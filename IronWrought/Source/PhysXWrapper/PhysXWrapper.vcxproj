@@ -82,7 +82,7 @@
     <TargetName>$(ProjectName)_$(Configuration)</TargetName>
     <IntDir>$(SolutionDir)..\Temp\$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)..\Lib\</OutDir>
-    <LibraryPath>$(SolutionDir)Includes\PhysX-4.1\lib\debug\;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)..\Lib\physxlib\debug\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -90,7 +90,7 @@
     <TargetName>$(ProjectName)_$(Configuration)</TargetName>
     <IntDir>$(SolutionDir)..\Temp\$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)..\Lib\</OutDir>
-    <LibraryPath>$(SolutionDir)Includes\PhysX-4.1\lib\release\;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)..\Lib\physxlib\release\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

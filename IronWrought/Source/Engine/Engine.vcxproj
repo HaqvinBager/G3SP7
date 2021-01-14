@@ -48,16 +48,16 @@
     <TargetName>$(ProjectName)_$(Configuration)</TargetName>
     <IntDir>$(ProjectDir)..\..\Temp\$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir>$(ProjectDir)..\..\Lib\</OutDir>
-    <IncludePath>$(IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\DirectXTK\Inc\;$(ProjectDir)..\Game\;$(ProjectDir)..\ModelLoader\;$(ProjectDir)..\UnityImporterApp\;$(ProjectDir)..\Includes\;$(SolutionDir)PhysXWrapper\</IncludePath>
-    <LibraryPath>$(SolutionDir)../Lib/;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
+    <IncludePath>$(IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\DirectXTK\Inc\;$(ProjectDir)..\Game\;$(ProjectDir)..\ModelLoader\;$(ProjectDir)..\UnityImporterApp\;$(ProjectDir)..\Includes\;$(SolutionDir)PhysXWrapper\;$(SolutionDir)Includes\PhysX-4.1\physx\include\;$(SolutionDir)Includes\PhysX-4.1\pxshared\include\</IncludePath>
+    <LibraryPath>$(SolutionDir)../Lib/;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)..\Lib\physxlib\debug\</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <TargetName>$(ProjectName)_$(Configuration)</TargetName>
     <IntDir>$(ProjectDir)..\..\Temp\$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir>$(ProjectDir)..\..\Lib\</OutDir>
-    <IncludePath>$(IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\DirectXTK\Inc\;$(ProjectDir)..\Game\;$(ProjectDir)..\ModelLoader\;$(ProjectDir)..\UnityImporterApp\;$(ProjectDir)..\Includes\;$(SolutionDir)PhysXWrapper\</IncludePath>
-    <LibraryPath>$(SolutionDir)../Lib/;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
+    <IncludePath>$(IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\DirectXTK\Inc\;$(ProjectDir)..\Game\;$(ProjectDir)..\ModelLoader\;$(ProjectDir)..\UnityImporterApp\;$(ProjectDir)..\Includes\;$(SolutionDir)PhysXWrapper\;$(SolutionDir)Includes\PhysX-4.1\physx\include\;$(SolutionDir)Includes\PhysX-4.1\pxshared\include\</IncludePath>
+    <LibraryPath>$(SolutionDir)../Lib/;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)..\Lib\physxlib\release\</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -149,6 +149,7 @@
     <ClInclude Include="MessageType.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="PerlinNoise.h" />
+    <ClInclude Include="PhysX.h" />
     <ClInclude Include="PointLightComponent.h" />
     <ClInclude Include="PostMaster.h" />
     <ClInclude Include="Debug.h" />
@@ -245,6 +246,7 @@
     <ClCompile Include="MainSingleton.cpp" />
     <ClCompile Include="ParticleEmitterComponent.cpp" />
     <ClCompile Include="PerlinNoise.cpp" />
+    <ClCompile Include="PhysX.cpp" />
     <ClCompile Include="PointLightComponent.cpp" />
     <ClCompile Include="PostMaster.cpp" />
     <ClCompile Include="RectangleColliderComponent.cpp" />
