@@ -21,9 +21,7 @@ public:
 		std::array<ID3D11ShaderResourceView*, 3> myTexture { };
 		//ID3D11Buffer* myBonesBuffer = nullptr;
 		//std::vector<CAnimation*> myAnimations;
-
 		std::array<ID3D11ShaderResourceView*, 4> myDetailNormals { nullptr, nullptr, nullptr, nullptr };
-		bool myHasDetailNormals;
 	};
 
 	struct SModelInstanceData {

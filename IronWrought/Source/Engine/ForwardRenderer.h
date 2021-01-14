@@ -68,7 +68,9 @@ private:
 		} myPointLights[LIGHTCOUNT];
 
 		unsigned int myNumberOfUsedPointLights;
-		unsigned int myPadding[3];
+		unsigned int myNumberOfDetailNormals;
+		unsigned int myNumberOfTextureSets;
+		unsigned int myPaddington;
 	} myObjectBufferData;
 
 	static_assert((sizeof(SObjectBufferData) % 16) == 0, "CB size not padded correctly");

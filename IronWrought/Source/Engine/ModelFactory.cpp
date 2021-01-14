@@ -227,23 +227,26 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 	modelData.myTexture[1] = materialResourceView;
 	modelData.myTexture[2] = normalResourceView;
 
-	// "model_name_ts1_dn1.fbx" // What do if?
-	// "dn1_model_name_ts1.fbx
-	// "model_name_ts1_dn.fbx"
-	// _123 = har tilesheet nr2 och detailnormal nr3
-	// (int)'c'
-
 	// Check for detail normal
 	ID3D11ShaderResourceView* detailNormal1 = nullptr;
+	ID3D11ShaderResourceView* detailNormal2 = nullptr;
+	ID3D11ShaderResourceView* detailNormal3 = nullptr;
+	ID3D11ShaderResourceView* detailNormal4 = nullptr;
 	std::string dnsuffix = aFilePath.substr(aFilePath.length() - 7, 3);
 	if (dnsuffix == "_dn")
 	{
-		modelData.myHasDetailNormals = true;
+		//modelData. = true;
 		//detailNormal1 = GetShaderResourceView(device, "Assets/3D/Exempel_Modeller/DetailNormals/Tufted_Leather/dn_25cm_N.dds");
 		detailNormal1 = GetShaderResourceView(device, "Assets/3D/Exempel_Modeller/DetailNormals/4DN/dns/dn_CarbonFibre_n.dds");
+		detailNormal2 = GetShaderResourceView(device, "Assets/3D/Exempel_Modeller/DetailNormals/Tufted_Leather/dn_25cm_N.dds");
+		detailNormal3 = GetShaderResourceView(device, "Assets/3D/Exempel_Modeller/DetailNormals/4DN/dns/dn_Wool_n.dds");
+		detailNormal4 = GetShaderResourceView(device, "Assets/3D/Exempel_Modeller/DetailNormals/4DN/dns/dn_PlasticPolymer_n.dds");
 	}
 	// ! Check for detail norma
 	modelData.myDetailNormals[0] = detailNormal1;
+	modelData.myDetailNormals[1] = detailNormal2;
+	modelData.myDetailNormals[2] = detailNormal3;
+	modelData.myDetailNormals[3] = detailNormal4;
 
 	model->Init(modelData);
 

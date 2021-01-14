@@ -19,7 +19,7 @@
 
 namespace SM = DirectX::SimpleMath;
 
-CForwardRenderer::CForwardRenderer() 
+CForwardRenderer::CForwardRenderer()
 	: myContext(nullptr)
 	, myFrameBuffer(nullptr)
 	, myFrameBufferData()
@@ -51,7 +51,7 @@ bool CForwardRenderer::Init(CDirectXFramework* aFramework) {
 	if (!device)
 		return false;
 
-	D3D11_BUFFER_DESC bufferDescription = { 0 };
+	D3D11_BUFFER_DESC bufferDescription = {0};
 	bufferDescription.Usage = D3D11_USAGE_DYNAMIC;
 	bufferDescription.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	bufferDescription.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
@@ -73,7 +73,7 @@ bool CForwardRenderer::Init(CDirectXFramework* aFramework) {
 	// Render pass shaders
 	std::ifstream psFile;
 	psFile.open("Shaders/RenderPassColorPixelShader.cso", std::ios::binary);
-	std::string psData = { std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>() };
+	std::string psData = {std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>()};
 	psFile.close();
 
 	myRenderPassPixelShaders.emplace_back();
@@ -81,7 +81,7 @@ bool CForwardRenderer::Init(CDirectXFramework* aFramework) {
 
 	// ===============
 	psFile.open("Shaders/RenderPassNormalPixelShader.cso", std::ios::binary);
-	psData = { std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>() };
+	psData = {std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>()};
 	psFile.close();
 
 	myRenderPassPixelShaders.emplace_back();
@@ -89,7 +89,7 @@ bool CForwardRenderer::Init(CDirectXFramework* aFramework) {
 
 	// ===============
 	psFile.open("Shaders/RenderPassRoughnessPixelShader.cso", std::ios::binary);
-	psData = { std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>() };
+	psData = {std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>()};
 	psFile.close();
 
 	myRenderPassPixelShaders.emplace_back();
@@ -97,7 +97,7 @@ bool CForwardRenderer::Init(CDirectXFramework* aFramework) {
 
 	// ===============
 	psFile.open("Shaders/RenderPassMetalnessPixelShader.cso", std::ios::binary);
-	psData = { std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>() };
+	psData = {std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>()};
 	psFile.close();
 
 	myRenderPassPixelShaders.emplace_back();
@@ -105,7 +105,7 @@ bool CForwardRenderer::Init(CDirectXFramework* aFramework) {
 
 	// ===============
 	psFile.open("Shaders/RenderPassAmbientOcclusionPixelShader.cso", std::ios::binary);
-	psData = { std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>() };
+	psData = {std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>()};
 	psFile.close();
 
 	myRenderPassPixelShaders.emplace_back();
@@ -144,21 +144,32 @@ void CForwardRenderer::Render(CEnvironmentLight* anEnvironmentLight, std::vector
 		if (gameobject->GetComponent<CModelComponent>()->GetMyModel() == nullptr)
 			continue;
 
-			for (unsigned int i = 0; i < aModelPointLightList[modelIndex].first; ++i)
-			{
-				SM::Vector3 position = aModelPointLightList[modelIndex].second[i]->GetPosition();
-				SM::Vector3 color = aModelPointLightList[modelIndex].second[i]->GetColor();
-				myObjectBufferData.myPointLights[i].myPositionAndIntensity = { position.x, position.y, position.z, aModelPointLightList[modelIndex].second[i]->GetIntensity() };
-				myObjectBufferData.myPointLights[i].myColorAndRange = { color.x, color.y, color.z, aModelPointLightList[modelIndex].second[i]->GetRange() };
-			}
-			myObjectBufferData.myNumberOfUsedPointLights = aModelPointLightList[modelIndex].first;
-			modelIndex++;
+		for (unsigned int i = 0; i < aModelPointLightList[modelIndex].first; ++i)
+		{
+			SM::Vector3 position = aModelPointLightList[modelIndex].second[i]->GetPosition();
+			SM::Vector3 color = aModelPointLightList[modelIndex].second[i]->GetColor();
+			myObjectBufferData.myPointLights[i].myPositionAndIntensity = {position.x, position.y, position.z, aModelPointLightList[modelIndex].second[i]->GetIntensity()};
+			myObjectBufferData.myPointLights[i].myColorAndRange = {color.x, color.y, color.z, aModelPointLightList[modelIndex].second[i]->GetRange()};
+		}
+		myObjectBufferData.myNumberOfUsedPointLights = aModelPointLightList[modelIndex].first;
+		modelIndex++;
 
 		CModel* model = gameobject->GetComponent<CModelComponent>()->GetMyModel();
 
 		CModel::SModelData modelData = model->GetModelData();
 
 		myObjectBufferData.myToWorld = gameobject->GetComponent<CTransformComponent>()->Transform();
+
+		int counter = 0;
+		for (auto detailNormal : model->GetModelData().myDetailNormals)
+		{
+			if (detailNormal)
+			{
+				++counter;
+			}
+		}
+
+		myObjectBufferData.myNumberOfDetailNormals = counter;
 
 		BindBuffer(myObjectBuffer, myObjectBufferData, "Object Buffer");
 
@@ -180,16 +191,16 @@ void CForwardRenderer::Render(CEnvironmentLight* anEnvironmentLight, std::vector
 
 		myContext->PSSetConstantBuffers(1, 1, &myObjectBuffer);
 		myContext->PSSetShaderResources(1, 3, &modelData.myTexture[0]);
-		if (modelData.myHasDetailNormals)
+		for (unsigned int i = 0; i < myObjectBufferData.myNumberOfDetailNormals; ++i)
 		{
-			myContext->PSSetShaderResources(4, 1, &modelData.myDetailNormals[0]);
+			myContext->PSSetShaderResources(4 + i, 1, &modelData.myDetailNormals[i]);
 		}
 		myContext->PSSetSamplers(0, 1, &modelData.mySamplerState);
 
 		// Toggling render passes
 		if (myCurrentPixelShader == nullptr)
 			myContext->PSSetShader(modelData.myPixelShader, nullptr, 0);
-		else 
+		else
 			myContext->PSSetShader(myCurrentPixelShader, nullptr, 0);
 
 		myContext->DrawIndexed(modelData.myNumberOfIndices, 0, 0);
@@ -201,7 +212,7 @@ void CForwardRenderer::InstancedRender(CEnvironmentLight* anEnvironmentLight, st
 	DirectX::SimpleMath::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
 	myFrameBufferData.myToCamera = cameraMatrix.Invert();;
 	myFrameBufferData.myToProjection = aCamera->GetProjection();
-	myFrameBufferData.myCameraPosition = DirectX::SimpleMath::Vector4{ cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f };
+	myFrameBufferData.myCameraPosition = DirectX::SimpleMath::Vector4{cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f};
 	myFrameBufferData.myDirectionalLightDirection = anEnvironmentLight->GetDirection();
 	myFrameBufferData.myDirectionalLightColor = anEnvironmentLight->GetColor();
 
@@ -240,8 +251,8 @@ void CForwardRenderer::InstancedRender(CEnvironmentLight* anEnvironmentLight, st
 			for (unsigned int i = 0; i < aModelPointLightList[instancedIndex].first; ++i) {
 				SM::Vector3 position = aModelPointLightList[instancedIndex].second[i]->GetPosition();
 				SM::Vector3 color = aModelPointLightList[instancedIndex].second[i]->GetColor();
-				myObjectBufferData.myPointLights[i].myPositionAndIntensity = { position.x, position.y, position.z, aModelPointLightList[instancedIndex].second[i]->GetIntensity() };
-				myObjectBufferData.myPointLights[i].myColorAndRange = { color.x, color.y, color.z, aModelPointLightList[instancedIndex].second[i]->GetRange() };
+				myObjectBufferData.myPointLights[i].myPositionAndIntensity = {position.x, position.y, position.z, aModelPointLightList[instancedIndex].second[i]->GetIntensity()};
+				myObjectBufferData.myPointLights[i].myColorAndRange = {color.x, color.y, color.z, aModelPointLightList[instancedIndex].second[i]->GetRange()};
 			}
 			myObjectBufferData.myNumberOfUsedPointLights = aModelPointLightList[instancedIndex].first;
 			instancedIndex++;
@@ -251,7 +262,7 @@ void CForwardRenderer::InstancedRender(CEnvironmentLight* anEnvironmentLight, st
 
 		CModel* model = instanceComponent->GetModel();
 		CModel::SModelInstanceData modelData = model->GetModelInstanceData();
-		
+
 		{
 			D3D11_MAPPED_SUBRESOURCE instanceBuffer;
 			ZeroMemory(&instanceBuffer, sizeof(D3D11_MAPPED_SUBRESOURCE));
@@ -263,7 +274,7 @@ void CForwardRenderer::InstancedRender(CEnvironmentLight* anEnvironmentLight, st
 		myContext->IASetPrimitiveTopology(modelData.myPrimitiveTopology);
 		myContext->IASetInputLayout(modelData.myInputLayout);
 
-		ID3D11Buffer* bufferPointers[2] = { modelData.myVertexBuffer, modelData.myInstanceBuffer };
+		ID3D11Buffer* bufferPointers[2] = {modelData.myVertexBuffer, modelData.myInstanceBuffer};
 		myContext->IASetVertexBuffers(0, 2, bufferPointers, modelData.myStride, modelData.myOffset);
 		myContext->IASetIndexBuffer(modelData.myIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
@@ -280,7 +291,7 @@ void CForwardRenderer::InstancedRender(CEnvironmentLight* anEnvironmentLight, st
 		// Toggling render passes
 		if (myCurrentPixelShader == nullptr)
 			myContext->PSSetShader(modelData.myPixelShader, nullptr, 0);
-		else 
+		else
 			myContext->PSSetShader(myCurrentPixelShader, nullptr, 0);
 
 
@@ -310,7 +321,7 @@ void CForwardRenderer::RenderLines(CCameraComponent* aCamera, const std::vector<
 
 		myContext->IASetPrimitiveTopology(lineData.myPrimitiveTopology);
 		myContext->IASetInputLayout(lineData.myInputLayout);
- 		myContext->IASetVertexBuffers(0, 1, &lineData.myVertexBuffer, &lineData.myStride, &lineData.myOffset);
+		myContext->IASetVertexBuffers(0, 1, &lineData.myVertexBuffer, &lineData.myStride, &lineData.myOffset);
 		myContext->IASetIndexBuffer(lineData.myIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
 		myContext->VSSetConstantBuffers(1, 1, &myObjectBuffer);
@@ -372,39 +383,39 @@ void CForwardRenderer::RenderOutline(CCameraComponent* aCamera, CGameObject* aMo
 
 void CForwardRenderer::RenderLineInstances(CCameraComponent* aCamera, const std::vector<CLineInstance*>& aLineList) {
 
-    namespace SM = DirectX::SimpleMath;
-    myFrameBufferData.myToCamera = aCamera->GameObject().myTransform->Transform().Invert();
-    myFrameBufferData.myToProjection = aCamera->GetProjection();
+	namespace SM = DirectX::SimpleMath;
+	myFrameBufferData.myToCamera = aCamera->GameObject().myTransform->Transform().Invert();
+	myFrameBufferData.myToProjection = aCamera->GetProjection();
 
-    BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
+	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
 
-    myContext->VSSetConstantBuffers(0, 1, &myFrameBuffer);
-    myContext->PSSetConstantBuffers(0, 1, &myFrameBuffer);
+	myContext->VSSetConstantBuffers(0, 1, &myFrameBuffer);
+	myContext->PSSetConstantBuffers(0, 1, &myFrameBuffer);
 
-    for (const CLineInstance* instance : aLineList)
-    {
+	for (const CLineInstance* instance : aLineList)
+	{
 
-        CLine::SLineData lineData = instance->GetLine()->GetLineData();
+		CLine::SLineData lineData = instance->GetLine()->GetLineData();
 
-        myObjectBufferData.myToWorld = instance->GetTransform();
+		myObjectBufferData.myToWorld = instance->GetTransform();
 
-        BindBuffer(myObjectBuffer, myObjectBufferData, "Object Buffer");
+		BindBuffer(myObjectBuffer, myObjectBufferData, "Object Buffer");
 
-        myContext->IASetPrimitiveTopology(lineData.myPrimitiveTopology);
-        myContext->IASetInputLayout(lineData.myInputLayout);
-        myContext->IASetVertexBuffers(0, 1, &lineData.myVertexBuffer, &lineData.myStride, &lineData.myOffset);
-        myContext->IASetIndexBuffer(lineData.myIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+		myContext->IASetPrimitiveTopology(lineData.myPrimitiveTopology);
+		myContext->IASetInputLayout(lineData.myInputLayout);
+		myContext->IASetVertexBuffers(0, 1, &lineData.myVertexBuffer, &lineData.myStride, &lineData.myOffset);
+		myContext->IASetIndexBuffer(lineData.myIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
-        myContext->VSSetConstantBuffers(1, 1, &myObjectBuffer);
-        myContext->VSSetShader(lineData.myVertexShader, nullptr, 0);
+		myContext->VSSetConstantBuffers(1, 1, &myObjectBuffer);
+		myContext->VSSetShader(lineData.myVertexShader, nullptr, 0);
 
-        myContext->PSSetShader(lineData.myPixelShader, nullptr, 0);
+		myContext->PSSetShader(lineData.myPixelShader, nullptr, 0);
 
-        //myContext->DrawIndexed(lineData.myNumberOfIndices, 0, 0);
-        myContext->Draw(lineData.myNumberOfVertices, 0);
+		//myContext->DrawIndexed(lineData.myNumberOfIndices, 0, 0);
+		myContext->Draw(lineData.myNumberOfVertices, 0);
 
 
-    }
+	}
 }
 
 bool CForwardRenderer::ToggleRenderPass()
@@ -414,8 +425,7 @@ bool CForwardRenderer::ToggleRenderPass()
 	{
 		myCurrentPixelShader = nullptr;
 		return true;
-	} 
-	else if (myRenderPassIndex > myRenderPassPixelShaders.size())
+	} else if (myRenderPassIndex > myRenderPassPixelShaders.size())
 	{
 		myRenderPassIndex = 0;
 	}

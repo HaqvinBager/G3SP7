@@ -8,7 +8,7 @@ class CModel;
 class CModelComponent : public CBehaviour
 {
 public:
-	CModelComponent(CGameObject& aParent, std::string aFBXPath);
+	CModelComponent(CGameObject& aParent, const std::string& aFBXPath);
 	~CModelComponent() override;
 
 	void Awake() override;

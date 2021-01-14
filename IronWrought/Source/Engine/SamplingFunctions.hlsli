@@ -17,12 +17,12 @@ float PixelShader_DetailNormalStrength(VertexToPixel input)
     return output;
 }
 
-PixelOutPut PixelShader_DetailNormal(VertexToPixel input)
+PixelOutPut PixelShader_DetailNormal(VertexToPixel input, int index)
 {
     float tilingModifier = 4.0f; // eq to scale
    
     float3 normal;
-    normal.xy = detailNormals[0].Sample(defaultSampler, input.myUV.xy * tilingModifier).ag;
+    normal.xy = detailNormals[index].Sample(defaultSampler, input.myUV.xy * tilingModifier).ag;
     normal.z = 0.0f;
     normal = (normal * 2.0f) - 1.0f;
     normal.z = sqrt(1 - saturate((normal.x * normal.x) + (normal.y * normal.y)));

@@ -37,15 +37,20 @@ PixelOutPut main(VertexToPixel input)
     float4 albedo = PixelShader_Color(input).myColor.rgba;
     float3 normal = PixelShader_Normal(input).myColor.xyz;
     
-    // if ( hasDetailedNormals ) // get from ModelData when rendering
+    if (myNumberOfDetailNormals > 0)
+    { // get from ModelData when rendering
         float detailNormalStrength = PixelShader_DetailNormalStrength(input);
-        float strengthMultiplier = 4.0f;// should change based on distance to camera
-        float3 detailNormal = PixelShader_DetailNormal(input).myColor.xyz;
-        detailNormal = SetDetailNormalStrength(detailNormal, detailNormalStrength, strengthMultiplier);
-        normal = normal * 0.5 + 0.5;
-        detailNormal = detailNormal * 0.5 + 0.5;
-        normal = BlendRNM(normal, detailNormal);
-    // End of if
+        float strengthMultiplier = 4.0f; // should change based on distance to camera
+        float3 detailNormal;
+        for (int i = 0; i < myNumberOfDetailNormals; ++i)
+        {
+            detailNormal = PixelShader_DetailNormal(input, i).myColor.xyz;
+            detailNormal = SetDetailNormalStrength(detailNormal, detailNormalStrength, strengthMultiplier);
+            normal = normal * 0.5 + 0.5;
+            detailNormal = detailNormal * 0.5 + 0.5;
+            normal = BlendRNM(normal, detailNormal);
+        }
+    } // End of if
     
     float3x3 tangentSpaceMatrix = float3x3(normalize(input.myTangent.xyz), normalize(input.myBiNormal.xyz), normalize(input.myNormal.xyz));
     normal = mul(normal.xyz, tangentSpaceMatrix);
@@ -71,7 +76,7 @@ PixelOutPut main(VertexToPixel input)
         pointLights += EvaluatePointLight(color, specularcolor, normal, perceptualroughness, currentLight.myColorAndRange.rgb, currentLight.myPositionAndIntensity.w, currentLight.myColorAndRange.a, currentLight.myPositionAndIntensity.xyz, toEye, input.myWorldPosition.xyz);
     }
     
-    float3 emissive = albedo * emissivedata;// Maybe add cool multiplier?? // Aki 2021
+    float3 emissive = albedo * emissivedata; // Maybe add cool multiplier?? // Aki 2021
     float3 radiance = ambience + directionallight + pointLights + emissive;
    
     output.myColor.rgb = LinearToGamma(radiance);

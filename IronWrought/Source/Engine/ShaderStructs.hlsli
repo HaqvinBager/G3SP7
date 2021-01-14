@@ -27,7 +27,9 @@ cbuffer ObjectBuffer : register(b1)
     } myPointLights[LIGHTCOUNT];
     
     unsigned int myNumberOfUsedPointLights;
-    unsigned int myPadding[3];
+    unsigned int myNumberOfDetailNormals;
+    unsigned int myNumberOfTextureSets;
+    unsigned int myPaddington;
 };
 
 cbuffer BoneBuffer : register(b2)
