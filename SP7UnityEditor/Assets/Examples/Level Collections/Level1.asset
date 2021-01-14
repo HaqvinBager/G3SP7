@@ -9,15 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a9d86338336fd2641bb14063b8d982a2, type: 3}
+  m_Script: {fileID: 11500000, guid: d184d122156d96b4c9a8a1a955cc3186, type: 3}
   m_Name: Level1
   m_EditorClassIdentifier: 
   myScenes:
-  - sceneAsset: {fileID: 102900000, guid: fd0f7f47773d2bd46bbcf71f4321ddc2, type: 3}
+  - sceneAsset: {fileID: 102900000, guid: 457bf6488a5c48d41a6825d761396414, type: 3}
     scenePath: Assets/Examples/Level1/Level1_Layout_part1.unity
-  - sceneAsset: {fileID: 102900000, guid: ce715b48b4b22784290652084e6a6695, type: 3}
-    scenePath: Assets/Examples/Level1/Level1_Lights.unity
-  - sceneAsset: {fileID: 102900000, guid: fdb82c615a1652b4898ecadabed3092d, type: 3}
-    scenePath: Assets/Examples/Level1/Level1_Foliage.unity
-  - sceneAsset: {fileID: 102900000, guid: d01567fea30ac0b43bb00c39e029b583, type: 3}
+  - sceneAsset: {fileID: 102900000, guid: 26f4dc24d379c9a4194cc7749304f8f1, type: 3}
     scenePath: Assets/Examples/Level1/Level1_Layout_part2.unity
+  - sceneAsset: {fileID: 102900000, guid: d4572ef0aa732564c874dbf513700ae1, type: 3}
+    scenePath: Assets/Examples/Level1/Level1_Interactables.unity
