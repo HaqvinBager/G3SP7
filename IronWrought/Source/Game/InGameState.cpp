@@ -20,6 +20,7 @@
 
 #include <CollisionManager.h>
 
+#include <JsonReader.h>
 #include <iostream>
 
 
@@ -63,20 +64,72 @@ void CInGameState::Start()
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);
 
-	CGameObject* chest = new CGameObject(1337);
-	//chest->AddComponent<CModelComponent>(*chest, "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx");
-	chest->AddComponent<CModelComponent>(*chest, std::string(ASSETPATH + "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx"));
-	chest->GetComponent<CTransformComponent>()->Position({15.0f,0.0f,0.0f});
+
+	
+
+	
+
+	rapidjson::Document document = CJsonReader::LoadDocument(ASSETPATH + "Assets/TestJson.json");
+	auto jsonarray = document["gameobjects"].GetArray();
+
+	for (auto& jsongameobject : jsonarray) {
+
+		CGameObject* gameobject = new CGameObject(0);
+		std::string model_path;
+		Vector3 position;
 
 
-	CGameObject* dn = new CGameObject(1338);
-	dn->AddComponent<CModelComponent>(*dn, "Assets/3D/Exempel_Modeller/DetailNormals/Tufted_Leather/tufted_leather_dn.fbx");
-	dn->GetComponent<CTransformComponent>()->Position({0.0f,0.0f,0.0f});
-	dn->GetComponent<CTransformComponent>()->Scale(100.0f);
 
-	scene->AddInstance(chest);
+		auto jsonmodelpath = jsongameobject["model"].GetObjectW();
 
-	scene->AddInstance(dn);
+		model_path = jsonmodelpath["fbxPath"].GetString();
+
+		auto jsontransform = jsongameobject["transform"].GetObjectW();
+		auto jsonposition = jsontransform["position"].GetObjectW();
+
+		position.x = jsonposition["x"].GetFloat();
+
+		position.y = jsonposition["y"].GetFloat();
+
+		position.z = jsonposition["z"].GetFloat();
+
+		
+
+
+		gameobject->AddComponent<CModelComponent>(*gameobject, std::string(ASSETPATH + model_path));
+		gameobject->GetComponent<CTransformComponent>()->Position(position);
+
+
+		scene->AddInstance(gameobject);
+	}
+
+	
+
+
+
+	
+
+	
+
+	//CGameObject* chest = new CGameObject(1337);
+	////chest->AddComponent<CModelComponent>(*chest, "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx");
+	//chest->AddComponent<CModelComponent>(*chest, std::string(ASSETPATH + "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx"));
+	//chest->GetComponent<CTransformComponent>()->Position({15.0f,0.0f,0.0f});
+
+
+	//CGameObject* dn = new CGameObject(1338);
+	//dn->AddComponent<CModelComponent>(*dn, "Assets/3D/Exempel_Modeller/DetailNormals/Tufted_Leather/tufted_leather_dn.fbx");
+	//dn->GetComponent<CTransformComponent>()->Position({0.0f,0.0f,0.0f});
+	//dn->GetComponent<CTransformComponent>()->Scale(100.0f);
+
+	/*scene->AddInstance(chest);
+
+	scene->AddInstance(dn);*/
+
+
+	//steg 1. kalla på read json funktion
+	//steg 2. skapa en gameobject struct
+	//steg 3. 
 
 	myExitLevel = false;
 

@@ -27,6 +27,13 @@ public struct SGameObject
     public SModel model;
 }
 
+[System.Serializable]
+public struct SScene
+{
+    public SGameObject[] gameobjects;
+}
+
+
 public class Exporter 
 {
 
@@ -36,6 +43,8 @@ public class Exporter
     {
         Scene currentScene = SceneManager.GetActiveScene();
         GameObject[] rootGameObjects = currentScene.GetRootGameObjects();
+        SScene SceneObject = new SScene();
+        SceneObject.gameobjects = new SGameObject[rootGameObjects.Length];
 
         for(int i = 0; i < rootGameObjects.Length; ++i)
         {
@@ -44,13 +53,14 @@ public class Exporter
             gameObject.transform.rotation = rootGameObjects[i].transform.rotation.eulerAngles;
             gameObject.transform.scale = rootGameObjects[i].transform.localScale;
 
-            gameObject.model.fbxPath = AssetDatabase.GetAssetPath(PrefabUtility.GetCorrespondingObjectFromSource(rootGameObjects[i].GetComponent<MeshFilter>().sharedMesh)); 
+            gameObject.model.fbxPath = AssetDatabase.GetAssetPath(PrefabUtility.GetCorrespondingObjectFromOriginalSource(rootGameObjects[i].GetComponent<Renderer>()));
 
-            string jsonTransform = JsonUtility.ToJson(gameObject);
-            string savePath = System.IO.Directory.GetCurrentDirectory() + "\\Assets\\TestJson.json";
-            System.IO.File.WriteAllText(savePath, jsonTransform);
+            SceneObject.gameobjects[i] = gameObject;
         }
 
+        string jsonGameObject = JsonUtility.ToJson(SceneObject);
+        string savePath = System.IO.Directory.GetCurrentDirectory() + "\\Assets\\TestJson.json";
+        System.IO.File.WriteAllText(savePath, jsonGameObject);
     }
     
 
