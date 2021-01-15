@@ -66,3 +66,8 @@ public class Exporter
         System.IO.File.WriteAllText(savePath, jsonGameObject);
     }
 }
+
+//NOTES
+// LoadScene funktion / Class / Refaktorisera InGameState så vi kan få det mera strukturerat och tänka på att vi ska kunna bygga vidare på systemet. 
+// (Export Levels) ta hela export scene konceptet och gör den "loopbar" så vi kan ta en samling av scener och exporta dem med ett klick. 
+// AKA ExportLevelCollection
