@@ -10,6 +10,7 @@ using UnityEditor;
 [System.Serializable]
 public struct STransform
 {
+    public float instanceID;
     public Vector3 position;
     public Vector3 rotation;
     public Vector3 scale;
@@ -49,8 +50,10 @@ public class Exporter
         for(int i = 0; i < rootGameObjects.Length; ++i)
         {
             SGameObject gameObject;
+            gameObject.transform.instanceID = rootGameObjects[i].GetInstanceID();
             gameObject.transform.position = rootGameObjects[i].transform.position;
-            gameObject.transform.rotation = rootGameObjects[i].transform.rotation.eulerAngles;
+            gameObject.transform.rotation = rootGameObjects[i].transform.ConvertToIronWroughtRotation();
+                //rootGameObjects[i].transform.rotation.eulerAngles;
             gameObject.transform.scale = rootGameObjects[i].transform.localScale;
 
             gameObject.model.fbxPath = AssetDatabase.GetAssetPath(PrefabUtility.GetCorrespondingObjectFromOriginalSource(rootGameObjects[i].GetComponent<Renderer>()));
@@ -62,7 +65,4 @@ public class Exporter
         string savePath = System.IO.Directory.GetCurrentDirectory() + "\\Assets\\TestJson.json";
         System.IO.File.WriteAllText(savePath, jsonGameObject);
     }
-    
-
-
 }
