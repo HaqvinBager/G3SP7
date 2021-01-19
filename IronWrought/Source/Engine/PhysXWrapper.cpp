@@ -48,6 +48,7 @@ CPhysXWrapper::~CPhysXWrapper()
 	//myFoundation->release();
 	//delete myAllocator;
 	//myAllocator = nullptr;
+	myPhysicsVisualDebugger->disconnect();
 }
 
 bool CPhysXWrapper::Init()
@@ -63,7 +64,8 @@ bool CPhysXWrapper::Init()
 	if (!myPhysicsVisualDebugger) {
 		return false;
 	}
-	PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 10);
+	PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate("localhost", 5425, 10);
+	//PxPvdTransport* transport = PxDefaultPvdFileTransportCreate("Test.pxd2");
 	myPhysicsVisualDebugger->connect(*transport, PxPvdInstrumentationFlag::eALL);
 
 	myPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *myFoundation, PxTolerancesScale(), true, myPhysicsVisualDebugger);
@@ -98,11 +100,10 @@ PxScene* CPhysXWrapper::CreatePXScene()
 	}
 
 	// Create a basic setup for a scene - contain the rodents in a invisible cage
-	PxMaterial* myMaterial = myPhysics->createMaterial(0.9f, 0.4f, 0.96f);
+	PxMaterial* myMaterial = myPhysics->createMaterial(1.0f, 0.0f, -0.5f);
 
-	PxRigidStatic* groundPlane = PxCreatePlane(*myPhysics, PxPlane(0, 1, 0, 10000), *myMaterial);
-	groundPlane->setGlobalPose( {15.0f,0.0f,0.0f} );
-	std::cout << groundPlane->getGlobalPose().p.y << std::endl;
+	PxRigidStatic* groundPlane = PxCreatePlane(*myPhysics, PxPlane(0, 1, 0, 3.3f), *myMaterial);
+	//groundPlane->setGlobalPose( {15.0f,0.0f,0.0f} );
 	pXScene->addActor(*groundPlane);
 
 	return pXScene;

@@ -8,6 +8,7 @@
 #include "CameraControllerComponent.h"
 #include "EnviromentLightComponent.h"
 #include "TransformComponent.h"
+#include "RigidBodyComponent.h"
 
 #include "ModelComponent.h"
 #include "EnvironmentLight.h"
@@ -45,6 +46,7 @@ void CInGameState::Awake()
 void CInGameState::Start()
 {
 	CScene* scene = new CScene();
+	scene->AddPXScene(CMainSingleton::PhysXWrapper().CreatePXScene());
 
 	CGameObject* camera = new CGameObject(0);
 	camera->AddComponent<CCameraComponent>(*camera, 70.0f);
@@ -109,10 +111,12 @@ void CInGameState::Start()
 		scene->AddInstance(gameobject);
 	}
 
-	//CGameObject* chest = new CGameObject(1337);
-	////chest->AddComponent<CModelComponent>(*chest, "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx");
-	//chest->AddComponent<CModelComponent>(*chest, std::string(ASSETPATH + "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx"));
-	//chest->GetComponent<CTransformComponent>()->Position({15.0f,0.0f,0.0f});
+	CGameObject* chest = new CGameObject(1337);
+	//chest->AddComponent<CModelComponent>(*chest, "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx");
+	chest->AddComponent<CModelComponent>(*chest, std::string(ASSETPATH + "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx"));
+	chest->GetComponent<CTransformComponent>()->Position({15.0f,50.0f,0.0f});
+	chest->AddComponent<CRigidBodyComponent>(*chest);
+	scene->AddInstance(chest);
 
 
 	//CGameObject* dn = new CGameObject(1338);
@@ -166,6 +170,7 @@ void CInGameState::Stop()
 
 void CInGameState::Update()
 {
+	CMainSingleton::PhysXWrapper().Simulate();
 	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
 	{
 		gameObject->Update();
