@@ -8,8 +8,10 @@
 #include "CameraControllerComponent.h"
 #include "EnviromentLightComponent.h"
 #include "TransformComponent.h"
-
+#include "InstancedModelComponent.h"
+#include "RigidBodyComponent.h"
 #include "ModelComponent.h"
+
 #include "EnvironmentLight.h"
 #include "Timer.h"
 #include "Engine.h"
@@ -47,6 +49,7 @@ void CInGameState::Awake()
 void CInGameState::Start()
 {
 	CScene* scene = new CScene();
+	scene->AddPXScene(CMainSingleton::PhysXWrapper().CreatePXScene());
 
 	CGameObject* camera = new CGameObject(0);
 	camera->AddComponent<CCameraComponent>(*camera, 70.0f);
@@ -112,8 +115,6 @@ void CInGameState::Start()
 	//}
 
 
-
-
 	CGameObject* chest = new CGameObject(1337);
 	chest->AddComponent<CModelComponent>(*chest, "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx");
 	chest->AddComponent<CModelComponent>(*chest, std::string(ASSETPATH + "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx"));
@@ -168,8 +169,6 @@ void CInGameState::Start()
 	scene->AddInstance(pointLights[3]->GetComponent<CPointLightComponent>()->GetPointLight());
 	scene->AddInstance(pointLights[4]->GetComponent<CPointLightComponent>()->GetPointLight());
 
-
-
 	CGameObject* dn = new CGameObject(1338);
 	dn->AddComponent<CModelComponent>(*dn, "Assets/3D/Exempel_Modeller/DetailNormals/Tufted_Leather/tufted_leather_dn.fbx");
 	dn->GetComponent<CTransformComponent>()->Position({7.0f,0.0f,0.0f});
@@ -177,10 +176,9 @@ void CInGameState::Start()
 
 	scene->AddInstance(dn);
 
-
-	//steg 1. kalla på read json funktion
+	//steg 1. kalla pï¿½ read json funktion
 	//steg 2. skapa en gameobject struct
-	//steg 3. 
+	//steg 3.
 
 	myExitLevel = false;
 
@@ -219,6 +217,7 @@ void CInGameState::Stop()
 
 void CInGameState::Update()
 {
+	CMainSingleton::PhysXWrapper().Simulate();
 	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
 	{
 		gameObject->Update();

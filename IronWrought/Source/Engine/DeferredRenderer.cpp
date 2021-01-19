@@ -11,6 +11,8 @@
 #include "CameraComponent.h"
 #include "ModelComponent.h"
 
+#include <fstream>
+
 namespace SM = DirectX::SimpleMath;
 
 CDeferredRenderer::CDeferredRenderer()

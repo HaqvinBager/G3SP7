@@ -4,8 +4,9 @@
 #include "DDSTextureLoader.h"
 #include "Particle.h"
 
-#include "rapidjson/document.h"
-#include "rapidjson/istreamwrapper.h"
+#include "JsonReader.h"
+//#include "rapidjson/document.h"
+//#include "rapidjson/istreamwrapper.h"
 
 CParticleFactory* CParticleFactory::ourInstance = nullptr;
 
@@ -179,10 +180,10 @@ void CParticleFactory::ReadJsonValues(std::string aFilePath, CParticle::SParticl
 {
     using namespace rapidjson;
 
-    std::ifstream inputStream(aFilePath);
-    IStreamWrapper inputWrapper(inputStream);
-    Document document;
-    document.ParseStream(inputWrapper);
+    //std::ifstream inputStream(aFilePath);
+    //IStreamWrapper inputWrapper(inputStream);
+    Document document = CJsonReader::LoadDocument(aFilePath);
+    //document.ParseStream(inputWrapper);
 
     someParticleData.myNumberOfParticles =          document["Max Number Of Particles"].GetInt();
    

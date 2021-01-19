@@ -509,7 +509,8 @@ public:
 		if (IsDestructibleModel(anFBXFilePath))
 		{
 			//myImporters[myCurSceneIndex]->GetOrphanedScene()// Cool but can't be used atm
-			myScenes.push_back(myImporters[myCurSceneIndex]->ReadFile(myModelPath, aiProcessPreset_TargetRealtime_Quality_DontJoinIdentical | aiProcess_ConvertToLeftHanded));
+			int qualityFlags = aiProcessPreset_TargetRealtime_Quality;
+			myScenes.push_back(myImporters[myCurSceneIndex]->ReadFile(myModelPath, (qualityFlags ^= (int)aiProcess_JoinIdenticalVertices) | aiProcess_ConvertToLeftHanded));
 		}
 		else
 		{

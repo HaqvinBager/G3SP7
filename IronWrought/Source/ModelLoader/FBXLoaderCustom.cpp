@@ -3,6 +3,7 @@
 #include <assimp/cimport.h>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <assimp/texture.h>
 
 #include "modelExceptionTools.h"
 
@@ -18,9 +19,9 @@
 
 // Change to your path
 #ifdef _DEBUG
-#pragma comment(lib, "assimp-vc140-mt.lib")
+#pragma comment(lib, "assimp-vc142-mtd.lib")
 #else
-#pragma comment (lib, "assimp-vc140-mt.lib")
+#pragma comment (lib, "assimp-vc142-mt.lib")
 #endif
 
 #define TEXTURE_SET_0 0
@@ -320,11 +321,11 @@ void* CFBXLoaderCustom::LoadModelInternal(CLoaderModel* someInput)
 	using namespace ModelExceptionTools;
 	if (IsDestructibleModel(model->myModelPath))
 	{
-		scene = aiImportFile(model->myModelPath.c_str(), aiProcessPreset_TargetRealtime_MaxQuality_DontJoinIndetical | aiProcess_ConvertToLeftHanded);
+		scene = aiImportFile(model->myModelPath.c_str(), /*aiProcessPreset_TargetRealtime_MaxQuality_DontJoinIndetical*/aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_ConvertToLeftHanded);
 	}
 	else
 	{
-		scene = aiImportFile(model->myModelPath.c_str(), aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_ConvertToLeftHanded);
+		scene = aiImportFile(model->myModelPath.c_str(), /*aiProcess_EmbedTextures |*/ aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_ConvertToLeftHanded);
 	}
 	
 	//aiSetImportPropertyFloat(aiprops, AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, GlobalScale);
@@ -374,9 +375,17 @@ void* CFBXLoaderCustom::LoadModelInternal(CLoaderModel* someInput)
 
 void CFBXLoaderCustom::LoadMaterials(const struct aiScene* sc, CLoaderModel* aModel)
 {
-
+	sc->mNumTextures;
+	aiString path;
 	for (unsigned int m = 0; m < sc->mNumMaterials; m++)
 	{
+		//sc->mMaterials[m]->Get(AI_MATKEY_TEXTURE(aiTextureType_DIFFUSE, 0), path);
+		//if (auto texture = sc->GetEmbeddedTexture(texture_file.C_Str())) {
+		//	//returned pointer is not null, read texture from memory
+		//}
+		//else {
+		//	//regular file, check if it exists and read it
+		//}
 		LoadTexture(aiTextureType_DIFFUSE, aModel->myTextures, sc->mMaterials[m]); // TEXTURE_DEFINITION_ALBEDO
 		LoadTexture(aiTextureType_SPECULAR, aModel->myTextures, sc->mMaterials[m]); // TEXTURE_DEFINITION_ROUGHNESS
 		LoadTexture(aiTextureType_AMBIENT, aModel->myTextures, sc->mMaterials[m]); // TEXTURE_DEFINITION_AMBIENTOCCLUSION
@@ -389,6 +398,8 @@ void CFBXLoaderCustom::LoadMaterials(const struct aiScene* sc, CLoaderModel* aMo
 		LoadTexture(aiTextureType_LIGHTMAP, aModel->myTextures, sc->mMaterials[m]);
 		LoadTexture(aiTextureType_REFLECTION, aModel->myTextures, sc->mMaterials[m]); // TEXTURE_DEFINITION_METALNESS
 	}
+
+	aModel->myTextures;
 }
 
 void CFBXLoaderCustom::LoadTexture(int aType, std::vector<std::string>& someTextures, aiMaterial* aMaterial)

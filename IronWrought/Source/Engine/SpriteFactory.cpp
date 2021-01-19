@@ -5,6 +5,8 @@
 #include "AnimatedUIElement.h"
 #include "RandomNumberGenerator.h"
 
+#include "JsonReader.h"
+
 #include "rapidjson\document.h"
 #include "rapidjson\istreamwrapper.h"
 
@@ -109,10 +111,10 @@ SAnimatedSpriteData* CSpriteFactory::LoadVFXSprite(std::string aFilePath)
 {
 	using namespace rapidjson;
 
-	std::ifstream input_stream(aFilePath);
-	IStreamWrapper input_wrapper(input_stream);
-	Document document;
-	document.ParseStream(input_wrapper);
+	//std::ifstream input_stream(aFilePath);
+	//IStreamWrapper input_wrapper(input_stream);
+	Document document = CJsonReader::LoadDocument(aFilePath);
+	//document.ParseStream(input_wrapper);
 
 	SAnimatedSpriteData* spriteData = new SAnimatedSpriteData();
 

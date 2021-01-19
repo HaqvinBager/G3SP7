@@ -30,6 +30,44 @@ void CModel::InstanceCount(int aCount)
 	//myTransforms.reserve(aCount);
 }
 
+const bool CModel::ShouldRenderWithAlpha() const
+{
+	return false;
+}
+
+const unsigned int CModel::DetailNormalCount() const
+{
+	return 0;
+}
+
+const unsigned int CModel::UseTrimsheetNumber() const
+{
+	return false;
+}
+
+void CModel::EvaluateModelSuffix(const std::string& aModelSuffix)
+{
+	size_t startIndex = aModelSuffix.find_first_of('-');
+	size_t endIndex = aModelSuffix.find_last_of('.');
+
+	if (startIndex == aModelSuffix.npos)
+		return;
+
+	unsigned short modelSuffix = 0;
+
+	std::string subString = aModelSuffix.substr(startIndex, endIndex - startIndex);
+
+	if (subString.find("ap"))
+	{
+		modelSuffix |= (1 << 0);
+	}
+
+	if (subString.find("dn"))
+	{
+		modelSuffix |= (1 << 4);
+	}
+}
+
 //bool CModel::AddInstancedTransform(DirectX::SimpleMath::Matrix aTransform)
 //{
 //	if (myTransforms.size() < myInstanceCount) {

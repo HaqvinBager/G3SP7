@@ -8,7 +8,7 @@
 #include <codecvt>
 #include <cstdarg>
 #include <iostream>
-#include <fstream>
+//#include <fstream> Om den behövs, behöver du förmodligen JsonReader. Inkludera JsonReader // Nico 19 jan 2021
 #include <vector>
 #include <array>
 #include <string>
@@ -22,9 +22,9 @@ using namespace DirectX::SimpleMath;
 #include "Input.h"
 #include "Timer.h"
 #include "EngineException.h"
-#include "ModelMath.h"
-#include "JsonReader.h"
-#include "Utility.h"
+//#include "ModelMath.h"
+//#include "JsonReader.h"
+//#include "Utility.h"
 //
 //Engine
 #include "DirectXFramework.h"

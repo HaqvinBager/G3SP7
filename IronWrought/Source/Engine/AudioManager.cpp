@@ -8,6 +8,7 @@
 #include "PostMaster.h"
 #include "rapidjson\document.h"
 #include "rapidjson\istreamwrapper.h"
+#include "JsonReader.h"
 
 /*////////////////////////////////////
 * Suggestion
@@ -29,10 +30,10 @@ using namespace rapidjson;
 CAudioManager::CAudioManager() : myWrapper() {
 	SubscribeToMessages();
 
-	std::ifstream inputStream("Json/Audio/AudioPaths.json");
-	IStreamWrapper inputWrapper(inputStream);
-	Document document;
-	document.ParseStream(inputWrapper);
+	//std::ifstream inputStream("Json/Audio/AudioPaths.json");
+	//IStreamWrapper inputWrapper(inputStream);
+	Document document = CJsonReader::LoadDocument("Json/Audio/AudioPaths.json");
+	//document.ParseStream(inputWrapper);
 
 	if (document.HasParseError()) { return; }
 
