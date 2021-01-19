@@ -12,10 +12,12 @@
 #include "SpriteFactory.h"
 #include "Sprite.h"
 #include "MainSingleton.h"
-#include "rapidjson\document.h"
-#include "rapidjson\istreamwrapper.h"
 #include "Engine.h"
 #include "Scene.h"
+
+#include "JsonReader.h"
+//#include "rapidjson\document.h"
+//#include "rapidjson\istreamwrapper.h"
 
 using namespace rapidjson;
 
@@ -63,10 +65,10 @@ CCanvas::~CCanvas()
 
 void CCanvas::Init(std::string aFilePath, CScene& aScene, bool addToScene)
 {
-	std::ifstream inputStream(aFilePath);
-	IStreamWrapper inputWrapper(inputStream);
-	Document document;
-	document.ParseStream(inputWrapper);
+	//std::ifstream inputStream(aFilePath);
+	//IStreamWrapper inputWrapper(inputStream);
+	Document document = CJsonReader::LoadDocument(aFilePath);
+	//document.ParseStream(inputWrapper);
 
 	if (document.HasMember("Buttons"))
 	{

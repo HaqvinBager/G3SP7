@@ -78,8 +78,6 @@ CModel* CModelFactory::GetModel(std::string aFilePath)
 
 CModel* CModelFactory::LoadModel(std::string aFilePath)
 {
-	//HRESULT result;
-	// THIS ABSOLUTELY AWESOME MATEY. BUT MAEK IT BETTER LATER LOL :):)??
 	const size_t last_slash_idx = aFilePath.find_last_of("\\/");
 	std::string modelDirectory = aFilePath.substr(0, last_slash_idx + 1);
 	std::string modelName = aFilePath.substr(last_slash_idx + 1, aFilePath.size() - last_slash_idx - 5);
@@ -131,7 +129,6 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 
 	vsFile.close();
 
-
 	//PixelShader
 	std::ifstream psFile;
 	psFile.open("Shaders/PBRPixelShader.cso", std::ios::binary);
@@ -176,11 +173,6 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 	ID3D11Device* device = myEngine->myFramework->GetDevice();
 	std::string modelDirectoryAndName = modelDirectory + modelName;
 
-	//UPDATE THIS ON MONDAY WHAT MONDAY?????????
-	//std::map<int, std::string> trimsheets;
-	//trimsheets.emplace(static_cast<int>('1'), "ts_1_Dungeon");
-	//trimsheets.emplace(static_cast<int>('2'), "ts_2_Something");
-
 	// Check if model uses trimsheet.
 	// suffix ts_#
 	std::string suffix = aFilePath.substr(aFilePath.length() - 8, 4);
@@ -197,15 +189,23 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 	}											
 	// ! Check if model uses trimsheet
 
+	// Check for detail normal
+	ID3D11ShaderResourceView* detailNormal1 = nullptr;
+	ID3D11ShaderResourceView* detailNormal2 = nullptr;
+	ID3D11ShaderResourceView* detailNormal3 = nullptr;
+	ID3D11ShaderResourceView* detailNormal4 = nullptr;
+	std::string dnsuffix = aFilePath.substr(aFilePath.length() - 7, 3);
+	if (dnsuffix == "_dn")
+	{
+		detailNormal1 = GetShaderResourceView(device, "Assets/3D/Exempel_Modeller/DetailNormals/4DN/dns/dn_CarbonFibre_n.dds");
+		detailNormal2 = GetShaderResourceView(device, "Assets/3D/Exempel_Modeller/DetailNormals/Tufted_Leather/dn_25cm_N.dds");
+		detailNormal3 = GetShaderResourceView(device, "Assets/3D/Exempel_Modeller/DetailNormals/4DN/dns/dn_Wool_n.dds");
+		detailNormal4 = GetShaderResourceView(device, "Assets/3D/Exempel_Modeller/DetailNormals/4DN/dns/dn_PlasticPolymer_n.dds");
+	}
 
-	ID3D11ShaderResourceView* diffuseResourceView = GetShaderResourceView(device, /*TexturePathWide*/(modelDirectoryAndName + "_D.dds"));
-	ID3D11ShaderResourceView* materialResourceView = GetShaderResourceView(device, /*TexturePathWide*/(modelDirectoryAndName + "_M.dds"));
-	ID3D11ShaderResourceView* normalResourceView = GetShaderResourceView(device, /*TexturePathWide*/(modelDirectoryAndName + "_N.dds"));
-
-	//ID3D11ShaderResourceView* metalnessShaderResourceView = GetShaderResourceView(device, TexturePathWide(modelDirectory + loaderModel->myTextures[10]));
-	//ID3D11ShaderResourceView* roughnessShaderResourceView = GetShaderResourceView(device, TexturePathWide(modelDirectory + loaderModel->myTextures[1]));
-	//ID3D11ShaderResourceView* ambientShaderResourceView = GetShaderResourceView(device, TexturePathWide(modelDirectory + loaderModel->myTextures[2]));
-	//ID3D11ShaderResourceView* emissiveShaderResourceView = GetShaderResourceView(device, TexturePathWide(modelDirectory + loaderModel->myTextures[3]));
+	ID3D11ShaderResourceView* diffuseResourceView = GetShaderResourceView(device, (modelDirectoryAndName + "_D.dds"));
+	ID3D11ShaderResourceView* materialResourceView = GetShaderResourceView(device, (modelDirectoryAndName + "_M.dds"));
+	ID3D11ShaderResourceView* normalResourceView = GetShaderResourceView(device, (modelDirectoryAndName + "_N.dds"));
 
 	//Model
 	CModel* model = new CModel();
@@ -227,21 +227,6 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 	modelData.myTexture[1] = materialResourceView;
 	modelData.myTexture[2] = normalResourceView;
 
-	// Check for detail normal
-	ID3D11ShaderResourceView* detailNormal1 = nullptr;
-	ID3D11ShaderResourceView* detailNormal2 = nullptr;
-	ID3D11ShaderResourceView* detailNormal3 = nullptr;
-	ID3D11ShaderResourceView* detailNormal4 = nullptr;
-	std::string dnsuffix = aFilePath.substr(aFilePath.length() - 7, 3);
-	if (dnsuffix == "_dn")
-	{
-		//modelData. = true;
-		//detailNormal1 = GetShaderResourceView(device, "Assets/3D/Exempel_Modeller/DetailNormals/Tufted_Leather/dn_25cm_N.dds");
-		detailNormal1 = GetShaderResourceView(device, "Assets/3D/Exempel_Modeller/DetailNormals/4DN/dns/dn_CarbonFibre_n.dds");
-		detailNormal2 = GetShaderResourceView(device, "Assets/3D/Exempel_Modeller/DetailNormals/Tufted_Leather/dn_25cm_N.dds");
-		detailNormal3 = GetShaderResourceView(device, "Assets/3D/Exempel_Modeller/DetailNormals/4DN/dns/dn_Wool_n.dds");
-		detailNormal4 = GetShaderResourceView(device, "Assets/3D/Exempel_Modeller/DetailNormals/4DN/dns/dn_PlasticPolymer_n.dds");
-	}
 	// ! Check for detail norma
 	modelData.myDetailNormals[0] = detailNormal1;
 	modelData.myDetailNormals[1] = detailNormal2;
