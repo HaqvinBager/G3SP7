@@ -1,6 +1,5 @@
 #pragma once
 #include "StateStack.h"
-#include <PhysXWrapper.h>
 
 class CGame
 {
@@ -17,6 +16,5 @@ private:
 	void InitRealGame();
 
 	CStateStack myStateStack;
-	PhysXWrapper physx;
 };
 

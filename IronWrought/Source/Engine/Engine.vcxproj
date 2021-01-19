@@ -181,6 +181,7 @@
     <ClInclude Include="Canvas.h" />
     <ClInclude Include="CapsuleColliderComponent.h" />
     <ClInclude Include="Collider.h" />
+    <ClInclude Include="ContactReportCallback.h" />
     <ClInclude Include="EngineDefines.h" />
     <ClInclude Include="FMod.h" />
     <ClInclude Include="CircleColliderComponent.h" />
@@ -197,6 +198,7 @@
     <ClInclude Include="MessageType.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="PerlinNoise.h" />
+    <ClInclude Include="PhysXWrapper.h" />
     <ClInclude Include="PointLightComponent.h" />
     <ClInclude Include="PostMaster.h" />
     <ClInclude Include="Debug.h" />
@@ -206,6 +208,8 @@
     <ClInclude Include="InputObserver.h" />
     <ClInclude Include="ParticleEmitterComponent.h" />
     <ClInclude Include="RectangleColliderComponent.h" />
+    <ClInclude Include="RigidBodyComponent.h" />
+    <ClInclude Include="RigidDynamicBody.h" />
     <ClInclude Include="StackWalker.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="DebugTimerUtility.h" />
@@ -279,6 +283,7 @@
     <ClCompile Include="Canvas.cpp" />
     <ClCompile Include="CapsuleColliderComponent.cpp" />
     <ClCompile Include="Collider.cpp" />
+    <ClCompile Include="ContactReportCallback.cpp" />
     <ClCompile Include="FMod.cpp" />
     <ClCompile Include="CircleColliderComponent.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
@@ -293,9 +298,12 @@
     <ClCompile Include="MainSingleton.cpp" />
     <ClCompile Include="ParticleEmitterComponent.cpp" />
     <ClCompile Include="PerlinNoise.cpp" />
+    <ClCompile Include="PhysXWrapper.cpp" />
     <ClCompile Include="PointLightComponent.cpp" />
     <ClCompile Include="PostMaster.cpp" />
     <ClCompile Include="RectangleColliderComponent.cpp" />
+    <ClCompile Include="RigidBodyComponent.cpp" />
+    <ClCompile Include="RigidDynamicBody.cpp" />
     <ClCompile Include="StackWalker.cpp" />
     <ClCompile Include="State.cpp" />
     <ClCompile Include="DirectXFramework.cpp" />

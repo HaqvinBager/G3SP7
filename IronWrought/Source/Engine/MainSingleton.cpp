@@ -4,6 +4,7 @@
 #include "PopupTextService.h"
 #include "DialogueSystem.h"
 #include "PopupTextService.h"
+#include "PhysXWrapper.h"
 
 CMainSingleton* CMainSingleton::ourInstance = nullptr;
 
@@ -13,6 +14,7 @@ CMainSingleton::CMainSingleton() {
 	myCollisionManager = new CCollisionManager();
 	myPopupTextService = new CPopupTextService();
 	myDialogueSystem = new CDialogueSystem();
+	myPhysXWrapper = new CPhysXWrapper();
 }
 
 CMainSingleton::~CMainSingleton()
@@ -21,6 +23,7 @@ CMainSingleton::~CMainSingleton()
 	SAFE_DELETE(myCollisionManager);
 	SAFE_DELETE(myPopupTextService);
 	SAFE_DELETE(myDialogueSystem);
+	SAFE_DELETE(myPhysXWrapper);
 	ourInstance = nullptr;
 }
 
@@ -42,4 +45,9 @@ CPopupTextService& CMainSingleton::PopupTextService()
 CDialogueSystem& CMainSingleton::DialogueSystem()
 {
 	return *ourInstance->myDialogueSystem;
+}
+
+CPhysXWrapper& CMainSingleton::PhysXWrapper()
+{
+	return *ourInstance->myPhysXWrapper;
 }

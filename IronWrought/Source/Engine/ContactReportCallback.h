@@ -1,3 +1,5 @@
+#include <pxPhysicsApi.h>
+
 namespace physx
 {
 	class PxActor;

@@ -1,4 +1,5 @@
 #pragma once
+#include "pxPhysicsApi.h"
 #include <utility>
 	
 namespace physx
@@ -10,9 +11,9 @@ namespace physx
 class RigidDynamicBody
 {
 public:
-							RigidDynamicBody(physx::PxPhysics& aPhysX, const float aX = 0, const float aY = 0);
+							RigidDynamicBody(physx::PxPhysics& aPhysX, const Vector3 aPosition);
 	physx::PxRigidDynamic&	GetBody();
-	std::pair<float, float>	GetPosition() const;
+	Vector3	GetPosition() const;
 	float					GetRotation() const;
 
 private:
@@ -21,7 +22,6 @@ private:
 
 inline physx::PxRigidDynamic& RigidDynamicBody::GetBody()
 {
-	
 	return *myBody;
 }
 

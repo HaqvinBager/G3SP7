@@ -23,6 +23,7 @@
 #include "InstancedModelComponent.h"
 #include "TextInstance.h"
 #include "..\Game\AIBehavior.h"
+#include "PhysXWrapper.h"
 
 //CScene* CScene::ourInstance = nullptr;
 
@@ -498,6 +499,15 @@ bool CScene::AddPlayer(CGameObject* aPlayer)
 		return false;
 	}
 	myPlayer = aPlayer;
+	return true;
+}
+
+bool CScene::AddPXScene(PxScene* aPXScene)
+{
+	if (!aPXScene) {
+		return false;
+	}
+	myPXScene = aPXScene;
 	return true;
 }
 

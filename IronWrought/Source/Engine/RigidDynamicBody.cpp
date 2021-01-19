@@ -1,6 +1,5 @@
-#include "pch.h"
+#include "stdafx.h"
 #include "RigidDynamicBody.h"
-#include <string>
 
 std::string globalNames[] = 
 {
@@ -22,9 +21,9 @@ std::string globalNames[] =
 	"Whiskers"
 };
 
-RigidDynamicBody::RigidDynamicBody(physx::PxPhysics& aPhysX, const float aX, const float aY)
+RigidDynamicBody::RigidDynamicBody(physx::PxPhysics& aPhysX, const Vector3 aPosition)
 {
-	myBody = aPhysX.createRigidDynamic({ aX, aY, 0 });
+	myBody = aPhysX.createRigidDynamic({ aPosition.x, aPosition.y, aPosition.z });
 
 	// Set userData to identify the collider (usually some GameObjectID)
 	// It's used in ContactReportCallBack::onContact
@@ -50,10 +49,10 @@ RigidDynamicBody::RigidDynamicBody(physx::PxPhysics& aPhysX, const float aX, con
 	myBody->attachShape(*shape);
 }
 
-std::pair<float, float> RigidDynamicBody::GetPosition() const
+Vector3 RigidDynamicBody::GetPosition() const
 {
 	const physx::PxTransform transform = myBody->getGlobalPose();
-	return { transform.p.x, -transform.p.y };
+	return { transform.p.x, transform.p.y , transform.p.z};
 }
 
 float RigidDynamicBody::GetRotation() const

@@ -1,7 +1,5 @@
-#include "pch.h"
+#include "stdafx.h"
 #include "ContactReportCallback.h"
-#include <string>
-#include <iostream>
 
 void ContactReportCallback::onWake(physx::PxActor** actors, physx::PxU32 count)
 {
@@ -40,7 +38,7 @@ void ContactReportCallback::onConstraintBreak(physx::PxConstraintInfo* constrain
 	(count);
 }
 
-void ContactReportCallback::onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* pairs, physx::PxU32 nbPairs)
+void ContactReportCallback::onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* /*pairs*/, physx::PxU32 /*nbPairs*/)
 {
 	// Walls don't uses userData. Only feedback when hamsters collide
 	if (pairHeader.actors[0]->userData != nullptr && pairHeader.actors[1]->userData != nullptr)

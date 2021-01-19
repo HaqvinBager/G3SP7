@@ -4,6 +4,7 @@
 #include "Component.h"
 #include "SpriteInstance.h"
 #include "EngineDefines.h"
+#include "PhysXWrapper.h"
 
 class CModelComponent;
 class CCamera;
@@ -37,7 +38,6 @@ public:
 	bool Init();
 	bool InitNavMesh(std::string aPath);
 	void SetMainCamera(CCameraComponent* aCamera);
-
 
 	//This will run every 5-10 frames (It doesn't need to run all the time anyway!)
 	void UpdateLightsNearestPlayer();
@@ -75,6 +75,10 @@ public:
 	bool AddBoss(CGameObject* aBoss);
 	bool AddDestructible(CGameObject* aDestructible);
 	bool AddPlayer(CGameObject* aPlayer);
+
+	//PhysX
+	bool AddPXScene(PxScene* aPXScene);
+	PxScene* GetPXScene() { return myPXScene; }
 
 	std::vector<CGameObject*> GetEnemies() { return myEnemies; }
 	std::vector<CGameObject*> GetDestructibles() { return myDestructibles; }
@@ -151,6 +155,9 @@ private:
 	//static CScene* ourInstance;
 
 	std::vector<CGameObject*> myModelsToOutline;
+
+	//PhysX scene
+	PxScene* myPXScene;
 
 #ifdef  _DEBUG
 private:

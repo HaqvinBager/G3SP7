@@ -336,6 +336,18 @@
     <ClCompile Include="Collider.cpp">
       <Filter>GameObject and Component</Filter>
     </ClCompile>
+    <ClCompile Include="ContactReportCallback.cpp">
+      <Filter>PhysX</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysXWrapper.cpp">
+      <Filter>PhysX</Filter>
+    </ClCompile>
+    <ClCompile Include="RigidDynamicBody.cpp">
+      <Filter>PhysX</Filter>
+    </ClCompile>
+    <ClCompile Include="RigidBodyComponent.cpp">
+      <Filter>GameObject and Component\Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -632,6 +644,18 @@
     <ClInclude Include="Collider.h">
       <Filter>GameObject and Component</Filter>
     </ClInclude>
+    <ClInclude Include="ContactReportCallback.h">
+      <Filter>PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysXWrapper.h">
+      <Filter>PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="RigidDynamicBody.h">
+      <Filter>PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="RigidBodyComponent.h">
+      <Filter>GameObject and Component\Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">
@@ -779,6 +803,9 @@
     </Filter>
     <Filter Include="Shaders\Instanced">
       <UniqueIdentifier>{5578e42d-5b05-43eb-aa3b-36cf45d8f2d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PhysX">
+      <UniqueIdentifier>{1645c7e6-7786-411c-b472-6b687e4bb7e0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
