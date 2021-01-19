@@ -103,7 +103,7 @@ void CInGameState::Start()
 		scale.y = jsonscale["y"].GetFloat();
 		scale.z = jsonscale["z"].GetFloat();
 
-		gameobject->AddComponent<CInstancedModelComponent>(*gameobject, std::string(ASSETPATH + model_path));
+		gameobject->AddComponent<CModelComponent>(*gameobject, std::string(ASSETPATH + model_path));
 		gameobject->GetComponent<CTransformComponent>()->Position(position);
 		gameobject->GetComponent<CTransformComponent>()->Rotation(rotation);
 		gameobject->GetComponent<CTransformComponent>()->Scale(scale.x);
