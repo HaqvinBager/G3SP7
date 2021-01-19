@@ -178,25 +178,25 @@ void CRenderManager::Render(CScene& aScene)
 
 
 #pragma region DEFERRED
-	std::vector<CPointLight*> onlyPointLights;
-	onlyPointLights = aScene.CullPointLights(&maincamera->GameObject());
-
-	myGBuffer.SetAsActiveTarget(&myIntermediateDepth);
-	myDeferredRenderer.GenerateGBuffer(maincamera, gameObjects);
-	myDeferredTexture.SetAsActiveTarget();
-	myGBuffer.SetAllAsResources();
-	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_ADDITIVEBLEND);
-	
-	myDeferredRenderer.Render(maincamera, environmentlight);
-	myDeferredRenderer.Render(maincamera, onlyPointLights);
-	
-	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_DISABLE);
-	myIntermediateTexture.SetAsActiveTarget();
-	myDeferredTexture.SetAsResourceOnSlot(0);
-	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCRENSHADER_GAMMACORRECTION);
+	//std::vector<CPointLight*> onlyPointLights;
+	//onlyPointLights = aScene.CullPointLights(&maincamera->GameObject());
+	//
+	//myGBuffer.SetAsActiveTarget(&myIntermediateDepth);
+	//myDeferredRenderer.GenerateGBuffer(maincamera, gameObjects);
+	//myDeferredTexture.SetAsActiveTarget();
+	//myGBuffer.SetAllAsResources();
+	//myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_ADDITIVEBLEND);
+	//
+	//myDeferredRenderer.Render(maincamera, environmentlight);
+	//myDeferredRenderer.Render(maincamera, onlyPointLights);
+	//
+	//myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_DISABLE);
+	//myIntermediateTexture.SetAsActiveTarget();
+	//myDeferredTexture.SetAsResourceOnSlot(0);
+	//myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCRENSHADER_GAMMACORRECTION);
 #pragma endregion ! DEFERRED
 
-	//myForwardRenderer.Render(environmentlight, pointlights, maincamera, gameObjects);
+	myForwardRenderer.Render(environmentlight, pointlights, maincamera, gameObjects);
 	myForwardRenderer.InstancedRender(environmentlight, pointLightsInstanced, maincamera, instancedGameObjects);
 
 	for (auto modelToOutline : aScene.GetModelsToOutline()) {
