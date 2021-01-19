@@ -8,9 +8,10 @@
 #include "CameraControllerComponent.h"
 #include "EnviromentLightComponent.h"
 #include "TransformComponent.h"
+#include "InstancedModelComponent.h"
 #include "RigidBodyComponent.h"
-
 #include "ModelComponent.h"
+
 #include "EnvironmentLight.h"
 #include "Timer.h"
 #include "Engine.h"
@@ -93,7 +94,7 @@ void CInGameState::Start()
 		position.x = jsonposition["x"].GetFloat();
 		position.y = jsonposition["y"].GetFloat();
 		position.z = jsonposition["z"].GetFloat();
-		
+
 		rotation.x = jsonrotation["x"].GetFloat();
 		rotation.y = jsonrotation["y"].GetFloat();
 		rotation.z = jsonrotation["z"].GetFloat();
@@ -102,7 +103,7 @@ void CInGameState::Start()
 		scale.y = jsonscale["y"].GetFloat();
 		scale.z = jsonscale["z"].GetFloat();
 
-		gameobject->AddComponent<CModelComponent>(*gameobject, std::string(ASSETPATH + model_path));
+		gameobject->AddComponent<CInstancedModelComponent>(*gameobject, std::string(ASSETPATH + model_path));
 		gameobject->GetComponent<CTransformComponent>()->Position(position);
 		gameobject->GetComponent<CTransformComponent>()->Rotation(rotation);
 		gameobject->GetComponent<CTransformComponent>()->Scale(scale.x);
@@ -129,9 +130,9 @@ void CInGameState::Start()
 	scene->AddInstance(dn);*/
 
 
-	//steg 1. kalla på read json funktion
+	//steg 1. kalla pï¿½ read json funktion
 	//steg 2. skapa en gameobject struct
-	//steg 3. 
+	//steg 3.
 
 	myExitLevel = false;
 
