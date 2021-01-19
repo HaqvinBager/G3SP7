@@ -30,45 +30,15 @@ CRenderManager::~CRenderManager()
 
 bool CRenderManager::Init(CDirectXFramework* aFramework, CWindowHandler* aWindowHandler)
 {
-	if (!myForwardRenderer.Init(aFramework))
-	{
-		return false;
-	}
-
-	if (!myFullscreenRenderer.Init(aFramework))
-	{
-		return false;
-	}
-
-	if (!myFullscreenTextureFactory.Init(aFramework))
-	{
-		return false;
-	}
-
-	if (!myParticleRenderer.Init(aFramework))
-	{
-		return false;
-	}
-
-	if (!myRenderStateManager.Init(aFramework))
-	{
-		return false;
-	}
-
-	if (!myVFXRenderer.Init(aFramework))
-	{
-		return false;
-	}
-
-	if (!mySpriteRenderer.Init(aFramework))
-	{
-		return false;
-	}
-
-	if (!myTextRenderer.Init(aFramework))
-	{
-		return false;
-	}
+	ENGINE_ERROR_BOOL_MESSAGE(myForwardRenderer.Init(aFramework), "Failed to Init Forward Renderer.");
+	ENGINE_ERROR_BOOL_MESSAGE(myDeferredRenderer.Init(aFramework), "Failed to Init Deferred Renderer.");
+	ENGINE_ERROR_BOOL_MESSAGE(myFullscreenRenderer.Init(aFramework), "Failed to Init Fullscreen Renderer.");
+	ENGINE_ERROR_BOOL_MESSAGE(myFullscreenTextureFactory.Init(aFramework), "Failed to Init Fullscreen Texture Factory.");
+	ENGINE_ERROR_BOOL_MESSAGE(myParticleRenderer.Init(aFramework), "Failed to Init Particle Renderer.");
+	ENGINE_ERROR_BOOL_MESSAGE(myRenderStateManager.Init(aFramework), "Failed to Init Render State Manager.");
+	ENGINE_ERROR_BOOL_MESSAGE(myVFXRenderer.Init(aFramework), "Failed to Init VFX Renderer.");
+	ENGINE_ERROR_BOOL_MESSAGE(mySpriteRenderer.Init(aFramework), "Failed to Init Sprite Renderer.");
+	ENGINE_ERROR_BOOL_MESSAGE(myTextRenderer.Init(aFramework), "Failed to Init Text Renderer.");
 
 	ID3D11Texture2D* backbufferTexture = aFramework->GetBackbufferTexture();
 	if (!backbufferTexture)
@@ -85,6 +55,8 @@ bool CRenderManager::Init(CDirectXFramework* aFramework, CWindowHandler* aWindow
 	myBlurTexture1			= myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R8G8B8A8_UNORM);
 	myBlurTexture2			= myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R8G8B8A8_UNORM);
 	myVignetteTexture		= myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R8G8B8A8_UNORM);
+	myDeferredTexture		= myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R32G32B32A32_FLOAT);
+	myGBuffer				= myFullscreenTextureFactory.CreateGBuffer(aWindowHandler->GetResolution());
 
 	return true;
 }
@@ -112,6 +84,8 @@ bool CRenderManager::ReInit(CDirectXFramework* aFramework, CWindowHandler* aWind
 	myBlurTexture1 = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R8G8B8A8_UNORM);
 	myBlurTexture2 = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R8G8B8A8_UNORM);
 	myVignetteTexture = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R8G8B8A8_UNORM);
+	myDeferredTexture		= myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R32G32B32A32_FLOAT);
+	myGBuffer				= myFullscreenTextureFactory.CreateGBuffer(aWindowHandler->GetResolution());
 	
 	return true;
 }
@@ -136,6 +110,8 @@ void CRenderManager::Render(CScene& aScene)
 	myBackbuffer.ClearTexture(myClearColor);
 	myIntermediateTexture.ClearTexture(myClearColor);
 	myIntermediateDepth.ClearDepth();
+	myGBuffer.ClearTextures(myClearColor);
+	myDeferredTexture.ClearTexture();
 
 	myIntermediateTexture.SetAsActiveTarget(&myIntermediateDepth);
 
@@ -145,9 +121,8 @@ void CRenderManager::Render(CScene& aScene)
 	std::vector<CGameObject*> gameObjects = aScene.CullGameObjects(maincamera);
 	std::vector<CGameObject*> instancedGameObjects;
 	std::vector<CGameObject*> instancedGameObjectsWithAlpha;
-	std::vector<std::pair<unsigned int, std::array<CPointLight*, LIGHTCOUNT>>> pointlights;
-	std::vector<std::pair<unsigned int, std::array<CPointLight*, LIGHTCOUNT>>> pointLightsInstanced;
-
+	std::vector<LightPair> pointlights;
+	std::vector<LightPair> pointLightsInstanced;
 
 	std::vector<int> indicesOfOutlineModels;
 	for (unsigned int i = 0; i < gameObjects.size(); ++i)
@@ -200,7 +175,28 @@ void CRenderManager::Render(CScene& aScene)
 		gameObjects.pop_back();
 	}
 
-	myForwardRenderer.Render(environmentlight, pointlights, maincamera, gameObjects);
+
+
+#pragma region DEFERRED
+	std::vector<CPointLight*> onlyPointLights;
+	onlyPointLights = aScene.CullPointLights(&maincamera->GameObject());
+
+	myGBuffer.SetAsActiveTarget(&myIntermediateDepth);
+	myDeferredRenderer.GenerateGBuffer(maincamera, gameObjects);
+	myDeferredTexture.SetAsActiveTarget();
+	myGBuffer.SetAllAsResources();
+	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_ADDITIVEBLEND);
+	
+	myDeferredRenderer.Render(maincamera, environmentlight);
+	myDeferredRenderer.Render(maincamera, onlyPointLights);
+	
+	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_DISABLE);
+	myIntermediateTexture.SetAsActiveTarget();
+	myDeferredTexture.SetAsResourceOnSlot(0);
+	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCRENSHADER_GAMMACORRECTION);
+#pragma endregion ! DEFERRED
+
+	//myForwardRenderer.Render(environmentlight, pointlights, maincamera, gameObjects);
 	myForwardRenderer.InstancedRender(environmentlight, pointLightsInstanced, maincamera, instancedGameObjects);
 
 	for (auto modelToOutline : aScene.GetModelsToOutline()) {
@@ -233,7 +229,6 @@ void CRenderManager::Render(CScene& aScene)
 
 	myForwardRenderer.RenderLines(maincamera, lines);
 	myForwardRenderer.RenderLineInstances(maincamera, lineInstances);
-
 
 	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_ALPHABLEND);
 	myRenderStateManager.SetDepthStencilState(CRenderStateManager::DepthStencilStates::DEPTHSTENCILSTATE_ONLYREAD);
@@ -295,6 +290,8 @@ void CRenderManager::Release()
 	myBlurTexture1.ReleaseTexture();
 	myBlurTexture2.ReleaseTexture();
 	myVignetteTexture.ReleaseTexture();
+	myDeferredTexture.ReleaseTexture();
+	//myGBuffer // Should something be released for the GBuffer?
 }
 
 void CRenderManager::Clear(DirectX::SimpleMath::Vector4 aClearColor)

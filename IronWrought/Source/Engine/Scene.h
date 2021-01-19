@@ -48,6 +48,7 @@ public:
 	std::vector<CGameObject*> CullGameObjects(CCameraComponent* aMainCamera);
 	std::pair<unsigned int, std::array<CPointLight*, LIGHTCOUNT>> CullLights(CGameObject* aGameObject);
 	LightPair CullLightInstanced(CInstancedModelComponent* aModelType);
+	std::vector<CPointLight*> CullPointLights(CGameObject* aGameObject);
 
 	std::vector<CVFXInstance*> CullVFX(CCameraComponent* aMainCamera);
 	const std::vector<SLineTime>& CullLines() const;

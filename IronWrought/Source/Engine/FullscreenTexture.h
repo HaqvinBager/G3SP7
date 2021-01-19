@@ -21,6 +21,7 @@ public:
 	void ReleaseTexture();
 	void ReleaseDepth();
 	friend CFullscreenTextureFactory;
+	friend class CGBuffer;
 
 private:
 	ID3D11DeviceContext* myContext;

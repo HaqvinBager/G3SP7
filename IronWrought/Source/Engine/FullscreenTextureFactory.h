@@ -14,6 +14,7 @@ public:
 	CFullscreenTexture CreateTexture(SM::Vector2 aSize, DXGI_FORMAT aFormat);
 	CFullscreenTexture CreateTexture(ID3D11Texture2D* aTexture);
 	CFullscreenTexture CreateDepth(SM::Vector2 aSize, DXGI_FORMAT aFormat);
+	class CGBuffer CreateGBuffer(DirectX::SimpleMath::Vector2 aSize);
 
 private:
 	CDirectXFramework* myFramework;

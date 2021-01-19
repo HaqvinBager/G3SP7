@@ -297,6 +297,12 @@ LightPair CScene::CullLightInstanced(CInstancedModelComponent* aModelType)
 	return pointLightPair;
 }
 
+std::vector<CPointLight*> CScene::CullPointLights(CGameObject* /*aGameObject*/)
+{
+	std::cout << __FUNCTION__ << " Reminde to add actual culling to this function!" << std::endl;
+	return myPointLights;
+}
+
 
 std::vector<CVFXInstance*> CScene::CullVFX(CCameraComponent* /*aMainCamera*/)
 {

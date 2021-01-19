@@ -40,6 +40,7 @@ bool CFullscreenRenderer::Init(CDirectXFramework* aFramework) {
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_GAUSSIANVERTICAL)] = "Shaders/FullscreenPixelShader_GaussianBlurVertical.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_BLOOM)] = "Shaders/FullscreenPixelShader_Bloom.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_VIGNETTE)] = "Shaders/FullscreenPixelShader_Vignette.cso";
+	filepaths[static_cast<size_t>(FullscreenShader::FULLSCRENSHADER_GAMMACORRECTION)] = "Shaders/FullscreenPixelShader_GammaCorrection.cso";
 
 	for (UINT i = 0; i < static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_COUNT); i++) {
 		std::ifstream psFile;

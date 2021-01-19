@@ -94,6 +94,24 @@
     <FxCompile Include="InstancedVertexShader.hlsl">
       <Filter>Shaders\Instanced</Filter>
     </FxCompile>
+    <FxCompile Include="DeferredLightEnvironmentShader.hlsl">
+      <Filter>Shaders\Deferred</Filter>
+    </FxCompile>
+    <FxCompile Include="DeferredLightPointShader.hlsl">
+      <Filter>Shaders\Deferred</Filter>
+    </FxCompile>
+    <FxCompile Include="DeferredModelVertexShader.hlsl">
+      <Filter>Shaders\Deferred</Filter>
+    </FxCompile>
+    <FxCompile Include="GBufferPixelShader.hlsl">
+      <Filter>Shaders\Deferred</Filter>
+    </FxCompile>
+    <FxCompile Include="FullscreenPixelShader_GammaCorrection.hlsl">
+      <Filter>Shaders\Fullscreen</Filter>
+    </FxCompile>
+    <FxCompile Include="DeferredVertexShader.hlsl">
+      <Filter>Shaders\Deferred</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimationComponent.cpp">
@@ -347,6 +365,12 @@
     </ClCompile>
     <ClCompile Include="RigidBodyComponent.cpp">
       <Filter>GameObject and Component\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="DeferredRenderer.cpp">
+      <Filter>Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="GBuffer.cpp">
+      <Filter>Renderers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -656,6 +680,12 @@
     <ClInclude Include="RigidBodyComponent.h">
       <Filter>GameObject and Component\Component</Filter>
     </ClInclude>
+    <ClInclude Include="DeferredRenderer.h">
+      <Filter>Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="GBuffer.h">
+      <Filter>Renderers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">
@@ -693,6 +723,15 @@
     </None>
     <None Include="DetailNormalHelpers.hlsli">
       <Filter>Shaders\PBR</Filter>
+    </None>
+    <None Include="DeferredPBRFunctions.hlsli">
+      <Filter>Shaders\Deferred</Filter>
+    </None>
+    <None Include="DeferredSamplingFunctions.hlsli">
+      <Filter>Shaders\Deferred</Filter>
+    </None>
+    <None Include="DeferredShaderStructs.hlsli">
+      <Filter>Shaders\Deferred</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -806,6 +845,9 @@
     </Filter>
     <Filter Include="PhysX">
       <UniqueIdentifier>{1645c7e6-7786-411c-b472-6b687e4bb7e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Deferred">
+      <UniqueIdentifier>{cc09a61a-ce12-4e9a-a6ca-e9ecc120c994}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

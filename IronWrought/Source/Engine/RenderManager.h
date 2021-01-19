@@ -1,5 +1,6 @@
 #pragma once
 #include "ForwardRenderer.h"
+#include "DeferredRenderer.h"
 #include "FullscreenRenderer.h"
 #include "FullscreenTexture.h"
 #include "FullscreenTextureFactory.h"
@@ -8,6 +9,7 @@
 #include "RenderStateManager.h"
 #include "SpriteRenderer.h"
 #include "TextRenderer.h"
+#include "GBuffer.h"
 
 class CDirectXFramework;
 class CWindowHandler;
@@ -33,6 +35,7 @@ private:
 private:
 	CRenderStateManager myRenderStateManager;
 	CForwardRenderer myForwardRenderer;
+	CDeferredRenderer myDeferredRenderer;
 	CFullscreenRenderer myFullscreenRenderer;
 	CParticleRenderer myParticleRenderer;
 	CVFXRenderer myVFXRenderer;
@@ -49,6 +52,8 @@ private:
 	CFullscreenTexture myBlurTexture1;
 	CFullscreenTexture myBlurTexture2;
 	CFullscreenTexture myVignetteTexture;
+	CFullscreenTexture myDeferredTexture;
+	CGBuffer myGBuffer;
 
 
 	DirectX::SimpleMath::Vector4 myClearColor;

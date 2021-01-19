@@ -2,6 +2,7 @@
 #include "FullscreenTextureFactory.h"
 #include "FullscreenTexture.h"
 #include "DirectXFramework.h"
+#include "GBuffer.h"
 
 CFullscreenTextureFactory::CFullscreenTextureFactory() : myFramework(nullptr) {
 }
@@ -115,4 +116,39 @@ CFullscreenTexture CFullscreenTextureFactory::CreateDepth(SM::Vector2 aSize, DXG
 	returnDepth.myDepth = depth;
 	returnDepth.myViewport = viewport;
 	return returnDepth;
+}
+
+CGBuffer CFullscreenTextureFactory::CreateGBuffer(DirectX::SimpleMath::Vector2 aSize)
+{
+	std::array<DXGI_FORMAT, static_cast<size_t>(CGBuffer::EGBufferTextures::COUNT)> textureFormats =
+	{
+		DXGI_FORMAT_R32G32B32A32_FLOAT,
+		DXGI_FORMAT_R8G8B8A8_UNORM,
+		DXGI_FORMAT_R16G16B16A16_SNORM,
+		DXGI_FORMAT_R16G16B16A16_SNORM,
+		DXGI_FORMAT_R8_UNORM,
+		DXGI_FORMAT_R8_UNORM,
+		DXGI_FORMAT_R8_UNORM,
+		DXGI_FORMAT_R8_UNORM,
+	};
+
+	//Creating textures, rendertargets, shaderresources and a viewport
+	std::array<ID3D11Texture2D*, static_cast<size_t>(CGBuffer::EGBufferTextures::COUNT)> textures;
+	std::array<ID3D11RenderTargetView*, static_cast<size_t>(CGBuffer::EGBufferTextures::COUNT)> renderTargets;
+	std::array<ID3D11ShaderResourceView*, static_cast<size_t>(CGBuffer::EGBufferTextures::COUNT)> shaderResources;
+	for (UINT i = 0; i < static_cast<size_t>(CGBuffer::EGBufferTextures::COUNT); ++i) {
+		CFullscreenTexture texture = CreateTexture(aSize, textureFormats[i]);
+		textures[i] = texture.myTexture;
+		renderTargets[i] = texture.myRenderTarget;
+		shaderResources[i] = texture.myShaderResource;
+	}
+	D3D11_VIEWPORT* viewport = new D3D11_VIEWPORT({ 0.0f, 0.0f, aSize.x, aSize.y, 0.0f, 1.0f });
+
+	CGBuffer returnGBuffer;
+	returnGBuffer.myContext = myFramework->GetContext();
+	returnGBuffer.myTextures = std::move(textures);
+	returnGBuffer.myRenderTargets = std::move(renderTargets);
+	returnGBuffer.myShaderResources = std::move(shaderResources);
+	returnGBuffer.myViewport = viewport;
+	return returnGBuffer;
 }
