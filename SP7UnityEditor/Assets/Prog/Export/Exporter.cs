@@ -57,10 +57,20 @@ public class Exporter
         SScene sceneObject = new SScene();
         // SceneObject.gameobjects = new SGameObject[rootGameObjects.Length];
         Dictionary<string, int> fbxPathMap = new Dictionary<string, int>();
-       
-        for(int i = 0; i < rootGameObjects.Length; ++i)
+        Dictionary<string, List<GameObject>> fbxPathGameObjectMap = new Dictionary<string, List<GameObject>>();
+
+        for (int i = 0; i < rootGameObjects.Length; ++i)
         {
             string fbxPath = AssetDatabase.GetAssetPath(PrefabUtility.GetCorrespondingObjectFromOriginalSource(rootGameObjects[i].GetComponent<Renderer>()));
+
+            if (!fbxPathGameObjectMap.ContainsKey(fbxPath))
+            {
+                fbxPathGameObjectMap.Add(fbxPath, new List<GameObject>());
+            }
+
+            fbxPathGameObjectMap[fbxPath].Add(rootGameObjects[i]);
+
+
             if (!fbxPathMap.ContainsKey(fbxPath))
             {
                 fbxPathMap.Add(fbxPath, 0);
@@ -97,7 +107,7 @@ public class Exporter
 // Exportera instansierade objekt
 // step 1: FBX Path
 // step 2: Count, antalet objekt av just denna model
-// step 3: Lista med varje gameobjekt som tillhör en nyckel till FBX path
+// step 3: Lista med varje gameobjekt som tillhör en nyckel som är en FBX path
 // step 4: Lista på varje objekts separata transforms
 
 
