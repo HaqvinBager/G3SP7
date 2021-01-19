@@ -6,6 +6,8 @@
 #include "DDSTextureLoader.h"
 #include "RandomNumberGenerator.h"
 
+#include <fstream>
+
 CSpriteRenderer::CSpriteRenderer() : myContext(nullptr), myObjectBuffer()
 {
 }

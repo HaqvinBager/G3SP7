@@ -17,6 +17,8 @@
 #include "InstancedModelComponent.h"
 #include "Scene.h"
 
+#include <fstream>
+
 namespace SM = DirectX::SimpleMath;
 
 CForwardRenderer::CForwardRenderer()

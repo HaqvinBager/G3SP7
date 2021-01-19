@@ -36,6 +36,7 @@
 #include <typeinfo>
 #include <vector>
 #include <memory>
+#include <utility>
 
 class CTransformComponent;
 class CComponent;

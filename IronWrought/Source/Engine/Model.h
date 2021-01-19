@@ -22,6 +22,8 @@ public:
 		//ID3D11Buffer* myBonesBuffer = nullptr;
 		//std::vector<CAnimation*> myAnimations;
 		std::array<ID3D11ShaderResourceView*, 4> myDetailNormals { nullptr, nullptr, nullptr, nullptr };
+
+		unsigned short myModelModifiers;
 	};
 
 	struct SModelInstanceData {
@@ -41,6 +43,8 @@ public:
 
 		std::array<ID3D11ShaderResourceView*, 4> myDetailNormals { nullptr, nullptr, nullptr, nullptr };
 		bool myHasDetailNormals;
+
+		unsigned short myModelModifiers;
 	};
 
 	struct SInstanceType {
@@ -63,6 +67,12 @@ public:
 
 	/*bool AddInstancedTransform(DirectX::SimpleMath::Matrix aTransform);
 	std::vector<DirectX::SimpleMath::Matrix>& GetInstancedTransform() { return myTransforms; }*/
+
+	const bool ShouldRenderWithAlpha() const;
+	const unsigned int DetailNormalCount() const;
+	const unsigned int UseTrimsheetNumber() const;
+
+	void EvaluateModelSuffix(const std::string& aModelSuffix);
 
 private:
 	SModelData myModelData;

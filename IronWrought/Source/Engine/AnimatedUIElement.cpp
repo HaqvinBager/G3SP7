@@ -6,6 +6,8 @@
 #include "WindowHandler.h"
 #include "Scene.h"
 
+#include "JsonReader.h"
+
 #include "rapidjson\document.h"
 #include "rapidjson\istreamwrapper.h"
 
@@ -13,10 +15,10 @@ CAnimatedUIElement::CAnimatedUIElement(std::string aFilePath, CScene& aScene, bo
 {
     using namespace rapidjson;
 
-    std::ifstream input_stream(aFilePath);
-    IStreamWrapper input_wrapper(input_stream);
-    Document document;
-    document.ParseStream(input_wrapper);
+    //std::ifstream input_stream(aFilePath);
+    //IStreamWrapper input_wrapper(input_stream);
+    Document document = CJsonReader::LoadDocument(aFilePath);
+    //document.ParseStream(input_wrapper);
 
     mySpriteInstance = new CSpriteInstance(aScene, addToScene);
     mySpriteInstance->Init(CSpriteFactory::GetInstance()->GetSprite(document["Texture Overlay"].GetString()));

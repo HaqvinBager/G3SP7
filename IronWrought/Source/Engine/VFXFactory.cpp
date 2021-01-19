@@ -5,8 +5,10 @@
 #include "DDSTextureLoader.h"
 #include "FBXLoaderCustom.h"
 
-#include "rapidjson\document.h"
-#include "rapidjson\istreamwrapper.h"
+#include "JsonReader.h"
+//
+//#include "rapidjson\document.h"
+//#include "rapidjson\istreamwrapper.h"
 
 #ifdef _DEBUG
 #pragma comment (lib, "ModelLoader_Debug.lib")
@@ -203,10 +205,10 @@ void CVFXFactory::ReadJsonValues(std::string aFilePath, CVFXBase::SVFXBaseData& 
 {
     using namespace rapidjson;
 
-    std::ifstream input_stream(aFilePath);
-    IStreamWrapper input_wrapper(input_stream);
-    Document document;
-    document.ParseStream(input_wrapper);
+    //std::ifstream input_stream(aFilePath);
+    //IStreamWrapper input_wrapper(input_stream);
+    Document document = CJsonReader::LoadDocument(aFilePath);
+    //document.ParseStream(input_wrapper);
 
     someVFXBaseData.myIsActive = false;
     someVFXBaseData.myDelay = { document["Delay"].GetFloat() };
