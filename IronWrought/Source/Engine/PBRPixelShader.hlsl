@@ -1,4 +1,3 @@
-#include "DetailNormalHelpers.hlsli"
 #include "PBRAmbience.hlsli"
 #include "PBRDirectionalLight.hlsli"
 
@@ -40,7 +39,7 @@ PixelOutPut main(VertexToPixel input)
     if (myNumberOfDetailNormals > 0)
     { // get from ModelData when rendering
         float detailNormalStrength = PixelShader_DetailNormalStrength(input);
-        float strengthMultiplier = 4.0f; // should change based on distance to camera
+        float strengthMultiplier = DetailStrengthDistanceMultiplier(cameraPosition.xyz, input.myWorldPosition.xyz); // should change based on distance to camera
         float3 detailNormal;
         for (int i = 0; i < myNumberOfDetailNormals; ++i)
         {
@@ -77,7 +76,7 @@ PixelOutPut main(VertexToPixel input)
     }
     
     float3 emissive = albedo * emissivedata; // Maybe add cool multiplier?? // Aki 2021
-    float3 radiance = /*ambience +*/ directionallight + pointLights + emissive;
+    float3 radiance = ambience + directionallight + pointLights + emissive;
    
     output.myColor.rgb = LinearToGamma(radiance);
     output.myColor.a = albedo.w;

@@ -118,6 +118,13 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 		CModel::SModelData modelData = model->GetModelData();
 
 		myObjectBufferData.myToWorld = gameObject->myTransform->GetMatrix();
+		int dnCounter = 0;
+		for (auto detailNormal : model->GetModelData().myDetailNormals)
+		{
+			if (detailNormal)
+				++dnCounter;
+		}
+		myObjectBufferData.myNumberOfDetailNormals = dnCounter;
 
 		BindBuffer(myObjectBuffer, myObjectBufferData, "Object Buffer");
 
@@ -132,6 +139,11 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 
 		myContext->PSSetConstantBuffers(1, 1, &myObjectBuffer);
 		myContext->PSSetShaderResources(9, 3, &modelData.myTexture[0]);
+		for (unsigned int i = 0; i < myObjectBufferData.myNumberOfDetailNormals; ++i)
+		{
+			myContext->PSSetShaderResources(12 + i, 1, &modelData.myDetailNormals[i]);
+		}
+
 		myContext->PSSetShader(myGBufferPixelShader, nullptr, 0);
 
 		myContext->PSSetSamplers(0, 1, &modelData.mySamplerState);

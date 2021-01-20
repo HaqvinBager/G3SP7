@@ -51,6 +51,9 @@ private:
 	struct SObjectBufferData
 	{
 		DirectX::SimpleMath::Matrix myToWorld;
+		unsigned int myNumberOfDetailNormals;
+		unsigned int myNumberOfTextureSets;
+		unsigned int myPaddington[2];
 	} myObjectBufferData;
 
 	struct SLightBufferData 

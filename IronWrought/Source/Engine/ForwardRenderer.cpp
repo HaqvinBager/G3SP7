@@ -170,7 +170,6 @@ void CForwardRenderer::Render(CEnvironmentLight* anEnvironmentLight, std::vector
 				++counter;
 			}
 		}
-
 		myObjectBufferData.myNumberOfDetailNormals = counter;
 
 		BindBuffer(myObjectBuffer, myObjectBufferData, "Object Buffer");

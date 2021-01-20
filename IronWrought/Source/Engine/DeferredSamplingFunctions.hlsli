@@ -1,5 +1,6 @@
 #include "DeferredShaderStructs.hlsli"
 #include "MathHelpers.hlsli"
+#include "DetailNormalHelpers.hlsli"
 
 PixelOutput PixelShader_WorldPosition(VertexToPixel input)
 {
@@ -21,17 +22,47 @@ PixelOutput PixelShader_Exists(VertexToPixel input)
 PixelOutput PixelShader_Albedo(VertexToPixel input)
 {
     PixelOutput output;
-    float3 albedo = albedoTexture.Sample(defaultSampler, input.myUV.xy).rgb;
-    output.myColor.rgb = albedo;
-    output.myColor.a = 1.0f;
+    float4 color = albedoTexture.Sample(defaultSampler, input.myUV.xy).rgba;
+    //color.rgb = GammaToLinear(color.rgb);// Used for when testing Detail normals, tufted leather model had incorrect compression format (sLinear instead of sRGB)
+    output.myColor.rgb = color;
+    output.myColor.a = color.a;
     return output;
 }
 
 PixelOutput PixelShader_Normal(VertexToPixel input)
 {
+    float3 normal;
+    normal.xy = normalTexture.Sample(defaultSampler, input.myUV.xy).ag;
+    // Recreate z
+    normal.z = 0.0f;
+    normal = (normal * 2.0f) - 1.0f;
+    normal.z = sqrt(1 - saturate((normal.x * normal.x) + (normal.y * normal.y)));
+    //normal = (normal * 0.5f) + 0.5f;// Found in TGA modelviewer shader code, but seems to cause issues here.
+    normal = normalize(normal);
+    
     PixelOutput output;
-    float3 normal = normalTexture.Sample(defaultSampler, input.myUV.xy).rgb;
-    output.myColor.rgb = normal;
+    output.myColor.xyz = normal.xyz;
+    output.myColor.a = 1.0f;
+    return output;
+}
+float PixelShader_DetailNormalStrength(VertexToPixel input)
+{
+    float output = materialTexture.Sample(defaultSampler, input.myUV.xy).a;
+    return output;
+}
+PixelOutput PixelShader_DetailNormal(VertexToPixel input, int index)
+{
+    float tilingModifier = DETAILNORMAL_TILING; // eq to scale
+   
+    float3 normal;
+    normal.xy = detailNormals[index].Sample(defaultSampler, input.myUV.xy * tilingModifier).ag;
+    normal.z = 0.0f;
+    normal = (normal * 2.0f) - 1.0f;
+    normal.z = sqrt(1 - saturate((normal.x * normal.x) + (normal.y * normal.y)));
+    normal = normalize(normal);
+    
+    PixelOutput output;
+    output.myColor.xyz = normal.xyz;
     output.myColor.a = 1.0f;
     return output;
 }
@@ -48,7 +79,7 @@ PixelOutput PixelShader_Material(VertexToPixel input)
 PixelOutput PixelShader_AmbientOcclusion(VertexToPixel input)
 {
     PixelOutput output;
-    float ao = normalTexture.Sample(defaultSampler, input.myUV.xy).a;
+    float ao = normalTexture.Sample(defaultSampler, input.myUV.xy).b;
     output.myColor.rgb = ao.xxx;
     output.myColor.a = 1.0f;
     return output;

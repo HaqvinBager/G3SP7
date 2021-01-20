@@ -19,16 +19,32 @@ GBufferOutput main(VertexModelToPixel input)
     vertToPixel.myUV        = input.myUV;
     
     float3 albedo = PixelShader_Albedo(vertToPixel).myColor.rgb;
+    //float dist = distance(cameraPosition.xyz, input.myWorldPosition.xyz); // / (1920.0f * 1080.f);
+    //float multiplier = clamp((1.0f / (dist * dist)), 0.0f, 4.0f);
+    //albedo.r *= multiplier;
     
-    //
     float3 normal = PixelShader_Normal(vertToPixel).myColor.xyz;
-    normal = (normal * 2) - 1;
-    normal = normalize(normal);
+    //normal = (normal * 2) - 1; // Done in PixelShader_Normal
+    //normal = normalize(normal);// Done in PixelShader_Normal
+    
+    if (myNumberOfDetailNormals > 0)
+    { // get from ModelData when rendering
+        float detailNormalStrength = PixelShader_DetailNormalStrength(vertToPixel);
+        float strengthMultiplier = DetailStrengthDistanceMultiplier(cameraPosition.xyz, input.myWorldPosition.xyz); // should change based on distance to camera
+        float3 detailNormal;
+        for (int i = 0; i < myNumberOfDetailNormals; ++i)
+        {
+            detailNormal = PixelShader_DetailNormal(vertToPixel, i).myColor.xyz;
+            detailNormal = SetDetailNormalStrength(detailNormal, detailNormalStrength, strengthMultiplier);
+            normal = normal * 0.5 + 0.5;
+            detailNormal = detailNormal * 0.5 + 0.5;
+            normal = BlendRNM(normal, detailNormal);
+        }
+    } // End of if
     
     float3x3 tangentSpaceMatrix = float3x3(normalize(input.myTangent.xyz), normalize(input.myBinormal.xyz), normalize(input.myNormal.xyz));
     normal = mul(normal.xyz, tangentSpaceMatrix);
     normal = normalize(normal);
-    //
     
     float ambientOcclusion = PixelShader_AmbientOcclusion(vertToPixel).myColor.r;
     float metalness = PixelShader_Metalness(vertToPixel).myColor.r;

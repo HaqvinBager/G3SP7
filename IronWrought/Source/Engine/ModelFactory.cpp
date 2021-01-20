@@ -197,8 +197,8 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 	std::string dnsuffix = aFilePath.substr(aFilePath.length() - 7, 3);
 	if (dnsuffix == "_dn")
 	{
-		detailNormal1 = GetShaderResourceView(device, "Assets/3D/Exempel_Modeller/DetailNormals/4DN/dns/dn_CarbonFibre_n.dds");
-		detailNormal2 = GetShaderResourceView(device, "Assets/3D/Exempel_Modeller/DetailNormals/Tufted_Leather/dn_25cm_N.dds");
+		detailNormal1 = GetShaderResourceView(device, "Assets/3D/Exempel_Modeller/DetailNormals/Tufted_Leather/dn_25cm_N.dds");
+		detailNormal2 = GetShaderResourceView(device, "Assets/3D/Exempel_Modeller/DetailNormals/4DN/dns/dn_CarbonFibre_n.dds");
 		detailNormal3 = GetShaderResourceView(device, "Assets/3D/Exempel_Modeller/DetailNormals/4DN/dns/dn_Wool_n.dds");
 		detailNormal4 = GetShaderResourceView(device, "Assets/3D/Exempel_Modeller/DetailNormals/4DN/dns/dn_PlasticPolymer_n.dds");
 	}
