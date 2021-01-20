@@ -7,7 +7,7 @@ class CModel;
 class CInstancedModelComponent : public CBehaviour
 {
 public:
-	CInstancedModelComponent(CGameObject& aParent, std::string aModelPath, int aCount, std::vector<DirectX::SimpleMath::Matrix> aInstancedTransforms, bool aRenderWithAlpha = false);
+	CInstancedModelComponent(CGameObject& aParent, std::string aModelPath, std::vector<DirectX::SimpleMath::Matrix> aInstancedTransforms, bool aRenderWithAlpha = false);
 	~CInstancedModelComponent();
 
 	void Awake() override;
