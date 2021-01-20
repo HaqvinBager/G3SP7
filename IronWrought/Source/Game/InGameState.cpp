@@ -134,11 +134,37 @@ void CInGameState::Start()
 	scene->AddInstance(chest2);
 	scene->AddInstance(chest3);
 
+	constexpr int numPointLights = 0;
 	std::vector<CGameObject*> pointLights;
+	float x = -2.0f;
+	float y = -10.0f;
+	for (int i = 0; i < numPointLights; ++i)
+	{
+		if ((i + 1) % 10 == 0)
+		{
+			x = -2.0f;
+			y += 1.0f;
+		}
+		x -= 1.0f;
+
+		CGameObject* pl = new CGameObject(1789 + i);
+		pl->AddComponent<CPointLightComponent>(*pl, 10.f, SM::Vector3{1,1,1}, 10.f);
+		pl->myTransform->Position({ x, y, -3.0f });
+
+		int thirdRange = numPointLights / 3;
+		float r = (i < thirdRange ? 1.0f : 0.0f);
+		float g = (i > thirdRange && i < thirdRange * 2 ? 1.0f : 0.0f);
+		float b = (i > thirdRange * 2 && i < thirdRange * 3 ? 1.0f : 0.0f);
+		pl->GetComponent<CPointLightComponent>()->GetPointLight()->SetColor({ r,g,b });
+		pl->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ x, y, -3.0f });
+
+		scene->AddInstance(pl->GetComponent<CPointLightComponent>()->GetPointLight());
+		scene->AddInstance(pl);
+	}
 	for (int i = 0; i < 5; ++i)
 	{
 		CGameObject* pl = new CGameObject(9999 + i);
-		/*CPointLightComponent* plL = */pl->AddComponent<CPointLightComponent>(*pl, 10.f, SM::Vector3{1,1,1}, 10.f);
+		pl->AddComponent<CPointLightComponent>(*pl, 10.f, SM::Vector3{1,1,1}, 10.f);
 		pointLights.emplace_back(pl);
 		pl->myTransform->Position({ 0xDEAD, 0xDEAD, 0xDEAD });
 		
@@ -175,6 +201,98 @@ void CInGameState::Start()
 	dn->GetComponent<CTransformComponent>()->Scale(100.0f);
 
 	scene->AddInstance(dn);
+
+
+	/*
+	std::unordered_map<int, int> modelIndexMap;
+	for (const auto& gameObjectData : aData.myGameObjects)
+	{
+		if (modelIndexMap.find(gameObjectData.myModelIndex) == modelIndexMap.end())
+		{
+			modelIndexMap[gameObjectData.myModelIndex] = 0;
+		}
+		modelIndexMap[gameObjectData.myModelIndex]++;
+	}
+
+	std::unordered_map<int, std::vector<Matrix>> transformIndexMap;
+	for (const auto& go : aData.myGameObjects)
+	{
+		if (transformIndexMap.find(go.myModelIndex) == transformIndexMap.end())
+		{
+			transformIndexMap[go.myModelIndex].reserve(modelIndexMap[go.myModelIndex]);
+		}
+		Matrix transform = { };
+		//Scale
+		Vector3 scale;
+		Vector3 translation;
+		Quaternion rotation;
+		transform.Decompose(scale, rotation, translation);
+		transform = Matrix::CreateFromQuaternion(rotation);
+		transform *= Matrix::CreateScale(go.myScale.x * ENGINE_SCALE);
+		transform.Translation(translation);
+
+		//Position
+		transform.Translation(go.myPosition);
+
+		//Rotation
+		Vector3 tempTranslation = transform.Translation();
+
+		DirectX::SimpleMath::Matrix tempRotation = Matrix::CreateFromYawPitchRoll(
+			DirectX::XMConvertToRadians(go.myRotation.y),
+			DirectX::XMConvertToRadians(go.myRotation.x),
+			DirectX::XMConvertToRadians(go.myRotation.z)
+		);
+
+		transform = tempRotation;
+		transform *= Matrix::CreateScale(go.myScale.x * ENGINE_SCALE);
+		transform.Translation(tempTranslation);
+
+
+		transformIndexMap[go.myModelIndex].emplace_back(transform);
+
+		for (int key = 0; key < aBinModelPaths.size(); ++key)
+		{
+			if (modelIndexMap.find(key) != modelIndexMap.end())
+			{
+			aScene.AddInstance(CreateGameObjectInstanced(aBinModelPaths[key], modelIndexMap[key], transformIndexMap[key]));
+			}
+		}
+
+		CGameObject* CUnityFactory::CreateGameObjectInstanced(const std::string& aModelPath, int InstancedID, std::vector<DirectX::SimpleMath::Matrix> aInstancedTransforms)
+		{
+			CGameObject* gameObject = new CGameObject(InstancedID);
+			gameObject->AddComponent<CInstancedModelComponent>(*gameObject, aModelPath, InstancedID, aInstancedTransforms, (GetSuffixFromString(aModelPath) == "_AL"));
+			return std::move(gameObject);
+		}
+	}
+	*/
+	constexpr int instancedCount = 300;
+	std::vector<SM::Matrix> transforms(instancedCount);
+	x = -2.0f;
+	y = -10.0f;
+	for (int i = 0; i < instancedCount; ++i)
+	{
+		if ((i + 1) % 10 == 0)
+		{
+			x = -2.0f;
+			y += 1.0f;
+		}
+		x -= 1.0f;
+
+		SM::Matrix transform;
+		transform.Translation({ x, y, 0.0f });
+		transforms[i] = transform;
+
+
+	}
+	CGameObject* instancedGameObject = new CGameObject(9999);
+	instancedGameObject->AddComponent<CInstancedModelComponent>(*instancedGameObject
+													   , "Assets/3D/Exempel_Modeller/DetailNormals/Tufted_Leather/tufted_leather_dn.fbx"
+													   , instancedCount
+													   , transforms
+													   , false);
+	scene->AddInstance(instancedGameObject);
+
 
 	//steg 1. kalla p� read json funktion
 	//steg 2. skapa en gameobject struct

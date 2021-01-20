@@ -8,10 +8,11 @@ struct VertexModelInput
     float4 myPosition   : POSITION;
     float4 myNormal     : NORMAL;
     float4 myTangent    : TANGENT;
-    float4 myBiTangent   : BITANGENT;
+    float4 myBiTangent  : BITANGENT;
     float2 myUV         : UV;
     float4 myBoneID     : BONEID;
     float4 myBoneWeight : BONEWEIGHT;
+    column_major float4x4 myTransform : INSTANCETRANSFORM;
 };
 
 struct VertexToPixel

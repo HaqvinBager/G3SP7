@@ -90,16 +90,17 @@ bool CRenderManager::ReInit(CDirectXFramework* aFramework, CWindowHandler* aWind
 	return true;
 }
 
+#define USING_DEFERRED
 void CRenderManager::Render(CScene& aScene)
 {
-	if (myFrameCounter % 5 == 0) {
-		aScene.UpdateLightsNearestPlayer();
-
-		if (myFrameCounter > 50005) {
-			myFrameCounter = 0;
-		}
-	}
-	myFrameCounter++;
+	//if (myFrameCounter % 5 == 0) {
+	//	aScene.UpdateLightsNearestPlayer();
+	//
+	//	if (myFrameCounter > 50005) {
+	//		myFrameCounter = 0;
+	//	}
+	//}
+	//myFrameCounter++;
 
 	if (Input::GetInstance()->IsKeyPressed(VK_F6))
 	{
@@ -123,8 +124,12 @@ void CRenderManager::Render(CScene& aScene)
 	std::vector<CGameObject*> instancedGameObjectsWithAlpha;
 	std::vector<LightPair> pointlights;
 	std::vector<LightPair> pointLightsInstanced;
-
 	std::vector<int> indicesOfOutlineModels;
+
+#ifdef USING_DEFERRED // Define is above function
+#pragma region DEFERRED
+
+	
 	for (unsigned int i = 0; i < gameObjects.size(); ++i)
 	{
 		auto instance = gameObjects[i];
@@ -134,22 +139,52 @@ void CRenderManager::Render(CScene& aScene)
 			}
 		}
 
-		//CModelComponent* modelComponent = nullptr;
-		//CInstancedModelComponent* instancedModelComponent = nullptr;
-
-		/*if (instance->TryGetComponent(&modelComponent)) 
-		{
-			pointlights.emplace_back(aScene.CullLights(instance));
-		}
-		else if (instance->TryGetComponent(&instancedModelComponent)) 
-		{
-			pointLightsInstanced.emplace_back(aScene.CullLightInstanced(instancedModelComponent));
+		if (instance->GetComponent<CInstancedModelComponent>()) {
+			if (instance->GetComponent<CInstancedModelComponent>()->RenderWithAlpha())
+			{
+				instancedGameObjectsWithAlpha.emplace_back(instance);
+				continue;
+			}
 			instancedGameObjects.emplace_back(instance);
-			instancedModelComponent->RenderWithAlpha() ?
-				instancedGameObjectsWithAlpha.emplace_back(instance) :
-				instancedGameObjects.emplace_back(instance);
+		}
+	}
 
-		}*/
+	std::sort(indicesOfOutlineModels.begin(), indicesOfOutlineModels.end(), [](UINT a, UINT b) { return a > b; });
+
+	for (auto index : indicesOfOutlineModels)
+	{
+		std::swap(gameObjects[index], gameObjects.back());
+		gameObjects.pop_back();
+	}
+
+	std::vector<CPointLight*> onlyPointLights;
+	onlyPointLights = aScene.CullPointLights(&maincamera->GameObject());
+
+	myGBuffer.SetAsActiveTarget(&myIntermediateDepth);
+	myDeferredRenderer.GenerateGBuffer(maincamera, gameObjects, instancedGameObjects);
+	myDeferredTexture.SetAsActiveTarget();
+	myGBuffer.SetAllAsResources();
+	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_ADDITIVEBLEND);
+
+	myDeferredRenderer.Render(maincamera, environmentlight);
+	myDeferredRenderer.Render(maincamera, onlyPointLights);
+
+	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_DISABLE);
+	myIntermediateTexture.SetAsActiveTarget();
+	myDeferredTexture.SetAsResourceOnSlot(0);
+	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCRENSHADER_GAMMACORRECTION);
+
+#pragma endregion ! DEFERRED
+#else
+
+	for (unsigned int i = 0; i < gameObjects.size(); ++i)
+	{
+		auto instance = gameObjects[i];
+		for (auto gameObjectToOutline : aScene.GetModelsToOutline()) {
+			if (instance == gameObjectToOutline) {
+				indicesOfOutlineModels.emplace_back(i);
+			}
+		}
 
 		if (instance->GetComponent<CModelComponent>()) {
 			pointlights.emplace_back(aScene.CullLights(instance));
@@ -175,29 +210,11 @@ void CRenderManager::Render(CScene& aScene)
 		gameObjects.pop_back();
 	}
 
-
-
-#pragma region DEFERRED
-	std::vector<CPointLight*> onlyPointLights;
-	onlyPointLights = aScene.CullPointLights(&maincamera->GameObject());
-	
-	myGBuffer.SetAsActiveTarget(&myIntermediateDepth);
-	myDeferredRenderer.GenerateGBuffer(maincamera, gameObjects);
-	myDeferredTexture.SetAsActiveTarget();
-	myGBuffer.SetAllAsResources();
-	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_ADDITIVEBLEND);
-	
-	myDeferredRenderer.Render(maincamera, environmentlight);
-	myDeferredRenderer.Render(maincamera, onlyPointLights);
-	
-	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_DISABLE);
-	myIntermediateTexture.SetAsActiveTarget();
-	myDeferredTexture.SetAsResourceOnSlot(0);
-	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCRENSHADER_GAMMACORRECTION);
-#pragma endregion ! DEFERRED
-
-	//myForwardRenderer.Render(environmentlight, pointlights, maincamera, gameObjects);
+	myForwardRenderer.Render(environmentlight, pointlights, maincamera, gameObjects);
 	myForwardRenderer.InstancedRender(environmentlight, pointLightsInstanced, maincamera, instancedGameObjects);
+
+#endif // USING_DEFERRED
+
 
 	for (auto modelToOutline : aScene.GetModelsToOutline()) {
 		std::vector<CGameObject*> interimVector;

@@ -20,7 +20,7 @@ public:
 
 	bool Init(CDirectXFramework* aFramework);
 
-	void GenerateGBuffer(CCameraComponent* aCamera, std::vector<CGameObject*>& aGameObjectList);
+	void GenerateGBuffer(CCameraComponent* aCamera, std::vector<CGameObject*>& aGameObjectList, std::vector<CGameObject*>& aInstancedGameObjectList);
 	void Render(CCameraComponent* aCamera, CEnvironmentLight* anEnvironmentLight);
 	void Render(CCameraComponent* aCamera, std::vector<CPointLight*>& aPointLightList);
 
@@ -76,6 +76,7 @@ private:
 	ID3D11Buffer* myPointLightBuffer;
 	ID3D11VertexShader* myFullscreenShader;
 	ID3D11VertexShader* myModelVertexShader;
+	ID3D11VertexShader* myInstancedModelVertexShader;
 	ID3D11PixelShader* myGBufferPixelShader;
 	ID3D11PixelShader* myEnvironmentLightShader;
 	ID3D11PixelShader* myPointLightShader;

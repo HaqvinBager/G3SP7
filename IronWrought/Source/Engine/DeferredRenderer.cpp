@@ -10,6 +10,7 @@
 #include "GameObject.h"
 #include "CameraComponent.h"
 #include "ModelComponent.h"
+#include "InstancedModelComponent.h"
 
 #include <fstream>
 
@@ -64,6 +65,11 @@ bool CDeferredRenderer::Init(CDirectXFramework* aFramework)
 	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateVertexShader(vsData.data(), vsData.size(), nullptr, &myModelVertexShader), "Fullscreen Vertex Shader could not be created.");
 	vsFile.close();
 
+	vsFile.open("Shaders/DeferredInstancedModelVertexShader.cso", std::ios::binary);
+	vsData = { std::istreambuf_iterator<char>(vsFile), std::istreambuf_iterator<char>() };
+	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateVertexShader(vsData.data(), vsData.size(), nullptr, &myInstancedModelVertexShader), "Fullscreen Vertex Shader could not be created.");
+	vsFile.close();
+
 	std::ifstream ps1File;
 	ps1File.open("Shaders/GBufferPixelShader.cso", std::ios::binary);
 	std::string psData = { std::istreambuf_iterator<char>(ps1File), std::istreambuf_iterator<char>() };
@@ -94,7 +100,7 @@ bool CDeferredRenderer::Init(CDirectXFramework* aFramework)
 	return true;
 }
 
-void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<CGameObject*>& aGameObjectList)
+void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<CGameObject*>& aGameObjectList, std::vector<CGameObject*>& aInstancedGameObjectList)
 {
 	SM::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
 	myFrameBufferData.myCameraPosition = SM::Vector4{ cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f };
@@ -150,6 +156,53 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 
 		myContext->DrawIndexed(modelData.myNumberOfIndices, 0, 0);
 	}
+
+	
+	for (auto& gameobject : aInstancedGameObjectList)
+	{
+		CInstancedModelComponent* instanceComponent = gameobject->GetComponent<CInstancedModelComponent>();
+		if (instanceComponent == nullptr)
+			continue;
+
+		BindBuffer(myObjectBuffer, myObjectBufferData, "Object Buffer");
+
+		CModel* model = instanceComponent->GetModel();
+		CModel::SModelInstanceData modelData = model->GetModelInstanceData();
+
+		{
+			D3D11_MAPPED_SUBRESOURCE instanceBuffer;
+			ZeroMemory(&instanceBuffer, sizeof(D3D11_MAPPED_SUBRESOURCE));
+			ENGINE_HR_MESSAGE(myContext->Map(modelData.myInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &instanceBuffer), "Instanced Buffer Could not be mapped in ForwardRenderer.");
+			memcpy(instanceBuffer.pData, &instanceComponent->GetInstancedTransforms()[0], sizeof(DirectX::SimpleMath::Matrix) * instanceComponent->GetInstancedTransforms().size());
+			myContext->Unmap(modelData.myInstanceBuffer, 0);
+		}
+
+		myContext->IASetPrimitiveTopology(modelData.myPrimitiveTopology);
+		myContext->IASetInputLayout(modelData.myInputLayout);
+
+		ID3D11Buffer* bufferPointers[2] = {modelData.myVertexBuffer, modelData.myInstanceBuffer};
+		myContext->IASetVertexBuffers(0, 2, bufferPointers, modelData.myStride, modelData.myOffset);
+		myContext->IASetIndexBuffer(modelData.myIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+
+		myContext->VSSetConstantBuffers(1, 1, &myObjectBuffer);
+		myContext->VSSetShader(myInstancedModelVertexShader, nullptr, 0);
+
+		myContext->PSSetConstantBuffers(1, 1, &myObjectBuffer);
+		myContext->PSSetShaderResources(9, 3, &modelData.myTexture[0]);
+
+		myContext->PSSetSamplers(0, 1, &modelData.mySamplerState);
+
+		myContext->PSSetShader(myGBufferPixelShader, nullptr, 0);
+
+		// Toggling render passes
+		//if (myCurrentPixelShader == nullptr)
+		//	myContext->PSSetShader(modelData.myPixelShader, nullptr, 0);
+		//else
+		//	myContext->PSSetShader(myCurrentPixelShader, nullptr, 0);
+
+		myContext->DrawIndexedInstanced(modelData.myNumberOfIndices, model->InstanceCount(), 0, 0, 0);
+	}
+	
 
 	ID3D11ShaderResourceView* nullView = NULL;
 	myContext->PSSetShaderResources(9, 1, &nullView);
