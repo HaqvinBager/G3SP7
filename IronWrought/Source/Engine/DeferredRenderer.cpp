@@ -144,11 +144,15 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 		myContext->VSSetShader(myModelVertexShader, nullptr, 0);
 
 		myContext->PSSetConstantBuffers(1, 1, &myObjectBuffer);
-		myContext->PSSetShaderResources(9, 3, &modelData.myTexture[0]);
-		for (unsigned int i = 0; i < myObjectBufferData.myNumberOfDetailNormals; ++i)
-		{
-			myContext->PSSetShaderResources(12 + i, 1, &modelData.myDetailNormals[i]);
-		}
+		myContext->PSSetShaderResources(5, 3, &modelData.myTexture[0]);
+		myContext->PSSetShaderResources(8, 4, &modelData.myDetailNormals[0]);
+		//myContext->PSSetShaderResources(9, 3, &modelData.myTexture[0]);
+		//myContext->PSSetShaderResources(12, 4, &modelData.myDetailNormals[0]);
+		// Not necessary, as long as dnCounter is correct, the shader loops through the number of textures there.
+		//for (unsigned int i = 0; i < myObjectBufferData.myNumberOfDetailNormals; ++i)
+		//{
+		//	myContext->PSSetShaderResources(12 + i, 1, &modelData.myDetailNormals[i]);
+		//}
 
 		myContext->PSSetShader(myGBufferPixelShader, nullptr, 0);
 
@@ -157,6 +161,15 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 		myContext->DrawIndexed(modelData.myNumberOfIndices, 0, 0);
 	}
 
+	ID3D11ShaderResourceView* nullView = NULL;
+	myContext->PSSetShaderResources(9, 1, &nullView);
+	myContext->PSSetShaderResources(10, 1, &nullView);
+	myContext->PSSetShaderResources(11, 1, &nullView);
+	myContext->PSSetShaderResources(12, 1, &nullView);
+	myContext->PSSetShaderResources(13, 1, &nullView);
+	myContext->PSSetShaderResources(14, 1, &nullView);
+	myContext->PSSetShaderResources(15, 1, &nullView);
+	myObjectBufferData.myNumberOfDetailNormals = 0;
 	
 	for (auto& gameobject : aInstancedGameObjectList)
 	{
@@ -188,7 +201,8 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 		myContext->VSSetShader(myInstancedModelVertexShader, nullptr, 0);
 
 		myContext->PSSetConstantBuffers(1, 1, &myObjectBuffer);
-		myContext->PSSetShaderResources(9, 3, &modelData.myTexture[0]);
+		myContext->PSSetShaderResources(5, 3, &modelData.myTexture[0]);
+		//myContext->PSSetShaderResources(9, 3, &modelData.myTexture[0]);
 
 		myContext->PSSetSamplers(0, 1, &modelData.mySamplerState);
 
@@ -202,12 +216,7 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 
 		myContext->DrawIndexedInstanced(modelData.myNumberOfIndices, model->InstanceCount(), 0, 0, 0);
 	}
-	
 
-	ID3D11ShaderResourceView* nullView = NULL;
-	myContext->PSSetShaderResources(9, 1, &nullView);
-	myContext->PSSetShaderResources(10, 1, &nullView);
-	myContext->PSSetShaderResources(11, 1, &nullView);
 }
 
 void CDeferredRenderer::Render(CCameraComponent* aCamera, CEnvironmentLight* anEnvironmentLight)

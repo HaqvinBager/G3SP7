@@ -116,17 +116,14 @@ void CInGameState::Start()
 
 
 	CGameObject* chest = new CGameObject(1337);
-	chest->AddComponent<CModelComponent>(*chest, "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx");
 	chest->AddComponent<CModelComponent>(*chest, std::string(ASSETPATH + "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx"));
 	chest->GetComponent<CTransformComponent>()->Position({4.0f,0.0f,0.0f});
 
 	CGameObject* chest2 = new CGameObject(1338);
-	chest2->AddComponent<CModelComponent>(*chest2, "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx");
 	chest2->AddComponent<CModelComponent>(*chest2, std::string(ASSETPATH + "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx"));
 	chest2->GetComponent<CTransformComponent>()->Position({5.0f,-2.0f,0.0f});
 
 	CGameObject* chest3 = new CGameObject(1339);
-	chest3->AddComponent<CModelComponent>(*chest3, "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx");
 	chest3->AddComponent<CModelComponent>(*chest3, std::string(ASSETPATH + "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx"));
 	chest3->GetComponent<CTransformComponent>()->Position({6.0f,2.0f,0.0f});
 
@@ -200,72 +197,14 @@ void CInGameState::Start()
 	dn->GetComponent<CTransformComponent>()->Position({7.0f,0.0f,0.0f});
 	dn->GetComponent<CTransformComponent>()->Scale(100.0f);
 
+	CGameObject* dn4 = new CGameObject(1339);
+	dn4->AddComponent<CModelComponent>(*dn4, "Assets/3D/Exempel_Modeller/DetailNormals/4DN/4DNs_dn.fbx");
+	dn4->GetComponent<CTransformComponent>()->Position({8.0f,0.0f,0.0f});
+	dn4->GetComponent<CTransformComponent>()->Scale(100.0f);
+
 	scene->AddInstance(dn);
+	scene->AddInstance(dn4);
 
-
-	/*
-	std::unordered_map<int, int> modelIndexMap;
-	for (const auto& gameObjectData : aData.myGameObjects)
-	{
-		if (modelIndexMap.find(gameObjectData.myModelIndex) == modelIndexMap.end())
-		{
-			modelIndexMap[gameObjectData.myModelIndex] = 0;
-		}
-		modelIndexMap[gameObjectData.myModelIndex]++;
-	}
-
-	std::unordered_map<int, std::vector<Matrix>> transformIndexMap;
-	for (const auto& go : aData.myGameObjects)
-	{
-		if (transformIndexMap.find(go.myModelIndex) == transformIndexMap.end())
-		{
-			transformIndexMap[go.myModelIndex].reserve(modelIndexMap[go.myModelIndex]);
-		}
-		Matrix transform = { };
-		//Scale
-		Vector3 scale;
-		Vector3 translation;
-		Quaternion rotation;
-		transform.Decompose(scale, rotation, translation);
-		transform = Matrix::CreateFromQuaternion(rotation);
-		transform *= Matrix::CreateScale(go.myScale.x * ENGINE_SCALE);
-		transform.Translation(translation);
-
-		//Position
-		transform.Translation(go.myPosition);
-
-		//Rotation
-		Vector3 tempTranslation = transform.Translation();
-
-		DirectX::SimpleMath::Matrix tempRotation = Matrix::CreateFromYawPitchRoll(
-			DirectX::XMConvertToRadians(go.myRotation.y),
-			DirectX::XMConvertToRadians(go.myRotation.x),
-			DirectX::XMConvertToRadians(go.myRotation.z)
-		);
-
-		transform = tempRotation;
-		transform *= Matrix::CreateScale(go.myScale.x * ENGINE_SCALE);
-		transform.Translation(tempTranslation);
-
-
-		transformIndexMap[go.myModelIndex].emplace_back(transform);
-
-		for (int key = 0; key < aBinModelPaths.size(); ++key)
-		{
-			if (modelIndexMap.find(key) != modelIndexMap.end())
-			{
-			aScene.AddInstance(CreateGameObjectInstanced(aBinModelPaths[key], modelIndexMap[key], transformIndexMap[key]));
-			}
-		}
-
-		CGameObject* CUnityFactory::CreateGameObjectInstanced(const std::string& aModelPath, int InstancedID, std::vector<DirectX::SimpleMath::Matrix> aInstancedTransforms)
-		{
-			CGameObject* gameObject = new CGameObject(InstancedID);
-			gameObject->AddComponent<CInstancedModelComponent>(*gameObject, aModelPath, InstancedID, aInstancedTransforms, (GetSuffixFromString(aModelPath) == "_AL"));
-			return std::move(gameObject);
-		}
-	}
-	*/
 	constexpr int instancedCount = 300;
 	std::vector<SM::Matrix> transforms(instancedCount);
 	x = -2.0f;
@@ -285,18 +224,13 @@ void CInGameState::Start()
 
 
 	}
-	CGameObject* instancedGameObject = new CGameObject(9999);
+	CGameObject* instancedGameObject = new CGameObject(999);
 	instancedGameObject->AddComponent<CInstancedModelComponent>(*instancedGameObject
 													   , "Assets/3D/Exempel_Modeller/DetailNormals/Tufted_Leather/tufted_leather_dn.fbx"
 													   , instancedCount
 													   , transforms
 													   , false);
 	scene->AddInstance(instancedGameObject);
-
-
-	//steg 1. kalla p� read json funktion
-	//steg 2. skapa en gameobject struct
-	//steg 3.
 
 	myExitLevel = false;
 

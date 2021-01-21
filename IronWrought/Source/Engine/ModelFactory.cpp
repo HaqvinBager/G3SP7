@@ -227,7 +227,6 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 	modelData.myTexture[1] = materialResourceView;
 	modelData.myTexture[2] = normalResourceView;
 
-	// ! Check for detail norma
 	modelData.myDetailNormals[0] = detailNormal1;
 	modelData.myDetailNormals[1] = detailNormal2;
 	modelData.myDetailNormals[2] = detailNormal3;

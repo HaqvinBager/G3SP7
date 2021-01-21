@@ -23,8 +23,8 @@ PixelOutput PixelShader_Albedo(VertexToPixel input)
 {
     PixelOutput output;
     float4 color = albedoTexture.Sample(defaultSampler, input.myUV.xy).rgba;
-    //color.rgb = GammaToLinear(color.rgb);// Used for when testing Detail normals, tufted leather model had incorrect compression format (sLinear instead of sRGB)
-    output.myColor.rgb = color;
+    //color.rgb = GammaToLinear(color.rgb);// Used for when testing Detail normals, tufted leather model had incorrect compression format (sLinear instead of sRGB) or something lika that i don't remember
+    output.myColor.rgb = color.rgb;
     output.myColor.a = color.a;
     return output;
 }
@@ -55,6 +55,7 @@ PixelOutput PixelShader_DetailNormal(VertexToPixel input, int index)
     float tilingModifier = DETAILNORMAL_TILING; // eq to scale
    
     float3 normal;
+    
     normal.xy = detailNormals[index].Sample(defaultSampler, input.myUV.xy * tilingModifier).ag;
     normal.z = 0.0f;
     normal = (normal * 2.0f) - 1.0f;
@@ -70,9 +71,9 @@ PixelOutput PixelShader_DetailNormal(VertexToPixel input, int index)
 PixelOutput PixelShader_Material(VertexToPixel input)
 {
     PixelOutput output;
-    float3 material = materialTexture.Sample(defaultSampler, input.myUV.xy).rgb;
+    float4 material = materialTexture.Sample(defaultSampler, input.myUV.xy).rgba;
     output.myColor.rgb = material.rgb;
-    output.myColor.a = 1.0f;
+    output.myColor.a = material.a;
     return output;
 }
 
@@ -117,10 +118,17 @@ PixelOutput PixelShader_Emissive(VertexToPixel input)
 PixelOutput GBuffer_Albedo(VertexToPixel input)
 {
     PixelOutput output;
-    float4 albedo = albedoTextureGBuffer.Sample(defaultSampler, input.myUV.xy).rgba;
-    output.myColor.rgba = albedo;
+    float3 albedo = albedoTextureGBuffer.Sample(defaultSampler, input.myUV.xy).rgb;
+    output.myColor.rgb = albedo;
     output.myColor.a = 1.0f;
     return output;
+    
+    // Original
+    //PixelOutput output;
+    //float4 albedo = albedoTextureGBuffer.Sample(defaultSampler, input.myUV.xy).rgba;
+    //output.myColor.rgba = albedo;
+    //output.myColor.a = 1.0f;
+    //return output;
 }
 
 PixelOutput GBuffer_Normal(VertexToPixel input)
@@ -144,35 +152,63 @@ PixelOutput GBuffer_VertexNormal(VertexToPixel input)
 PixelOutput GBuffer_AmbientOcclusion(VertexToPixel input)
 {
     PixelOutput output;
-    float ao = ambientOcclusionTexture.Sample(defaultSampler, input.myUV.xy).r;
+    float ao = normalTextureGBuffer.Sample(defaultSampler, input.myUV.xy).a;
     output.myColor.rgb = ao.xxx;
     output.myColor.a = 1.0f;
     return output;
+    
+    // Original
+    //PixelOutput output;
+    //float ao = ambientOcclusionTexture.Sample(defaultSampler, input.myUV.xy).r;
+    //output.myColor.rgb = ao.xxx;
+    //output.myColor.a = 1.0f;
+    //return output;
 }
 
 PixelOutput GBuffer_Metalness(VertexToPixel input)
 {
     PixelOutput output;
-    float metalness = metalnessTexture.Sample(defaultSampler, input.myUV.xy).r;
+    float metalness =  worldPositionTexture.Sample(defaultSampler, input.myUV.xy).a;
     output.myColor.rgb = metalness.xxx;
     output.myColor.a = 1.0f;
     return output;
+    
+    // Original
+    //PixelOutput output;
+    //float metalness = metalnessTexture.Sample(defaultSampler, input.myUV.xy).r;
+    //output.myColor.rgb = metalness.xxx;
+    //output.myColor.a = 1.0f;
+    //return output;
 }
 
 PixelOutput GBuffer_PerceptualRoughness(VertexToPixel input)
 {
     PixelOutput output;
-    float roughness = roughnessTexture.Sample(defaultSampler, input.myUV.xy).r;
+    float roughness = albedoTextureGBuffer.Sample(defaultSampler, input.myUV.xy).a;
     output.myColor.rgb = roughness;
     output.myColor.a = 1.0f;
     return output;
+
+    // Original
+    //PixelOutput output;
+    //float roughness = roughnessTexture.Sample(defaultSampler, input.myUV.xy).r;
+    //output.myColor.rgb = roughness;
+    //output.myColor.a = 1.0f;
+    //return output;
 }
 
 PixelOutput GBuffer_Emissive(VertexToPixel input)
-{    
+{   
     PixelOutput output;
-    float emissive = emissiveTexture.Sample(defaultSampler, input.myUV.xy).r;
+    float emissive = vertexNormalTexture.Sample(defaultSampler, input.myUV.xy).a;
     output.myColor.rgb = emissive.xxx;
     output.myColor.a = 1.0f;
     return output;
+    
+    // Original
+    //PixelOutput output;
+    //float emissive = emissiveTexture.Sample(defaultSampler, input.myUV.xy).r;
+    //output.myColor.rgb = emissive.xxx;
+    //output.myColor.a = 1.0f;
+    //return output;
 }

@@ -1,5 +1,5 @@
 #pragma once
-#define LIGHTCOUNT 200
+#define LIGHTCOUNT 32
 #define SAFE_DELETE(aPointer) delete aPointer; aPointer = nullptr;
 
 #ifdef EXCELSIOR

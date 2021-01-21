@@ -118,18 +118,16 @@ void CRenderManager::Render(CScene& aScene)
 
 	CEnvironmentLight* environmentlight = aScene.GetEnvironmentLight();
 	CCameraComponent* maincamera = aScene.GetMainCamera();
-	//std::vector<CModelComponent*> modelsToRender = myScene.CullGameObjects(maincamera);
+
 	std::vector<CGameObject*> gameObjects = aScene.CullGameObjects(maincamera);
 	std::vector<CGameObject*> instancedGameObjects;
 	std::vector<CGameObject*> instancedGameObjectsWithAlpha;
+	std::vector<int> indicesOfOutlineModels;
 	std::vector<LightPair> pointlights;
 	std::vector<LightPair> pointLightsInstanced;
-	std::vector<int> indicesOfOutlineModels;
 
 #ifdef USING_DEFERRED // Define is above function
-#pragma region DEFERRED
-
-	
+#pragma region Deferred
 	for (unsigned int i = 0; i < gameObjects.size(); ++i)
 	{
 		auto instance = gameObjects[i];
@@ -174,7 +172,7 @@ void CRenderManager::Render(CScene& aScene)
 	myDeferredTexture.SetAsResourceOnSlot(0);
 	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCRENSHADER_GAMMACORRECTION);
 
-#pragma endregion ! DEFERRED
+#pragma endregion ! Deferred
 #else
 
 	for (unsigned int i = 0; i < gameObjects.size(); ++i)
