@@ -92,7 +92,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <ForcedIncludeFiles>StdAfx.h;%(ForcedINcludeFiles)</ForcedIncludeFiles>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Includes/Imgui/%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>
       </AdditionalUsingDirectories>
     </ClCompile>
@@ -124,7 +124,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <ForcedIncludeFiles>StdAfx.h;%(ForcedINcludeFiles)</ForcedIncludeFiles>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Includes/Imgui/%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -150,7 +150,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <ForcedIncludeFiles>StdAfx.h;%(ForcedINcludeFiles)</ForcedIncludeFiles>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Includes/Imgui/%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -164,6 +164,13 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Includes\Imgui\imgui.h" />
+    <ClInclude Include="..\Includes\Imgui\imgui_impl_dx11.h" />
+    <ClInclude Include="..\Includes\Imgui\imgui_impl_win32.h" />
+    <ClInclude Include="..\Includes\Imgui\imgui_internal.h" />
+    <ClInclude Include="..\Includes\Imgui\imstb_rectpack.h" />
+    <ClInclude Include="..\Includes\Imgui\imstb_textedit.h" />
+    <ClInclude Include="..\Includes\Imgui\imstb_truetype.h" />
     <ClInclude Include="AnimatedUIElement.h" />
     <ClInclude Include="Animation.h" />
     <ClInclude Include="AnimationComponent.h" />
@@ -193,6 +200,7 @@
     <ClInclude Include="Funneling.h" />
     <ClInclude Include="animationEnums.h" />
     <ClInclude Include="GBuffer.h" />
+    <ClInclude Include="ImguiManager.h" />
     <ClInclude Include="InstancedModelComponent.h" />
     <ClInclude Include="JsonReader.h" />
     <ClInclude Include="MainSingleton.h" />
@@ -270,6 +278,13 @@
     <ClInclude Include="WinInclude.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Includes\Imgui\imgui.cpp" />
+    <ClCompile Include="..\Includes\Imgui\imgui_demo.cpp" />
+    <ClCompile Include="..\Includes\Imgui\imgui_draw.cpp" />
+    <ClCompile Include="..\Includes\Imgui\imgui_impl_dx11.cpp" />
+    <ClCompile Include="..\Includes\Imgui\imgui_impl_win32.cpp" />
+    <ClCompile Include="..\Includes\Imgui\imgui_tables.cpp" />
+    <ClCompile Include="..\Includes\Imgui\imgui_widgets.cpp" />
     <ClCompile Include="AnimatedUIElement.cpp" />
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="AnimationComponent.cpp" />
@@ -297,6 +312,7 @@
     <ClCompile Include="FModWrapper.cpp" />
     <ClCompile Include="EnviromentLightComponent.cpp" />
     <ClCompile Include="GBuffer.cpp" />
+    <ClCompile Include="ImguiManager.cpp" />
     <ClCompile Include="InputMapper.cpp" />
     <ClCompile Include="InstancedModelComponent.cpp" />
     <ClCompile Include="MainSingleton.cpp" />

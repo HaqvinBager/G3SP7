@@ -30,7 +30,10 @@
 #include <PopupTextService.h>
 #include "AudioManager.h"
 #include <string>
-
+#include "ImguiManager.h"
+#include "imgui.h"
+#include "imgui_impl_dx11.h"
+#include "imgui_impl_win32.h"
 #include "StateStack.h"
 
 #pragma comment(lib, "runtimeobject.lib")
@@ -38,7 +41,7 @@
 
 CEngine* CEngine::ourInstance = nullptr;
 
-CEngine::CEngine() : myRenderSceneActive(true)
+CEngine::CEngine(): myRenderSceneActive(true)
 {
 	ourInstance = this;
 
@@ -62,11 +65,13 @@ CEngine::CEngine() : myRenderSceneActive(true)
 	myAudioManager = new CAudioManager();
 	//myActiveScene = 0; //muc bad
 	myActiveState = CStateStack::EState::InGame;
+	myImguiManager = new CImguiManager();
 	//myDialogueSystem = new CDialogueSystem();
 }
 
 CEngine::~CEngine()
 {
+	ImGui_ImplDX11_Shutdown();
 	delete myWindowHandler;
 	myWindowHandler = nullptr;
 	delete myFramework;
@@ -124,6 +129,7 @@ bool CEngine::Init(CWindowHandler::SWindowData& someWindowData)
 {
 	ENGINE_ERROR_BOOL_MESSAGE(myWindowHandler->Init(someWindowData), "Window Handler could not be initialized.");
 	ENGINE_ERROR_BOOL_MESSAGE(myFramework->Init(myWindowHandler), "Framework could not be initialized.");
+	ImGui_ImplDX11_Init(myFramework->GetDevice(), myFramework->GetContext());
 	myWindowHandler->SetInternalResolution();
 	ENGINE_ERROR_BOOL_MESSAGE(myModelFactory->Init(*this), "Model Factory could not be initiliazed.");
 	ENGINE_ERROR_BOOL_MESSAGE(myCameraFactory->Init(myWindowHandler), "Camera Factory could not be initialized.");
@@ -155,6 +161,14 @@ float CEngine::BeginFrame()
 	//CDebug::GetInstance()->Update();
 #endif
 
+	//if (myImguiIsEnabled)
+	//{
+		ImGui_ImplDX11_NewFrame();
+		ImGui_ImplWin32_NewFrame();
+		ImGui::NewFrame();
+	//}
+	
+
 	myAudioManager->Update();
 	CMainSingleton::DialogueSystem().Update();
 
@@ -168,11 +182,31 @@ void CEngine::RenderFrame()
 
 	ENGINE_BOOL_POPUP(mySceneMap[myActiveState], "The Scene you want to render is nullptr");
 	myRenderManager->Render(*mySceneMap[myActiveState]);
+
+	//IMGUI START
+	myImguiManager->DebugWindow();
+
+	if (myEnabledEditorImgui)
+	{
+	}
+	
+	//IMGUI END
 }
 
 void CEngine::EndFrame()
 {
+	/*if (myImguiIsEnabled)
+	{*/
+		ImGui::Render();
+		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+	//}
+
 	myFramework->EndFrame();
+
+	if (Input::GetInstance()->IsKeyPressed(VK_F1))
+	{
+		EnableEditorImgui(!myEnabledEditorImgui);
+	}
 }
 
 CWindowHandler* CEngine::GetWindowHandler()
@@ -197,7 +231,7 @@ void CEngine::InitWindowsImaging()
 #include <DbgHelp.h>
 #include <strsafe.h>
 
-void CEngine::CrashWithScreenShot(std::wstring &aSubPath)
+void CEngine::CrashWithScreenShot(std::wstring& aSubPath)
 {
 	DL_Debug::CDebug::GetInstance()->CopyToCrashFolder(aSubPath);
 
@@ -267,4 +301,14 @@ void CEngine::RemoveScene(CStateStack::EState aState)
 void CEngine::ClearModelFactory()
 {
 	myModelFactory->ClearFactory();
+}
+
+void CEngine::EnableEditorImgui(bool aIsEnabled)
+{
+	myEnabledEditorImgui = aIsEnabled;
+}
+
+bool CEngine::EditorImguiEnabled()
+{
+	return myEnabledEditorImgui;
 }

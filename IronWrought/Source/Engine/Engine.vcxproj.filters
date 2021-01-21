@@ -372,6 +372,30 @@
     <ClCompile Include="GBuffer.cpp">
       <Filter>Renderers</Filter>
     </ClCompile>
+    <ClCompile Include="..\Includes\Imgui\imgui.cpp">
+      <Filter>Imgui\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Includes\Imgui\imgui_demo.cpp">
+      <Filter>Imgui\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Includes\Imgui\imgui_draw.cpp">
+      <Filter>Imgui\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Includes\Imgui\imgui_impl_dx11.cpp">
+      <Filter>Imgui\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Includes\Imgui\imgui_impl_win32.cpp">
+      <Filter>Imgui\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Includes\Imgui\imgui_tables.cpp">
+      <Filter>Imgui\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Includes\Imgui\imgui_widgets.cpp">
+      <Filter>Imgui\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="ImguiManager.cpp">
+      <Filter>Imgui\Manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -686,6 +710,30 @@
     <ClInclude Include="GBuffer.h">
       <Filter>Renderers</Filter>
     </ClInclude>
+    <ClInclude Include="..\Includes\Imgui\imgui.h">
+      <Filter>Imgui\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Includes\Imgui\imgui_impl_dx11.h">
+      <Filter>Imgui\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Includes\Imgui\imgui_impl_win32.h">
+      <Filter>Imgui\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Includes\Imgui\imgui_internal.h">
+      <Filter>Imgui\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Includes\Imgui\imstb_rectpack.h">
+      <Filter>Imgui\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Includes\Imgui\imstb_textedit.h">
+      <Filter>Imgui\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Includes\Imgui\imstb_truetype.h">
+      <Filter>Imgui\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="ImguiManager.h">
+      <Filter>Imgui\Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">
@@ -848,6 +896,15 @@
     </Filter>
     <Filter Include="Shaders\Deferred">
       <UniqueIdentifier>{cc09a61a-ce12-4e9a-a6ca-e9ecc120c994}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui">
+      <UniqueIdentifier>{e133abf3-57ac-489e-828a-4dc34449865c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Core">
+      <UniqueIdentifier>{4732a842-0d10-4335-b186-3c6e2bbf5b3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Manager">
+      <UniqueIdentifier>{cf9224c9-d296-4081-b1d8-7c2bb6b21f0d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
