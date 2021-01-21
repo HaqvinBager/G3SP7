@@ -61,8 +61,9 @@ void CInGameState::Start()
 
 	CGameObject* envLight = new CGameObject(1);
 	envLight->AddComponent<CEnviromentLightComponent>(*envLight);
-	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetIntensity(1.f);
-	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetDirection({0.0f,0.0f,-1.0f});
+	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetColor({0.0f,0.0f,1.0f});
+	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetIntensity(10.f);
+	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetDirection({1.0f,0.5f,-1.0f});
 	scene->AddInstance(envLight);
 	scene->SetEnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight());
 
@@ -131,10 +132,10 @@ void CInGameState::Start()
 	scene->AddInstance(chest2);
 	scene->AddInstance(chest3);
 
-	constexpr int numPointLights = 1;
+	constexpr int numPointLights = 32;
 	std::vector<CGameObject*> pointLights;
 	float x = -2.0f;
-	float y = -10.0f;
+	float y = 1.0f;
 	for (int i = 0; i < numPointLights; ++i)
 	{
 		if ((i + 1) % 10 == 0)
@@ -145,7 +146,7 @@ void CInGameState::Start()
 		x -= 1.0f;
 
 		CGameObject* pl = new CGameObject(1789 + i);
-		pl->AddComponent<CPointLightComponent>(*pl, 10.f, SM::Vector3{1,1,1}, 10.f);
+		pl->AddComponent<CPointLightComponent>(*pl, 15.f, SM::Vector3{1,1,1}, 10.f);
 		pl->myTransform->Position({ x, y, -3.0f });
 
 		int thirdRange = numPointLights / 3;

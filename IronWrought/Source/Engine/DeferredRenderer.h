@@ -86,8 +86,11 @@ private:
 	ID3D11PixelShader* myPointLightShader;
 	ID3D11SamplerState* mySamplerState;
 
-	std::vector<ID3D11PixelShader*> myRenderPassPixelShaders;
-	ID3D11PixelShader* myCurrentRenderPassPixelShader;
+	std::vector<ID3D11PixelShader*> myRenderPassShaders;
+	ID3D11PixelShader* myCurrentRenderPassShader;
+	// Switches between myRenderPassGBuffer and myGBufferPixelShader
+	ID3D11PixelShader* myCurrentGBufferPixelShader;
+	ID3D11PixelShader* myRenderPassGBuffer;
 	unsigned short myRenderPassIndex;
 };
 

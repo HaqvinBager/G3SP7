@@ -115,7 +115,28 @@
     <FxCompile Include="DeferredInstancedModelVertexShader.hlsl">
       <Filter>Shaders\Deferred</Filter>
     </FxCompile>
-    <FxCompile Include="DeferredRenderPassAlbedoPixelShader.hlsl">
+    <FxCompile Include="DeferredRenderPassFullscreenPixelShader_GammaCorrection.hlsl">
+      <Filter>Shaders\Deferred Render Passes</Filter>
+    </FxCompile>
+    <FxCompile Include="DeferredRenderPassGBufferPixelShader.hlsl">
+      <Filter>Shaders\Deferred Render Passes</Filter>
+    </FxCompile>
+    <FxCompile Include="DeferredRenderPassShader_Albedo.hlsl">
+      <Filter>Shaders\Deferred Render Passes</Filter>
+    </FxCompile>
+    <FxCompile Include="DeferredRenderPassShader_AO.hlsl">
+      <Filter>Shaders\Deferred Render Passes</Filter>
+    </FxCompile>
+    <FxCompile Include="DeferredRenderPassShader_Emissive.hlsl">
+      <Filter>Shaders\Deferred Render Passes</Filter>
+    </FxCompile>
+    <FxCompile Include="DeferredRenderPassShader_Metalness.hlsl">
+      <Filter>Shaders\Deferred Render Passes</Filter>
+    </FxCompile>
+    <FxCompile Include="DeferredRenderPassShader_Normal.hlsl">
+      <Filter>Shaders\Deferred Render Passes</Filter>
+    </FxCompile>
+    <FxCompile Include="DeferredRenderPassShader_Roughness.hlsl">
       <Filter>Shaders\Deferred Render Passes</Filter>
     </FxCompile>
   </ItemGroup>

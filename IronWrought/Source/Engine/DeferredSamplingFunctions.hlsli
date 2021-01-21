@@ -29,13 +29,29 @@ PixelOutput PixelShader_Albedo(VertexToPixel input)
     return output;
 }
 
+// This function is used for renderpasses to isolate the normal texture.
+PixelOutput PixelShader_NormalForIsolatedRendering(VertexToPixel input)
+{
+    float3 normal;
+    normal.xy = normalTexture.Sample(defaultSampler, input.myUV.xy).ag;
+    // Recreate z
+    normal.z = 0.0f;
+    normal.z = sqrt(1 - saturate((normal.x * normal.x) + (normal.y * normal.y)));
+    normal = normalize(normal);
+    
+    PixelOutput output;
+    output.myColor.xyz = normal.xyz;
+    output.myColor.a = 1.0f;
+    return output;
+}
+
 PixelOutput PixelShader_Normal(VertexToPixel input)
 {
     float3 normal;
     normal.xy = normalTexture.Sample(defaultSampler, input.myUV.xy).ag;
     // Recreate z
     normal.z = 0.0f;
-    normal = (normal * 2.0f) - 1.0f;
+    normal = (normal * 2.0f) - 1.0f;// Comment this for Normal shader render pass
     normal.z = sqrt(1 - saturate((normal.x * normal.x) + (normal.y * normal.y)));
     //normal = (normal * 0.5f) + 0.5f;// Found in TGA modelviewer shader code, but seems to cause issues here.
     normal = normalize(normal);

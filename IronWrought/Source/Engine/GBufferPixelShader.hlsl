@@ -24,7 +24,7 @@ GBufferOutput main(VertexModelToPixel input)
     if (myNumberOfDetailNormals > 0)
     {
         float detailNormalStrength = PixelShader_DetailNormalStrength(vertToPixel);
-        float strengthMultiplier = DetailStrengthDistanceMultiplier(cameraPosition.xyz, input.myWorldPosition.xyz); // should change based on distance to camera
+        float strengthMultiplier = DetailStrengthDistanceMultiplier(cameraPosition.xyz, input.myWorldPosition.xyz);
         float3 detailNormal;
 
         // Blend based on detail normal strength

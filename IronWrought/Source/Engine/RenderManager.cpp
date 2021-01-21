@@ -21,7 +21,7 @@
 #define USING_DEFERRED
 
 CRenderManager::CRenderManager() /*: myScene(*CScene::GetInstance())*/
-	: myUseBloom(true)
+	: myDoFullRender(true)
 	, myClearColor(0.8f, 0.5f, 0.5f, 1.0f)
 {
 }
@@ -97,7 +97,7 @@ void CRenderManager::Render(CScene& aScene)
 	if (Input::GetInstance()->IsKeyPressed(VK_F6))	
 	{
 #ifdef USING_DEFERRED //Define found under #includes
-		myUseBloom = myDeferredRenderer.ToggleRenderPass();
+		myDoFullRender = myDeferredRenderer.ToggleRenderPass();
 #else
 		myUseBloom = myForwardRenderer.ToggleRenderPass();
 #endif
@@ -149,32 +149,31 @@ void CRenderManager::Render(CScene& aScene)
 		gameObjects.pop_back();
 	}
 
-	std::vector<CPointLight*> onlyPointLights;
-	onlyPointLights = aScene.CullPointLights(&maincamera->GameObject());
-
 	myGBuffer.SetAsActiveTarget(&myIntermediateDepth);
 	myDeferredRenderer.GenerateGBuffer(maincamera, gameObjects, instancedGameObjects);
 	myDeferredTexture.SetAsActiveTarget();
 	myGBuffer.SetAllAsResources();
 	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_ADDITIVEBLEND);
 
-	if (myUseBloom)// Rename myUseBloom to be tied to renderpasses
-	{
-		myDeferredRenderer.Render(maincamera, environmentlight);
-		myDeferredRenderer.Render(maincamera, onlyPointLights);
-	}
+	std::vector<CPointLight*> onlyPointLights;
+	onlyPointLights = aScene.CullPointLights(&maincamera->GameObject());
+	
+	myDeferredRenderer.Render(maincamera, environmentlight);
+	myDeferredRenderer.Render(maincamera, onlyPointLights);
 
 	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_DISABLE);
 	myIntermediateTexture.SetAsActiveTarget();
 	myDeferredTexture.SetAsResourceOnSlot(0);
-	if(myUseBloom)
+	if(myDoFullRender)
 		myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCRENSHADER_GAMMACORRECTION);
-
+	else
+		myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCRENSHADER_GAMMACORRECTION_RENDERPASS);
+	
 	myIntermediateTexture.SetAsActiveTarget(&myIntermediateDepth);
 
 #pragma endregion ! Deferred
 #else
-
+#pragma region Forward
 	myIntermediateTexture.SetAsActiveTarget(&myIntermediateDepth);
 
 	for (unsigned int i = 0; i < gameObjects.size(); ++i)
@@ -212,7 +211,7 @@ void CRenderManager::Render(CScene& aScene)
 
 	myForwardRenderer.Render(environmentlight, pointlights, maincamera, gameObjects);
 	myForwardRenderer.InstancedRender(environmentlight, pointLightsInstanced, maincamera, instancedGameObjects);
-
+#pragma endregion ! Forward
 #endif // USING_DEFERRED
 
 #pragma region MODEL OUTLINES
@@ -268,7 +267,7 @@ void CRenderManager::Render(CScene& aScene)
 	myRenderStateManager.SetDepthStencilState(CRenderStateManager::DepthStencilStates::DEPTHSTENCILSTATE_DEFAULT);
 
 	// Hope this works!
-	myUseBloom ? RenderBloom() : RenderWithoutBloom();
+	myDoFullRender ? RenderBloom() : RenderWithoutBloom();
 
 	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_ALPHABLEND);
 	myRenderStateManager.SetDepthStencilState(CRenderStateManager::DepthStencilStates::DEPTHSTENCILSTATE_ONLYREAD);
