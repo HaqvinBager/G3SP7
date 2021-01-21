@@ -286,9 +286,6 @@ void CForwardRenderer::InstancedRender(CEnvironmentLight* anEnvironmentLight, st
 		myContext->PSSetShaderResources(1, 3, &modelData.myTexture[0]);
 		myContext->PSSetSamplers(0, 1, &modelData.mySamplerState);
 
-
-
-
 		// Toggling render passes
 		if (myCurrentPixelShader == nullptr)
 			myContext->PSSetShader(modelData.myPixelShader, nullptr, 0);
@@ -395,7 +392,6 @@ void CForwardRenderer::RenderLineInstances(CCameraComponent* aCamera, const std:
 
 	for (const CLineInstance* instance : aLineList)
 	{
-
 		CLine::SLineData lineData = instance->GetLine()->GetLineData();
 
 		myObjectBufferData.myToWorld = instance->GetTransform();
@@ -414,8 +410,6 @@ void CForwardRenderer::RenderLineInstances(CCameraComponent* aCamera, const std:
 
 		//myContext->DrawIndexed(lineData.myNumberOfIndices, 0, 0);
 		myContext->Draw(lineData.myNumberOfVertices, 0);
-
-
 	}
 }
 

@@ -24,6 +24,8 @@ public:
 	void Render(CCameraComponent* aCamera, CEnvironmentLight* anEnvironmentLight);
 	void Render(CCameraComponent* aCamera, std::vector<CPointLight*>& aPointLightList);
 
+	bool ToggleRenderPass();
+
 private:
 	template<class T>
 	void BindBuffer(ID3D11Buffer* aBuffer, T& someBufferData, std::string aBufferType)
@@ -69,6 +71,8 @@ private:
 	} myPointLightBufferData;
 
 private:
+	bool LoadRenderPassPixelShaders(ID3D11Device* aDevice);
+
 	ID3D11DeviceContext* myContext;
 	ID3D11Buffer* myFrameBuffer;
 	ID3D11Buffer* myObjectBuffer;
@@ -81,5 +85,9 @@ private:
 	ID3D11PixelShader* myEnvironmentLightShader;
 	ID3D11PixelShader* myPointLightShader;
 	ID3D11SamplerState* mySamplerState;
+
+	std::vector<ID3D11PixelShader*> myRenderPassPixelShaders;
+	ID3D11PixelShader* myCurrentRenderPassPixelShader;
+	unsigned short myRenderPassIndex;
 };
 

@@ -35,6 +35,7 @@ GBufferOutput main(VertexModelToPixel input)
 
         // Blend based on detail normal strength
         // X3512 Sampler array index must be literal expression => DETAILNORMAL_#
+        // Make this better please
         int dnIndex = DetailNormalToBlend(myNumberOfDetailNormals, detailNormalStrength);
         if (dnIndex == DETAILNORMAL_1)
             detailNormal = PixelShader_DetailNormal(vertToPixel, DETAILNORMAL_1).myColor.xyz;

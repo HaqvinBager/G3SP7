@@ -59,5 +59,5 @@ private:
 	DirectX::SimpleMath::Vector4 myClearColor;
 
 	bool myUseBloom;
-	int myFrameCounter;
+	//int myFrameCounter;// Used for a hack solution, can probably be removed
 };

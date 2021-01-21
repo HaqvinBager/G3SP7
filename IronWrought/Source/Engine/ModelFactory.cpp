@@ -260,6 +260,8 @@ CModel* CModelFactory::GetOutlineModelSubset()
 	psFile.close();
 	//End Shader
 
+
+
 	myOutlineModelSubset = new CModel();
 
 	CModel::SModelData modelData;
@@ -462,6 +464,20 @@ CModel* CModelFactory::CreateInstancedModels(std::string aFilePath, int aNumberO
 	//ID3D11ShaderResourceView* ambientShaderResourceView = GetShaderResourceView(device, TexturePathWide(modelDirectory + loaderModel->myTextures[2]));
 	//ID3D11ShaderResourceView* emissiveShaderResourceView = GetShaderResourceView(device, TexturePathWide(modelDirectory + loaderModel->myTextures[3]));
 
+	// Check for detail normal
+	ID3D11ShaderResourceView* detailNormal1 = nullptr;
+	ID3D11ShaderResourceView* detailNormal2 = nullptr;
+	ID3D11ShaderResourceView* detailNormal3 = nullptr;
+	ID3D11ShaderResourceView* detailNormal4 = nullptr;
+	std::string dnsuffix = aFilePath.substr(aFilePath.length() - 7, 3);
+	if (dnsuffix == "_dn")
+	{
+		detailNormal1 = GetShaderResourceView(device, "Assets/3D/Exempel_Modeller/DetailNormals/Tufted_Leather/dn_25cm_N.dds");
+		detailNormal2 = GetShaderResourceView(device, "Assets/3D/Exempel_Modeller/DetailNormals/4DN/dns/dn_CarbonFibre_n.dds");
+		detailNormal3 = GetShaderResourceView(device, "Assets/3D/Exempel_Modeller/DetailNormals/4DN/dns/dn_Wool_n.dds");
+		detailNormal4 = GetShaderResourceView(device, "Assets/3D/Exempel_Modeller/DetailNormals/4DN/dns/dn_PlasticPolymer_n.dds");
+	}
+
 	CModel::SModelInstanceData modelInstanceData;
 	modelInstanceData.myNumberOfVertices = mesh->myVertexCount;
 	modelInstanceData.myNumberOfIndices = static_cast<UINT>(mesh->myIndexes.size());
@@ -480,6 +496,11 @@ CModel* CModelFactory::CreateInstancedModels(std::string aFilePath, int aNumberO
 	modelInstanceData.myTexture[0] = diffuseResourceView;
 	modelInstanceData.myTexture[1] = materialResourceView;
 	modelInstanceData.myTexture[2] = normalResourceView;
+
+	modelInstanceData.myDetailNormals[0] = detailNormal1;
+	modelInstanceData.myDetailNormals[1] = detailNormal2;
+	modelInstanceData.myDetailNormals[2] = detailNormal3;
+	modelInstanceData.myDetailNormals[3] = detailNormal4;
 
 	model->Init(modelInstanceData);
 	SInstancedModel instancedModel = { aFilePath, aNumberOfInstanced };

@@ -17,8 +17,21 @@
 namespace SM = DirectX::SimpleMath;
 
 CDeferredRenderer::CDeferredRenderer()
-{
-}
+	: myContext(nullptr)
+	, myFrameBuffer(nullptr)
+	, myObjectBuffer(nullptr)
+	, myLightBuffer(nullptr)
+	, myPointLightBuffer(nullptr)
+	, myFullscreenShader(nullptr)
+	, myModelVertexShader(nullptr)
+	, myInstancedModelVertexShader(nullptr)
+	, myEnvironmentLightShader(nullptr)
+	, myGBufferPixelShader(nullptr)
+	, myPointLightShader(nullptr)
+	, mySamplerState(nullptr)
+	, myCurrentRenderPassPixelShader(nullptr)
+	, myRenderPassIndex(0)
+{}
 
 CDeferredRenderer::~CDeferredRenderer()
 {
@@ -88,6 +101,8 @@ bool CDeferredRenderer::Init(CDirectXFramework* aFramework)
 	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreatePixelShader(psData.data(), psData.size(), nullptr, &myPointLightShader), "Point Light Pixel Shader could not be createed.");
 	ps3File.close();
 
+	LoadRenderPassPixelShaders(aFramework->GetDevice());
+
 	D3D11_SAMPLER_DESC samplerDesc = {};
 	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -111,6 +126,14 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 
 	myContext->VSSetConstantBuffers(0, 1, &myFrameBuffer);
 	myContext->PSSetConstantBuffers(0, 1, &myFrameBuffer);
+
+	// Toggling render passes
+	bool resetCurrentRenderPassPointer = false;
+	if (myCurrentRenderPassPixelShader == nullptr)
+	{
+		myCurrentRenderPassPixelShader = myGBufferPixelShader;//myContext->PSSetShader(myGBufferPixelShader, nullptr, 0);
+		resetCurrentRenderPassPointer = true;
+	}
 
 	for (auto& gameObject : aGameObjectList)
 	{
@@ -154,7 +177,8 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 		//	myContext->PSSetShaderResources(12 + i, 1, &modelData.myDetailNormals[i]);
 		//}
 
-		myContext->PSSetShader(myGBufferPixelShader, nullptr, 0);
+		//myContext->PSSetShader(myGBufferPixelShader, nullptr, 0);
+		myContext->PSSetShader(myCurrentRenderPassPixelShader, nullptr, 0);
 
 		myContext->PSSetSamplers(0, 1, &modelData.mySamplerState);
 
@@ -162,14 +186,14 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 	}
 
 	ID3D11ShaderResourceView* nullView = NULL;
-	myContext->PSSetShaderResources(9, 1, &nullView);
+	myContext->PSSetShaderResources(9,  1, &nullView);
 	myContext->PSSetShaderResources(10, 1, &nullView);
 	myContext->PSSetShaderResources(11, 1, &nullView);
 	myContext->PSSetShaderResources(12, 1, &nullView);
 	myContext->PSSetShaderResources(13, 1, &nullView);
 	myContext->PSSetShaderResources(14, 1, &nullView);
 	myContext->PSSetShaderResources(15, 1, &nullView);
-	myObjectBufferData.myNumberOfDetailNormals = 0;
+	myObjectBufferData.myNumberOfDetailNormals = 0;// Making sure to reset it!
 	
 	for (auto& gameobject : aInstancedGameObjectList)
 	{
@@ -177,10 +201,18 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 		if (instanceComponent == nullptr)
 			continue;
 
-		BindBuffer(myObjectBuffer, myObjectBufferData, "Object Buffer");
-
 		CModel* model = instanceComponent->GetModel();
 		CModel::SModelInstanceData modelData = model->GetModelInstanceData();
+
+		int dnCounter = 0;
+		for (auto detailNormal : model->GetModelInstanceData().myDetailNormals)
+		{
+			if (detailNormal)
+				++dnCounter;
+		}
+		myObjectBufferData.myNumberOfDetailNormals = dnCounter;
+
+		BindBuffer(myObjectBuffer, myObjectBufferData, "Object Buffer");
 
 		{
 			D3D11_MAPPED_SUBRESOURCE instanceBuffer;
@@ -203,20 +235,18 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 		myContext->PSSetConstantBuffers(1, 1, &myObjectBuffer);
 		myContext->PSSetShaderResources(5, 3, &modelData.myTexture[0]);
 		//myContext->PSSetShaderResources(9, 3, &modelData.myTexture[0]);
+		myContext->PSSetShaderResources(8, 4, &modelData.myDetailNormals[0]);
 
 		myContext->PSSetSamplers(0, 1, &modelData.mySamplerState);
 
-		myContext->PSSetShader(myGBufferPixelShader, nullptr, 0);
-
-		// Toggling render passes
-		//if (myCurrentPixelShader == nullptr)
-		//	myContext->PSSetShader(modelData.myPixelShader, nullptr, 0);
-		//else
-		//	myContext->PSSetShader(myCurrentPixelShader, nullptr, 0);
+		//myContext->PSSetShader(myGBufferPixelShader, nullptr, 0);
+		myContext->PSSetShader(myCurrentRenderPassPixelShader, nullptr, 0);
 
 		myContext->DrawIndexedInstanced(modelData.myNumberOfIndices, model->InstanceCount(), 0, 0, 0);
 	}
 
+	if (resetCurrentRenderPassPointer)
+		myCurrentRenderPassPixelShader = nullptr;
 }
 
 void CDeferredRenderer::Render(CCameraComponent* aCamera, CEnvironmentLight* anEnvironmentLight)
@@ -302,4 +332,65 @@ bool CDeferredRenderer::CreatePixelShader(std::string aFilepath, CDirectXFramewo
 	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreatePixelShader(psData.data(), psData.size(), nullptr, &outPixelShader), "Pixel Shader could not be created.");
 	psFile.close();
 	return true;
+}
+
+bool CDeferredRenderer::LoadRenderPassPixelShaders(ID3D11Device* aDevice)
+{
+	// Render pass shaders
+	std::ifstream psFile;
+	psFile.open("Shaders/RenderPassColorPixelShader.cso", std::ios::binary);
+	std::string psData = {std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>()};
+	psFile.close();
+
+	myRenderPassPixelShaders.emplace_back();
+	ENGINE_HR_MESSAGE(aDevice->CreatePixelShader(psData.data(), psData.size(), nullptr, &myRenderPassPixelShaders[0]), "Color Pixel Shader could not be created.");
+
+	// ===============
+	psFile.open("Shaders/RenderPassNormalPixelShader.cso", std::ios::binary);
+	psData = {std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>()};
+	psFile.close();
+
+	myRenderPassPixelShaders.emplace_back();
+	ENGINE_HR_MESSAGE(aDevice->CreatePixelShader(psData.data(), psData.size(), nullptr, &myRenderPassPixelShaders[1]), "Normal Pixel Shader could not be created.");
+
+	// ===============
+	psFile.open("Shaders/RenderPassRoughnessPixelShader.cso", std::ios::binary);
+	psData = {std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>()};
+	psFile.close();
+
+	myRenderPassPixelShaders.emplace_back();
+	ENGINE_HR_MESSAGE(aDevice->CreatePixelShader(psData.data(), psData.size(), nullptr, &myRenderPassPixelShaders[2]), "Roughness Pixel Shader could not be created.");
+
+	// ===============
+	psFile.open("Shaders/RenderPassMetalnessPixelShader.cso", std::ios::binary);
+	psData = {std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>()};
+	psFile.close();
+
+	myRenderPassPixelShaders.emplace_back();
+	ENGINE_HR_MESSAGE(aDevice->CreatePixelShader(psData.data(), psData.size(), nullptr, &myRenderPassPixelShaders[3]), "Metalness Pixel Shader could not be created.");
+
+	// ===============
+	psFile.open("Shaders/RenderPassAmbientOcclusionPixelShader.cso", std::ios::binary);
+	psData = {std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>()};
+	psFile.close();
+
+	myRenderPassPixelShaders.emplace_back();
+	ENGINE_HR_MESSAGE(aDevice->CreatePixelShader(psData.data(), psData.size(), nullptr, &myRenderPassPixelShaders[4]), "Ambient Occlusion Pixel Shader could not be created.");
+
+	return true;
+}
+
+bool CDeferredRenderer::ToggleRenderPass()
+{
+	++myRenderPassIndex;
+	if (myRenderPassIndex == myRenderPassPixelShaders.size())
+	{
+		myCurrentRenderPassPixelShader = nullptr;
+		return true;
+	} else if (myRenderPassIndex > myRenderPassPixelShaders.size())
+	{
+		myRenderPassIndex = 0;
+	}
+	myCurrentRenderPassPixelShader = myRenderPassPixelShaders[myRenderPassIndex];
+	return false;
 }

@@ -131,7 +131,7 @@ void CInGameState::Start()
 	scene->AddInstance(chest2);
 	scene->AddInstance(chest3);
 
-	constexpr int numPointLights = 0;
+	constexpr int numPointLights = 1;
 	std::vector<CGameObject*> pointLights;
 	float x = -2.0f;
 	float y = -10.0f;
@@ -211,22 +211,21 @@ void CInGameState::Start()
 	y = -10.0f;
 	for (int i = 0; i < instancedCount; ++i)
 	{
+		x -= 1.0f;
 		if ((i + 1) % 10 == 0)
 		{
 			x = -2.0f;
 			y += 1.0f;
 		}
-		x -= 1.0f;
 
 		SM::Matrix transform;
 		transform.Translation({ x, y, 0.0f });
 		transforms[i] = transform;
-
-
 	}
 	CGameObject* instancedGameObject = new CGameObject(999);
 	instancedGameObject->AddComponent<CInstancedModelComponent>(*instancedGameObject
-													   , "Assets/3D/Exempel_Modeller/DetailNormals/Tufted_Leather/tufted_leather_dn.fbx"
+													   //, "Assets/3D/Exempel_Modeller/DetailNormals/Tufted_Leather/tufted_leather_dn.fbx"
+													   , "Assets/3D/Exempel_Modeller/DetailNormals/4DN/4DNs_dn.fbx"
 													   , instancedCount
 													   , transforms
 													   , false);
