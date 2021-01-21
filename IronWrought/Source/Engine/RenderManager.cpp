@@ -158,18 +158,24 @@ void CRenderManager::Render(CScene& aScene)
 	myGBuffer.SetAllAsResources();
 	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_ADDITIVEBLEND);
 
-	myDeferredRenderer.Render(maincamera, environmentlight);
-	myDeferredRenderer.Render(maincamera, onlyPointLights);
+	if (myUseBloom)// Rename myUseBloom to be tied to renderpasses
+	{
+		myDeferredRenderer.Render(maincamera, environmentlight);
+		myDeferredRenderer.Render(maincamera, onlyPointLights);
+	}
 
 	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_DISABLE);
 	myIntermediateTexture.SetAsActiveTarget();
 	myDeferredTexture.SetAsResourceOnSlot(0);
-	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCRENSHADER_GAMMACORRECTION);
+	if(myUseBloom)
+		myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCRENSHADER_GAMMACORRECTION);
 
 	myIntermediateTexture.SetAsActiveTarget(&myIntermediateDepth);
 
 #pragma endregion ! Deferred
 #else
+
+	myIntermediateTexture.SetAsActiveTarget(&myIntermediateDepth);
 
 	for (unsigned int i = 0; i < gameObjects.size(); ++i)
 	{

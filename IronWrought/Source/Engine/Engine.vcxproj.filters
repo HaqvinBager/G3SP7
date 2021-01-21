@@ -115,6 +115,9 @@
     <FxCompile Include="DeferredInstancedModelVertexShader.hlsl">
       <Filter>Shaders\Deferred</Filter>
     </FxCompile>
+    <FxCompile Include="DeferredRenderPassAlbedoPixelShader.hlsl">
+      <Filter>Shaders\Deferred Render Passes</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimationComponent.cpp">
@@ -851,6 +854,9 @@
     </Filter>
     <Filter Include="Shaders\Deferred">
       <UniqueIdentifier>{cc09a61a-ce12-4e9a-a6ca-e9ecc120c994}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Deferred Render Passes">
+      <UniqueIdentifier>{4e1a5e39-8e5c-4cda-9552-2d86c85c158e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -41,14 +41,34 @@ PixelOutPut main(VertexToPixel input)
         float detailNormalStrength = PixelShader_DetailNormalStrength(input);
         float strengthMultiplier = DetailStrengthDistanceMultiplier(cameraPosition.xyz, input.myWorldPosition.xyz); // should change based on distance to camera
         float3 detailNormal;
-        for (int i = 0; i < myNumberOfDetailNormals; ++i)
-        {
-            detailNormal = PixelShader_DetailNormal(input, i).myColor.xyz;
-            detailNormal = SetDetailNormalStrength(detailNormal, detailNormalStrength, strengthMultiplier);
-            normal = normal * 0.5 + 0.5;
-            detailNormal = detailNormal * 0.5 + 0.5;
-            normal = BlendRNM(normal, detailNormal);
-        }
+        
+        // Blend based on detail normal strength
+        // X3512 Sampler array index must be literal expression => DETAILNORMAL_#
+        // Make this better please
+        int dnIndex = DetailNormalToBlend(myNumberOfDetailNormals, detailNormalStrength); // This is an if-chain. D:
+        if (dnIndex == DETAILNORMAL_1)// This is also an if-chain >:/
+            detailNormal = PixelShader_DetailNormal(input, DETAILNORMAL_1).myColor.xyz;
+        else if (dnIndex == DETAILNORMAL_2)
+            detailNormal = PixelShader_DetailNormal(input, DETAILNORMAL_2).myColor.xyz;
+        else if (dnIndex == DETAILNORMAL_3)
+            detailNormal = PixelShader_DetailNormal(input, DETAILNORMAL_3).myColor.xyz;
+        else if (dnIndex == DETAILNORMAL_4)
+            detailNormal = PixelShader_DetailNormal(input, DETAILNORMAL_4).myColor.xyz;
+        
+        detailNormal = SetDetailNormalStrength(detailNormal, detailNormalStrength, strengthMultiplier);
+        normal = normal * 0.5 + 0.5;
+        detailNormal = detailNormal * 0.5 + 0.5;
+        normal = BlendRNM(normal, detailNormal);
+        
+        // Blend all 4
+        //for (int i = 0; i < myNumberOfDetailNormals; ++i)
+        //{
+        //    detailNormal = PixelShader_DetailNormal(input, i).myColor.xyz;
+        //    detailNormal = SetDetailNormalStrength(detailNormal, detailNormalStrength, strengthMultiplier);
+        //    normal = normal * 0.5 + 0.5;
+        //    detailNormal = detailNormal * 0.5 + 0.5;
+        //    normal = BlendRNM(normal, detailNormal);
+        //}
     } // End of if
     
     float3x3 tangentSpaceMatrix = float3x3(normalize(input.myTangent.xyz), normalize(input.myBiNormal.xyz), normalize(input.myNormal.xyz));

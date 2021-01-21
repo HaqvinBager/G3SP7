@@ -40,9 +40,8 @@ CDeferredRenderer::~CDeferredRenderer()
 bool CDeferredRenderer::Init(CDirectXFramework* aFramework)
 {
 	myContext = aFramework->GetContext();
-	if (!myContext)
-	{
-		return false;
+	if (!myContext){
+		return false; // Maybe we should fix proper error handling?? :S
 	}
 
 	ID3D11Device* device = aFramework->GetDevice();
@@ -134,6 +133,7 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 		myCurrentRenderPassPixelShader = myGBufferPixelShader;//myContext->PSSetShader(myGBufferPixelShader, nullptr, 0);
 		resetCurrentRenderPassPointer = true;
 	}
+	// else it has been set and we don't have to do anything
 
 	for (auto& gameObject : aGameObjectList)
 	{
@@ -338,7 +338,7 @@ bool CDeferredRenderer::LoadRenderPassPixelShaders(ID3D11Device* aDevice)
 {
 	// Render pass shaders
 	std::ifstream psFile;
-	psFile.open("Shaders/RenderPassColorPixelShader.cso", std::ios::binary);
+	psFile.open("Shaders/DeferredRenderPassAlbedoPixelShader.cso", std::ios::binary);
 	std::string psData = {std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>()};
 	psFile.close();
 
