@@ -70,11 +70,11 @@ void CInGameState::Start()
 	CEngine::GetInstance()->SetActiveScene(myState);
 
 	//rapidjson::Document document = CJsonReader::LoadDocument(ASSETPATH + "Assets/TestJson.json");
-	//auto jsonarray = document["gameobjects"].GetArray();
+	//auto jsonarray = document["instancedGameobjects"].GetArray();
 
 	//for (auto& jsongameobject : jsonarray) {
 	//
-	//	CGameObject* gameobject = new CGameObject(0);
+	//	CGameObject* instancedGameObject = new CGameObject(0);
 	//	std::string model_path;
 	//	//float instanceID;
 	//	Vector3 position;
@@ -82,38 +82,40 @@ void CInGameState::Start()
 	//	Vector3 scale;
 	//
 	//	auto jsonmodelpath = jsongameobject["model"].GetObjectW();
-	//
 	//	model_path = jsonmodelpath["fbxPath"].GetString();
-	//
-	//	auto jsontransform = jsongameobject["transform"].GetObjectW();
-	//	//auto jsoninstanceID = jsontransform["instanceID"].GetObjectW();
-	//	auto jsonposition = jsontransform["position"].GetObjectW();
-	//	auto jsonrotation = jsontransform["rotation"].GetObjectW();
-	//	auto jsonscale = jsontransform["scale"].GetObjectW();
-	//
-	//	//instanceID = jsoninstanceID[""].GetFloat();
-	//
-	//	position.x = jsonposition["x"].GetFloat();
-	//	position.y = jsonposition["y"].GetFloat();
-	//	position.z = jsonposition["z"].GetFloat();
-	//	
-	//	rotation.x = jsonrotation["x"].GetFloat();
-	//	rotation.y = jsonrotation["y"].GetFloat();
-	//	rotation.z = jsonrotation["z"].GetFloat();
-	//
-	//	scale.x = jsonscale["x"].GetFloat();
-	//	scale.y = jsonscale["y"].GetFloat();
-	//	scale.z = jsonscale["z"].GetFloat();
-	//
-	//	gameobject->AddComponent<CModelComponent>(*gameobject, std::string(ASSETPATH + model_path));
-	//	gameobject->GetComponent<CTransformComponent>()->Position(position);
-	//	gameobject->GetComponent<CTransformComponent>()->Rotation(rotation);
-	//	gameobject->GetComponent<CTransformComponent>()->Scale(scale.x);
-	//
-	//
-	//	scene->AddInstance(gameobject);
-	//}
+	//	auto jsonTransforms = jsongameobject["transforms"].GetArray();
+	//	std::vector<DirectX::SimpleMath::Matrix> instancedTransforms;
+	//	for (auto& jsonTransform : jsonTransforms) {
+	//		//auto jsoninstanceID = jsontransform["instanceID"].GetObjectW();
+	//		auto jsonposition = jsonTransform["position"].GetObjectW();
+	//		auto jsonrotation = jsonTransform["rotation"].GetObjectW();
+	//		auto jsonscale = jsonTransform["scale"].GetObjectW();
 
+	//		//instanceID = jsoninstanceID[""].GetFloat();
+
+	//		position.x = jsonposition["x"].GetFloat();			
+	//		position.y = jsonposition["y"].GetFloat();
+	//		position.z = jsonposition["z"].GetFloat();
+
+	//		rotation.x = jsonrotation["x"].GetFloat();
+	//		rotation.y = jsonrotation["y"].GetFloat();
+	//		rotation.z = jsonrotation["z"].GetFloat();
+
+	//		scale.x = jsonscale["x"].GetFloat();
+	//		scale.y = jsonscale["y"].GetFloat();
+	//		scale.z = jsonscale["z"].GetFloat();
+
+	//		CGameObject temp(0);
+	//		CTransformComponent transform(temp);
+	//		transform.Scale(scale.x);
+	//		transform.Position(position);
+	//		transform.Rotation(rotation);
+	//		instancedTransforms.emplace_back(transform.GetMatrix());
+	//		
+	//	}
+	//	instancedGameObject->AddComponent<CInstancedModelComponent>(*instancedGameObject, std::string(ASSETPATH + model_path), instancedTransforms);
+	//	scene->AddInstance(instancedGameObject);
+	//}
 
 	CGameObject* chest = new CGameObject(1337);
 	chest->AddComponent<CModelComponent>(*chest, "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx");
@@ -171,7 +173,7 @@ void CInGameState::Start()
 
 	CGameObject* dn = new CGameObject(1338);
 	dn->AddComponent<CModelComponent>(*dn, "Assets/3D/Exempel_Modeller/DetailNormals/Tufted_Leather/tufted_leather_dn.fbx");
-	dn->GetComponent<CTransformComponent>()->Position({7.0f,0.0f,0.0f});
+	dn->GetComponent<CTransformComponent>()->Position({7.0f,100.0f,0.0f});
 	dn->GetComponent<CTransformComponent>()->Scale(100.0f);
 
 	scene->AddInstance(dn);

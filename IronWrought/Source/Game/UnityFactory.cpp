@@ -3,6 +3,7 @@
 #include "Scene.h"
 #include "GameObject.h"
 
+#include "Component.h"
 #include "ModelComponent.h"
 #include "InstancedModelComponent.h"
 #include "AnimationComponent.h"
@@ -173,6 +174,6 @@ CGameObject* CUnityFactory::CreateGameObject(const SGameObjectData& aData, const
 CGameObject* CUnityFactory::CreateGameObjectInstanced(const std::string& aModelPath, int InstancedID, std::vector<DirectX::SimpleMath::Matrix> aInstancedTransforms)
 {
 	CGameObject* gameObject = new CGameObject(InstancedID);
-	gameObject->AddComponent<CInstancedModelComponent>(*gameObject, aModelPath, InstancedID, aInstancedTransforms, (GetSuffixFromString(aModelPath) == "_AL"));
+	gameObject->AddComponent<CInstancedModelComponent>(*gameObject, aModelPath, aInstancedTransforms, (GetSuffixFromString(aModelPath) == "_AL"));
 	return std::move(gameObject);
 }
