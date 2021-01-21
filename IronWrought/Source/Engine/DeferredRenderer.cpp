@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "DeferredRenderer.h"
 #include "DirectXFramework.h"
-//#include "ModelInstance.h"
 #include "Model.h"
 #include "Camera.h"
 #include "EnvironmentLight.h"
@@ -31,7 +30,7 @@ CDeferredRenderer::CDeferredRenderer()
 	, mySamplerState(nullptr)
 	, myCurrentGBufferPixelShader(nullptr)
 	, myRenderPassGBuffer(nullptr)
-	, myRenderPassIndex(0)
+	, myRenderPassIndex(9)
 {}
 
 CDeferredRenderer::~CDeferredRenderer()
