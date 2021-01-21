@@ -16,7 +16,6 @@ CImguiManager::~CImguiManager()
 
 void CImguiManager::DebugWindow()
 {
-	static char buffer[1024];
 	if (ImGui::Begin("Debug info"))
 	{
 		ImGui::Text("Framerate: %.0f", ImGui::GetIO().Framerate);

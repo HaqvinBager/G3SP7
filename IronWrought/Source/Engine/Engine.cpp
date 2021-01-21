@@ -188,6 +188,7 @@ void CEngine::RenderFrame()
 
 	if (myEnabledEditorImgui)
 	{
+		ImGui::ShowDemoWindow(&myEnabledEditorImgui);
 	}
 	
 	//IMGUI END
