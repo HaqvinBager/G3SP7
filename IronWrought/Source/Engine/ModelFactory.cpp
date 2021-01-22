@@ -24,6 +24,8 @@
 #define TRIMSHEET_PATH "Assets/Trimsheets/"	
 // Create functions for Trimsheets if they are to be used again. Instead of copypasted clutter.
 
+#define USING_FBX_MATERIALS
+
 CModelFactory* CModelFactory::ourInstance = nullptr;
 CModelFactory* CModelFactory::GetInstance()
 {
@@ -224,6 +226,7 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 		detailNormal4 = GetShaderResourceView(device, "Assets/3D/Exempel_Modeller/DetailNormals/4DN/dns/dn_PlasticPolymer_n.dds");
 	}
 
+#ifdef USING_FBX_MATERIALS
 	std::vector<std::array<ID3D11ShaderResourceView*, 3>> materials;
 	for (unsigned int i = 0; i < loaderModel->myMaterials.size(); ++i) {
 		std::string materialName = loaderModel->myMaterials[loaderModel->myMaterialIndices[i]];
@@ -232,6 +235,14 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 		ID3D11ShaderResourceView* normalResourceView = GetShaderResourceView(device, (modelDirectory + materialName/*modelDirectoryAndName*/ + "_n.dds"));
 		materials.push_back({ diffuseResourceView, materialResourceView, normalResourceView });
 	}
+#else
+	std::vector<std::array<ID3D11ShaderResourceView*, 3>> materials;
+	ID3D11ShaderResourceView* diffuseResourceView = GetShaderResourceView(device, (modelDirectory + modelName/*modelDirectoryAndName*/ + "_c.dds"));
+	ID3D11ShaderResourceView* materialResourceView = GetShaderResourceView(device, (modelDirectory + modelName/*modelDirectoryAndName*/ + "_m.dds"));
+	ID3D11ShaderResourceView* normalResourceView = GetShaderResourceView(device, (modelDirectory + modelName/*modelDirectoryAndName*/ + "_n.dds"));
+	materials.push_back({ diffuseResourceView, materialResourceView, normalResourceView });
+#endif
+
 
 	//Model
 	CModel* model = new CModel();
@@ -484,6 +495,7 @@ CModel* CModelFactory::CreateInstancedModels(std::string aFilePath, int aNumberO
 	}
 	// ! Check if model uses trimsheet
 
+#ifdef USING_FBX_MATERIALS
 	std::vector<std::array<ID3D11ShaderResourceView*, 3>> materials;
 	for (unsigned int i = 0; i < loaderModel->myMaterials.size(); ++i) {
 		std::string materialName = loaderModel->myMaterials[loaderModel->myMaterialIndices[i]];
@@ -492,6 +504,13 @@ CModel* CModelFactory::CreateInstancedModels(std::string aFilePath, int aNumberO
 		ID3D11ShaderResourceView* normalResourceView = GetShaderResourceView(device, (modelDirectory + materialName/*modelDirectoryAndName*/ + "_n.dds"));
 		materials.push_back({ diffuseResourceView, materialResourceView, normalResourceView });
 	}
+#else
+	std::vector<std::array<ID3D11ShaderResourceView*, 3>> materials;
+	ID3D11ShaderResourceView* diffuseResourceView = GetShaderResourceView(device, (modelDirectory + modelName/*modelDirectoryAndName*/ + "_c.dds"));
+	ID3D11ShaderResourceView* materialResourceView = GetShaderResourceView(device, (modelDirectory + modelName/*modelDirectoryAndName*/ + "_m.dds"));
+	ID3D11ShaderResourceView* normalResourceView = GetShaderResourceView(device, (modelDirectory + modelName/*modelDirectoryAndName*/ + "_n.dds"));
+	materials.push_back({ diffuseResourceView, materialResourceView, normalResourceView });
+#endif
 
 	// Check for detail normal
 	ID3D11ShaderResourceView* detailNormal1 = nullptr;

@@ -99,7 +99,7 @@ void CRenderManager::Render(CScene& aScene)
 #ifdef USING_DEFERRED //Define found under #includes
 		myDoFullRender = myDeferredRenderer.ToggleRenderPass();
 #else
-		myUseBloom = myForwardRenderer.ToggleRenderPass();
+		myDoFullRender = myForwardRenderer.ToggleRenderPass();
 #endif
 	}
 
