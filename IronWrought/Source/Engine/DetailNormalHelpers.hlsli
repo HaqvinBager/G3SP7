@@ -8,6 +8,16 @@
 #define DETAILNORMAL_3 2
 #define DETAILNORMAL_4 3
 
+// Detail normal strength value 0.1f - 0.24f == DETAILNORMAL_1
+#define DETAILNORMAL_1_STR_RANGE_MIN 0.01f
+// Detail normal strength value 0.26f - 0.49f == DETAILNORMAL_2
+#define DETAILNORMAL_2_STR_RANGE_MIN 0.26f
+// Detail normal strength value 0.51f - 0.74f == DETAILNORMAL_3
+#define DETAILNORMAL_3_STR_RANGE_MIN 0.51f
+// Detail normal strength value 0.76f - 1.0f == DETAILNORMAL_4
+#define DETAILNORMAL_4_STR_RANGE_MIN 0.76f
+#define DETAILNORMAL_STR_RANGE_DIFF 0.23f
+
 #define DETAILNORMAL_DISTANCE_MAX 1.0f /* Don't go higher than 4.0f. Gives no noticable effect. */
 
 float3 SetDetailNormalStrength(float3 detailNormal, float detailNormalStrength, float strengthMultiplier)
@@ -32,32 +42,4 @@ float DetailStrengthDistanceMultiplier(float3 eyePos, float3 vertWorldPos)
     multiplier = clamp((1.0f / (dist * dist)), 0.0f, DETAILNORMAL_DISTANCE_MAX);
     return multiplier;
 }
-
-int DetailNormalToBlend(int aNumberOfDetailNormals, float detailNormalStrength)
-{
-    int index = DETAILNORMAL_1;
-    // Lazy way
-    //if (detailNormalStrength > 0.0f && detailNormalStrength < 0.23f)
-    //    index = DETAILNORMAL_1;
-    //else if (detailNormalStrength > 0.26f && detailNormalStrength < 0.48f)
-    //    index = DETAILNORMAL_2;
-    //else if (detailNormalStrength > 0.51f && detailNormalStrength < 0.73f)
-    //    index = DETAILNORMAL_3;
-    //else if (detailNormalStrength > 0.76f && detailNormalStrength < 1.0f)
-    //    index = DETAILNORMAL_4;
-    
-    // Lazy way : alt 2
-    if (detailNormalStrength > 0.76f)
-        index = DETAILNORMAL_4;
-    else if (detailNormalStrength > 0.51f)
-        index = DETAILNORMAL_3;
-    else if (detailNormalStrength > 0.26f)
-        index = DETAILNORMAL_2;
-    //else if (detailNormalStrength > 0.0f)
-    //    index = DETAILNORMAL_1;
-    
-    index = index > aNumberOfDetailNormals ? aNumberOfDetailNormals : index;
-    return index;
-}
-
 #endif

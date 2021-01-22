@@ -292,8 +292,6 @@ void CForwardRenderer::InstancedRender(CEnvironmentLight* anEnvironmentLight, st
 		else
 			myContext->PSSetShader(myCurrentPixelShader, nullptr, 0);
 
-
-
 		myContext->DrawIndexedInstanced(modelData.myNumberOfIndices, model->InstanceCount(), 0, 0, 0);
 	}
 }

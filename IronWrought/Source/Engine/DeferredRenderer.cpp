@@ -30,6 +30,7 @@ CDeferredRenderer::CDeferredRenderer()
 	, mySamplerState(nullptr)
 	, myCurrentGBufferPixelShader(nullptr)
 	, myRenderPassGBuffer(nullptr)
+	, myCurrentRenderPassShader(nullptr)
 	, myRenderPassIndex(9)
 {}
 
