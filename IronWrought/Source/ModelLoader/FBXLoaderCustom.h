@@ -48,12 +48,14 @@ public:
 	}
 
 	std::vector<CLoaderMesh*> myMeshes;
+	std::vector<unsigned int> myMaterialIndices;
 	std::string myModelPath;
 	float myAnimationDuration;
 	const struct aiScene* myScene;
 	Matrix44f myGlobalInverseTransform;
 	bool myIsLoaded;
 	std::vector<std::string> myTextures;
+	std::vector<std::string> myMaterials;
 	// Animation data
 	std::vector<BoneInfo> myBoneInfo;
 	std::map<std::string, unsigned int> myBoneNameToIndex;

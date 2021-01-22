@@ -19,7 +19,7 @@ void CGBuffer::ClearTextures(DirectX::SimpleMath::Vector4 aClearColor)
 
 void CGBuffer::ReleaseRenderTargets()
 {
-	std::array<ID3D11RenderTargetView*, static_cast<size_t>(EGBufferTextures::COUNT)> nullViews = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+	std::array<ID3D11RenderTargetView*, static_cast<size_t>(EGBufferTextures::COUNT)> nullViews = { NULL, NULL, NULL, NULL/*, NULL, NULL, NULL, NULL*/ };
 	myContext->OMSetRenderTargets(static_cast<size_t>(EGBufferTextures::COUNT), &nullViews[0], nullptr);
 }
 

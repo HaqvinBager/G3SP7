@@ -695,6 +695,23 @@ enum aiPostProcessSteps
     aiProcess_OptimizeMeshes                 |  \
     0 )
 
+// VI HAR GJORT DEN HÄR
+#define aiProcessPreset_TargetRealtime_MaxQuality_DontJoinIdentical ( \
+    aiProcess_CalcTangentSpace               |  \
+    aiProcess_GenSmoothNormals               |  \
+    aiProcess_ImproveCacheLocality           |  \
+    aiProcess_LimitBoneWeights               |  \
+    aiProcess_RemoveRedundantMaterials       |  \
+    aiProcess_SplitLargeMeshes               |  \
+    aiProcess_Triangulate                    |  \
+    aiProcess_GenUVCoords                    |  \
+    aiProcess_SortByPType                    |  \
+    aiProcess_FindDegenerates                |  \
+    aiProcess_FindInvalidData                |  \
+    aiProcess_FindInstances                  |  \
+    aiProcess_ValidateDataStructure          |  \
+    aiProcess_OptimizeMeshes                 |  \
+    0 )
 
 #ifdef __cplusplus
 } // end of extern "C"

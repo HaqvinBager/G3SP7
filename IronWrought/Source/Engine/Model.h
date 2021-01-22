@@ -4,45 +4,50 @@
 
 class CAnimation;
 
+struct SMeshData {
+	ID3D11Buffer* myVertexBuffer = nullptr;
+	ID3D11Buffer* myIndexBuffer = nullptr;
+	UINT myNumberOfVertices = 0;
+	UINT myNumberOfIndices = 0;
+	UINT myStride = 0;
+	UINT myOffset = 0;
+	UINT myMaterialIndex = 0;
+};
+
+struct SInstancedMeshData {
+	ID3D11Buffer* myVertexBuffer = nullptr;
+	ID3D11Buffer* myIndexBuffer = nullptr;
+	UINT myNumberOfVertices = 0;
+	UINT myNumberOfIndices = 0;
+	UINT myStride[2] = { 0, 0 };
+	UINT myOffset[2] = { 0, 0 };
+	UINT myMaterialIndex = 0;
+};
+
 class CModel {
 public:
 	struct SModelData {
-		UINT myNumberOfVertices = 0;
-		UINT myNumberOfIndices = 0;
-		UINT myStride = 0;
-		UINT myOffset = 0;
-		ID3D11Buffer* myVertexBuffer = nullptr;
-		ID3D11Buffer* myIndexBuffer = nullptr;
+		std::vector<SMeshData> myMeshes { };
 		ID3D11VertexShader* myVertexShader = nullptr;
 		ID3D11PixelShader* myPixelShader = nullptr;
 		ID3D11SamplerState* mySamplerState = nullptr;
 		D3D11_PRIMITIVE_TOPOLOGY myPrimitiveTopology;
 		ID3D11InputLayout* myInputLayout = nullptr;
-		std::array<ID3D11ShaderResourceView*, 3> myTexture { };
-		//ID3D11Buffer* myBonesBuffer = nullptr;
-		//std::vector<CAnimation*> myAnimations;
+		std::vector<std::array<ID3D11ShaderResourceView*, 3>> myMaterials { };
 		std::array<ID3D11ShaderResourceView*, 4> myDetailNormals { nullptr, nullptr, nullptr, nullptr };
-
-		unsigned short myModelModifiers;
 	};
 
 	struct SModelInstanceData {
-		UINT myNumberOfVertices = 0;
-		UINT myNumberOfIndices = 0;
-		UINT myStride[2] = { 0, 0 };
-		UINT myOffset[2] = { 0, 0 };
-		ID3D11Buffer* myVertexBuffer = nullptr;
-		ID3D11Buffer* myIndexBuffer = nullptr;
+		std::vector<SInstancedMeshData> myMeshes{ };
 		ID3D11Buffer* myInstanceBuffer = nullptr;
 		ID3D11VertexShader* myVertexShader = nullptr;
 		ID3D11PixelShader* myPixelShader = nullptr;
 		ID3D11SamplerState* mySamplerState = nullptr;
 		D3D11_PRIMITIVE_TOPOLOGY myPrimitiveTopology;
 		ID3D11InputLayout* myInputLayout = nullptr;
-		std::array<ID3D11ShaderResourceView*, 3> myTexture { };
+		std::vector<std::array<ID3D11ShaderResourceView*, 3>> myMaterials{ };
 
 		std::array<ID3D11ShaderResourceView*, 4> myDetailNormals { nullptr, nullptr, nullptr, nullptr };
-		bool myHasDetailNormals;
 
 		unsigned short myModelModifiers;
 	};
@@ -81,14 +86,3 @@ private:
 	SModelInstanceData myModelInstanceData;
 	int myInstanceCount;
 };
-
-	// CAnimation is only used in CAnimationComponent
-	//int AddAnimation(CAnimation* anAnimation);
-	//int CModel::AddAnimation(CAnimation* aAnimation)
-	//{
-	//	myAnimations.push_back(aAnimation);
-	//	return static_cast<int>(myAnimations.size());
-	//}
-	//const std::vector<CAnimation*>& GetAnimations() const { return myAnimations; }
-	//private:
-	//std::vector<CAnimation*> myAnimations;
