@@ -302,7 +302,6 @@ void TEMP_DeferredRenderingTests(CScene* scene)
 	instancedGameObject->AddComponent<CInstancedModelComponent>(*instancedGameObject
 																//, "Assets/3D/Exempel_Modeller/DetailNormals/Tufted_Leather/tufted_leather_dn.fbx"
 																, "Assets/3D/Exempel_Modeller/DetailNormals/4DN/4DNs_dn.fbx"
-																, instancedCount
 																, transforms
 																, false);
 	scene->AddInstance(instancedGameObject);
