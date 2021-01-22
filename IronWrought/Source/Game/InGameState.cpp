@@ -49,9 +49,16 @@ void CInGameState::Awake()
 
 void CInGameState::Start()
 {
-	std::vector<std::string> scenePath = {
+	std::vector<std::string> scenePath;
+	//rapidjson::Document document = CJsonReader::LoadDocument(ASSETPATH + "Assets/Generated/");
+
+	scenePath = {
 		"Level1_Layout_part1.json",
 		"Level1_Layout_part2.json"
+		/*GOAL:
+			Om LD tex inte har jobbat i part2 men den står med här, så kommer den att krasha eftersom filen inte existerar.
+			vi behöver alltså uppdatera scenepath efter hur Asset/Generated mappen ser ut.
+		*/
 	};
 	CScene* myUnityScene = CSceneManager::CreateScene(scenePath);
 	CEngine::GetInstance()->AddScene(myState, myUnityScene);
