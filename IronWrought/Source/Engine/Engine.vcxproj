@@ -204,6 +204,7 @@
     <ClInclude Include="InstancedModelComponent.h" />
     <ClInclude Include="JsonReader.h" />
     <ClInclude Include="MainSingleton.h" />
+    <ClInclude Include="MaterialHandler.h" />
     <ClInclude Include="Message.h" />
     <ClInclude Include="MessageType.h" />
     <ClInclude Include="Observer.h" />
@@ -316,6 +317,7 @@
     <ClCompile Include="InputMapper.cpp" />
     <ClCompile Include="InstancedModelComponent.cpp" />
     <ClCompile Include="MainSingleton.cpp" />
+    <ClCompile Include="MaterialHandler.cpp" />
     <ClCompile Include="ParticleEmitterComponent.cpp" />
     <ClCompile Include="PerlinNoise.cpp" />
     <ClCompile Include="PhysXWrapper.cpp" />

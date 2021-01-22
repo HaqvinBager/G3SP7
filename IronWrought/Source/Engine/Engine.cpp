@@ -35,6 +35,7 @@
 #include "imgui_impl_dx11.h"
 #include "imgui_impl_win32.h"
 #include "StateStack.h"
+#include "MaterialHandler.h"
 
 #pragma comment(lib, "runtimeobject.lib")
 #pragma comment(lib, "d3d11.lib")
@@ -145,7 +146,9 @@ bool CEngine::Init(CWindowHandler::SWindowData& someWindowData)
 
 	ENGINE_ERROR_BOOL_MESSAGE(CMainSingleton::PopupTextService().Init(), "Popup Text Service could not be initialized.");
 	ENGINE_ERROR_BOOL_MESSAGE(CMainSingleton::DialogueSystem().Init(), "Dialogue System could not be initialized.");
+	ENGINE_ERROR_BOOL_MESSAGE(CMainSingleton::MaterialHandler().Init(myFramework), "Material Handler could not be initialized.");
 	InitWindowsImaging();
+
 	return true;
 }
 

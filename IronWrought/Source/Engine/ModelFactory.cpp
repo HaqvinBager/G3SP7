@@ -8,7 +8,7 @@
 #include "ModelMath.h"
 #include "Model.h"
 #include <UnityFactory.h>
-
+#include "MaterialHandler.h"
 
 #ifdef _DEBUG
 #pragma comment(lib, "ModelLoader_Debug.lib")
@@ -499,10 +499,11 @@ CModel* CModelFactory::CreateInstancedModels(std::string aFilePath, int aNumberO
 	std::vector<std::array<ID3D11ShaderResourceView*, 3>> materials;
 	for (unsigned int i = 0; i < loaderModel->myMaterials.size(); ++i) {
 		std::string materialName = loaderModel->myMaterials[loaderModel->myMaterialIndices[i]];
-		ID3D11ShaderResourceView* diffuseResourceView = GetShaderResourceView(device, (modelDirectory + materialName/*modelDirectoryAndName*/ + "_c.dds"));
-		ID3D11ShaderResourceView* materialResourceView = GetShaderResourceView(device, (modelDirectory + materialName/*modelDirectoryAndName*/ + "_m.dds"));
-		ID3D11ShaderResourceView* normalResourceView = GetShaderResourceView(device, (modelDirectory + materialName/*modelDirectoryAndName*/ + "_n.dds"));
-		materials.push_back({ diffuseResourceView, materialResourceView, normalResourceView });
+		materials.push_back(CMainSingleton::MaterialHandler().RequestMaterial(materialName));
+		//ID3D11ShaderResourceView* diffuseResourceView = GetShaderResourceView(device, (modelDirectory + materialName/*modelDirectoryAndName*/ + "_c.dds"));
+		//ID3D11ShaderResourceView* materialResourceView = GetShaderResourceView(device, (modelDirectory + materialName/*modelDirectoryAndName*/ + "_m.dds"));
+		//ID3D11ShaderResourceView* normalResourceView = GetShaderResourceView(device, (modelDirectory + materialName/*modelDirectoryAndName*/ + "_n.dds"));
+		//materials.push_back({ diffuseResourceView, materialResourceView, normalResourceView });
 	}
 #else
 	std::vector<std::array<ID3D11ShaderResourceView*, 3>> materials;
