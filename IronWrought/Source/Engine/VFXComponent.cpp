@@ -31,7 +31,7 @@ void CVFXComponent::Update()
 	DirectX::SimpleMath::Vector3 scale;
 	DirectX::SimpleMath::Quaternion quat;
 	DirectX::SimpleMath::Vector3 translation;
-	GameObject().myTransform->GetMatrix().Decompose(scale, quat, translation);
+	GameObject().myTransform->GetWorldMatrix().Decompose(scale, quat, translation);
 	SetRotation(quat);
 
 	for (unsigned int i = 0; i < myVFXBases.size(); ++i)

@@ -56,13 +56,15 @@ void CInGameState::Start()
 	camera->myTransform->Position({0.0f, 1.0f, 0.0f});
 	camera->myTransform->Rotation({0.0f, 0.0f, 0.0f});
 	scene->SetMainCamera(camera->GetComponent<CCameraComponent>());
-	scene->AddInstance(camera);
 
 	CGameObject* player = new CGameObject(1);
-	player->AddComponent<CCameraControllerComponent>(*camera, 25.0f);
+	player->AddComponent<CCameraControllerComponent>(*player, 25.0f);
+	player->AddComponent<CModelComponent>(*player, ASSETPATH + "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx");
+	player->myTransform->Position({0.f, 0, 5.f});
 	camera->myTransform->SetParent(player->myTransform);
 
 	scene->AddInstance(player);
+	scene->AddInstance(camera);
 
 	CGameObject* envLight = new CGameObject(2);
 	envLight->AddComponent<CEnviromentLightComponent>(*envLight);
@@ -168,6 +170,8 @@ void CInGameState::Update()
 	{
 		gameObject->Update();
 	}
+	std::cout << "Camera X: " << CEngine::GetInstance()->GetActiveScene().GetMainCamera()->GameObject().myTransform->GetWorldMatrix().Translation().x << std::endl;
+	//std::cout << "Player X: " << CEngine::GetInstance()->GetActiveScene().GetMainCamera()->GameObject().myTransform->GetWorldMatrix().Translation().x << std::endl;
 }
 
 void CInGameState::ReceiveEvent(const EInputEvent aEvent)

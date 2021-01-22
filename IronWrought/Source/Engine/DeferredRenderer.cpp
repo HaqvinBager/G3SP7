@@ -144,7 +144,7 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 		CModel* model = gameObject->GetComponent<CModelComponent>()->GetMyModel();
 		CModel::SModelData modelData = model->GetModelData();
 
-		myObjectBufferData.myToWorld = gameObject->myTransform->GetMatrix();
+		myObjectBufferData.myToWorld = gameObject->myTransform->GetWorldMatrix();
 		int dnCounter = 0;
 		for (auto detailNormal : model->GetModelData().myDetailNormals)
 		{

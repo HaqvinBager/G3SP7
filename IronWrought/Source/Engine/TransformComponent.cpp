@@ -58,7 +58,14 @@ void CTransformComponent::Update()
 
 	if (myParent != nullptr)
 	{
-		myWorldTransform = DirectX::XMMatrixMultiply(myWorldTransform, myParent->myWorldTransform);
+		//Vector3 tempTranslation = myParent->myWorldTransform.Translation();
+		//
+		//Matrix tempRotation = Matrix::CreateFromQuaternion(
+		//	Rotation()
+		//);
+
+		myWorldTransform = DirectX::XMMatrixMultiply(myParent->myWorldTransform, myLocalTransform);
+		//myWorldTransform.Translation(tempTranslation + myLocalTransform.Translation());
 		//myWorldTransform = myParent->myWorldTransform * myLocalTransform;
 	}
 	else
@@ -70,16 +77,7 @@ void CTransformComponent::Update()
 
 void CTransformComponent::Position(DirectX::SimpleMath::Vector3 aPosition)
 {
-	if (myParent == nullptr)
-	{
-		myLocalTransform.Translation(aPosition);
-	}
-	else
-	{
-
-		//myTransform.Translation()
-	}
-
+	myLocalTransform.Translation(aPosition);
 }
 
 DirectX::SimpleMath::Vector3 CTransformComponent::Position() const
@@ -96,6 +94,7 @@ void CTransformComponent::Rotation(DirectX::SimpleMath::Vector3 aRotation)
 		DirectX::XMConvertToRadians(aRotation.x),
 		DirectX::XMConvertToRadians(aRotation.z)
 	);
+
 	myLocalTransform = tempRotation;
 	myLocalTransform *= Matrix::CreateScale(myScale * ENGINE_SCALE);
 	myLocalTransform.Translation(tempTranslation);
@@ -119,7 +118,7 @@ DirectX::SimpleMath::Quaternion CTransformComponent::Rotation() const
 	DirectX::SimpleMath::Vector3 translation;
 	DirectX::SimpleMath::Vector3 scale;
 	DirectX::SimpleMath::Quaternion quat;
-	GetMatrix().Decompose(scale, quat, translation);
+	GetLocalMatrix().Decompose(scale, quat, translation);
 	return quat;
 }
 
@@ -198,7 +197,12 @@ void CTransformComponent::Rotate(DirectX::SimpleMath::Quaternion aQuaternion)
 	myLocalTransform.Translation(tempTranslation);
 }
 
-DirectX::SimpleMath::Matrix CTransformComponent::GetMatrix() const
+DirectX::SimpleMath::Matrix CTransformComponent::GetWorldMatrix() const
+{
+	return myWorldTransform;
+}
+
+DirectX::SimpleMath::Matrix CTransformComponent::GetLocalMatrix() const
 {
 	return myLocalTransform;
 }
