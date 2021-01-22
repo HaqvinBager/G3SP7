@@ -29,6 +29,7 @@ class CScene {
 	friend class CEngine;
 	friend class CInGameState;
 	friend class CMenuState;
+	friend class teststate;
 public:
 
 	CScene();

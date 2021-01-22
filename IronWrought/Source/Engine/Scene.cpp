@@ -43,7 +43,7 @@ CScene::CScene()
 	, myBoss(nullptr)
 {
 
-
+	CMainSingleton::PhysXWrapper().CreatePXScene(this);
 	myModelsToOutline.resize(2);
 	for (unsigned int i = 0; i < myModelsToOutline.size(); ++i)
 	{

@@ -11,6 +11,7 @@
 #include "InstancedModelComponent.h"
 #include "RigidBodyComponent.h"
 #include "ModelComponent.h"
+#include "CharacterControllerComponent.h"
 
 #include "EnvironmentLight.h"
 #include "Timer.h"
@@ -49,13 +50,15 @@ void CInGameState::Awake()
 void CInGameState::Start()
 {
 	CScene* scene = new CScene();
-	scene->AddPXScene(CMainSingleton::PhysXWrapper().CreatePXScene());
+	CEngine::GetInstance()->AddScene(myState, scene);
+	CEngine::GetInstance()->SetActiveScene(myState);
 
 	CGameObject* camera = new CGameObject(0);
 	camera->AddComponent<CCameraComponent>(*camera, 70.0f);
 	camera->AddComponent<CCameraControllerComponent>(*camera, 25.0f);
 	camera->myTransform->Position({0.0f, 1.0f, 0.0f});
 	camera->myTransform->Rotation({0.0f, 0.0f, 0.0f});
+	camera->AddComponent<CCharacterControllerComponent>(*camera, PxControllerShapeType::eCAPSULE, camera->myTransform->Position());
 	scene->AddInstance(camera);
 	scene->SetMainCamera(camera->GetComponent<CCameraComponent>());
 
@@ -65,9 +68,6 @@ void CInGameState::Start()
 	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetDirection({0.0f,0.0f,-1.0f});
 	scene->AddInstance(envLight);
 	scene->SetEnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight());
-
-	CEngine::GetInstance()->AddScene(myState, scene);
-	CEngine::GetInstance()->SetActiveScene(myState);
 
 	//rapidjson::Document document = CJsonReader::LoadDocument(ASSETPATH + "Assets/TestJson.json");
 	//auto jsonarray = document["gameobjects"].GetArray();
@@ -107,7 +107,7 @@ void CInGameState::Start()
 	//
 	//	gameobject->AddComponent<CModelComponent>(*gameobject, std::string(ASSETPATH + model_path));
 	//	gameobject->GetComponent<CTransformComponent>()->Position(position);
-	//	gameobject->GetComponent<CTransformComponent>()->Rotation(rotation);
+	//	gameobject->GetComponent<CTransformComponent>()->Rotation(rotation);	
 	//	gameobject->GetComponent<CTransformComponent>()->Scale(scale.x);
 	//
 	//
@@ -171,8 +171,9 @@ void CInGameState::Start()
 
 	CGameObject* dn = new CGameObject(1338);
 	dn->AddComponent<CModelComponent>(*dn, "Assets/3D/Exempel_Modeller/DetailNormals/Tufted_Leather/tufted_leather_dn.fbx");
-	dn->GetComponent<CTransformComponent>()->Position({7.0f,0.0f,0.0f});
+	dn->GetComponent<CTransformComponent>()->Position({7.0f,100.0f,0.0f});
 	dn->GetComponent<CTransformComponent>()->Scale(100.0f);
+	dn->AddComponent<CRigidBodyComponent>(*dn);
 
 	scene->AddInstance(dn);
 

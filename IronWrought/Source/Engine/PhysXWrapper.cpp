@@ -4,6 +4,7 @@
 #include "Scene.h"
 #include "Engine.h"
 #include "RigidDynamicBody.h"
+#include "CharacterController.h"
 
 PxFilterFlags contactReportFilterShader(PxFilterObjectAttributes attributes0, PxFilterData filterData0,
 	PxFilterObjectAttributes attributes1, PxFilterData filterData1,
@@ -35,6 +36,7 @@ CPhysXWrapper::CPhysXWrapper()
 	myPhysicsVisualDebugger = nullptr;
 	myAllocator = nullptr;
 	myContactReportCallback = nullptr;
+	//myControllerManager = nullptr;
 }
 
 CPhysXWrapper::~CPhysXWrapper()
@@ -74,11 +76,11 @@ bool CPhysXWrapper::Init()
 	}
 
 	// All collisions gets pushed to this class
-	myContactReportCallback = new ContactReportCallback();
+	myContactReportCallback = new CContactReportCallback();
     return true;
 }
 
-PxScene* CPhysXWrapper::CreatePXScene()
+bool CPhysXWrapper::CreatePXScene(CScene* aScene)
 {
 	PxSceneDesc sceneDesc(myPhysics->getTolerancesScale());
 	sceneDesc.gravity = PxVec3(0.0f, -9.82f, 0.0f);
@@ -88,7 +90,7 @@ PxScene* CPhysXWrapper::CreatePXScene()
 	sceneDesc.simulationEventCallback = myContactReportCallback;
 	PxScene* pXScene = myPhysics->createScene(sceneDesc);
 	if (!pXScene) {
-		return nullptr;
+		return false;
 	}
 
 	PxPvdSceneClient* pvdClient = pXScene->getScenePvdClient();
@@ -97,7 +99,7 @@ PxScene* CPhysXWrapper::CreatePXScene()
 		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONSTRAINTS, true);
 		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);
 		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
-	}
+	} 
 
 	// Create a basic setup for a scene - contain the rodents in a invisible cage
 	PxMaterial* myMaterial = myPhysics->createMaterial(1.0f, 0.0f, -0.5f);
@@ -106,20 +108,40 @@ PxScene* CPhysXWrapper::CreatePXScene()
 	//groundPlane->setGlobalPose( {15.0f,0.0f,0.0f} );
 	pXScene->addActor(*groundPlane);
 
-	return pXScene;
+	myControllerManagers[pXScene] = PxCreateControllerManager(*pXScene);
+
+	myPXScenes[aScene] = pXScene;
+
+	return true;
+}
+
+PxScene* CPhysXWrapper::GetPXScene()
+{
+	return myPXScenes[&CEngine::GetInstance()->GetActiveScene()];
 }
 
 void CPhysXWrapper::Simulate()
 {
-	if (CEngine::GetInstance()->GetActiveScene().GetPXScene() != nullptr) {
-		CEngine::GetInstance()->GetActiveScene().GetPXScene()->simulate(CTimer::Dt());
-		CEngine::GetInstance()->GetActiveScene().GetPXScene()->fetchResults(true);
+	if (GetPXScene() != nullptr) {
+		GetPXScene()->simulate(CTimer::Dt());
+		GetPXScene()->fetchResults(true);
 	}
 }
 
-RigidDynamicBody* CPhysXWrapper::CreateDynamicRigidbody(Vector3 aPos)
+CRigidDynamicBody* CPhysXWrapper::CreateDynamicRigidbody(const Vector3& aPos)
 {
-	RigidDynamicBody* dynamicBody = new RigidDynamicBody(*myPhysics, aPos);
-	CEngine::GetInstance()->GetActiveScene().GetPXScene()->addActor(dynamicBody->GetBody());
+	CRigidDynamicBody* dynamicBody = new CRigidDynamicBody(*myPhysics, aPos);
+	GetPXScene()->addActor(dynamicBody->GetBody());
 	return dynamicBody;
+}
+
+CCharacterController* CPhysXWrapper::CreateCharacterController(PxControllerShapeType::Enum aType, const Vector3& aPos, const float& aRadius, const float& aHeight)
+{
+	CCharacterController* characterController = new CCharacterController(aType, aPos, aRadius, aHeight);
+	return characterController;
+}
+
+PxControllerManager* CPhysXWrapper::GetControllerManger()
+{
+	return myControllerManagers[GetPXScene()];
 }

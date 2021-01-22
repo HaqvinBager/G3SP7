@@ -3,8 +3,10 @@
 
 using namespace physx;
 
-class ContactReportCallback;
-class RigidDynamicBody;
+class CContactReportCallback;
+class CRigidDynamicBody;
+class CScene;
+class CCharacterController;
 
 class CPhysXWrapper
 {
@@ -14,11 +16,17 @@ public:
 
 	bool Init();
 
-	PxScene* CreatePXScene();
+	bool CreatePXScene(CScene* aScene);
+	PxScene* GetPXScene();
+	PxPhysics* GetPhysics() { return myPhysics; }
 
 	void Simulate();
 
-	RigidDynamicBody* CreateDynamicRigidbody(Vector3 aPos);
+	CRigidDynamicBody* CreateDynamicRigidbody(const Vector3& aPos);
+
+	CCharacterController* CreateCharacterController(PxControllerShapeType::Enum aType, const Vector3& aPos, const float& aRadius, const float& aHeight);
+
+	PxControllerManager* GetControllerManger();
 private:
 	PxFoundation* myFoundation;
 	PxPhysics* myPhysics;
@@ -26,6 +34,9 @@ private:
 	PxMaterial* myPXMaterial;
 	PxPvd* myPhysicsVisualDebugger;
 	PxDefaultAllocator* myAllocator;
-	ContactReportCallback* myContactReportCallback;
+	CContactReportCallback* myContactReportCallback;
+	//PxControllerManager* myControllerManager;
+	std::unordered_map<PxScene*, PxControllerManager*> myControllerManagers;
+	std::unordered_map<CScene*, PxScene*> myPXScenes;
 };
 
