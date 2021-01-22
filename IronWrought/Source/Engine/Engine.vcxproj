@@ -221,6 +221,7 @@
     <ClInclude Include="RectangleColliderComponent.h" />
     <ClInclude Include="RigidBodyComponent.h" />
     <ClInclude Include="RigidDynamicBody.h" />
+    <ClInclude Include="SceneManager.h" />
     <ClInclude Include="StackWalker.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="DebugTimerUtility.h" />
@@ -326,6 +327,7 @@
     <ClCompile Include="RectangleColliderComponent.cpp" />
     <ClCompile Include="RigidBodyComponent.cpp" />
     <ClCompile Include="RigidDynamicBody.cpp" />
+    <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="StackWalker.cpp" />
     <ClCompile Include="State.cpp" />
     <ClCompile Include="DirectXFramework.cpp" />
