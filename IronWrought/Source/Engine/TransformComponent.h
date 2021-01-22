@@ -36,9 +36,21 @@ public:
 	//To be Removed 2020-01-12 -> 2020-01-22 /Axel
 	void SetOutlineScale();
 
+	void SetParent(CTransformComponent* aParent) { myParent = aParent; }
+
 private:
-	float myScale;
 	// TODO: Move speed into "Resource Component"
 	DirectX::SimpleMath::Matrix myTransform;
-	std::string hej;
+	DirectX::SimpleMath::Matrix myLocalTransform;
+
+	DirectX::SimpleMath::Vector3 myLocalPosition;
+	DirectX::SimpleMath::Vector3 myLocalRotation;
+	DirectX::SimpleMath::Vector3 myLocalScale;
+
+	DirectX::SimpleMath::Vector3 myWorldPosition;
+	DirectX::SimpleMath::Vector3 myWorldRotation;
+	DirectX::SimpleMath::Vector3 myWorldScale;
+
+	CTransformComponent* myParent;
+	float myScale;
 };

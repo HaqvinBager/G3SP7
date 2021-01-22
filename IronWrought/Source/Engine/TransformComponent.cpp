@@ -8,7 +8,10 @@
 #define ENGINE_SCALE 0.01f
 using namespace DirectX::SimpleMath;
 
-CTransformComponent::CTransformComponent(CGameObject& aParent, DirectX::SimpleMath::Vector3 aPosition): myScale(1.0f), CComponent(aParent)
+CTransformComponent::CTransformComponent(CGameObject& aParent, DirectX::SimpleMath::Vector3 aPosition)
+	:  myScale(1.0f), 
+	myParent(nullptr),
+	CComponent(aParent)
 {
 	Scale(1.0f);
 	Position(aPosition);
@@ -29,17 +32,50 @@ void CTransformComponent::Start()
 
 void CTransformComponent::Update()
 {
+	if (myParent != nullptr)
+	{
+		myWorldRotation = myParent->myWorldRotation * myLocalRotation;
+		myWorldScale = myParent->myWorldScale * myLocalScale;
+		myWorldPosition = myParent->myWorldPosition + myParent->myWorldRotation * (myParent->myWorldScale * myLocalPosition);
+
+		Matrix t, r, s;		
+		// cache local/world transforms
+		t = Matrix::CreateTranslation(myLocalPosition);
+		r = Matrix::CreateFromYawPitchRoll(DirectX::XMConvertToRadians(myLocalRotation.y),
+										   DirectX::XMConvertToRadians(myLocalRotation.x),
+										   DirectX::XMConvertToRadians(myLocalRotation.z));
+		s = Matrix::CreateScale(myLocalScale);
+		myLocalTransform = t * r * s;
+
+
+		t = Matrix::CreateTranslation(myWorldPosition);
+		r = Matrix::CreateFromYawPitchRoll(DirectX::XMConvertToRadians(myWorldRotation.y),
+										   DirectX::XMConvertToRadians(myWorldRotation.x),
+										   DirectX::XMConvertToRadians(myWorldRotation.z));
+		s = Matrix::CreateScale(myWorldScale);
+		myTransform = t * r * s;
+	}
 }
 
 void CTransformComponent::Position(DirectX::SimpleMath::Vector3 aPosition)
 {
-	myTransform.Translation(aPosition);
+	if (myParent == nullptr)
+	{
+		myTransform.Translation(aPosition);
+	}
+	else
+	{
+
+		//myTransform.Translation()
+	}
+
 }
 
 DirectX::SimpleMath::Vector3 CTransformComponent::Position() const
 {
 	return myTransform.Translation();
 }
+
 void CTransformComponent::Rotation(DirectX::SimpleMath::Vector3 aRotation)
 {
 	Vector3 tempTranslation = myTransform.Translation();
@@ -52,6 +88,7 @@ void CTransformComponent::Rotation(DirectX::SimpleMath::Vector3 aRotation)
 	myTransform = tempRotation;
 	myTransform *= Matrix::CreateScale(myScale * ENGINE_SCALE);
 	myTransform.Translation(tempTranslation);
+	myLocalRotation += aRotation;
 }
 
 void CTransformComponent::Rotation(DirectX::SimpleMath::Quaternion aQuaternion) 
@@ -78,6 +115,8 @@ DirectX::SimpleMath::Quaternion CTransformComponent::Rotation() const
 void CTransformComponent::Scale(float aScale)
 {
 	myScale = aScale;
+	myWorldScale = { aScale, aScale, aScale };
+	myLocalScale = { aScale, aScale, aScale };
 	ResetScale();
 }
 
@@ -129,6 +168,13 @@ void CTransformComponent::MoveLocal(DirectX::SimpleMath::Vector3 aMovement)
 	myTransform.Translation(myTransform.Translation() + myTransform.Right() * aMovement.x);
 	myTransform.Translation(myTransform.Translation() + myTransform.Up() * aMovement.y);
 	myTransform.Translation(myTransform.Translation() - myTransform.Forward() * aMovement.z);
+	myWorldPosition += myTransform.Translation();
+
+	if (Input::GetInstance()->IsKeyPressed('P'))
+	{
+		int a = 0;
+		a += 0;
+	}
 }
 
 void CTransformComponent::Rotate(DirectX::SimpleMath::Vector3 aRotation)

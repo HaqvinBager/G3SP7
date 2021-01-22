@@ -52,13 +52,19 @@ void CInGameState::Start()
 
 	CGameObject* camera = new CGameObject(0);
 	camera->AddComponent<CCameraComponent>(*camera, 70.0f);
-	camera->AddComponent<CCameraControllerComponent>(*camera, 25.0f);
+	//camera->AddComponent<CCameraControllerComponent>(*camera, 25.0f);
 	camera->myTransform->Position({0.0f, 1.0f, 0.0f});
 	camera->myTransform->Rotation({0.0f, 0.0f, 0.0f});
-	scene->AddInstance(camera);
 	scene->SetMainCamera(camera->GetComponent<CCameraComponent>());
+	scene->AddInstance(camera);
 
-	CGameObject* envLight = new CGameObject(1);
+	CGameObject* player = new CGameObject(1);
+	player->AddComponent<CCameraControllerComponent>(*camera, 25.0f);
+	camera->myTransform->SetParent(player->myTransform);
+
+	scene->AddInstance(player);
+
+	CGameObject* envLight = new CGameObject(2);
 	envLight->AddComponent<CEnviromentLightComponent>(*envLight);
 	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetColor({0.0f,0.0f,1.0f});
 	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetIntensity(10.f);
