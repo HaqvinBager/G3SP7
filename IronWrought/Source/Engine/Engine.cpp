@@ -35,6 +35,7 @@
 #include "imgui_impl_dx11.h"
 #include "imgui_impl_win32.h"
 #include "StateStack.h"
+#include "CGraphManager.h"
 
 #pragma comment(lib, "runtimeobject.lib")
 #pragma comment(lib, "d3d11.lib")
@@ -66,12 +67,18 @@ CEngine::CEngine(): myRenderSceneActive(true)
 	//myActiveScene = 0; //muc bad
 	myActiveState = CStateStack::EState::InGame;
 	myImguiManager = new CImguiManager();
+	myGraphManager = new CGraphManager();
 	//myDialogueSystem = new CDialogueSystem();
 }
 
 CEngine::~CEngine()
 {
 	ImGui_ImplDX11_Shutdown();
+	delete myImguiManager;
+	myImguiManager = nullptr;
+	delete myGraphManager;
+	myGraphManager = nullptr;
+
 	delete myWindowHandler;
 	myWindowHandler = nullptr;
 	delete myFramework;
@@ -129,7 +136,9 @@ bool CEngine::Init(CWindowHandler::SWindowData& someWindowData)
 {
 	ENGINE_ERROR_BOOL_MESSAGE(myWindowHandler->Init(someWindowData), "Window Handler could not be initialized.");
 	ENGINE_ERROR_BOOL_MESSAGE(myFramework->Init(myWindowHandler), "Framework could not be initialized.");
+	ImGui_ImplWin32_Init(myWindowHandler->GetWindowHandle());
 	ImGui_ImplDX11_Init(myFramework->GetDevice(), myFramework->GetContext());
+	myGraphManager->Load();
 	myWindowHandler->SetInternalResolution();
 	ENGINE_ERROR_BOOL_MESSAGE(myModelFactory->Init(*this), "Model Factory could not be initiliazed.");
 	ENGINE_ERROR_BOOL_MESSAGE(myCameraFactory->Init(myWindowHandler), "Camera Factory could not be initialized.");
@@ -166,7 +175,8 @@ float CEngine::BeginFrame()
 		ImGui_ImplDX11_NewFrame();
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
-	//}
+		
+		//}
 	
 
 	myAudioManager->Update();
@@ -189,8 +199,11 @@ void CEngine::RenderFrame()
 	if (myEnabledEditorImgui)
 	{
 		ImGui::ShowDemoWindow(&myEnabledEditorImgui);
+		myGraphManager->PreFrame(CTimer::Dt());
+		myGraphManager->ConstructEditorTreeAndConnectLinks();
+		myGraphManager->PostFrame();
 	}
-	
+
 	//IMGUI END
 }
 
