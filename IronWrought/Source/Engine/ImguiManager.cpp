@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "ImguiManager.h"
 #include "imgui.h"
+#include "ImGuiLevelSelect.h"
 
 CImguiManager::CImguiManager()
 {
@@ -21,4 +22,7 @@ void CImguiManager::DebugWindow()
 		ImGui::Text("Framerate: %.0f", ImGui::GetIO().Framerate);
 	}
 	ImGui::End();
+
+
+	mySelectLevelWindow->RenderWindow();
 }

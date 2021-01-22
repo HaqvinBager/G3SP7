@@ -1,4 +1,7 @@
 #pragma once
+
+class CImGuiLevelSelect;
+
 class CImguiManager
 {
 public:
@@ -7,6 +10,6 @@ public:
 	void DebugWindow();
 
 private:
-
+	CImGuiLevelSelect* mySelectLevelWindow;
 };
 

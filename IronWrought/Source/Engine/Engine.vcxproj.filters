@@ -396,6 +396,9 @@
     <ClCompile Include="ImguiManager.cpp">
       <Filter>Imgui\Manager</Filter>
     </ClCompile>
+    <ClCompile Include="ImGuiLevelSelect.cpp">
+      <Filter>Imgui\Manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -732,6 +735,9 @@
       <Filter>Imgui\Core</Filter>
     </ClInclude>
     <ClInclude Include="ImguiManager.h">
+      <Filter>Imgui\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGuiLevelSelect.h">
       <Filter>Imgui\Manager</Filter>
     </ClInclude>
   </ItemGroup>
