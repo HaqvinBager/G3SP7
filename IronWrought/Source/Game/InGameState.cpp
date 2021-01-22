@@ -114,67 +114,99 @@ void CInGameState::Start()
 	//	scene->AddInstance(gameobject);
 	//}
 
+	//std::string modelPath = "../../Resources/SP_Test_Preprod/FoliageTest/IvyVine_Triangle.fbx";
+	std::string modelPath = "../../Resources/SP_Test_Preprod/Wall/Wall.fbx";
+	//CGameObject* test = new CGameObject(1337);
+	//test->AddComponent<CModelComponent>(*test, modelPath);
+	//scene->AddInstance(test);
 
-	CGameObject* chest = new CGameObject(1337);
-	chest->AddComponent<CModelComponent>(*chest, "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx");
-	chest->AddComponent<CModelComponent>(*chest, std::string(ASSETPATH + "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx"));
-	chest->GetComponent<CTransformComponent>()->Position({4.0f,0.0f,0.0f});
-
-	CGameObject* chest2 = new CGameObject(1338);
-	chest2->AddComponent<CModelComponent>(*chest2, "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx");
-	chest2->AddComponent<CModelComponent>(*chest2, std::string(ASSETPATH + "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx"));
-	chest2->GetComponent<CTransformComponent>()->Position({5.0f,-2.0f,0.0f});
-
-	CGameObject* chest3 = new CGameObject(1339);
-	chest3->AddComponent<CModelComponent>(*chest3, "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx");
-	chest3->AddComponent<CModelComponent>(*chest3, std::string(ASSETPATH + "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx"));
-	chest3->GetComponent<CTransformComponent>()->Position({6.0f,2.0f,0.0f});
-
-	scene->AddInstance(chest);
-	scene->AddInstance(chest2);
-	scene->AddInstance(chest3);
-
-	std::vector<CGameObject*> pointLights;
-	for (int i = 0; i < 5; ++i)
+	float x = 0.0f, y = 0.0f;
+	constexpr int instancedCount = 300;
+	std::vector<SM::Matrix> transforms(instancedCount);
+	x = -5.0f;
+	y = -15.0f;
+	for (int i = 0; i < instancedCount; ++i)
 	{
-		CGameObject* pl = new CGameObject(9999 + i);
-		/*CPointLightComponent* plL = */pl->AddComponent<CPointLightComponent>(*pl, 10.f, SM::Vector3{1,1,1}, 10.f);
-		pointLights.emplace_back(pl);
-		pl->myTransform->Position({ 0xDEAD, 0xDEAD, 0xDEAD });
-		
+		x -= 5.0f;
+		if ((i + 1) % 10 == 0)
+		{
+			x = -5.0f;
+			y += 5.0f;
+		}
+
+		SM::Matrix transform;
+		transforms[i] = transform;
+		transforms[i] *= SM::Matrix::CreateScale(0.01f);
+		transforms[i].Translation({ x, y, 0.0f });
 	}
-	pointLights[0]->myTransform->Position({ 6.0f, 0.0f, 0.0f });
-	pointLights[0]->GetComponent<CPointLightComponent>()->GetPointLight()->SetColor({ 0.0f,1.0f,0.0f });
-	pointLights[0]->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ 4.0f,0.0f,-3.0f });
+	CGameObject* instancedGameObject = new CGameObject(999);
+	instancedGameObject->AddComponent<CInstancedModelComponent>(*instancedGameObject
+		, modelPath
+		, instancedCount
+		, transforms
+		, false);
+	scene->AddInstance(instancedGameObject);
 
-	pointLights[1]->myTransform->Position({ 4.0f, 1.0f, 0.0f });
-	pointLights[1]->GetComponent<CPointLightComponent>()->GetPointLight()->SetColor({ 1.0f,0.0f,0.0f });
-	pointLights[1]->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ 5.0f,2.0f,-1.0f });
-	
-	pointLights[2]->myTransform->Position({ 7.0f, 2.0f, 0.0f });
-	pointLights[2]->GetComponent<CPointLightComponent>()->GetPointLight()->SetColor({ 0.0f,0.0f,1.0f });
-	pointLights[2]->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ 4.0f,-1.0f,-2.0f });
-	
-	pointLights[3]->myTransform->Position({ 6.0f, 0.0f, 0.0f });
-	pointLights[3]->GetComponent<CPointLightComponent>()->GetPointLight()->SetColor({ 0.0f,0.5f,1.0f });
-	pointLights[3]->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ 4.0f,0.0f,-2.0f });
+	//CGameObject* chest = new CGameObject(1337);
+	//chest->AddComponent<CModelComponent>(*chest, "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx");
+	//chest->AddComponent<CModelComponent>(*chest, std::string(ASSETPATH + "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx"));
+	//chest->GetComponent<CTransformComponent>()->Position({4.0f,0.0f,0.0f});
 
-	pointLights[4]->myTransform->Position({ 10.0f, 2.0f, 0.0f });
-	pointLights[4]->GetComponent<CPointLightComponent>()->GetPointLight()->SetColor({ 0.5f,0.0f,1.0f });
-	pointLights[4]->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ 5.0f,-2.0f,-2.0f });
+	//CGameObject* chest2 = new CGameObject(1338);
+	//chest2->AddComponent<CModelComponent>(*chest2, "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx");
+	//chest2->AddComponent<CModelComponent>(*chest2, std::string(ASSETPATH + "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx"));
+	//chest2->GetComponent<CTransformComponent>()->Position({5.0f,-2.0f,0.0f});
 
-	scene->AddInstance(pointLights[0]->GetComponent<CPointLightComponent>()->GetPointLight());
-	scene->AddInstance(pointLights[1]->GetComponent<CPointLightComponent>()->GetPointLight());
-	scene->AddInstance(pointLights[2]->GetComponent<CPointLightComponent>()->GetPointLight());
-	scene->AddInstance(pointLights[3]->GetComponent<CPointLightComponent>()->GetPointLight());
-	scene->AddInstance(pointLights[4]->GetComponent<CPointLightComponent>()->GetPointLight());
+	//CGameObject* chest3 = new CGameObject(1339);
+	//chest3->AddComponent<CModelComponent>(*chest3, "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx");
+	//chest3->AddComponent<CModelComponent>(*chest3, std::string(ASSETPATH + "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx"));
+	//chest3->GetComponent<CTransformComponent>()->Position({6.0f,2.0f,0.0f});
 
-	CGameObject* dn = new CGameObject(1338);
-	dn->AddComponent<CModelComponent>(*dn, "Assets/3D/Exempel_Modeller/DetailNormals/Tufted_Leather/tufted_leather_dn.fbx");
-	dn->GetComponent<CTransformComponent>()->Position({7.0f,0.0f,0.0f});
-	dn->GetComponent<CTransformComponent>()->Scale(100.0f);
+	//scene->AddInstance(chest);
+	//scene->AddInstance(chest2);
+	//scene->AddInstance(chest3);
 
-	scene->AddInstance(dn);
+	//std::vector<CGameObject*> pointLights;
+	//for (int i = 0; i < 5; ++i)
+	//{
+	//	CGameObject* pl = new CGameObject(9999 + i);
+	//	/*CPointLightComponent* plL = */pl->AddComponent<CPointLightComponent>(*pl, 10.f, SM::Vector3{1,1,1}, 10.f);
+	//	pointLights.emplace_back(pl);
+	//	pl->myTransform->Position({ 0xDEAD, 0xDEAD, 0xDEAD });
+	//	
+	//}
+	//pointLights[0]->myTransform->Position({ 6.0f, 0.0f, 0.0f });
+	//pointLights[0]->GetComponent<CPointLightComponent>()->GetPointLight()->SetColor({ 0.0f,1.0f,0.0f });
+	//pointLights[0]->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ 4.0f,0.0f,-3.0f });
+
+	//pointLights[1]->myTransform->Position({ 4.0f, 1.0f, 0.0f });
+	//pointLights[1]->GetComponent<CPointLightComponent>()->GetPointLight()->SetColor({ 1.0f,0.0f,0.0f });
+	//pointLights[1]->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ 5.0f,2.0f,-1.0f });
+	//
+	//pointLights[2]->myTransform->Position({ 7.0f, 2.0f, 0.0f });
+	//pointLights[2]->GetComponent<CPointLightComponent>()->GetPointLight()->SetColor({ 0.0f,0.0f,1.0f });
+	//pointLights[2]->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ 4.0f,-1.0f,-2.0f });
+	//
+	//pointLights[3]->myTransform->Position({ 6.0f, 0.0f, 0.0f });
+	//pointLights[3]->GetComponent<CPointLightComponent>()->GetPointLight()->SetColor({ 0.0f,0.5f,1.0f });
+	//pointLights[3]->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ 4.0f,0.0f,-2.0f });
+
+	//pointLights[4]->myTransform->Position({ 10.0f, 2.0f, 0.0f });
+	//pointLights[4]->GetComponent<CPointLightComponent>()->GetPointLight()->SetColor({ 0.5f,0.0f,1.0f });
+	//pointLights[4]->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ 5.0f,-2.0f,-2.0f });
+
+	//scene->AddInstance(pointLights[0]->GetComponent<CPointLightComponent>()->GetPointLight());
+	//scene->AddInstance(pointLights[1]->GetComponent<CPointLightComponent>()->GetPointLight());
+	//scene->AddInstance(pointLights[2]->GetComponent<CPointLightComponent>()->GetPointLight());
+	//scene->AddInstance(pointLights[3]->GetComponent<CPointLightComponent>()->GetPointLight());
+	//scene->AddInstance(pointLights[4]->GetComponent<CPointLightComponent>()->GetPointLight());
+
+	//CGameObject* dn = new CGameObject(1338);
+	//dn->AddComponent<CModelComponent>(*dn, "Assets/3D/Exempel_Modeller/DetailNormals/Tufted_Leather/tufted_leather_dn.fbx");
+	//dn->GetComponent<CTransformComponent>()->Position({7.0f,0.0f,0.0f});
+	//dn->GetComponent<CTransformComponent>()->Scale(100.0f);
+
+	//scene->AddInstance(dn);
 
 	//steg 1. kalla p� read json funktion
 	//steg 2. skapa en gameobject struct
