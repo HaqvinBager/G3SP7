@@ -44,14 +44,10 @@ public class Exporter
     [MenuItem("Export/Export Scene")]
     static void ExportScene()
     {
-        //Scene currentScene = SceneManager.GetActiveScene();
-        //ExportScene(currentScene);
-     
         for(int i = 0; i <  SceneManager.sceneCount; ++i)
         {
             ExportAScene(SceneManager.GetSceneAt(i));
         }
-
     }
 
     private static void ExportAScene(Scene aScene)

@@ -49,81 +49,13 @@ void CInGameState::Awake()
 
 void CInGameState::Start()
 {
-
-// gör en till scene med chests som heter lvl 2
-// gör så att man kan byta utkommenterad kod för att byta mellan lvl 1 och lvl 2 inladdning
-
-
-	CScene* myUnityScene = CSceneManager::CreateScene("TestJson.json");
-
-
-	
-
+	std::vector<std::string> scenePath = {
+		"Level1_Layout_part1.json",
+		"Level1_Layout_part2.json"
+	};
+	CScene* myUnityScene = CSceneManager::CreateScene(scenePath);
 	CEngine::GetInstance()->AddScene(myState, myUnityScene);
 	CEngine::GetInstance()->SetActiveScene(myState);
-
-	//rapidjson::Document document = CJsonReader::LoadDocument(ASSETPATH + "Assets/TestJson.json");
-	//auto jsonarray = document["instancedGameobjects"].GetArray();
-
-	//for (auto& jsongameobject : jsonarray) {
-	//
-	//	CGameObject* instancedGameObject = new CGameObject(0);
-	//	std::string model_path;
-	//	//float instanceID;
-	//	Vector3 position;
-	//	Vector3 rotation;
-	//	Vector3 scale;
-	//
-	//	auto jsonmodelpath = jsongameobject["model"].GetObjectW();
-	//	model_path = jsonmodelpath["fbxPath"].GetString();
-	//	auto jsonTransforms = jsongameobject["transforms"].GetArray();
-	//	std::vector<DirectX::SimpleMath::Matrix> instancedTransforms;
-	//	for (auto& jsonTransform : jsonTransforms) {
-	//		//auto jsoninstanceID = jsontransform["instanceID"].GetObjectW();
-	//		auto jsonposition = jsonTransform["position"].GetObjectW();
-	//		auto jsonrotation = jsonTransform["rotation"].GetObjectW();
-	//		auto jsonscale = jsonTransform["scale"].GetObjectW();
-
-	//		//instanceID = jsoninstanceID[""].GetFloat();
-
-	//		position.x = jsonposition["x"].GetFloat();			
-	//		position.y = jsonposition["y"].GetFloat();
-	//		position.z = jsonposition["z"].GetFloat();
-
-	//		rotation.x = jsonrotation["x"].GetFloat();
-	//		rotation.y = jsonrotation["y"].GetFloat();
-	//		rotation.z = jsonrotation["z"].GetFloat();
-
-	//		scale.x = jsonscale["x"].GetFloat();
-	//		scale.y = jsonscale["y"].GetFloat();
-	//		scale.z = jsonscale["z"].GetFloat();
-
-	//		CGameObject temp(0);
-	//		CTransformComponent transform(temp);
-	//		transform.Scale(scale.x);
-	//		transform.Position(position);
-	//		transform.Rotation(rotation);
-	//		instancedTransforms.emplace_back(transform.GetMatrix());
-	//		
-	//	}
-	//	instancedGameObject->AddComponent<CInstancedModelComponent>(*instancedGameObject, std::string(ASSETPATH + model_path), instancedTransforms);
-	//	scene->AddInstance(instancedGameObject);
-	//}
-
-	//goal
-	// flytta inladdningen/inläsningen av objekt till sin egna klass för att tömma ingamestate på onödig kod
-
-	
-
-
-
-
-
-
-
-	/*scene = CSceneManager::CreateScene("TestJson.json");
-	CEngine::GetInstance()->AddScene(myState, scene);*/
-
 
 
 	//CGameObject* chest = new CGameObject(1337);
