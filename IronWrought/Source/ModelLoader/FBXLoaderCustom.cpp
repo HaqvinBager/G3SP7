@@ -321,11 +321,11 @@ void* CFBXLoaderCustom::LoadModelInternal(CLoaderModel* someInput)
 	using namespace ModelExceptionTools;
 	if (IsDestructibleModel(model->myModelPath))
 	{
-		scene = aiImportFile(model->myModelPath.c_str(), /*aiProcessPreset_TargetRealtime_MaxQuality_DontJoinIndetical*/aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_ConvertToLeftHanded);
+		scene = aiImportFile(model->myModelPath.c_str(), aiProcessPreset_TargetRealtime_MaxQuality_DontJoinIdentical | aiProcess_ConvertToLeftHanded);
 	}
 	else
 	{
-		scene = aiImportFile(model->myModelPath.c_str(), /*aiProcess_EmbedTextures |*/ aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_ConvertToLeftHanded);
+		scene = aiImportFile(model->myModelPath.c_str(), /*aiProcessPreset_TargetRealtime_MaxQuality*/ aiProcessPreset_TargetRealtime_MaxQuality_DontJoinIdentical | aiProcess_ConvertToLeftHanded);
 	}
 	
 	//aiSetImportPropertyFloat(aiprops, AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, GlobalScale);
@@ -345,12 +345,13 @@ void* CFBXLoaderCustom::LoadModelInternal(CLoaderModel* someInput)
 													 0, 0, 0, 1);*/
 	model->myScene = scene;
 
-
-	CLoaderMesh* mesh = model->CreateMesh();
+	// Load multiple meshes
 	for (unsigned int n = 0; n < scene->mNumMeshes; ++n)
 	{
+		CLoaderMesh* mesh = model->CreateMesh();
 		aiMesh* fbxMesh = scene->mMeshes[n];
-		//fbxMesh->
+		model->myMaterialIndices.push_back(fbxMesh->mMaterialIndex);
+
 		DetermineAndLoadVerticies(fbxMesh, mesh);
 		for (unsigned int i = 0; i < fbxMesh->mNumFaces; i++)
 		{
@@ -372,34 +373,13 @@ void* CFBXLoaderCustom::LoadModelInternal(CLoaderModel* someInput)
 
 }
 
-
 void CFBXLoaderCustom::LoadMaterials(const struct aiScene* sc, CLoaderModel* aModel)
 {
-	sc->mNumTextures;
-	aiString path;
-	for (unsigned int m = 0; m < sc->mNumMaterials; m++)
+	aModel->myMaterials.resize(sc->mNumMaterials);
+	for (unsigned int i = 0; i < sc->mNumMaterials; ++i)
 	{
-		//sc->mMaterials[m]->Get(AI_MATKEY_TEXTURE(aiTextureType_DIFFUSE, 0), path);
-		//if (auto texture = sc->GetEmbeddedTexture(texture_file.C_Str())) {
-		//	//returned pointer is not null, read texture from memory
-		//}
-		//else {
-		//	//regular file, check if it exists and read it
-		//}
-		LoadTexture(aiTextureType_DIFFUSE, aModel->myTextures, sc->mMaterials[m]); // TEXTURE_DEFINITION_ALBEDO
-		LoadTexture(aiTextureType_SPECULAR, aModel->myTextures, sc->mMaterials[m]); // TEXTURE_DEFINITION_ROUGHNESS
-		LoadTexture(aiTextureType_AMBIENT, aModel->myTextures, sc->mMaterials[m]); // TEXTURE_DEFINITION_AMBIENTOCCLUSION
-		LoadTexture(aiTextureType_EMISSIVE, aModel->myTextures, sc->mMaterials[m]); // TEXTURE_DEFINITION_EMISSIVE
-		LoadTexture(aiTextureType_HEIGHT, aModel->myTextures, sc->mMaterials[m]);
-		LoadTexture(aiTextureType_NORMALS, aModel->myTextures, sc->mMaterials[m]); // TEXTURE_DEFINITION_NORMAL
-		LoadTexture(aiTextureType_SHININESS, aModel->myTextures, sc->mMaterials[m]);
-		LoadTexture(aiTextureType_OPACITY, aModel->myTextures, sc->mMaterials[m]);
-		LoadTexture(aiTextureType_DISPLACEMENT, aModel->myTextures, sc->mMaterials[m]);
-		LoadTexture(aiTextureType_LIGHTMAP, aModel->myTextures, sc->mMaterials[m]);
-		LoadTexture(aiTextureType_REFLECTION, aModel->myTextures, sc->mMaterials[m]); // TEXTURE_DEFINITION_METALNESS
+		aModel->myMaterials[i] = sc->mMaterials[i]->GetName().C_Str();
 	}
-
-	aModel->myTextures;
 }
 
 void CFBXLoaderCustom::LoadTexture(int aType, std::vector<std::string>& someTextures, aiMaterial* aMaterial)

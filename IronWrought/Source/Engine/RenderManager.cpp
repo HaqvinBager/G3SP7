@@ -175,8 +175,6 @@ void CRenderManager::Render(CScene& aScene)
 		gameObjects.pop_back();
 	}
 
-
-
 #pragma region DEFERRED
 	//std::vector<CPointLight*> onlyPointLights;
 	//onlyPointLights = aScene.CullPointLights(&maincamera->GameObject());
@@ -233,7 +231,8 @@ void CRenderManager::Render(CScene& aScene)
 	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_ALPHABLEND);
 	myRenderStateManager.SetDepthStencilState(CRenderStateManager::DepthStencilStates::DEPTHSTENCILSTATE_ONLYREAD);
 
-	myForwardRenderer.InstancedRender(environmentlight, pointlights, maincamera, instancedGameObjectsWithAlpha);
+	//myForwardRenderer.InstancedRender(environmentlight, pointlights, maincamera, instancedGameObjectsWithAlpha);
+	//myForwardRenderer.Render(environmentlight, pointlights, maincamera, gameObjects);
 
 	myVFXRenderer.Render(maincamera, gameObjects);
 
