@@ -112,6 +112,33 @@
     <FxCompile Include="DeferredVertexShader.hlsl">
       <Filter>Shaders\Deferred</Filter>
     </FxCompile>
+    <FxCompile Include="DeferredInstancedModelVertexShader.hlsl">
+      <Filter>Shaders\Deferred</Filter>
+    </FxCompile>
+    <FxCompile Include="DeferredRenderPassFullscreenPixelShader_GammaCorrection.hlsl">
+      <Filter>Shaders\Deferred Render Passes</Filter>
+    </FxCompile>
+    <FxCompile Include="DeferredRenderPassGBufferPixelShader.hlsl">
+      <Filter>Shaders\Deferred Render Passes</Filter>
+    </FxCompile>
+    <FxCompile Include="DeferredRenderPassShader_Albedo.hlsl">
+      <Filter>Shaders\Deferred Render Passes</Filter>
+    </FxCompile>
+    <FxCompile Include="DeferredRenderPassShader_AO.hlsl">
+      <Filter>Shaders\Deferred Render Passes</Filter>
+    </FxCompile>
+    <FxCompile Include="DeferredRenderPassShader_Emissive.hlsl">
+      <Filter>Shaders\Deferred Render Passes</Filter>
+    </FxCompile>
+    <FxCompile Include="DeferredRenderPassShader_Metalness.hlsl">
+      <Filter>Shaders\Deferred Render Passes</Filter>
+    </FxCompile>
+    <FxCompile Include="DeferredRenderPassShader_Normal.hlsl">
+      <Filter>Shaders\Deferred Render Passes</Filter>
+    </FxCompile>
+    <FxCompile Include="DeferredRenderPassShader_Roughness.hlsl">
+      <Filter>Shaders\Deferred Render Passes</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimationComponent.cpp">
@@ -902,6 +929,9 @@
     </Filter>
     <Filter Include="Imgui\Manager">
       <UniqueIdentifier>{cf9224c9-d296-4081-b1d8-7c2bb6b21f0d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Deferred Render Passes">
+      <UniqueIdentifier>{4e1a5e39-8e5c-4cda-9552-2d86c85c158e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

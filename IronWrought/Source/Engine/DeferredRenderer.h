@@ -20,9 +20,11 @@ public:
 
 	bool Init(CDirectXFramework* aFramework);
 
-	void GenerateGBuffer(CCameraComponent* aCamera, std::vector<CGameObject*>& aGameObjectList);
+	void GenerateGBuffer(CCameraComponent* aCamera, std::vector<CGameObject*>& aGameObjectList, std::vector<CGameObject*>& aInstancedGameObjectList);
 	void Render(CCameraComponent* aCamera, CEnvironmentLight* anEnvironmentLight);
 	void Render(CCameraComponent* aCamera, std::vector<CPointLight*>& aPointLightList);
+
+	bool ToggleRenderPass();
 
 private:
 	template<class T>
@@ -51,6 +53,9 @@ private:
 	struct SObjectBufferData
 	{
 		DirectX::SimpleMath::Matrix myToWorld;
+		unsigned int myNumberOfDetailNormals;
+		unsigned int myNumberOfTextureSets;
+		unsigned int myPaddington[2];
 	} myObjectBufferData;
 
 	struct SLightBufferData 
@@ -66,6 +71,8 @@ private:
 	} myPointLightBufferData;
 
 private:
+	bool LoadRenderPassPixelShaders(ID3D11Device* aDevice);
+
 	ID3D11DeviceContext* myContext;
 	ID3D11Buffer* myFrameBuffer;
 	ID3D11Buffer* myObjectBuffer;
@@ -73,9 +80,17 @@ private:
 	ID3D11Buffer* myPointLightBuffer;
 	ID3D11VertexShader* myFullscreenShader;
 	ID3D11VertexShader* myModelVertexShader;
+	ID3D11VertexShader* myInstancedModelVertexShader;
 	ID3D11PixelShader* myGBufferPixelShader;
 	ID3D11PixelShader* myEnvironmentLightShader;
 	ID3D11PixelShader* myPointLightShader;
 	ID3D11SamplerState* mySamplerState;
+
+	std::vector<ID3D11PixelShader*> myRenderPassShaders;
+	ID3D11PixelShader* myCurrentRenderPassShader;
+	// Switches between myRenderPassGBuffer and myGBufferPixelShader
+	ID3D11PixelShader* myCurrentGBufferPixelShader;
+	ID3D11PixelShader* myRenderPassGBuffer;
+	unsigned short myRenderPassIndex;
 };
 

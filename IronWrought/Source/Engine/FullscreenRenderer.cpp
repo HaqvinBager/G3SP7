@@ -3,7 +3,12 @@
 #include "DirectXFramework.h"
 #include <fstream>
 
-CFullscreenRenderer::CFullscreenRenderer() : myContext(nullptr), myVertexShader(nullptr), myPixelShaders() {
+CFullscreenRenderer::CFullscreenRenderer() 
+	: myContext(nullptr)
+	, myVertexShader(nullptr)
+	, myPixelShaders()
+	, mySampler(nullptr)
+{
 }
 
 CFullscreenRenderer::~CFullscreenRenderer() {
@@ -41,6 +46,7 @@ bool CFullscreenRenderer::Init(CDirectXFramework* aFramework) {
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_BLOOM)] = "Shaders/FullscreenPixelShader_Bloom.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_VIGNETTE)] = "Shaders/FullscreenPixelShader_Vignette.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCRENSHADER_GAMMACORRECTION)] = "Shaders/FullscreenPixelShader_GammaCorrection.cso";
+	filepaths[static_cast<size_t>(FullscreenShader::FULLSCRENSHADER_GAMMACORRECTION_RENDERPASS)] = "Shaders/DeferredRenderPassFullscreenPixelShader_GammaCorrection.cso";
 
 	for (UINT i = 0; i < static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_COUNT); i++) {
 		std::ifstream psFile;
@@ -62,6 +68,8 @@ bool CFullscreenRenderer::Init(CDirectXFramework* aFramework) {
 	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.MinLOD = 0;// Added 21/1 2021
+	samplerDesc.MaxLOD = 10;// Added 21/1 2021
 	ENGINE_HR_MESSAGE(device->CreateSamplerState(&samplerDesc, &sampler), "Sampler could not be created.");
 	mySampler = sampler;
 	//End Sampler
@@ -91,6 +99,7 @@ void CFullscreenRenderer::Render(FullscreenShader anEffect) {
 	myContext->PSSetShaderResources(6, 1, &nullView);
 	myContext->PSSetShaderResources(7, 1, &nullView);
 	myContext->PSSetShaderResources(8, 1, &nullView);
+	myContext->PSSetShaderResources(9, 1, &nullView);
 
 	myContext->GSSetShader(nullptr, nullptr, 0);
 }

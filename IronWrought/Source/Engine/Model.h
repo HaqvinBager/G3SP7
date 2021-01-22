@@ -48,7 +48,8 @@ public:
 		std::vector<std::array<ID3D11ShaderResourceView*, 3>> myMaterials{ };
 
 		std::array<ID3D11ShaderResourceView*, 4> myDetailNormals { nullptr, nullptr, nullptr, nullptr };
-		bool myHasDetailNormals;
+
+		unsigned short myModelModifiers;
 	};
 
 	struct SInstanceType {

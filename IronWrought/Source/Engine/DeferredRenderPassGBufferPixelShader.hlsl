@@ -19,7 +19,7 @@ GBufferOutput main(VertexModelToPixel input)
     vertToPixel.myUV        = input.myUV;
     
     float3 albedo = PixelShader_Albedo(vertToPixel).myColor.rgb;
-    float3 normal = PixelShader_Normal(vertToPixel).myColor.xyz;
+    float3 normal = PixelShader_NormalForIsolatedRendering(vertToPixel).myColor.xyz;
     
     if (myNumberOfDetailNormals > 0)
     {
@@ -74,10 +74,6 @@ GBufferOutput main(VertexModelToPixel input)
         //    normal = BlendRNM(normal, detailNormal);
         //}
     } // End of if
-    
-    float3x3 tangentSpaceMatrix = float3x3(normalize(input.myTangent.xyz), normalize(input.myBinormal.xyz), normalize(input.myNormal.xyz));
-    normal = mul(normal.xyz, tangentSpaceMatrix);
-    normal = normalize(normal);
     
     float ambientOcclusion      = PixelShader_AmbientOcclusion(vertToPixel).myColor.r;
     float metalness             = PixelShader_Metalness(vertToPixel).myColor.r;

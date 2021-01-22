@@ -170,7 +170,6 @@ void CForwardRenderer::Render(CEnvironmentLight* anEnvironmentLight, std::vector
 				++counter;
 			}
 		}
-
 		myObjectBufferData.myNumberOfDetailNormals = counter;
 
 		BindBuffer(myObjectBuffer, myObjectBufferData, "Object Buffer");
@@ -404,7 +403,6 @@ void CForwardRenderer::RenderLineInstances(CCameraComponent* aCamera, const std:
 
 	for (const CLineInstance* instance : aLineList)
 	{
-
 		CLine::SLineData lineData = instance->GetLine()->GetLineData();
 
 		myObjectBufferData.myToWorld = instance->GetTransform();
@@ -423,8 +421,6 @@ void CForwardRenderer::RenderLineInstances(CCameraComponent* aCamera, const std:
 
 		//myContext->DrawIndexed(lineData.myNumberOfIndices, 0, 0);
 		myContext->Draw(lineData.myNumberOfVertices, 0);
-
-
 	}
 }
 
