@@ -2,7 +2,6 @@
 #include "Animation.h"
 #include "AnimationController.h"
 
-
 CAnimation::CAnimation()
 	: myController(nullptr)
 	, myTotalAnimationTime(0)
@@ -67,20 +66,3 @@ void CAnimation::SetCurAnimationScene(const int aCurAnimScene)
 {
 	myController->SetCurSceneIndex(aCurAnimScene);
 }
-
-// Old: before 2020 11 13
-/*
-	void CAnimation::Step(float aDelta)
-	{
-		// commented 2020 11 12 - The if check is used for nothing. The commented contents were already not in use.
-		//if (myController->IsDoneBlending())
-		//{
-		//	//myController->SetAnimIndex();
-		//	//myController->SetAnimIndex(2, true, 5);
-		//}
-		
-		myTotalAnimationTime += aDelta;
-		myController->Update();
-	}
-
-*/

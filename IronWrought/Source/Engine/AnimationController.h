@@ -365,15 +365,6 @@ public:
 		}
 	}
 
-	/// PlayAnim(animIndex, anIsLoop)
-	/// 
-	/// AnimationTime is the current frame of the animation between 0.0f to mDuration
-	/// Once anim is almost mDuration the animation resets.
-	/// (ceil(AnimationTime) >= static_cast<float>(myScenes[myCurSceneIndex]->mAnimations[0]->mDuration))
-	/// returns 1 if the animation is complete.
-	/// if 1 set myAnimationTimeCurrent = 0.0f
-	/// set myCurSceneIndex to myLoopingSceneIndex
-
 	void  BoneTransform(std::vector<aiMatrix4x4>& aTransformsVector, const float /*anAnimSpeedMultiplier*/)
 	{
 		aiMatrix4x4 identity;// Used for ReadNodeHierarchy

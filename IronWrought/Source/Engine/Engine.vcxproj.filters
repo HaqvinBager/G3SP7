@@ -303,12 +303,6 @@
     <ClCompile Include="StackWalker.cpp">
       <Filter>Debug Tools</Filter>
     </ClCompile>
-    <ClCompile Include="State.cpp">
-      <Filter>Text\State Stack</Filter>
-    </ClCompile>
-    <ClCompile Include="StateStack.cpp">
-      <Filter>Text\State Stack</Filter>
-    </ClCompile>
     <ClCompile Include="Input.cpp">
       <Filter>Input</Filter>
     </ClCompile>
@@ -423,6 +417,8 @@
     <ClCompile Include="ImguiManager.cpp">
       <Filter>Imgui\Manager</Filter>
     </ClCompile>
+    <ClCompile Include="State.cpp" />
+    <ClCompile Include="StateStack.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -605,12 +601,6 @@
     <ClInclude Include="Heap.h">
       <Filter>Utility</Filter>
     </ClInclude>
-    <ClInclude Include="State.h">
-      <Filter>Text\State Stack</Filter>
-    </ClInclude>
-    <ClInclude Include="StateStack.h">
-      <Filter>Text\State Stack</Filter>
-    </ClInclude>
     <ClInclude Include="Input.h">
       <Filter>Input</Filter>
     </ClInclude>
@@ -686,9 +676,6 @@
     <ClInclude Include="StringIDLoader.h">
       <Filter>StringID</Filter>
     </ClInclude>
-    <ClInclude Include="animationEnums.h">
-      <Filter>Animation</Filter>
-    </ClInclude>
     <ClInclude Include="AnimatedUIElement.h">
       <Filter>Sprite</Filter>
     </ClInclude>
@@ -761,6 +748,8 @@
     <ClInclude Include="ImguiManager.h">
       <Filter>Imgui\Manager</Filter>
     </ClInclude>
+    <ClInclude Include="State.h" />
+    <ClInclude Include="StateStack.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">

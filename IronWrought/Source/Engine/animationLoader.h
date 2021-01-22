@@ -8,10 +8,7 @@ class CGameObject;
 
 enum class EAnimatedObject
 {
-	Player,
-	Enemy,
-	Boss,
-	Destructible
+	Test
 };
 // Gets the three last chars before file ending, ex: _SK from enemy_SK.fbx
 std::string GetSuffixFromString(const std::string& aString);

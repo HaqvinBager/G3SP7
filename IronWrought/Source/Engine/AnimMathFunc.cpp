@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "AnimMathFunc.h"
 
-
-
 void set_float4(float f[4], float a, float b, float c, float d)
 {
 	f[0] = a;
@@ -31,11 +29,12 @@ uint FindRotation(float AnimationTime, const aiNodeAnim* pNodeAnim)
 			return i;
 		}
 	}
+	// This is an 'ugly-fix' for if the animations that are being played have incorrect conections
+	// In short: bypasses the error by returning the last working key
+	//return pNodeAnim->mNumRotationKeys - 2;
 
-	return pNodeAnim->mNumRotationKeys - 2;
-
-	//assert(0);
-	//return 0xFFFFFFFF;
+	assert(0);
+	return 0xFFFFFFFF;
 }
 
 void CalcInterpolatedRotation(aiQuaternion& Out, float AnimationTime, const aiNodeAnim* pNodeAnim)
@@ -75,9 +74,12 @@ uint FindScaling(float AnimationTime, const aiNodeAnim* pNodeAnim)
 		}
 	}
 
-	return pNodeAnim->mNumScalingKeys - 2;
-	//assert(0);
-	//return 0xFFFFFFFF;
+	// This is an 'ugly-fix' for if the animations that are being played have incorrect conections
+	// In short: bypasses the error by returning the last working key
+	//return pNodeAnim->mNumScalingKeys - 2;
+	
+	assert(0);
+	return 0xFFFFFFFF;
 }
 
 void CalcInterpolatedScaling(aiVector3D& Out, float AnimationTime, const aiNodeAnim* pNodeAnim)
@@ -116,9 +118,12 @@ uint FindPosition(float AnimationTime, const aiNodeAnim* pNodeAnim)
 		}
 	}
 
-	return pNodeAnim->mNumPositionKeys - 2;
-	//assert(0);
-	//return 0xFFFFFFFF;
+	// This is an 'ugly-fix' for if the animations that are being played have incorrect conections
+	// In short: bypasses the error by returning the last working key
+	//return pNodeAnim->mNumPositionKeys - 2;
+	
+	assert(0);
+	return 0xFFFFFFFF;
 }
 
 void CalcInterpolatedPosition(aiVector3D& Out, float AnimationTime, const aiNodeAnim* pNodeAnim)
