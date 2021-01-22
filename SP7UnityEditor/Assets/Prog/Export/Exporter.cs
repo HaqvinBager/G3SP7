@@ -80,10 +80,13 @@ public class Exporter
             instancedGameObjects.Add(instancedGameObject);
         }
 
+        Debug.Log(currentScene.name);
         sceneObject.instancedGameobjects = instancedGameObjects.ToArray();
         string jsonGameObject = JsonUtility.ToJson(sceneObject);
-        string savePath = System.IO.Directory.GetCurrentDirectory() + "\\Assets\\TestJson.json";
+        string savePath = System.IO.Directory.GetCurrentDirectory() + "\\Assets\\Generated\\" + currentScene.name + ".json";
         System.IO.File.WriteAllText(savePath, jsonGameObject);
+        AssetDatabase.Refresh();
+
     }
 }
 

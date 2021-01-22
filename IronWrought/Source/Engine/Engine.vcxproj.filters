@@ -372,6 +372,9 @@
     <ClCompile Include="GBuffer.cpp">
       <Filter>Renderers</Filter>
     </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>Engine Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -685,6 +688,9 @@
     </ClInclude>
     <ClInclude Include="GBuffer.h">
       <Filter>Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>Engine Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
