@@ -24,6 +24,8 @@
 #define TRIMSHEET_PATH "Assets/Trimsheets/"	
 // Create functions for Trimsheets if they are to be used again. Instead of copypasted clutter.
 
+#define USING_FBX_MATERIALS
+
 CModelFactory* CModelFactory::ourInstance = nullptr;
 CModelFactory* CModelFactory::GetInstance()
 {
@@ -78,6 +80,7 @@ CModel* CModelFactory::GetModel(std::string aFilePath)
 
 CModel* CModelFactory::LoadModel(std::string aFilePath)
 {
+	// Loading
 	const size_t last_slash_idx = aFilePath.find_last_of("\\/");
 	std::string modelDirectory = aFilePath.substr(0, last_slash_idx + 1);
 	std::string modelName = aFilePath.substr(last_slash_idx + 1, aFilePath.size() - last_slash_idx - 5);
@@ -86,32 +89,51 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 	CLoaderModel* loaderModel = modelLoader.LoadModel(aFilePath.c_str());
 	ENGINE_ERROR_BOOL_MESSAGE(loaderModel, aFilePath.append(" could not be loaded.").c_str());
 
+	// Mesh Data
+	size_t numberOfMeshes = loaderModel->myMeshes.size();
+	std::vector<SMeshData> meshData;
+	meshData.resize(numberOfMeshes);
+
 	CLoaderMesh* mesh = loaderModel->myMeshes[0];
-	
-	D3D11_BUFFER_DESC vertexBufferDesc = { 0 };
-	vertexBufferDesc.ByteWidth = mesh->myVertexBufferSize * mesh->myVertexCount;
-	vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	for (unsigned int i = 0; i < numberOfMeshes; ++i)
+	{
+		mesh = loaderModel->myMeshes[i];
 
-	D3D11_SUBRESOURCE_DATA subVertexResourceData = { 0 };
-	subVertexResourceData.pSysMem = mesh->myVerticies;
+		// Vertex Buffer
+		D3D11_BUFFER_DESC vertexBufferDesc = { 0 };
+		vertexBufferDesc.ByteWidth = mesh->myVertexBufferSize * mesh->myVertexCount;
+		vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+		vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
-	if (vertexBufferDesc.ByteWidth == 0) {
-		return nullptr;
+		D3D11_SUBRESOURCE_DATA subVertexResourceData = { 0 };
+		subVertexResourceData.pSysMem = mesh->myVerticies;
+
+		if (vertexBufferDesc.ByteWidth == 0) {
+			return nullptr;
+		}
+		ID3D11Buffer* vertexBuffer;
+		ENGINE_HR_MESSAGE(myEngine->myFramework->GetDevice()->CreateBuffer(&vertexBufferDesc, &subVertexResourceData, &vertexBuffer), "Vertex Buffer could not be created.");
+
+		// Index Buffer
+		D3D11_BUFFER_DESC indexBufferDesc = { 0 };
+		indexBufferDesc.ByteWidth = sizeof(unsigned int) * static_cast<UINT>(mesh->myIndexes.size());
+		indexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+		indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+
+		D3D11_SUBRESOURCE_DATA subIndexResourceData = { 0 };
+		subIndexResourceData.pSysMem = mesh->myIndexes.data();
+
+		ID3D11Buffer* indexBuffer;
+		ENGINE_HR_MESSAGE(myEngine->myFramework->GetDevice()->CreateBuffer(&indexBufferDesc, &subIndexResourceData, &indexBuffer), "Index Buffer could not be created.");
+
+		meshData[i].myNumberOfVertices = mesh->myVertexCount;
+		meshData[i].myNumberOfIndices = static_cast<UINT>(mesh->myIndexes.size());
+		meshData[i].myStride = mesh->myVertexBufferSize;
+		meshData[i].myOffset = 0;
+		meshData[i].myMaterialIndex = mesh->myModel->myMaterialIndices[i];
+		meshData[i].myVertexBuffer = vertexBuffer;
+		meshData[i].myIndexBuffer = indexBuffer;
 	}
-	ID3D11Buffer* vertexBuffer;
-	ENGINE_HR_MESSAGE(myEngine->myFramework->GetDevice()->CreateBuffer(&vertexBufferDesc, &subVertexResourceData, &vertexBuffer), "Vertex Buffer could not be created.");
-
-	D3D11_BUFFER_DESC indexBufferDesc = { 0 };
-	indexBufferDesc.ByteWidth = sizeof(unsigned int) * static_cast<UINT>(mesh->myIndexes.size());
-	indexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-
-	D3D11_SUBRESOURCE_DATA subIndexResourceData = { 0 };
-	subIndexResourceData.pSysMem = mesh->myIndexes.data();
-
-	ID3D11Buffer* indexBuffer;
-	ENGINE_HR_MESSAGE(myEngine->myFramework->GetDevice()->CreateBuffer(&indexBufferDesc, &subIndexResourceData, &indexBuffer), "Index Buffer could not be created.");
 
 	//VertexShader
 	std::ifstream vsFile;
@@ -119,7 +141,8 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 	{
 		vsFile.open("Shaders/AnimatedVertexShader.cso", std::ios::binary);
 	}
-	else {
+	else 
+	{
 		vsFile.open("Shaders/VertexShader.cso", std::ios::binary);
 	}
 	
@@ -197,37 +220,43 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 	std::string dnsuffix = aFilePath.substr(aFilePath.length() - 7, 3);
 	if (dnsuffix == "_dn")
 	{
-		detailNormal1 = GetShaderResourceView(device, "Assets/3D/Exempel_Modeller/DetailNormals/4DN/dns/dn_CarbonFibre_n.dds");
-		detailNormal2 = GetShaderResourceView(device, "Assets/3D/Exempel_Modeller/DetailNormals/Tufted_Leather/dn_25cm_N.dds");
+		detailNormal1 = GetShaderResourceView(device, "Assets/3D/Exempel_Modeller/DetailNormals/Tufted_Leather/dn_25cm_N.dds");
+		detailNormal2 = GetShaderResourceView(device, "Assets/3D/Exempel_Modeller/DetailNormals/4DN/dns/dn_CarbonFibre_n.dds");
 		detailNormal3 = GetShaderResourceView(device, "Assets/3D/Exempel_Modeller/DetailNormals/4DN/dns/dn_Wool_n.dds");
 		detailNormal4 = GetShaderResourceView(device, "Assets/3D/Exempel_Modeller/DetailNormals/4DN/dns/dn_PlasticPolymer_n.dds");
 	}
 
-	ID3D11ShaderResourceView* diffuseResourceView = GetShaderResourceView(device, (modelDirectoryAndName + "_D.dds"));
-	ID3D11ShaderResourceView* materialResourceView = GetShaderResourceView(device, (modelDirectoryAndName + "_M.dds"));
-	ID3D11ShaderResourceView* normalResourceView = GetShaderResourceView(device, (modelDirectoryAndName + "_N.dds"));
+#ifdef USING_FBX_MATERIALS
+	std::vector<std::array<ID3D11ShaderResourceView*, 3>> materials;
+	for (unsigned int i = 0; i < loaderModel->myMaterials.size(); ++i) {
+		std::string materialName = loaderModel->myMaterials[loaderModel->myMaterialIndices[i]];
+		ID3D11ShaderResourceView* diffuseResourceView = GetShaderResourceView(device, (modelDirectory + materialName/*modelDirectoryAndName*/ + "_c.dds"));
+		ID3D11ShaderResourceView* materialResourceView = GetShaderResourceView(device, (modelDirectory + materialName/*modelDirectoryAndName*/ + "_m.dds"));
+		ID3D11ShaderResourceView* normalResourceView = GetShaderResourceView(device, (modelDirectory + materialName/*modelDirectoryAndName*/ + "_n.dds"));
+		materials.push_back({ diffuseResourceView, materialResourceView, normalResourceView });
+	}
+#else
+	std::vector<std::array<ID3D11ShaderResourceView*, 3>> materials;
+	ID3D11ShaderResourceView* diffuseResourceView = GetShaderResourceView(device, (modelDirectory + modelName/*modelDirectoryAndName*/ + "_c.dds"));
+	ID3D11ShaderResourceView* materialResourceView = GetShaderResourceView(device, (modelDirectory + modelName/*modelDirectoryAndName*/ + "_m.dds"));
+	ID3D11ShaderResourceView* normalResourceView = GetShaderResourceView(device, (modelDirectory + modelName/*modelDirectoryAndName*/ + "_n.dds"));
+	materials.push_back({ diffuseResourceView, materialResourceView, normalResourceView });
+#endif
+
 
 	//Model
 	CModel* model = new CModel();
 	ENGINE_ERROR_BOOL_MESSAGE(model, "Empty model could not be loaded.");
 
 	CModel::SModelData modelData;
-	modelData.myNumberOfVertices = mesh->myVertexCount;
-	modelData.myNumberOfIndices = static_cast<UINT>(mesh->myIndexes.size());
-	modelData.myStride = mesh->myVertexBufferSize;
-	modelData.myOffset = 0;
-	modelData.myVertexBuffer = vertexBuffer;
-	modelData.myIndexBuffer = indexBuffer;
+	modelData.myMeshes = meshData;
 	modelData.myVertexShader = vertexShader;
 	modelData.myPixelShader = pixelShader;
 	modelData.mySamplerState = sampler;
 	modelData.myPrimitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	modelData.myInputLayout = inputLayout;
-	modelData.myTexture[0] = diffuseResourceView;
-	modelData.myTexture[1] = materialResourceView;
-	modelData.myTexture[2] = normalResourceView;
+	modelData.myMaterials = materials;
 
-	// ! Check for detail norma
 	modelData.myDetailNormals[0] = detailNormal1;
 	modelData.myDetailNormals[1] = detailNormal2;
 	modelData.myDetailNormals[2] = detailNormal3;
@@ -261,23 +290,16 @@ CModel* CModelFactory::GetOutlineModelSubset()
 	psFile.close();
 	//End Shader
 
+
+
 	myOutlineModelSubset = new CModel();
 
 	CModel::SModelData modelData;
-	modelData.myNumberOfVertices = 0;
-	modelData.myNumberOfIndices = 0;
-	modelData.myStride = 0;
-	modelData.myOffset = 0;
-	modelData.myVertexBuffer = nullptr;
-	modelData.myIndexBuffer = nullptr;
 	modelData.myVertexShader = vertexShader;
 	modelData.myPixelShader = pixelShader;
 	modelData.mySamplerState = nullptr;
 	modelData.myPrimitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	modelData.myInputLayout = nullptr;
-	modelData.myTexture[0] = nullptr;
-	modelData.myTexture[1] = nullptr;
-	modelData.myTexture[2] = nullptr;
 	myOutlineModelSubset->Init(modelData);
 
 	return myOutlineModelSubset;
@@ -324,39 +346,58 @@ CModel* CModelFactory::CreateInstancedModels(std::string aFilePath, int aNumberO
 	CLoaderModel* loaderModel = modelLoader.LoadModel(aFilePath.c_str());
 	ENGINE_ERROR_BOOL_MESSAGE(loaderModel, aFilePath.append(" could not be loaded.").c_str());
 
+	// Mesh Data
+	size_t numberOfMeshes = loaderModel->myMeshes.size();
+	std::vector<SInstancedMeshData> meshData;
+	meshData.resize(numberOfMeshes);
+
 	CLoaderMesh* mesh = loaderModel->myMeshes[0];
+	for (unsigned int i = 0; i < numberOfMeshes; ++i)
+	{
+		mesh = loaderModel->myMeshes[i];
+
+		// Vertex Buffer
+		D3D11_BUFFER_DESC vertexBufferDesc = { 0 };
+		vertexBufferDesc.ByteWidth = mesh->myVertexBufferSize * mesh->myVertexCount;
+		vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+		vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
+		D3D11_SUBRESOURCE_DATA subVertexResourceData = { 0 };
+		subVertexResourceData.pSysMem = mesh->myVerticies;
+
+		if (vertexBufferDesc.ByteWidth == 0) {
+			return nullptr;
+		}
+		ID3D11Buffer* vertexBuffer;
+		ENGINE_HR_MESSAGE(myEngine->myFramework->GetDevice()->CreateBuffer(&vertexBufferDesc, &subVertexResourceData, &vertexBuffer), "Vertex Buffer could not be created.");
+
+		// Index Buffer
+		D3D11_BUFFER_DESC indexBufferDesc = { 0 };
+		indexBufferDesc.ByteWidth = sizeof(unsigned int) * static_cast<UINT>(mesh->myIndexes.size());
+		indexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+		indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+
+		D3D11_SUBRESOURCE_DATA subIndexResourceData = { 0 };
+		subIndexResourceData.pSysMem = mesh->myIndexes.data();
+
+		ID3D11Buffer* indexBuffer;
+		ENGINE_HR_MESSAGE(myEngine->myFramework->GetDevice()->CreateBuffer(&indexBufferDesc, &subIndexResourceData, &indexBuffer), "Index Buffer could not be created.");
+
+		meshData[i].myNumberOfVertices = mesh->myVertexCount;
+		meshData[i].myNumberOfIndices = static_cast<UINT>(mesh->myIndexes.size());
+		meshData[i].myStride[0] = mesh->myVertexBufferSize;
+		meshData[i].myStride[1] = sizeof(CModel::SInstanceType);
+		meshData[i].myOffset[0] = 0;	
+		meshData[i].myOffset[1] = 0;	
+		meshData[i].myMaterialIndex = mesh->myModel->myMaterialIndices[i];
+		meshData[i].myVertexBuffer = vertexBuffer;
+		meshData[i].myIndexBuffer = indexBuffer;
+	}
 
 	//Model
 	CModel* model = new CModel();
 	ENGINE_ERROR_BOOL_MESSAGE(model, "Empty model could not be loaded.");
 	model->InstanceCount(aNumberOfInstanced);
-
-	D3D11_BUFFER_DESC vertexBufferDescription = { 0 };
-	vertexBufferDescription.ByteWidth = mesh->myVertexBufferSize * mesh->myVertexCount;
-	vertexBufferDescription.Usage = D3D11_USAGE_IMMUTABLE;
-	vertexBufferDescription.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-
-	D3D11_SUBRESOURCE_DATA vertexSubresourceData = { 0 };
-	vertexSubresourceData.pSysMem = mesh->myVerticies;
-	vertexSubresourceData.SysMemPitch = 0;
-	vertexSubresourceData.SysMemSlicePitch = 0;
-
-	if (vertexBufferDescription.ByteWidth == 0) {
-		return nullptr;
-	}
-	ID3D11Buffer* vertexBuffer;
-	ENGINE_HR_MESSAGE(myEngine->myFramework->GetDevice()->CreateBuffer(&vertexBufferDescription, &vertexSubresourceData, &vertexBuffer), "Vertex Buffer could not be created.");
-
-	D3D11_BUFFER_DESC indexBufferDescription = { 0 };
-	indexBufferDescription.ByteWidth = sizeof(unsigned int) * static_cast<UINT>(mesh->myIndexes.size());
-	indexBufferDescription.Usage = D3D11_USAGE_IMMUTABLE;
-	indexBufferDescription.BindFlags = D3D11_BIND_INDEX_BUFFER;
-
-	D3D11_SUBRESOURCE_DATA IndexSubresourceData = { 0 };
-	IndexSubresourceData.pSysMem = mesh->myIndexes.data();
-
-	ID3D11Buffer* indexBuffer;
-	ENGINE_HR_MESSAGE(myEngine->myFramework->GetDevice()->CreateBuffer(&indexBufferDescription, &IndexSubresourceData, &indexBuffer), "Index Buffer could not be created.");
 
 	//Instance Buffer
 	D3D11_BUFFER_DESC instanceBufferDesc;
@@ -454,33 +495,51 @@ CModel* CModelFactory::CreateInstancedModels(std::string aFilePath, int aNumberO
 	}
 	// ! Check if model uses trimsheet
 
-	ID3D11ShaderResourceView* diffuseResourceView = GetShaderResourceView(device, /*TexturePathWide*/(modelDirectoryAndName + "_D.dds"));
-	ID3D11ShaderResourceView* materialResourceView = GetShaderResourceView(device, /*TexturePathWide*/(modelDirectoryAndName + "_M.dds"));
-	ID3D11ShaderResourceView* normalResourceView = GetShaderResourceView(device, /*TexturePathWide*/(modelDirectoryAndName + "_N.dds"));
+#ifdef USING_FBX_MATERIALS
+	std::vector<std::array<ID3D11ShaderResourceView*, 3>> materials;
+	for (unsigned int i = 0; i < loaderModel->myMaterials.size(); ++i) {
+		std::string materialName = loaderModel->myMaterials[loaderModel->myMaterialIndices[i]];
+		ID3D11ShaderResourceView* diffuseResourceView = GetShaderResourceView(device, (modelDirectory + materialName/*modelDirectoryAndName*/ + "_c.dds"));
+		ID3D11ShaderResourceView* materialResourceView = GetShaderResourceView(device, (modelDirectory + materialName/*modelDirectoryAndName*/ + "_m.dds"));
+		ID3D11ShaderResourceView* normalResourceView = GetShaderResourceView(device, (modelDirectory + materialName/*modelDirectoryAndName*/ + "_n.dds"));
+		materials.push_back({ diffuseResourceView, materialResourceView, normalResourceView });
+	}
+#else
+	std::vector<std::array<ID3D11ShaderResourceView*, 3>> materials;
+	ID3D11ShaderResourceView* diffuseResourceView = GetShaderResourceView(device, (modelDirectory + modelName/*modelDirectoryAndName*/ + "_c.dds"));
+	ID3D11ShaderResourceView* materialResourceView = GetShaderResourceView(device, (modelDirectory + modelName/*modelDirectoryAndName*/ + "_m.dds"));
+	ID3D11ShaderResourceView* normalResourceView = GetShaderResourceView(device, (modelDirectory + modelName/*modelDirectoryAndName*/ + "_n.dds"));
+	materials.push_back({ diffuseResourceView, materialResourceView, normalResourceView });
+#endif
 
-	//ID3D11ShaderResourceView* metalnessShaderResourceView = GetShaderResourceView(device, TexturePathWide(modelDirectory + loaderModel->myTextures[10]));
-	//ID3D11ShaderResourceView* roughnessShaderResourceView = GetShaderResourceView(device, TexturePathWide(modelDirectory + loaderModel->myTextures[1]));
-	//ID3D11ShaderResourceView* ambientShaderResourceView = GetShaderResourceView(device, TexturePathWide(modelDirectory + loaderModel->myTextures[2]));
-	//ID3D11ShaderResourceView* emissiveShaderResourceView = GetShaderResourceView(device, TexturePathWide(modelDirectory + loaderModel->myTextures[3]));
+	// Check for detail normal
+	ID3D11ShaderResourceView* detailNormal1 = nullptr;
+	ID3D11ShaderResourceView* detailNormal2 = nullptr;
+	ID3D11ShaderResourceView* detailNormal3 = nullptr;
+	ID3D11ShaderResourceView* detailNormal4 = nullptr;
+	std::string dnsuffix = aFilePath.substr(aFilePath.length() - 7, 3);
+	if (dnsuffix == "_dn")
+	{
+		detailNormal1 = GetShaderResourceView(device, "Assets/3D/Exempel_Modeller/DetailNormals/Tufted_Leather/dn_25cm_N.dds");
+		detailNormal2 = GetShaderResourceView(device, "Assets/3D/Exempel_Modeller/DetailNormals/4DN/dns/dn_CarbonFibre_n.dds");
+		detailNormal3 = GetShaderResourceView(device, "Assets/3D/Exempel_Modeller/DetailNormals/4DN/dns/dn_Wool_n.dds");
+		detailNormal4 = GetShaderResourceView(device, "Assets/3D/Exempel_Modeller/DetailNormals/4DN/dns/dn_PlasticPolymer_n.dds");
+	}
 
 	CModel::SModelInstanceData modelInstanceData;
-	modelInstanceData.myNumberOfVertices = mesh->myVertexCount;
-	modelInstanceData.myNumberOfIndices = static_cast<UINT>(mesh->myIndexes.size());
-	modelInstanceData.myStride[0] = mesh->myVertexBufferSize;
-	modelInstanceData.myStride[1] = sizeof(CModel::SInstanceType);
-	modelInstanceData.myOffset[0] = 0;
-	modelInstanceData.myOffset[1] = 0;
-	modelInstanceData.myVertexBuffer = vertexBuffer;
-	modelInstanceData.myIndexBuffer = indexBuffer;
+	modelInstanceData.myMeshes = meshData;
 	modelInstanceData.myInstanceBuffer = instanceBuffer;
 	modelInstanceData.myVertexShader = vertexShader;
 	modelInstanceData.myPixelShader = pixelShader;
 	modelInstanceData.mySamplerState = sampler;
 	modelInstanceData.myPrimitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	modelInstanceData.myInputLayout = inputLayout;
-	modelInstanceData.myTexture[0] = diffuseResourceView;
-	modelInstanceData.myTexture[1] = materialResourceView;
-	modelInstanceData.myTexture[2] = normalResourceView;
+	modelInstanceData.myMaterials = materials;
+
+	modelInstanceData.myDetailNormals[0] = detailNormal1;
+	modelInstanceData.myDetailNormals[1] = detailNormal2;
+	modelInstanceData.myDetailNormals[2] = detailNormal3;
+	modelInstanceData.myDetailNormals[3] = detailNormal4;
 
 	model->Init(modelInstanceData);
 	SInstancedModel instancedModel = { aFilePath, aNumberOfInstanced };
