@@ -40,16 +40,16 @@ public:
 
 private:
 	// TODO: Move speed into "Resource Component"
-	DirectX::SimpleMath::Matrix myTransform;
 	DirectX::SimpleMath::Matrix myLocalTransform;
+	DirectX::SimpleMath::Matrix myWorldTransform;
 
-	DirectX::SimpleMath::Vector3 myLocalPosition;
-	DirectX::SimpleMath::Vector3 myLocalRotation;
-	DirectX::SimpleMath::Vector3 myLocalScale;
+	//DirectX::SimpleMath::Vector3 myLocalPosition;
+	//DirectX::SimpleMath::Vector3 myLocalRotation;
+	//DirectX::SimpleMath::Vector3 myLocalScale;
 
-	DirectX::SimpleMath::Vector3 myWorldPosition;
-	DirectX::SimpleMath::Vector3 myWorldRotation;
-	DirectX::SimpleMath::Vector3 myWorldScale;
+	//DirectX::SimpleMath::Vector3 myWorldPosition;
+	//DirectX::SimpleMath::Vector3 myWorldRotation;
+	//DirectX::SimpleMath::Vector3 myWorldScale;
 
 	CTransformComponent* myParent;
 	float myScale;
