@@ -60,8 +60,8 @@ void CInGameState::Start()
 
 	CGameObject* envLight = new CGameObject(1);
 	envLight->AddComponent<CEnviromentLightComponent>(*envLight);
-	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetColor({0.0f,0.0f,1.0f});
-	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetIntensity(10.f);
+	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetColor({1.0f,1.0f,1.0f});
+	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetIntensity(1.f);
 	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetDirection({1.0f,0.5f,-1.0f});
 	scene->AddInstance(envLight);
 	scene->SetEnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight());
@@ -192,15 +192,15 @@ void CInGameState::Receive(const SMessage& /*aMessage*/)
 void TEMP_DeferredRenderingTests(CScene* scene)
 {
 	CGameObject* chest = new CGameObject(1337);
-	chest->AddComponent<CModelComponent>(*chest, std::string(ASSETPATH + "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx"));
+	chest->AddComponent<CModelComponent>(*chest, std::string(ASSETPATH + "Assets/Graphics/Exempel_Modeller/Chest/Particle_Chest.fbx"));
 	chest->GetComponent<CTransformComponent>()->Position({4.0f,0.0f,0.0f});
 
 	CGameObject* chest2 = new CGameObject(1338);
-	chest2->AddComponent<CModelComponent>(*chest2, std::string(ASSETPATH + "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx"));
+	chest2->AddComponent<CModelComponent>(*chest2, std::string(ASSETPATH + "Assets/Graphics/Exempel_Modeller/Chest/Particle_Chest.fbx"));
 	chest2->GetComponent<CTransformComponent>()->Position({5.0f,-2.0f,0.0f});
 
 	CGameObject* chest3 = new CGameObject(1339);
-	chest3->AddComponent<CModelComponent>(*chest3, std::string(ASSETPATH + "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx"));
+	chest3->AddComponent<CModelComponent>(*chest3, std::string(ASSETPATH + "Assets/Graphics/Exempel_Modeller/Chest/Particle_Chest.fbx"));
 	chest3->GetComponent<CTransformComponent>()->Position({6.0f,2.0f,0.0f});
 
 	scene->AddInstance(chest);
@@ -269,12 +269,12 @@ void TEMP_DeferredRenderingTests(CScene* scene)
 	scene->AddInstance(pointLights[4]->GetComponent<CPointLightComponent>()->GetPointLight());
 
 	CGameObject* dn = new CGameObject(1338);
-	dn->AddComponent<CModelComponent>(*dn, "Assets/3D/Exempel_Modeller/DetailNormals/Tufted_Leather/tufted_leather_dn.fbx");
+	dn->AddComponent<CModelComponent>(*dn, ASSETPATH + "Assets/Graphics/Exempel_Modeller/DetailNormals/Tufted_Leather/tufted_leather_dn.fbx");
 	dn->GetComponent<CTransformComponent>()->Position({7.0f,0.0f,0.0f});
 	dn->GetComponent<CTransformComponent>()->Scale(100.0f);
 
 	CGameObject* dn4 = new CGameObject(1339);
-	dn4->AddComponent<CModelComponent>(*dn4, "Assets/3D/Exempel_Modeller/DetailNormals/4DN/4DNs_dn.fbx");
+	dn4->AddComponent<CModelComponent>(*dn4, ASSETPATH + "Assets/Graphics/Exempel_Modeller/DetailNormals/4DN/4DNs_dn.fbx");
 	dn4->GetComponent<CTransformComponent>()->Position({8.0f,0.0f,0.0f});
 	dn4->GetComponent<CTransformComponent>()->Scale(100.0f);
 
@@ -283,25 +283,26 @@ void TEMP_DeferredRenderingTests(CScene* scene)
 
 	constexpr int instancedCount = 300;
 	std::vector<SM::Matrix> transforms(instancedCount);
-	x = -2.0f;
+	x = -3.0f;
 	y = -10.0f;
 	for (int i = 0; i < instancedCount; ++i)
 	{
-		x -= 1.0f;
+		x -= 3.0f;
 		if ((i + 1) % 10 == 0)
 		{
-			x = -2.0f;
-			y += 1.0f;
+			x = -3.0f;
+			y += 3.0f;
 		}
 
 		SM::Matrix transform;
-		transform.Translation({ x, y, 0.0f });
 		transforms[i] = transform;
+		transforms[i] *= SM::Matrix::CreateScale(0.01f);
+		transforms[i].Translation({ x, y, 0.0f });
 	}
 	CGameObject* instancedGameObject = new CGameObject(999);
 	instancedGameObject->AddComponent<CInstancedModelComponent>(*instancedGameObject
-																//, "Assets/3D/Exempel_Modeller/DetailNormals/Tufted_Leather/tufted_leather_dn.fbx"
-																, "Assets/3D/Exempel_Modeller/DetailNormals/4DN/4DNs_dn.fbx"
+																, std::string(ASSETPATH + "Assets/Graphics/Exempel_Modeller/Wall/Wall.fbx")
+																//, "Assets/Graphics/Exempel_Modeller/DetailNormals/4DN/4DNs_dn.fbx"
 																, transforms
 																, false);
 	scene->AddInstance(instancedGameObject);
