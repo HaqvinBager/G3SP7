@@ -26,32 +26,23 @@ void CImGuiLevelSelect::RenderWindow()
 
     std::vector<std::string> files = CJsonReader::GetFilePathsInFolder(ASSETPATH + "Assets/Generated");
 	ImGui::Begin("LevelSelect");
-    if (ImGui::TreeNode("Selection State: Single Selection"))
+    if (ImGui::TreeNodeEx("Scenes"))
     {
         static int selected = -1;
         for (int n = 0; n < files.size(); n++)
         {
             char buf[512];
             sprintf_s(buf, "%s", files[n].c_str());
-
-            if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
-            {
-                std::cout << "Load Level: " << buf << std::endl;
-                //CScene* myUnityScene = CSceneManager::CreateScene(buf);
-                //CEngine::GetInstance()->AddScene(CStateStack::EState::InGame, myUnityScene);
-                //CEngine::GetInstance()->SetActiveScene(CStateStack::EState::InGame);
-            }
-
-            if (ImGui::Selectable(buf, selected == n))
+            if (ImGui::Selectable(buf, selected == n, ImGuiSelectableFlags_AllowDoubleClick))
             {
                 selected = n;
-
-            
+                if (ImGui::IsMouseDoubleClicked(0))
+                {
+                    
+                }
             }
         }
         ImGui::TreePop();
     }
-
-
 	ImGui::End();
 }
