@@ -170,7 +170,6 @@ void CForwardRenderer::Render(CEnvironmentLight* anEnvironmentLight, std::vector
 				++counter;
 			}
 		}
-
 		myObjectBufferData.myNumberOfDetailNormals = counter;
 
 		BindBuffer(myObjectBuffer, myObjectBufferData, "Object Buffer");
@@ -185,14 +184,11 @@ void CForwardRenderer::Render(CEnvironmentLight* anEnvironmentLight, std::vector
 
 		myContext->IASetPrimitiveTopology(modelData.myPrimitiveTopology);
 		myContext->IASetInputLayout(modelData.myInputLayout);
-		myContext->IASetVertexBuffers(0, 1, &modelData.myVertexBuffer, &modelData.myStride, &modelData.myOffset);
-		myContext->IASetIndexBuffer(modelData.myIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
 		myContext->VSSetConstantBuffers(1, 1, &myObjectBuffer);
 		myContext->VSSetShader(modelData.myVertexShader, nullptr, 0);
 
 		myContext->PSSetConstantBuffers(1, 1, &myObjectBuffer);
-		myContext->PSSetShaderResources(1, 3, &modelData.myTexture[0]);
 		for (unsigned int i = 0; i < myObjectBufferData.myNumberOfDetailNormals; ++i)
 		{
 			myContext->PSSetShaderResources(4 + i, 1, &modelData.myDetailNormals[i]);
@@ -205,7 +201,14 @@ void CForwardRenderer::Render(CEnvironmentLight* anEnvironmentLight, std::vector
 		else
 			myContext->PSSetShader(myCurrentPixelShader, nullptr, 0);
 
-		myContext->DrawIndexed(modelData.myNumberOfIndices, 0, 0);
+		// Render all meshes
+		for (unsigned int i = 0; i < modelData.myMeshes.size(); ++i)
+		{
+			myContext->IASetVertexBuffers(0, 1, &modelData.myMeshes[i].myVertexBuffer, &modelData.myMeshes[i].myStride, &modelData.myMeshes[i].myOffset);
+			myContext->IASetIndexBuffer(modelData.myMeshes[i].myIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+			myContext->PSSetShaderResources(1, 3, &modelData.myMaterials[modelData.myMeshes[i].myMaterialIndex][0]);
+			myContext->DrawIndexed(modelData.myMeshes[i].myNumberOfIndices, 0, 0);
+		}
 	}
 }
 
@@ -276,19 +279,11 @@ void CForwardRenderer::InstancedRender(CEnvironmentLight* anEnvironmentLight, st
 		myContext->IASetPrimitiveTopology(modelData.myPrimitiveTopology);
 		myContext->IASetInputLayout(modelData.myInputLayout);
 
-		ID3D11Buffer* bufferPointers[2] = {modelData.myVertexBuffer, modelData.myInstanceBuffer};
-		myContext->IASetVertexBuffers(0, 2, bufferPointers, modelData.myStride, modelData.myOffset);
-		myContext->IASetIndexBuffer(modelData.myIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-
 		myContext->VSSetConstantBuffers(1, 1, &myObjectBuffer);
 		myContext->VSSetShader(modelData.myVertexShader, nullptr, 0);
 
 		myContext->PSSetConstantBuffers(1, 1, &myObjectBuffer);
-		myContext->PSSetShaderResources(1, 3, &modelData.myTexture[0]);
 		myContext->PSSetSamplers(0, 1, &modelData.mySamplerState);
-
-
-
 
 		// Toggling render passes
 		if (myCurrentPixelShader == nullptr)
@@ -296,9 +291,15 @@ void CForwardRenderer::InstancedRender(CEnvironmentLight* anEnvironmentLight, st
 		else
 			myContext->PSSetShader(myCurrentPixelShader, nullptr, 0);
 
-
-
-		myContext->DrawIndexedInstanced(modelData.myNumberOfIndices, model->InstanceCount(), 0, 0, 0);
+		// Render all meshes
+		for (unsigned int i = 0; i < modelData.myMeshes.size(); ++i)
+		{
+			ID3D11Buffer* bufferPointers[2] = { modelData.myMeshes[i].myVertexBuffer, modelData.myInstanceBuffer };
+			myContext->IASetVertexBuffers(0, 2, bufferPointers, modelData.myMeshes[i].myStride, modelData.myMeshes[i].myOffset);
+			myContext->IASetIndexBuffer(modelData.myMeshes[i].myIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+			myContext->PSSetShaderResources(1, 3, &modelData.myMaterials[modelData.myMeshes[i].myMaterialIndex][0]);
+			myContext->DrawIndexedInstanced(modelData.myMeshes[i].myNumberOfIndices, model->InstanceCount(), 0, 0, 0);
+		}
 	}
 }
 
@@ -333,8 +334,6 @@ void CForwardRenderer::RenderLines(CCameraComponent* aCamera, const std::vector<
 
 		//myContext->DrawIndexed(lineData.myNumberOfIndices, 0, 0);
 		myContext->Draw(lineData.myNumberOfVertices, 0);
-
-
 	}
 }
 
@@ -364,8 +363,8 @@ void CForwardRenderer::RenderOutline(CCameraComponent* aCamera, CGameObject* aMo
 	myContext->IASetPrimitiveTopology(modelData.myPrimitiveTopology);
 	myContext->IASetInputLayout(modelData.myInputLayout);
 
-	myContext->IASetVertexBuffers(0, 1, &modelData.myVertexBuffer, &modelData.myStride, &modelData.myOffset);
-	myContext->IASetIndexBuffer(modelData.myIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	//myContext->IASetVertexBuffers(0, 1, &modelData.myVertexBuffer, &modelData.myStride, &modelData.myOffset);
+	//myContext->IASetIndexBuffer(modelData.myIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
 	myContext->VSSetConstantBuffers(1, 1, &myObjectBuffer);
 	myContext->VSSetShader(outlineModelData.myVertexShader, nullptr, 0);
@@ -375,12 +374,20 @@ void CForwardRenderer::RenderOutline(CCameraComponent* aCamera, CGameObject* aMo
 
 	myContext->PSSetConstantBuffers(1, 1, &myObjectBuffer);
 	myContext->PSSetConstantBuffers(3, 1, &myOutlineBuffer);
-	myContext->PSSetShaderResources(1, 3, &modelData.myTexture[0]);
+	//myContext->PSSetShaderResources(1, 3, &modelData.myTexture[0]);
 	myContext->PSSetShader(outlineModelData.myPixelShader, nullptr, 0);
 
 	myContext->PSSetSamplers(0, 1, &modelData.mySamplerState);
 
-	myContext->DrawIndexed(modelData.myNumberOfIndices, 0, 0);
+	for (unsigned int i = 0; i < modelData.myMeshes.size(); ++i)
+	{
+		myContext->IASetVertexBuffers(0, 1, &modelData.myMeshes[i].myVertexBuffer, &modelData.myMeshes[i].myStride, &modelData.myMeshes[i].myOffset);
+		myContext->IASetIndexBuffer(modelData.myMeshes[i].myIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+		//myContext->PSSetShaderResources(1, 3, &modelData.myMaterials[modelData.myMeshes[i].myMaterialIndex][0]);
+		myContext->DrawIndexed(modelData.myMeshes[i].myNumberOfIndices, 0, 0);
+	}
+
+	//myContext->DrawIndexed(modelData.myNumberOfIndices, 0, 0);
 }
 
 void CForwardRenderer::RenderLineInstances(CCameraComponent* aCamera, const std::vector<CLineInstance*>& aLineList) {
@@ -396,7 +403,6 @@ void CForwardRenderer::RenderLineInstances(CCameraComponent* aCamera, const std:
 
 	for (const CLineInstance* instance : aLineList)
 	{
-
 		CLine::SLineData lineData = instance->GetLine()->GetLineData();
 
 		myObjectBufferData.myToWorld = instance->GetTransform();
@@ -415,8 +421,6 @@ void CForwardRenderer::RenderLineInstances(CCameraComponent* aCamera, const std:
 
 		//myContext->DrawIndexed(lineData.myNumberOfIndices, 0, 0);
 		myContext->Draw(lineData.myNumberOfVertices, 0);
-
-
 	}
 }
 

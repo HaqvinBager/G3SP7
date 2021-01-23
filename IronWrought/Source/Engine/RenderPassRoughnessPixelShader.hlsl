@@ -1,5 +1,4 @@
 #include "PBRAmbience.hlsli"
-#include "PBRDirectionalLight.hlsli"
 
 PixelOutPut main(VertexToPixel input)
 {

@@ -27,6 +27,7 @@ class CVFXFactory;
 class CLineFactory;
 class CAudioManager;
 class CImguiManager;
+class CGraphManager;
 //class CDialogueSystem;
 
 class CEngine
@@ -98,6 +99,7 @@ private:
 	//CDialogueSystem* myDialogueSystem;
 
 	CImguiManager* myImguiManager;
+	CGraphManager* myGraphManager;
 
 	bool myRenderSceneActive = false;
 	bool myEnabledEditorImgui = false;

@@ -1,4 +1,3 @@
-#include "DetailNormalHelpers.hlsli"
 #include "PBRAmbience.hlsli"
 #include "PBRDirectionalLight.hlsli"
 
@@ -40,16 +39,53 @@ PixelOutPut main(VertexToPixel input)
     if (myNumberOfDetailNormals > 0)
     { // get from ModelData when rendering
         float detailNormalStrength = PixelShader_DetailNormalStrength(input);
-        float strengthMultiplier = 4.0f; // should change based on distance to camera
+        float strengthMultiplier = DetailStrengthDistanceMultiplier(cameraPosition.xyz, input.myWorldPosition.xyz); // should change based on distance to camera
         float3 detailNormal;
-        for (int i = 0; i < myNumberOfDetailNormals; ++i)
+        
+        // Blend based on detail normal strength
+        // X3512 Sampler array index must be literal expression => DETAILNORMAL_#
+        // Sampled detail normal strength value: 
+        //      0.1f - 0.24f    == DETAILNORMAL_1
+        //      0.26f - 0.49f   == DETAILNORMAL_2
+        //      0.51f - 0.74f   == DETAILNORMAL_3
+        //      0.76f - 1.0f    == DETAILNORMAL_4
+        // Note! This if-chain exists in 3 shaders: PBRPixelShader, GBufferPixelShader and DeferredRenderPassGBufferPixelShader
+        // Make this better please
+        if (detailNormalStrength > DETAILNORMAL_4_STR_RANGE_MIN)
         {
-            detailNormal = PixelShader_DetailNormal(input, i).myColor.xyz;
-            detailNormal = SetDetailNormalStrength(detailNormal, detailNormalStrength, strengthMultiplier);
-            normal = normal * 0.5 + 0.5;
-            detailNormal = detailNormal * 0.5 + 0.5;
-            normal = BlendRNM(normal, detailNormal);
+            detailNormal = PixelShader_DetailNormal(input, DETAILNORMAL_4).myColor.xyz;
+            detailNormalStrength = (detailNormalStrength - DETAILNORMAL_4_STR_RANGE_MIN + 0.01f) / DETAILNORMAL_STR_RANGE_DIFF;
         }
+        else if (detailNormalStrength > DETAILNORMAL_3_STR_RANGE_MIN)
+        {
+            detailNormal = PixelShader_DetailNormal(input, DETAILNORMAL_3).myColor.xyz;
+            detailNormalStrength = (detailNormalStrength - DETAILNORMAL_3_STR_RANGE_MIN + 0.01f) / DETAILNORMAL_STR_RANGE_DIFF;
+        }
+        else if (detailNormalStrength > DETAILNORMAL_2_STR_RANGE_MIN)
+        {
+            detailNormal = PixelShader_DetailNormal(input, DETAILNORMAL_2).myColor.xyz;
+            detailNormalStrength = (detailNormalStrength - DETAILNORMAL_2_STR_RANGE_MIN + 0.01f) / DETAILNORMAL_STR_RANGE_DIFF;
+        }
+        else
+        {
+            detailNormal = PixelShader_DetailNormal(input, DETAILNORMAL_1).myColor.xyz;
+            detailNormalStrength = (detailNormalStrength - DETAILNORMAL_1_STR_RANGE_MIN + 0.01f) / DETAILNORMAL_STR_RANGE_DIFF;
+        }
+        
+        detailNormal = SetDetailNormalStrength(detailNormal, detailNormalStrength, strengthMultiplier);
+        normal = normal * 0.5 + 0.5;
+        detailNormal = detailNormal * 0.5 + 0.5;
+        normal = BlendRNM(normal, detailNormal);
+        
+        // Blend all 4
+        //for (int i = 0; i < myNumberOfDetailNormals; ++i)
+        //{
+        //    detailNormal = PixelShader_DetailNormal(input, i).myColor.xyz;
+        //    detailNormal = SetDetailNormalStrength(detailNormal, detailNormalStrength, strengthMultiplier);
+        //    normal = normal * 0.5 + 0.5;
+        //    detailNormal = detailNormal * 0.5 + 0.5;
+        //    normal = BlendRNM(normal, detailNormal);
+        //}
     } // End of if
     
     float3x3 tangentSpaceMatrix = float3x3(normalize(input.myTangent.xyz), normalize(input.myBiNormal.xyz), normalize(input.myNormal.xyz));
@@ -77,7 +113,7 @@ PixelOutPut main(VertexToPixel input)
     }
     
     float3 emissive = albedo * emissivedata; // Maybe add cool multiplier?? // Aki 2021
-    float3 radiance = /*ambience +*/ directionallight + pointLights + emissive;
+    float3 radiance = ambience + directionallight + pointLights + emissive;
    
     output.myColor.rgb = LinearToGamma(radiance);
     output.myColor.a = albedo.w;
