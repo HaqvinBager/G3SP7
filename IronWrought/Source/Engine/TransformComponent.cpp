@@ -56,23 +56,21 @@ void CTransformComponent::Update()
 	//	myTransform = t * r * s;
 	//}
 
+	
+}
+
+void CTransformComponent::LateUpdate()
+{
 	if (myParent != nullptr)
 	{
-		//Vector3 tempTranslation = myParent->myWorldTransform.Translation();
-		//
-		//Matrix tempRotation = Matrix::CreateFromQuaternion(
-		//	Rotation()
-		//);
-
+		myLocalTransform.Translation(myParent->myWorldTransform.Translation());
+		Rotation(myParent->Rotation());
 		myWorldTransform = DirectX::XMMatrixMultiply(myParent->myWorldTransform, myLocalTransform);
-		//myWorldTransform.Translation(tempTranslation + myLocalTransform.Translation());
-		//myWorldTransform = myParent->myWorldTransform * myLocalTransform;
 	}
 	else
 	{
 		myWorldTransform = myLocalTransform;
 	}
-
 }
 
 void CTransformComponent::Position(DirectX::SimpleMath::Vector3 aPosition)

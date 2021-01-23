@@ -64,6 +64,15 @@ void CGameObject::Update()
 			myComponents[i]->Update();
 		}
 	}
+
+}
+
+void CGameObject::LateUpdate()
+{
+	for (size_t i = 0; i < myComponents.size(); ++i)
+	{
+		myComponents[i]->LateUpdate();
+	}
 }
 
 void CGameObject::Collided(CGameObject& aCollidedGameObject)

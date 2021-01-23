@@ -54,6 +54,7 @@ public:
 	void Start();
 
 	void Update();
+	void LateUpdate();
 
 	void Collided(CGameObject& aCollidedGameObject);
 
