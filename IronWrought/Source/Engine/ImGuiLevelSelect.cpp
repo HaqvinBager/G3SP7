@@ -38,11 +38,17 @@ void CImGuiLevelSelect::RenderWindow()
                 selected = n;
                 if (ImGui::IsMouseDoubleClicked(0))
                 {
-                    std::cout << "Load level" << buf << std::endl;
+                    LoadLevel(files[n]);             
                 }
             }
         }
         ImGui::TreePop();
     }
 	ImGui::End();
+}
+
+void CImGuiLevelSelect::LoadLevel(std::string aLevelPath)
+{
+
+    std::cout << "Load: " << aLevelPath << std::endl;
 }

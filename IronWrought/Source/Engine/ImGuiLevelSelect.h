@@ -9,5 +9,7 @@ public:
 
 private:
 
+	void LoadLevel(std::string aLevelPath);
+
 };
 
