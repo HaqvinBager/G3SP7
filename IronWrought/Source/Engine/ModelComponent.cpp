@@ -6,10 +6,14 @@
 
 CModelComponent::CModelComponent(CGameObject& aParent, const std::string& aFBXPath) : CBehaviour(aParent) {
 	myModel = CModelFactory::GetInstance()->GetModel(aFBXPath);
+	myModelPath = aFBXPath;
 }
 
 CModelComponent::~CModelComponent()
-{}
+{
+	//SAFE_DELETE(myModel);
+	CModelFactory::GetInstance()->ClearModel(myModelPath);
+}
 
 void CModelComponent::Awake()
 {}

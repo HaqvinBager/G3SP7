@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "SpriteRenderer.h"
+#include "RenderManager.h"
 #include "Sprite.h"
 #include "SpriteInstance.h"
 #include "AnimatedUIElement.h"
@@ -102,6 +103,7 @@ void CSpriteRenderer::Render(std::vector<CSpriteInstance*>& aSpriteList)
         myContext->PSSetShader(mySpritePixelShader, nullptr, 0);
 
         myContext->Draw(3, 0);
+        CRenderManager::myNumberOfDrawCallsThisFrame++;
 
         //Reset Resources
         ID3D11ShaderResourceView* nullView = NULL;
@@ -165,6 +167,7 @@ void CSpriteRenderer::Render(std::vector<CAnimatedUIElement*>& someAnimatedEleme
         myContext->PSSetShader(data->myPixelShader, nullptr, 0);
 
         myContext->Draw(3, 0);
+        CRenderManager::myNumberOfDrawCallsThisFrame++;
 
         //Reset Resources
         ID3D11ShaderResourceView* nullView = NULL;

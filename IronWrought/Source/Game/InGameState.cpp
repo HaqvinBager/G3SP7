@@ -162,6 +162,11 @@ void CInGameState::Update()
 	{
 		gameObject->Update();
 	}
+
+	if (Input::GetInstance()->IsKeyPressed(VK_ESCAPE))
+	{
+		myStateStack.PopTopAndPush(CStateStack::EState::InGame);
+	}
 }
 
 void CInGameState::ReceiveEvent(const EInputEvent aEvent)
@@ -191,20 +196,20 @@ void CInGameState::Receive(const SMessage& /*aMessage*/)
 
 void TEMP_DeferredRenderingTests(CScene* scene)
 {
-	//CGameObject* chest = new CGameObject(1337);
-	//chest->AddComponent<CModelComponent>(*chest, std::string(ASSETPATH + "Assets/Graphics/Exempel_Modeller/Chest/Particle_Chest.fbx"));
-	//chest->GetComponent<CTransformComponent>()->Position({4.0f,0.0f,0.0f});
+	CGameObject* chest = new CGameObject(1337);
+	chest->AddComponent<CModelComponent>(*chest, std::string(ASSETPATH + "Assets/Graphics/Exempel_Modeller/Wall/Wall.fbx"));
+	chest->GetComponent<CTransformComponent>()->Position({4.0f,0.0f,0.0f});
 
-	//CGameObject* chest2 = new CGameObject(1338);
-	//chest2->AddComponent<CModelComponent>(*chest2, std::string(ASSETPATH + "Assets/Graphics/Exempel_Modeller/Chest/Particle_Chest.fbx"));
-	//chest2->GetComponent<CTransformComponent>()->Position({5.0f,-2.0f,0.0f});
+	CGameObject* chest2 = new CGameObject(1338);
+	chest2->AddComponent<CModelComponent>(*chest2, std::string(ASSETPATH + "Assets/Graphics/Exempel_Modeller/Wall/Wall.fbx"));
+	chest2->GetComponent<CTransformComponent>()->Position({5.0f,-2.0f,0.0f});
 
 	//CGameObject* chest3 = new CGameObject(1339);
 	//chest3->AddComponent<CModelComponent>(*chest3, std::string(ASSETPATH + "Assets/Graphics/Exempel_Modeller/Chest/Particle_Chest.fbx"));
 	//chest3->GetComponent<CTransformComponent>()->Position({6.0f,2.0f,0.0f});
 
-	//scene->AddInstance(chest);
-	//scene->AddInstance(chest2);
+	scene->AddInstance(chest);
+	scene->AddInstance(chest2);
 	//scene->AddInstance(chest3);
 
 	constexpr int numPointLights = 1;

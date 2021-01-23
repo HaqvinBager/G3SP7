@@ -23,6 +23,7 @@ public:
 	void OnDisable() override;
 private:
 	CModel* myModel;
+	std::string myModelPath;
 };
 
 

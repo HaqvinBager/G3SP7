@@ -7,6 +7,7 @@ public:
 	void DebugWindow();
 
 private:
-
+	const std::string GetSystemMemory();
+	const std::string GetDrawCalls();
 };
 

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "MaterialHandler.h"
 
-std::array<ID3D11ShaderResourceView*, 3> CMaterialHandler::RequestMaterial(const std::string aMaterialName)
+std::array<ID3D11ShaderResourceView*, 3> CMaterialHandler::RequestMaterial(const std::string& aMaterialName)
 {
 	if (myMaterials.find(aMaterialName) == myMaterials.end())
 	{
@@ -10,9 +10,11 @@ std::array<ID3D11ShaderResourceView*, 3> CMaterialHandler::RequestMaterial(const
 		newTextures[1] = GetShaderResourceView(myDevice, myMaterialPath + aMaterialName + "/" + aMaterialName + "_m.dds");
 		newTextures[2] = GetShaderResourceView(myDevice, myMaterialPath + aMaterialName + "/" + aMaterialName + "_n.dds");
 
-		myMaterials.emplace(aMaterialName, newTextures);
+		myMaterials.emplace(aMaterialName, std::move(newTextures));
+		myMaterialReferences.emplace(aMaterialName, 0);
 	}
 
+	myMaterialReferences[aMaterialName] += 1;
 	std::array<ID3D11ShaderResourceView*, 3> textures;
 	textures[0] = myMaterials[aMaterialName][0].Get();
 	textures[1] = myMaterials[aMaterialName][1].Get();
@@ -20,8 +22,25 @@ std::array<ID3D11ShaderResourceView*, 3> CMaterialHandler::RequestMaterial(const
 	return textures;
 }
 
-void CMaterialHandler::ReleaseMaterial(const std::string aMaterialName)
+void CMaterialHandler::ReleaseMaterial(const std::string& aMaterialName)
 {
+	if (myMaterials.find(aMaterialName) != myMaterials.end())
+	{
+		myMaterialReferences[aMaterialName] -= 1;
+
+		if (myMaterialReferences[aMaterialName] <= 0)
+		{
+			ULONG remainingRefs = 0;
+			do
+			{
+				myMaterials[aMaterialName][0].Get()->Release();
+				myMaterials[aMaterialName][1].Get()->Release();
+				remainingRefs = myMaterials[aMaterialName][2].Get()->Release();
+			} while (remainingRefs > 1);
+
+			myMaterials.erase(aMaterialName);
+		}
+	}
 }
 
 bool CMaterialHandler::Init(CDirectXFramework* aFramwork)
@@ -36,7 +55,7 @@ bool CMaterialHandler::Init(CDirectXFramework* aFramwork)
 	return true;
 }
 
-ID3D11ShaderResourceView* CMaterialHandler::GetShaderResourceView(ID3D11Device* aDevice, std::string aTexturePath)
+ID3D11ShaderResourceView* CMaterialHandler::GetShaderResourceView(ID3D11Device* aDevice, const std::string& aTexturePath)
 {
 	ID3D11ShaderResourceView* shaderResourceView;
 
@@ -69,6 +88,7 @@ ID3D11ShaderResourceView* CMaterialHandler::GetShaderResourceView(ID3D11Device* 
 }
 
 CMaterialHandler::CMaterialHandler()
+	: myDevice(nullptr)
 {
 }
 
