@@ -20,6 +20,8 @@
 
 #define USING_DEFERRED
 
+unsigned int CRenderManager::myNumberOfDrawCallsThisFrame = 0;
+
 CRenderManager::CRenderManager() /*: myScene(*CScene::GetInstance())*/
 	: myDoFullRender(true)
 	, myClearColor(0.8f, 0.5f, 0.5f, 1.0f)
@@ -94,6 +96,8 @@ bool CRenderManager::ReInit(CDirectXFramework* aFramework, CWindowHandler* aWind
 
 void CRenderManager::Render(CScene& aScene)
 {
+	CRenderManager::myNumberOfDrawCallsThisFrame = 0;
+
 	if (Input::GetInstance()->IsKeyPressed(VK_F6))	
 	{
 #ifdef USING_DEFERRED //Define found under #includes

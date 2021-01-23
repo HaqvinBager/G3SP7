@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "DeferredRenderer.h"
 #include "DirectXFramework.h"
+#include "RenderManager.h"
 #include "Model.h"
 #include "Camera.h"
 #include "EnvironmentLight.h"
@@ -178,6 +179,7 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 
 		myContext->PSSetSamplers(0, 1, &modelData.mySamplerState);
 
+
 		// Render all meshes
 		for (unsigned int i = 0; i < modelData.myMeshes.size(); ++i)
 		{
@@ -185,6 +187,7 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 			myContext->IASetIndexBuffer(modelData.myMeshes[i].myIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 			myContext->PSSetShaderResources(5, 3, &modelData.myMaterials[modelData.myMeshes[i].myMaterialIndex][0]);
 			myContext->DrawIndexed(modelData.myMeshes[i].myNumberOfIndices, 0, 0);
+			CRenderManager::myNumberOfDrawCallsThisFrame++;
 		}
 	}
 
@@ -253,6 +256,7 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 			myContext->IASetIndexBuffer(modelData.myMeshes[i].myIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 			myContext->PSSetShaderResources(5, 3, &modelData.myMaterials[modelData.myMeshes[i].myMaterialIndex][0]);
 			myContext->DrawIndexedInstanced(modelData.myMeshes[i].myNumberOfIndices, model->InstanceCount(), 0, 0, 0);
+			CRenderManager::myNumberOfDrawCallsThisFrame++;
 		}
 	}
 
@@ -301,6 +305,7 @@ void CDeferredRenderer::Render(CCameraComponent* aCamera, CEnvironmentLight* anE
 	myContext->PSSetSamplers(0, 1, &mySamplerState);
 
 	myContext->Draw(3, 0);
+	CRenderManager::myNumberOfDrawCallsThisFrame++;
 }
 
 void CDeferredRenderer::Render(CCameraComponent* aCamera, std::vector<CPointLight*>& aPointLightList)
@@ -336,6 +341,7 @@ void CDeferredRenderer::Render(CCameraComponent* aCamera, std::vector<CPointLigh
 		myContext->PSSetSamplers(0, 1, &mySamplerState);
 
 		myContext->Draw(3, 0);
+		CRenderManager::myNumberOfDrawCallsThisFrame++;
 	}
 
 }

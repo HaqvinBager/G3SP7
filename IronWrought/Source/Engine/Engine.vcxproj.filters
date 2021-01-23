@@ -417,104 +417,11 @@
     <ClCompile Include="ImguiManager.cpp">
       <Filter>Imgui\Manager</Filter>
     </ClCompile>
-    <ClCompile Include="Builders.cpp">
-      <Filter>Imgui\Blueprints</Filter>
-    </ClCompile>
-    <ClCompile Include="Drawing.cpp">
-      <Filter>Imgui\Blueprints</Filter>
-    </ClCompile>
-    <ClCompile Include="Widgets.cpp">
-      <Filter>Imgui\Blueprints</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Includes\Imgui\Node Editor\crude_json.cpp">
-      <Filter>Imgui\Node Editor\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Includes\Imgui\Node Editor\imgui_canvas.cpp">
-      <Filter>Imgui\Node Editor\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Includes\Imgui\Node Editor\imgui_node_editor.cpp">
-      <Filter>Imgui\Node Editor\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Includes\Imgui\Node Editor\imgui_node_editor_api.cpp">
-      <Filter>Imgui\Node Editor\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="CGraphManager.cpp">
-      <Filter>Imgui\Node Editor\Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="CNodeInstance.cpp">
-      <Filter>Imgui\Node Editor\Nodes</Filter>
-    </ClCompile>
-    <ClCompile Include="CNodeType.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Base Type</Filter>
-    </ClCompile>
-    <ClCompile Include="CNodeTypePrint.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library</Filter>
-    </ClCompile>
-    <ClCompile Include="CNodeTypeStart.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library</Filter>
-    </ClCompile>
-    <ClCompile Include="CNodeTypeGetMousePosition.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="CNodeTypeMathAbs.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="CNodeTypeMathAdd.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="CNodeTypeMathAtan2.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="CNodeTypeMathCeil.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="CNodeTypeMathCos.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="CNodeTypeMathDistance.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="CNodeTypeMathDot.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="CNodeTypeMathFloor.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="CNodeTypeMathLerp.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="CNodeTypeMathMax.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="CNodeTypeMathMin.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="CNodeTypeMathMul.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="CNodeTypeMathSaturate.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="CNodeTypeMathSin.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="CNodeTypeMathSmoothstep.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="CNodeTypeMathStorage.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="CNodeTypeMathSub.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="CNodeTypeMathToDegrees.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="CNodeTypeMathToRadians.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
-    </ClCompile>
     <ClCompile Include="State.cpp" />
     <ClCompile Include="StateStack.cpp" />
+    <ClCompile Include="MaterialHandler.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
     <ClCompile Include="ImGuiLevelSelect.cpp">
       <Filter>Imgui\Manager</Filter>
     </ClCompile>
@@ -850,122 +757,11 @@
     <ClInclude Include="ImguiManager.h">
       <Filter>Imgui\Manager</Filter>
     </ClInclude>
-    <ClInclude Include="Builders.h">
-      <Filter>Imgui\Blueprints</Filter>
-    </ClInclude>
-    <ClInclude Include="Drawing.h">
-      <Filter>Imgui\Blueprints</Filter>
-    </ClInclude>
-    <ClInclude Include="Interop.h">
-      <Filter>Imgui\Blueprints</Filter>
-    </ClInclude>
-    <ClInclude Include="Math2D.h">
-      <Filter>Imgui\Blueprints</Filter>
-    </ClInclude>
-    <ClInclude Include="Widgets.h">
-      <Filter>Imgui\Blueprints</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Includes\Imgui\Node Editor\crude_json.h">
-      <Filter>Imgui\Node Editor\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Includes\Imgui\Node Editor\imgui_bezier_math.h">
-      <Filter>Imgui\Node Editor\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Includes\Imgui\Node Editor\imgui_canvas.h">
-      <Filter>Imgui\Node Editor\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Includes\Imgui\Node Editor\imgui_extra_math.h">
-      <Filter>Imgui\Node Editor\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Includes\Imgui\Node Editor\imgui_node_editor.h">
-      <Filter>Imgui\Node Editor\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Includes\Imgui\Node Editor\imgui_node_editor_internal.h">
-      <Filter>Imgui\Node Editor\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="CGraphManager.h">
-      <Filter>Imgui\Node Editor\Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="CNodeInstance.h">
-      <Filter>Imgui\Node Editor\Nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="CNodeType.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Base Type</Filter>
-    </ClInclude>
-    <ClInclude Include="NodeTypes.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Base Type</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Includes\Imgui\stb_image.h">
-      <Filter>Imgui\Node Editor\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="CNodeTypePrint.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library</Filter>
-    </ClInclude>
-    <ClInclude Include="CNodeTypeStart.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library</Filter>
-    </ClInclude>
-    <ClInclude Include="CNodeTypeGetMousePosition.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="CNodeTypeMathAbs.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="CNodeTypeMathAdd.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="CNodeTypeMathAtan2.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="CNodeTypeMathCeil.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="CNodeTypeMathCos.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="CNodeTypeMathDistance.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="CNodeTypeMathDot.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="CNodeTypeMathFloor.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="CNodeTypeMathLerp.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="CNodeTypeMathMax.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="CNodeTypeMathMin.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="CNodeTypeMathMul.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="CNodeTypeMathSaturate.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="CNodeTypeMathSin.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="CNodeTypeMathSmoothstep.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="CNodeTypeMathStorage.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="CNodeTypeMathSub.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="CNodeTypeMathToDegrees.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="CNodeTypeMathToRadians.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
-    </ClInclude>
     <ClInclude Include="State.h" />
     <ClInclude Include="StateStack.h" />
+    <ClInclude Include="MaterialHandler.h">
+      <Filter>Model</Filter>
+    </ClInclude>
     <ClInclude Include="ImGuiLevelSelect.h">
       <Filter>Imgui\Manager</Filter>
     </ClInclude>
@@ -1015,18 +811,6 @@
     </None>
     <None Include="DeferredShaderStructs.hlsli">
       <Filter>Shaders\Deferred</Filter>
-    </None>
-    <None Include="Math2D.inl">
-      <Filter>Imgui\Blueprints</Filter>
-    </None>
-    <None Include="..\Includes\Imgui\Node Editor\imgui_bezier_math.inl">
-      <Filter>Imgui\Node Editor\Core</Filter>
-    </None>
-    <None Include="..\Includes\Imgui\Node Editor\imgui_extra_math.inl">
-      <Filter>Imgui\Node Editor\Core</Filter>
-    </None>
-    <None Include="..\Includes\Imgui\Node Editor\imgui_node_editor_internal.inl">
-      <Filter>Imgui\Node Editor\Core</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -1149,42 +933,6 @@
     </Filter>
     <Filter Include="Imgui\Manager">
       <UniqueIdentifier>{cf9224c9-d296-4081-b1d8-7c2bb6b21f0d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Imgui\Blueprints">
-      <UniqueIdentifier>{61efb602-1edc-4871-bb93-611607e3cbf2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Imgui\Node Editor">
-      <UniqueIdentifier>{211fa6bb-7d1c-4a02-9f6e-71b96259a94e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Imgui\Node Editor\Core">
-      <UniqueIdentifier>{59c69b1a-a008-4d02-a32a-aa13e7cefd86}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Imgui\Node Editor\Manager">
-      <UniqueIdentifier>{87b4700a-15b2-426d-b032-f3d2463faf7e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Imgui\Node Editor\Nodes">
-      <UniqueIdentifier>{bbbcd0c0-46e2-4f03-b955-0181c1622d4a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Imgui\Node Editor\Nodes\Base Library">
-      <UniqueIdentifier>{948ea354-fca3-40a7-81d8-2ad5d3247554}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Imgui\Node Editor\Nodes\Base Library\Base Type">
-      <UniqueIdentifier>{b7cdf648-4b6e-4eaa-b986-8766bdbc5020}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Imgui\Node Editor\Nodes\Base Library\Input">
-      <UniqueIdentifier>{7642cd3e-92c8-418d-a31f-1cfe24e1a16e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Imgui\Node Editor\Nodes\Base Library\Math">
-      <UniqueIdentifier>{615e6ff6-4a3a-4b26-8b02-d27da0b082b2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Imgui\Node Editor\Nodes\Base Library\Timer">
-      <UniqueIdentifier>{2e592059-39e1-49a6-a023-a4d3ba392358}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Imgui\Node Editor\Nodes\Base Library\Trigger">
-      <UniqueIdentifier>{91609e06-4217-4759-beb5-82276c4b60bc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Imgui\Node Editor\Nodes\Base Library\Gameobject">
-      <UniqueIdentifier>{8bbe5362-d12e-4d25-9a8f-5cd174138235}</UniqueIdentifier>
     </Filter>
     <Filter Include="Shaders\Deferred Render Passes">
       <UniqueIdentifier>{4e1a5e39-8e5c-4cda-9552-2d86c85c158e}</UniqueIdentifier>

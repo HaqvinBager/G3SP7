@@ -80,6 +80,9 @@ CScene::~CScene()
 	delete myGrid;
 #endif
 
+	myPXScene->release();
+	myPXScene = nullptr;
+
 	if (myNavMesh)// Any CScene that is not InGame's scene will not hold a NavMesh
 	{
 		delete myNavMesh;

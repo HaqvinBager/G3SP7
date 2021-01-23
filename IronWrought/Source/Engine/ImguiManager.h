@@ -1,7 +1,5 @@
 #pragma once
-
 class CImGuiLevelSelect;
-
 class CImguiManager
 {
 public:
@@ -10,6 +8,9 @@ public:
 	void DebugWindow();
 
 private:
-	CImGuiLevelSelect* mySelectLevelWindow;
+	const std::string GetSystemMemory();
+	const std::string GetDrawCalls();
+	CImGuiLevelSelect* myLevelSelectWindow;
+	
 };
 

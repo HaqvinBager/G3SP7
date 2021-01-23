@@ -70,7 +70,7 @@
     <TargetName>$(ProjectName)_$(Configuration)</TargetName>
     <IntDir>$(ProjectDir)..\..\Temp\$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir>$(ProjectDir)..\..\Lib\</OutDir>
-    <IncludePath>$(SolutionDir)Includes/Imgui/;$(SolutionDir)Includes/Imgui/NodeEditor/;$(IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\DirectXTK\Inc\;$(ProjectDir)..\Game\;$(ProjectDir)..\ModelLoader\;$(ProjectDir)..\UnityImporterApp\;$(ProjectDir)..\Includes\;$(SolutionDir)PhysXWrapper\;$(SolutionDir)Includes\PhysX-4.1\physx\include\;$(SolutionDir)Includes\PhysX-4.1\pxshared\include\</IncludePath>
+    <IncludePath>$(IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\DirectXTK\Inc\;$(ProjectDir)..\Game\;$(ProjectDir)..\ModelLoader\;$(ProjectDir)..\UnityImporterApp\;$(ProjectDir)..\Includes\;$(SolutionDir)PhysXWrapper\;$(SolutionDir)Includes\PhysX-4.1\physx\include\;$(SolutionDir)Includes\PhysX-4.1\pxshared\include\</IncludePath>
     <LibraryPath>$(SolutionDir)../Lib/;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)..\Lib\physxlib\release\</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">
@@ -124,7 +124,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <ForcedIncludeFiles>StdAfx.h;%(ForcedINcludeFiles)</ForcedIncludeFiles>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Includes/Imgui/%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -171,13 +171,6 @@
     <ClInclude Include="..\Includes\Imgui\imstb_rectpack.h" />
     <ClInclude Include="..\Includes\Imgui\imstb_textedit.h" />
     <ClInclude Include="..\Includes\Imgui\imstb_truetype.h" />
-    <ClInclude Include="..\Includes\Imgui\Node Editor\crude_json.h" />
-    <ClInclude Include="..\Includes\Imgui\Node Editor\imgui_bezier_math.h" />
-    <ClInclude Include="..\Includes\Imgui\Node Editor\imgui_canvas.h" />
-    <ClInclude Include="..\Includes\Imgui\Node Editor\imgui_extra_math.h" />
-    <ClInclude Include="..\Includes\Imgui\Node Editor\imgui_node_editor.h" />
-    <ClInclude Include="..\Includes\Imgui\Node Editor\imgui_node_editor_internal.h" />
-    <ClInclude Include="..\Includes\Imgui\stb_image.h" />
     <ClInclude Include="AnimatedUIElement.h" />
     <ClInclude Include="Animation.h" />
     <ClInclude Include="AnimationComponent.h" />
@@ -188,42 +181,15 @@
     <ClInclude Include="AudioChannel.h" />
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Behaviour.h" />
-    <ClInclude Include="Builders.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraComponent.h" />
     <ClInclude Include="CameraFactory.h" />
     <ClInclude Include="Canvas.h" />
     <ClInclude Include="CapsuleColliderComponent.h" />
-    <ClInclude Include="CGraphManager.h" />
-    <ClInclude Include="CNodeInstance.h" />
-    <ClInclude Include="CNodeType.h" />
-    <ClInclude Include="CNodeTypeGetMousePosition.h" />
-    <ClInclude Include="CNodeTypeMathAbs.h" />
-    <ClInclude Include="CNodeTypeMathAdd.h" />
-    <ClInclude Include="CNodeTypeMathAtan2.h" />
-    <ClInclude Include="CNodeTypeMathCeil.h" />
-    <ClInclude Include="CNodeTypeMathCos.h" />
-    <ClInclude Include="CNodeTypeMathDistance.h" />
-    <ClInclude Include="CNodeTypeMathDot.h" />
-    <ClInclude Include="CNodeTypeMathFloor.h" />
-    <ClInclude Include="CNodeTypeMathLerp.h" />
-    <ClInclude Include="CNodeTypeMathMax.h" />
-    <ClInclude Include="CNodeTypeMathMin.h" />
-    <ClInclude Include="CNodeTypeMathMul.h" />
-    <ClInclude Include="CNodeTypeMathSaturate.h" />
-    <ClInclude Include="CNodeTypeMathSin.h" />
-    <ClInclude Include="CNodeTypeMathSmoothstep.h" />
-    <ClInclude Include="CNodeTypeMathStorage.h" />
-    <ClInclude Include="CNodeTypeMathSub.h" />
-    <ClInclude Include="CNodeTypeMathToDegrees.h" />
-    <ClInclude Include="CNodeTypeMathToRadians.h" />
-    <ClInclude Include="CNodeTypePrint.h" />
-    <ClInclude Include="CNodeTypeStart.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="ContactReportCallback.h" />
     <ClInclude Include="DeferredRenderer.h" />
-    <ClInclude Include="Drawing.h" />
     <ClInclude Include="EngineDefines.h" />
     <ClInclude Include="FMod.h" />
     <ClInclude Include="CircleColliderComponent.h" />
@@ -237,13 +203,11 @@
     <ClInclude Include="ImGuiLevelSelect.h" />
     <ClInclude Include="ImguiManager.h" />
     <ClInclude Include="InstancedModelComponent.h" />
-    <ClInclude Include="Interop.h" />
     <ClInclude Include="JsonReader.h" />
     <ClInclude Include="MainSingleton.h" />
-    <ClInclude Include="Math2D.h" />
+    <ClInclude Include="MaterialHandler.h" />
     <ClInclude Include="Message.h" />
     <ClInclude Include="MessageType.h" />
-    <ClInclude Include="NodeTypes.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="PerlinNoise.h" />
     <ClInclude Include="PhysXWrapper.h" />
@@ -312,7 +276,6 @@
     <ClInclude Include="VFXFactory.h" />
     <ClInclude Include="VFXInstance.h" />
     <ClInclude Include="VFXRenderer.h" />
-    <ClInclude Include="Widgets.h" />
     <ClInclude Include="WindowHandler.h" />
     <ClInclude Include="WinInclude.h" />
   </ItemGroup>
@@ -324,10 +287,6 @@
     <ClCompile Include="..\Includes\Imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="..\Includes\Imgui\imgui_tables.cpp" />
     <ClCompile Include="..\Includes\Imgui\imgui_widgets.cpp" />
-    <ClCompile Include="..\Includes\Imgui\Node Editor\crude_json.cpp" />
-    <ClCompile Include="..\Includes\Imgui\Node Editor\imgui_canvas.cpp" />
-    <ClCompile Include="..\Includes\Imgui\Node Editor\imgui_node_editor.cpp" />
-    <ClCompile Include="..\Includes\Imgui\Node Editor\imgui_node_editor_api.cpp" />
     <ClCompile Include="AnimatedUIElement.cpp" />
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="AnimationComponent.cpp" />
@@ -336,42 +295,15 @@
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="AudioChannel.cpp" />
     <ClCompile Include="AudioManager.cpp" />
-    <ClCompile Include="Builders.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraComponent.cpp" />
     <ClCompile Include="CameraFactory.cpp" />
     <ClCompile Include="Canvas.cpp" />
     <ClCompile Include="CapsuleColliderComponent.cpp" />
-    <ClCompile Include="CGraphManager.cpp" />
-    <ClCompile Include="CNodeInstance.cpp" />
-    <ClCompile Include="CNodeType.cpp" />
-    <ClCompile Include="CNodeTypeGetMousePosition.cpp" />
-    <ClCompile Include="CNodeTypeMathAbs.cpp" />
-    <ClCompile Include="CNodeTypeMathAdd.cpp" />
-    <ClCompile Include="CNodeTypeMathAtan2.cpp" />
-    <ClCompile Include="CNodeTypeMathCeil.cpp" />
-    <ClCompile Include="CNodeTypeMathCos.cpp" />
-    <ClCompile Include="CNodeTypeMathDistance.cpp" />
-    <ClCompile Include="CNodeTypeMathDot.cpp" />
-    <ClCompile Include="CNodeTypeMathFloor.cpp" />
-    <ClCompile Include="CNodeTypeMathLerp.cpp" />
-    <ClCompile Include="CNodeTypeMathMax.cpp" />
-    <ClCompile Include="CNodeTypeMathMin.cpp" />
-    <ClCompile Include="CNodeTypeMathMul.cpp" />
-    <ClCompile Include="CNodeTypeMathSaturate.cpp" />
-    <ClCompile Include="CNodeTypeMathSin.cpp" />
-    <ClCompile Include="CNodeTypeMathSmoothstep.cpp" />
-    <ClCompile Include="CNodeTypeMathStorage.cpp" />
-    <ClCompile Include="CNodeTypeMathSub.cpp" />
-    <ClCompile Include="CNodeTypeMathToDegrees.cpp" />
-    <ClCompile Include="CNodeTypeMathToRadians.cpp" />
-    <ClCompile Include="CNodeTypePrint.cpp" />
-    <ClCompile Include="CNodeTypeStart.cpp" />
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="ContactReportCallback.cpp" />
     <ClCompile Include="DeferredRenderer.cpp" />
-    <ClCompile Include="Drawing.cpp" />
     <ClCompile Include="FMod.cpp" />
     <ClCompile Include="CircleColliderComponent.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
@@ -387,6 +319,7 @@
     <ClCompile Include="InputMapper.cpp" />
     <ClCompile Include="InstancedModelComponent.cpp" />
     <ClCompile Include="MainSingleton.cpp" />
+    <ClCompile Include="MaterialHandler.cpp" />
     <ClCompile Include="ParticleEmitterComponent.cpp" />
     <ClCompile Include="PerlinNoise.cpp" />
     <ClCompile Include="PhysXWrapper.cpp" />
@@ -446,7 +379,6 @@
     <ClCompile Include="VFXFactory.cpp" />
     <ClCompile Include="VFXInstance.cpp" />
     <ClCompile Include="VFXRenderer.cpp" />
-    <ClCompile Include="Widgets.cpp" />
     <ClCompile Include="WindowHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -736,16 +668,12 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Includes\Imgui\Node Editor\imgui_bezier_math.inl" />
-    <None Include="..\Includes\Imgui\Node Editor\imgui_extra_math.inl" />
-    <None Include="..\Includes\Imgui\Node Editor\imgui_node_editor_internal.inl" />
     <None Include="DeferredPBRFunctions.hlsli" />
     <None Include="DeferredSamplingFunctions.hlsli" />
     <None Include="DeferredShaderStructs.hlsli" />
     <None Include="DetailNormalHelpers.hlsli" />
     <None Include="FullscreenShaderStructs.hlsli" />
     <None Include="LineShaderStructs.hlsli" />
-    <None Include="Math2D.inl" />
     <None Include="MathHelpers.hlsli" />
     <None Include="ParticleShaderStructs.hlsli" />
     <None Include="PBRAmbience.hlsli" />

@@ -38,7 +38,7 @@ void CImGuiLevelSelect::RenderWindow()
                 selected = n;
                 if (ImGui::IsMouseDoubleClicked(0))
                 {
-                    
+                    std::cout << "Load level" << buf << std::endl;
                 }
             }
         }
