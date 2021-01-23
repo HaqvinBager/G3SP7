@@ -234,6 +234,7 @@
     <ClInclude Include="Funneling.h" />
     <ClInclude Include="animationEnums.h" />
     <ClInclude Include="GBuffer.h" />
+    <ClInclude Include="ImGuiLevelSelect.h" />
     <ClInclude Include="ImguiManager.h" />
     <ClInclude Include="InstancedModelComponent.h" />
     <ClInclude Include="Interop.h" />
@@ -381,6 +382,7 @@
     <ClCompile Include="FModWrapper.cpp" />
     <ClCompile Include="EnviromentLightComponent.cpp" />
     <ClCompile Include="GBuffer.cpp" />
+    <ClCompile Include="ImGuiLevelSelect.cpp" />
     <ClCompile Include="ImguiManager.cpp" />
     <ClCompile Include="InputMapper.cpp" />
     <ClCompile Include="InstancedModelComponent.cpp" />
