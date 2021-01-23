@@ -7,7 +7,7 @@ public:
 	CSceneManager();
 	~CSceneManager();
 
-	static CScene* CreateScene(std::string aJsonFile);
+	static CScene* CreateScene(std::vector<std::string> ajsonFile);
 
 
 

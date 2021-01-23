@@ -44,9 +44,15 @@ public class Exporter
     [MenuItem("Export/Export Scene")]
     static void ExportScene()
     {
-        Scene currentScene = SceneManager.GetActiveScene();
-        GameObject[] rootGameObjects = currentScene.GetRootGameObjects();
-        SScene sceneObject = new SScene();
+        for(int i = 0; i <  SceneManager.sceneCount; ++i)
+        {
+            ExportAScene(SceneManager.GetSceneAt(i));
+        }
+    }
+
+    private static void ExportAScene(Scene aScene)
+    {
+        GameObject[] rootGameObjects = aScene.GetRootGameObjects();
         Dictionary<string, List<STransform>> fbxPathGameObjectMap = new Dictionary<string, List<STransform>>();
         List<string> fbxpaths = new List<string>();
         for (int i = 0; i < rootGameObjects.Length; ++i)
@@ -68,7 +74,7 @@ public class Exporter
             {
                 fbxpaths.Add(fbxPath);
             }
-           // Debug.Log(fbxPath + " Count: " + fbxPathMap[fbxPath]);
+            // Debug.Log(fbxPath + " Count: " + fbxPathMap[fbxPath]);
         }
         List<SInstancedGameObject> instancedGameObjects = new List<SInstancedGameObject>();
         for (int i = 0; i < fbxpaths.Count; ++i)
@@ -80,13 +86,13 @@ public class Exporter
             instancedGameObjects.Add(instancedGameObject);
         }
 
-        Debug.Log(currentScene.name);
+        Debug.Log(aScene.name);
+        SScene sceneObject = new SScene();
         sceneObject.instancedGameobjects = instancedGameObjects.ToArray();
         string jsonGameObject = JsonUtility.ToJson(sceneObject);
-        string savePath = System.IO.Directory.GetCurrentDirectory() + "\\Assets\\Generated\\" + currentScene.name + ".json";
+        string savePath = System.IO.Directory.GetCurrentDirectory() + "\\Assets\\Generated\\" + aScene.name + ".json";
         System.IO.File.WriteAllText(savePath, jsonGameObject);
         AssetDatabase.Refresh();
-
     }
 }
 
