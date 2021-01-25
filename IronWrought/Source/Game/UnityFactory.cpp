@@ -165,7 +165,7 @@ CGameObject* CUnityFactory::CreateGameObject(const SGameObjectData& aData, const
 {
 	CGameObject* gameObject = new CGameObject(aData.myInstanceID);
 	gameObject->AddComponent<CModelComponent>(*gameObject, aModelPath);
-	gameObject->myTransform->Scale(aData.myScale.x);
+	gameObject->myTransform->Scale(aData.myScale);
 	gameObject->myTransform->Position(aData.myPosition);
 	gameObject->myTransform->Rotation(aData.myRotation);
 	return std::move(gameObject);

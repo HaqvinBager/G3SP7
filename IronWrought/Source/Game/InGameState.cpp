@@ -53,8 +53,8 @@ void CInGameState::Start()
 	//rapidjson::Document document = CJsonReader::LoadDocument(ASSETPATH + "Assets/Generated/");
 
 	scenePath = {
-		"Level1_Layout_part1.json",
-		"Level1_Layout_part2.json"
+		"Level1_Layout_part2.json",
+		"Level1_World_Layout.json"
 		/*GOAL:
 			Om LD tex inte har jobbat i part2 men den står med här, så kommer den att krasha eftersom filen inte existerar.
 			vi behöver alltså uppdatera scenepath efter hur Asset/Generated mappen ser ut.

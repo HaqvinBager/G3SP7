@@ -10,7 +10,7 @@ using namespace DirectX::SimpleMath;
 
 CTransformComponent::CTransformComponent(CGameObject& aParent, DirectX::SimpleMath::Vector3 aPosition): myScale(1.0f), CComponent(aParent)
 {
-	Scale(1.0f);
+	Scale({ 1.0f, 1.0f, 1.0f });
 	Position(aPosition);
 }
 
@@ -75,13 +75,13 @@ DirectX::SimpleMath::Quaternion CTransformComponent::Rotation() const
 	return quat;
 }
 
-void CTransformComponent::Scale(float aScale)
+void CTransformComponent::Scale(DirectX::SimpleMath::Vector3 aScale)
 {
 	myScale = aScale;
 	ResetScale();
 }
 
-float CTransformComponent::Scale() const
+DirectX::SimpleMath::Vector3 CTransformComponent::Scale() const
 {
 	return myScale;
 }

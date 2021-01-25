@@ -58,7 +58,7 @@ CScene* CSceneManager::CreateScene(std::vector<std::string> aJsonFile)
 
 				CGameObject temp(0);
 				CTransformComponent transform(temp);
-				transform.Scale(scale.x);
+				transform.Scale(scale);
 				transform.Position(position);
 				transform.Rotation(rotation);
 				instancedTransforms.emplace_back(transform.GetMatrix());

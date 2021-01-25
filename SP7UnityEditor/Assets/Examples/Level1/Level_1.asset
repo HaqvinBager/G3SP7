@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: Level_1
   m_EditorClassIdentifier: 
   myScenes:
-  - sceneAsset: {fileID: 102900000, guid: 457bf6488a5c48d41a6825d761396414, type: 3}
-    scenePath: Assets/Examples/Level1/Level1_Layout_part1.unity
   - sceneAsset: {fileID: 102900000, guid: 26f4dc24d379c9a4194cc7749304f8f1, type: 3}
     scenePath: Assets/Examples/Level1/Level1_Layout_part2.unity
+  - sceneAsset: {fileID: 102900000, guid: 457bf6488a5c48d41a6825d761396414, type: 3}
+    scenePath: Assets/Examples/Level1/Level1_World_Layout.unity
+  - sceneAsset: {fileID: 102900000, guid: 8980c9661d030564693a5acffa1f2182, type: 3}
+    scenePath: Assets/Examples/Level1/Level1_Lights.unity

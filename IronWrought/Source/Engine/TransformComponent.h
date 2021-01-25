@@ -19,8 +19,8 @@ public:
 	void Rotation(DirectX::SimpleMath::Quaternion aQuaternion);
 	DirectX::SimpleMath::Quaternion Rotation() const;
 
-	void Scale(float aScale);
-	float Scale() const;
+	void Scale(DirectX::SimpleMath::Vector3 aScale);
+	DirectX::SimpleMath::Vector3 Scale() const;
 
 	DirectX::SimpleMath::Matrix& Transform();
 	DirectX::SimpleMath::Matrix GetMatrix() const;
@@ -37,7 +37,7 @@ public:
 	void SetOutlineScale();
 
 private:
-	float myScale;
+	DirectX::SimpleMath::Vector3 myScale;
 	// TODO: Move speed into "Resource Component"
 	DirectX::SimpleMath::Matrix myTransform;
 	std::string hej;
