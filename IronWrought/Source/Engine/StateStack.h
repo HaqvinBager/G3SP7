@@ -3,7 +3,7 @@
 #include <unordered_map>
 
 class CState;
-class CStateStack {
+class CStateStack  {
 	friend class CShowCase;
 public:
 	enum class EState {

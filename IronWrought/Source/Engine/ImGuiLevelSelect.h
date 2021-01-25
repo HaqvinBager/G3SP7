@@ -11,5 +11,7 @@ private:
 
 	void LoadLevel(std::string aLevelPath);
 
+	int mySelectedScene;
+
 };
 
