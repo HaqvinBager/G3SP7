@@ -5,6 +5,7 @@ class CCollisionManager;
 class CDialogueSystem;
 class CPopupTextService;
 class CPhysXWrapper;
+class CMaterialHandler;
 
 class CMainSingleton
 {
@@ -16,15 +17,17 @@ public:
 	static CPopupTextService& PopupTextService();
 	static CDialogueSystem& DialogueSystem();
 	static CPhysXWrapper& PhysXWrapper();
+	static CMaterialHandler& MaterialHandler();
 
 private:
 	static CMainSingleton* ourInstance;
 
 	CPostMaster*			myPostMaster;
-	CCollisionManager*	myCollisionManager;
-	CPopupTextService*	myPopupTextService;
+	CCollisionManager*		myCollisionManager;
+	CPopupTextService*		myPopupTextService;
 	CDialogueSystem*		myDialogueSystem;
-	CPhysXWrapper* myPhysXWrapper;
+	CPhysXWrapper*			myPhysXWrapper;
+	CMaterialHandler*		myMaterialHandler;
 
 private:
 	CMainSingleton();

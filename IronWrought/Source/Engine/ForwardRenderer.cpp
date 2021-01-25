@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "ForwardRenderer.h"
 #include "Engine.h"
+#include "RenderManager.h"
 #include "Model.h"
 #include "Camera.h"
 #include "EnvironmentLight.h"
@@ -208,6 +209,7 @@ void CForwardRenderer::Render(CEnvironmentLight* anEnvironmentLight, std::vector
 			myContext->IASetIndexBuffer(modelData.myMeshes[i].myIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 			myContext->PSSetShaderResources(1, 3, &modelData.myMaterials[modelData.myMeshes[i].myMaterialIndex][0]);
 			myContext->DrawIndexed(modelData.myMeshes[i].myNumberOfIndices, 0, 0);
+			CRenderManager::myNumberOfDrawCallsThisFrame++;
 		}
 	}
 }
@@ -299,6 +301,7 @@ void CForwardRenderer::InstancedRender(CEnvironmentLight* anEnvironmentLight, st
 			myContext->IASetIndexBuffer(modelData.myMeshes[i].myIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 			myContext->PSSetShaderResources(1, 3, &modelData.myMaterials[modelData.myMeshes[i].myMaterialIndex][0]);
 			myContext->DrawIndexedInstanced(modelData.myMeshes[i].myNumberOfIndices, model->InstanceCount(), 0, 0, 0);
+			CRenderManager::myNumberOfDrawCallsThisFrame++;
 		}
 	}
 }
@@ -334,6 +337,7 @@ void CForwardRenderer::RenderLines(CCameraComponent* aCamera, const std::vector<
 
 		//myContext->DrawIndexed(lineData.myNumberOfIndices, 0, 0);
 		myContext->Draw(lineData.myNumberOfVertices, 0);
+		CRenderManager::myNumberOfDrawCallsThisFrame++;
 	}
 }
 
@@ -385,6 +389,7 @@ void CForwardRenderer::RenderOutline(CCameraComponent* aCamera, CGameObject* aMo
 		myContext->IASetIndexBuffer(modelData.myMeshes[i].myIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 		//myContext->PSSetShaderResources(1, 3, &modelData.myMaterials[modelData.myMeshes[i].myMaterialIndex][0]);
 		myContext->DrawIndexed(modelData.myMeshes[i].myNumberOfIndices, 0, 0);
+		CRenderManager::myNumberOfDrawCallsThisFrame++;
 	}
 
 	//myContext->DrawIndexed(modelData.myNumberOfIndices, 0, 0);
@@ -421,6 +426,7 @@ void CForwardRenderer::RenderLineInstances(CCameraComponent* aCamera, const std:
 
 		//myContext->DrawIndexed(lineData.myNumberOfIndices, 0, 0);
 		myContext->Draw(lineData.myNumberOfVertices, 0);
+		CRenderManager::myNumberOfDrawCallsThisFrame++;
 	}
 }
 

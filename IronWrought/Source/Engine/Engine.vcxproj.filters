@@ -303,12 +303,6 @@
     <ClCompile Include="StackWalker.cpp">
       <Filter>Debug Tools</Filter>
     </ClCompile>
-    <ClCompile Include="State.cpp">
-      <Filter>Text\State Stack</Filter>
-    </ClCompile>
-    <ClCompile Include="StateStack.cpp">
-      <Filter>Text\State Stack</Filter>
-    </ClCompile>
     <ClCompile Include="Input.cpp">
       <Filter>Input</Filter>
     </ClCompile>
@@ -519,6 +513,11 @@
     <ClCompile Include="CNodeTypeMathToRadians.cpp">
       <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
     </ClCompile>
+    <ClCompile Include="State.cpp" />
+    <ClCompile Include="StateStack.cpp" />
+    <ClCompile Include="MaterialHandler.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -700,12 +699,6 @@
     </ClInclude>
     <ClInclude Include="Heap.h">
       <Filter>Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="State.h">
-      <Filter>Text\State Stack</Filter>
-    </ClInclude>
-    <ClInclude Include="StateStack.h">
-      <Filter>Text\State Stack</Filter>
     </ClInclude>
     <ClInclude Include="Input.h">
       <Filter>Input</Filter>
@@ -970,6 +963,11 @@
     </ClInclude>
     <ClInclude Include="CNodeTypeMathToRadians.h">
       <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="State.h" />
+    <ClInclude Include="StateStack.h" />
+    <ClInclude Include="MaterialHandler.h">
+      <Filter>Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

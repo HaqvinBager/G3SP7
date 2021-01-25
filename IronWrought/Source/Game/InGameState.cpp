@@ -162,6 +162,11 @@ void CInGameState::Update()
 	{
 		gameObject->Update();
 	}
+
+	if (Input::GetInstance()->IsKeyPressed(VK_ESCAPE))
+	{
+		myStateStack.PopTopAndPush(CStateStack::EState::InGame);
+	}
 }
 
 void CInGameState::ReceiveEvent(const EInputEvent aEvent)
@@ -192,22 +197,22 @@ void CInGameState::Receive(const SMessage& /*aMessage*/)
 void TEMP_DeferredRenderingTests(CScene* scene)
 {
 	CGameObject* chest = new CGameObject(1337);
-	chest->AddComponent<CModelComponent>(*chest, std::string(ASSETPATH + "Assets/Graphics/Exempel_Modeller/Chest/Particle_Chest.fbx"));
+	chest->AddComponent<CModelComponent>(*chest, std::string(ASSETPATH + "Assets/Graphics/Exempel_Modeller/Wall/Wall.fbx"));
 	chest->GetComponent<CTransformComponent>()->Position({4.0f,0.0f,0.0f});
 
 	CGameObject* chest2 = new CGameObject(1338);
-	chest2->AddComponent<CModelComponent>(*chest2, std::string(ASSETPATH + "Assets/Graphics/Exempel_Modeller/Chest/Particle_Chest.fbx"));
+	chest2->AddComponent<CModelComponent>(*chest2, std::string(ASSETPATH + "Assets/Graphics/Exempel_Modeller/Wall/Wall.fbx"));
 	chest2->GetComponent<CTransformComponent>()->Position({5.0f,-2.0f,0.0f});
 
-	CGameObject* chest3 = new CGameObject(1339);
-	chest3->AddComponent<CModelComponent>(*chest3, std::string(ASSETPATH + "Assets/Graphics/Exempel_Modeller/Chest/Particle_Chest.fbx"));
-	chest3->GetComponent<CTransformComponent>()->Position({6.0f,2.0f,0.0f});
+	//CGameObject* chest3 = new CGameObject(1339);
+	//chest3->AddComponent<CModelComponent>(*chest3, std::string(ASSETPATH + "Assets/Graphics/Exempel_Modeller/Chest/Particle_Chest.fbx"));
+	//chest3->GetComponent<CTransformComponent>()->Position({6.0f,2.0f,0.0f});
 
 	scene->AddInstance(chest);
 	scene->AddInstance(chest2);
-	scene->AddInstance(chest3);
+	//scene->AddInstance(chest3);
 
-	constexpr int numPointLights = 32;
+	constexpr int numPointLights = 1;
 	std::vector<CGameObject*> pointLights;
 	float x = -2.0f;
 	float y = 1.0f;
@@ -268,22 +273,22 @@ void TEMP_DeferredRenderingTests(CScene* scene)
 	scene->AddInstance(pointLights[3]->GetComponent<CPointLightComponent>()->GetPointLight());
 	scene->AddInstance(pointLights[4]->GetComponent<CPointLightComponent>()->GetPointLight());
 
-	CGameObject* dn = new CGameObject(1338);
-	dn->AddComponent<CModelComponent>(*dn, ASSETPATH + "Assets/Graphics/Exempel_Modeller/DetailNormals/Tufted_Leather/tufted_leather_dn.fbx");
-	dn->GetComponent<CTransformComponent>()->Position({7.0f,0.0f,0.0f});
-	dn->GetComponent<CTransformComponent>()->Scale(100.0f);
+	//CGameObject* dn = new CGameObject(1338);
+	//dn->AddComponent<CModelComponent>(*dn, ASSETPATH + "Assets/Graphics/Exempel_Modeller/DetailNormals/Tufted_Leather/tufted_leather_dn.fbx");
+	//dn->GetComponent<CTransformComponent>()->Position({7.0f,0.0f,0.0f});
+	//dn->GetComponent<CTransformComponent>()->Scale(100.0f);
 
-	CGameObject* dn4 = new CGameObject(1339);
-	dn4->AddComponent<CModelComponent>(*dn4, ASSETPATH + "Assets/Graphics/Exempel_Modeller/DetailNormals/4DN/4DNs_dn.fbx");
-	dn4->GetComponent<CTransformComponent>()->Position({8.0f,0.0f,0.0f});
-	dn4->GetComponent<CTransformComponent>()->Scale(100.0f);
+	//CGameObject* dn4 = new CGameObject(1339);
+	//dn4->AddComponent<CModelComponent>(*dn4, ASSETPATH + "Assets/Graphics/Exempel_Modeller/DetailNormals/4DN/4DNs_dn.fbx");
+	//dn4->GetComponent<CTransformComponent>()->Position({8.0f,0.0f,0.0f});
+	//dn4->GetComponent<CTransformComponent>()->Scale(100.0f);
 
-	scene->AddInstance(dn);
-	scene->AddInstance(dn4);
+	//scene->AddInstance(dn);
+	//scene->AddInstance(dn4);
 
-	constexpr int instancedCount = 300;
+	constexpr int instancedCount = 100;
 	std::vector<SM::Matrix> transforms(instancedCount);
-	x = -3.0f;
+	x = 0.0f;
 	y = -10.0f;
 	for (int i = 0; i < instancedCount; ++i)
 	{

@@ -22,7 +22,7 @@ class CLoaderMesh
 {
 public:
 	CLoaderMesh() {myShaderType = 0; myVerticies = nullptr; myVertexBufferSize = 0; myVertexCount = 0; myModel = nullptr; }
-	~CLoaderMesh(){}
+	~CLoaderMesh() { delete myVerticies; myVerticies = nullptr; }
 	std::vector<unsigned int> myIndexes;
 	std::vector<CLoaderMesh*> myChildren;
 	unsigned int myShaderType;
@@ -36,7 +36,7 @@ class CLoaderModel
 {
 public:
 	CLoaderModel() : myNumBones(), myScene(nullptr) { myIsLoaded = false; myAnimationDuration = 0.0f; }
-	~CLoaderModel(){}
+	~CLoaderModel();
 	void SetData(const char* aModelPath){ myModelPath = aModelPath; }
 	
 	CLoaderMesh* CreateMesh() 
@@ -60,8 +60,6 @@ public:
 	std::vector<BoneInfo> myBoneInfo;
 	std::map<std::string, unsigned int> myBoneNameToIndex;
 	unsigned int myNumBones;
-
-
 };
 
 
