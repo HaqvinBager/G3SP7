@@ -9,11 +9,44 @@
 
 #pragma comment(lib, "psapi.lib")
 
+static ImFont* ImGui_LoadFont(ImFontAtlas& atlas, const char* name, float size, const ImVec2& displayOffset = ImVec2(0, 0))
+{
+	char* windir = nullptr;
+	if (_dupenv_s(&windir, nullptr, "WINDIR") || windir == nullptr)
+		return nullptr;
+
+	static const ImWchar ranges[] =
+	{
+		0x0020, 0x00FF, // Basic Latin + Latin Supplement
+		0x0104, 0x017C, // Polish characters and more
+		0,
+	};
+
+	ImFontConfig config;
+	config.OversampleH = 4;
+	config.OversampleV = 4;
+	config.PixelSnapH = false;
+
+	auto path = std::string(windir) + "\\Fonts\\" + name;
+	auto font = atlas.AddFontFromFileTTF(path.c_str(), size, &config, ranges);
+	if (font)
+		font->DisplayOffset = displayOffset;
+
+	free(windir);
+
+	return font;
+}
+ImFontAtlas myFontAtlas;
+
 CImguiManager::CImguiManager()
 {
 	ImGui::DebugCheckVersionAndDataLayout("1.80 WIP", sizeof(ImGuiIO), sizeof(ImGuiStyle), sizeof(ImVec2), sizeof(ImVec4), sizeof(ImDrawVert), sizeof(unsigned int));
 	ImGui::CreateContext();
 	ImGui::StyleColorsDark();
+	ImGui_LoadFont(myFontAtlas, "segoeui.ttf", 22.0f);
+	myFontAtlas.Build();
+
+	ImGui::CreateContext(&myFontAtlas);
 }
 
 CImguiManager::~CImguiManager()
@@ -63,3 +96,4 @@ const std::string CImguiManager::GetDrawCalls()
 	drawCalls.append(std::to_string(CRenderManager::myNumberOfDrawCallsThisFrame));
 	return drawCalls;
 }
+

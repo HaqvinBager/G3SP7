@@ -843,8 +843,8 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 			auto drawList = ed::GetNodeBackgroundDrawList(nodeInstance->myUID.AsInt());
 			
 			const auto halfBorderWidth = ed::GetStyle().NodeBorderWidth * 0.5f;
-			auto headerColor = nodeInstance->GetColor(); 
-			static ImTextureID HeaderTextureId = ImGui_LoadTexture("Data/BlueprintBackground.png");
+			auto headerColor = nodeInstance->GetColor();
+			ImTextureID HeaderTextureId = ImGui_LoadTexture("Imgui/Data/BlueprintBackground.png");
 			const auto uv = ImVec2(
 				HeaderRect.w / (float)(4.0f * ImGui_GetTextureWidth(HeaderTextureId)),
 				HeaderRect.h / (float)(4.0f * ImGui_GetTextureHeight(HeaderTextureId)));
@@ -1287,17 +1287,6 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 	}
 }
 
-void CGraphManager::Update()
-{
-	//float x = ImGui::GetMousePos().x;
-	//float y = ImGui::GetMousePos().y;
-
-	//std::cout << "x: " << x << " y: " << y << std::endl;
-
-	//Input::Get()->IsHotKeyPressed(Input::EHotKeyButton::ECtrlZ);
-	//Input::Get()->IsHotKeyPressed(Input::EHotKeyButton::ECtrlY);
-}
-
 void CGraphManager::PostFrame()
 {
 	if (myLikeToSave)
@@ -1319,5 +1308,4 @@ void CGraphManager::PostFrame()
 	myFlowsToBeShown.clear();
 	ed::End();
 	ed::SetCurrentEditor(nullptr);
-	ImGui::End();
 }

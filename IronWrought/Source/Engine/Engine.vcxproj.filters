@@ -393,27 +393,6 @@
     <ClCompile Include="GBuffer.cpp">
       <Filter>Renderers</Filter>
     </ClCompile>
-    <ClCompile Include="..\Includes\Imgui\imgui.cpp">
-      <Filter>Imgui\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Includes\Imgui\imgui_demo.cpp">
-      <Filter>Imgui\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Includes\Imgui\imgui_draw.cpp">
-      <Filter>Imgui\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Includes\Imgui\imgui_impl_dx11.cpp">
-      <Filter>Imgui\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Includes\Imgui\imgui_impl_win32.cpp">
-      <Filter>Imgui\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Includes\Imgui\imgui_tables.cpp">
-      <Filter>Imgui\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Includes\Imgui\imgui_widgets.cpp">
-      <Filter>Imgui\Core</Filter>
-    </ClCompile>
     <ClCompile Include="ImguiManager.cpp">
       <Filter>Imgui\Manager</Filter>
     </ClCompile>
@@ -425,18 +404,6 @@
     </ClCompile>
     <ClCompile Include="Widgets.cpp">
       <Filter>Imgui\Blueprints</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Includes\Imgui\Node Editor\crude_json.cpp">
-      <Filter>Imgui\Node Editor\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Includes\Imgui\Node Editor\imgui_canvas.cpp">
-      <Filter>Imgui\Node Editor\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Includes\Imgui\Node Editor\imgui_node_editor.cpp">
-      <Filter>Imgui\Node Editor\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Includes\Imgui\Node Editor\imgui_node_editor_api.cpp">
-      <Filter>Imgui\Node Editor\Core</Filter>
     </ClCompile>
     <ClCompile Include="CGraphManager.cpp">
       <Filter>Imgui\Node Editor\Manager</Filter>
@@ -518,6 +485,8 @@
     <ClCompile Include="MaterialHandler.cpp">
       <Filter>Model</Filter>
     </ClCompile>
+    <ClCompile Include="..\imgui_ne\ThirdParty\imgui\imgui_impl_dx11.cpp" />
+    <ClCompile Include="..\imgui_ne\ThirdParty\imgui\imgui_impl_win32.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -826,27 +795,6 @@
     <ClInclude Include="GBuffer.h">
       <Filter>Renderers</Filter>
     </ClInclude>
-    <ClInclude Include="..\Includes\Imgui\imgui.h">
-      <Filter>Imgui\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Includes\Imgui\imgui_impl_dx11.h">
-      <Filter>Imgui\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Includes\Imgui\imgui_impl_win32.h">
-      <Filter>Imgui\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Includes\Imgui\imgui_internal.h">
-      <Filter>Imgui\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Includes\Imgui\imstb_rectpack.h">
-      <Filter>Imgui\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Includes\Imgui\imstb_textedit.h">
-      <Filter>Imgui\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Includes\Imgui\imstb_truetype.h">
-      <Filter>Imgui\Core</Filter>
-    </ClInclude>
     <ClInclude Include="ImguiManager.h">
       <Filter>Imgui\Manager</Filter>
     </ClInclude>
@@ -856,32 +804,11 @@
     <ClInclude Include="Drawing.h">
       <Filter>Imgui\Blueprints</Filter>
     </ClInclude>
-    <ClInclude Include="Interop.h">
-      <Filter>Imgui\Blueprints</Filter>
-    </ClInclude>
     <ClInclude Include="Math2D.h">
       <Filter>Imgui\Blueprints</Filter>
     </ClInclude>
     <ClInclude Include="Widgets.h">
       <Filter>Imgui\Blueprints</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Includes\Imgui\Node Editor\crude_json.h">
-      <Filter>Imgui\Node Editor\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Includes\Imgui\Node Editor\imgui_bezier_math.h">
-      <Filter>Imgui\Node Editor\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Includes\Imgui\Node Editor\imgui_canvas.h">
-      <Filter>Imgui\Node Editor\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Includes\Imgui\Node Editor\imgui_extra_math.h">
-      <Filter>Imgui\Node Editor\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Includes\Imgui\Node Editor\imgui_node_editor.h">
-      <Filter>Imgui\Node Editor\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Includes\Imgui\Node Editor\imgui_node_editor_internal.h">
-      <Filter>Imgui\Node Editor\Core</Filter>
     </ClInclude>
     <ClInclude Include="CGraphManager.h">
       <Filter>Imgui\Node Editor\Manager</Filter>
@@ -894,9 +821,6 @@
     </ClInclude>
     <ClInclude Include="NodeTypes.h">
       <Filter>Imgui\Node Editor\Nodes\Base Library\Base Type</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Includes\Imgui\stb_image.h">
-      <Filter>Imgui\Node Editor\Core</Filter>
     </ClInclude>
     <ClInclude Include="CNodeTypePrint.h">
       <Filter>Imgui\Node Editor\Nodes\Base Library</Filter>
@@ -969,6 +893,8 @@
     <ClInclude Include="MaterialHandler.h">
       <Filter>Model</Filter>
     </ClInclude>
+    <ClInclude Include="..\imgui_ne\ThirdParty\imgui\imgui_impl_dx11.h" />
+    <ClInclude Include="..\imgui_ne\ThirdParty\imgui\imgui_impl_win32.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">
@@ -1018,15 +944,6 @@
     </None>
     <None Include="Math2D.inl">
       <Filter>Imgui\Blueprints</Filter>
-    </None>
-    <None Include="..\Includes\Imgui\Node Editor\imgui_bezier_math.inl">
-      <Filter>Imgui\Node Editor\Core</Filter>
-    </None>
-    <None Include="..\Includes\Imgui\Node Editor\imgui_extra_math.inl">
-      <Filter>Imgui\Node Editor\Core</Filter>
-    </None>
-    <None Include="..\Includes\Imgui\Node Editor\imgui_node_editor_internal.inl">
-      <Filter>Imgui\Node Editor\Core</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -1185,7 +1102,7 @@
     </Filter>
     <Filter Include="Imgui\Node Editor\Nodes\Base Library\Gameobject">
       <UniqueIdentifier>{8bbe5362-d12e-4d25-9a8f-5cd174138235}</UniqueIdentifier>
-	</Filter>
+    </Filter>
     <Filter Include="Shaders\Deferred Render Passes">
       <UniqueIdentifier>{4e1a5e39-8e5c-4cda-9552-2d86c85c158e}</UniqueIdentifier>
     </Filter>

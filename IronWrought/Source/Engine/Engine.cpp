@@ -175,12 +175,9 @@ float CEngine::BeginFrame()
 
 	//if (myImguiIsEnabled)
 	//{
-		ImGui_ImplDX11_NewFrame();
-		ImGui_ImplWin32_NewFrame();
-		ImGui::NewFrame();
-		
-		//}
-	
+	ImGui_ImplDX11_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
 
 	myAudioManager->Update();
 	CMainSingleton::DialogueSystem().Update();
@@ -197,7 +194,7 @@ void CEngine::RenderFrame()
 	myRenderManager->Render(*mySceneMap[myActiveState]);
 
 	//IMGUI START
-	myImguiManager->DebugWindow();
+	//myImguiManager->DebugWindow();
 
 	if (myEnabledEditorImgui)
 	{
@@ -215,6 +212,11 @@ void CEngine::EndFrame()
 {
 	/*if (myImguiIsEnabled)
 	{*/
+	if (myEnabledEditorImgui)
+	{
+		ImGui::End();
+	}
+
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 	myFramework->EndFrame();

@@ -304,7 +304,14 @@
     <ClInclude Include="WinInclude.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\imgui_ne\ThirdParty\imgui\imgui_impl_dx11.cpp" />
+    <ClCompile Include="..\imgui_ne\ThirdParty\imgui\imgui_impl_dx11.cpp">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)imgui_ne\ThirdParty\imgui;$(SolutionDir)imgui_ne\ThirdParty\stb_image;$(SolutionDir)imgui_ne\NodeEditor\include\;%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)imgui_ne\ThirdParty\imgui;$(SolutionDir)imgui_ne\ThirdParty\stb_image;$(SolutionDir)imgui_ne\NodeEditor\include\;%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">$(SolutionDir)imgui_ne\ThirdParty\imgui;$(SolutionDir)imgui_ne\ThirdParty\stb_image;$(SolutionDir)imgui_ne\NodeEditor\include\;%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Level4</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Level4</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Level4</WarningLevel>
+    </ClCompile>
     <ClCompile Include="..\imgui_ne\ThirdParty\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="AnimatedUIElement.cpp" />
     <ClCompile Include="Animation.cpp" />
