@@ -3,13 +3,13 @@
 #include "CNodeType.h"
 #include <vector>
 #include <any>
-#include "..\rapidjson/writer.h"
-#include "..\rapidjson/stringbuffer.h"
+#include "rapidjson/writer.h"
+#include "rapidjson/stringbuffer.h"
 #include <sstream>
 #include "imgui.h"
-#include "Node Editor/imgui_node_editor.h"
+#include <imgui_node_editor.h>
 
-#define UNDEFINED_PIN_ID INT_MAX 
+#define UNDEFINED_PIN_ID INT_MAX
 
 namespace ed = ax::NodeEditor;
 
@@ -78,13 +78,18 @@ public:
 	template <typename Writer>
 	inline void WritePinValue(Writer& writer, const SPin& aPin) const
 	{
+		
 		if (aPin.myPinType == SPin::PinTypeInOut::PinTypeInOut_OUT)
 		{
 			writer.String("");
 		}
 		else
 		{
-			if (aPin.myVariableType == SPin::PinType::Bool)
+			if (aPin.myData == NULL)
+			{
+				writer.String("");
+			}
+			else if (aPin.myVariableType == SPin::PinType::Bool)
 			{
 				writer.Bool(NodeData::Get<bool>(aPin.myData));
 			}
@@ -106,7 +111,6 @@ public:
 				writer.String("");
 			}
 		}
-
 	}
 
 	template <typename Writer>

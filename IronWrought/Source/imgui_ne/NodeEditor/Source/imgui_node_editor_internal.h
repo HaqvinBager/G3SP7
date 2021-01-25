@@ -1263,7 +1263,9 @@ struct EditorContext
     HintBuilder& GetHintBuilder() { return m_HintBuilder; }
 
     EditorAction* GetCurrentAction() { return m_CurrentAction; }
-    void ResetShortCutAction() { m_CurrentAction->AsCutCopyPaste()->m_IsActive = false; m_CurrentAction = nullptr; }
+    void ResetShortCutAction() {
+        m_CurrentAction->AsCutCopyPaste()->m_IsActive = false; m_CurrentAction = nullptr;
+    }
 
     CreateItemAction& GetItemCreator() { return m_CreateItemAction; }
     DeleteItemsAction& GetItemDeleter() { return m_DeleteItemsAction; }
@@ -1333,11 +1335,14 @@ struct EditorContext
     template <typename T>
     ImRect GetBounds(const std::vector<T*>& objects)
     {
-        ImRect bounds;
+        ImRect bounds(FLT_MAX, FLT_MAX, -FLT_MAX, -FLT_MAX);
 
         for (auto object : objects)
             if (object->m_IsLive)
                 bounds.Add(object->GetBounds());
+
+        if (ImRect_IsEmpty(bounds))
+            bounds = ImRect();
 
         return bounds;
     }
@@ -1345,11 +1350,14 @@ struct EditorContext
     template <typename T>
     ImRect GetBounds(const std::vector<ObjectWrapper<T>>& objects)
     {
-        ImRect bounds;
+        ImRect bounds(FLT_MAX, FLT_MAX, -FLT_MAX, -FLT_MAX);
 
         for (auto object : objects)
             if (object.m_Object->m_IsLive)
                 bounds.Add(object.m_Object->GetBounds());
+
+        if (ImRect_IsEmpty(bounds))
+            bounds = ImRect();
 
         return bounds;
     }

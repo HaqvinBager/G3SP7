@@ -1,18 +1,18 @@
 #include "stdafx.h"
 #include "CGraphManager.h"
-#include "..\rapidjson/document.h"
-#include "..\rapidjson/writer.h"
-#include "..\rapidjson/stringbuffer.h"
-#include "..\rapidjson/document.h"
-#include "..\rapidjson/filewritestream.h"
-#include "..\rapidjson/filereadstream.h"
-#include "..\rapidjson/prettywriter.h"
+#include "rapidjson/document.h"
+#include "rapidjson/writer.h"
+#include "rapidjson/stringbuffer.h"
+#include "rapidjson/document.h"
+#include "rapidjson/filewritestream.h"
+#include "rapidjson/filereadstream.h"
+#include "rapidjson/prettywriter.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include "CNodeInstance.h"
 #include "CNodeType.h"
-#include "Node Editor/imgui_node_editor.h"
+#include <imgui_node_editor.h>
 #include "Drawing.h"
 #include "Widgets.h"
 #include "Interop.h"
@@ -38,6 +38,7 @@ void CGraphManager::Load()
 	myMenuSeachField = new char[127];
 	memset(&myMenuSeachField[0], 0, sizeof(myMenuSeachField));
 
+	CGraphManager::LoadTreeFromFile();
 }
 
 void CGraphManager::ReTriggerUpdateringTrees()
@@ -89,7 +90,7 @@ void CGraphManager::SaveTreeToFile()
 
 
 
-		std::ofstream of("nodeinstances.json");
+		std::ofstream of("Imgui/NodeScripts/nodeinstances.json");
 		of << s.GetString();
 	}
 	//Links
@@ -116,7 +117,7 @@ void CGraphManager::SaveTreeToFile()
 		writer1.EndObject();
 
 
-		std::ofstream of("links.json");
+		std::ofstream of("Imgui/NodeScripts/links.json");
 		of << s.GetString();
 	}
 
@@ -174,7 +175,7 @@ void CGraphManager::LoadTreeFromFile()
 	UID::myGlobalUID = 0;
 	
 	{
-		std::ifstream inputFile("nodeinstances.json");
+		std::ifstream inputFile("Imgui/NodeScripts/nodeinstances.json");
 		std::stringstream jsonDocumentBuffer;
 		std::string inputLine;
 
@@ -221,7 +222,7 @@ void CGraphManager::LoadTreeFromFile()
 		}
 	}
 	{
-		std::ifstream inputFile("links.json");
+		std::ifstream inputFile("Imgui/NodeScripts/links.json");
 		std::stringstream jsonDocumentBuffer;
 		std::string inputLine;
 
@@ -647,11 +648,11 @@ void CGraphManager::PreFrame(float aTimeDelta)
 		ReTriggerTree();
 	}
 	ImGui::SameLine();
-	if (ImGui::Button("Save"))
-	{
-		myLikeToSave = true;
-		
-	}
+	//if (ImGui::Button("Save"))
+	//{
+	//	myLikeToSave = true;
+	//	
+	//}
 	static bool showFlow = false;
 	if (ImGui::Checkbox("Show Flow", &showFlow))
 	{
@@ -659,11 +660,11 @@ void CGraphManager::PreFrame(float aTimeDelta)
 			
 	}
 	ImGui::SameLine();
-	if (ImGui::Button("Load"))
-	{
-		LoadTreeFromFile();
-		ReTriggerTree();
-	}
+	//if (ImGui::Button("Load"))
+	//{
+	//	LoadTreeFromFile();
+	//	ReTriggerTree();
+	//}
 
 	for (auto& nodeInstance : myNodeInstancesInGraph)
 	{
@@ -841,12 +842,12 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 		{
 			auto drawList = ed::GetNodeBackgroundDrawList(nodeInstance->myUID.AsInt());
 			
-			const auto halfBorderWidth = ed::GetStyle().NodeBorderWidth/* * 0.5f*/;
+			const auto halfBorderWidth = ed::GetStyle().NodeBorderWidth * 0.5f;
 			auto headerColor = nodeInstance->GetColor(); 
-			static ImTextureID HeaderTextureId = ImGui_LoadTexture("Sprites/BlueprintBackground.png");
+			static ImTextureID HeaderTextureId = ImGui_LoadTexture("Data/BlueprintBackground.png");
 			const auto uv = ImVec2(
 				HeaderRect.w / (float)(4.0f * ImGui_GetTextureWidth(HeaderTextureId)),
-				HeaderRect.h / (float)(4.0f * ImGui_GetTextureWidth(HeaderTextureId)));
+				HeaderRect.h / (float)(4.0f * ImGui_GetTextureHeight(HeaderTextureId)));
 
 				drawList->AddImageRounded(HeaderTextureId,
 					to_imvec(HeaderRect.top_left()) - ImVec2(8 - halfBorderWidth,  4 - halfBorderWidth),
@@ -955,7 +956,7 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 
 									std::cout << "push add link command!" << std::endl;
 									myUndoCommands.push({ CommandAction::AddLink, firstNode, secondNode, myLinks.back(), 0});
-									
+									myLikeToSave = true;
 									ReTriggerTree();
 								}
 							}
@@ -997,6 +998,7 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 						}
 
 						myLinks.erase(&link);
+						myLikeToSave = true;
 
 						break;
 					}
@@ -1018,6 +1020,7 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 						if (myShouldPushCommand) 
 						{
 							std::cout << "Push delete command!" << std::endl;
+							myLikeToSave = true;
 							myUndoCommands.push({ CommandAction::Delete, (*it), nullptr,  {0,0,0}, (*it)->myUID.AsInt() });
 						}
 						
@@ -1104,6 +1107,7 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 					if (myShouldPushCommand)
 					{
 						std::cout << "Push create command!" << std::endl;
+						myLikeToSave = true;
 						myUndoCommands.push({ CommandAction::Create, node, nullptr, {0,0,0}, node->myUID.AsInt()});
 					}
 				}
@@ -1146,6 +1150,7 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 							if (myShouldPushCommand)
 							{
 								std::cout << "Push create command!" << std::endl;
+								myLikeToSave = true;
 								myUndoCommands.push({CommandAction::Create, node, nullptr, {0,0,0}, node->myUID.AsInt()});
 							}
 						}
@@ -1225,6 +1230,7 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 				std::cout << "undo!" << std::endl;
 				myUndoCommands.pop();
 				std::cout << "Push redo command!" << std::endl;
+				myLikeToSave = true;
 				myRedoCommands.push(inverseCommand);
 			}
 		}
@@ -1274,6 +1280,7 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 				std::cout << "redo!" << std::endl;
 				myRedoCommands.pop();
 				std::cout << "Push undo command!" << std::endl;
+				myLikeToSave = true;
 				myUndoCommands.push(inverseCommand);
 			}
 		}

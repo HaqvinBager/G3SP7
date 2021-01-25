@@ -32,8 +32,8 @@
 #include <string>
 #include "ImguiManager.h"
 #include "imgui.h"
-#include "imgui_impl_dx11.h"
-#include "imgui_impl_win32.h"
+#include <imgui_impl_dx11.h>
+#include <imgui_impl_win32.h>
 #include "StateStack.h"
 #include "CGraphManager.h"
 
@@ -198,12 +198,13 @@ void CEngine::RenderFrame()
 
 	if (myEnabledEditorImgui)
 	{
-		ImGui::ShowDemoWindow(&myEnabledEditorImgui);
 		myGraphManager->PreFrame(CTimer::Dt());
 		myGraphManager->ConstructEditorTreeAndConnectLinks();
 		myGraphManager->PostFrame();
 	}
 
+	
+	//}
 	//IMGUI END
 }
 
@@ -211,10 +212,8 @@ void CEngine::EndFrame()
 {
 	/*if (myImguiIsEnabled)
 	{*/
-		ImGui::Render();
-		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-	//}
-
+	ImGui::Render();
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 	myFramework->EndFrame();
 
 	if (Input::GetInstance()->IsKeyPressed(VK_F1))

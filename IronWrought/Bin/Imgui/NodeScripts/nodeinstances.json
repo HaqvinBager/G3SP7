@@ -1,0 +1,57 @@
+{
+    "UID_MAX": {
+        "Num": 281
+    },
+    "NodeInstances": [
+        {
+            "NodeType": 0,
+            "UID": 275,
+            "Position": {
+                "X": 257,
+                "Y": 278
+            },
+            "Pins": [
+                {
+                    "Index": 0,
+                    "UID": 276,
+                    "DATA": "",
+                    "DATA_TYPE": ""
+                },
+                {
+                    "Index": 1,
+                    "UID": 277,
+                    "DATA": "",
+                    "DATA_TYPE": "STRING"
+                },
+                {
+                    "Index": 2,
+                    "UID": 278,
+                    "DATA": "",
+                    "DATA_TYPE": ""
+                }
+            ]
+        },
+        {
+            "NodeType": 1,
+            "UID": 279,
+            "Position": {
+                "X": 22,
+                "Y": 254
+            },
+            "Pins": [
+                {
+                    "Index": 0,
+                    "UID": 280,
+                    "DATA": false,
+                    "DATA_TYPE": "BOOL"
+                },
+                {
+                    "Index": 1,
+                    "UID": 281,
+                    "DATA": "",
+                    "DATA_TYPE": ""
+                }
+            ]
+        }
+    ]
+}

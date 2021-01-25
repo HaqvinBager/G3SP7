@@ -10,8 +10,8 @@
 //#include "stdafx.h"
 #include "Builders.h"
 #include "Interop.h"
-#include "Node Editor/imgui_node_editor.h"
-#include "imgui.h"
+#include <imgui_node_editor.h>
+#include <imgui.h>
 
 //------------------------------------------------------------------------------
 namespace ed   = ax::NodeEditor;

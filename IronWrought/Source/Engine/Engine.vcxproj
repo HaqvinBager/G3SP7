@@ -62,7 +62,7 @@
     <TargetName>$(ProjectName)_$(Configuration)</TargetName>
     <IntDir>$(ProjectDir)..\..\Temp\$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir>$(ProjectDir)..\..\Lib\</OutDir>
-    <IncludePath>$(IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\DirectXTK\Inc\;$(ProjectDir)..\Game\;$(ProjectDir)..\ModelLoader\;$(ProjectDir)..\UnityImporterApp\;$(ProjectDir)..\Includes\;$(SolutionDir)PhysXWrapper\;$(SolutionDir)Includes\PhysX-4.1\physx\include\;$(SolutionDir)Includes\PhysX-4.1\pxshared\include\</IncludePath>
+    <IncludePath>$(SolutionDir)imgui_ne\ThirdParty\imgui;$(SolutionDir)imgui_ne\NodeEditor\include\;$(IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\DirectXTK\Inc\;$(ProjectDir)..\Game\;$(ProjectDir)..\ModelLoader\;$(ProjectDir)..\UnityImporterApp\;$(ProjectDir)..\Includes\;$(SolutionDir)PhysXWrapper\;$(SolutionDir)Includes\PhysX-4.1\physx\include\;$(SolutionDir)Includes\PhysX-4.1\pxshared\include\</IncludePath>
     <LibraryPath>$(SolutionDir)../Lib/;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)..\Lib\physxlib\debug\</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -70,7 +70,7 @@
     <TargetName>$(ProjectName)_$(Configuration)</TargetName>
     <IntDir>$(ProjectDir)..\..\Temp\$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir>$(ProjectDir)..\..\Lib\</OutDir>
-    <IncludePath>$(SolutionDir)Includes/Imgui/;$(SolutionDir)Includes/Imgui/NodeEditor/;$(IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\DirectXTK\Inc\;$(ProjectDir)..\Game\;$(ProjectDir)..\ModelLoader\;$(ProjectDir)..\UnityImporterApp\;$(ProjectDir)..\Includes\;$(SolutionDir)PhysXWrapper\;$(SolutionDir)Includes\PhysX-4.1\physx\include\;$(SolutionDir)Includes\PhysX-4.1\pxshared\include\</IncludePath>
+    <IncludePath>$(SolutionDir)imgui_ne\ThirdParty\imgui;$(SolutionDir)imgui_ne\NodeEditor\include\;$(IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\DirectXTK\Inc\;$(ProjectDir)..\Game\;$(ProjectDir)..\ModelLoader\;$(ProjectDir)..\UnityImporterApp\;$(ProjectDir)..\Includes\;$(SolutionDir)PhysXWrapper\;$(SolutionDir)Includes\PhysX-4.1\physx\include\;$(SolutionDir)Includes\PhysX-4.1\pxshared\include\</IncludePath>
     <LibraryPath>$(SolutionDir)../Lib/;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)..\Lib\physxlib\release\</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">
@@ -78,7 +78,7 @@
     <TargetName>$(ProjectName)_$(Configuration)</TargetName>
     <IntDir>$(ProjectDir)..\..\Temp\$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir>$(ProjectDir)..\..\Lib\</OutDir>
-    <IncludePath>$(IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\DirectXTK\Inc\;$(ProjectDir)..\Game\;$(ProjectDir)..\ModelLoader\;$(ProjectDir)..\UnityImporterApp\;$(ProjectDir)..\Includes\;$(SolutionDir)PhysXWrapper\</IncludePath>
+    <IncludePath>$(SolutionDir)imgui_ne\ThirdParty\imgui;$(SolutionDir)imgui_ne\NodeEditor\include\;$(IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\DirectXTK\Inc\;$(ProjectDir)..\Game\;$(ProjectDir)..\ModelLoader\;$(ProjectDir)..\UnityImporterApp\;$(ProjectDir)..\Includes\;$(SolutionDir)PhysXWrapper\;$(SolutionDir)Includes\PhysX-4.1\physx\include\;$(SolutionDir)Includes\PhysX-4.1\pxshared\include\</IncludePath>
     <LibraryPath>$(SolutionDir)../Lib/;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -92,7 +92,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <ForcedIncludeFiles>StdAfx.h;%(ForcedINcludeFiles)</ForcedIncludeFiles>
-      <AdditionalIncludeDirectories>$(SolutionDir)Includes/Imgui/%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)imgui_ne\ThirdParty\imgui;$(SolutionDir)imgui_ne\NodeEditor\include\;%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>
       </AdditionalUsingDirectories>
     </ClCompile>
@@ -124,7 +124,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <ForcedIncludeFiles>StdAfx.h;%(ForcedINcludeFiles)</ForcedIncludeFiles>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)imgui_ne\ThirdParty\imgui;$(SolutionDir)imgui_ne\NodeEditor\include\;%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -150,7 +150,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <ForcedIncludeFiles>StdAfx.h;%(ForcedINcludeFiles)</ForcedIncludeFiles>
-      <AdditionalIncludeDirectories>$(SolutionDir)Includes/Imgui/%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)imgui_ne\ThirdParty\imgui;$(SolutionDir)imgui_ne\NodeEditor\include\;%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -164,20 +164,8 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\Includes\Imgui\imgui.h" />
-    <ClInclude Include="..\Includes\Imgui\imgui_impl_dx11.h" />
-    <ClInclude Include="..\Includes\Imgui\imgui_impl_win32.h" />
-    <ClInclude Include="..\Includes\Imgui\imgui_internal.h" />
-    <ClInclude Include="..\Includes\Imgui\imstb_rectpack.h" />
-    <ClInclude Include="..\Includes\Imgui\imstb_textedit.h" />
-    <ClInclude Include="..\Includes\Imgui\imstb_truetype.h" />
-    <ClInclude Include="..\Includes\Imgui\Node Editor\crude_json.h" />
-    <ClInclude Include="..\Includes\Imgui\Node Editor\imgui_bezier_math.h" />
-    <ClInclude Include="..\Includes\Imgui\Node Editor\imgui_canvas.h" />
-    <ClInclude Include="..\Includes\Imgui\Node Editor\imgui_extra_math.h" />
-    <ClInclude Include="..\Includes\Imgui\Node Editor\imgui_node_editor.h" />
-    <ClInclude Include="..\Includes\Imgui\Node Editor\imgui_node_editor_internal.h" />
-    <ClInclude Include="..\Includes\Imgui\stb_image.h" />
+    <ClInclude Include="..\imgui_ne\ThirdParty\imgui\imgui_impl_dx11.h" />
+    <ClInclude Include="..\imgui_ne\ThirdParty\imgui\imgui_impl_win32.h" />
     <ClInclude Include="AnimatedUIElement.h" />
     <ClInclude Include="Animation.h" />
     <ClInclude Include="AnimationComponent.h" />
@@ -236,7 +224,6 @@
     <ClInclude Include="GBuffer.h" />
     <ClInclude Include="ImguiManager.h" />
     <ClInclude Include="InstancedModelComponent.h" />
-    <ClInclude Include="Interop.h" />
     <ClInclude Include="JsonReader.h" />
     <ClInclude Include="MainSingleton.h" />
     <ClInclude Include="Math2D.h" />
@@ -316,17 +303,8 @@
     <ClInclude Include="WinInclude.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Includes\Imgui\imgui.cpp" />
-    <ClCompile Include="..\Includes\Imgui\imgui_demo.cpp" />
-    <ClCompile Include="..\Includes\Imgui\imgui_draw.cpp" />
-    <ClCompile Include="..\Includes\Imgui\imgui_impl_dx11.cpp" />
-    <ClCompile Include="..\Includes\Imgui\imgui_impl_win32.cpp" />
-    <ClCompile Include="..\Includes\Imgui\imgui_tables.cpp" />
-    <ClCompile Include="..\Includes\Imgui\imgui_widgets.cpp" />
-    <ClCompile Include="..\Includes\Imgui\Node Editor\crude_json.cpp" />
-    <ClCompile Include="..\Includes\Imgui\Node Editor\imgui_canvas.cpp" />
-    <ClCompile Include="..\Includes\Imgui\Node Editor\imgui_node_editor.cpp" />
-    <ClCompile Include="..\Includes\Imgui\Node Editor\imgui_node_editor_api.cpp" />
+    <ClCompile Include="..\imgui_ne\ThirdParty\imgui\imgui_impl_dx11.cpp" />
+    <ClCompile Include="..\imgui_ne\ThirdParty\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="AnimatedUIElement.cpp" />
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="AnimationComponent.cpp" />
@@ -734,9 +712,6 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Includes\Imgui\Node Editor\imgui_bezier_math.inl" />
-    <None Include="..\Includes\Imgui\Node Editor\imgui_extra_math.inl" />
-    <None Include="..\Includes\Imgui\Node Editor\imgui_node_editor_internal.inl" />
     <None Include="DeferredPBRFunctions.hlsli" />
     <None Include="DeferredSamplingFunctions.hlsli" />
     <None Include="DeferredShaderStructs.hlsli" />

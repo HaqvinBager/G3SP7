@@ -2422,7 +2422,7 @@ bool ed::Settings::Parse(const std::string& string, Settings& settings)
     {
         auto separator = str.find_first_of(':');
         auto idStart   = str.c_str() + ((separator != std::string::npos) ? separator + 1 : 0);
-        auto id        = reinterpret_cast<void*>(strtoull(idStart, nullptr, 16));
+        auto id        = reinterpret_cast<void*>(strtoull(idStart, nullptr, 10));
         if (str.compare(0, separator, "node") == 0)
             return ObjectId(NodeId(id));
         else if (str.compare(0, separator, "link") == 0)
@@ -3922,8 +3922,7 @@ ed::EditorAction::AcceptResult ed::ShortcutAction::Accept(const Control& control
                     std::sort(m_Context.begin(), m_Context.end());
                     m_Context.erase(std::unique(m_Context.begin(), m_Context.end()), m_Context.end());
                 }
-            }
-            else if (control.HotObject && control.HotObject->IsSelectable() && !IsGroup(control.HotObject->AsNode()))
+            } else if (control.HotObject && control.HotObject->IsSelectable() && !IsGroup(control.HotObject->AsNode()))
             {
                 m_Context.push_back(control.HotObject);
             }
@@ -3965,18 +3964,17 @@ ed::EditorAction::AcceptResult ed::ShortcutAction::Accept(const Control& control
 
                 // Drop out of context links
                 links.erase(std::remove_if(links.begin(), links.end(), [&isNodeInContext](Link* link)
-                {
-                    return !isNodeInContext(link->m_StartPin->m_Node->m_ID) || !isNodeInContext(link->m_EndPin->m_Node->m_ID);
-                }), links.end());
+                    {
+                        return !isNodeInContext(link->m_StartPin->m_Node->m_ID) || !isNodeInContext(link->m_EndPin->m_Node->m_ID);
+                    }), links.end());
 
                 // Append links and remove duplicates
                 m_Context.insert(m_Context.end(), links.begin(), links.end());
             }
-        }
-        else
+        } else
             m_Context.resize(0);
 
-        m_IsActive      = true;
+        m_IsActive = true;
         m_CurrentAction = candidateAction;
 
         return True;
@@ -4080,8 +4078,6 @@ bool ed::ShortcutAction::AcceptRedo()
     IM_ASSERT(m_InAction);
     return m_CurrentAction == Redo;
 }
-
-
 
 
 //------------------------------------------------------------------------------

@@ -71,9 +71,9 @@ inline ImRect ImCubicBezierBoundingRect(const ImCubicBezierPoints& curve);
 // Project point on Cubic Bezier curve.
 struct ImProjectResult
 {
-    ImVec2 Point;    // Point on curve
-    float  Time;     // [0 - 1]
-    float  Distance; // Distance to curve
+    ImVec2 Point = {0.0f,0.0f};    // Point on curve
+    float  Time = 0.0f;     // [0 - 1]
+    float  Distance = 0.0f; // Distance to curve
 };
 
 inline ImProjectResult ImProjectOnCubicBezier(const ImVec2& p, const ImVec2& p0, const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, const int subdivisions = 100);
