@@ -64,7 +64,6 @@ void CGameObject::Update()
 			myComponents[i]->Update();
 		}
 	}
-
 }
 
 void CGameObject::LateUpdate()

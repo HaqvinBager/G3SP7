@@ -44,6 +44,7 @@ private:
 	// TODO: Move speed into "Resource Component"
 	DirectX::SimpleMath::Matrix myLocalTransform;
 	DirectX::SimpleMath::Matrix myWorldTransform;
+	DirectX::SimpleMath::Vector3 myParentOffset;
 
 	//DirectX::SimpleMath::Vector3 myLocalPosition;
 	//DirectX::SimpleMath::Vector3 myLocalRotation;

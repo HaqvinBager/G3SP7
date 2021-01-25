@@ -63,9 +63,31 @@ void CTransformComponent::LateUpdate()
 {
 	if (myParent != nullptr)
 	{
-		myLocalTransform.Translation(myParent->myWorldTransform.Translation());
+
+
+
+		
+	/*	Vector3 thisChildOffset = myLocalTransform.Translation();
+		Matrix childMatrix = myLocalTransform;
+
+		Matrix tempRotation = Matrix::CreateFromQuaternion(myParent->Rotation());
+		childMatrix = tempRotation;
+		childMatrix *= Matrix::CreateScale(myScale * ENGINE_SCALE);
+		childMatrix.Translation(thisChildOffset);
+		myLocalTransform = childMatrix;*/
+		
+		//myLocalTransform.Translation(myLocalTransform.Translation() - myLocalTransform.Forward() * aMovement.z);
+
 		Rotation(myParent->Rotation());
+
+		Vector3 parentForward = myParent->myWorldTransform.Forward();
+		parentForward.Normalize();
+
+		Vector3 test = myParentOffset * parentForward;
+		myLocalTransform.Translation(myParent->myWorldTransform.Translation() + myParentOffset * parentForward);
 		myWorldTransform = DirectX::XMMatrixMultiply(myParent->myWorldTransform, myLocalTransform);
+
+		
 	}
 	else
 	{
@@ -75,6 +97,7 @@ void CTransformComponent::LateUpdate()
 
 void CTransformComponent::Position(DirectX::SimpleMath::Vector3 aPosition)
 {
+	myParentOffset = aPosition;
 	myLocalTransform.Translation(aPosition);
 }
 
@@ -168,11 +191,15 @@ DirectX::SimpleMath::Matrix& CTransformComponent::Transform()
 
 void CTransformComponent::Move(DirectX::SimpleMath::Vector3 aMovement)
 {
+	//Position(myLocalTransform.Translation() + aMovement);
 	myLocalTransform.Translation(myLocalTransform.Translation() + aMovement);
 }
 
 void CTransformComponent::MoveLocal(DirectX::SimpleMath::Vector3 aMovement)
 {
+	//Position(myLocalTransform.Translation() + myLocalTransform.Right() * aMovement.x);
+	//Position(myLocalTransform.Translation() + myLocalTransform.Up() * aMovement.y);
+	//Position(myLocalTransform.Translation() - myLocalTransform.Forward() * aMovement.z);
 	myLocalTransform.Translation(myLocalTransform.Translation() + myLocalTransform.Right() * aMovement.x);
 	myLocalTransform.Translation(myLocalTransform.Translation() + myLocalTransform.Up() * aMovement.y);
 	myLocalTransform.Translation(myLocalTransform.Translation() - myLocalTransform.Forward() * aMovement.z);

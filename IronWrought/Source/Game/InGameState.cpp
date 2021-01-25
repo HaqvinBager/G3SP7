@@ -53,13 +53,13 @@ void CInGameState::Start()
 	CGameObject* camera = new CGameObject(0);
 	camera->AddComponent<CCameraComponent>(*camera, 70.0f);
 	//camera->AddComponent<CCameraControllerComponent>(*camera, 25.0f);
-	camera->AddComponent<CModelComponent>(*camera, ASSETPATH + "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx");
-	camera->myTransform->Position({0.0f, 0.0f, 0.0f});
+	camera->myTransform->Position({0.0f, 0.0f, -5.0f});
 	camera->myTransform->Rotation({0.0f, 0.0f, 0.0f});
 	scene->SetMainCamera(camera->GetComponent<CCameraComponent>());
 
 	CGameObject* player = new CGameObject(1);
 	player->AddComponent<CCameraControllerComponent>(*player, 25.0f);
+	player->AddComponent<CModelComponent>(*player, ASSETPATH + "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx");
 	//player->AddComponent<CModelComponent>(*player, ASSETPATH + "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx");
 	player->myTransform->Position({0.0f, 0.0f, 0.0f});
 	camera->myTransform->SetParent(player->myTransform);
@@ -129,7 +129,7 @@ void CInGameState::Start()
 	//}
 
 
-	TEMP_DeferredRenderingTests(scene);
+	//TEMP_DeferredRenderingTests(scene);
 
 	myExitLevel = false;
 
@@ -206,6 +206,8 @@ void CInGameState::Receive(const SMessage& /*aMessage*/)
 	//	default:break;
 	//}
 }
+
+
 
 void TEMP_DeferredRenderingTests(CScene* scene)
 {
