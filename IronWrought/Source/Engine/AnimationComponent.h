@@ -1,21 +1,20 @@
 #pragma once
 #include "Behaviour.h"
 #include "StringID.hpp"
-
 #include "SimpleMath.h"
 #include "ModelMath.h"
 
-//#define USING_BLENDED_ANIMATIONS // Don't toggle this. There is no support for it atm. Anything can happen if active.
+//class SceneAnimator;
+class CAnimationController;
 
 struct SAnimationBlend
 {
-	int myFirst = -1;
-	int mySecond = -1;
-	float myBlendLerp = 0;
+	int myFirst = 1;
+	int mySecond = 1;
+	float myBlendLerp = 0.0f;
 };
 
 class CGameObject;
-class CAnimation;
 class CAnimationComponent : public CBehaviour
 {
 public:
@@ -35,34 +34,27 @@ public:
 	const float GetCurrentAnimationTicksPerSecond();
 
 	std::array<SlimMatrix44, 64> GetBones() { return myBones; }
-	void GetAnimatedBlendTransforms(float dt, SlimMatrix44* transforms);
-	void GetAnimatedTransforms(float dt, SlimMatrix44* transforms);
+	void GetAnimatedBlendTransforms(SlimMatrix44* transforms);
 
-	void MovingState();
-	// After calling this no other animation will be able to be called.
-	bool DeadState();
-	void ForceToIdleState();
-
-	void SetIdleID(const int anIdleID);
-	void SetMovingID(const int aMovingID);
-	void SetDyingID(const int aDyingID);
-
+// TEMP
+	CAnimationController* GetController() { return myController; }
+// !TEMP
 public:
-	CAnimation* GetMyAnimation() { return myAnimation; }
-	const float GetBlend() const { return myBlend.myBlendLerp; }
+	const float GetBlendLerp() const { return myBlend.myBlendLerp; }
+
+private:// CAnimation functions
+	void BoneTransformsWithBlend(SlimMatrix44* Transforms, float aBlendFactor);
+	void BlendStep();
 
 private:
 	void SetBonesToIdentity();
-	void UpdateBlended(const float dt);
-	void UpdateNonBlended(const float dt);
+	void UpdateBlended();
 	void SetBlend(int anAnimationIndex, int anAnimationIndexTwo, float aBlend);
 
 private:
-	CAnimation* myAnimation;
+	CAnimationController* myController;
 	std::array<SlimMatrix44, 64> myBones { };
 	SAnimationBlend myBlend;
-	bool myIsLooping;
-	float myAnimationSpeed;
 	std::vector<CStringID> myAnimationIds;
 
 private: // Needed for template functions
@@ -105,3 +97,31 @@ private: // Needed for template functions
 		return 0;
 	}
 };
+
+#pragma region COMMENTED 2020_11_11 UNUSED, No defintions existed
+//public :
+	//void BoneTransform(SlimMatrix44* Transforms); 
+	//void SetAnimator(SceneAnimator* anAnimator) { myAnimator = anAnimator; }	
+	//void SetBindPose(SceneAnimator* aBindPose) { myBindPose = aBindPose; }	
+	//void SetActiveAnimations(std::vector<int>& someActiveAnimations) { myActiveAnimations = someActiveAnimations; }	
+	//void SetTotalAnimationTime(float aTotalAnimationTime) { myTotalAnimationTime = aTotalAnimationTime; }		
+	//void SetAnimationTime(float anAnimationTime) { myAnimTime = anAnimationTime; }		
+	//void SetAnimationSpeed(int anAnimationSpeed) { myAnimSpeed = anAnimationSpeed; }		
+
+	//SceneAnimator* GetAnimator() const { return myAnimator; }		
+	//SceneAnimator* GetBindPose() const { return myBindPose; }		
+	//const std::vector<int>& GetActiveAnimations() const { return myActiveAnimations; }
+	//const float GetTotalAnimationTime() const { return myTotalAnimationTime; }		
+	//const float GetAnimationTime() const { return myAnimTime; }		
+	//const int GetAnimationSpeed() const { return myAnimSpeed; }		
+
+
+//private:
+	//SceneAnimator* myAnimator; 
+	//SceneAnimator* myBindPose = nullptr;
+	//std::vector<int> myActiveAnimations;
+
+	//int myAnimSpeed = 60;
+	//float myAnimTime = 0;
+
+#pragma endregion ! 2020_11_11 UNUSED

@@ -52,9 +52,7 @@ void SetAnimations(CGameObject& aGameObject, const EAnimatedObject anAnimatedObj
 	Document document;
 	document.ParseStream(inputWrapper);
 	CAnimationComponent* anim = aGameObject.GetComponent<CAnimationComponent>();
-	anim->SetIdleID(document["Idle 1"].GetInt());
-	anim->SetMovingID(document["Move"].GetInt());
-	anim->SetDyingID(document["Dying"].GetInt());
+	anim;
 
 	inputStream.close();
 }

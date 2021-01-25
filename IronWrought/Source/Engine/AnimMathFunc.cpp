@@ -29,8 +29,8 @@ uint FindRotation(float AnimationTime, const aiNodeAnim* pNodeAnim)
 			return i;
 		}
 	}
-	// This is an 'ugly-fix' for if the animations that are being played have incorrect conections
-	// In short: bypasses the error by returning the last working key
+// This is an 'ugly-fix' for if the animations that are being played have incorrect conections
+// In short: bypasses the error by returning the last working key
 	//return pNodeAnim->mNumRotationKeys - 2;
 
 	assert(0);
@@ -74,8 +74,8 @@ uint FindScaling(float AnimationTime, const aiNodeAnim* pNodeAnim)
 		}
 	}
 
-	// This is an 'ugly-fix' for if the animations that are being played have incorrect conections
-	// In short: bypasses the error by returning the last working key
+// This is an 'ugly-fix' for if the animations that are being played have incorrect conections
+// In short: bypasses the error by returning the last working key
 	//return pNodeAnim->mNumScalingKeys - 2;
 	
 	assert(0);
@@ -96,10 +96,12 @@ void CalcInterpolatedScaling(aiVector3D& Out, float AnimationTime, const aiNodeA
 	assert(NextScalingIndex < pNodeAnim->mNumScalingKeys);
 	float DeltaTime = static_cast<float>(pNodeAnim->mScalingKeys[NextScalingIndex].mTime - pNodeAnim->mScalingKeys[ScalingIndex].mTime);
 	float Factor = (AnimationTime - (float)pNodeAnim->mScalingKeys[ScalingIndex].mTime) / DeltaTime;
+// This if just stops the assert below it from triggering. SP6 animations had some anims with issues and this was faster than having SG debug their animations.
 	if (!(Factor >= 0.0f && Factor <= 1.0f))
 	{
 		Factor = 0.0f;
 	}
+// ! If that stops the assert below it 
 	assert(Factor >= 0.0f && Factor <= 1.0f);
 	const aiVector3D& StartScaling = pNodeAnim->mScalingKeys[ScalingIndex].mValue;
 	const aiVector3D& EndScaling = pNodeAnim->mScalingKeys[NextScalingIndex].mValue;
@@ -118,8 +120,8 @@ uint FindPosition(float AnimationTime, const aiNodeAnim* pNodeAnim)
 		}
 	}
 
-	// This is an 'ugly-fix' for if the animations that are being played have incorrect conections
-	// In short: bypasses the error by returning the last working key
+// This is an 'ugly-fix' for if the animations that are being played have incorrect conections
+// In short: bypasses the error by returning the last working key
 	//return pNodeAnim->mNumPositionKeys - 2;
 	
 	assert(0);
@@ -140,10 +142,12 @@ void CalcInterpolatedPosition(aiVector3D& Out, float AnimationTime, const aiNode
 	assert(NextPositionIndex < pNodeAnim->mNumPositionKeys);
 	float DeltaTime = static_cast<float>(pNodeAnim->mPositionKeys[NextPositionIndex].mTime - pNodeAnim->mPositionKeys[PositionIndex].mTime);
 	float Factor = (AnimationTime - (float)pNodeAnim->mPositionKeys[PositionIndex].mTime) / DeltaTime;
+// This if just stops the assert below it from triggering. SP6 animations had some anims with issues and this was faster than having SG debug their animations.
 	if (!(Factor >= 0.0f && Factor <= 1.0f))
 	{
 		Factor = 0.0f;
 	}
+// ! If that stops the assert below it 
 	assert(Factor >= 0.0f && Factor <= 1.0f);
 	const aiVector3D& StartPosition = pNodeAnim->mPositionKeys[PositionIndex].mValue;
 	const aiVector3D& EndPosition = pNodeAnim->mPositionKeys[NextPositionIndex].mValue;

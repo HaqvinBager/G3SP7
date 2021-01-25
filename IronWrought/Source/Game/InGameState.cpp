@@ -25,7 +25,11 @@
 #include <JsonReader.h>
 #include <iostream>
 
+#include "AnimationComponent.h"
+#include "AnimationController.h"
+
 void TEMP_DeferredRenderingTests(CScene* aScene);
+void TEMP_SetUpAnimationTest(CScene* aScene);
 
 CInGameState::CInGameState(CStateStack& aStateStack, const CStateStack::EState aState)
 	: CState(aStateStack, aState),
@@ -119,6 +123,7 @@ void CInGameState::Start()
 
 
 	TEMP_DeferredRenderingTests(scene);
+	TEMP_SetUpAnimationTest(scene);
 
 	myExitLevel = false;
 
@@ -305,5 +310,27 @@ void TEMP_DeferredRenderingTests(CScene* scene)
 																//, "Assets/Graphics/Exempel_Modeller/DetailNormals/4DN/4DNs_dn.fbx"
 																, transforms
 																, false);
-	scene->AddInstance(instancedGameObject);
+	//scene->AddInstance(instancedGameObject);
+}
+
+void TEMP_SetUpAnimationTest(CScene* aScene)
+{
+	CGameObject* animObj = new CGameObject(123123123);
+	std::string rig = "Assets/Temp/Undead/Undead.fbx";
+	std::vector<std::string> someAnimations;
+	someAnimations.emplace_back("Assets/Temp/Undead/Idle.fbx");
+	someAnimations.emplace_back("Assets/Temp/Undead/Walk.fbx");
+
+	//std::string rig = "Assets/Temp/Enemy/Enemy.fbx";
+	//std::vector<std::string> someAnimations;
+	//someAnimations.emplace_back("Assets/Temp/Enemy/Walk.fbx");
+	//someAnimations.emplace_back("Assets/Temp/Enemy/Idle.fbx");
+
+	animObj->AddComponent<CModelComponent>(*animObj, rig);
+	
+	CAnimationComponent* animComp = animObj->AddComponent<CAnimationComponent>(*animObj, rig, someAnimations);
+	animComp->GetController()->SetAnimIndex(2, true, 1.f);
+	animComp->GetController()->SetAnimIndex(2, true, 5.f);
+	
+	aScene->AddInstance(animObj);
 }

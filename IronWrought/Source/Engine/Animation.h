@@ -1,5 +1,5 @@
 #include "ModelMath.h"
-#include "ModelMath.h"
+#include "AnimationController.h"
 
 class SceneAnimator;
 class AnimationController;
@@ -13,7 +13,7 @@ public:
 	void Init(const char* aRig, std::vector<std::string>& somePathsToAnimations);
 
 	void BoneTransformsWithBlend(SlimMatrix44* Transforms, float aBlendFactor);
-	void BoneTransforms(SlimMatrix44* Transforms, const float anAnimSpeedMultiplier);
+	void BoneTransforms(SlimMatrix44* Transforms);
 	void BlendStep(float aDelta);
 	void Step();
 
@@ -21,11 +21,11 @@ public:
 
 public: 
 	void SetCurAnimationScene(const int aCurAnimScene);
-	AnimationController& GetMyController() { return *myController; }
+	CAnimationController& GetMyController() { return *myController; }
 
 private:
 	float myTotalAnimationTime;
-	AnimationController* myController;
+	CAnimationController* myController;
 
 #pragma region COMMENTED 2020_11_11 UNUSED No defintions exist
 public :

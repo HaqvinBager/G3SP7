@@ -24,7 +24,7 @@
 #define TRIMSHEET_PATH "Assets/Trimsheets/"	
 // Create functions for Trimsheets if they are to be used again. Instead of copypasted clutter.
 
-#define USING_FBX_MATERIALS
+//#define USING_FBX_MATERIALS
 
 CModelFactory* CModelFactory::ourInstance = nullptr;
 CModelFactory* CModelFactory::GetInstance()

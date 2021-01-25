@@ -18,7 +18,7 @@
 
 #include <algorithm>
 
-#define USING_DEFERRED
+//#define USING_DEFERRED
 
 CRenderManager::CRenderManager() /*: myScene(*CScene::GetInstance())*/
 	: myDoFullRender(true)
