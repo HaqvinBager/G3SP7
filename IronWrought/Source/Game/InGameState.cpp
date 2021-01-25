@@ -25,6 +25,7 @@
 #include <JsonReader.h>
 #include <iostream>
 #include "SceneManager.h"
+#include "JsonReader.h"
 
 
 
@@ -50,16 +51,7 @@ void CInGameState::Awake()
 void CInGameState::Start()
 {
 	std::vector<std::string> scenePath;
-	//rapidjson::Document document = CJsonReader::LoadDocument(ASSETPATH + "Assets/Generated/");
-
-	scenePath = {
-		"Level1_Layout_part2.json",
-		"Level1_World_Layout.json"
-		/*GOAL:
-			Om LD tex inte har jobbat i part2 men den står med här, så kommer den att krasha eftersom filen inte existerar.
-			vi behöver alltså uppdatera scenepath efter hur Asset/Generated mappen ser ut.
-		*/
-	};
+	scenePath = CJsonReader::GetFilePathsInFolder(ASSETPATH + "Assets\\Generated\\", ".json");
 	CScene* myUnityScene = CSceneManager::CreateScene(scenePath);
 	CEngine::GetInstance()->AddScene(myState, myUnityScene);
 	CEngine::GetInstance()->SetActiveScene(myState);
