@@ -5,7 +5,9 @@
 #include "AStar.h"
 #include "AnimationComponent.h"
 
-#define ENGINE_SCALE 0.01f
+//#define ENGINE_SCALE 0.01f
+#define ENGINE_SCALE 1.0f
+
 using namespace DirectX::SimpleMath;
 
 CTransformComponent::CTransformComponent(CGameObject& aParent, DirectX::SimpleMath::Vector3 aPosition)
@@ -32,62 +34,16 @@ void CTransformComponent::Start()
 
 void CTransformComponent::Update()
 {
-	//if (myParent != nullptr)
-	//{
-	//	myWorldRotation = myParent->myWorldRotation * myLocalRotation;
-	//	myWorldScale = myParent->myWorldScale * myLocalScale;
-	//	myWorldPosition = myParent->myWorldPosition + myParent->myWorldRotation * (myParent->myWorldScale * myLocalPosition);
 
-	//	Matrix t, r, s;		
-	//	// cache local/world transforms
-	//	t = Matrix::CreateTranslation(myLocalPosition);
-	//	r = Matrix::CreateFromYawPitchRoll(DirectX::XMConvertToRadians(myLocalRotation.y),
-	//									   DirectX::XMConvertToRadians(myLocalRotation.x),
-	//									   DirectX::XMConvertToRadians(myLocalRotation.z));
-	//	s = Matrix::CreateScale(myLocalScale);
-	//	myLocalTransform = t * r * s;
-
-
-	//	t = Matrix::CreateTranslation(myWorldPosition);
-	//	r = Matrix::CreateFromYawPitchRoll(DirectX::XMConvertToRadians(myWorldRotation.y),
-	//									   DirectX::XMConvertToRadians(myWorldRotation.x),
-	//									   DirectX::XMConvertToRadians(myWorldRotation.z));
-	//	s = Matrix::CreateScale(myWorldScale);
-	//	myTransform = t * r * s;
-	//}
-
-	
 }
 
 void CTransformComponent::LateUpdate()
 {
 	if (myParent != nullptr)
 	{
-
-
-
-		
-	/*	Vector3 thisChildOffset = myLocalTransform.Translation();
-		Matrix childMatrix = myLocalTransform;
-
-		Matrix tempRotation = Matrix::CreateFromQuaternion(myParent->Rotation());
-		childMatrix = tempRotation;
-		childMatrix *= Matrix::CreateScale(myScale * ENGINE_SCALE);
-		childMatrix.Translation(thisChildOffset);
-		myLocalTransform = childMatrix;*/
-		
-		//myLocalTransform.Translation(myLocalTransform.Translation() - myLocalTransform.Forward() * aMovement.z);
-
-		Rotation(myParent->Rotation());
-
-		Vector3 parentForward = myParent->myWorldTransform.Forward();
-		parentForward.Normalize();
-
-		Vector3 test = myParentOffset * parentForward;
-		myLocalTransform.Translation(myParent->myWorldTransform.Translation() + myParentOffset * parentForward);
-		myWorldTransform = DirectX::XMMatrixMultiply(myParent->myWorldTransform, myLocalTransform);
-
-		
+		Matrix temp = myLocalTransform;
+		//temp *= Matrix::CreateScale(myScale * 100.0f);
+		myWorldTransform = DirectX::XMMatrixMultiply(temp, myParent->myWorldTransform);		
 	}
 	else
 	{
@@ -174,7 +130,9 @@ void CTransformComponent::ResetScale()
 	Quaternion rotation;
 	myLocalTransform.Decompose(scale, rotation, translation);
 	myLocalTransform = Matrix::CreateFromQuaternion(rotation);
-	myLocalTransform *= Matrix::CreateScale(myScale * ENGINE_SCALE);
+	if(myParent == nullptr)
+		myLocalTransform *= Matrix::CreateScale(myScale * ENGINE_SCALE);
+
 	myLocalTransform.Translation(translation);
 }
 
@@ -230,4 +188,71 @@ DirectX::SimpleMath::Matrix CTransformComponent::GetWorldMatrix() const
 DirectX::SimpleMath::Matrix CTransformComponent::GetLocalMatrix() const
 {
 	return myLocalTransform;
+}
+
+
+void CTransformComponent::SetParent(CTransformComponent* aParent)
+{
+
+
+	static bool hasBeenParented = false;
+	//if (myParent == nullptr) //We have a Prent
+	//{
+	//	if (aParent != nullptr)
+	//	{
+	//		//Setting a Parent for (previously without Parent)
+	//		//Inverten av Parents Rotation - (this inverted rotation) 
+	//		//Rotation(aParent->Rotation());
+	//		//Matrix temp = myLocalTransform;
+	//		//temp *= Matrix::CreateScale(myScale * 100.0f);
+	//		//myWorldTransform = DirectX::XMMatrixMultiply(temp, aParent->myWorldTransform.Invert());
+	//		/*Quaternion invParentRotation = aParent->Rotation();
+	//		invParentRotation.Inverse(invParentRotation);
+	//		Rotation(invParentRotation);*/
+
+	//		//if (!hasBeenParented)
+	//		//{
+	//		//	Matrix newMatrix = DirectX::XMMatrixMultiply(myWorldTransform, aParent->myWorldTransform);
+	//		//	//newMatrix *= Matrix::CreateScale(myScale * ENGINE_SCALE);
+	//		//	myLocalTransform = newMatrix;
+	//		//}
+	//		//else
+	//		//{
+	//		//	Vector3 tempTranslation = myWorldTransform.Translation();
+	//		//	Matrix tempRotation = Matrix::CreateFromQuaternion(
+	//		//		Quaternion::Identity
+	//		//	);
+	//		//	myWorldTransform = tempRotation;
+	//		//	//myWorldTransform *= Matrix::CreateScale(myScale * ENGINE_SCALE);
+	//		//	myWorldTransform.Translation(tempTranslation);
+
+	//		//	Matrix newMatrix = DirectX::XMMatrixMultiply(myWorldTransform, aParent->myWorldTransform);
+	//		//	//newMatrix *= Matrix::CreateScale(myScale * 100.0f);
+	//		//	myLocalTransform = newMatrix;
+	//		//}
+
+
+	//	}
+	//}
+	//else
+	//{
+		if (aParent == nullptr) //GOOOD
+		{
+			Vector3 positionOffset = Position();
+			Quaternion rotationOffset = Rotation();
+
+			//Removing Parent
+			Matrix temp = myLocalTransform.Invert();
+			temp.Translation({ 0, 0 ,0 });
+			//temp *= Matrix::CreateScale(myScale * 100.0f);
+			myLocalTransform = DirectX::XMMatrixMultiply(temp, myParent->myWorldTransform);
+			Rotate(rotationOffset);
+			Position(positionOffset);
+			myWorldTransform = myLocalTransform;
+		}
+	//}
+
+	myParent = aParent;
+	if (myParent != nullptr)
+		hasBeenParented = true;
 }

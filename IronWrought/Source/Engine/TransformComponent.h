@@ -37,8 +37,15 @@ public:
 	void ResetScale();
 	//To be Removed 2020-01-12 -> 2020-01-22 /Axel
 	void SetOutlineScale();
+	
+	/// <summary>
+	/// :(
+	/// </summary>
+	void PrepareToOrphan()
+	{
 
-	void SetParent(CTransformComponent* aParent) { myParent = aParent; }
+	}
+	void SetParent(CTransformComponent* aParent); /*{ myParent = aParent; }*/
 
 private:
 	// TODO: Move speed into "Resource Component"

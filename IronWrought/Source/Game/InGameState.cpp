@@ -35,7 +35,7 @@ CInGameState::CInGameState(CStateStack& aStateStack, const CStateStack::EState a
 
 CInGameState::~CInGameState()
 {
- }
+}
 
 void CInGameState::Awake()
 {
@@ -50,86 +50,55 @@ void CInGameState::Start()
 	CScene* scene = new CScene();
 	scene->AddPXScene(CMainSingleton::PhysXWrapper().CreatePXScene());
 
-	CGameObject* camera = new CGameObject(0);
-	camera->AddComponent<CCameraComponent>(*camera, 70.0f);
-	//camera->AddComponent<CCameraControllerComponent>(*camera, 25.0f);
-	camera->myTransform->Position({0.0f, 0.0f, -5.0f});
-	camera->myTransform->Rotation({0.0f, 0.0f, 0.0f});
-	scene->SetMainCamera(camera->GetComponent<CCameraComponent>());
+
+	myCamera = new CGameObject(5);
+	myCamera->AddComponent<CCameraComponent>(*myCamera, 70.0f);
+	myCamera->AddComponent<CCameraControllerComponent>(*myCamera, 25.0f);
+	myCamera->myTransform->Position({ 0.f, 0.f, -5.f });
+
 
 	CGameObject* player = new CGameObject(1);
-	player->AddComponent<CCameraControllerComponent>(*player, 25.0f);
-	player->AddComponent<CModelComponent>(*player, ASSETPATH + "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx");
-	//player->AddComponent<CModelComponent>(*player, ASSETPATH + "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx");
-	player->myTransform->Position({0.0f, 0.0f, 0.0f});
-	camera->myTransform->SetParent(player->myTransform);
+	//player->AddComponent<CCameraControllerComponent>(*player, 25.0f);
+	player->myTransform->Position({ 0.0f, 0.0f, 0.0f });
 
-	//player->myTransform->SetParent(camera->myTransform);
+	myCube = new CGameObject(0);
+	//myTestCameraOne->AddComponent<CCameraComponent>(*myTestCameraOne, 70.0f);
+	myCube->AddComponent<CModelComponent>(*myCube, ASSETPATH + "Assets/3D/Exempel_Modeller/Primitives/Cube.fbx");
+	myCube->myTransform->Position({ 0.0f, 0.0f, 0.0f });
+	myCube->myTransform->Rotation({ 0.0f, 0.0f, 0.0f });
 
-	scene->AddInstance(camera);
+	//camera->AddComponent<CCameraControllerComponent>(*camera, 25.0f);
+
+	myChest = new CGameObject(3);
+	myChest->AddComponent<CModelComponent>(*myChest, ASSETPATH + "Assets/3D/Exempel_Modeller/Barrel/EN_P_Barrel_01_17G3_v2_19.fbx");
+	myChest->myTransform->Rotation({ 0.0f, 0.0f, 0.0f });
+	myChest->myTransform->Position({ 0.f, 0.f, 0.0f });
+	myChest->myTransform->SetParent(myCube->myTransform);
+	//test->myTransform->SetParent(player->myTransform);
+	//myTestCameraOne->myTransform->SetParent(player->myTransform);
+
+
+
+
+
+//player->myTransform->SetParent(camera->myTransform);
+	scene->SetMainCamera(myCamera->GetComponent<CCameraComponent>());
+
 	scene->AddInstance(player);
+	scene->AddInstance(myCube);
+	scene->AddInstance(myCamera);
+	scene->AddInstance(myChest);
 
 	CGameObject* envLight = new CGameObject(2);
 	envLight->AddComponent<CEnviromentLightComponent>(*envLight);
-	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetColor({0.0f,0.0f,1.0f});
+	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetColor({ 0.0f,0.0f,1.0f });
 	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetIntensity(10.f);
-	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetDirection({1.0f,0.5f,-1.0f});
+	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetDirection({ 1.0f,0.5f,-1.0f });
 	scene->AddInstance(envLight);
 	scene->SetEnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight());
 
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);
-
-	//rapidjson::Document document = CJsonReader::LoadDocument(ASSETPATH + "Assets/TestJson.json");
-	//auto jsonarray = document["instancedGameobjects"].GetArray();
-
-	//for (auto& jsongameobject : jsonarray) {
-	//
-	//	CGameObject* instancedGameObject = new CGameObject(0);
-	//	std::string model_path;
-	//	//float instanceID;
-	//	Vector3 position;
-	//	Vector3 rotation;
-	//	Vector3 scale;
-	//
-	//	auto jsonmodelpath = jsongameobject["model"].GetObjectW();
-	//	model_path = jsonmodelpath["fbxPath"].GetString();
-	//	auto jsonTransforms = jsongameobject["transforms"].GetArray();
-	//	std::vector<DirectX::SimpleMath::Matrix> instancedTransforms;
-	//	for (auto& jsonTransform : jsonTransforms) {
-	//		//auto jsoninstanceID = jsontransform["instanceID"].GetObjectW();
-	//		auto jsonposition = jsonTransform["position"].GetObjectW();
-	//		auto jsonrotation = jsonTransform["rotation"].GetObjectW();
-	//		auto jsonscale = jsonTransform["scale"].GetObjectW();
-
-	//		//instanceID = jsoninstanceID[""].GetFloat();
-
-	//		position.x = jsonposition["x"].GetFloat();			
-	//		position.y = jsonposition["y"].GetFloat();
-	//		position.z = jsonposition["z"].GetFloat();
-
-	//		rotation.x = jsonrotation["x"].GetFloat();
-	//		rotation.y = jsonrotation["y"].GetFloat();
-	//		rotation.z = jsonrotation["z"].GetFloat();
-
-	//		scale.x = jsonscale["x"].GetFloat();
-	//		scale.y = jsonscale["y"].GetFloat();
-	//		scale.z = jsonscale["z"].GetFloat();
-
-	//		CGameObject temp(0);
-	//		CTransformComponent transform(temp);
-	//		transform.Scale(scale.x);
-	//		transform.Position(position);
-	//		transform.Rotation(rotation);
-	//		instancedTransforms.emplace_back(transform.GetMatrix());
-	//		
-	//	}
-	//	instancedGameObject->AddComponent<CInstancedModelComponent>(*instancedGameObject, std::string(ASSETPATH + model_path), instancedTransforms);
-	//	scene->AddInstance(instancedGameObject);
-	//}
-
-
-	//TEMP_DeferredRenderingTests(scene);
 
 	myExitLevel = false;
 
@@ -168,6 +137,46 @@ void CInGameState::Stop()
 
 void CInGameState::Update()
 {
+	//Vector3 pos = myChest->myTransform->Position();
+	//pos.x += CTimer::Dt();
+	//myChest->myTransform->Position(pos);
+
+	if (Input::GetInstance()->IsKeyDown('K'))
+	{
+		Vector3 cubePos = myCube->myTransform->Position();
+		cubePos.z += CTimer::Dt() * 50.0f;
+		myCube->myTransform->Position(cubePos);
+	}
+
+	if (Input::GetInstance()->IsKeyDown('J'))
+	{
+		Vector3 cubePos = myChest->myTransform->Position();
+		cubePos.x -= CTimer::Dt();
+		myChest->myTransform->Position(cubePos);
+	}
+
+	static float rotation = 0;
+	rotation = CTimer::Dt();
+	myCube->myTransform->Rotate({ 0, rotation, 0 });
+
+
+	static bool hasParent = true;
+	if (Input::GetInstance()->IsKeyPressed('P'))
+	{
+		if (hasParent)
+		{
+			myChest->myTransform->SetParent(nullptr);
+		}
+		else
+		{
+			myChest->myTransform->SetParent(myCube->myTransform);
+		}
+
+		hasParent = !hasParent;
+		
+	}
+
+
 	CMainSingleton::PhysXWrapper().Simulate();
 	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
 	{
@@ -184,12 +193,14 @@ void CInGameState::Update()
 
 void CInGameState::ReceiveEvent(const EInputEvent aEvent)
 {
-	if (this == myStateStack.GetTop()) {
-		switch (aEvent) {
-		case IInputObserver::EInputEvent::PauseGame:
-			break;
-		default:
-			break;
+	if (this == myStateStack.GetTop())
+	{
+		switch (aEvent)
+		{
+			case IInputObserver::EInputEvent::PauseGame:
+				break;
+			default:
+				break;
 		}
 	}
 }
@@ -213,15 +224,15 @@ void TEMP_DeferredRenderingTests(CScene* scene)
 {
 	CGameObject* chest = new CGameObject(1337);
 	chest->AddComponent<CModelComponent>(*chest, std::string(ASSETPATH + "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx"));
-	chest->GetComponent<CTransformComponent>()->Position({4.0f,0.0f,0.0f});
+	chest->GetComponent<CTransformComponent>()->Position({ 4.0f,0.0f,0.0f });
 
 	CGameObject* chest2 = new CGameObject(1338);
 	chest2->AddComponent<CModelComponent>(*chest2, std::string(ASSETPATH + "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx"));
-	chest2->GetComponent<CTransformComponent>()->Position({5.0f,-2.0f,0.0f});
+	chest2->GetComponent<CTransformComponent>()->Position({ 5.0f,-2.0f,0.0f });
 
 	CGameObject* chest3 = new CGameObject(1339);
 	chest3->AddComponent<CModelComponent>(*chest3, std::string(ASSETPATH + "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx"));
-	chest3->GetComponent<CTransformComponent>()->Position({6.0f,2.0f,0.0f});
+	chest3->GetComponent<CTransformComponent>()->Position({ 6.0f,2.0f,0.0f });
 
 	scene->AddInstance(chest);
 	scene->AddInstance(chest2);
@@ -241,7 +252,7 @@ void TEMP_DeferredRenderingTests(CScene* scene)
 		x -= 1.0f;
 
 		CGameObject* pl = new CGameObject(1789 + i);
-		pl->AddComponent<CPointLightComponent>(*pl, 15.f, SM::Vector3{1,1,1}, 10.f);
+		pl->AddComponent<CPointLightComponent>(*pl, 15.f, SM::Vector3{ 1,1,1 }, 10.f);
 		pl->myTransform->Position({ x, y, -3.0f });
 
 		int thirdRange = numPointLights / 3;
@@ -257,7 +268,7 @@ void TEMP_DeferredRenderingTests(CScene* scene)
 	for (int i = 0; i < 5; ++i)
 	{
 		CGameObject* pl = new CGameObject(9999 + i);
-		pl->AddComponent<CPointLightComponent>(*pl, 10.f, SM::Vector3{1,1,1}, 10.f);
+		pl->AddComponent<CPointLightComponent>(*pl, 10.f, SM::Vector3{ 1,1,1 }, 10.f);
 		pointLights.emplace_back(pl);
 		pl->myTransform->Position({ 0xDEAD, 0xDEAD, 0xDEAD });
 
@@ -290,12 +301,12 @@ void TEMP_DeferredRenderingTests(CScene* scene)
 
 	CGameObject* dn = new CGameObject(1338);
 	dn->AddComponent<CModelComponent>(*dn, "Assets/3D/Exempel_Modeller/DetailNormals/Tufted_Leather/tufted_leather_dn.fbx");
-	dn->GetComponent<CTransformComponent>()->Position({7.0f,0.0f,0.0f});
+	dn->GetComponent<CTransformComponent>()->Position({ 7.0f,0.0f,0.0f });
 	dn->GetComponent<CTransformComponent>()->Scale(100.0f);
 
 	CGameObject* dn4 = new CGameObject(1339);
 	dn4->AddComponent<CModelComponent>(*dn4, "Assets/3D/Exempel_Modeller/DetailNormals/4DN/4DNs_dn.fbx");
-	dn4->GetComponent<CTransformComponent>()->Position({8.0f,0.0f,0.0f});
+	dn4->GetComponent<CTransformComponent>()->Position({ 8.0f,0.0f,0.0f });
 	dn4->GetComponent<CTransformComponent>()->Scale(100.0f);
 
 	scene->AddInstance(dn);
