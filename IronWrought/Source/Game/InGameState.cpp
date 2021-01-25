@@ -25,7 +25,7 @@
 #include <JsonReader.h>
 #include <iostream>
 #include "SceneManager.h"
-#include "JsonReader.h"
+#include "FolderUtility.h"
 
 
 
@@ -36,14 +36,9 @@ CInGameState::CInGameState(CStateStack& aStateStack, const CStateStack::EState a
 {
 }
 
-CInGameState::~CInGameState()
-{
- }
+CInGameState::~CInGameState(){}
 
-void CInGameState::Awake()
-{
-
-}
+void CInGameState::Awake(){}
 
 #include "PointLight.h"
 #include "PointLightComponent.h"
@@ -51,7 +46,7 @@ void CInGameState::Awake()
 void CInGameState::Start()
 {
 	std::vector<std::string> scenePath;
-	scenePath = CJsonReader::GetFilePathsInFolder(ASSETPATH + "Assets\\Generated\\", ".json");
+	scenePath = CFolderUtility::GetFilePathsInFolder(ASSETPATH + "Assets\\Generated\\", ".json");
 	CScene* myUnityScene = CSceneManager::CreateScene(scenePath);
 	CEngine::GetInstance()->AddScene(myState, myUnityScene);
 	CEngine::GetInstance()->SetActiveScene(myState);
