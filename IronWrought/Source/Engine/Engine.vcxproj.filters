@@ -487,6 +487,9 @@
     </ClCompile>
     <ClCompile Include="..\imgui_ne\ThirdParty\imgui\imgui_impl_win32.cpp">
       <Filter>Imgui\ImGui Implemenations</Filter>
+	</ClCompile> 
+    <ClCompile Include="MaterialHandler.cpp">
+      <Filter>Model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -896,6 +899,9 @@
     </ClInclude>
     <ClInclude Include="..\imgui_ne\ThirdParty\imgui\imgui_impl_win32.h">
       <Filter>Imgui\ImGui Implemenations</Filter>
+	</ClCompile>
+    <ClInclude Include="MaterialHandler.h">
+      <Filter>Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

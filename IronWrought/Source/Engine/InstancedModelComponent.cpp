@@ -7,12 +7,15 @@ CInstancedModelComponent::CInstancedModelComponent(CGameObject& aParent, std::st
 	: CBehaviour(aParent)
 	, myModel(CModelFactory::GetInstance()->GetInstancedModel(aModelPath, static_cast<int> (aInstancedTransforms.size())))
 	, myIntancedTransforms(aInstancedTransforms)
+	, myModelPath(aModelPath)
 	, myRenderWithAlpha(aRenderWithAlpha)
 {
 }
 
 CInstancedModelComponent::~CInstancedModelComponent()
 {
+	//SAFE_DELETE(myModel);
+	CModelFactory::GetInstance()->ClearModel(myModelPath, static_cast<int>(myIntancedTransforms.size()));
 }
 
 void CInstancedModelComponent::Awake()

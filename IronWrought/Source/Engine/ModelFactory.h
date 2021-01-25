@@ -18,6 +18,8 @@ public:
 	CModel* GetInstancedModel(std::string aFilePath, int aNumberOfInstanced);	
 	CModel* GetOutlineModelSubset();
 
+	void ClearModel(std::string aFilePath, int aNumberOfInstances = 0);
+
 private:
 	struct SInstancedModel
 	{
@@ -49,6 +51,8 @@ private:
 private:
 	std::map<std::string, CModel*> myModelMap;
 	std::map<SInstancedModel, CModel*> myInstancedModelMap;
+	std::map<std::string, int> myModelMapReferences;
+	std::map<std::string, int> myInstancedModelMapReferences;
 	CEngine* myEngine;
 	CModel* myOutlineModelSubset;
 	static CModelFactory* ourInstance;
