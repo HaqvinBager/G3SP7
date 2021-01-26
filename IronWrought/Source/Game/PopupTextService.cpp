@@ -257,17 +257,17 @@ void CPopupTextService::SpawnDamageNumber(void* someData)
 	case 0: // Normal
 		myDamageAnimationData.back()->myMinScale = { 0.5f, 0.5f };
 		myDamageAnimationData.back()->myMaxScale = { 1.5f, 1.5f };
-		CEngine::GetInstance()->GetActiveScene().GetMainCamera()->SetTrauma(0.5f);
+		CEngine::GetInstance()->GetActiveScene().MainCamera()->SetTrauma(0.5f);
 		break;
 	case 1: // Crit
 		myDamageAnimationData.back()->myMinScale = { 1.5f, 1.5f };
 		myDamageAnimationData.back()->myMaxScale = { 2.0f, 2.0f };
-		CEngine::GetInstance()->GetActiveScene().GetMainCamera()->SetTrauma(0.65f);
+		CEngine::GetInstance()->GetActiveScene().MainCamera()->SetTrauma(0.65f);
 		break;
 	case 2: // Ultracrit
 		myDamageAnimationData.back()->myMinScale = { 1.0f, 1.0f };
 		myDamageAnimationData.back()->myMaxScale = { 2.5f, 2.5f };
-		CEngine::GetInstance()->GetActiveScene().GetMainCamera()->SetTrauma(0.85f);
+		CEngine::GetInstance()->GetActiveScene().MainCamera()->SetTrauma(0.85f);
 		break;
 	case 3: // Enemy
 		myDamageAnimationData.back()->myMinScale = { 0.5f, 0.5f };

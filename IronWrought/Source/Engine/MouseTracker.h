@@ -23,8 +23,8 @@ public:
 		if (/*CEngine::GetInstance()->GetActiveScene().GetNavMesh()*/true) {
 			DirectX::SimpleMath::Ray ray = MouseTracker::WorldSpacePick();
 			STriangle* triangle = nullptr;
-			for (unsigned int i = 0; i < CEngine::GetInstance()->GetActiveScene().GetNavMesh()->myTriangles.size(); ++i) {
-				triangle = CEngine::GetInstance()->GetActiveScene().GetNavMesh()->myTriangles[i];
+			for (unsigned int i = 0; i < CEngine::GetInstance()->GetActiveScene().NavMesh()->myTriangles.size(); ++i) {
+				triangle = CEngine::GetInstance()->GetActiveScene().NavMesh()->myTriangles[i];
 				float dist = 0;
 				if (ray.Intersects(triangle->myVertexPositions[0], triangle->myVertexPositions[1], triangle->myVertexPositions[2], dist)) {
 					DirectX::SimpleMath::Vector3 finalPosition = ray.position + ray.direction * dist;
@@ -86,7 +86,7 @@ public:
 		float mouseX = static_cast<float>(Input::GetInstance()->MouseX());
 		float mouseY = static_cast<float>(Input::GetInstance()->MouseY());
 
-		CCameraComponent* cam = CEngine::GetInstance()->GetActiveScene().GetMainCamera();
+		CCameraComponent* cam = CEngine::GetInstance()->GetActiveScene().MainCamera();
 		CTransformComponent* camTransform = cam->GameObject().myTransform;
 
 		float xV = (((2 * mouseX) / width) - 1) / cam->GetProjection()._11;

@@ -19,7 +19,7 @@ CSceneManager::~CSceneManager()
 
 CScene* CSceneManager::CreateScene(std::vector<std::string> aJsonFile)
 {
-		CScene* scene = new CScene();
+	CScene* scene = new CScene();
 	for (int i = 0; i < aJsonFile.size(); ++i) {
 		rapidjson::Document document = CJsonReader::LoadDocument(ASSETPATH + "Assets/Generated/" + aJsonFile[i]);
 		auto jsonarray = document["instancedGameobjects"].GetArray();
@@ -76,14 +76,14 @@ CScene* CSceneManager::CreateScene(std::vector<std::string> aJsonFile)
 		camera->myTransform->Position({ 0.0f, 1.0f, 0.0f });
 		camera->myTransform->Rotation({ 0.0f, 0.0f, 0.0f });
 		scene->AddInstance(camera);
-		scene->SetMainCamera(camera->GetComponent<CCameraComponent>());
+		scene->MainCamera(camera->GetComponent<CCameraComponent>());
 
 		CGameObject* envLight = new CGameObject(1);
 		envLight->AddComponent<CEnviromentLightComponent>(*envLight);
 		envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetIntensity(1.f);
 		envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetDirection({ 0.0f,0.0f,-1.0f });
 		scene->AddInstance(envLight);
-		scene->SetEnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight());
+		scene->EnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight());
 		
 	}
 	return scene;
