@@ -114,8 +114,8 @@ void CRenderManager::Render(CScene& aScene)
 	myGBuffer.ClearTextures(myClearColor);
 	myDeferredTexture.ClearTexture();
 
-	CEnvironmentLight* environmentlight = aScene.GetEnvironmentLight();
-	CCameraComponent* maincamera = aScene.GetMainCamera();
+	CEnvironmentLight* environmentlight = aScene.EnvironmentLight();
+	CCameraComponent* maincamera = aScene.MainCamera();
 
 	std::vector<CGameObject*> gameObjects = aScene.CullGameObjects(maincamera);
 	std::vector<CGameObject*> instancedGameObjects;
@@ -129,7 +129,7 @@ void CRenderManager::Render(CScene& aScene)
 	for (unsigned int i = 0; i < gameObjects.size(); ++i)
 	{
 		auto instance = gameObjects[i];
-		for (auto gameObjectToOutline : aScene.GetModelsToOutline()) {
+		for (auto gameObjectToOutline : aScene.ModelsToOutline()) {
 			if (instance == gameObjectToOutline) {
 				indicesOfOutlineModels.emplace_back(i);
 			}
@@ -218,32 +218,32 @@ void CRenderManager::Render(CScene& aScene)
 #pragma endregion ! Forward
 #endif // USING_DEFERRED
 
-#pragma region MODEL OUTLINES
-	for (auto modelToOutline : aScene.GetModelsToOutline()) {
-		std::vector<CGameObject*> interimVector;
-		if (modelToOutline) {
-			pointlights.emplace_back(aScene.CullLights(modelToOutline));
-			interimVector.emplace_back(modelToOutline);
-			myRenderStateManager.SetDepthStencilState(CRenderStateManager::DepthStencilStates::DEPTHSTENCILSTATE_STENCILWRITE, 0xFF);
-
-			myForwardRenderer.Render(environmentlight, pointlights, maincamera, interimVector);
-
-			if (modelToOutline != aScene.GetPlayer()) {
-				modelToOutline->GetComponent<CTransformComponent>()->SetOutlineScale();
-			}
-
-			myRenderStateManager.SetDepthStencilState(CRenderStateManager::DepthStencilStates::DEPTHSTENCILSTATE_STENCILMASK, 0xFF);
-
-			if (modelToOutline != aScene.GetPlayer()) {
-				myForwardRenderer.RenderOutline(maincamera, modelToOutline, CModelFactory::GetInstance()->GetOutlineModelSubset(), { 1.0f, 0.0f, 0.0f, 1.0f });
-				modelToOutline->GetComponent<CTransformComponent>()->ResetScale();
-			}
-			else {
-				myForwardRenderer.RenderOutline(maincamera, modelToOutline, CModelFactory::GetInstance()->GetOutlineModelSubset(), { 25.0f / 255.0f, 200.0f / 255.0f, 208.0f / 255.0f, 1.0f });
-			}
-		}
-	}
-#pragma endregion ! MODEL OUTLINES
+//#pragma region MODEL OUTLINES
+//	for (auto modelToOutline : aScene.ModelsToOutline()) {
+//		std::vector<CGameObject*> interimVector;
+//		if (modelToOutline) {
+//			pointlights.emplace_back(aScene.CullLights(modelToOutline));
+//			interimVector.emplace_back(modelToOutline);
+//			myRenderStateManager.SetDepthStencilState(CRenderStateManager::DepthStencilStates::DEPTHSTENCILSTATE_STENCILWRITE, 0xFF);
+//
+//			myForwardRenderer.Render(environmentlight, pointlights, maincamera, interimVector);
+//
+//			if (modelToOutline != aScene.GetPlayer()) {
+//				modelToOutline->GetComponent<CTransformComponent>()->SetOutlineScale();
+//			}
+//
+//			myRenderStateManager.SetDepthStencilState(CRenderStateManager::DepthStencilStates::DEPTHSTENCILSTATE_STENCILMASK, 0xFF);
+//
+//			if (modelToOutline != aScene.GetPlayer()) {
+//				myForwardRenderer.RenderOutline(maincamera, modelToOutline, CModelFactory::GetInstance()->GetOutlineModelSubset(), { 1.0f, 0.0f, 0.0f, 1.0f });
+//				modelToOutline->GetComponent<CTransformComponent>()->ResetScale();
+//			}
+//			else {
+//				myForwardRenderer.RenderOutline(maincamera, modelToOutline, CModelFactory::GetInstance()->GetOutlineModelSubset(), { 25.0f / 255.0f, 200.0f / 255.0f, 208.0f / 255.0f, 1.0f });
+//			}
+//		}
+//	}
+//#pragma endregion ! MODEL OUTLINES
 
 	const std::vector<CLineInstance*>& lineInstances = aScene.CullLineInstances();
 	const std::vector<SLineTime>& lines = aScene.CullLines();
@@ -284,14 +284,14 @@ void CRenderManager::Render(CScene& aScene)
 
 	std::vector<CSpriteInstance*> animatedUIFrames;
 	std::vector<CAnimatedUIElement*> animatedUIElements = aScene.CullAnimatedUI(animatedUIFrames);
-	CEngine::GetInstance()->GetActiveScene().GetMainCamera()->EmplaceSprites(animatedUIFrames);
+	CEngine::GetInstance()->GetActiveScene().MainCamera()->EmplaceSprites(animatedUIFrames);
 	mySpriteRenderer.Render(animatedUIElements);
 	mySpriteRenderer.Render(animatedUIFrames);
 
 	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_DISABLE);
 	myRenderStateManager.SetDepthStencilState(CRenderStateManager::DepthStencilStates::DEPTHSTENCILSTATE_DEFAULT);
 
-	std::vector<CTextInstance*> textsToRender = aScene.GetTexts();
+	std::vector<CTextInstance*> textsToRender = aScene.Texts();
 	CMainSingleton::PopupTextService().EmplaceTexts(textsToRender);
 	CMainSingleton::DialogueSystem().EmplaceTexts(textsToRender);
 	myTextRenderer.Render(textsToRender);

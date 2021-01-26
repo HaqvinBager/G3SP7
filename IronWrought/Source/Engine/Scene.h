@@ -30,88 +30,23 @@ class CScene {
 	friend class CInGameState;
 	friend class CMenuState;
 public:
-
+//SETUP START
 	CScene();
 	~CScene();
 
 	//static CScene* GetInstance();
 	bool Init();
 	bool InitNavMesh(std::string aPath);
-	void SetMainCamera(CCameraComponent* aCamera);
-
-	//This will run every 5-10 frames (It doesn't need to run all the time anyway!)
-	void UpdateLightsNearestPlayer();
-
-	CCameraComponent* GetMainCamera();
-	CEnvironmentLight* GetEnvironmentLight();
-	SNavMesh* GetNavMesh();
-	std::vector<CGameObject*> CullGameObjects(CCameraComponent* aMainCamera);
-	std::pair<unsigned int, std::array<CPointLight*, LIGHTCOUNT>> CullLights(CGameObject* aGameObject);
-	LightPair CullLightInstanced(CInstancedModelComponent* aModelType);
-	std::vector<CPointLight*> CullPointLights(CGameObject* aGameObject);
-
-	std::vector<CVFXInstance*> CullVFX(CCameraComponent* aMainCamera);
-	const std::vector<SLineTime>& CullLines() const;
-	const std::vector<CLineInstance*>& CullLineInstances() const;
-	std::vector<CSpriteInstance*> CullSprites();
-	std::vector<CAnimatedUIElement*> CullAnimatedUI(std::vector<CSpriteInstance*>& someFramesToReturn);
-	std::vector<CTextInstance*> GetTexts();
-
-	std::vector<CGameObject*> GetModelsToOutline() const { return myModelsToOutline; }
-	std::vector<CPointLight*> GetLightsNearestPlayer() { return myLightsSortedNearestPlayer;  }
-
-	std::vector<CPointLight*>& GetPointLights() { return myPointLights; }
-
-	bool AddInstances(std::vector<CGameObject*>& someGameObjects);
-	bool SetEnvironmentLight(CEnvironmentLight* anEnvironmentLight);
-	bool AddInstance(CPointLight* aPointLight);
-	bool AddInstance(CGameObject* aGameObject);
-	bool AddInstance(CVFXInstance* aVFXInstance);
-	bool AddInstance(CLineInstance* aLineInstance);
-	bool AddInstance(CSpriteInstance* aSprite);
-	bool AddInstance(CAnimatedUIElement* anAnimatedUIElement);
-	bool RemoveInstance(CAnimatedUIElement* anAnimatedUIElement);
-	bool AddInstance(CTextInstance* aText);
-	bool AddEnemies(CGameObject* aEnemy);
-	bool AddBoss(CGameObject* aBoss);
-	bool AddDestructible(CGameObject* aDestructible);
-	bool AddPlayer(CGameObject* aPlayer);
-
-	//PhysX
-	bool AddPXScene(PxScene* aPXScene);
-	PxScene* GetPXScene() { return myPXScene; }
-
-	std::vector<CGameObject*> GetEnemies() { return myEnemies; }
-	std::vector<CGameObject*> GetDestructibles() { return myDestructibles; }
-	CGameObject* GetPlayer() { return myPlayer; }
-	CGameObject* GetBoss() { return myBoss; }
-
-
-	bool RemoveInstance(CGameObject* aGameObject);
-	bool RemoveInstance(CPointLight* aPointLight);
-
-	bool DestroyGameObjects();
-	bool DestroySprites();
-	bool DestroyPointLights();
-	bool DestroyVFXInstances();
-	bool DestroyLineInstances();
-	bool DestroyAnimatedUIElement();
-	bool DestroyTextInstances();
-
-	void SetPlayerToOutline(CGameObject* aPlayer);
-	void SetEnemyToOutline(CGameObject* anEnemy);
-
-	const bool Ready() const { return myIsReadyToRender; }
-	void Ready(bool aReady) { myIsReadyToRender = aReady; }
-
-	void SetShouldRenderLineInstance(const bool aShouldRender);
-
-	void TakeOwnershipOfAIBehavior(IAIBehavior* aBehavior);
-
-	const std::vector<CGameObject*>& GetActiveGameObjects() const { return myGameObjects; }
-
+//SETUP END
+public:
+//SETTERS START
+	void MainCamera(CCameraComponent* aMainCamera);
+	bool EnvironmentLight(CEnvironmentLight* anEnvironmentLight);
+	void ShouldRenderLineInstance(const bool aShouldRender);
+//SETTERS END
+public:
 	template <class T>
-	T* FindObjectOfType() {
+	T* FindFirstObjectWithComponent() {
 		for (auto& gameObject : myGameObjects) {
 			if (gameObject->GetComponent<T>() != nullptr) {
 				return gameObject->GetComponent<T>();
@@ -119,47 +54,118 @@ public:
 		}
 		return nullptr;
 	}
+public:
+//GETTERS START
+	CCameraComponent* MainCamera();
+	CEnvironmentLight* EnvironmentLight();
+	SNavMesh* NavMesh();
+	PxScene* PXScene();
+	std::vector<CGameObject*> ModelsToOutline() const;
+	std::vector<CPointLight*>& PointLights();
+	std::vector<CTextInstance*> Texts();
+	const std::vector<CGameObject*>& ActiveGameObjects() const;
+//GETTERS END
+public:
+	const bool Ready() const { return myIsReadyToRender; }
+	void Ready(bool aReady) { myIsReadyToRender = aReady; }
+public:
+//CULLING START
+	std::vector<CPointLight*> CullPointLights(CGameObject* aGameObject);
+	std::pair<unsigned int, std::array<CPointLight*, LIGHTCOUNT>> CullLights(CGameObject* aGameObject);
+	const std::vector<CLineInstance*>& CullLineInstances() const;
+	const std::vector<SLineTime>& CullLines() const;
+	std::vector<CVFXInstance*> CullVFX(CCameraComponent* aMainCamera);
+	std::vector<CAnimatedUIElement*> CullAnimatedUI(std::vector<CSpriteInstance*>& someFramesToReturn);
+	LightPair CullLightInstanced(CInstancedModelComponent* aModelType);
+	std::vector<CGameObject*> CullGameObjects(CCameraComponent* aMainCamera);
+	std::vector<CSpriteInstance*> CullSprites();
+//CULLING END
+public:
+	//POPULATE SCENE START
+	bool AddInstance(CPointLight* aPointLight);
+	bool AddInstance(CLineInstance* aLineInstance);
+	bool AddInstance(CVFXInstance* aVFXInstance);
+	bool AddInstance(CAnimatedUIElement* anAnimatedUIElement);
+	bool AddInstance(CTextInstance* aText);
+	bool AddInstance(CGameObject* aGameObject);
+	bool AddInstances(std::vector<CGameObject*>& someGameObjects);
+	bool AddInstance(CSpriteInstance* aSprite);
+	//PhysX
+	bool AddPXScene(PxScene* aPXScene);
+	//POPULATE SCENE END
+public:
+//REMOVE SPECIFIC INSTANCE START
+	bool RemoveInstance(CPointLight* aPointLight);
+	bool RemoveInstance(CAnimatedUIElement* anAnimatedUIElement);
+	bool RemoveInstance(CGameObject* aGameObject);
+//REMOVE SPECIFIC INSTANCE END
+//CLEAR SCENE OF INSTANCES START
+	bool ClearPointLights();
+	bool ClearLineInstances();
+	bool ClearVFXInstances();
+	bool ClearAnimatedUIElement();
+	bool ClearTextInstances();
+	bool ClearGameObjects();
+	bool ClearSprites();
+//CLEAR SCENE OF INSTANCES START
+
+	//Ev Remove // Ev? / Aki & Haqvin
+	//std::vector<CPointLight*> LightsNearestPlayer() { return myLightsSortedNearestPlayer;  }
+	//This will run every 5-10 frames (It doesn't need to run all the time anyway!)
+	//void UpdateLightsNearestPlayer();
+	//bool AddEnemies(CGameObject* aEnemy);
+	//bool AddBoss(CGameObject* aBoss);
+	//bool AddDestructible(CGameObject* aDestructible);
+	//bool AddPlayer(CGameObject* aPlayer);
+	/*std::vector<CGameObject*> GetEnemies() { return myEnemies; }
+	std::vector<CGameObject*> GetDestructibles() { return myDestructibles; }
+	CGameObject* GetBoss() { return myBoss; }*/
+	//CGameObject* GetPlayer() { return myPlayer; }
+	//void SetPlayerToOutline(CGameObject* aPlayer);
+	//void SetEnemyToOutline(CGameObject* anEnemy);
+	//void TakeOwnershipOfAIBehavior(IAIBehavior* aBehavior);
 
 private:
+	//Struct left because it might be needed later
 	struct NearestPlayerComparer {
 		DirectX::SimpleMath::Vector3 myPos;
 		bool operator()(const CPointLight* a, const CPointLight* b) const;
 	} ourNearestPlayerComparer;
-
-	std::vector<CGameObject*> myGameObjects;
-	CCameraComponent* myMainCamera;
-	CEnvironmentLight* myEnvironmentLight;
-
-	//Ev Remove // Ev? / Aki
-	//std::vector<CCamera*> myCameras;
-	//std::vector<CEnvironmentLight*> myEnvironmentLights;
-	std::vector<CPointLight*> myLightsSortedNearestPlayer;
+private:
+//CONTAINERS START
 	std::vector<CPointLight*> myPointLights;
-	std::vector<CVFXInstance*> myVFXInstances;
 	std::vector<CLineInstance*> myLineInstances;
+	std::vector<CVFXInstance*> myVFXInstances;
 	std::vector<CAnimatedUIElement*> myAnimatedUIElements;
 	std::vector<CTextInstance*> myTexts;
+	std::vector<CGameObject*> myGameObjects;
+	std::vector<CGameObject*> myModelsToOutline;
+	
 	std::unordered_map<ERenderOrder, std::vector<CSpriteInstance*>> mySpriteInstances;
-	std::vector<CGameObject*> myEnemies;
-	std::vector<CGameObject*> myDestructibles;
-	CGameObject* myPlayer;
-	CGameObject* myBoss;
-	IAIBehavior* myEnemyBehavior;
-
-	//CCollisionManager* myCollisionManager;
-
+//CONTAINERS END
+private:
+//POINTERS START
+	CEnvironmentLight* myEnvironmentLight;
 	SNavMesh* myNavMesh;
 	CLineInstance* myNavMeshGrid;
+	CCameraComponent* myMainCamera;
+	//PhysX scene
+	PxScene* myPXScene;
+//POINTERS END
 
 	bool myIsReadyToRender;
 
-	//static CScene* ourInstance;
-
-	std::vector<CGameObject*> myModelsToOutline;
-
-	//PhysX scene
-	PxScene* myPXScene;
-
+//Ev Remove // Ev? / Aki & Haqvin
+//std::vector<CPointLight*> myLightsSortedNearestPlayer;
+//std::vector<CCamera*> myCameras;
+//std::vector<CEnvironmentLight*> myEnvironmentLights;
+//std::vector<CGameObject*> myEnemies;
+//std::vector<CGameObject*> myDestructibles;
+//CGameObject* myPlayer;
+//CGameObject* myBoss;
+//IAIBehavior* myEnemyBehavior;
+//CCollisionManager* myCollisionManager;
+//static CScene* ourInstance;
 #ifdef  _DEBUG
 private:
 	bool myShouldRenderLineInstance;
