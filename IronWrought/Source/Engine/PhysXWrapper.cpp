@@ -111,15 +111,15 @@ PxScene* CPhysXWrapper::CreatePXScene()
 
 void CPhysXWrapper::Simulate()
 {
-	if (CEngine::GetInstance()->GetActiveScene().GetPXScene() != nullptr) {
-		CEngine::GetInstance()->GetActiveScene().GetPXScene()->simulate(CTimer::Dt());
-		CEngine::GetInstance()->GetActiveScene().GetPXScene()->fetchResults(true);
+	if (CEngine::GetInstance()->GetActiveScene().PXScene() != nullptr) {
+		CEngine::GetInstance()->GetActiveScene().PXScene()->simulate(CTimer::Dt());
+		CEngine::GetInstance()->GetActiveScene().PXScene()->fetchResults(true);
 	}
 }
 
 RigidDynamicBody* CPhysXWrapper::CreateDynamicRigidbody(Vector3 aPos)
 {
 	RigidDynamicBody* dynamicBody = new RigidDynamicBody(*myPhysics, aPos);
-	CEngine::GetInstance()->GetActiveScene().GetPXScene()->addActor(dynamicBody->GetBody());
+	CEngine::GetInstance()->GetActiveScene().PXScene()->addActor(dynamicBody->GetBody());
 	return dynamicBody;
 }

@@ -45,7 +45,7 @@ void CParticleEmitterComponent::Update()
 	GameObject().myTransform->Transform().Decompose(scale, quat, translation);
 	SetRotation(quat);
 	//GameObject().myTransform->Position(gameObjectPos);
-	Update(CEngine::GetInstance()->GetActiveScene().GetMainCamera()->GameObject().myTransform->Position());
+	Update(CEngine::GetInstance()->GetActiveScene().MainCamera()->GameObject().myTransform->Position());
 }
 
 void CParticleEmitterComponent::Init(std::vector<CParticle*> someParticles)

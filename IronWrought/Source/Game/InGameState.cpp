@@ -45,9 +45,9 @@ void CInGameState::Awake(){}
 void CInGameState::Start()
 {
 
-	std::vector<std::string> scenePath;
-	scenePath = CFolderUtility::GetFilePathsInFolder(ASSETPATH + "Assets\\Generated\\", ".json");
-	CScene* scene = CSceneManager::CreateScene(scenePath);
+	//std::vector<std::string> scenePath;
+	//scenePath = CFolderUtility::GetFilePathsInFolder(ASSETPATH + "Assets\\Generated\\", ".json");
+	CScene* scene = new CScene();
 
 
 
@@ -59,7 +59,7 @@ void CInGameState::Start()
 	camera->myTransform->Position({0.0f, 1.0f, 0.0f});
 	camera->myTransform->Rotation({0.0f, 0.0f, 0.0f});
 	scene->AddInstance(camera);
-	scene->SetMainCamera(camera->GetComponent<CCameraComponent>());
+	scene->MainCamera(camera->GetComponent<CCameraComponent>());
 
 	CGameObject* envLight = new CGameObject(1);
 	envLight->AddComponent<CEnviromentLightComponent>(*envLight);
@@ -67,7 +67,7 @@ void CInGameState::Start()
 	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetIntensity(1.f);
 	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetDirection({1.0f,0.5f,-1.0f});
 	scene->AddInstance(envLight);
-	scene->SetEnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight());
+	scene->EnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight());
 
 	CEngine::GetInstance()->AddScene(myState, scene);
 
@@ -109,7 +109,7 @@ void CInGameState::Start()
 		gameObject->Start();
 	}
 
-	CEngine::GetInstance()->GetActiveScene().GetMainCamera()->Fade(true);
+	CEngine::GetInstance()->GetActiveScene().MainCamera()->Fade(true);
 }
 
 void CInGameState::Stop()
