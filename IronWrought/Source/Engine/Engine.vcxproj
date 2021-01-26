@@ -62,7 +62,7 @@
     <TargetName>$(ProjectName)_$(Configuration)</TargetName>
     <IntDir>$(ProjectDir)..\..\Temp\$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir>$(ProjectDir)..\..\Lib\</OutDir>
-    <IncludePath>$(IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\DirectXTK\Inc\;$(ProjectDir)..\Game\;$(ProjectDir)..\ModelLoader\;$(ProjectDir)..\UnityImporterApp\;$(ProjectDir)..\Includes\;$(SolutionDir)PhysXWrapper\;$(SolutionDir)Includes\PhysX-4.1\physx\include\;$(SolutionDir)Includes\PhysX-4.1\pxshared\include\</IncludePath>
+    <IncludePath>$(SolutionDir)imgui_ne\ThirdParty\imgui;$(SolutionDir)imgui_ne\NodeEditor\include\;$(IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\DirectXTK\Inc\;$(ProjectDir)..\Game\;$(ProjectDir)..\ModelLoader\;$(ProjectDir)..\UnityImporterApp\;$(ProjectDir)..\Includes\;$(SolutionDir)PhysXWrapper\;$(SolutionDir)Includes\PhysX-4.1\physx\include\;$(SolutionDir)Includes\PhysX-4.1\pxshared\include\</IncludePath>
     <LibraryPath>$(SolutionDir)../Lib/;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)..\Lib\physxlib\debug\</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -70,7 +70,7 @@
     <TargetName>$(ProjectName)_$(Configuration)</TargetName>
     <IntDir>$(ProjectDir)..\..\Temp\$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir>$(ProjectDir)..\..\Lib\</OutDir>
-    <IncludePath>$(IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\DirectXTK\Inc\;$(ProjectDir)..\Game\;$(ProjectDir)..\ModelLoader\;$(ProjectDir)..\UnityImporterApp\;$(ProjectDir)..\Includes\;$(SolutionDir)PhysXWrapper\;$(SolutionDir)Includes\PhysX-4.1\physx\include\;$(SolutionDir)Includes\PhysX-4.1\pxshared\include\</IncludePath>
+    <IncludePath>$(SolutionDir)imgui_ne\ThirdParty\imgui;$(SolutionDir)imgui_ne\NodeEditor\include\;$(IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\DirectXTK\Inc\;$(ProjectDir)..\Game\;$(ProjectDir)..\ModelLoader\;$(ProjectDir)..\UnityImporterApp\;$(ProjectDir)..\Includes\;$(SolutionDir)PhysXWrapper\;$(SolutionDir)Includes\PhysX-4.1\physx\include\;$(SolutionDir)Includes\PhysX-4.1\pxshared\include\</IncludePath>
     <LibraryPath>$(SolutionDir)../Lib/;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)..\Lib\physxlib\release\</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">
@@ -78,7 +78,7 @@
     <TargetName>$(ProjectName)_$(Configuration)</TargetName>
     <IntDir>$(ProjectDir)..\..\Temp\$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir>$(ProjectDir)..\..\Lib\</OutDir>
-    <IncludePath>$(IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\DirectXTK\Inc\;$(ProjectDir)..\Game\;$(ProjectDir)..\ModelLoader\;$(ProjectDir)..\UnityImporterApp\;$(ProjectDir)..\Includes\;$(SolutionDir)PhysXWrapper\</IncludePath>
+    <IncludePath>$(SolutionDir)imgui_ne\ThirdParty\imgui;$(SolutionDir)imgui_ne\NodeEditor\include\;$(IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\DirectXTK\Inc\;$(ProjectDir)..\Game\;$(ProjectDir)..\ModelLoader\;$(ProjectDir)..\UnityImporterApp\;$(ProjectDir)..\Includes\;$(SolutionDir)PhysXWrapper\;$(SolutionDir)Includes\PhysX-4.1\physx\include\;$(SolutionDir)Includes\PhysX-4.1\pxshared\include\</IncludePath>
     <LibraryPath>$(SolutionDir)../Lib/;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -92,7 +92,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <ForcedIncludeFiles>StdAfx.h;%(ForcedINcludeFiles)</ForcedIncludeFiles>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)imgui_ne\ThirdParty\imgui;$(SolutionDir)imgui_ne\NodeEditor\include\;%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>
       </AdditionalUsingDirectories>
     </ClCompile>
@@ -124,7 +124,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <ForcedIncludeFiles>StdAfx.h;%(ForcedINcludeFiles)</ForcedIncludeFiles>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)imgui_ne\ThirdParty\imgui;$(SolutionDir)imgui_ne\NodeEditor\include\;%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -150,7 +150,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <ForcedIncludeFiles>StdAfx.h;%(ForcedINcludeFiles)</ForcedIncludeFiles>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)imgui_ne\ThirdParty\imgui;$(SolutionDir)imgui_ne\NodeEditor\include\;%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -164,6 +164,8 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\imgui_ne\ThirdParty\imgui\imgui_impl_dx11.h" />
+    <ClInclude Include="..\imgui_ne\ThirdParty\imgui\imgui_impl_win32.h" />
     <ClInclude Include="AnimatedUIElement.h" />
     <ClInclude Include="Animation.h" />
     <ClInclude Include="AnimationComponent.h" />
@@ -174,15 +176,42 @@
     <ClInclude Include="AudioChannel.h" />
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Behaviour.h" />
+    <ClInclude Include="Builders.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraComponent.h" />
     <ClInclude Include="CameraFactory.h" />
     <ClInclude Include="Canvas.h" />
     <ClInclude Include="CapsuleColliderComponent.h" />
+    <ClInclude Include="CGraphManager.h" />
+    <ClInclude Include="CNodeInstance.h" />
+    <ClInclude Include="CNodeType.h" />
+    <ClInclude Include="CNodeTypeGetMousePosition.h" />
+    <ClInclude Include="CNodeTypeMathAbs.h" />
+    <ClInclude Include="CNodeTypeMathAdd.h" />
+    <ClInclude Include="CNodeTypeMathAtan2.h" />
+    <ClInclude Include="CNodeTypeMathCeil.h" />
+    <ClInclude Include="CNodeTypeMathCos.h" />
+    <ClInclude Include="CNodeTypeMathDistance.h" />
+    <ClInclude Include="CNodeTypeMathDot.h" />
+    <ClInclude Include="CNodeTypeMathFloor.h" />
+    <ClInclude Include="CNodeTypeMathLerp.h" />
+    <ClInclude Include="CNodeTypeMathMax.h" />
+    <ClInclude Include="CNodeTypeMathMin.h" />
+    <ClInclude Include="CNodeTypeMathMul.h" />
+    <ClInclude Include="CNodeTypeMathSaturate.h" />
+    <ClInclude Include="CNodeTypeMathSin.h" />
+    <ClInclude Include="CNodeTypeMathSmoothstep.h" />
+    <ClInclude Include="CNodeTypeMathStorage.h" />
+    <ClInclude Include="CNodeTypeMathSub.h" />
+    <ClInclude Include="CNodeTypeMathToDegrees.h" />
+    <ClInclude Include="CNodeTypeMathToRadians.h" />
+    <ClInclude Include="CNodeTypePrint.h" />
+    <ClInclude Include="CNodeTypeStart.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="ContactReportCallback.h" />
     <ClInclude Include="DeferredRenderer.h" />
+    <ClInclude Include="Drawing.h" />
     <ClInclude Include="EngineDefines.h" />
     <ClInclude Include="FMod.h" />
     <ClInclude Include="CircleColliderComponent.h" />
@@ -194,11 +223,15 @@
     <ClInclude Include="Funneling.h" />
     <ClInclude Include="animationEnums.h" />
     <ClInclude Include="GBuffer.h" />
+    <ClInclude Include="ImguiManager.h" />
     <ClInclude Include="InstancedModelComponent.h" />
     <ClInclude Include="JsonReader.h" />
     <ClInclude Include="MainSingleton.h" />
+    <ClInclude Include="MaterialHandler.h" />
+    <ClInclude Include="Math2D.h" />
     <ClInclude Include="Message.h" />
     <ClInclude Include="MessageType.h" />
+    <ClInclude Include="NodeTypes.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="PerlinNoise.h" />
     <ClInclude Include="PhysXWrapper.h" />
@@ -268,10 +301,20 @@
     <ClInclude Include="VFXFactory.h" />
     <ClInclude Include="VFXInstance.h" />
     <ClInclude Include="VFXRenderer.h" />
+    <ClInclude Include="Widgets.h" />
     <ClInclude Include="WindowHandler.h" />
     <ClInclude Include="WinInclude.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\imgui_ne\ThirdParty\imgui\imgui_impl_dx11.cpp">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)imgui_ne\ThirdParty\imgui;$(SolutionDir)imgui_ne\ThirdParty\stb_image;$(SolutionDir)imgui_ne\NodeEditor\include\;%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)imgui_ne\ThirdParty\imgui;$(SolutionDir)imgui_ne\ThirdParty\stb_image;$(SolutionDir)imgui_ne\NodeEditor\include\;%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">$(SolutionDir)imgui_ne\ThirdParty\imgui;$(SolutionDir)imgui_ne\ThirdParty\stb_image;$(SolutionDir)imgui_ne\NodeEditor\include\;%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Level4</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Level4</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Level4</WarningLevel>
+    </ClCompile>
+    <ClCompile Include="..\imgui_ne\ThirdParty\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="AnimatedUIElement.cpp" />
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="AnimationComponent.cpp" />
@@ -280,15 +323,42 @@
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="AudioChannel.cpp" />
     <ClCompile Include="AudioManager.cpp" />
+    <ClCompile Include="Builders.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraComponent.cpp" />
     <ClCompile Include="CameraFactory.cpp" />
     <ClCompile Include="Canvas.cpp" />
     <ClCompile Include="CapsuleColliderComponent.cpp" />
+    <ClCompile Include="CGraphManager.cpp" />
+    <ClCompile Include="CNodeInstance.cpp" />
+    <ClCompile Include="CNodeType.cpp" />
+    <ClCompile Include="CNodeTypeGetMousePosition.cpp" />
+    <ClCompile Include="CNodeTypeMathAbs.cpp" />
+    <ClCompile Include="CNodeTypeMathAdd.cpp" />
+    <ClCompile Include="CNodeTypeMathAtan2.cpp" />
+    <ClCompile Include="CNodeTypeMathCeil.cpp" />
+    <ClCompile Include="CNodeTypeMathCos.cpp" />
+    <ClCompile Include="CNodeTypeMathDistance.cpp" />
+    <ClCompile Include="CNodeTypeMathDot.cpp" />
+    <ClCompile Include="CNodeTypeMathFloor.cpp" />
+    <ClCompile Include="CNodeTypeMathLerp.cpp" />
+    <ClCompile Include="CNodeTypeMathMax.cpp" />
+    <ClCompile Include="CNodeTypeMathMin.cpp" />
+    <ClCompile Include="CNodeTypeMathMul.cpp" />
+    <ClCompile Include="CNodeTypeMathSaturate.cpp" />
+    <ClCompile Include="CNodeTypeMathSin.cpp" />
+    <ClCompile Include="CNodeTypeMathSmoothstep.cpp" />
+    <ClCompile Include="CNodeTypeMathStorage.cpp" />
+    <ClCompile Include="CNodeTypeMathSub.cpp" />
+    <ClCompile Include="CNodeTypeMathToDegrees.cpp" />
+    <ClCompile Include="CNodeTypeMathToRadians.cpp" />
+    <ClCompile Include="CNodeTypePrint.cpp" />
+    <ClCompile Include="CNodeTypeStart.cpp" />
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="ContactReportCallback.cpp" />
     <ClCompile Include="DeferredRenderer.cpp" />
+    <ClCompile Include="Drawing.cpp" />
     <ClCompile Include="FMod.cpp" />
     <ClCompile Include="CircleColliderComponent.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
@@ -299,9 +369,11 @@
     <ClCompile Include="FModWrapper.cpp" />
     <ClCompile Include="EnviromentLightComponent.cpp" />
     <ClCompile Include="GBuffer.cpp" />
+    <ClCompile Include="ImguiManager.cpp" />
     <ClCompile Include="InputMapper.cpp" />
     <ClCompile Include="InstancedModelComponent.cpp" />
     <ClCompile Include="MainSingleton.cpp" />
+    <ClCompile Include="MaterialHandler.cpp" />
     <ClCompile Include="ParticleEmitterComponent.cpp" />
     <ClCompile Include="PerlinNoise.cpp" />
     <ClCompile Include="PhysXWrapper.cpp" />
@@ -362,6 +434,7 @@
     <ClCompile Include="VFXFactory.cpp" />
     <ClCompile Include="VFXInstance.cpp" />
     <ClCompile Include="VFXRenderer.cpp" />
+    <ClCompile Include="Widgets.cpp" />
     <ClCompile Include="WindowHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -372,6 +445,11 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">4.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="DeferredInstancedModelVertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Vertex</ShaderType>
     </FxCompile>
     <FxCompile Include="DeferredLightEnvironmentShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
@@ -387,6 +465,46 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="DeferredRenderPassFullscreenPixelShader_GammaCorrection.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="DeferredRenderPassGBufferPixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="DeferredRenderPassShader_Albedo.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="DeferredRenderPassShader_AO.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="DeferredRenderPassShader_Emissive.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="DeferredRenderPassShader_Metalness.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="DeferredRenderPassShader_Normal.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="DeferredRenderPassShader_Roughness.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="DeferredVertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
@@ -612,6 +730,7 @@
     <None Include="DetailNormalHelpers.hlsli" />
     <None Include="FullscreenShaderStructs.hlsli" />
     <None Include="LineShaderStructs.hlsli" />
+    <None Include="Math2D.inl" />
     <None Include="MathHelpers.hlsli" />
     <None Include="ParticleShaderStructs.hlsli" />
     <None Include="PBRAmbience.hlsli" />

@@ -80,6 +80,9 @@ CScene::~CScene()
 	delete myGrid;
 #endif
 
+	myPXScene->release();
+	myPXScene = nullptr;
+
 	if (myNavMesh)// Any CScene that is not InGame's scene will not hold a NavMesh
 	{
 		delete myNavMesh;
@@ -299,7 +302,7 @@ LightPair CScene::CullLightInstanced(CInstancedModelComponent* aModelType)
 
 std::vector<CPointLight*> CScene::CullPointLights(CGameObject* /*aGameObject*/)
 {
-	std::cout << __FUNCTION__ << " Reminde to add actual culling to this function!" << std::endl;
+	//std::cout << __FUNCTION__ << " Reminde to add actual culling to this function!" << std::endl;
 	return myPointLights;
 }
 

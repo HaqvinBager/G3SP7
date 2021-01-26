@@ -2,6 +2,7 @@
 #include "VFXRenderer.h"
 #include "VFXComponent.h"
 #include "DirectXFramework.h"
+#include "RenderManager.h"
 #include "Camera.h"
 #include "VFXInstance.h"
 #include "VFXBase.h"
@@ -106,6 +107,7 @@ void CVFXRenderer::Render(CCameraComponent* aCamera, std::vector<CGameObject*>& 
 			myContext->PSSetSamplers(0, 1, &vfxBaseData.mySampler);
 
 			myContext->DrawIndexed(vfxBaseData.myNumberOfIndices, 0, 0);
+			CRenderManager::myNumberOfDrawCallsThisFrame++;
 		}
 	}
 }

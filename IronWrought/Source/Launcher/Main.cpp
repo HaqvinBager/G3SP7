@@ -183,6 +183,7 @@ void RunGame(LPWSTR lpCmdLine)
 		shouldRun = game.Update();
 		engine.RenderFrame();
 		engine.EndFrame();
+		
 		CInputMapper::GetInstance()->Update();
 	}
 

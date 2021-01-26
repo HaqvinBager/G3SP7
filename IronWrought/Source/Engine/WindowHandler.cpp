@@ -1,11 +1,20 @@
 #include "WindowHandler.h"
 #include "Input.h"
 #include "JsonReader.h"
+#include "imgui_impl_win32.h"
+
+IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 LRESULT CWindowHandler::WinProc(_In_ HWND hwnd, _In_ UINT uMsg, _In_ WPARAM wParam, _In_ LPARAM lParam)
 {
     static CWindowHandler* windowHandler = nullptr;
     CREATESTRUCT* createStruct;
+
+    if (ImGui_ImplWin32_WndProcHandler(hwnd, uMsg, wParam, lParam))
+    {
+        return true;
+    }
+
     switch (uMsg)
     {
         case WM_CLOSE:
@@ -44,6 +53,7 @@ CWindowHandler::CWindowHandler()
 
 CWindowHandler::~CWindowHandler()
 {
+    ImGui_ImplWin32_Shutdown();
     LockCursor(false);
     myCursorIsLocked = false;
     myWindowHandle = 0;
@@ -113,6 +123,8 @@ bool CWindowHandler::Init(CWindowHandler::SWindowData someWindowData)
     //    WS_POPUP | WS_VISIBLE,
     //    0, 0, /*GetSystemMetrics(SM_CXSCREEN)*/1920, /*GetSystemMetrics(SM_CYSCREEN)*/1080,
     //    NULL, NULL, GetModuleHandle(nullptr), this);
+
+    ImGui_ImplWin32_Init(myWindowHandle);
 
     LockCursor(true);
 

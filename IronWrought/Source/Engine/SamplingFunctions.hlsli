@@ -1,5 +1,6 @@
 #include "ShaderStructs.hlsli"
 #include "MathHelpers.hlsli"
+#include "DetailNormalHelpers.hlsli"
 
 PixelOutPut PixelShader_Color(VertexToPixel input)
 {
@@ -19,7 +20,7 @@ float PixelShader_DetailNormalStrength(VertexToPixel input)
 
 PixelOutPut PixelShader_DetailNormal(VertexToPixel input, int index)
 {
-    float tilingModifier = 4.0f; // eq to scale
+    float tilingModifier = DETAILNORMAL_TILING; // eq to scale
    
     float3 normal;
     normal.xy = detailNormals[index].Sample(defaultSampler, input.myUV.xy * tilingModifier).ag;
@@ -51,6 +52,7 @@ PixelOutPut PixelShader_Normal(VertexToPixel input)
     return output;
 }
 
+// Unused?
 PixelOutPut PixelShader_TextureNormal(VertexToPixel input)
 {
     float3 normal = normalTexture.Sample(defaultSampler, input.myUV.xy).agr;

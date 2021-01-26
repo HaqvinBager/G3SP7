@@ -25,6 +25,7 @@ public:
 private:
 	std::vector<DirectX::SimpleMath::Matrix> myIntancedTransforms;
 	CModel* myModel;
+	std::string myModelPath;
 	bool myRenderWithAlpha;
 };
 

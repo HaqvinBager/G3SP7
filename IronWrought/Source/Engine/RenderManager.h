@@ -25,6 +25,9 @@ public:
 
 	void Release();
 
+public:
+	static unsigned int myNumberOfDrawCallsThisFrame;
+
 private:
 	void Clear(DirectX::SimpleMath::Vector4 aClearColor);
 
@@ -55,9 +58,9 @@ private:
 	CFullscreenTexture myDeferredTexture;
 	CGBuffer myGBuffer;
 
-
 	DirectX::SimpleMath::Vector4 myClearColor;
 
-	bool myUseBloom;
-	int myFrameCounter;
+	// Effectively used to toggle renderpasses and bloom. True == enable bloom, full render. False == disable bloom, isolated render pass
+	bool myDoFullRender;
+	//int myFrameCounter;// Used for a hack solution, can probably be removed
 };

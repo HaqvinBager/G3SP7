@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Input.h"
+#include "imgui.h"
 
 Input* Input::GetInstance()
 {
@@ -32,11 +33,21 @@ Input::Input() {
 bool Input::UpdateEvents(UINT message, WPARAM wParam, LPARAM lParam) {
 
 	std::vector<char> rawBuffer;
+	const auto& ImguiInput = ImGui::GetIO();
+
 	switch (message) {
 	case WM_KEYDOWN:
+		if (ImguiInput.WantCaptureKeyboard)
+		{
+			return false;
+		}
 		myKeyDown[wParam] = true;
 		return true;
 	case WM_KEYUP:
+		if (ImguiInput.WantCaptureKeyboard)
+		{
+			return false;
+		}
 		myKeyDown[wParam] = false;
 		return true;
 	case WM_MOUSEMOVE:
@@ -47,21 +58,45 @@ bool Input::UpdateEvents(UINT message, WPARAM wParam, LPARAM lParam) {
 		myMouseWheel += GET_WHEEL_DELTA_WPARAM(wParam);//returns difference in mouse wheel position
 		return true;
 	case WM_LBUTTONDOWN:
+		if (ImguiInput.WantCaptureMouse)
+		{
+			return false;
+		}
 		myMouseButton[(int)EMouseButton::Left] = true;
 		return true;
 	case WM_LBUTTONUP:
+		if (ImguiInput.WantCaptureMouse)
+		{
+			return false;
+		}
 		myMouseButton[(int)EMouseButton::Left] = false;
 		return true;
 	case WM_RBUTTONDOWN:
+		if (ImguiInput.WantCaptureMouse)
+		{
+			return false;
+		}
 		myMouseButton[(int)EMouseButton::Right] = true;
 		return true;
 	case WM_RBUTTONUP:
+		if (ImguiInput.WantCaptureMouse)
+		{
+			return false;
+		}
 		myMouseButton[(int)EMouseButton::Right] = false;
 		return true;
 	case WM_MBUTTONDOWN:
+		if (ImguiInput.WantCaptureMouse)
+		{
+			return false;
+		}
 		myMouseButton[(int)EMouseButton::Middle] = true;
 		return true;
 	case WM_MBUTTONUP:
+		if (ImguiInput.WantCaptureMouse)
+		{
+			return false;
+		}
 		myMouseButton[(int)EMouseButton::Middle] = false;
 		return true;
 	case WM_XBUTTONDOWN:

@@ -26,7 +26,7 @@ PixelOutput main(VertexToPixel input)
     float3 diffuseColor = lerp((float3) 0.00, albedo, 1 - metalness);
     
     float3 ambiance = EvaluateAmbiance(environmentTexture, normal, vertexNormal, toEye, perceptualRoughness, metalness, albedo, ambientOcclusion, diffuseColor, specularColor);
-    float3 directionalLight = EvaluateDirectionalLight(diffuseColor, specularColor, normal, perceptualRoughness, directionalLightColor.xyz, toDirectionalLight.xyz, toEye.xyz);
+    float3 directionalLight = EvaluateDirectionalLight(diffuseColor, specularColor, normal, perceptualRoughness, directionalLightColor.rgb * directionalLightColor.a, toDirectionalLight.xyz, toEye.xyz);
     float3 emissive = albedo * emissiveData;
     float3 radiance = ambiance + directionalLight + emissive;
     

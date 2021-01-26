@@ -18,8 +18,12 @@
 
 #include <algorithm>
 
+#define USING_DEFERRED
+
+unsigned int CRenderManager::myNumberOfDrawCallsThisFrame = 0;
+
 CRenderManager::CRenderManager() /*: myScene(*CScene::GetInstance())*/
-	: myUseBloom(true)
+	: myDoFullRender(true)
 	, myClearColor(0.8f, 0.5f, 0.5f, 1.0f)
 {
 }
@@ -92,18 +96,15 @@ bool CRenderManager::ReInit(CDirectXFramework* aFramework, CWindowHandler* aWind
 
 void CRenderManager::Render(CScene& aScene)
 {
-	if (myFrameCounter % 5 == 0) {
-		aScene.UpdateLightsNearestPlayer();
+	CRenderManager::myNumberOfDrawCallsThisFrame = 0;
 
-		if (myFrameCounter > 50005) {
-			myFrameCounter = 0;
-		}
-	}
-	myFrameCounter++;
-
-	if (Input::GetInstance()->IsKeyPressed(VK_F6))
+	if (Input::GetInstance()->IsKeyPressed(VK_F6))	
 	{
-		myUseBloom = myForwardRenderer.ToggleRenderPass();
+#ifdef USING_DEFERRED //Define found under #includes
+		myDoFullRender = myDeferredRenderer.ToggleRenderPass();
+#else
+		myDoFullRender = myForwardRenderer.ToggleRenderPass();
+#endif
 	}
 
 	myRenderStateManager.SetAllDefault();
@@ -113,18 +114,18 @@ void CRenderManager::Render(CScene& aScene)
 	myGBuffer.ClearTextures(myClearColor);
 	myDeferredTexture.ClearTexture();
 
-	myIntermediateTexture.SetAsActiveTarget(&myIntermediateDepth);
-
 	CEnvironmentLight* environmentlight = aScene.GetEnvironmentLight();
 	CCameraComponent* maincamera = aScene.GetMainCamera();
-	//std::vector<CModelComponent*> modelsToRender = myScene.CullGameObjects(maincamera);
+
 	std::vector<CGameObject*> gameObjects = aScene.CullGameObjects(maincamera);
 	std::vector<CGameObject*> instancedGameObjects;
 	std::vector<CGameObject*> instancedGameObjectsWithAlpha;
+	std::vector<int> indicesOfOutlineModels;
 	std::vector<LightPair> pointlights;
 	std::vector<LightPair> pointLightsInstanced;
 
-	std::vector<int> indicesOfOutlineModels;
+#ifdef USING_DEFERRED // Define found under #includes
+#pragma region Deferred
 	for (unsigned int i = 0; i < gameObjects.size(); ++i)
 	{
 		auto instance = gameObjects[i];
@@ -134,22 +135,59 @@ void CRenderManager::Render(CScene& aScene)
 			}
 		}
 
-		//CModelComponent* modelComponent = nullptr;
-		//CInstancedModelComponent* instancedModelComponent = nullptr;
-
-		/*if (instance->TryGetComponent(&modelComponent)) 
-		{
-			pointlights.emplace_back(aScene.CullLights(instance));
-		}
-		else if (instance->TryGetComponent(&instancedModelComponent)) 
-		{
-			pointLightsInstanced.emplace_back(aScene.CullLightInstanced(instancedModelComponent));
+		if (instance->GetComponent<CInstancedModelComponent>()) {
+			if (instance->GetComponent<CInstancedModelComponent>()->RenderWithAlpha())
+			{
+				instancedGameObjectsWithAlpha.emplace_back(instance);
+				continue;
+			}
 			instancedGameObjects.emplace_back(instance);
-			instancedModelComponent->RenderWithAlpha() ?
-				instancedGameObjectsWithAlpha.emplace_back(instance) :
-				instancedGameObjects.emplace_back(instance);
+		}
+	}
 
-		}*/
+	std::sort(indicesOfOutlineModels.begin(), indicesOfOutlineModels.end(), [](UINT a, UINT b) { return a > b; });
+
+	for (auto index : indicesOfOutlineModels)
+	{
+		std::swap(gameObjects[index], gameObjects.back());
+		gameObjects.pop_back();
+	}
+
+	myGBuffer.SetAsActiveTarget(&myIntermediateDepth);
+	myDeferredRenderer.GenerateGBuffer(maincamera, gameObjects, instancedGameObjects);
+	myDeferredTexture.SetAsActiveTarget();
+	myGBuffer.SetAllAsResources();
+	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_ADDITIVEBLEND);
+
+	std::vector<CPointLight*> onlyPointLights;
+	onlyPointLights = aScene.CullPointLights(&maincamera->GameObject());
+	
+	myDeferredRenderer.Render(maincamera, environmentlight);
+	myDeferredRenderer.Render(maincamera, onlyPointLights);
+
+	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_DISABLE);
+	myIntermediateTexture.SetAsActiveTarget();
+	myDeferredTexture.SetAsResourceOnSlot(0);
+	if(myDoFullRender)
+		myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCRENSHADER_GAMMACORRECTION);
+	else
+		myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCRENSHADER_GAMMACORRECTION_RENDERPASS);
+	
+	myIntermediateTexture.SetAsActiveTarget(&myIntermediateDepth);
+
+#pragma endregion ! Deferred
+#else
+#pragma region Forward
+	myIntermediateTexture.SetAsActiveTarget(&myIntermediateDepth);
+
+	for (unsigned int i = 0; i < gameObjects.size(); ++i)
+	{
+		auto instance = gameObjects[i];
+		for (auto gameObjectToOutline : aScene.GetModelsToOutline()) {
+			if (instance == gameObjectToOutline) {
+				indicesOfOutlineModels.emplace_back(i);
+			}
+		}
 
 		if (instance->GetComponent<CModelComponent>()) {
 			pointlights.emplace_back(aScene.CullLights(instance));
@@ -175,30 +213,12 @@ void CRenderManager::Render(CScene& aScene)
 		gameObjects.pop_back();
 	}
 
-
-
-#pragma region DEFERRED
-	//std::vector<CPointLight*> onlyPointLights;
-	//onlyPointLights = aScene.CullPointLights(&maincamera->GameObject());
-	//
-	//myGBuffer.SetAsActiveTarget(&myIntermediateDepth);
-	//myDeferredRenderer.GenerateGBuffer(maincamera, gameObjects);
-	//myDeferredTexture.SetAsActiveTarget();
-	//myGBuffer.SetAllAsResources();
-	//myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_ADDITIVEBLEND);
-	//
-	//myDeferredRenderer.Render(maincamera, environmentlight);
-	//myDeferredRenderer.Render(maincamera, onlyPointLights);
-	//
-	//myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_DISABLE);
-	//myIntermediateTexture.SetAsActiveTarget();
-	//myDeferredTexture.SetAsResourceOnSlot(0);
-	//myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCRENSHADER_GAMMACORRECTION);
-#pragma endregion ! DEFERRED
-
 	myForwardRenderer.Render(environmentlight, pointlights, maincamera, gameObjects);
 	myForwardRenderer.InstancedRender(environmentlight, pointLightsInstanced, maincamera, instancedGameObjects);
+#pragma endregion ! Forward
+#endif // USING_DEFERRED
 
+#pragma region MODEL OUTLINES
 	for (auto modelToOutline : aScene.GetModelsToOutline()) {
 		std::vector<CGameObject*> interimVector;
 		if (modelToOutline) {
@@ -223,21 +243,24 @@ void CRenderManager::Render(CScene& aScene)
 			}
 		}
 	}
+#pragma endregion ! MODEL OUTLINES
 
 	const std::vector<CLineInstance*>& lineInstances = aScene.CullLineInstances();
 	const std::vector<SLineTime>& lines = aScene.CullLines();
-
 	myForwardRenderer.RenderLines(maincamera, lines);
 	myForwardRenderer.RenderLineInstances(maincamera, lineInstances);
 
+	// Alpha stage for objects in World 3D space
 	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_ALPHABLEND);
 	myRenderStateManager.SetDepthStencilState(CRenderStateManager::DepthStencilStates::DEPTHSTENCILSTATE_ONLYREAD);
 
-	myForwardRenderer.InstancedRender(environmentlight, pointlights, maincamera, instancedGameObjectsWithAlpha);
+	//myForwardRenderer.InstancedRender(environmentlight, pointlights, maincamera, instancedGameObjectsWithAlpha);
+	//myForwardRenderer.Render(environmentlight, pointlights, maincamera, gameObjects);
 
 	myVFXRenderer.Render(maincamera, gameObjects);
 
 	myParticleRenderer.Render(maincamera, gameObjects);
+	// ! Alpha stage for objects in World 3D space
 
 	//std::vector<CSpriteInstance*> sprites = myScene.CullSprites();
 	//mySpriteRenderer.Render(sprites);
@@ -249,7 +272,7 @@ void CRenderManager::Render(CScene& aScene)
 	myRenderStateManager.SetDepthStencilState(CRenderStateManager::DepthStencilStates::DEPTHSTENCILSTATE_DEFAULT);
 
 	// Hope this works!
-	myUseBloom ? RenderBloom() : RenderWithoutBloom();
+	myDoFullRender ? RenderBloom() : RenderWithoutBloom();
 
 	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_ALPHABLEND);
 	myRenderStateManager.SetDepthStencilState(CRenderStateManager::DepthStencilStates::DEPTHSTENCILSTATE_ONLYREAD);

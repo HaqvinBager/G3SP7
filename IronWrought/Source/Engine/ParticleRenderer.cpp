@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "ParticleRenderer.h"
 #include "DirectXFramework.h"
+#include "RenderManager.h"
 #include "Camera.h"
 #include "GameObject.h"
 #include "ParticleEmitterComponent.h"
@@ -105,6 +106,7 @@ void CParticleRenderer::Render(CCameraComponent* aCamera, std::vector<CGameObjec
             myContext->PSSetShader(particleData.myPixelShader, nullptr, 0);
 
             myContext->Draw(numberOfVertices, 0);
+            CRenderManager::myNumberOfDrawCallsThisFrame++;
 
         }
         //Reset Resources
