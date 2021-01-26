@@ -4,6 +4,28 @@
     },
     "NodeInstances": [
         {
+            "NodeType": 1,
+            "UID": 1976,
+            "Position": {
+                "X": 1338,
+                "Y": -653
+            },
+            "Pins": [
+                {
+                    "Index": 0,
+                    "UID": 1979,
+                    "DATA": false,
+                    "DATA_TYPE": "BOOL"
+                },
+                {
+                    "Index": 1,
+                    "UID": 1980,
+                    "DATA": "",
+                    "DATA_TYPE": ""
+                }
+            ]
+        },
+        {
             "NodeType": 20,
             "UID": 1435,
             "Position": {
@@ -44,56 +66,6 @@
             ]
         },
         {
-            "NodeType": 0,
-            "UID": 1451,
-            "Position": {
-                "X": 1388,
-                "Y": -441
-            },
-            "Pins": [
-                {
-                    "Index": 0,
-                    "UID": 1455,
-                    "DATA": "",
-                    "DATA_TYPE": ""
-                },
-                {
-                    "Index": 1,
-                    "UID": 1456,
-                    "DATA": "",
-                    "DATA_TYPE": "STRING"
-                },
-                {
-                    "Index": 2,
-                    "UID": 1457,
-                    "DATA": "",
-                    "DATA_TYPE": ""
-                }
-            ]
-        },
-        {
-            "NodeType": 1,
-            "UID": 1458,
-            "Position": {
-                "X": 1563,
-                "Y": -359
-            },
-            "Pins": [
-                {
-                    "Index": 0,
-                    "UID": 1461,
-                    "DATA": false,
-                    "DATA_TYPE": "BOOL"
-                },
-                {
-                    "Index": 1,
-                    "UID": 1462,
-                    "DATA": "",
-                    "DATA_TYPE": ""
-                }
-            ]
-        },
-        {
             "NodeType": 2,
             "UID": 1463,
             "Position": {
@@ -118,6 +90,34 @@
                     "UID": 1469,
                     "DATA": "",
                     "DATA_TYPE": "FLOAT"
+                }
+            ]
+        },
+        {
+            "NodeType": 0,
+            "UID": 1482,
+            "Position": {
+                "X": 1573,
+                "Y": -629
+            },
+            "Pins": [
+                {
+                    "Index": 0,
+                    "UID": 1486,
+                    "DATA": "",
+                    "DATA_TYPE": ""
+                },
+                {
+                    "Index": 1,
+                    "UID": 1487,
+                    "DATA": "",
+                    "DATA_TYPE": "STRING"
+                },
+                {
+                    "Index": 2,
+                    "UID": 1488,
+                    "DATA": "",
+                    "DATA_TYPE": ""
                 }
             ]
         },
@@ -150,28 +150,22 @@
             ]
         },
         {
-            "NodeType": 0,
-            "UID": 1482,
+            "NodeType": 1,
+            "UID": 1458,
             "Position": {
-                "X": 1573,
-                "Y": -629
+                "X": 1563,
+                "Y": -359
             },
             "Pins": [
                 {
                     "Index": 0,
-                    "UID": 1486,
-                    "DATA": "",
-                    "DATA_TYPE": ""
+                    "UID": 1461,
+                    "DATA": false,
+                    "DATA_TYPE": "BOOL"
                 },
                 {
                     "Index": 1,
-                    "UID": 1487,
-                    "DATA": "",
-                    "DATA_TYPE": "STRING"
-                },
-                {
-                    "Index": 2,
-                    "UID": 1488,
+                    "UID": 1462,
                     "DATA": "",
                     "DATA_TYPE": ""
                 }
@@ -206,22 +200,28 @@
             ]
         },
         {
-            "NodeType": 1,
-            "UID": 1976,
+            "NodeType": 0,
+            "UID": 1451,
             "Position": {
-                "X": 1338,
-                "Y": -653
+                "X": 1388,
+                "Y": -441
             },
             "Pins": [
                 {
                     "Index": 0,
-                    "UID": 1979,
-                    "DATA": false,
-                    "DATA_TYPE": "BOOL"
+                    "UID": 1455,
+                    "DATA": "",
+                    "DATA_TYPE": ""
                 },
                 {
                     "Index": 1,
-                    "UID": 1980,
+                    "UID": 1456,
+                    "DATA": "",
+                    "DATA_TYPE": "STRING"
+                },
+                {
+                    "Index": 2,
+                    "UID": 1457,
                     "DATA": "",
                     "DATA_TYPE": ""
                 }

@@ -172,17 +172,17 @@ public:
 	{
 		if (myEnteredTimer > 0.0f)
 		{
-			return COL32(0, min(myEnteredTimer * 255, 255), 0, 255);
+			return COL32(0, min(myEnteredTimer * 200, 200), 0, 255);
 		}
 		if (myNodeType->IsStartNode())
 		{
-			return COL32(255, 128, 128, 255);
+			return COL32(200, 75, 75, 255);
 		}
 		if (myNodeType->IsFlowNode())
 		{
-			return COL32(128, 195, 248, 255);
+			return COL32(75, 125, 200, 255);
 		}
-		return COL32(255, 255, 255, 255);
+		return COL32(75, 75, 75, 255);
 	}
 	float myEnteredTimer = 0.0f;
 private:

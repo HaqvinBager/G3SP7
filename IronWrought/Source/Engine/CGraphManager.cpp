@@ -32,7 +32,7 @@ CGraphManager::~CGraphManager()
 void CGraphManager::Load()
 {
 	ed::Config config;
-	config.SettingsFile = "Simple.json";
+	config.SettingsFile = "Imgui/NodeScripts/Simple.json";
 	g_Context = ed::CreateEditor(&config);
 	CNodeTypeCollector::PopulateTypes();
 	myMenuSeachField = new char[127];
@@ -289,7 +289,7 @@ void CGraphManager::SaveNodesToClipboard()
 
 
 
-		std::ofstream of("clipboard.json");
+		std::ofstream of("Imgui/NodeScripts/clipboard.json");
 		of << s.GetString();
 	}
 	//Links
@@ -323,7 +323,7 @@ void CGraphManager::SaveNodesToClipboard()
 
 void CGraphManager::LoadNodesFromClipboard()
 {
-	std::ifstream inputFile("clipboard.json");
+	std::ifstream inputFile("Imgui/NodeScripts/clipboard.json");
 	std::stringstream jsonDocumentBuffer;
 	std::string inputLine;
 
@@ -844,7 +844,7 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 			
 			const auto halfBorderWidth = ed::GetStyle().NodeBorderWidth * 0.5f;
 			auto headerColor = nodeInstance->GetColor();
-			ImTextureID HeaderTextureId = ImGui_LoadTexture("Imgui/Data/BlueprintBackground.png");
+			ImTextureID HeaderTextureId = ImGui_LoadTexture("Imgui/Sprites/BlueprintBackground.png");
 			const auto uv = ImVec2(
 				HeaderRect.w / (float)(4.0f * ImGui_GetTextureWidth(HeaderTextureId)),
 				HeaderRect.h / (float)(4.0f * ImGui_GetTextureHeight(HeaderTextureId)));
