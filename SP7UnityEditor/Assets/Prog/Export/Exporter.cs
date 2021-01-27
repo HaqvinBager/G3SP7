@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 
 
 [System.Serializable]
@@ -44,30 +45,83 @@ public class Exporter
     [MenuItem("Export/Export Scene")]
     static void ExportScene()
     {
-        for(int i = 0; i <  SceneManager.sceneCount; ++i)
+        List<GameObject> allScenesActiveObjects = new List<GameObject>();
+
+
+        for (int i = 0; i < SceneManager.sceneCount; ++i)
         {
-            ExportAScene(SceneManager.GetSceneAt(i));
+            GameObject[] gameobjects = SceneManager.GetSceneAt(i).GetRootGameObjects();
+
+            foreach (var gameobject in gameobjects)
+            {
+                if (gameobject.activeInHierarchy)
+                {
+                    allScenesActiveObjects.Add(gameobject);
+                    gameobject.SetActive(false);
+                }
+            }
         }
+
+
+        for (int i = 0; i < SceneManager.sceneCount; ++i)
+        {
+            GameObject[] gameobjects = SceneManager.GetSceneAt(i).GetRootGameObjects();
+            List<GameObject> activeobjects = new List<GameObject>();
+            foreach (var gameobject in gameobjects)
+            {
+                if (allScenesActiveObjects.Contains(gameobject))
+                {
+                    activeobjects.Add(gameobject);
+                    gameobject.SetActive(true);
+                }
+            }
+
+
+            ExportAScene(SceneManager.GetSceneAt(i));
+
+            foreach (var gameobject in activeobjects)
+            {
+                gameobject.SetActive(false);
+            }
+        }
+
+        foreach (var gameObject in allScenesActiveObjects)
+        {
+            gameObject.SetActive(true);
+        }
+
     }
 
     private static void ExportAScene(Scene aScene)
     {
-        GameObject[] rootGameObjects = aScene.GetRootGameObjects();
+
+        //GameObject[] rootGameObjects = aScene.GetRootGameObjects();
+        Renderer[] allrenderers = GameObject.FindObjectsOfType<Renderer>();
+
+
         Dictionary<string, List<STransform>> fbxPathGameObjectMap = new Dictionary<string, List<STransform>>();
+        List<Renderer> renderers = new List<Renderer>();
+
         List<string> fbxpaths = new List<string>();
-        for (int i = 0; i < rootGameObjects.Length; ++i)
+
+
+        //foreach (Renderer go in allrenderers)
+        for (int i = 0; i < allrenderers.Length; ++i)
+        //for (int i = 0; i < rootGameObjects.Length; ++i)
+
         {
-            string fbxPath = AssetDatabase.GetAssetPath(PrefabUtility.GetCorrespondingObjectFromOriginalSource(rootGameObjects[i].GetComponent<Renderer>()));
+
+            string fbxPath = AssetDatabase.GetAssetPath(PrefabUtility.GetCorrespondingObjectFromOriginalSource(allrenderers[i].GetComponent<Renderer>()));
 
             if (!fbxPathGameObjectMap.ContainsKey(fbxPath))
             {
                 fbxPathGameObjectMap.Add(fbxPath, new List<STransform>());
             }
             STransform transform = new STransform();
-            transform.instanceID = rootGameObjects[i].gameObject.GetInstanceID();
-            transform.position = rootGameObjects[i].transform.position;
-            transform.rotation = rootGameObjects[i].transform.ConvertToIronWroughtRotation();
-            transform.scale = rootGameObjects[i].transform.localScale;
+            transform.instanceID = allrenderers[i].gameObject.GetInstanceID();
+            transform.position = allrenderers[i].transform.position;
+            transform.rotation = allrenderers[i].transform.ConvertToIronWroughtRotation();
+            transform.scale = allrenderers[i].transform.localScale;
             fbxPathGameObjectMap[fbxPath].Add(transform);
 
             if (!fbxpaths.Contains(fbxPath))
