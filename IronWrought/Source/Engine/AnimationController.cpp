@@ -205,7 +205,15 @@ void CAnimationController::ReadNodeHeirarchy(
 		aiMatrix4x4::Translation(Translation, TranslationM);
 
 		// Combine the above transformations
-		//NodeTransformation = TranslationM * RotationM * ScalingM;//Original, intended. But now blob-like
+		NodeTransformation = TranslationM * RotationM * ScalingM;//Original, intended. But now blob-like
+		
+		// Inverse test
+		//NodeTransformation = TranslationM.Inverse() * RotationM.Inverse() * ScalingM.Inverse();//E.T
+		//NodeTransformation = TranslationM * RotationM.Inverse() * ScalingM.Inverse();//Proper Squid
+		//NodeTransformation = TranslationM * RotationM * ScalingM.Inverse();//Blob
+		//NodeTransformation = TranslationM.Inverse() * RotationM * ScalingM;//Blob - Spiral type
+
+		// Removing tests
 		//NodeTransformation = RotationM * ScalingM;//Amorphous blob
 		//NodeTransformation = TranslationM * ScalingM;//Amorphous blob, tall
 		//NodeTransformation = TranslationM * RotationM;//Amorphous blob
