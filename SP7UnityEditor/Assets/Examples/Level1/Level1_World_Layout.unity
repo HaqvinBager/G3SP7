@@ -121,7 +121,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1001 &1822512940
+--- !u!1001 &848474620
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -136,12 +136,12 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 7305a427a588c0b48ab92883388aeb5b,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 16
+      value: 36.157
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7305a427a588c0b48ab92883388aeb5b,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 12
+      value: 43.588
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7305a427a588c0b48ab92883388aeb5b,
         type: 3}
@@ -156,7 +156,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 7305a427a588c0b48ab92883388aeb5b,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.72
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7305a427a588c0b48ab92883388aeb5b,
         type: 3}
@@ -197,11 +197,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Cube
-      objectReference: {fileID: 0}
-    - target: {fileID: 919132149155446097, guid: 7305a427a588c0b48ab92883388aeb5b,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7305a427a588c0b48ab92883388aeb5b, type: 3}

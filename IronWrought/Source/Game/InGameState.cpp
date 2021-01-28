@@ -27,6 +27,7 @@
 #include "SceneManager.h"
 #include "FolderUtility.h"
 
+
 void TEMP_DeferredRenderingTests(CScene* aScene);
 
 CInGameState::CInGameState(CStateStack& aStateStack, const CStateStack::EState aState)
@@ -44,30 +45,11 @@ void CInGameState::Awake(){}
 
 void CInGameState::Start()
 {
-
-	//std::vector<std::string> scenePath;
-	//scenePath = CFolderUtility::GetFilePathsInFolder(ASSETPATH + "Assets\\Generated\\", ".json");
+	std::vector<std::string> scenePath;
+	scenePath = CFolderUtility::GetFilePathsInFolder(ASSETPATH + "Assets\\Generated\\", ".json");
 	CScene* scene = new CScene();
+	scene = CSceneManager::CreateScene(scenePath);
 
-
-
-	scene->AddPXScene(CMainSingleton::PhysXWrapper().CreatePXScene());
-
-	CGameObject* camera = new CGameObject(0);
-	camera->AddComponent<CCameraComponent>(*camera, 70.0f);
-	camera->AddComponent<CCameraControllerComponent>(*camera, 25.0f);
-	camera->myTransform->Position({0.0f, 1.0f, 0.0f});
-	camera->myTransform->Rotation({0.0f, 0.0f, 0.0f});
-	scene->AddInstance(camera);
-	scene->MainCamera(camera->GetComponent<CCameraComponent>());
-
-	CGameObject* envLight = new CGameObject(1);
-	envLight->AddComponent<CEnviromentLightComponent>(*envLight);
-	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetColor({1.0f,1.0f,1.0f});
-	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetIntensity(1.f);
-	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetDirection({1.0f,0.5f,-1.0f});
-	scene->AddInstance(envLight);
-	scene->EnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight());
 
 	CEngine::GetInstance()->AddScene(myState, scene);
 
@@ -80,7 +62,7 @@ void CInGameState::Start()
 	//chest->GetComponent<CTransformComponent>()->Position({4.0f,0.0f,0.0f});
 
 
-	TEMP_DeferredRenderingTests(scene);
+	//TEMP_DeferredRenderingTests(scene);
 
 	myExitLevel = false;
 
