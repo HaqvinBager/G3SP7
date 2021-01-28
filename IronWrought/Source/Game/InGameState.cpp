@@ -123,7 +123,7 @@ void CInGameState::Update()
 	//pos.x += CTimer::Dt();
 	//myChest->myTransform->Position(pos);
 
-	if (Input::GetInstance()->IsKeyDown('K'))
+	/*if (Input::GetInstance()->IsKeyDown('K'))
 	{
 		Vector3 cubePos = myCube->myTransform->Position();
 		cubePos.z += CTimer::Dt() * 50.0f;
@@ -139,10 +139,10 @@ void CInGameState::Update()
 
 	static float rotation = 0;
 	rotation = CTimer::Dt();
-	myCube->myTransform->Rotate({ 0, rotation, 0 });
+	myCube->myTransform->Rotate({ 0, rotation, 0 });*/
 
 
-	static bool hasParent = true;
+	/*static bool hasParent = true;
 	if (Input::GetInstance()->IsKeyPressed('P'))
 	{
 		if (hasParent)
@@ -156,7 +156,7 @@ void CInGameState::Update()
 
 		hasParent = !hasParent;
 
-	}
+	}*/
 
 
 	CMainSingleton::PhysXWrapper().Simulate();

@@ -64,6 +64,6 @@ private:
 	//DirectX::SimpleMath::Vector3 myWorldScale;
 
 	CTransformComponent* myParent;
-	float myScale;
+	//float myScale;
 	//bool scalediff;
 };

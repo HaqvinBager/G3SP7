@@ -61,7 +61,7 @@ CScene* CSceneManager::CreateScene(std::vector<std::string> aJsonFile)
 				transform.Scale(scale);
 				transform.Position(position);
 				transform.Rotation(rotation);
-				instancedTransforms.emplace_back(transform.GetMatrix());
+				instancedTransforms.emplace_back(transform.GetLocalMatrix());
 
 			}
 
