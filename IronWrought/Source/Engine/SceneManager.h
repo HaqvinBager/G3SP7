@@ -8,8 +8,5 @@ public:
 	~CSceneManager();
 
 	static CScene* CreateScene(std::vector<std::string> ajsonFile);
-
-
-
 };
 

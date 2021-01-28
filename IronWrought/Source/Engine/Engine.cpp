@@ -1,42 +1,45 @@
 #include "stdafx.h"
+#include <wincodec.h>
 #include <array>
-#include "Engine.h"
+#include <string>
+#include <rapidjson\document.h>
+#include <imgui.h>
+#include <imgui_impl_dx11.h>
+#include <imgui_impl_win32.h>
+#include <ScreenGrab.h>
+#include <DialogueSystem.h>
+#include <PopupTextService.h>
 
+#include "Engine.h"
 #include "WindowHandler.h"
 #include "DirectXFramework.h"
 #include "ForwardRenderer.h"
 #include "Scene.h"
 #include "Camera.h"
-#include "Timer.h"
-#include "ModelFactory.h"
-#include "CameraFactory.h"
 #include "EnvironmentLight.h"
 #include "LightFactory.h"
-#include "RenderManager.h"
+
+#include "ModelFactory.h"
+#include "CameraFactory.h"
 #include "ParticleFactory.h"
+#include "TextFactory.h"
 #include "VFXFactory.h"
 #include "LineFactory.h"
 #include "SpriteFactory.h"
-#include "TextFactory.h"
-#include "InputMapper.h"
-#include <rapidjson\document.h>
-#include <string>
-#include "Debug.h"
-#include <ScreenGrab.h>
-#include <wincodec.h>
-#include "DL_Debug.h"
-#include "MainSingleton.h"
-#include <DialogueSystem.h>
-#include <PopupTextService.h>
-#include "AudioManager.h"
-#include <string>
+
+#include "RenderManager.h"
 #include "ImguiManager.h"
-#include "imgui.h"
-#include <imgui_impl_dx11.h>
-#include <imgui_impl_win32.h>
-#include "StateStack.h"
 #include "CGraphManager.h"
+#include "AudioManager.h"
+#include "InputMapper.h"
+
+#include "Debug.h"
+#include "DL_Debug.h"
+
+#include "Timer.h"
+#include "MainSingleton.h"
 #include "MaterialHandler.h"
+#include "StateStack.h"
 
 #pragma comment(lib, "runtimeobject.lib")
 #pragma comment(lib, "d3d11.lib")

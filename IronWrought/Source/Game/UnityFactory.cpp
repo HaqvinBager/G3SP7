@@ -49,10 +49,10 @@ bool CUnityFactory::FillScene(const SLoadScreenData& aData, const std::vector<st
 {
 	CGameObject* camera = CreateGameObject(aData.myCamera, false);
 	aScene.AddInstance(camera);
-	aScene.SetMainCamera(camera->GetComponent<CCameraComponent>());
+	aScene.MainCamera(camera->GetComponent<CCameraComponent>());
 	CGameObject* envLight = CreateGameObject(aData.myDirectionalLight);
 	aScene.AddInstance(envLight);
-	aScene.SetEnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight());
+	aScene.EnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight());
 	return true;
 }
 
@@ -60,11 +60,11 @@ bool CUnityFactory::FillScene(const SInGameData& aData, const std::vector<std::s
 {
 	CGameObject* camera = CreateGameObject(aData.myCamera);
 	aScene.AddInstance(camera);
-	aScene.SetMainCamera(camera->GetComponent<CCameraComponent>());
+	aScene.MainCamera(camera->GetComponent<CCameraComponent>());
 
 	CGameObject* envLight = CreateGameObject(aData.myDirectionalLight);
 	aScene.AddInstance(envLight);
-	aScene.SetEnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight());
+	aScene.EnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight());
 
 	for (const auto& pointLightData : aData.myPointLightData)
 	{
