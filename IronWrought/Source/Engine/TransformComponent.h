@@ -46,6 +46,7 @@ public:
 
 	}
 	void SetParent(CTransformComponent* aParent); /*{ myParent = aParent; }*/
+	void RemoveParent();
 
 private:
 	// TODO: Move speed into "Resource Component"
@@ -63,4 +64,5 @@ private:
 
 	CTransformComponent* myParent;
 	float myScale;
+	//bool scalediff;
 };
