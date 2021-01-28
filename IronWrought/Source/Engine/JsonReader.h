@@ -3,6 +3,9 @@
 #include "../Includes/rapidjson/document.h"
 #include "../Includes/rapidjson/istreamwrapper.h"
 
+#include <string>
+#include <filesystem>
+
 class CJsonReader
 {
 public:
@@ -14,4 +17,19 @@ public:
 		document.ParseStream(wrapper);
 		return document;
 	}
+
+	static std::vector<std::string> GetFilePathsInFolder(const std::string& aFolder)
+	{
+		std::vector<std::string> filePaths;
+		for (const auto& file : std::filesystem::directory_iterator(aFolder))
+		{
+			if (file.path().extension().string() == ".meta")
+				continue;
+
+			filePaths.emplace_back(file.path().filename().string());
+		}
+
+		return filePaths;
+	}
+
 };

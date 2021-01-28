@@ -84,7 +84,7 @@ CScene* CSceneManager::CreateScene(std::vector<std::string> aJsonFile)
 		envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetDirection({ 0.0f,0.0f,-1.0f });
 		scene->AddInstance(envLight);
 		scene->EnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight());
-		
+
 	}
 	return scene;
 }

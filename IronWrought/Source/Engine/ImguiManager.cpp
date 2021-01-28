@@ -63,6 +63,9 @@ void CImguiManager::DebugWindow()
 		ImGui::Text(GetDrawCalls().c_str());
 	}
 	ImGui::End();
+
+
+	mySelectLevelWindow->RenderWindow();
 }
 
 const std::string CImguiManager::GetSystemMemory()
@@ -96,4 +99,3 @@ const std::string CImguiManager::GetDrawCalls()
 	drawCalls.append(std::to_string(CRenderManager::myNumberOfDrawCallsThisFrame));
 	return drawCalls;
 }
-

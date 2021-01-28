@@ -9,5 +9,5 @@ public:
 private:
 	const std::string GetSystemMemory();
 	const std::string GetDrawCalls();
+	CImGuiLevelSelect* mySelectLevelWindow;
 };
-
