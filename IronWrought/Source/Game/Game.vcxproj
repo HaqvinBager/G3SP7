@@ -166,8 +166,7 @@
     <ClInclude Include="InGameState.h" />
     <ClInclude Include="NavMeshComponent.h" />
     <ClInclude Include="PopupTextService.h" />
-    <ClInclude Include="SceneData.h" />
-    <ClInclude Include="SceneReader.h" />
+    <ClInclude Include="BinReader.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TokenPool.h" />
     <ClInclude Include="UnityFactory.h" />
@@ -182,7 +181,7 @@
     <ClCompile Include="InGameState.cpp" />
     <ClCompile Include="NavMeshComponent.cpp" />
     <ClCompile Include="PopupTextService.cpp" />
-    <ClCompile Include="SceneReader.cpp" />
+    <ClCompile Include="BinReader.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
