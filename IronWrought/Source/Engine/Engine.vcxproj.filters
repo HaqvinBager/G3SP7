@@ -395,6 +395,7 @@
     </ClCompile>
     <ClCompile Include="SceneManager.cpp">
       <Filter>Engine Core</Filter>
+	  </ClCompile>
     <ClCompile Include="..\Includes\Imgui\imgui.cpp">
       <Filter>Imgui\Core</Filter>
     </ClCompile>

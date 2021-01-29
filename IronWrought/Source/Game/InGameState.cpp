@@ -58,8 +58,7 @@ void CInGameState::Start()
 	//chest->AddComponent<CModelComponent>(*chest, std::string(ASSETPATH + "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx"));
 	//chest->GetComponent<CTransformComponent>()->Position({4.0f,0.0f,0.0f});
 
-
-	TEMP_DeferredRenderingTests(scene);
+	//TEMP_DeferredRenderingTests(scene);
 
 	myExitLevel = false;
 
