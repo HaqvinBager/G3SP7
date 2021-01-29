@@ -28,6 +28,7 @@
 #include "FolderUtility.h"
 
 void TEMP_DeferredRenderingTests(CScene* aScene);
+void TEMP_VertexPaintTest(CScene* aScene);
 
 CInGameState::CInGameState(CStateStack& aStateStack, const CStateStack::EState aState)
 	: CState(aStateStack, aState),
@@ -44,7 +45,6 @@ void CInGameState::Awake(){}
 
 void CInGameState::Start()
 {
-
 	std::vector<std::string> scenePath;
 	scenePath = CFolderUtility::GetFilePathsInFolder(ASSETPATH + "Assets\\Generated\\", ".json");
 	CScene* scene = new CScene();
@@ -52,11 +52,7 @@ void CInGameState::Start()
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);
 
-	//CGameObject* chest = new CGameObject(1337);
-	//chest->AddComponent<CModelComponent>(*chest, "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx");
-	//chest->AddComponent<CModelComponent>(*chest, std::string(ASSETPATH + "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx"));
-	//chest->GetComponent<CTransformComponent>()->Position({4.0f,0.0f,0.0f});
-	//TEMP_DeferredRenderingTests(scene);
+	TEMP_VertexPaintTest(scene);
 
 	myExitLevel = false;
 
@@ -293,4 +289,15 @@ void TEMP_DeferredRenderingTests(CScene* scene)
 																, transforms
 																, false);
 	scene->AddInstance(instancedGameObject);
+}
+
+#include "MaterialHandler.h"
+void TEMP_VertexPaintTest(CScene* aScene)
+{
+	int gameObjectGUID = -10808;
+	CGameObject* vertexPaintTest = new CGameObject(gameObjectGUID);
+	vertexPaintTest->AddComponent<CModelComponent>(*vertexPaintTest, std::string(ASSETPATH + "Assets/Graphics/Exempel_Modeller/Primitives/Plane.fbx"));
+	vertexPaintTest->GetComponent<CTransformComponent>()->Position({ 4.0f,0.0f,0.0f });
+
+	aScene->AddInstance(vertexPaintTest);
 }

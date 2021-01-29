@@ -21,6 +21,11 @@ CScene* CSceneManager::CreateScene(std::vector<std::string> aJsonFile)
 {
 	CScene* scene = new CScene();
 	for (int i = 0; i < aJsonFile.size(); ++i) {
+		if (aJsonFile[i].find("Level") == aJsonFile[i].npos)
+		{
+			continue;
+		}
+
 		rapidjson::Document document = CJsonReader::LoadDocument(ASSETPATH + "Assets/Generated/" + aJsonFile[i]);
 		auto jsonarray = document["instancedGameobjects"].GetArray();
 		for (auto& jsongameobject : jsonarray) {

@@ -1,5 +1,8 @@
 #include "stdafx.h"
 #include "MaterialHandler.h"
+#include "BinReader.h"
+
+#include "JsonReader.h"
 
 std::array<ID3D11ShaderResourceView*, 3> CMaterialHandler::RequestMaterial(const std::string& aMaterialName)
 {
@@ -39,6 +42,55 @@ void CMaterialHandler::ReleaseMaterial(const std::string& aMaterialName)
 			} while (remainingRefs > 1);
 
 			myMaterials.erase(aMaterialName);
+			myMaterialReferences.erase(aMaterialName);
+		}
+	}
+}
+
+unsigned int CMaterialHandler::RequestVertexColorID(int aGameObjectID)
+{
+	SVertexPaintColorData colorData{ {}, 0 };
+	rapidjson::Document vertexLinks = CJsonReader::LoadDocument(myVertexLinksPath);
+	if (vertexLinks.HasMember("links"))
+	{
+		if (vertexLinks["links"].IsArray())
+		{
+			auto linksArray = vertexLinks["links"].GetArray();
+			for (unsigned int i = 0; i < linksArray.Size(); ++i)
+			{
+				if (linksArray[i]["myGameObjectIDs"][0] == aGameObjectID)
+				{
+					colorData = CBinReader::LoadVertexColorData(ASSETPATH + linksArray[i]["colorsPath"].GetString());
+
+					if (myVertexColors.find(colorData.myVertexMeshID) == myVertexColors.end())
+					{
+						myVertexColors.emplace(colorData.myVertexMeshID, colorData.myColors);
+						myVertexColorReferences.emplace(colorData.myVertexMeshID, 0);
+					}
+
+					myVertexColorReferences[colorData.myVertexMeshID] += 1;
+				}
+			}
+		}
+	}
+	return colorData.myVertexMeshID;
+}
+
+std::vector<DirectX::SimpleMath::Vector3>& CMaterialHandler::GetVertexColors(unsigned int aVertexColorID)
+{
+	return myVertexColors[aVertexColorID];
+}
+
+void CMaterialHandler::ReleaseVertexColors(unsigned int aVertexColorID)
+{
+	if (myVertexColors.find(aVertexColorID) != myVertexColors.end())
+	{
+		myVertexColorReferences[aVertexColorID] -= 1;
+
+		if (myVertexColorReferences[aVertexColorID] <= 0)
+		{
+			myVertexColors.erase(aVertexColorID);
+			myVertexColorReferences.erase(aVertexColorID);
 		}
 	}
 }
