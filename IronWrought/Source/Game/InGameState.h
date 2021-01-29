@@ -25,4 +25,9 @@ public:
 
 private:
 	bool myExitLevel;
+
+	CGameObject* myCube;
+	CGameObject* myChest;
+	CGameObject* myTestCameraOne;
+	CGameObject* myCamera;
 };

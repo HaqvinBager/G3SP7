@@ -61,7 +61,7 @@ CScene* CSceneManager::CreateScene(std::vector<std::string> aJsonFile)
 				transform.Scale(scale);
 				transform.Position(position);
 				transform.Rotation(rotation);
-				instancedTransforms.emplace_back(transform.GetMatrix());
+				instancedTransforms.emplace_back(transform.GetLocalMatrix());
 
 			}
 
@@ -84,7 +84,7 @@ CScene* CSceneManager::CreateScene(std::vector<std::string> aJsonFile)
 		envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetDirection({ 0.0f,0.0f,-1.0f });
 		scene->AddInstance(envLight);
 		scene->EnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight());
-		
+
 	}
 	return scene;
 }
