@@ -394,8 +394,8 @@
       <Filter>Renderers</Filter>
     </ClCompile>
     <ClCompile Include="SceneManager.cpp">
-      <Filter>Engine Core</Filter>
-	  </ClCompile>
+     <Filter>Engine Core</Filter>
+	</ClCompile>
     <ClCompile Include="..\Includes\Imgui\imgui.cpp">
       <Filter>Imgui\Core</Filter>
     </ClCompile>
@@ -458,6 +458,7 @@
     </ClCompile>
     <ClCompile Include="CNodeTypeMathMax.cpp">
       <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
+	</ClCompile>
     <ClCompile Include="ImguiManager.cpp">
       <Filter>Imgui\Manager</Filter>
     </ClCompile>
@@ -811,6 +812,7 @@
     </ClInclude>
     <ClInclude Include="SceneManager.h">
       <Filter>Engine Core</Filter>
+	  </ClInclude>
     <ClInclude Include="..\Includes\Imgui\imgui.h">
       <Filter>Imgui\Core</Filter>
     </ClInclude>
@@ -837,6 +839,7 @@
     </ClInclude>
     <ClInclude Include="CNodeInstance.h">
       <Filter>Imgui\Node Editor\Nodes</Filter>
+	  </ClInclude>
     <ClInclude Include="ImguiManager.h">
       <Filter>Imgui\Manager</Filter>
     </ClInclude>

@@ -52,12 +52,10 @@ void CInGameState::Start()
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);
 
-
 	//CGameObject* chest = new CGameObject(1337);
 	//chest->AddComponent<CModelComponent>(*chest, "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx");
 	//chest->AddComponent<CModelComponent>(*chest, std::string(ASSETPATH + "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx"));
 	//chest->GetComponent<CTransformComponent>()->Position({4.0f,0.0f,0.0f});
-
 	//TEMP_DeferredRenderingTests(scene);
 
 	myExitLevel = false;
