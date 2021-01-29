@@ -44,9 +44,9 @@ void CInGameState::Awake(){}
 
 void CInGameState::Start()
 {
-
-	std::vector<std::string> scenePath;
-	scenePath = CFolderUtility::GetFilePathsInFolder(ASSETPATH + "Assets\\Generated\\", ".json");
+	//std::vector<std::string> scenePath;
+	std::string scenePath = "Level_1.json";
+	//scenePath = CFolderUtility::GetFilePathsInFolder(ASSETPATH + "Assets\\Generated\\", ".json");
 	CScene* scene = new CScene();
 	scene = CSceneManager::CreateScene(scenePath);
 	CEngine::GetInstance()->AddScene(myState, scene);

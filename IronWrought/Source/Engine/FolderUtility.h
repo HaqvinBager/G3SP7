@@ -5,17 +5,17 @@ class CFolderUtility
 {
 public:
 
-	static std::vector<std::string> GetFilePathsInFolder(const std::string& aFolder) {
+	static std::string GetFilePathsInFolder(const std::string& aFolder) {
 
-		std::vector<std::string> filePaths;
+		std::string filePath;
 		for (const auto& file : std::filesystem::directory_iterator(aFolder)) {
 			if (file.path().extension().string() == ".meta")
 				continue;
 			
-				filePaths.emplace_back(file.path().filename().string());
+				filePath = aFolder;
 			
 		}
-		return filePaths;
+		return filePath;
 	}
 
 
