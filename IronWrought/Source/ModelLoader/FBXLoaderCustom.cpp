@@ -325,7 +325,7 @@ void* CFBXLoaderCustom::LoadModelInternal(CLoaderModel* someInput)
 	}
 	else
 	{
-		scene = aiImportFile(model->myModelPath.c_str(), /*aiProcessPreset_TargetRealtime_MaxQuality*/ aiProcessPreset_TargetRealtime_MaxQuality_DontJoinIdentical | aiProcess_ConvertToLeftHanded);
+		scene = aiImportFile(model->myModelPath.c_str(), aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_ConvertToLeftHanded);
 	}
 	
 	//aiSetImportPropertyFloat(aiprops, AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, GlobalScale);

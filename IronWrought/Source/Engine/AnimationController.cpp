@@ -1,7 +1,8 @@
 #include "stdafx.h"
 #include "AnimationController.h"
 
-#ifndef USING_TGA_ORIGINAL
+#include "../ModelLoader/modelExceptionTools.h"
+
 CAnimationController::CAnimationController()
 	: myNumOfBones(0)
 	, myCurAnimIndex(0)
@@ -206,21 +207,6 @@ void CAnimationController::ReadNodeHeirarchy(
 
 		// Combine the above transformations
 		NodeTransformation = TranslationM * RotationM * ScalingM;//Original, intended. But now blob-like
-		
-		// Inverse test
-		//NodeTransformation = TranslationM.Inverse() * RotationM.Inverse() * ScalingM.Inverse();//E.T
-		//NodeTransformation = TranslationM * RotationM.Inverse() * ScalingM.Inverse();//Proper Squid
-		//NodeTransformation = TranslationM * RotationM * ScalingM.Inverse();//Blob
-		//NodeTransformation = TranslationM.Inverse() * RotationM * ScalingM;//Blob - Spiral type
-
-		// Removing tests
-		//NodeTransformation = RotationM * ScalingM;//Amorphous blob
-		//NodeTransformation = TranslationM * ScalingM;//Amorphous blob, tall
-		//NodeTransformation = TranslationM * RotationM;//Amorphous blob
-		//NodeTransformation = TranslationM;//Amorphous blob, tall, wants hug
-		//NodeTransformation = RotationM;//Amorphous blob, round. Octopus like?
-		//NodeTransformation = ScalingM;// Squashed.
-		// Nothing gives frame1 pose of animIndex
 	}
 	aStopAnimAtLevel--;
 
@@ -353,12 +339,16 @@ void CAnimationController::SetBoneTransforms(std::vector<aiMatrix4x4>& aTransfor
 	}
 	else// There is only one animation to play. No blending.
 	{
-		float TicksPerSecond = 
-			static_cast<float>(myAnimations[myCurAnimIndex]->mAnimations[0]->mTicksPerSecond) != 0 
-			? 
-			static_cast<float>(myAnimations[myCurAnimIndex]->mAnimations[0]->mTicksPerSecond) : 25.0f;
-		float TimeInTicks = myAnimationTimePrev * TicksPerSecond;
-		float AnimationTime = fmodf(TimeInTicks, static_cast<float>(myAnimations[myCurAnimIndex]->mAnimations[0]->mDuration));
+		float AnimationTime = 0.0f;
+		if (myAnimations[myCurAnimIndex]->mAnimations)
+		{
+			float TicksPerSecond = 
+				static_cast<float>(myAnimations[myCurAnimIndex]->mAnimations[0]->mTicksPerSecond) != 0 
+				? 
+				static_cast<float>(myAnimations[myCurAnimIndex]->mAnimations[0]->mTicksPerSecond) : 25.0f;
+			float TimeInTicks = myAnimationTimePrev * TicksPerSecond;
+			AnimationTime = fmodf(TimeInTicks, static_cast<float>(myAnimations[myCurAnimIndex]->mAnimations[0]->mDuration));
+		}
 
 		ReadNodeHeirarchy(myAnimations[myCurAnimIndex], AnimationTime, myAnimations[myCurAnimIndex]->mRootNode, Identity, 2);
 	}
@@ -373,7 +363,7 @@ void CAnimationController::SetBoneTransforms(std::vector<aiMatrix4x4>& aTransfor
 
 void CAnimationController::UpdateAnimationTimes()
 {
-	float dt = CTimer::Dt() * 10.0f;
+	float dt = CTimer::Dt() * 50.0f;
 
 	myAnimationTimePrev += dt;
 	if (myBlendingTime > 0.f)
@@ -412,7 +402,7 @@ bool CAnimationController::SetAnimIndex(uint index, bool updateBoth, float blend
 	}
 	myPrevAnimIndex = myCurAnimIndex;
 	myCurAnimIndex = index;
-	myBlendingTime = 1.f;
+	myBlendingTime = blendDuration;
 	myBlendingTimeMul = blendDuration > 0.0f ? 1.0f / blendDuration : 1.0f;
 	myAnimationTimeCurrent = 0.f;
 	myUpdateBoth = updateBoth;
@@ -436,4 +426,3 @@ bool CAnimationController::IsDoneBlending()
 {
 	return myBlendingTime <= 0.0f;
 }
-#endif

@@ -208,9 +208,9 @@ void TEMP_DeferredRenderingTests(CScene* scene)
 	chest3->AddComponent<CModelComponent>(*chest3, std::string(ASSETPATH + "Assets/Graphics/Exempel_Modeller/Chest/Particle_Chest.fbx"));
 	chest3->GetComponent<CTransformComponent>()->Position({6.0f,2.0f,0.0f});
 
-	scene->AddInstance(chest);
-	scene->AddInstance(chest2);
-	scene->AddInstance(chest3);
+	//scene->AddInstance(chest);
+	//scene->AddInstance(chest2);
+	//scene->AddInstance(chest3);
 
 	constexpr int numPointLights = 32;
 	std::vector<CGameObject*> pointLights;
@@ -316,20 +316,25 @@ void TEMP_DeferredRenderingTests(CScene* scene)
 void TEMP_SetUpAnimationTest(CScene* aScene)
 {
 	CGameObject* animObj = new CGameObject(123123123);
-	std::string rig = "Assets/Temp/Undead/Undead.fbx";
-	std::vector<std::string> someAnimations;
-	someAnimations.emplace_back("Assets/Temp/Undead/Idle.fbx");
-	someAnimations.emplace_back("Assets/Temp/Undead/Walk.fbx");
-
-	//std::string rig = "Assets/Temp/Enemy/Enemy.fbx";
+	//std::string rig = "Assets/Temp/Undead/Undead.fbx";
 	//std::vector<std::string> someAnimations;
-	//someAnimations.emplace_back("Assets/Temp/Enemy/Walk.fbx");
-	//someAnimations.emplace_back("Assets/Temp/Enemy/Idle.fbx");
+	//someAnimations.emplace_back("Assets/Temp/Undead/Idle.fbx");
+	//someAnimations.emplace_back("Assets/Temp/Undead/Walk.fbx");
+
+	std::string rig = "Assets/Temp/Mixamo/SK.fbx";
+	std::vector<std::string> someAnimations;
+	someAnimations.emplace_back("Assets/Temp/Mixamo/Defeated_30fps.fbx");//1
+	someAnimations.emplace_back("Assets/Temp/Mixamo/Guitar_30fps.fbx");//2
+	someAnimations.emplace_back("Assets/Temp/Mixamo/Idle_30fps.fbx");//3
+	someAnimations.emplace_back("Assets/Temp/Mixamo/Nervous_30fps.fbx");//4
+	someAnimations.emplace_back("Assets/Temp/Mixamo/Oof_30fps.fbx");//5
+	someAnimations.emplace_back("Assets/Temp/Mixamo/Jump_30fps.fbx");//6
 
 	animObj->AddComponent<CModelComponent>(*animObj, rig);
 	
 	CAnimationComponent* animComp = animObj->AddComponent<CAnimationComponent>(*animObj, rig, someAnimations);
-	animComp->GetController()->SetAnimIndex(2, true, 1.f);
+	//animComp->GetController()->SetBlendTime(10.0f);
+	animComp->GetController()->SetAnimIndex(5, true, 1.f);
 	animComp->GetController()->SetAnimIndex(2, true, 5.f);
 	
 	aScene->AddInstance(animObj);
