@@ -27,6 +27,7 @@
 #include "SceneManager.h"
 #include "FolderUtility.h"
 
+
 void TEMP_DeferredRenderingTests(CScene* aScene);
 
 CInGameState::CInGameState(CStateStack& aStateStack, const CStateStack::EState aState)
@@ -45,10 +46,15 @@ void CInGameState::Awake(){}
 void CInGameState::Start()
 {
 	//std::vector<std::string> scenePath;
+	//scenePath = CFolderUtility::GetFilePathsInFolder(ASSETPATH + "Assets\\Generated\\", ".json");
+//	CScene* scene = new CScene();
+//	scene = CSceneManager::CreateScene(scenePath);
+	//std::vector<std::string> scenePath;
 	std::string scenePath = "Level_1.json";
 	//scenePath = CFolderUtility::GetFilePathsInFolder(ASSETPATH + "Assets\\Generated\\", ".json");
 	CScene* scene = new CScene();
 	scene = CSceneManager::CreateScene(scenePath);
+
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);
 

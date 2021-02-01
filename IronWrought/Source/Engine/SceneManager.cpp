@@ -6,6 +6,7 @@
 #include "InstancedModelComponent.h"
 #include "CameraControllerComponent.h"
 #include "EnviromentLightComponent.h"
+#include <iostream>
 
 
 
@@ -85,7 +86,7 @@ CScene* CSceneManager::CreateScene(std::string aJsonFile)//TEMP
 		scene->AddInstance(envLight);
 		scene->EnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight());
 
-	
+
 	return scene;
 }
 
@@ -127,7 +128,11 @@ CScene* CSceneManager::CreateScene(std::vector<std::string> aJsonFile)
 				scale.x = jsonscale["x"].GetFloat();
 				scale.y = jsonscale["y"].GetFloat();
 				scale.z = jsonscale["z"].GetFloat();
-
+				float pos_x = position.x;
+				float pos_y = position.y;
+				float pos_z = position.z;
+				std::cout << " Object: " + model_path << std::endl;
+				std::cout << " -This Objects x,y,z: (" << pos_x <<","<<  pos_y<< "," << pos_z << ")" << std::endl;
 				CGameObject temp(0);
 				CTransformComponent transform(temp);
 				transform.Scale(scale);
