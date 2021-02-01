@@ -22,7 +22,7 @@ CScene* CSceneManager::CreateScene(std::string aJsonFile)//TEMP
 {
 	CScene* scene = new CScene();
 
-		rapidjson::Document document = CJsonReader::LoadDocument(ASSETPATH + "Assets/Generated/" + aJsonFile);
+		rapidjson::Document document = CJsonReader::LoadDocument(ASSETPATH + "Assets/Level_Json/" + aJsonFile);
 		auto jsonarray = document["instancedGameobjects"].GetArray();
 		for (auto& jsongameobject : jsonarray) {
 
