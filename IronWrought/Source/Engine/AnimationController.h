@@ -12,6 +12,7 @@
 #include "Timer.h"
 
 #define NUM_BONES_PER_VERTEX 4
+#define TEMP_FRAMES_PER_SECOND 30.0f // Original was 25.0f
 
 struct VertexBoneDataAnim
 {
@@ -95,7 +96,7 @@ public:
 	void UpdateAnimationTimes();
 // ! Update functions
 
-	bool SetAnimIndex(uint index, bool updateBoth = true, float blendDuration = 0.3f, bool temporary = false, float time = 0.f);
+	void BlendToAnimation(uint anAnimationIndex, bool anUpdateBoth = true, float aBlendDuration = 0.3f, bool aTemporary = false, float aTime = 0.0f);
 	bool SetBlendTime(float aTime);
 	uint GetMaxIndex();
 	bool IsDoneBlending();
@@ -103,40 +104,50 @@ public:
 	void SetRotation(const aiVector3D& aRotation) { myRotation = aRotation; }
 	aiVector3D GetRotation() { return myRotation; }
 
-	void SetCurSceneIndex(int aCurSceneIndex) { myCurAnimIndex = aCurSceneIndex; }
-	const int GetCurSceneIndex() { return myCurAnimIndex; }
+	void Animation0Index(int anIndex) { myAnim0Index = anIndex; }
+	void Animation1Index(int anIndex) { myAnim1Index = anIndex; }
+	const uint Animation0Index() { return myAnim0Index; }
+	const uint Animation1Index() { return myAnim1Index; }
 	const size_t GetNrOfAnimations() const { return myAnimations.size(); }
 
-	void ResetAnimationTimeCurrent() { myAnimationTimeCurrent = 0.0f; }
+	const float AnimationDuration(uint anIndex);
+	const float Animation0Duration();
+	const float Animation1Duration();
 
-	const float CurrentAnimationDuration() { return static_cast<float>(myAnimations[myCurAnimIndex]->mAnimations[0]->mDuration); }
-	const float CurrentAnimationTicksPerSecond() { return static_cast<float>(myAnimations[myCurAnimIndex]->mAnimations[0]->mTicksPerSecond); }
-	const float CurrentAnimationTimePercent() { return myAnimationTimePercent; }
+	void ResetAnimationTimeCurrent() { myAnimationTime1 = 0.0f; }
 
 private:
-	float myAnimationTimePrev;
-	float myAnimationTimeCurrent;
-	float myAnimationTimePercent;
+	bool AnimationIndexWithinRange(uint anIndex);
+private:
+	float myAnimationTime0;
+	float myAnimationTime1;
 
+	// Used to set the time it should take to blend from myAnimation1 to myAnimation0
 	float myBlendingTime;
 	float myBlendingTimeMul;
 	float myPlayTime;
 
-	int myCurAnimIndex;
-	int myPrevAnimIndex;
+	// With a myBlendingTime of 0 myAnimIndex0 is played. Using lerp use: 0.0f, to play.
+	uint myAnim0Index;
+	// With a myBlendingTime of > 0 myAnimIndex1 is played. Using lerp use: 1.0f, to play.
+	uint myAnim1Index;
+
 	uint myNumOfBones;
 	bool myUpdateBoth;
 	bool myTemporary;
 
 	aiVector3D myRotation;
-	// Takes ownership if myAnimations. I.e Importer has ownership if aiScene.
-	// Used for loading myAnimations. This is the FBX. Seems like an FBX can hold several animations?
-	std::vector<Assimp::Importer*>		myAnimationScenes;
+
 	// Holds the animations that we play. Each animation modifies bonetransforms depending on animation time.
-	std::vector<const aiScene*>			myAnimations;
+	std::vector<aiScene*>				myAnimations;
 	aiMatrix4x4							myGlobalInverseTransform;
 	std::map<std::string, uint>			myBoneMapping;
 	std::vector<MeshEntry>				myEntries;
 	std::vector<BoneInfoAnim>			myBoneInfo;
 	std::vector<VertexBoneDataAnim>		myMass;
+
+// No longer used 2021 02 01
+	// Takes ownership if myAnimations. I.e Importer has ownership if aiScene.
+	// Used for loading myAnimations. This is the FBX. Seems like an FBX can hold several animations?
+	//std::vector<Assimp::Importer*>		myImporters;
 };

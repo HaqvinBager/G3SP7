@@ -30,6 +30,9 @@
 
 void TEMP_DeferredRenderingTests(CScene* aScene);
 void TEMP_SetUpAnimationTest(CScene* aScene);
+void TEMP_AnimObjectControl();
+
+CGameObject* g_TempAnimObject = nullptr;
 
 CInGameState::CInGameState(CStateStack& aStateStack, const CStateStack::EState aState)
 	: CState(aStateStack, aState),
@@ -167,6 +170,8 @@ void CInGameState::Update()
 	{
 		gameObject->Update();
 	}
+
+	TEMP_AnimObjectControl();
 }
 
 void CInGameState::ReceiveEvent(const EInputEvent aEvent)
@@ -323,19 +328,82 @@ void TEMP_SetUpAnimationTest(CScene* aScene)
 
 	std::string rig = "Assets/Temp/Mixamo/SK.fbx";
 	std::vector<std::string> someAnimations;
-	someAnimations.emplace_back("Assets/Temp/Mixamo/Defeated_30fps.fbx");//1
-	someAnimations.emplace_back("Assets/Temp/Mixamo/Guitar_30fps.fbx");//2
-	someAnimations.emplace_back("Assets/Temp/Mixamo/Idle_30fps.fbx");//3
-	someAnimations.emplace_back("Assets/Temp/Mixamo/Nervous_30fps.fbx");//4
-	someAnimations.emplace_back("Assets/Temp/Mixamo/Oof_30fps.fbx");//5
-	someAnimations.emplace_back("Assets/Temp/Mixamo/Jump_30fps.fbx");//6
+	someAnimations.emplace_back("Assets/Temp/Mixamo/Defeated_30fps.fbx");	//1
+	someAnimations.emplace_back("Assets/Temp/Mixamo/Guitar_30fps.fbx");		//2
+	someAnimations.emplace_back("Assets/Temp/Mixamo/Idle_30fps.fbx");		//3
+	someAnimations.emplace_back("Assets/Temp/Mixamo/Nervous_30fps.fbx");	//4
+	someAnimations.emplace_back("Assets/Temp/Mixamo/Oof_30fps.fbx");		//5
+	someAnimations.emplace_back("Assets/Temp/Mixamo/Jump_30fps.fbx");		//6
 
 	animObj->AddComponent<CModelComponent>(*animObj, rig);
 	
 	CAnimationComponent* animComp = animObj->AddComponent<CAnimationComponent>(*animObj, rig, someAnimations);
-	//animComp->GetController()->SetBlendTime(10.0f);
-	animComp->GetController()->SetAnimIndex(5, true, 1.f);
-	animComp->GetController()->SetAnimIndex(2, true, 5.f);
+
+	animComp->BlendLerpBetween(4, 5, 0.0f);
 	
+	g_TempAnimObject = animObj;
+
 	aScene->AddInstance(animObj);
+}
+#define GetAnimComp g_TempAnimObject->GetComponent<CAnimationComponent>()
+void TEMP_AnimObjectControl()
+{
+	float blend = 1.0f;// >1.0f is scary
+	if (Input::GetInstance()->IsKeyPressed('1'))
+	{
+		//GetAnimComp->SetBlend(1, 5, blend);
+		GetAnimComp->BlendToAnimation(1, blend);
+	}
+	if (Input::GetInstance()->IsKeyPressed('2'))
+	{
+		//GetAnimComp->SetBlend(2, 5, blend);
+		GetAnimComp->BlendToAnimation(2, blend);
+	}
+	if (Input::GetInstance()->IsKeyPressed('3'))
+	{
+		//GetAnimComp->SetBlend(3, 5, blend);
+		GetAnimComp->BlendToAnimation(3, blend);
+	}
+	if (Input::GetInstance()->IsKeyPressed('4'))
+	{
+		//GetAnimComp->SetBlend(4, 5, blend);
+		GetAnimComp->BlendToAnimation(4, blend);
+	}
+	if (Input::GetInstance()->IsKeyPressed('5'))
+	{
+		//GetAnimComp->SetBlend(5, 5, blend);
+		GetAnimComp->BlendToAnimation(5, blend);
+	}
+	if (Input::GetInstance()->IsKeyPressed('6'))
+	{
+		//GetAnimComp->SetBlend(6, 5, blend);
+		GetAnimComp->BlendToAnimation(6, blend);
+	}
+
+	if (Input::GetInstance()->IsKeyPressed(VK_F2))
+	{
+		GetAnimComp->BlendLerpBetween(4, 5, 0.0f);
+	}
+	if (Input::GetInstance()->IsKeyPressed(VK_F3))
+	{
+		GetAnimComp->BlendLerpBetween(1, 3, 0.0f);
+	}
+	if (Input::GetInstance()->IsKeyPressed(VK_F4))
+	{
+		GetAnimComp->BlendLerpBetween(2, 6, 0.0f);
+	}
+
+	static float blendLerp = 0.0f;
+	if (Input::GetInstance()->IsKeyPressed('9'))
+	{
+		//GetAnimComp->SetBlend(6, 5, blend);
+		GetAnimComp->BlendLerp(blendLerp += 0.1f);
+		std::cout << __FUNCTION__ << " blendLerp @ " << blendLerp << std::endl;
+	}
+	if (Input::GetInstance()->IsKeyPressed('0'))
+	{
+		//GetAnimComp->SetBlend(6, 5, blend);
+		GetAnimComp->BlendLerp(blendLerp -= 0.1f);
+		std::cout << __FUNCTION__ << " blendLerp @ " << blendLerp << std::endl;
+	}
 }

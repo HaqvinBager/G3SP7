@@ -5,27 +5,34 @@
 
 CAnimationController::CAnimationController()
 	: myNumOfBones(0)
-	, myCurAnimIndex(0)
-	, myPrevAnimIndex(0)
+	, myAnim0Index(0)
+	, myAnim1Index(0)
 	, myRotation(0.f)
 	, myBlendingTime(0.f)
 	, myBlendingTimeMul(1.f)
 	, myUpdateBoth(true)
 	, myTemporary(false)
 	, myPlayTime(0.f)
-	, myAnimationTimeCurrent(0)
-	, myAnimationTimePrev(0)
-	, myAnimationTimePercent(0)
+	, myAnimationTime1(0)
+	, myAnimationTime0(0)
 {}
 
 CAnimationController::~CAnimationController()
 {
-	for (uint i = 0; i < myAnimationScenes.size(); ++i)
+// No longer used 2021 02 01
+	//for (uint i = 0; i < myImporters.size(); ++i)
+	//{
+	//	delete myImporters[i];
+	//	myImporters[i] = nullptr;
+	//}
+	//myImporters.clear();
+
+	for (size_t i = 0; i < myAnimations.size(); ++i)
 	{
-		delete myAnimationScenes[i];
-		myAnimationScenes[i] = nullptr;
+		delete myAnimations[i];
+		myAnimations[i] = nullptr;
 	}
-	myAnimationScenes.clear();
+	myAnimations.clear();
 }
 
 bool CAnimationController::ImportRig(const std::string& anFBXFilePath)
@@ -45,34 +52,35 @@ bool CAnimationController::ImportRig(const std::string& anFBXFilePath)
 		return false;
 	}
 
-	myCurAnimIndex = static_cast<int>(myAnimationScenes.size());
-	myAnimationScenes.emplace_back(new Assimp::Importer);
+	myAnim0Index = static_cast<int>(myAnimations.size());
 
-	if (ModelExceptionTools::IsDestructibleModel(anFBXFilePath))
-	{
-		int qualityFlags = aiProcessPreset_TargetRealtime_Quality;
-		myAnimations.push_back(myAnimationScenes[myCurAnimIndex]->ReadFile(anFBXFilePath, (qualityFlags ^= (int)aiProcess_JoinIdenticalVertices) | aiProcess_ConvertToLeftHanded));
-	}
+	Assimp::Importer importer;
+	if (importer.ReadFile(anFBXFilePath, aiProcessPreset_TargetRealtime_Quality | aiProcess_ConvertToLeftHanded))
+		myAnimations.emplace_back(importer.GetOrphanedScene());
 	else
-	{
-		myAnimations.push_back(myAnimationScenes[myCurAnimIndex]->ReadFile(anFBXFilePath, aiProcessPreset_TargetRealtime_Quality | aiProcess_ConvertToLeftHanded));
-	}
-	//_curScene = importer.ReadFile( m_ModelPath, aiProcess_Triangulate | aiProcess_GenSmoothNormals );
-
+		return false;
+	
 	bool ret = false;
 	// If the import failed, report it
-	if (myAnimations[myCurAnimIndex])
+	if (myAnimations[myAnim0Index])
 	{
-		myGlobalInverseTransform = myAnimations[myCurAnimIndex]->mRootNode->mTransformation;
+		myGlobalInverseTransform = myAnimations[myAnim0Index]->mRootNode->mTransformation;
 		myGlobalInverseTransform.Inverse();
-		ret = InitFromScene(myAnimations[myCurAnimIndex]);
+		ret = InitFromScene(myAnimations[myAnim0Index]);
 		// Now we can access the file's contents.
 		logInfo("Import of _curScene " + anFBXFilePath + " succeeded.");
 	}
 	else
 	{
-		logInfo(myAnimationScenes[myCurAnimIndex]->GetErrorString());
+		logInfo(importer.GetErrorString());
 	}
+// Quick test that gave no noticable result 2021 02 01
+	//delete myAnimations[myAnim0Index]->mMeshes;
+	//myAnimations[myAnim0Index]->mMeshes = nullptr;
+	//delete myAnimations[myAnim0Index]->mMaterials;
+	//myAnimations[myAnim0Index]->mMaterials = nullptr;
+	//delete myAnimations[myAnim0Index]->mTextures;
+	//myAnimations[myAnim0Index]->mTextures = nullptr;
 
 	// We're done. Everything will be cleaned up by the importer destructor
 	return ret;
@@ -83,32 +91,43 @@ bool CAnimationController::ImportAnimation(const std::string& fileName)
 	// Check if file exists
 	std::ifstream fin(fileName.c_str());
 	if (!fin.fail())
-	{
 		fin.close();
-	}
 	else
 	{
 		MessageBoxA(NULL, ("Couldn't open file: " + fileName).c_str(), "ERROR", MB_OK | MB_ICONEXCLAMATION);
 		return false;
 	}
 
-	myCurAnimIndex = static_cast<int>(myAnimationScenes.size());
-	myAnimationScenes.emplace_back(new Assimp::Importer);
-	myAnimations.emplace_back(myAnimationScenes[myCurAnimIndex]->ReadFile(fileName, aiProcessPreset_TargetRealtime_Quality | aiProcess_ConvertToLeftHanded));
+	Assimp::Importer importer;
+
+	myAnim0Index = static_cast<int>(myAnimations.size());
+	if(importer.ReadFile(fileName, aiProcessPreset_TargetRealtime_Quality | aiProcess_ConvertToLeftHanded))
+		myAnimations.emplace_back(importer.GetOrphanedScene());
+	else
+		return false;
 
 	// If the import failed, report it
-	if (!myAnimations[myCurAnimIndex])
+	if (!myAnimations[myAnim0Index])
 	{
-		logInfo(myAnimationScenes[myCurAnimIndex]->GetErrorString());
+		logInfo(importer.GetErrorString());
 		return false;
 	}
+
+// Quick test that gave no noticable result 2021 02 01
+	//delete myAnimations[myAnim0Index]->mMeshes;
+	//myAnimations[myAnim0Index]->mMeshes = nullptr;
+	//delete myAnimations[myAnim0Index]->mMaterials;
+	//myAnimations[myAnim0Index]->mMaterials = nullptr;
+	//delete myAnimations[myAnim0Index]->mTextures;
+	//myAnimations[myAnim0Index]->mTextures = nullptr;
+
 	return true;
 }
 
 bool CAnimationController::InitFromScene(const aiScene* pScene)
 {
-	myAnimationTimePrev = 0.0f;
-	myAnimationTimeCurrent = 0.0f;
+	myAnimationTime0 = 0.0f;
+	myAnimationTime1 = 0.0f;
 
 	myEntries.resize(pScene->mNumMeshes);
 
@@ -307,50 +326,35 @@ void CAnimationController::SetBoneTransforms(std::vector<aiMatrix4x4>& aTransfor
 	aiMatrix4x4 Identity;// Used for ReadNodeHierarchy
 	InitIdentityM4(Identity);
 
-	if (myBlendingTime > 0.f)// There are 2 animations that we are blending between
+	if (myBlendingTime > 0.f)
 	{
-	// Animation time for the first anim ( 0 ) (Previous?)
 		// Ticks == Frames
-		float TicksPerSecond = 
-			static_cast<float>(myAnimations[myPrevAnimIndex]->mAnimations[0]->mTicksPerSecond) != 0 
-			? 
-			static_cast<float>(myAnimations[myPrevAnimIndex]->mAnimations[0]->mTicksPerSecond) : 25.0f;
+		float ticksPerSecond = static_cast<float>(myAnimations[myAnim0Index]->mAnimations[0]->mTicksPerSecond);
+		ticksPerSecond = ticksPerSecond != 0 ? ticksPerSecond : TEMP_FRAMES_PER_SECOND;
 		
-		// How many frames are we into the animation?
-		float TimeInTicks = myAnimationTimePrev * TicksPerSecond;
-		// Where are we in the animation, on which frame?
-		float AnimationTime0 = fmodf(TimeInTicks, static_cast<float>(myAnimations[myPrevAnimIndex]->mAnimations[0]->mDuration));
-	// !  Animation time for the first anim ( 0 )
+		float timeInTicks = myAnimationTime0 * ticksPerSecond;
+		float animationTime0 = fmodf(timeInTicks, static_cast<float>(myAnimations[myAnim0Index]->mAnimations[0]->mDuration));
 		
-	// Animation time for the second anim ( 1 ) (Current?)
-		TicksPerSecond = 
-			static_cast<float>(myAnimations[myCurAnimIndex]->mAnimations[0]->mTicksPerSecond) != 0 
-			?
-			static_cast<float>(myAnimations[myCurAnimIndex]->mAnimations[0]->mTicksPerSecond) : 25.0f;
+		ticksPerSecond = static_cast<float>(myAnimations[myAnim1Index]->mAnimations[0]->mTicksPerSecond);
+		ticksPerSecond = ticksPerSecond != 0 ? ticksPerSecond : TEMP_FRAMES_PER_SECOND;
 		
-		TimeInTicks = myAnimationTimeCurrent * TicksPerSecond;
-		float AnimationTime1 = fmodf(TimeInTicks, static_cast<float>(myAnimations[myCurAnimIndex]->mAnimations[0]->mDuration));
-	// ! Animation time for the second anim ( 1 )
+		timeInTicks = myAnimationTime1 * ticksPerSecond;
+		float animationTime1 = fmodf(timeInTicks, static_cast<float>(myAnimations[myAnim1Index]->mAnimations[0]->mDuration));
 		
-		ReadNodeHeirarchy(	myAnimations[myPrevAnimIndex], myAnimations[myCurAnimIndex]
-						  , AnimationTime0, AnimationTime1
-						  , myAnimations[myPrevAnimIndex]->mRootNode, myAnimations[myCurAnimIndex]->mRootNode
+		ReadNodeHeirarchy(	myAnimations[myAnim1Index], myAnimations[myAnim0Index]
+						  , animationTime0, animationTime1
+						  , myAnimations[myAnim1Index]->mRootNode, myAnimations[myAnim0Index]->mRootNode
 						  , Identity, 2);//stopAnimLevel=2
 	}
-	else// There is only one animation to play. No blending.
+	else
 	{
-		float AnimationTime = 0.0f;
-		if (myAnimations[myCurAnimIndex]->mAnimations)
-		{
-			float TicksPerSecond = 
-				static_cast<float>(myAnimations[myCurAnimIndex]->mAnimations[0]->mTicksPerSecond) != 0 
-				? 
-				static_cast<float>(myAnimations[myCurAnimIndex]->mAnimations[0]->mTicksPerSecond) : 25.0f;
-			float TimeInTicks = myAnimationTimePrev * TicksPerSecond;
-			AnimationTime = fmodf(TimeInTicks, static_cast<float>(myAnimations[myCurAnimIndex]->mAnimations[0]->mDuration));
-		}
+		float ticksPerSecond = static_cast<float>(myAnimations[myAnim0Index]->mAnimations[0]->mTicksPerSecond);
+		ticksPerSecond = ticksPerSecond != 0 ? ticksPerSecond : TEMP_FRAMES_PER_SECOND;
 
-		ReadNodeHeirarchy(myAnimations[myCurAnimIndex], AnimationTime, myAnimations[myCurAnimIndex]->mRootNode, Identity, 2);
+		float TimeInTicks = myAnimationTime0 * ticksPerSecond;
+		float AnimationTime = fmodf(TimeInTicks, static_cast<float>(myAnimations[myAnim0Index]->mAnimations[0]->mDuration));
+
+		ReadNodeHeirarchy(myAnimations[myAnim0Index], AnimationTime, myAnimations[myAnim0Index]->mRootNode, Identity, 2);//stopAnimLevel=2
 	}
 
 	aTransformsVector.resize(myNumOfBones);
@@ -363,52 +367,50 @@ void CAnimationController::SetBoneTransforms(std::vector<aiMatrix4x4>& aTransfor
 
 void CAnimationController::UpdateAnimationTimes()
 {
-	float dt = CTimer::Dt() * 50.0f;
+	float dt = CTimer::Dt() * TEMP_FRAMES_PER_SECOND;
 
-	myAnimationTimePrev += dt;
+	myAnimationTime0 += dt;
 	if (myBlendingTime > 0.f)
 	{
 		myBlendingTime -= dt * myBlendingTimeMul;
 		if (myBlendingTime <= 0.f)
 		{
-			myAnimationTimePrev = myAnimationTimeCurrent;
+			myAnimationTime0 = myAnimationTime1;
 		}
 		if (myUpdateBoth)
 		{
-			myAnimationTimeCurrent += dt;
+			myAnimationTime1 += dt;
 		}
 	}
 	else
 	{
-		myAnimationTimeCurrent += dt;
+		myAnimationTime1 += dt;
 	}
 
-	if (myTemporary)
+	if (myTemporary)// If the animation was temporary, return to the previous animation after the playtime is over
 	{
 		myPlayTime -= dt;
 		if (myPlayTime <= 0.f)
 		{
 			myTemporary = false;
-			SetAnimIndex(myPrevAnimIndex);
+			BlendToAnimation(myAnim1Index);
 		}
 	}
 }
 
-bool CAnimationController::SetAnimIndex(uint index, bool updateBoth, float blendDuration, bool temporary, float time)
+void CAnimationController::BlendToAnimation(uint anAnimationIndex, bool anUpdateBoth, float aBlendDuration, bool aTemporary, float aTime)
 {
-	if (index == static_cast<uint>(myCurAnimIndex) || index >= static_cast<uint>(myAnimations.size()))
-	{
-		return false;
-	}
-	myPrevAnimIndex = myCurAnimIndex;
-	myCurAnimIndex = index;
-	myBlendingTime = blendDuration;
-	myBlendingTimeMul = blendDuration > 0.0f ? 1.0f / blendDuration : 1.0f;
-	myAnimationTimeCurrent = 0.f;
-	myUpdateBoth = updateBoth;
-	myTemporary = temporary;
-	myPlayTime = time;
-	return true;
+	if (AnimationIndexWithinRange(anAnimationIndex))
+		return;
+
+	myAnim1Index = myAnim0Index;
+	myAnim0Index = anAnimationIndex;
+	myBlendingTime = aBlendDuration;
+	myBlendingTimeMul = aBlendDuration > 0.0f ? 1.0f / aBlendDuration : 1.0f;
+	myAnimationTime1 = 0.f;
+	myUpdateBoth = anUpdateBoth;
+	myTemporary = aTemporary;
+	myPlayTime = aTime;
 }
 
 bool CAnimationController::SetBlendTime(float aTime)
@@ -426,3 +428,106 @@ bool CAnimationController::IsDoneBlending()
 {
 	return myBlendingTime <= 0.0f;
 }
+
+const float CAnimationController::AnimationDuration(uint anIndex)
+{
+	if (AnimationIndexWithinRange(anIndex))
+		return (float)myAnimations[anIndex]->mAnimations[0]->mDuration;
+	return 0.0f;
+}
+
+const float CAnimationController::Animation0Duration()
+{
+	return (float)myAnimations[myAnim0Index]->mAnimations[0]->mDuration;
+}
+
+const float CAnimationController::Animation1Duration()
+{
+	return (float)myAnimations[myAnim1Index]->mAnimations[0]->mDuration;
+}
+
+bool CAnimationController::AnimationIndexWithinRange(uint anIndex)
+{
+	return anIndex == myAnim0Index || anIndex >= static_cast<uint>(myAnimations.size());
+}
+
+
+/*
+/////////////////////////////////////////////////////////////////////////////////////////
+// BACKUP OF OLD IMPORTING FUNCTIONS (using std::vector<Assimp::Importer*> myImportes //
+///////////////////////////////////////////////////////////////////////////////////////
+
+bool CAnimationController::ImportRig(const std::string& anFBXFilePath)
+{
+if (anFBXFilePath.length() <= 0)
+return false;
+
+// Check if file exists
+std::ifstream fIn(anFBXFilePath.c_str());
+if (!fIn.fail())
+{
+fIn.close();
+}
+else
+{
+MessageBoxA(NULL, ("Couldn't open file: " + anFBXFilePath).c_str(), "ERROR", MB_OK | MB_ICONEXCLAMATION);
+return false;
+}
+
+myAnim0Index = static_cast<int>(myImporters.size());
+myImporters.emplace_back(new Assimp::Importer);
+
+if (ModelExceptionTools::IsDestructibleModel(anFBXFilePath))
+{
+int qualityFlags = aiProcessPreset_TargetRealtime_Quality;
+myAnimations.push_back(myImporters[myAnim0Index]->ReadFile(anFBXFilePath, (qualityFlags ^= (int)aiProcess_JoinIdenticalVertices) | aiProcess_ConvertToLeftHanded));
+}
+else
+{
+myAnimations.push_back(myImporters[myAnim0Index]->ReadFile(anFBXFilePath, aiProcessPreset_TargetRealtime_Quality | aiProcess_ConvertToLeftHanded));
+}
+
+bool ret = false;
+// If the import failed, report it
+if (myAnimations[myAnim0Index])
+{
+myGlobalInverseTransform = myAnimations[myAnim0Index]->mRootNode->mTransformation;
+myGlobalInverseTransform.Inverse();
+ret = InitFromScene(myAnimations[myAnim0Index]);
+// Now we can access the file's contents.
+logInfo("Import of _curScene " + anFBXFilePath + " succeeded.");
+}
+else
+{
+logInfo(myImporters[myAnim0Index]->GetErrorString());
+}
+
+// We're done. Everything will be cleaned up by the importer destructor
+return ret;
+}
+
+bool CAnimationController::ImportAnimation(const std::string& fileName)
+{
+// Check if file exists
+std::ifstream fin(fileName.c_str());
+if (!fin.fail())
+fin.close();
+else
+{
+MessageBoxA(NULL, ("Couldn't open file: " + fileName).c_str(), "ERROR", MB_OK | MB_ICONEXCLAMATION);
+return false;
+}
+
+myAnim0Index = static_cast<int>(myImporters.size());
+myImporters.emplace_back(new Assimp::Importer);
+myAnimations.emplace_back(myImporters[myAnim0Index]->ReadFile(fileName, aiProcessPreset_TargetRealtime_Quality | aiProcess_ConvertToLeftHanded));
+
+// If the import failed, report it
+if (!myAnimations[myAnim0Index])
+{
+logInfo(myImporters[myAnim0Index]->GetErrorString());
+return false;
+}
+return true;
+}
+*/

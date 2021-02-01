@@ -9,6 +9,7 @@
 
 CAnimationComponent::CAnimationComponent(CGameObject& aParent, const std::string& aModelFilePath, std::vector<std::string>& someAnimationPaths)
 	: CBehaviour(aParent)
+	, myShouldUseLerp(false)
 {
 	myController = new CAnimationController();
 	myController->ImportRig(aModelFilePath);
@@ -17,6 +18,7 @@ CAnimationComponent::CAnimationComponent(CGameObject& aParent, const std::string
 		myController->ImportAnimation(s);
 	}
 
+// Used in SP6, optional to keep. Saves Id in vector using CStringID (int + _Debug::string).
 	//myAnimationIds.reserve(someAnimationPaths.size());
 	//for (auto& str : someAnimationPaths)
 	//{
@@ -49,30 +51,26 @@ void CAnimationComponent::OnEnable()
 void CAnimationComponent::OnDisable()
 {}
 
-const float CAnimationComponent::GetCurrentAnimationPercent()
+void CAnimationComponent::BlendLerpBetween(int anAnimationIndex0, int anAnimationIndex1, float aBlendLerp)
 {
-	return myController->CurrentAnimationTimePercent();
-}
-const float CAnimationComponent::GetCurrentAnimationDuration()
-{
-	return myController->CurrentAnimationDuration();
-}
-
-const float CAnimationComponent::GetCurrentAnimationTicksPerSecond()
-{
-	return myController->CurrentAnimationTicksPerSecond();
+	myAnimationBlend.myFirst		= anAnimationIndex0;
+	myAnimationBlend.mySecond		= anAnimationIndex1;
+	myAnimationBlend.myBlendLerp	= aBlendLerp;
+	myController->Animation0Index(anAnimationIndex0);
+	myController->Animation1Index(anAnimationIndex1);
+	myController->SetBlendTime(aBlendLerp);
+	myShouldUseLerp = true;
 }
 
-void CAnimationComponent::GetAnimatedBlendTransforms(SlimMatrix44 * transforms)
+void CAnimationComponent::BlendToAnimation(unsigned int anAnimationIndex, float aBlendDuration, bool anUpdateBoth, bool aTemporary, float aTime)
 {
-	BoneTransformsWithBlend(transforms, myBlend.myBlendLerp);
+	myController->BlendToAnimation(anAnimationIndex, anUpdateBoth, aBlendDuration, aTemporary, aTime);
+	myShouldUseLerp = false;
 }
 
-void CAnimationComponent::SetBlend(int anAnimationIndex, int anAnimationIndexTwo, float aBlend)
+void CAnimationComponent::BlendLerp(float aLerpValue)
 {
-	myBlend.myFirst		= anAnimationIndex;
-	myBlend.mySecond	= anAnimationIndexTwo;
-	myBlend.myBlendLerp = aBlend;
+	myAnimationBlend.myBlendLerp = aLerpValue > 1.0f ? 1.0f : aLerpValue < 0.0f ? 0.0f : aLerpValue;
 }
 
 void CAnimationComponent::SetBonesToIdentity()
@@ -84,20 +82,14 @@ void CAnimationComponent::SetBonesToIdentity()
 }
 void CAnimationComponent::UpdateBlended()
 {
-	BlendStep();
+	myController->UpdateAnimationTimes();
 	SetBonesToIdentity();
-	GetAnimatedBlendTransforms(myBones.data());
-}
 
-void CAnimationComponent::BoneTransformsWithBlend(SlimMatrix44* Transforms, float aBlendFactor)
-{
+	//Calling SetBlendTime here causes AnimCtrl::myBlendTime to be used for lerping.
+	if(myShouldUseLerp)
+		myController->SetBlendTime(myAnimationBlend.myBlendLerp);
+
 	std::vector<aiMatrix4x4> trans;
 	myController->SetBoneTransforms(trans);
-	myController->SetBlendTime(aBlendFactor);
-	memcpy(&Transforms[0], &trans[0], (sizeof(float) * 16) * trans.size());
-}
-
-void CAnimationComponent::BlendStep()
-{
-	myController->UpdateAnimationTimes();
+	memmove(myBones.data(), &trans[0], (sizeof(float) * 16) * trans.size());//was memcpy
 }

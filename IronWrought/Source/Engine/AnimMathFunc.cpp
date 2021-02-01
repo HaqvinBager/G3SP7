@@ -29,7 +29,7 @@ uint FindRotation(float AnimationTime, const aiNodeAnim* pNodeAnim)
 			return i;
 		}
 	}
-// This is an 'ugly-fix' for if the animations that are being played have incorrect conections
+// This is an 'ugly-fix'
 // In short: bypasses the error by returning the last working key
 	return pNodeAnim->mNumRotationKeys - 2;
 
@@ -76,7 +76,7 @@ uint FindScaling(float AnimationTime, const aiNodeAnim* pNodeAnim)
 		}
 	}
 
-// This is an 'ugly-fix' for if the animations that are being played have incorrect conections
+// This is an 'ugly-fix'
 // In short: bypasses the error by returning the last working key
 	return pNodeAnim->mNumScalingKeys - 2;
 	
@@ -122,7 +122,7 @@ uint FindPosition(float AnimationTime, const aiNodeAnim* pNodeAnim)
 		}
 	}
 
-// This is an 'ugly-fix' for if the animations that are being played have incorrect conections
+// This is an 'ugly-fix'
 // In short: bypasses the error by returning the last working key
 	return pNodeAnim->mNumPositionKeys - 2;
 	

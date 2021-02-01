@@ -4,20 +4,19 @@
 #include "SimpleMath.h"
 #include "ModelMath.h"
 
-//class SceneAnimator;
 class CAnimationController;
 
 struct SAnimationBlend
 {
 	int myFirst = 1;
 	int mySecond = 1;
-	float myBlendLerp = 0.0f;
+	float myBlendLerp = 10.0f;
 };
 
 class CGameObject;
 class CAnimationComponent : public CBehaviour
 {
-public:
+public:// Component/ Behaviour inherited
 	CAnimationComponent(CGameObject& aParent, const std::string& aModelFilePath, std::vector<std::string>& someAnimationPaths);
 	~CAnimationComponent() override;
 
@@ -29,76 +28,80 @@ public:
 	void OnDisable() override;
 
 public:
-	const float GetCurrentAnimationPercent();
-	const float GetCurrentAnimationDuration();
-	const float GetCurrentAnimationTicksPerSecond();
-
 	std::array<SlimMatrix44, 64> GetBones() { return myBones; }
-	void GetAnimatedBlendTransforms(SlimMatrix44* transforms);
 
-// TEMP
-	CAnimationController* GetController() { return myController; }
-// !TEMP
+	void BlendLerpBetween(int anAnimationIndex0, int anAnimationIndex1, float aBlendLerp);
+	void BlendToAnimation(unsigned int anAnimationIndex, float aBlendDuration = 0.3f, bool anUpdateBoth = true, bool aTemporary = false, float aTime = 0.0f);
+	void ToggleUseLerp(bool shouldUseLerp) { myShouldUseLerp = shouldUseLerp; }
+	void BlendLerp(float aLerpValue);
+
 public:
-	const float GetBlendLerp() const { return myBlend.myBlendLerp; }
-
-private:// CAnimation functions
-	void BoneTransformsWithBlend(SlimMatrix44* Transforms, float aBlendFactor);
-	void BlendStep();
+	const float GetBlendLerp() const { return myAnimationBlend.myBlendLerp; }
 
 private:
 	void SetBonesToIdentity();
 	void UpdateBlended();
-	void SetBlend(int anAnimationIndex, int anAnimationIndexTwo, float aBlend);
 
 private:
+	bool myShouldUseLerp;
 	CAnimationController* myController;
+	SAnimationBlend myAnimationBlend;
 	std::array<SlimMatrix44, 64> myBones { };
-	SAnimationBlend myBlend;
-	std::vector<CStringID> myAnimationIds;
 
-private: // Needed for template functions
+// Used in SP6, optional to keep. Saves Id in vector using CStringID (int + _Debug::string).
+	//std::vector<CStringID> myAnimationIds;
+
+//////////////////////////////////////////
+// Helper functions for myAnimationIds //
+////////////////////////////////////////
+/*
+private:
 	// This works if the ids are in a sorted list. But if the animations are added at random to the project the ids aren't sorted, making this function unsafe.
-	bool WithinIDRange(const int anID)
-	{
-		return (anID <= myAnimationIds.back().ID() && anID >= myAnimationIds.front().ID()); 
-	}
+	//bool WithinIDRange(const int anID)
+	//{
+	//	return (anID <= myAnimationIds.back().ID() && anID >= myAnimationIds.front().ID()); 
+	//}
 
 	// Goes through std::vector myAnimationID: returns true if it finds the id within the list.
-	bool HasID(const int anID)
-	{
-		for (auto& id : myAnimationIds)
-		{
-			if (id.ID() == anID)
-			{
-				return true;
-			}
-		}
-		return false;
-	}
+	//bool HasID(const int anID)
+	//{
+	//	for (auto& id : myAnimationIds)
+	//	{
+	//		if (id.ID() == anID)
+	//		{
+	//			return true;
+	//		}
+	//	}
+	//	return false;
+	//}
 
 	// This works if the ids are in a sorted list. Uses first abs(id - anID) +1. Unsafe.
-	const int GetIndexFromID(const int anID)
-	{
-		int index = abs(myAnimationIds[0].ID() - anID ) + 1;
-		return index;
-	}
+	//const int GetIndexFromID(const int anID)
+	//{
+	//	int index = abs(myAnimationIds[0].ID() - anID ) + 1;
+	//	return index;
+	//}
 
 	// Checks for ID withing std::vector myAnimationIds and returns index of ID
-	const int GetIndexFromList(const int anID)
-	{
-		for (int i = 0; i < myAnimationIds.size(); ++i)
-		{
-			if (myAnimationIds[i].ID() == anID)
-			{
-				return i + 1; // Animations inside CAnimation start at 1, 0 is a static civillian/ tpose.
-			}
-		}
-		return 0;
-	}
+	//const int GetIndexFromList(const int anID)
+	//{
+	//	for (int i = 0; i < myAnimationIds.size(); ++i)
+	//	{
+	//		if (myAnimationIds[i].ID() == anID)
+	//		{
+	//			return i + 1; // Animations inside CAnimation start at 1, 0 is a static civillian/ tpose.
+	//		}
+	//	}
+	//	return 0;
+	//}
+////////////////////////////////////////////
+// ! Helper functions for myAnimationIds //
+//////////////////////////////////////////
+*/
 };
 
-#pragma region COMMENTED 2020_11_11 UNUSED, No defintions existed
+#pragma region COMMENTED 2020_11_11 UNUSED, No defintions existed (From TGA Animation project?)
+//class SceneAnimator;
 //public :
 	//void BoneTransform(SlimMatrix44* Transforms); 
 	//void SetAnimator(SceneAnimator* anAnimator) { myAnimator = anAnimator; }	
