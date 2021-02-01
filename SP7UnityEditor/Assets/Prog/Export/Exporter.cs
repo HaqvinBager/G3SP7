@@ -144,7 +144,10 @@ public class Exporter
         SScene sceneObject = new SScene();
         sceneObject.instancedGameobjects = instancedGameObjects.ToArray();
         string jsonGameObject = JsonUtility.ToJson(sceneObject);
-        string savePath = System.IO.Directory.GetCurrentDirectory() + "\\Assets\\Level_Json\\" + aScene.name + ".json";
+        string savePath = System.IO.Directory.GetCurrentDirectory() + "\\Assets\\Generated\\";
+        if (!System.IO.Directory.Exists(savePath))
+            System.IO.Directory.CreateDirectory(savePath);
+        savePath += aScene.name + ".json";
         System.IO.File.WriteAllText(savePath, jsonGameObject);
         AssetDatabase.Refresh();
     }
