@@ -208,6 +208,7 @@
     <ClInclude Include="CNodeTypeMathToRadians.h" />
     <ClInclude Include="CNodeTypePrint.h" />
     <ClInclude Include="CNodeTypeStart.h" />
+    <ClInclude Include="ImGuiLevelSelect.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="ContactReportCallback.h" />
     <ClInclude Include="DeferredRenderer.h" />
@@ -355,6 +356,7 @@
     <ClCompile Include="CNodeTypeMathToRadians.cpp" />
     <ClCompile Include="CNodeTypePrint.cpp" />
     <ClCompile Include="CNodeTypeStart.cpp" />
+    <ClCompile Include="ImGuiLevelSelect.cpp" />
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="ContactReportCallback.cpp" />
     <ClCompile Include="DeferredRenderer.cpp" />

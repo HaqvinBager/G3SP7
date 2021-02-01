@@ -9,7 +9,7 @@
 #include "Engine.h"
 
 namespace SM = DirectX::SimpleMath;
-#define ENGINE_SCALE 0.01f
+//#define ENGINE_SCALE 0.01f
 
 CParticleEmitterComponent::CParticleEmitterComponent(CGameObject& aParent) : CBehaviour(aParent)
 {
@@ -81,7 +81,7 @@ void CParticleEmitterComponent::SetRotation(DirectX::SimpleMath::Vector3 aRotati
 		DirectX::XMConvertToRadians(aRotation.x),
 		DirectX::XMConvertToRadians(aRotation.z)
 	);
-	myTransform *= SM::Matrix::CreateScale(myScale * ENGINE_SCALE);
+	myTransform *= SM::Matrix::CreateScale(myScale);
 	myTransform.Translation(translation);
 }
 
@@ -91,7 +91,7 @@ void CParticleEmitterComponent::SetRotation(DirectX::SimpleMath::Quaternion aQua
 	myTransform = SM::Matrix::CreateFromQuaternion(
 		aQuaternion
 	);
-	myTransform *= SM::Matrix::CreateScale(myScale * ENGINE_SCALE);
+	myTransform *= SM::Matrix::CreateScale(myScale);
 	myTransform.Translation(translation);
 }
 
@@ -108,7 +108,7 @@ void CParticleEmitterComponent::SetScale(float aScale)
 	SM::Quaternion rotation;
 	myTransform.Decompose(scale, rotation, translation);
 	myTransform = SM::Matrix::CreateFromQuaternion(rotation);
-	myTransform *= SM::Matrix::CreateScale(myScale * ENGINE_SCALE);
+	myTransform *= SM::Matrix::CreateScale(myScale);
 	myTransform.Translation(translation);
 }
 
@@ -201,9 +201,9 @@ void CParticleEmitterComponent::SpawnParticles(unsigned int anIndex, DirectX::Si
 		myParticlePools[anIndex].pop();
 		myParticleVertices[anIndex].back().myLifeTime = someParticleData.myParticleLifetime + Random(someParticleData.myLifetimeLowerBound, someParticleData.myLifetimeUpperBound);
 		myParticleVertices[anIndex].back().myPosition = 
-			{ ((someParticleData.myOffsetPosition.x + Random(someParticleData.myOffsetLowerBound.x, someParticleData.myOffsetUpperBound.x)) * (1.0f /ENGINE_SCALE))
-			, ((someParticleData.myOffsetPosition.y + Random(someParticleData.myOffsetLowerBound.y, someParticleData.myOffsetUpperBound.y)) * (1.0f / ENGINE_SCALE))
-			, ((someParticleData.myOffsetPosition.z + Random(someParticleData.myOffsetLowerBound.z, someParticleData.myOffsetUpperBound.z)) * (1.0f / ENGINE_SCALE))
+			{ ((someParticleData.myOffsetPosition.x + Random(someParticleData.myOffsetLowerBound.x, someParticleData.myOffsetUpperBound.x)) * (1.0f))
+			, ((someParticleData.myOffsetPosition.y + Random(someParticleData.myOffsetLowerBound.y, someParticleData.myOffsetUpperBound.y)) * (1.0f))
+			, ((someParticleData.myOffsetPosition.z + Random(someParticleData.myOffsetLowerBound.z, someParticleData.myOffsetUpperBound.z)) * (1.0f))
 			, 1.0f 
 			};
 		myParticleVertices[anIndex].back().myMovement = someParticleData.myParticleStartDirection;

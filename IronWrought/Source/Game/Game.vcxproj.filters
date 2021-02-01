@@ -33,12 +33,6 @@
     <ClInclude Include="UnityFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SceneData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneReader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="InGameState.h">
       <Filter>State Stack</Filter>
     </ClInclude>
@@ -60,6 +54,9 @@
     <ClInclude Include="NavMeshComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BinReader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp">
@@ -75,9 +72,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="UnityFactory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="InGameState.cpp">
@@ -99,6 +93,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="NavMeshComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BinReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
