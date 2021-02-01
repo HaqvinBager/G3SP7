@@ -5,7 +5,7 @@
 #include "VFXBase.h"
 
 namespace SM = DirectX::SimpleMath;
-#define ENGINE_SCALE 0.01f
+//#define ENGINE_SCALE 0.01f
 
 CVFXComponent::CVFXComponent(CGameObject& aParent): CBehaviour(aParent) {
 	SetScale(1.0f);
@@ -31,7 +31,7 @@ void CVFXComponent::Update()
 	DirectX::SimpleMath::Vector3 scale;
 	DirectX::SimpleMath::Quaternion quat;
 	DirectX::SimpleMath::Vector3 translation;
-	GameObject().myTransform->GetMatrix().Decompose(scale, quat, translation);
+	GameObject().myTransform->GetWorldMatrix().Decompose(scale, quat, translation);
 	SetRotation(quat);
 
 	for (unsigned int i = 0; i < myVFXBases.size(); ++i)
@@ -74,7 +74,7 @@ void CVFXComponent::SetRotation(DirectX::SimpleMath::Vector3 aRotation) {
 		DirectX::XMConvertToRadians(aRotation.x),
 		DirectX::XMConvertToRadians(aRotation.z)
 	);
-	myTransform *= SM::Matrix::CreateScale(myScale * ENGINE_SCALE);
+	myTransform *= SM::Matrix::CreateScale(myScale);
 	myTransform.Translation(translation);
 }
 
@@ -84,7 +84,7 @@ void CVFXComponent::SetRotation(DirectX::SimpleMath::Quaternion aQuaternion)
 	myTransform = SM::Matrix::CreateFromQuaternion(
 		aQuaternion
 	);
-	myTransform *= SM::Matrix::CreateScale(myScale * ENGINE_SCALE);
+	myTransform *= SM::Matrix::CreateScale(myScale);
 	myTransform.Translation(translation);
 }
 
@@ -99,7 +99,7 @@ void CVFXComponent::SetScale(float aScale) {
 	SM::Quaternion rotation;
 	myTransform.Decompose(scale, rotation, translation);
 	myTransform = SM::Matrix::CreateFromQuaternion(rotation);
-	myTransform *= SM::Matrix::CreateScale(myScale * ENGINE_SCALE);
+	myTransform *= SM::Matrix::CreateScale(myScale);
 	myTransform.Translation(translation);
 }
 

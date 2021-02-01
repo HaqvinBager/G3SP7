@@ -44,43 +44,19 @@ void CInGameState::Awake(){}
 
 void CInGameState::Start()
 {
-
 	//std::vector<std::string> scenePath;
+	std::string scenePath = "Level_1.json";
 	//scenePath = CFolderUtility::GetFilePathsInFolder(ASSETPATH + "Assets\\Generated\\", ".json");
 	CScene* scene = new CScene();
-
-
-
-	scene->AddPXScene(CMainSingleton::PhysXWrapper().CreatePXScene());
-
-	CGameObject* camera = new CGameObject(0);
-	camera->AddComponent<CCameraComponent>(*camera, 70.0f);
-	camera->AddComponent<CCameraControllerComponent>(*camera, 25.0f);
-	camera->myTransform->Position({0.0f, 1.0f, 0.0f});
-	camera->myTransform->Rotation({0.0f, 0.0f, 0.0f});
-	scene->AddInstance(camera);
-	scene->MainCamera(camera->GetComponent<CCameraComponent>());
-
-	CGameObject* envLight = new CGameObject(1);
-	envLight->AddComponent<CEnviromentLightComponent>(*envLight);
-	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetColor({1.0f,1.0f,1.0f});
-	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetIntensity(1.f);
-	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetDirection({1.0f,0.5f,-1.0f});
-	scene->AddInstance(envLight);
-	scene->EnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight());
-
+	scene = CSceneManager::CreateScene(scenePath);
 	CEngine::GetInstance()->AddScene(myState, scene);
-
 	CEngine::GetInstance()->SetActiveScene(myState);
-
 
 	//CGameObject* chest = new CGameObject(1337);
 	//chest->AddComponent<CModelComponent>(*chest, "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx");
 	//chest->AddComponent<CModelComponent>(*chest, std::string(ASSETPATH + "Assets/3D/Exempel_Modeller/Chest/Particle_Chest.fbx"));
 	//chest->GetComponent<CTransformComponent>()->Position({4.0f,0.0f,0.0f});
-
-
-	TEMP_DeferredRenderingTests(scene);
+	//TEMP_DeferredRenderingTests(scene);
 
 	myExitLevel = false;
 
@@ -119,6 +95,46 @@ void CInGameState::Stop()
 
 void CInGameState::Update()
 {
+	//Vector3 pos = myChest->myTransform->Position();
+	//pos.x += CTimer::Dt();
+	//myChest->myTransform->Position(pos);
+
+	/*if (Input::GetInstance()->IsKeyDown('K'))
+	{
+		Vector3 cubePos = myCube->myTransform->Position();
+		cubePos.z += CTimer::Dt() * 50.0f;
+		myCube->myTransform->Position(cubePos);
+	}
+
+	if (Input::GetInstance()->IsKeyDown('J'))
+	{
+		Vector3 cubePos = myChest->myTransform->Position();
+		cubePos.x -= CTimer::Dt();
+		myChest->myTransform->Position(cubePos);
+	}
+
+	static float rotation = 0;
+	rotation = CTimer::Dt();
+	myCube->myTransform->Rotate({ 0, rotation, 0 });*/
+
+
+	/*static bool hasParent = true;
+	if (Input::GetInstance()->IsKeyPressed('P'))
+	{
+		if (hasParent)
+		{
+			myChest->myTransform->SetParent(nullptr);
+		}
+		else
+		{
+			myChest->myTransform->SetParent(myCube->myTransform);
+		}
+
+		hasParent = !hasParent;
+
+	}*/
+
+
 	CMainSingleton::PhysXWrapper().Simulate();
 	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
 	{
@@ -133,12 +149,14 @@ void CInGameState::Update()
 
 void CInGameState::ReceiveEvent(const EInputEvent aEvent)
 {
-	if (this == myStateStack.GetTop()) {
-		switch (aEvent) {
-		case IInputObserver::EInputEvent::PauseGame:
-			break;
-		default:
-			break;
+	if (this == myStateStack.GetTop())
+	{
+		switch (aEvent)
+		{
+			case IInputObserver::EInputEvent::PauseGame:
+				break;
+			default:
+				break;
 		}
 	}
 }
@@ -155,6 +173,8 @@ void CInGameState::Receive(const SMessage& /*aMessage*/)
 	//	default:break;
 	//}
 }
+
+
 
 void TEMP_DeferredRenderingTests(CScene* scene)
 {
@@ -188,7 +208,7 @@ void TEMP_DeferredRenderingTests(CScene* scene)
 		x -= 1.0f;
 
 		CGameObject* pl = new CGameObject(1789 + i);
-		pl->AddComponent<CPointLightComponent>(*pl, 15.f, SM::Vector3{1,1,1}, 10.f);
+		pl->AddComponent<CPointLightComponent>(*pl, 15.f, SM::Vector3{ 1,1,1 }, 10.f);
 		pl->myTransform->Position({ x, y, -3.0f });
 
 		int thirdRange = numPointLights / 3;
@@ -204,7 +224,7 @@ void TEMP_DeferredRenderingTests(CScene* scene)
 	for (int i = 0; i < 5; ++i)
 	{
 		CGameObject* pl = new CGameObject(9999 + i);
-		pl->AddComponent<CPointLightComponent>(*pl, 10.f, SM::Vector3{1,1,1}, 10.f);
+		pl->AddComponent<CPointLightComponent>(*pl, 10.f, SM::Vector3{ 1,1,1 }, 10.f);
 		pointLights.emplace_back(pl);
 		pl->myTransform->Position({ 0xDEAD, 0xDEAD, 0xDEAD });
 

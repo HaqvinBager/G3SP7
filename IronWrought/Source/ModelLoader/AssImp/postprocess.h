@@ -561,9 +561,9 @@ enum aiPostProcessSteps
     *  AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY from the global property table to configure this.
     *
     *  Use <tt>#AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY</tt> to setup the global scaling factor.
-    */
+    */ 
     aiProcess_GlobalScale = 0x8000000,
-
+    #define AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY 0.01f
     // -------------------------------------------------------------------------
     /** <hr>A postprocessing step to embed of textures.
      *
@@ -616,6 +616,7 @@ enum aiPostProcessSteps
     aiProcess_MakeLeftHanded     | \
     aiProcess_FlipUVs            | \
     aiProcess_FlipWindingOrder   | \
+    aiProcess_GlobalScale        |  \
     0 )
 
 
@@ -640,6 +641,7 @@ enum aiPostProcessSteps
     aiProcess_Triangulate           |  \
     aiProcess_GenUVCoords           |  \
     aiProcess_SortByPType           |  \
+    aiProcess_GlobalScale           |  \
     0 )
 
  // ---------------------------------------------------------------------------------------

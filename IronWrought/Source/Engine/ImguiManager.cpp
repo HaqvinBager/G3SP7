@@ -96,4 +96,3 @@ const std::string CImguiManager::GetDrawCalls()
 	drawCalls.append(std::to_string(CRenderManager::myNumberOfDrawCallsThisFrame));
 	return drawCalls;
 }
-

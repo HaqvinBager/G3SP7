@@ -9,6 +9,15 @@ CModelComponent::CModelComponent(CGameObject& aParent, const std::string& aFBXPa
 	myModelPath = aFBXPath;
 }
 
+CModelComponent::CModelComponent(CGameObject& aParent, const std::string& anFBXPath, const std::string& /*aVertexColorsPath*/) 
+	: CBehaviour(aParent)
+{
+	myModel = CModelFactory::GetInstance()->GetModel(anFBXPath);
+	myModelPath = anFBXPath;
+
+
+}
+
 CModelComponent::~CModelComponent()
 {
 	//SAFE_DELETE(myModel);

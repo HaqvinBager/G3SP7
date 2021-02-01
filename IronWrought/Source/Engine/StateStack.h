@@ -4,7 +4,6 @@
 
 class CState;
 class CStateStack {
-	friend class CShowCase;
 public:
 	enum class EState {
 		InGame,
