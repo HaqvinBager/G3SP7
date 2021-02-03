@@ -9,7 +9,6 @@ class CModelComponent : public CBehaviour
 {
 public:
 	CModelComponent(CGameObject& aParent, const std::string& aFBXPath);
-	CModelComponent(CGameObject& aParent, const std::string& anFBXPath, const std::string& aVertexColorsPath);
 	~CModelComponent() override;
 
 	void Awake() override;
@@ -22,10 +21,16 @@ public:
 
 	void OnEnable() override;
 	void OnDisable() override;
+
+public:
+	const unsigned int VertexPaintColorID() const;
+	const std::vector<std::string>& VertexPaintMaterialNames() const;
+
 private:
 	CModel* myModel;
 	std::string myModelPath;
-	std::vector<DirectX::SimpleMath::Vector3> myVertexColors;
+	std::vector<std::string> myVertexPaintMaterialNames;
+	unsigned int myVertexPaintColorID;
 };
 
 

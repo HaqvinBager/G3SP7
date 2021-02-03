@@ -39,8 +39,8 @@ private:
 		myContext->Unmap(aBuffer, 0);
 	}
 
-	bool CreateVertexShader(std::string aFilepath, CDirectXFramework* aFramework, ID3D11VertexShader* outVertexShader);
-	bool CreatePixelShader(std::string aFilepath, CDirectXFramework* aFramework, ID3D11PixelShader* outPixelShader);
+	bool CreateVertexShader(std::string aFilepath, CDirectXFramework* aFramework, ID3D11VertexShader** outVertexShader);
+	bool CreatePixelShader(std::string aFilepath, CDirectXFramework* aFramework, ID3D11PixelShader** outPixelShader);
 
 private:
 	struct SFrameBufferData
@@ -78,13 +78,18 @@ private:
 	ID3D11Buffer* myObjectBuffer;
 	ID3D11Buffer* myLightBuffer;
 	ID3D11Buffer* myPointLightBuffer;
+	ID3D11InputLayout* myVertexPaintInputLayout;
 	ID3D11VertexShader* myFullscreenShader;
 	ID3D11VertexShader* myModelVertexShader;
+	ID3D11VertexShader* myVertexPaintModelVertexShader;
 	ID3D11VertexShader* myInstancedModelVertexShader;
 	ID3D11PixelShader* myGBufferPixelShader;
+	ID3D11PixelShader* myVertexPaintPixelShader;
 	ID3D11PixelShader* myEnvironmentLightShader;
 	ID3D11PixelShader* myPointLightShader;
 	ID3D11SamplerState* mySamplerState;
+
+	//std::array<ID3D11ShaderResourceView*, 12> myVertexPaintMaterials;
 
 	std::vector<ID3D11PixelShader*> myRenderPassShaders;
 	ID3D11PixelShader* myCurrentRenderPassShader;

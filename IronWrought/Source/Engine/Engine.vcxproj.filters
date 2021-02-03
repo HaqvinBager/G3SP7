@@ -139,6 +139,12 @@
     <FxCompile Include="DeferredRenderPassShader_Roughness.hlsl">
       <Filter>Shaders\Deferred Render Passes</Filter>
     </FxCompile>
+    <FxCompile Include="DeferredVertexPaintVertexShader.hlsl">
+      <Filter>Shaders\Vertex Paint</Filter>
+    </FxCompile>
+    <FxCompile Include="DeferredVertexPaintPixelShader.hlsl">
+      <Filter>Shaders\Vertex Paint</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimationComponent.cpp">
@@ -475,6 +481,15 @@
     </ClCompile>
     <ClCompile Include="NodeTypeMathMax.cpp">
       <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="ImguiManager.cpp">
+      <Filter>Imgui\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGuiLevelSelect.cpp">
+      <Filter>Imgui\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>Engine Core</Filter>
     </ClCompile>
     <ClCompile Include="NodeTypeMathMin.cpp">
       <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
@@ -832,6 +847,12 @@
     <ClInclude Include="Widgets.h">
       <Filter>Imgui\Blueprints</Filter>
     </ClInclude>
+    <ClInclude Include="CGraphManager.h">
+      <Filter>Imgui\Node Editor\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="CNodeInstance.h">
+      <Filter>Imgui\Node Editor\Nodes</Filter>
+    </ClInclude>
     <ClInclude Include="ImguiManager.h">
       <Filter>Imgui\Manager</Filter>
     </ClInclude>
@@ -1140,6 +1161,9 @@
     </Filter>
     <Filter Include="Imgui\Node Editor\Node Editor Managers\NodeType Managers">
       <UniqueIdentifier>{86d033ab-85d5-4320-9d24-b75cab10223b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Vertex Paint">
+      <UniqueIdentifier>{286f625e-fdc4-4c90-8c1a-1a40c07bbbcb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

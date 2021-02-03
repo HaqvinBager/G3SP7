@@ -27,7 +27,6 @@ class CVFXFactory;
 class CLineFactory;
 class CAudioManager;
 class CGraphManager;
-//class CDialogueSystem;
 
 class CEngine
 {
@@ -37,6 +36,7 @@ class CEngine
 	friend class CLightFactory;
 	friend class CRenderManager;
 	friend class CLineFactory;
+	friend class CMaterialHandler;
 
 public:
 	CEngine();
@@ -95,7 +95,6 @@ private:
 	CInputMapper* myInputMapper;
 	CMainSingleton* myMainSingleton;
 	CAudioManager* myAudioManager;
-	//CDialogueSystem* myDialogueSystem;
 
 	CGraphManager* myGraphManager;
 

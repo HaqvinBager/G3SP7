@@ -14,7 +14,7 @@
 CCameraComponent::CCameraComponent(CGameObject& aParent, const float aFoV/*, float aNearPlane, float aFarPlane, DirectX::SimpleMath::Vector2 aResolution*/)
 	: CComponent(aParent)
 {
-	myProjection = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(aFoV), (1600.0f / 900.0f), 10.0f, 10000.0f);
+	myProjection = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(aFoV), (1600.0f / 900.0f), 0.1f, 10000.0f);
 	myView = DirectX::XMMatrixLookAtLH(GameObject().myTransform->Position(), Vector3::Forward, Vector3::Up);
 
 	myTrauma = 0.0f;

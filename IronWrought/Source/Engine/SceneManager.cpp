@@ -94,6 +94,11 @@ CScene* CSceneManager::CreateScene(std::vector<std::string> aJsonFile)
 {
 	CScene* scene = new CScene();
 	for (int i = 0; i < aJsonFile.size(); ++i) {
+		if (aJsonFile[i].find("Level") == aJsonFile[i].npos)
+		{
+			continue;
+		}
+
 		rapidjson::Document document = CJsonReader::LoadDocument(ASSETPATH + "Assets/Generated/" + aJsonFile[i]);
 		auto jsonarray = document["instancedGameobjects"].GetArray();
 		for (auto& jsongameobject : jsonarray) {
@@ -149,7 +154,7 @@ CScene* CSceneManager::CreateScene(std::vector<std::string> aJsonFile)
 
 		CGameObject* camera = new CGameObject(0);
 		camera->AddComponent<CCameraComponent>(*camera, 70.0f);
-		camera->AddComponent<CCameraControllerComponent>(*camera, 25.0f);
+		camera->AddComponent<CCameraControllerComponent>(*camera, 5.0f);
 		camera->myTransform->Position({ 0.0f, 1.0f, 0.0f });
 		camera->myTransform->Rotation({ 0.0f, 0.0f, 0.0f });
 		scene->AddInstance(camera);

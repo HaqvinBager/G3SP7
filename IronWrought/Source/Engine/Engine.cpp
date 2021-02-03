@@ -143,6 +143,7 @@ bool CEngine::Init(CWindowHandler::SWindowData& someWindowData)
 	myWindowHandler->SetInternalResolution();
 	ENGINE_ERROR_BOOL_MESSAGE(myModelFactory->Init(*this), "Model Factory could not be initiliazed.");
 	ENGINE_ERROR_BOOL_MESSAGE(myCameraFactory->Init(myWindowHandler), "Camera Factory could not be initialized.");
+	ENGINE_ERROR_BOOL_MESSAGE(CMainSingleton::MaterialHandler().Init(myFramework), "Material Handler could not be initialized.");
 	myRenderManager = new CRenderManager();
 	ENGINE_ERROR_BOOL_MESSAGE(myRenderManager->Init(myFramework, myWindowHandler), "RenderManager could not be initialized.");
 	ENGINE_ERROR_BOOL_MESSAGE(myLightFactory->Init(*this), "Light Factory could not be initialized.");
@@ -155,7 +156,6 @@ bool CEngine::Init(CWindowHandler::SWindowData& someWindowData)
 
 	ENGINE_ERROR_BOOL_MESSAGE(CMainSingleton::PopupTextService().Init(), "Popup Text Service could not be initialized.");
 	ENGINE_ERROR_BOOL_MESSAGE(CMainSingleton::DialogueSystem().Init(), "Dialogue System could not be initialized.");
-	ENGINE_ERROR_BOOL_MESSAGE(CMainSingleton::MaterialHandler().Init(myFramework), "Material Handler could not be initialized.");
 	InitWindowsImaging();
 
 	return true;

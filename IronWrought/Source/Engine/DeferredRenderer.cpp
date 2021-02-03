@@ -11,6 +11,7 @@
 #include "CameraComponent.h"
 #include "ModelComponent.h"
 #include "InstancedModelComponent.h"
+#include "MaterialHandler.h"
 
 #include <fstream>
 
@@ -104,6 +105,25 @@ bool CDeferredRenderer::Init(CDirectXFramework* aFramework)
 
 	LoadRenderPassPixelShaders(aFramework->GetDevice());
 
+	CreatePixelShader("Shaders/DeferredVertexPaintPixelShader.cso", aFramework, &myVertexPaintPixelShader);
+	//CreateVertexShader("Shaders/DeferredVertexPaintVertexShader.cso", aFramework, &myVertexPaintModelVertexShader);
+	vsFile.open("Shaders/DeferredVertexPaintVertexShader.cso", std::ios::binary);
+	vsData = { std::istreambuf_iterator<char>(vsFile), std::istreambuf_iterator<char>() };
+	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateVertexShader(vsData.data(), vsData.size(), nullptr, &myVertexPaintModelVertexShader), "Vertex Paint Vertex Shader could not be created.");
+	vsFile.close();
+
+	// Vertex Paint input layout
+	D3D11_INPUT_ELEMENT_DESC layout[] =
+	{
+		{"POSITION"	,	0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"NORMAL"	,	0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TANGENT"	,	0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"BINORMAL"	,	0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"UV"		,	0, DXGI_FORMAT_R32G32_FLOAT		 , 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"COLOR"	,	0, DXGI_FORMAT_R32G32B32_FLOAT	 , 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
+	};
+	ENGINE_HR_MESSAGE(aFramework->GetDevice()->CreateInputLayout(layout, sizeof(layout) / sizeof(D3D11_INPUT_ELEMENT_DESC), vsData.data(), vsData.size(), &myVertexPaintInputLayout), "Vertex Paint Input Layout could not be created.");
+
 	D3D11_SAMPLER_DESC samplerDesc = {};
 	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -112,6 +132,23 @@ bool CDeferredRenderer::Init(CDirectXFramework* aFramework)
 	samplerDesc.MinLOD = 0;
 	samplerDesc.MaxLOD = 10;
 	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateSamplerState(&samplerDesc, &mySamplerState), "Sampler could not be created.");
+
+	//auto material1 = CMainSingleton::MaterialHandler().RequestMaterial("tapestry");
+	//auto material2 = CMainSingleton::MaterialHandler().RequestMaterial("woodList");
+	//auto material3 = CMainSingleton::MaterialHandler().RequestMaterial("floor");
+	//auto material4 = CMainSingleton::MaterialHandler().RequestMaterial("Particle_Chest");
+	//myVertexPaintMaterials[0] = material1[0];
+	//myVertexPaintMaterials[1] = material1[1];
+	//myVertexPaintMaterials[2] = material1[2];
+	//myVertexPaintMaterials[3] = material2[0];
+	//myVertexPaintMaterials[4] = material2[1];
+	//myVertexPaintMaterials[5] = material2[2];
+	//myVertexPaintMaterials[6] = material3[0];
+	//myVertexPaintMaterials[7] = material3[1];
+	//myVertexPaintMaterials[8] = material3[2];
+	//myVertexPaintMaterials[9] = material4[0];
+	//myVertexPaintMaterials[10] = material4[1];
+	//myVertexPaintMaterials[11] = material4[2];
 
 	return true;
 }
@@ -136,13 +173,14 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 
 	for (auto& gameObject : aGameObjectList)
 	{
-		if (gameObject->GetComponent<CModelComponent>() == nullptr)
+		CModelComponent* modelComponent = gameObject->GetComponent<CModelComponent>();
+		if (modelComponent == nullptr)
 			continue;
 
-		if (gameObject->GetComponent<CModelComponent>()->GetMyModel() == nullptr)
+		if (modelComponent->GetMyModel() == nullptr)
 			continue;
 
-		CModel* model = gameObject->GetComponent<CModelComponent>()->GetMyModel();
+		CModel* model = modelComponent->GetMyModel();
 		CModel::SModelData modelData = model->GetModelData();
 
 		myObjectBufferData.myToWorld = gameObject->myTransform->GetWorldMatrix();
@@ -163,27 +201,34 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 		myContext->VSSetShader(myModelVertexShader, nullptr, 0);
 
 		myContext->PSSetConstantBuffers(1, 1, &myObjectBuffer);
-		//myContext->PSSetShaderResources(5, 3, &modelData.myTexture[0]);
 		myContext->PSSetShaderResources(8, 4, &modelData.myDetailNormals[0]);
-		//myContext->PSSetShaderResources(9, 3, &modelData.myTexture[0]);		 // Number of textures used has been reduced by 4, slots here are for 8 GBuffer textures
-		//myContext->PSSetShaderResources(12, 4, &modelData.myDetailNormals[0]); // Number of textures used has been reduced by 4, slots here are for 8 GBuffer textures
 
-		// Not necessary, as long as dnCounter is correct, the shader loops through the number of textures there.
-		//for (unsigned int i = 0; i < myObjectBufferData.myNumberOfDetailNormals; ++i)
-		//{
-		//	myContext->PSSetShaderResources(12 + i, 1, &modelData.myDetailNormals[i]);
-		//}
-
-		//myContext->PSSetShader(myGBufferPixelShader, nullptr, 0);
 		myContext->PSSetShader(myCurrentGBufferPixelShader, nullptr, 0);
-
 		myContext->PSSetSamplers(0, 1, &modelData.mySamplerState);
 
+		// Vertex Paint
+		unsigned int vertexColorID = modelComponent->VertexPaintColorID();
 
 		// Render all meshes
 		for (unsigned int i = 0; i < modelData.myMeshes.size(); ++i)
 		{
-			myContext->IASetVertexBuffers(0, 1, &modelData.myMeshes[i].myVertexBuffer, &modelData.myMeshes[i].myStride, &modelData.myMeshes[i].myOffset);
+			if (vertexColorID > 0)
+			{
+				auto vertexPaintMaterials = CMainSingleton::MaterialHandler().GetVertexPaintMaterials(modelComponent->VertexPaintMaterialNames());
+				ID3D11Buffer* vertexColorBuffer = CMainSingleton::MaterialHandler().GetVertexColorBuffer(vertexColorID);
+				UINT stride = sizeof(DirectX::SimpleMath::Vector3);
+				ID3D11Buffer* bufferPointers[2] = { modelData.myMeshes[i].myVertexBuffer, vertexColorBuffer };
+				UINT strides[2] = { modelData.myMeshes[i].myStride, stride };
+				UINT offsets[2] = { 0, 0 };
+				myContext->IASetInputLayout(myVertexPaintInputLayout);
+				myContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
+				myContext->VSSetShader(myVertexPaintModelVertexShader, nullptr, 0);
+				myContext->PSSetShader(myVertexPaintPixelShader, nullptr, 0);
+				myContext->PSSetShaderResources(12, 9, &vertexPaintMaterials[0]/*&myVertexPaintMaterials[0]*/);
+			}
+			else {
+				myContext->IASetVertexBuffers(0, 1, &modelData.myMeshes[i].myVertexBuffer, &modelData.myMeshes[i].myStride, &modelData.myMeshes[i].myOffset);
+			}
 			myContext->IASetIndexBuffer(modelData.myMeshes[i].myIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 			myContext->PSSetShaderResources(5, 3, &modelData.myMaterials[modelData.myMeshes[i].myMaterialIndex][0]);
 			myContext->DrawIndexed(modelData.myMeshes[i].myNumberOfIndices, 0, 0);
@@ -346,22 +391,22 @@ void CDeferredRenderer::Render(CCameraComponent* aCamera, std::vector<CPointLigh
 
 }
 
-bool CDeferredRenderer::CreateVertexShader(std::string aFilepath, CDirectXFramework* aFramework, ID3D11VertexShader* outVertexShader)
+bool CDeferredRenderer::CreateVertexShader(std::string aFilepath, CDirectXFramework* aFramework, ID3D11VertexShader** outVertexShader)
 {
 	std::ifstream vsFile;
 	vsFile.open(aFilepath, std::ios::binary);
 	std::string vsData = { std::istreambuf_iterator<char>(vsFile), std::istreambuf_iterator<char>() };
-	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateVertexShader(vsData.data(), vsData.size(), nullptr, &outVertexShader), "Vertex Shader could not be created.");
+	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateVertexShader(vsData.data(), vsData.size(), nullptr, outVertexShader), "Vertex Shader could not be created.");
 	vsFile.close();
 	return true;
 }
 
-bool CDeferredRenderer::CreatePixelShader(std::string aFilepath, CDirectXFramework* aFramework, ID3D11PixelShader* outPixelShader)
+bool CDeferredRenderer::CreatePixelShader(std::string aFilepath, CDirectXFramework* aFramework, ID3D11PixelShader** outPixelShader)
 {
 	std::ifstream psFile;
 	psFile.open(aFilepath, std::ios::binary);
 	std::string psData = { std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>() };
-	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreatePixelShader(psData.data(), psData.size(), nullptr, &outPixelShader), "Pixel Shader could not be created.");
+	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreatePixelShader(psData.data(), psData.size(), nullptr, outPixelShader), "Pixel Shader could not be created.");
 	psFile.close();
 	return true;
 }
