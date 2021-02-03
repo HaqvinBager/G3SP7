@@ -15,15 +15,6 @@ CImGuiLevelSelect::~CImGuiLevelSelect()
 
 void CImGuiLevelSelect::RenderWindow()
 {
-    //MenuBar Opens this Window?
-
-    /*
-        LoadLevel
-            <Read all Files from Generated Folder>
-    */
-
-    //Access all .json files inside ASSETPATH + Assets/Generated/ Folder
-
     std::vector<std::string> files = CJsonReader::GetFilePathsInFolder(ASSETPATH + "Assets/Generated");
 	ImGui::Begin("LevelSelect");
     if (ImGui::TreeNode("Selection State: Single Selection"))
@@ -34,12 +25,13 @@ void CImGuiLevelSelect::RenderWindow()
             char buf[512];
             sprintf_s(buf, "%s", files[n].c_str());
 
+
             if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
             {
                 std::cout << "Load Level: " << buf << std::endl;
-                //CScene* myUnityScene = CSceneManager::CreateScene(buf);
-                //CEngine::GetInstance()->AddScene(CStateStack::EState::InGame, myUnityScene);
-                //CEngine::GetInstance()->SetActiveScene(CStateStack::EState::InGame);
+                CScene* myUnityScene = CSceneManager::CreateScene(buf);
+                CEngine::GetInstance()->AddScene(CStateStack::EState::InGame, myUnityScene);
+                CEngine::GetInstance()->SetActiveScene(CStateStack::EState::InGame);
             }
 
             if (ImGui::Selectable(buf, selected == n))

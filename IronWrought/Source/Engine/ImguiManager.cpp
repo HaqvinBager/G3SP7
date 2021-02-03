@@ -1,7 +1,9 @@
 #include "stdafx.h"
 #include "ImguiManager.h"
 #include <imgui.h>
-
+#include "Engine.h"
+#include "Scene.h"
+#include "SceneManager.h"
 #pragma comment(lib, "imgui.lib")
 
 #include "RenderManager.h"
@@ -65,6 +67,43 @@ void CImguiManager::DebugWindow()
 	ImGui::End();
 }
 
+void CImguiManager::LevelSelect()
+{
+	//std::vector<std::string> files = CJsonReader::GetFilePathsInFolder(ASSETPATH + "Assets/Generated");
+	ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x - 200, 0));
+	float x = 10.f + ((ImGui::GetFontSize() + 5.5f) * static_cast<float>(myLevelsToSelectFrom.size()));
+	ImGui::SetNextWindowSize({200.f,  x});
+
+	ImGui::Begin("LevelSelect", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+	/*if (ImGui::TreeNodeEx("Selection State: Single Selection", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Leaf))
+	{*/
+		static int selected = -1;
+		for (int n = 0; n < myLevelsToSelectFrom.size(); n++)
+		{
+			char buf[512];
+			sprintf_s(buf, "%s", myLevelsToSelectFrom[n].c_str());
+
+			if (ImGui::Selectable(buf, selected == n, ImGuiSelectableFlags_AllowDoubleClick))
+			{
+				selected = n;
+
+				if (ImGui::IsMouseDoubleClicked(0))
+				{
+					std::cout << "Load Level: " << buf << std::endl;
+					CScene* myUnityScene = CSceneManager::CreateScene(buf);
+					CEngine::GetInstance()->AddScene(CStateStack::EState::InGame, myUnityScene);
+					CEngine::GetInstance()->SetActiveScene(CStateStack::EState::InGame);
+				}
+
+			}
+		}
+	/*	ImGui::TreePop();
+	}*/
+
+
+	ImGui::End();
+}
+
 const std::string CImguiManager::GetSystemMemory()
 {
 	// From TGA2D
@@ -95,4 +134,9 @@ const std::string CImguiManager::GetDrawCalls()
 	std::string drawCalls = "Draw Calls: ";
 	drawCalls.append(std::to_string(CRenderManager::myNumberOfDrawCallsThisFrame));
 	return drawCalls;
+}
+
+void CImguiManager::LevelsToSelectFrom(std::vector<std::string> someLevelsToSelectFrom)
+{
+	myLevelsToSelectFrom = someLevelsToSelectFrom;
 }

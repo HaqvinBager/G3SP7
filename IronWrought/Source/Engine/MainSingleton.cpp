@@ -6,6 +6,7 @@
 #include "PopupTextService.h"
 #include "PhysXWrapper.h"
 #include "MaterialHandler.h"
+#include "ImguiManager.h"
 
 CMainSingleton* CMainSingleton::ourInstance = nullptr;
 
@@ -17,6 +18,7 @@ CMainSingleton::CMainSingleton() {
 	myDialogueSystem = new CDialogueSystem();
 	myPhysXWrapper = new CPhysXWrapper();
 	myMaterialHandler = new CMaterialHandler();
+	myImguiManager = new CImguiManager();
 }
 
 CMainSingleton::~CMainSingleton()
@@ -27,6 +29,7 @@ CMainSingleton::~CMainSingleton()
 	SAFE_DELETE(myDialogueSystem);
 	SAFE_DELETE(myPhysXWrapper);
 	SAFE_DELETE(myMaterialHandler);
+	SAFE_DELETE(myImguiManager);
 	ourInstance = nullptr;
 }
 
@@ -58,4 +61,9 @@ CPhysXWrapper& CMainSingleton::PhysXWrapper()
 CMaterialHandler& CMainSingleton::MaterialHandler()
 {
 	return *ourInstance->myMaterialHandler;
+}
+
+CImguiManager& CMainSingleton::ImguiManager()
+{
+	return *ourInstance->myImguiManager;
 }

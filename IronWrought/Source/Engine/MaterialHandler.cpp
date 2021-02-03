@@ -33,9 +33,14 @@ void CMaterialHandler::ReleaseMaterial(const std::string& aMaterialName)
 			ULONG remainingRefs = 0;
 			do
 			{
-				myMaterials[aMaterialName][0].Get()->Release();
-				myMaterials[aMaterialName][1].Get()->Release();
-				remainingRefs = myMaterials[aMaterialName][2].Get()->Release();
+				if (myMaterials[aMaterialName][0].Get())
+					myMaterials[aMaterialName][0].Get()->Release();
+				if (myMaterials[aMaterialName][1].Get())
+					myMaterials[aMaterialName][1].Get()->Release();
+				if (myMaterials[aMaterialName][2].Get())
+					remainingRefs = myMaterials[aMaterialName][2].Get()->Release();
+				else
+					remainingRefs = 0;
 			} while (remainingRefs > 1);
 
 			myMaterials.erase(aMaterialName);

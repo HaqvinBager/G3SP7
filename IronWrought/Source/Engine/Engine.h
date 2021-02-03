@@ -26,7 +26,6 @@ class CForwardRenderer;
 class CVFXFactory;
 class CLineFactory;
 class CAudioManager;
-class CImguiManager;
 class CGraphManager;
 //class CDialogueSystem;
 
@@ -98,7 +97,6 @@ private:
 	CAudioManager* myAudioManager;
 	//CDialogueSystem* myDialogueSystem;
 
-	CImguiManager* myImguiManager;
 	CGraphManager* myGraphManager;
 
 	bool myRenderSceneActive = false;
