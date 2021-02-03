@@ -111,7 +111,7 @@ public class Exporter
 
         {
 
-            string fbxPath = AssetDatabase.GetAssetPath(PrefabUtility.GetCorrespondingObjectFromOriginalSource(allrenderers[i].GetComponent<Renderer>()));
+            string fbxPath = AssetDatabase.GetAssetPath(PrefabUtility.GetCorrespondingObjectFromOriginalSource(allrenderers[i].GetComponent<MeshFilter>().sharedMesh));
 
             if (!fbxPathGameObjectMap.ContainsKey(fbxPath))
             {
