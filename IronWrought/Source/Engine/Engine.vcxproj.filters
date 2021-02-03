@@ -139,6 +139,12 @@
     <FxCompile Include="DeferredRenderPassShader_Roughness.hlsl">
       <Filter>Shaders\Deferred Render Passes</Filter>
     </FxCompile>
+    <FxCompile Include="DeferredVertexPaintVertexShader.hlsl">
+      <Filter>Shaders\Vertex Paint</Filter>
+    </FxCompile>
+    <FxCompile Include="DeferredVertexPaintPixelShader.hlsl">
+      <Filter>Shaders\Vertex Paint</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimationComponent.cpp">
@@ -394,10 +400,7 @@
       <Filter>Renderers</Filter>
     </ClCompile>
     <ClCompile Include="SceneManager.cpp">
-     <Filter>Engine Core</Filter>
-	</ClCompile>
-    <ClCompile Include="..\Includes\Imgui\imgui.cpp">
-      <Filter>Imgui\Core</Filter>
+      <Filter>Engine Core</Filter>
     </ClCompile>
     <ClCompile Include="ImguiManager.cpp">
       <Filter>Imgui\Manager</Filter>
@@ -458,7 +461,7 @@
     </ClCompile>
     <ClCompile Include="CNodeTypeMathMax.cpp">
       <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
-	</ClCompile>
+    </ClCompile>
     <ClCompile Include="ImguiManager.cpp">
       <Filter>Imgui\Manager</Filter>
     </ClCompile>
@@ -466,7 +469,7 @@
       <Filter>Imgui\Manager</Filter>
     </ClCompile>
     <ClCompile Include="SceneManager.cpp">
-          <Filter>Engine Core</Filter>
+      <Filter>Engine Core</Filter>
     </ClCompile>
     <ClCompile Include="CNodeTypeMathMin.cpp">
       <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
@@ -812,9 +815,6 @@
     </ClInclude>
     <ClInclude Include="SceneManager.h">
       <Filter>Engine Core</Filter>
-	  </ClInclude>
-    <ClInclude Include="..\Includes\Imgui\imgui.h">
-      <Filter>Imgui\Core</Filter>
     </ClInclude>
     <ClInclude Include="FolderUtility.h">
       <Filter>Utility</Filter>
@@ -839,7 +839,7 @@
     </ClInclude>
     <ClInclude Include="CNodeInstance.h">
       <Filter>Imgui\Node Editor\Nodes</Filter>
-	  </ClInclude>
+    </ClInclude>
     <ClInclude Include="ImguiManager.h">
       <Filter>Imgui\Manager</Filter>
     </ClInclude>
@@ -847,7 +847,7 @@
       <Filter>Imgui\Manager</Filter>
     </ClInclude>
     <ClInclude Include="SceneManager.h">
-          <Filter>Engine Core</Filter>
+      <Filter>Engine Core</Filter>
     </ClInclude>
     <ClInclude Include="CNodeType.h">
       <Filter>Imgui\Node Editor\Nodes\Base Library\Base Type</Filter>
@@ -1135,6 +1135,9 @@
     </Filter>
     <Filter Include="Shaders\Deferred Render Passes">
       <UniqueIdentifier>{4e1a5e39-8e5c-4cda-9552-2d86c85c158e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Vertex Paint">
+      <UniqueIdentifier>{286f625e-fdc4-4c90-8c1a-1a40c07bbbcb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

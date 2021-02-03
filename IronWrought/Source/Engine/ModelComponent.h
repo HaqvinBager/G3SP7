@@ -23,12 +23,14 @@ public:
 	void OnDisable() override;
 
 public:
-	const unsigned int VertexColorID() const; 
+	const unsigned int VertexPaintColorID() const;
+	const std::vector<std::string>& VertexPaintMaterialNames() const;
 
 private:
 	CModel* myModel;
 	std::string myModelPath;
-	unsigned int myVertexColorID;
+	std::vector<std::string> myVertexPaintMaterialNames;
+	unsigned int myVertexPaintColorID;
 };
 
 

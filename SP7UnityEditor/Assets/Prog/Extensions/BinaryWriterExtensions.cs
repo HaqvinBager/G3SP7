@@ -47,6 +47,21 @@ public static class BinaryWriterExtensions
     }
 
     /// <summary>  
+    /// <list type="Bullet">Array Of </list>
+    /// <list type="bullet">X</list>
+    /// <list type="bullet">Y</list>
+    /// <list type="bullet">Z</list>
+    /// <list type="bullet">W</list>
+    /// </summary>
+    public static void Write(this BinaryWriter aBinWriter, Vector3[] someData)
+    {
+        foreach (Vector3 data in someData)
+        {
+            aBinWriter.Write(data);
+        }
+    }
+
+    /// <summary>  
     /// <list type="bullet">Position</list>
     /// <list type="bullet">Rotation Euler Angles</list>
     /// <list type="bullet">Local Scale</list>

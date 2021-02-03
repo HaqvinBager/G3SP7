@@ -9,12 +9,19 @@ CModelComponent::CModelComponent(CGameObject& aParent, const std::string& aFBXPa
 	myModel = CModelFactory::GetInstance()->GetModel(aFBXPath);
 	myModelPath = aFBXPath;
 
-	myVertexColorID = CMainSingleton::MaterialHandler().RequestVertexColorID(aParent.InstanceID());
+	SVertexPaintData vertexPaintData = CMainSingleton::MaterialHandler().RequestVertexColorID(aParent.InstanceID());
+	myVertexPaintColorID = vertexPaintData.myVertexColorID;
+	myVertexPaintMaterialNames = vertexPaintData.myRGBMaterialNames;
 }
 
 CModelComponent::~CModelComponent()
 {
 	CModelFactory::GetInstance()->ClearModel(myModelPath);
+
+	for (const auto& vertexPaintMaterialName : myVertexPaintMaterialNames)
+	{
+		CMainSingleton::MaterialHandler().ReleaseMaterial(vertexPaintMaterialName);
+	}
 }
 
 void CModelComponent::Awake()
@@ -42,7 +49,12 @@ void CModelComponent::OnEnable()
 void CModelComponent::OnDisable()
 {}
 
-const unsigned int CModelComponent::VertexColorID() const 
+const unsigned int CModelComponent::VertexPaintColorID() const 
 {
-	return myVertexColorID;
+	return myVertexPaintColorID;
+}
+
+const std::vector<std::string>& CModelComponent::VertexPaintMaterialNames() const
+{
+	return myVertexPaintMaterialNames;
 }

@@ -15,11 +15,22 @@ struct VertexModelInput
     column_major float4x4 myTransform : INSTANCETRANSFORM;
 };
 
+struct VertexPaintedModelInput
+{
+    float4 myPosition   : POSITION;
+    float4 myNormal     : NORMAL;
+    float4 myTangent    : TANGENT;
+    float4 myBinormal   : BINORMAL;
+    float2 myUV         : UV;
+    float3 myColor      : COLOR;
+};
+
 struct VertexToPixel
 {
     float4 myPosition   : SV_POSITION;
     float2 myUV         : UV;
 };
+
 struct VertexModelToPixel
 {
     float4 myPosition       : SV_POSITION;
@@ -28,6 +39,17 @@ struct VertexModelToPixel
     float4 myTangent        : TANGENT;
     float4 myBinormal       : BINORMAL;
     float2 myUV             : UV;
+};
+
+struct VertexPaintModelToPixel
+{
+    float4 myPosition : SV_POSITION;
+    float4 myWorldPosition : WORLDPOSITION;
+    float4 myNormal : NORMAL;
+    float4 myTangent : TANGENT;
+    float4 myBinormal : BINORMAL;
+    float2 myUV : UV;
+    float3 myColor : COLOR;
 };
 
 struct PixelOutput
@@ -78,40 +100,17 @@ Texture2D materialTexture   : register(t6);
 Texture2D normalTexture     : register(t7);
 // Detail normals
 Texture2D detailNormals[4] : register(t8);
+// Vertex Paint Materials
+Texture2D vertexPaintTextures[9] : register(t12);
 
 sampler defaultSampler : register(s0);
 
-// Last working
-//// Cubemap used for environment light shading
-//TextureCube environmentTexture : register(t0);
-//// GBuffer Textures: textures stored in the GBuffer, contains data for models. Used for environment and point light calculations
-//Texture2D worldPositionTexture : register(t1);
-//Texture2D albedoTextureGBuffer : register(t2);
-//Texture2D normalTextureGBuffer : register(t3);
-//Texture2D vertexNormalTexture : register(t4);
-//Texture2D metalnessTexture : register(t5);
-//Texture2D roughnessTexture : register(t6);
-//Texture2D ambientOcclusionTexture : register(t7);
-//Texture2D emissiveTexture : register(t8);
-//// Model textures (used to create GBuffer textures )
-//Texture2D albedoTexture : register(t9);
-//Texture2D materialTexture : register(t10);
-//Texture2D normalTexture : register(t11);
-//// Detail normals
-//Texture2D detailNormals[4] : register(t12);
-//
-//sampler defaultSampler : register(s0);
-
-
-/* // Backup
-TextureCube environmentTexture : register(t0);
-Texture2D worldPositionTexture : register(t1);
-Texture2D albedoTexture : register(t2);
-Texture2D normalTexture : register(t3);
-Texture2D vertexNormalTexture : register(t4);
-Texture2D metalnessTexture : register(t5);
-Texture2D roughnessTexture : register(t6);
-Texture2D ambientOcclusionTexture : register(t7);
-Texture2D emissiveTexture : register(t8);
-sampler defaultSampler : register(s0);
-*/
+#define RED_ALBEDO      0
+#define RED_MATERIAL    1
+#define RED_NORMAL      2
+#define GREEN_ALBEDO    3
+#define GREEN_MATERIAL  4
+#define GREEN_NORMAL    5
+#define BLUE_ALBEDO     6
+#define BLUE_MATERIAL   7
+#define BLUE_NORMAL     8

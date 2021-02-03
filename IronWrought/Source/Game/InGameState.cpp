@@ -294,10 +294,10 @@ void TEMP_DeferredRenderingTests(CScene* scene)
 #include "MaterialHandler.h"
 void TEMP_VertexPaintTest(CScene* aScene)
 {
-	int gameObjectGUID = -10808;
+	int gameObjectGUID = -10882;
 	CGameObject* vertexPaintTest = new CGameObject(gameObjectGUID);
-	vertexPaintTest->AddComponent<CModelComponent>(*vertexPaintTest, std::string(ASSETPATH + "Assets/Graphics/Exempel_Modeller/Primitives/Plane.fbx"));
-	vertexPaintTest->GetComponent<CTransformComponent>()->Position({ 4.0f,0.0f,0.0f });
+	vertexPaintTest->AddComponent<CModelComponent>(*vertexPaintTest, std::string(ASSETPATH + "Assets/Graphics/Exempel_Modeller/Primitives/Plane_v2.fbx"));
+	//vertexPaintTest->GetComponent<CTransformComponent>()->Move({ 10.0f,0.0f,-10.0f });
 
 	aScene->AddInstance(vertexPaintTest);
 }
