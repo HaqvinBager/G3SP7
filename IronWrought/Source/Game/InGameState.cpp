@@ -27,6 +27,7 @@
 #include "SceneManager.h"
 #include "FolderUtility.h"
 
+
 void TEMP_DeferredRenderingTests(CScene* aScene);
 void TEMP_VertexPaintTest(CScene* aScene);
 
@@ -49,6 +50,7 @@ void CInGameState::Start()
 	scenePath = CFolderUtility::GetFilePathsInFolder(ASSETPATH + "Assets\\Generated\\", ".json");
 	CScene* scene = new CScene();
 	scene = CSceneManager::CreateScene(scenePath);
+
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);
 

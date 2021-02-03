@@ -144,38 +144,11 @@ public class Exporter
         SScene sceneObject = new SScene();
         sceneObject.instancedGameobjects = instancedGameObjects.ToArray();
         string jsonGameObject = JsonUtility.ToJson(sceneObject);
-        string savePath = System.IO.Directory.GetCurrentDirectory() + "\\Assets\\Generated\\" + aScene.name + ".json";
+        string savePath = System.IO.Directory.GetCurrentDirectory() + "\\Assets\\Generated\\";
+        if (!System.IO.Directory.Exists(savePath))
+            System.IO.Directory.CreateDirectory(savePath);
+        savePath += aScene.name + ".json";
         System.IO.File.WriteAllText(savePath, jsonGameObject);
         AssetDatabase.Refresh();
     }
 }
-
-//NOTES
-//DONE: Definera vilken data vi vill ha (EX: POs/Rotation/Model/instans ID)
-//DONE: Hur får vi tag i datan från Unity
-//DONE: Hur exporterar vi datan i JSon
-
-// Exportera instansierade objekt
-// DONE: FBX Path
-// DONE: Count, antalet objekt av just denna model
-// DONE: Lista med varje gameobjekt som tillhör en nyckel som är en FBX path
-
-// DONE: Lista på varje objekts separata transforms
-// DONE: Spara FBX paths i Json
-// DONE: spara alla objekts transforms i Json
-// DONE: sortera så att alla objekts transforms som har samma FBX hamnar under rätt plats i Json
-// Exempel: 
-//          En Fbx path för tex Chest \Assets\3D\Exempel_Modeller\Chest
-//          Chest 1 + transform 
-//           POS: X: 0.0 Y: 0.0 Z: 0.0  
-//           ROT: X: 0.0 Y: 0.0 Z: 0.0 
-//           Scale: 1
-//          Chest 2 + transform data 
-//          osv...
-// Försa gången vi läser in ett objekt sparar vi Fbx path (Chest for example), sedan läser vi in en kub och sparar den FBX path.
-// sedan möter vi en till chest modell och då sparar vi bara positionen och inte fbx path och count++
-
-// LoadScene funktion / Class / Refaktorisera InGameState så vi kan få det mera strukturerat och tänka på att vi ska kunna bygga vidare på systemet. 
-// (Export Levels) ta hela export scene konceptet och gör den "loopbar" så vi kan ta en samling av scener och exporta dem med ett klick. 
-// AKA ExportLevelCollection
-     
