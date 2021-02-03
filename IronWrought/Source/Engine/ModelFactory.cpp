@@ -138,13 +138,9 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 	//VertexShader
 	std::ifstream vsFile;
 	if (mesh->myModel->myNumBones > 0)
-	{
 		vsFile.open("Shaders/AnimatedVertexShader.cso", std::ios::binary);
-	}
 	else 
-	{
 		vsFile.open("Shaders/VertexShader.cso", std::ios::binary);
-	}
 	
 	std::string vsData = { std::istreambuf_iterator<char>(vsFile), std::istreambuf_iterator<char>() };
 	ID3D11VertexShader* vertexShader;
@@ -237,10 +233,12 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 	}
 #else
 	std::vector<std::array<ID3D11ShaderResourceView*, 3>> materials;
-	ID3D11ShaderResourceView* diffuseResourceView = GetShaderResourceView(device, (modelDirectory + modelName/*modelDirectoryAndName*/ + "_c.dds"));
-	ID3D11ShaderResourceView* materialResourceView = GetShaderResourceView(device, (modelDirectory + modelName/*modelDirectoryAndName*/ + "_m.dds"));
-	ID3D11ShaderResourceView* normalResourceView = GetShaderResourceView(device, (modelDirectory + modelName/*modelDirectoryAndName*/ + "_n.dds"));
-	materials.push_back({ diffuseResourceView, materialResourceView, normalResourceView });
+	for (unsigned int i = 0; i < loaderModel->myMaterials.size(); ++i) {
+		ID3D11ShaderResourceView* diffuseResourceView = GetShaderResourceView(device, (modelDirectory + modelName/*modelDirectoryAndName*/ + "_c.dds"));
+		ID3D11ShaderResourceView* materialResourceView = GetShaderResourceView(device, (modelDirectory + modelName/*modelDirectoryAndName*/ + "_m.dds"));
+		ID3D11ShaderResourceView* normalResourceView = GetShaderResourceView(device, (modelDirectory + modelName/*modelDirectoryAndName*/ + "_n.dds"));
+		materials.push_back({ diffuseResourceView, materialResourceView, normalResourceView });
+	}
 #endif
 
 
@@ -263,6 +261,7 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 	modelData.myDetailNormals[3] = detailNormal4;
 
 	model->Init(modelData);
+	model->HasBones(mesh->myModel->myNumBones > 0);
 
 	myModelMap.emplace(aFilePath, model);
 	return model;

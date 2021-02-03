@@ -6,6 +6,9 @@
 
 class CAnimationController;
 
+#ifdef _DEBUG
+//#define ANIMATION_DEBUG
+#endif
 struct SAnimationBlend
 {
 	int myFirst = 1;
@@ -26,6 +29,10 @@ public:// Component/ Behaviour inherited
 
 	void OnEnable() override;
 	void OnDisable() override;
+
+#ifdef ANIMATION_DEBUG
+	void StepAnimation(const float aStep = 1.0f);
+#endif
 
 public:
 	std::array<SlimMatrix44, 64> GetBones() { return myBones; }

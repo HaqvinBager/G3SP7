@@ -68,6 +68,12 @@ uint FindScaling(float AnimationTime, const aiNodeAnim* pNodeAnim)
 {
 	assert(pNodeAnim->mNumScalingKeys > 0);
 
+	// 2021 02 02 Testing/ Figuring out animation speed
+	//for (uint i = 0; i < pNodeAnim->mNumScalingKeys - 1; i++)
+	//{
+	//	std::cout << (float)pNodeAnim->mScalingKeys[i + 1].mTime << std::endl;
+	//}
+
 	for (uint i = 0; i < pNodeAnim->mNumScalingKeys - 1; i++)
 	{
 		if (AnimationTime < (float)pNodeAnim->mScalingKeys[i + 1].mTime)

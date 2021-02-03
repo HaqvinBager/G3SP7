@@ -170,7 +170,12 @@ CGameObject* CUnityFactory::CreateGameObject(const SGameObjectData& aData, const
 	gameObject->myTransform->Rotation(aData.myRotation);
 	return std::move(gameObject);
 }
-
+// OK TO REMOVE??? 2021 02 03 Will it be used? / Aki. 
+std::string GetSuffixFromString(const std::string& aString)
+{
+	//ex: CH_NPC_Boss_Attack_AN.fbx =>  7 from last => _AN
+	return std::move(aString.substr(aString.length() - 7, 3));
+}
 CGameObject* CUnityFactory::CreateGameObjectInstanced(const std::string& aModelPath, int InstancedID, std::vector<DirectX::SimpleMath::Matrix> aInstancedTransforms)
 {
 	CGameObject* gameObject = new CGameObject(InstancedID);

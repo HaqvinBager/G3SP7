@@ -12,7 +12,7 @@
 #include "Timer.h"
 
 #define NUM_BONES_PER_VERTEX 4
-#define TEMP_FRAMES_PER_SECOND 30.0f // Original was 25.0f
+#define TEMP_FRAMES_PER_SECOND 24.0f//30.0f // Original was 25.0f
 
 struct VertexBoneDataAnim
 {
@@ -94,6 +94,10 @@ public:
 
 	void SetBoneTransforms(std::vector<aiMatrix4x4>& aTransformsVector);
 	void UpdateAnimationTimes();
+#ifdef _DEBUG
+	// Used for Debug
+	void UpdateAnimationTimeConstant(const float aStep = 1.0f);
+#endif
 // ! Update functions
 
 	void BlendToAnimation(uint anAnimationIndex, bool anUpdateBoth = true, float aBlendDuration = 0.3f, bool aTemporary = false, float aTime = 0.0f);
@@ -139,7 +143,7 @@ private:
 	aiVector3D myRotation;
 
 	// Holds the animations that we play. Each animation modifies bonetransforms depending on animation time.
-	std::vector<aiScene*>				myAnimations;
+	std::vector<const aiScene*>			myAnimations;
 	aiMatrix4x4							myGlobalInverseTransform;
 	std::map<std::string, uint>			myBoneMapping;
 	std::vector<MeshEntry>				myEntries;

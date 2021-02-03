@@ -64,6 +64,10 @@ public:
 	SModelData& GetModelData();
 
 public:
+	void HasBones(const bool aHasBones) { myHasBones = aHasBones; }
+	const bool HasBones() const { return myHasBones; }
+
+public:
 	void Init(SModelInstanceData aData);
 	SModelInstanceData& GetModelInstanceData() { return myModelInstanceData; }
 
@@ -81,6 +85,7 @@ public:
 
 private:
 	SModelData myModelData;
+	bool myHasBones;
 
 private:
 	SModelInstanceData myModelInstanceData;

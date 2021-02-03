@@ -6,6 +6,7 @@ CModel::CModel()
 	: myModelData()
 	, myModelInstanceData()
 	, myInstanceCount(0)
+	, myHasBones(false)
 {
 }
 

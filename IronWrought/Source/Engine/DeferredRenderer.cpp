@@ -167,7 +167,7 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 		//myContext->PSSetShaderResources(9, 3, &modelData.myTexture[0]);		 // Number of textures used has been reduced by 4, slots here are for 8 GBuffer textures
 		//myContext->PSSetShaderResources(12, 4, &modelData.myDetailNormals[0]); // Number of textures used has been reduced by 4, slots here are for 8 GBuffer textures
 
-		// Not necessary, as long as dnCounter is correct, the shader loops through the number of textures there.
+	// Not necessary, as long as dnCounter is correct, the shader loops through the number of textures there.
 		//for (unsigned int i = 0; i < myObjectBufferData.myNumberOfDetailNormals; ++i)
 		//{
 		//	myContext->PSSetShaderResources(12 + i, 1, &modelData.myDetailNormals[i]);

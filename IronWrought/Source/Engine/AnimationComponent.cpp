@@ -43,13 +43,32 @@ void CAnimationComponent::Start()
 
 void CAnimationComponent::Update()
 {
+#ifndef ANIMATION_DEBUG
 	UpdateBlended();
+#endif
 }
 
 void CAnimationComponent::OnEnable()
 {}
 void CAnimationComponent::OnDisable()
 {}
+#ifdef ANIMATION_DEBUG
+void CAnimationComponent::StepAnimation(const float aStep)
+{
+
+	myController->UpdateAnimationTimeConstant(aStep);
+	SetBonesToIdentity();
+
+	//Calling SetBlendTime here causes AnimCtrl::myBlendTime to be used for lerping.
+	if(myShouldUseLerp)
+		myController->SetBlendTime(myAnimationBlend.myBlendLerp);
+
+	std::vector<aiMatrix4x4> trans;
+	myController->SetBoneTransforms(trans);
+	memcpy(myBones.data(), &trans[0], (sizeof(float) * 16) * trans.size());//was memcpy
+
+}
+#endif
 
 void CAnimationComponent::BlendLerpBetween(int anAnimationIndex0, int anAnimationIndex1, float aBlendLerp)
 {
@@ -91,5 +110,5 @@ void CAnimationComponent::UpdateBlended()
 
 	std::vector<aiMatrix4x4> trans;
 	myController->SetBoneTransforms(trans);
-	memmove(myBones.data(), &trans[0], (sizeof(float) * 16) * trans.size());//was memcpy
+	memcpy(myBones.data(), &trans[0], (sizeof(float) * 16) * trans.size());//was memcpy
 }

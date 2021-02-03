@@ -248,14 +248,13 @@ void CAnimationController::ReadNodeHeirarchy(
 	, float anAnimationTimeTo, const aiNode* aStartNodeFrom, const aiNode* aStartNodeTo
 	, const aiMatrix4x4& aParentTransform, int aStopAnimAtLevel)
 {
-	float time0(anAnimationTimeFrom);// Why is AnimationTime0 made into a local variable?
-	float time1(anAnimationTimeTo);// Why is AnimationTime1 made into a local variable?
+	float time0(anAnimationTimeFrom);
+	float time1(anAnimationTimeTo);
 
-	std::string NodeName0(aStartNodeFrom->mName.data);// rename pNode0/1 is the previous animations data. pNode0 is pointerToPreviousAnimNode
-	std::string NodeName1(aStartNodeTo->mName.data);// pointerToCurrentAnimNode
-	
+	std::string NodeName0(aStartNodeFrom->mName.data);
+	std::string NodeName1(aStartNodeTo->mName.data);
 // Commented cause it was annoying when testing 2021 01 25
-	//assert(NodeName0 == NodeName1);// their first node should be the same, roots must be equal
+	//assert(NodeName0 == NodeName1);
 
 	const aiAnimation* pAnimation0 = aFromScene->mAnimations[0];
 	const aiAnimation* pAnimation1 = aToScene->mAnimations[0];
@@ -314,7 +313,7 @@ void CAnimationController::ReadNodeHeirarchy(
 		myBoneInfo[BoneIndex].myFinalTransformation = myGlobalInverseTransform * GlobalTransformation * myBoneInfo[BoneIndex].myBoneOffset;
 	}
 
-	uint n = min(aStartNodeFrom->mNumChildren, aStartNodeTo->mNumChildren); // Does one movement for all the children
+	uint n = min(aStartNodeFrom->mNumChildren, aStartNodeTo->mNumChildren);
 	for (uint i = 0; i < n; i++)
 	{
 		ReadNodeHeirarchy(aFromScene, aToScene, anAnimationTimeFrom, anAnimationTimeTo, aStartNodeFrom->mChildren[i], aStartNodeTo->mChildren[i], GlobalTransformation, aStopAnimAtLevel);
@@ -323,20 +322,20 @@ void CAnimationController::ReadNodeHeirarchy(
 
 void CAnimationController::SetBoneTransforms(std::vector<aiMatrix4x4>& aTransformsVector)
 {
-	aiMatrix4x4 Identity;// Used for ReadNodeHierarchy
+	aiMatrix4x4 Identity;
 	InitIdentityM4(Identity);
 
 	if (myBlendingTime > 0.f)
 	{
 		// Ticks == Frames
 		float ticksPerSecond = static_cast<float>(myAnimations[myAnim0Index]->mAnimations[0]->mTicksPerSecond);
-		ticksPerSecond = ticksPerSecond != 0 ? ticksPerSecond : TEMP_FRAMES_PER_SECOND;
+		ticksPerSecond = (ticksPerSecond != 0) ? ticksPerSecond : TEMP_FRAMES_PER_SECOND;
 		
 		float timeInTicks = myAnimationTime0 * ticksPerSecond;
 		float animationTime0 = fmodf(timeInTicks, static_cast<float>(myAnimations[myAnim0Index]->mAnimations[0]->mDuration));
 		
 		ticksPerSecond = static_cast<float>(myAnimations[myAnim1Index]->mAnimations[0]->mTicksPerSecond);
-		ticksPerSecond = ticksPerSecond != 0 ? ticksPerSecond : TEMP_FRAMES_PER_SECOND;
+		ticksPerSecond = (ticksPerSecond != 0) ? ticksPerSecond : TEMP_FRAMES_PER_SECOND;
 		
 		timeInTicks = myAnimationTime1 * ticksPerSecond;
 		float animationTime1 = fmodf(timeInTicks, static_cast<float>(myAnimations[myAnim1Index]->mAnimations[0]->mDuration));
@@ -349,12 +348,22 @@ void CAnimationController::SetBoneTransforms(std::vector<aiMatrix4x4>& aTransfor
 	else
 	{
 		float ticksPerSecond = static_cast<float>(myAnimations[myAnim0Index]->mAnimations[0]->mTicksPerSecond);
-		ticksPerSecond = ticksPerSecond != 0 ? ticksPerSecond : TEMP_FRAMES_PER_SECOND;
+		ticksPerSecond = (ticksPerSecond != 0) ? ticksPerSecond : TEMP_FRAMES_PER_SECOND;
 
-		float TimeInTicks = myAnimationTime0 * ticksPerSecond;
-		float AnimationTime = fmodf(TimeInTicks, static_cast<float>(myAnimations[myAnim0Index]->mAnimations[0]->mDuration));
+		float timeInTicks = myAnimationTime0 * ticksPerSecond /** 40.0f*//*ticksPerSecond*/ ;
+		//float timeInTicks = myAnimationTime0;//Suuuper slow
+		//float timeInTicks = (myAnimationTime0 / CTimer::Dt()) * ticksPerSecond;//Super speed //(Update is using dt = CTimer::Dt())
+		//float timeInTicks = myAnimationTime0 * (ticksPerSecond / CTimer::Dt());/Super speed //(Update is using dt = CTimer::Dt())
+		//float timeInTicks = myAnimationTime0 / ticksPerSecond;// Turtle speed :) //(Update is using dt = CTimer::Dt())
+		
+		float duration = static_cast<float>(myAnimations[myAnim0Index]->mAnimations[0]->mDuration);
+		//float duration = 40.0f;
+		float animationTime = fmodf(timeInTicks, duration);// In SP6 Project: mDuration is duration in frames. I.e 34frames for Undead Idle  @ 24fps
+		// 40.0f which is the actual nr of frames the animation has does not move the model, i.e the animation stands still
+		// Seems to be cause FindScaling/Rotation/Position() are returning the value of the first node they find which had 41.something mTime. if(AnimationTime < node.key[i]->mTime) return i
+		std::cout << timeInTicks << " " << duration << "  " << animationTime << std::endl;
 
-		ReadNodeHeirarchy(myAnimations[myAnim0Index], AnimationTime, myAnimations[myAnim0Index]->mRootNode, Identity, 2);//stopAnimLevel=2
+		ReadNodeHeirarchy(myAnimations[myAnim0Index], animationTime, myAnimations[myAnim0Index]->mRootNode, Identity, 2);//stopAnimLevel=2
 	}
 
 	aTransformsVector.resize(myNumOfBones);
@@ -365,9 +374,44 @@ void CAnimationController::SetBoneTransforms(std::vector<aiMatrix4x4>& aTransfor
 	}
 }
 
+void CAnimationController::UpdateAnimationTimeConstant(const float aStep)
+{
+	float dt = aStep;// Close to good (right)
+
+	myAnimationTime0 += dt;
+	if (myBlendingTime > 0.f)
+	{
+		myBlendingTime -= dt * myBlendingTimeMul;
+		if (myBlendingTime <= 0.f)
+		{
+			myAnimationTime0 = myAnimationTime1;
+		}
+		if (myUpdateBoth)
+		{
+			myAnimationTime1 += dt;
+		}
+	}
+	else
+	{
+		myAnimationTime1 += dt;
+	}
+
+	if (myTemporary)// If the animation was temporary, return to the previous animation after the playtime is over
+	{
+		myPlayTime -= dt;
+		if (myPlayTime <= 0.f)
+		{
+			myTemporary = false;
+			BlendToAnimation(myAnim1Index);
+		}
+	}
+}
+
 void CAnimationController::UpdateAnimationTimes()
 {
-	float dt = CTimer::Dt() * TEMP_FRAMES_PER_SECOND;
+	//float dt = CTimer::Dt() * ((float)myAnimations[myAnim0Index]->mAnimations[0]->mDuration / TEMP_FRAMES_PER_SECOND);
+	//float dt = CTimer::Dt() * TEMP_FRAMES_PER_SECOND);
+	float dt = CTimer::Dt() * 12.0f;// Close to good (right)
 
 	myAnimationTime0 += dt;
 	if (myBlendingTime > 0.f)
