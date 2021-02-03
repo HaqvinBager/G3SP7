@@ -89,8 +89,6 @@ private:
 	ID3D11PixelShader* myPointLightShader;
 	ID3D11SamplerState* mySamplerState;
 
-	//std::array<ID3D11ShaderResourceView*, 12> myVertexPaintMaterials;
-
 	std::vector<ID3D11PixelShader*> myRenderPassShaders;
 	ID3D11PixelShader* myCurrentRenderPassShader;
 	// Switches between myRenderPassGBuffer and myGBufferPixelShader
