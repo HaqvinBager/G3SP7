@@ -26,7 +26,6 @@ class CForwardRenderer;
 class CVFXFactory;
 class CLineFactory;
 class CAudioManager;
-class CImguiManager;
 class CGraphManager;
 
 class CEngine
@@ -97,7 +96,6 @@ private:
 	CMainSingleton* myMainSingleton;
 	CAudioManager* myAudioManager;
 
-	CImguiManager* myImguiManager;
 	CGraphManager* myGraphManager;
 
 	bool myRenderSceneActive = false;

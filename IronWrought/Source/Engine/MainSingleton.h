@@ -6,6 +6,7 @@ class CDialogueSystem;
 class CPopupTextService;
 class CPhysXWrapper;
 class CMaterialHandler;
+class CImguiManager;
 
 class CMainSingleton
 {
@@ -18,6 +19,7 @@ public:
 	static CDialogueSystem& DialogueSystem();
 	static CPhysXWrapper& PhysXWrapper();
 	static CMaterialHandler& MaterialHandler();
+	static CImguiManager& ImguiManager();
 
 private:
 	static CMainSingleton* ourInstance;
@@ -28,6 +30,7 @@ private:
 	CDialogueSystem*		myDialogueSystem;
 	CPhysXWrapper*			myPhysXWrapper;
 	CMaterialHandler*		myMaterialHandler;
+	CImguiManager*			myImguiManager;
 
 private:
 	CMainSingleton();

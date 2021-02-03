@@ -21,6 +21,7 @@
 #include "InputMapper.h"
 
 #include <CollisionManager.h>
+#include "ImguiManager.h"
 
 #include <JsonReader.h>
 #include <iostream>
@@ -46,10 +47,14 @@ void CInGameState::Awake(){}
 
 void CInGameState::Start()
 {
-	std::vector<std::string> scenePath;
-	scenePath = CFolderUtility::GetFilePathsInFolder(ASSETPATH + "Assets\\Generated\\", ".json");
 	CScene* scene = new CScene();
-	scene = CSceneManager::CreateScene(scenePath);
+	std::vector<std::string> scenePaths;
+	scenePaths = CFolderUtility::GetFilePathsInFolder(ASSETPATH + "Assets\\Generated\\", ".json");
+	CMainSingleton::ImguiManager().LevelsToSelectFrom(scenePaths);
+	scene = CSceneManager::CreateScene(scenePaths[0].c_str());
+	//std::string scenePath = "Level_1.json";
+	//CScene* scene = new CScene();
+	//scene = CSceneManager::CreateScene(scenePath);
 
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);

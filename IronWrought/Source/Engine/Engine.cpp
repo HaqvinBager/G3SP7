@@ -29,7 +29,7 @@
 
 #include "RenderManager.h"
 #include "ImguiManager.h"
-#include "CGraphManager.h"
+#include "GraphManager.h"
 #include "AudioManager.h"
 #include "InputMapper.h"
 
@@ -70,7 +70,6 @@ CEngine::CEngine(): myRenderSceneActive(true)
 	myAudioManager = new CAudioManager();
 	//myActiveScene = 0; //muc bad
 	myActiveState = CStateStack::EState::InGame;
-	myImguiManager = new CImguiManager();
 	myGraphManager = new CGraphManager();
 	//myDialogueSystem = new CDialogueSystem();
 }
@@ -78,8 +77,6 @@ CEngine::CEngine(): myRenderSceneActive(true)
 CEngine::~CEngine()
 {
 	ImGui_ImplDX11_Shutdown();
-	delete myImguiManager;
-	myImguiManager = nullptr;
 	delete myGraphManager;
 	myGraphManager = nullptr;
 
@@ -188,8 +185,10 @@ float CEngine::BeginFrame()
 	return CTimer::Mark();
 }
 
+#include "ImGuiLevelSelect.h"
 void CEngine::RenderFrame()
 {
+	//CImGuiLevelSelect *levelSelect = new CImGuiLevelSelect();
 	if (!myRenderSceneActive)
 		return;
 
@@ -198,15 +197,19 @@ void CEngine::RenderFrame()
 
 	//IMGUI START
 	//myImguiManager->DebugWindow();
+	//levelSelect->RenderWindow();
+	CMainSingleton::ImguiManager().LevelSelect();
 
-	if (myEnabledEditorImgui)
-	{
-		myGraphManager->PreFrame(CTimer::Dt());
-		myGraphManager->ConstructEditorTreeAndConnectLinks();
-		myGraphManager->PostFrame();
-	}
+	//if (myEnabledEditorImgui)
+	//{
+	//	myGraphManager->PreFrame(CTimer::Dt());
+	//	myGraphManager->ConstructEditorTreeAndConnectLinks();
+	//	myGraphManager->PostFrame();
+	//}
+	//ImGui::ShowMetricsWindow();
 
-	
+	//delete levelSelect;
+	//levelSelect = nullptr;
 	//}
 	//IMGUI END
 }
@@ -215,10 +218,10 @@ void CEngine::EndFrame()
 {
 	/*if (myImguiIsEnabled)
 	{*/
-	if (myEnabledEditorImgui)
-	{
-		ImGui::End();
-	}
+	//if (myEnabledEditorImgui)
+	//{
+	//	ImGui::End();
+	//}
 
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
