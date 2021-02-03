@@ -298,13 +298,13 @@ void TEMP_DeferredRenderingTests(CScene* scene)
 	scene->AddInstance(instancedGameObject);
 }
 
-#include "MaterialHandler.h"
-void TEMP_VertexPaintTest(CScene* aScene)
-{
-	int gameObjectGUID = -10882;
-	CGameObject* vertexPaintTest = new CGameObject(gameObjectGUID);
-	vertexPaintTest->AddComponent<CModelComponent>(*vertexPaintTest, std::string(ASSETPATH + "Assets/Graphics/Exempel_Modeller/Primitives/Plane_v2.fbx"));
-	//vertexPaintTest->GetComponent<CTransformComponent>()->Move({ 10.0f,0.0f,-10.0f });
-
-	aScene->AddInstance(vertexPaintTest);
-}
+//#include "MaterialHandler.h"
+//void TEMP_VertexPaintTest(CScene* aScene)
+//{
+//	int gameObjectGUID = -10882;
+//	CGameObject* vertexPaintTest = new CGameObject(gameObjectGUID);
+//	vertexPaintTest->AddComponent<CModelComponent>(*vertexPaintTest, std::string(ASSETPATH + "Assets/Graphics/Exempel_Modeller/Primitives/Plane_v2.fbx"));
+//	//vertexPaintTest->GetComponent<CTransformComponent>()->Move({ 10.0f,0.0f,-10.0f });
+//
+//	aScene->AddInstance(vertexPaintTest);
+//}
