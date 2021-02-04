@@ -40,7 +40,7 @@ void CGraphManager::Load()
 	CNodeTypeCollector::PopulateTypes();
 	myMenuSeachField = new char[127];
 	memset(&myMenuSeachField[0], 0, sizeof(myMenuSeachField));
-	CGraphManager::LoadTreeFromFile();
+	LoadTreeFromFile();
 	myShouldRenderGraph = false;
 }
 
@@ -177,48 +177,50 @@ void CGraphManager::LoadTreeFromFile()
 	{
 		std::ifstream inputFile("Imgui/NodeScripts/nodeinstances.json");
 		std::stringstream jsonDocumentBuffer;
-		std::string inputLine;
+		std::string inputLine = "";
 
-		while (std::getline(inputFile, inputLine))
-		{
-			jsonDocumentBuffer << inputLine << "\n";
-		}
-		rapidjson::Document document;
-		document.Parse(jsonDocumentBuffer.str().c_str());
-
-		rapidjson::Value& uidmax = document["UID_MAX"];
-		int test = uidmax["Num"].GetInt();
-		UID::myGlobalUID = test;
-
-		rapidjson::Value& results = document["NodeInstances"];
-
-		for (rapidjson::SizeType i = 0; i < results.Size(); i++)
-		{
-			rapidjson::Value& nodeInstance = results[i];
-			CNodeInstance* object = new CNodeInstance(false);
-			int nodeType = nodeInstance["NodeType"].GetInt();
-			int UID = nodeInstance["UID"].GetInt();
-			object->myUID = UID;
-			object->myNodeType = CNodeTypeCollector::GetNodeTypeFromID(nodeType);
-
-
-			object->myEditorPosition[0] = static_cast<float>(nodeInstance["Position"]["X"].GetInt());
-			object->myEditorPosition[1] = static_cast<float>(nodeInstance["Position"]["Y"].GetInt());
-
-			object->ConstructUniquePins();
-
-			for (unsigned int j = 0; j < nodeInstance["Pins"].Size(); j++)
+		if (inputFile.good()) {
+			while (std::getline(inputFile, inputLine))
 			{
-				int index = nodeInstance["Pins"][j]["Index"].GetInt();
-				object->myPins[index].myUID.SetUID(nodeInstance["Pins"][j]["UID"].GetInt());
-				SPin::PinType newType = LoadPinData(object->myPins[index].myData, nodeInstance["Pins"][j]["DATA"], nodeInstance["Pins"][j]["DATA"].GetType());
-				if (object->myPins[index].myVariableType == SPin::PinType::Unknown)
-				{
-					object->ChangePinTypes(newType);
-				}
+				jsonDocumentBuffer << inputLine << "\n";
 			}
+			rapidjson::Document document;
+			document.Parse(jsonDocumentBuffer.str().c_str());
 
-			myNodeInstancesInGraph.push_back(object);
+			rapidjson::Value& uidmax = document["UID_MAX"];
+			int test = uidmax["Num"].GetInt();
+			UID::myGlobalUID = test;
+
+			rapidjson::Value& results = document["NodeInstances"];
+
+			for (rapidjson::SizeType i = 0; i < results.Size(); i++)
+			{
+				rapidjson::Value& nodeInstance = results[i];
+				CNodeInstance* object = new CNodeInstance(false);
+				int nodeType = nodeInstance["NodeType"].GetInt();
+				int UID = nodeInstance["UID"].GetInt();
+				object->myUID = UID;
+				object->myNodeType = CNodeTypeCollector::GetNodeTypeFromID(nodeType);
+
+
+				object->myEditorPosition[0] = static_cast<float>(nodeInstance["Position"]["X"].GetInt());
+				object->myEditorPosition[1] = static_cast<float>(nodeInstance["Position"]["Y"].GetInt());
+
+				object->ConstructUniquePins();
+
+				for (unsigned int j = 0; j < nodeInstance["Pins"].Size(); j++)
+				{
+					int index = nodeInstance["Pins"][j]["Index"].GetInt();
+					object->myPins[index].myUID.SetUID(nodeInstance["Pins"][j]["UID"].GetInt());
+					SPin::PinType newType = LoadPinData(object->myPins[index].myData, nodeInstance["Pins"][j]["DATA"], nodeInstance["Pins"][j]["DATA"].GetType());
+					if (object->myPins[index].myVariableType == SPin::PinType::Unknown)
+					{
+						object->ChangePinTypes(newType);
+					}
+				}
+
+				myNodeInstancesInGraph.push_back(object);
+			}
 		}
 	}
 	{
@@ -226,32 +228,34 @@ void CGraphManager::LoadTreeFromFile()
 		std::stringstream jsonDocumentBuffer;
 		std::string inputLine;
 
-		while (std::getline(inputFile, inputLine))
-		{
-			jsonDocumentBuffer << inputLine << "\n";
-		}
-		rapidjson::Document document;
-		document.Parse(jsonDocumentBuffer.str().c_str());
-
-		//rapidjson::Value& results = document["Links"];
-
-		myNextLinkIdCounter = 0;
-		for (rapidjson::SizeType i = 0; i < document["Links"].Size(); i++)
-		{
-			int id = document["Links"][i]["ID"].GetInt();
-			int inputID = document["Links"][i]["Input"].GetInt();
-			int Output = document["Links"][i]["Output"].GetInt();
-
-			CNodeInstance* firstNode = GetNodeFromPinID(inputID);
-			CNodeInstance* secondNode = GetNodeFromPinID(Output);
-
-			firstNode->AddLinkVia(secondNode, inputID, Output, id);
-			secondNode->AddLinkVia(firstNode, Output, inputID, id);
-
-			myLinks.push_back({ed::LinkId(id), ed::PinId(inputID), ed::PinId(Output)});
-			if (myNextLinkIdCounter < id + 1)
+		if (inputFile.good()) {
+			while (std::getline(inputFile, inputLine))
 			{
-				myNextLinkIdCounter = id + 1;
+				jsonDocumentBuffer << inputLine << "\n";
+			}
+			rapidjson::Document document;
+			document.Parse(jsonDocumentBuffer.str().c_str());
+
+			//rapidjson::Value& results = document["Links"];
+
+			myNextLinkIdCounter = 0;
+			for (rapidjson::SizeType i = 0; i < document["Links"].Size(); i++)
+			{
+				int id = document["Links"][i]["ID"].GetInt();
+				int inputID = document["Links"][i]["Input"].GetInt();
+				int Output = document["Links"][i]["Output"].GetInt();
+
+				CNodeInstance* firstNode = GetNodeFromPinID(inputID);
+				CNodeInstance* secondNode = GetNodeFromPinID(Output);
+
+				firstNode->AddLinkVia(secondNode, inputID, Output, id);
+				secondNode->AddLinkVia(firstNode, Output, inputID, id);
+
+				myLinks.push_back({ ed::LinkId(id), ed::PinId(inputID), ed::PinId(Output) });
+				if (myNextLinkIdCounter < id + 1)
+				{
+					myNextLinkIdCounter = id + 1;
+				}
 			}
 		}
 	}
