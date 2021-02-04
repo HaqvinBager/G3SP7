@@ -67,16 +67,14 @@ void CMaterialHandler::ReleaseMaterial(const std::string& aMaterialName)
 	}
 }
 
-#include <fstream>
 SVertexPaintData CMaterialHandler::RequestVertexColorID(int aGameObjectID)
 {
+	std::vector<std::string> jsonPaths = CJsonReader::GetFilePathsInFolder(myVertexLinksPath, "PolybrushLinks_");
 	SVertexPaintColorData colorData{ {}, 0 };
 	std::vector<std::string> materialNames;
-	std::ifstream f(myVertexLinksPath.c_str());
-	
-	if (f.good())
+	for (auto& jsonPath : jsonPaths)
 	{
-		rapidjson::Document vertexLinks = CJsonReader::LoadDocument(myVertexLinksPath);
+		rapidjson::Document vertexLinks = CJsonReader::LoadDocument(myVertexLinksPath + jsonPath);
 
 		if (vertexLinks.HasMember("links"))
 		{
@@ -102,8 +100,7 @@ SVertexPaintData CMaterialHandler::RequestVertexColorID(int aGameObjectID)
 								vertexColorBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 								vertexColorBufferDesc.MiscFlags = 0;
 								vertexColorBufferDesc.StructureByteStride = 0;
-
-								D3D11_SUBRESOURCE_DATA subResourceData = {0};
+								D3D11_SUBRESOURCE_DATA subResourceData = { 0 };
 								subResourceData.pSysMem = colorData.myColors.data();
 
 								ID3D11Buffer* vertexColorBuffer;
@@ -125,8 +122,8 @@ SVertexPaintData CMaterialHandler::RequestVertexColorID(int aGameObjectID)
 				}
 			}
 		}
+
 	}
-	f.close();
 	return { materialNames, static_cast<unsigned int>(colorData.myVertexMeshID) };
 }
 

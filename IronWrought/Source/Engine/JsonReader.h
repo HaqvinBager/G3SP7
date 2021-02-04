@@ -18,7 +18,7 @@ public:
 		return document;
 	}
 
-	static std::vector<std::string> GetFilePathsInFolder(const std::string& aFolder)
+	static std::vector<std::string> GetFilePathsInFolder(const std::string& aFolder, const std::string& aPrefix = "")
 	{
 		std::vector<std::string> filePaths;
 		for (const auto& file : std::filesystem::directory_iterator(aFolder))
@@ -26,7 +26,16 @@ public:
 			if (file.path().extension().string() == ".meta")
 				continue;
 
-			filePaths.emplace_back(file.path().filename().string());
+			if (aPrefix.size() > 0) {
+				if (file.path().filename().string().find(aPrefix) != std::string::npos) {
+					filePaths.emplace_back(file.path().filename().string());
+				}
+			}
+			else {
+				filePaths.emplace_back(file.path().filename().string());
+
+			}
+
 		}
 
 		return filePaths;

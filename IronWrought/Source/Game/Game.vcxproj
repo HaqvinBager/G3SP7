@@ -72,7 +72,7 @@
     <IntDir>$(SolutionDir)..\Temp\$(ProjectName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(Configuration)</TargetName>
     <TargetExt>.lib</TargetExt>
-    <IncludePath>$(IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)DirectXTK\Inc\;$(SolutionDir)ModelLoader\;$(SolutionDir)UnityImporterApp\;$(SolutionDir)Includes\;$(SolutionDir)PhysXWrapper\;$(SolutionDir)Includes\PhysX-4.1\physx\include\;$(SolutionDir)Includes\PhysX-4.1\pxshared\include\</IncludePath>
+    <IncludePath>$(IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)DirectXTK\Inc\;$(SolutionDir)ModelLoader\;$(SolutionDir)UnityImporterApp\;$(SolutionDir)Includes\;$(SolutionDir)Includes\PhysX-4.1\physx\include\;$(SolutionDir)Includes\PhysX-4.1\pxshared\include\</IncludePath>
     <LibraryPath>$(SolutionDir)..\Lib\physxlib\release\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">

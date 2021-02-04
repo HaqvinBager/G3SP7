@@ -133,23 +133,6 @@ bool CDeferredRenderer::Init(CDirectXFramework* aFramework)
 	samplerDesc.MaxLOD = 10;
 	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateSamplerState(&samplerDesc, &mySamplerState), "Sampler could not be created.");
 
-	//auto material1 = CMainSingleton::MaterialHandler().RequestMaterial("tapestry");
-	//auto material2 = CMainSingleton::MaterialHandler().RequestMaterial("woodList");
-	//auto material3 = CMainSingleton::MaterialHandler().RequestMaterial("floor");
-	//auto material4 = CMainSingleton::MaterialHandler().RequestMaterial("Particle_Chest");
-	//myVertexPaintMaterials[0] = material1[0];
-	//myVertexPaintMaterials[1] = material1[1];
-	//myVertexPaintMaterials[2] = material1[2];
-	//myVertexPaintMaterials[3] = material2[0];
-	//myVertexPaintMaterials[4] = material2[1];
-	//myVertexPaintMaterials[5] = material2[2];
-	//myVertexPaintMaterials[6] = material3[0];
-	//myVertexPaintMaterials[7] = material3[1];
-	//myVertexPaintMaterials[8] = material3[2];
-	//myVertexPaintMaterials[9] = material4[0];
-	//myVertexPaintMaterials[10] = material4[1];
-	//myVertexPaintMaterials[11] = material4[2];
-
 	return true;
 }
 
