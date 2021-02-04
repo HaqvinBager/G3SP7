@@ -70,7 +70,7 @@
     <TargetName>$(ProjectName)_$(Configuration)</TargetName>
     <IntDir>$(ProjectDir)..\..\Temp\$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir>$(ProjectDir)..\..\Lib\</OutDir>
-    <IncludePath>$(SolutionDir)imgui_ne\ThirdParty\imgui;$(SolutionDir)imgui_ne\NodeEditor\include\;$(IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\DirectXTK\Inc\;$(ProjectDir)..\Game\;$(ProjectDir)..\ModelLoader\;$(ProjectDir)..\UnityImporterApp\;$(ProjectDir)..\Includes\;$(SolutionDir)PhysXWrapper\;$(SolutionDir)Includes\PhysX-4.1\physx\include\;$(SolutionDir)Includes\PhysX-4.1\pxshared\include\</IncludePath>
+    <IncludePath>$(SolutionDir)imgui_ne\ThirdParty\imgui;$(SolutionDir)imgui_ne\NodeEditor\include\;$(IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\DirectXTK\Inc\;$(ProjectDir)..\Game\;$(ProjectDir)..\ModelLoader\;$(ProjectDir)..\UnityImporterApp\;$(ProjectDir)..\Includes\;$(SolutionDir)Includes\PhysX-4.1\physx\include\;$(SolutionDir)Includes\PhysX-4.1\pxshared\include\</IncludePath>
     <LibraryPath>$(SolutionDir)../Lib/;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)..\Lib\physxlib\release\</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">
