@@ -69,7 +69,7 @@ CScene* CSceneManager::CreateScene(std::string aJsonFile)//TEMP
 			instancedGameObject->AddComponent<CInstancedModelComponent>(*instancedGameObject, std::string(ASSETPATH + model_path), instancedTransforms);
 			scene->AddInstance(instancedGameObject);
 		}
-		scene->AddPXScene(CMainSingleton::PhysXWrapper().CreatePXScene());
+		//scene->AddPXScene(CMainSingleton::PhysXWrapper().CreatePXScene());
 
 		CGameObject* camera = new CGameObject(0);
 		camera->AddComponent<CCameraComponent>(*camera, 70.0f);
@@ -150,7 +150,7 @@ CScene* CSceneManager::CreateScene(std::vector<std::string> aJsonFile)
 			instancedGameObject->AddComponent<CInstancedModelComponent>(*instancedGameObject, std::string(ASSETPATH + model_path), instancedTransforms);
 			scene->AddInstance(instancedGameObject);
 		}
-		scene->AddPXScene(CMainSingleton::PhysXWrapper().CreatePXScene());
+		//scene->AddPXScene(CMainSingleton::PhysXWrapper().CreatePXScene());
 
 		CGameObject* camera = new CGameObject(0);
 		camera->AddComponent<CCameraComponent>(*camera, 70.0f);
