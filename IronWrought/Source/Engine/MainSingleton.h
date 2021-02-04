@@ -4,7 +4,7 @@ class CPostMaster;
 class CCollisionManager;
 class CDialogueSystem;
 class CPopupTextService;
-class CPhysXWrapper;
+//class CPhysXWrapper;
 class CMaterialHandler;
 class CImguiManager;
 
@@ -17,7 +17,7 @@ public:
 	static CCollisionManager& CollisionManager();
 	static CPopupTextService& PopupTextService();
 	static CDialogueSystem& DialogueSystem();
-	static CPhysXWrapper& PhysXWrapper();
+	//static CPhysXWrapper& PhysXWrapper();
 	static CMaterialHandler& MaterialHandler();
 	static CImguiManager& ImguiManager();
 
@@ -28,7 +28,7 @@ private:
 	CCollisionManager*		myCollisionManager;
 	CPopupTextService*		myPopupTextService;
 	CDialogueSystem*		myDialogueSystem;
-	CPhysXWrapper*			myPhysXWrapper;
+	//CPhysXWrapper*			myPhysXWrapper;
 	CMaterialHandler*		myMaterialHandler;
 	CImguiManager*			myImguiManager;
 
