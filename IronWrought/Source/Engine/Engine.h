@@ -26,7 +26,6 @@ class CForwardRenderer;
 class CVFXFactory;
 class CLineFactory;
 class CAudioManager;
-class CGraphManager;
 
 class CEngine
 {
@@ -95,8 +94,6 @@ private:
 	CInputMapper* myInputMapper;
 	CMainSingleton* myMainSingleton;
 	CAudioManager* myAudioManager;
-
-	CGraphManager* myGraphManager;
 
 	bool myRenderSceneActive = false;
 	bool myEnabledEditorImgui = false;

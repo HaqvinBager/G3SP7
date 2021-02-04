@@ -742,6 +742,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="cpp.hint" />
     <None Include="DeferredPBRFunctions.hlsli" />
     <None Include="DeferredSamplingFunctions.hlsli" />
     <None Include="DeferredShaderStructs.hlsli" />

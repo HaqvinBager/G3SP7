@@ -27,18 +27,21 @@ using namespace ax::Drawing;
 static ed::EditorContext* g_Context = nullptr;
 CGraphManager::~CGraphManager()
 {
+	delete myHeaderTextureID;
+	myHeaderTextureID = nullptr;
 	ed::DestroyEditor(g_Context);
 }
 void CGraphManager::Load()
 {
+	myHeaderTextureID = nullptr;
 	ed::Config config;
 	config.SettingsFile = "Imgui/NodeScripts/Simple.json";
 	g_Context = ed::CreateEditor(&config);
 	CNodeTypeCollector::PopulateTypes();
 	myMenuSeachField = new char[127];
 	memset(&myMenuSeachField[0], 0, sizeof(myMenuSeachField));
-
 	CGraphManager::LoadTreeFromFile();
+	myShouldRenderGraph = false;
 }
 
 void CGraphManager::ReTriggerUpdateringTrees()
@@ -73,7 +76,7 @@ void CGraphManager::SaveTreeToFile()
 
 		writer1.StartObject();
 		writer1.Key("UID_MAX");
-		
+
 		writer1.StartObject();
 		writer1.Key("Num");
 		writer1.Int(UID::myGlobalUID);
@@ -111,7 +114,7 @@ void CGraphManager::SaveTreeToFile()
 			writer1.Key("Output");
 			writer1.Int(static_cast<int>(link.myOutputID.Get()));
 			writer1.EndObject();
-			
+
 		}
 		writer1.EndArray();
 		writer1.EndObject();
@@ -131,15 +134,13 @@ SPin::PinType LoadPinData(NodeDataPtr& someDataToCopy, rapidjson::Value& someDat
 		bool test = someData.GetBool();
 		memcpy(someDataToCopy, &test, sizeof(bool));
 		return SPin::PinType::Bool;
-	}
-	else if (someData.IsDouble())
+	} else if (someData.IsDouble())
 	{
 		someDataToCopy = new float;
 		float test = static_cast<float>(someData.GetDouble());
 		memcpy(someDataToCopy, &test, sizeof(float));
 		return SPin::PinType::Float;
-	}
-	else if (someData.IsString())
+	} else if (someData.IsString())
 	{
 		if (someData.GetStringLength() > 0)
 		{
@@ -151,8 +152,7 @@ SPin::PinType LoadPinData(NodeDataPtr& someDataToCopy, rapidjson::Value& someDat
 			return SPin::PinType::String;
 		}
 
-	}
-	else if (someData.IsInt())
+	} else if (someData.IsInt())
 	{
 		someDataToCopy = new int;
 		int test = someData.GetInt();
@@ -173,7 +173,7 @@ void CGraphManager::LoadTreeFromFile()
 	myNodeInstancesInGraph.clear();
 	UID::myAllUIDs.clear();
 	UID::myGlobalUID = 0;
-	
+
 	{
 		std::ifstream inputFile("Imgui/NodeScripts/nodeinstances.json");
 		std::stringstream jsonDocumentBuffer;
@@ -204,7 +204,7 @@ void CGraphManager::LoadTreeFromFile()
 
 			object->myEditorPosition[0] = static_cast<float>(nodeInstance["Position"]["X"].GetInt());
 			object->myEditorPosition[1] = static_cast<float>(nodeInstance["Position"]["Y"].GetInt());
-			
+
 			object->ConstructUniquePins();
 
 			for (unsigned int j = 0; j < nodeInstance["Pins"].Size(); j++)
@@ -248,7 +248,7 @@ void CGraphManager::LoadTreeFromFile()
 			firstNode->AddLinkVia(secondNode, inputID, Output, id);
 			secondNode->AddLinkVia(firstNode, Output, inputID, id);
 
-			myLinks.push_back({ ed::LinkId(id), ed::PinId(inputID), ed::PinId(Output) });
+			myLinks.push_back({ed::LinkId(id), ed::PinId(inputID), ed::PinId(Output)});
 			if (myNextLinkIdCounter < id + 1)
 			{
 				myNextLinkIdCounter = id + 1;
@@ -265,7 +265,7 @@ void CGraphManager::SaveNodesToClipboard()
 	std::vector<CNodeInstance*> nodeInstances;
 	for (int i = 0; i < selectedObjectCount; ++i)
 		nodeInstances.push_back(GetNodeFromNodeID(static_cast<unsigned int>(selectedNodeIDs[i].Get())));
-	
+
 	{
 		rapidjson::StringBuffer s;
 		rapidjson::PrettyWriter<rapidjson::StringBuffer> writer1(s);
@@ -292,33 +292,6 @@ void CGraphManager::SaveNodesToClipboard()
 		std::ofstream of("Imgui/NodeScripts/clipboard.json");
 		of << s.GetString();
 	}
-	//Links
-	//{
-	//	rapidjson::StringBuffer s;
-	//	rapidjson::PrettyWriter<rapidjson::StringBuffer> writer1(s);
-
-	//	writer1.StartObject();
-	//	writer1.Key("Links");
-	//	writer1.StartArray();
-	//	for (auto& link : myLinks)
-	//	{
-	//		writer1.StartObject();
-	//		writer1.Key("ID");
-	//		writer1.Int(link.Id.Get());
-	//		writer1.Key("Input");
-	//		writer1.Int(link.InputId.Get());
-	//		writer1.Key("Output");
-	//		writer1.Int(link.OutputId.Get());
-	//		writer1.EndObject();
-
-	//	}
-	//	writer1.EndArray();
-	//	writer1.EndObject();
-
-
-	//	std::ofstream of("links.json");
-	//	of << s.GetString();
-	//}
 }
 
 void CGraphManager::LoadNodesFromClipboard()
@@ -345,7 +318,7 @@ void CGraphManager::LoadNodesFromClipboard()
 	for (rapidjson::SizeType i = 0; i < results.Size(); i++)
 	{
 		rapidjson::Value& nodeInstance = results[i];
-			
+
 
 		CNodeInstance* object = new CNodeInstance(true);
 		int nodeType = nodeInstance["NodeType"].GetInt();
@@ -355,7 +328,7 @@ void CGraphManager::LoadNodesFromClipboard()
 		{
 			firstNodePos[0] = static_cast<float>(nodeInstance["Position"]["X"].GetInt());
 			firstNodePos[1] = static_cast<float>(nodeInstance["Position"]["Y"].GetInt());
-		} 
+		}
 
 		ImVec2 position;
 		position.x = nodeInstance["Position"]["X"].GetInt() - firstNodePos[0] + ImGui::GetMousePos().x;
@@ -376,7 +349,7 @@ void CGraphManager::LoadNodesFromClipboard()
 
 		ed::SetNodePosition(object->myUID.AsInt(), position);
 		object->myHasSetEditorPosition = true;
-			
+
 		myNodeInstancesInGraph.push_back(object);
 	}
 }
@@ -389,17 +362,39 @@ void CGraphManager::ShowFlow(int aLinkID)
 	myFlowsToBeShown.push_back(aLinkID);
 }
 
+void CGraphManager::Render()
+{
+	PreFrame(CTimer::Dt());
+
+	if (myShouldRenderGraph)
+	{
+		ConstructEditorTreeAndConnectLinks();
+		PostFrame();
+		ImGui::End();
+	}
+}
+
+void CGraphManager::PostRender()
+{
+	//ImGui_DestroyTexture(myHeaderTextureID);
+}
+
+void CGraphManager::ToggleShouldRenderGraph()
+{
+	myShouldRenderGraph = !myShouldRenderGraph;
+}
+
 ImColor GetIconColor(SPin::PinType type)
 {
 	switch (type)
 	{
 	default:
-		case SPin::PinType::Flow:     return ImColor(255, 255, 255);
-		case SPin::PinType::Bool:     return ImColor(220, 48, 48);
-		case SPin::PinType::Int:      return ImColor(68, 201, 156);
-		case SPin::PinType::Float:    return ImColor(147, 226, 74);
-		case SPin::PinType::String:   return ImColor(124, 21, 153);
-		case SPin::PinType::Unknown:   return ImColor(255, 0, 0);
+	case SPin::PinType::Flow:     return ImColor(255, 255, 255);
+	case SPin::PinType::Bool:     return ImColor(220, 48, 48);
+	case SPin::PinType::Int:      return ImColor(68, 201, 156);
+	case SPin::PinType::Float:    return ImColor(147, 226, 74);
+	case SPin::PinType::String:   return ImColor(124, 21, 153);
+	case SPin::PinType::Unknown:   return ImColor(255, 0, 0);
 	}
 };
 
@@ -434,15 +429,13 @@ CNodeInstance* CGraphManager::GetNodeFromNodeID(unsigned int anID)
 		if ((*it)->myUID.AsInt() == anID)
 		{
 			return *it;
-		}
-		else
+		} else
 		{
 			++it;
 		}
 	}
 
 	return nullptr;
-
 }
 
 
@@ -472,146 +465,151 @@ void CGraphManager::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInstance
 {
 	switch (aPin.myVariableType)
 	{
-		case SPin::PinType::String:
+	case SPin::PinType::String:
+	{
+		if (!aPin.myData)
 		{
-			if (!aPin.myData)
-			{
-				aPin.myData = new char[128];
-				static_cast<char*>(aPin.myData)[0] = '\0';
-			}
-
-			ImGui::PushID(aPin.myUID.AsInt());
-			ImGui::PushItemWidth(100.0f);
-			if (aNodeInstance->IsPinConnected(aPin))
-			{
-				DrawPinIcon(aPin, true, 255);
-			}
-			else
-			{
-				ImGui::InputText("##edit",(char*)aPin.myData, 127);
-			}
-			ImGui::PopItemWidth();
-
-			ImGui::PopID();
-			break;
+			aPin.myData = new char[128];
+			static_cast<char*>(aPin.myData)[0] = '\0';
 		}
-		case SPin::PinType::Int:
+
+		ImGui::PushID(aPin.myUID.AsInt());
+		ImGui::PushItemWidth(100.0f);
+		if (aNodeInstance->IsPinConnected(aPin))
 		{
-			if (!aPin.myData)
-			{
-				aPin.myData = new int;
-				int* c = ((int*)aPin.myData);
-				*c = 0;	
-			}
+			DrawPinIcon(aPin, true, 255);
+		} else
+		{
+			ImGui::InputText("##edit", (char*)aPin.myData, 127);
+		}
+		ImGui::PopItemWidth();
+
+		ImGui::PopID();
+		break;
+	}
+	case SPin::PinType::Int:
+	{
+		if (!aPin.myData)
+		{
+			aPin.myData = new int;
 			int* c = ((int*)aPin.myData);
-			ImGui::PushID(aPin.myUID.AsInt());
-			ImGui::PushItemWidth(100.0f);
-			if (aNodeInstance->IsPinConnected(aPin))
-			{
-				DrawPinIcon(aPin, true, 255);
-			}
-			else
-			{
-				ImGui::InputInt("##edit", c);
-			}
-			ImGui::PopItemWidth();
-
-			ImGui::PopID();
-			break;			
+			*c = 0;
 		}
-		case SPin::PinType::Bool:
+		int* c = ((int*)aPin.myData);
+		ImGui::PushID(aPin.myUID.AsInt());
+		ImGui::PushItemWidth(100.0f);
+		if (aNodeInstance->IsPinConnected(aPin))
 		{
-			if (!aPin.myData)
-			{
-				aPin.myData = new bool;
-				bool* c = ((bool*)aPin.myData);
-				*c = false;
-			}
+			DrawPinIcon(aPin, true, 255);
+		} else
+		{
+			ImGui::InputInt("##edit", c);
+		}
+		ImGui::PopItemWidth();
+
+		ImGui::PopID();
+		break;
+	}
+	case SPin::PinType::Bool:
+	{
+		if (!aPin.myData)
+		{
+			aPin.myData = new bool;
 			bool* c = ((bool*)aPin.myData);
-			ImGui::PushID(aPin.myUID.AsInt());
-			ImGui::PushItemWidth(100.0f);
-			if (aNodeInstance->IsPinConnected(aPin))
-			{
-				DrawPinIcon(aPin, true, 255);
-			}
-			else
-			{
-				ImGui::Checkbox("##edit", c);
-			}
-			ImGui::PopItemWidth();
-
-			ImGui::PopID();
-			break;
+			*c = false;
 		}
-		case SPin::PinType::Float:
+		bool* c = ((bool*)aPin.myData);
+		ImGui::PushID(aPin.myUID.AsInt());
+		ImGui::PushItemWidth(100.0f);
+		if (aNodeInstance->IsPinConnected(aPin))
 		{
-			if (!aPin.myData)
-			{
-				aPin.myData = new float;
-				float* c = ((float*)aPin.myData);
-				*c = 1.0f;
-			}
+			DrawPinIcon(aPin, true, 255);
+		} else
+		{
+			ImGui::Checkbox("##edit", c);
+		}
+		ImGui::PopItemWidth();
+
+		ImGui::PopID();
+		break;
+	}
+	case SPin::PinType::Float:
+	{
+		if (!aPin.myData)
+		{
+			aPin.myData = new float;
 			float* c = ((float*)aPin.myData);
-			ImGui::PushID(aPin.myUID.AsInt());
-			ImGui::PushItemWidth(70.0f);
-			if (aNodeInstance->IsPinConnected(aPin))
-			{
-				DrawPinIcon(aPin, true, 255);
-			}
-			else
-			{
-				ImGui::InputFloat("##edit", c);
-			}
-			ImGui::PopItemWidth();
-
-			ImGui::PopID();
-			break;
+			*c = 1.0f;
 		}
-		case SPin::PinType::Unknown:
+		float* c = ((float*)aPin.myData);
+		ImGui::PushID(aPin.myUID.AsInt());
+		ImGui::PushItemWidth(70.0f);
+		if (aNodeInstance->IsPinConnected(aPin))
 		{
-			ImGui::PushID(aPin.myUID.AsInt());
-			ImGui::PushItemWidth(100.0f);
-
-			int selectedIndex = -1;
-			if (ImGui::RadioButton("Bool", false))
-			{
-				selectedIndex = (int)SPin::PinType::Bool;
-			}
-			if (ImGui::RadioButton("Int", false))
-			{
-				selectedIndex = (int)SPin::PinType::Int;
-			}
-			if (ImGui::RadioButton("Float", false))
-			{
-				selectedIndex = (int)SPin::PinType::Float;
-			}
-			if (ImGui::RadioButton("String", false))
-			{
-				selectedIndex = (int)SPin::PinType::String;
-			}
-
-			if (selectedIndex != -1)
-			{
-				CNodeInstance* instance = GetNodeFromPinID(aPin.myUID.AsInt());
-				instance->ChangePinTypes((SPin::PinType)selectedIndex);
-			}
-
-			
-			ImGui::PopItemWidth();
-			ImGui::PopID();
-			break;
+			DrawPinIcon(aPin, true, 255);
+		} else
+		{
+			ImGui::InputFloat("##edit", c);
 		}
-		default:
-			assert(0);
+		ImGui::PopItemWidth();
+
+		ImGui::PopID();
+		break;
+	}
+	case SPin::PinType::Unknown:
+	{
+		ImGui::PushID(aPin.myUID.AsInt());
+		ImGui::PushItemWidth(100.0f);
+
+		int selectedIndex = -1;
+		if (ImGui::RadioButton("Bool", false))
+		{
+			selectedIndex = (int)SPin::PinType::Bool;
+		}
+		if (ImGui::RadioButton("Int", false))
+		{
+			selectedIndex = (int)SPin::PinType::Int;
+		}
+		if (ImGui::RadioButton("Float", false))
+		{
+			selectedIndex = (int)SPin::PinType::Float;
+		}
+		if (ImGui::RadioButton("String", false))
+		{
+			selectedIndex = (int)SPin::PinType::String;
+		}
+
+		if (selectedIndex != -1)
+		{
+			CNodeInstance* instance = GetNodeFromPinID(aPin.myUID.AsInt());
+			instance->ChangePinTypes((SPin::PinType)selectedIndex);
+		}
+
+
+		ImGui::PopItemWidth();
+		ImGui::PopID();
+		break;
+	}
+	default:
+		assert(0);
 	}
 
+}
+
+ImTextureID CGraphManager::HeaderTextureID()
+{
+	if (!myHeaderTextureID)
+	{
+		myHeaderTextureID = ImGui_LoadTexture("Imgui/Sprites/BlueprintBackground.png");
+	}
+	return myHeaderTextureID;
 }
 
 void CGraphManager::WillBeCyclic(CNodeInstance* aFirst, CNodeInstance* /*aSecond*/, bool& aIsCyclic, CNodeInstance* aBase)
 {
 	if (aFirst == nullptr)
 		return;
-	
+
 	if (aBase == nullptr)
 		return;
 
@@ -640,7 +638,7 @@ void CGraphManager::WillBeCyclic(CNodeInstance* aFirst, CNodeInstance* /*aSecond
 					return;
 				}
 				WillBeCyclic(connectedNodeToOutPut, nullptr, aIsCyclic, aBase);
-			}	
+			}
 		}
 	}
 }
@@ -649,21 +647,23 @@ void CGraphManager::PreFrame(float aDeltaTime)
 {
 	static float timer = 0;
 	timer += aDeltaTime;
-	auto& io = ImGui::GetIO();
-	ImGui::SetNextWindowPos(ImVec2(0, 0));
-	ImGui::SetNextWindowSize({ io.DisplaySize.x / 2,  io.DisplaySize.y });
-	ImGui::Begin("Content", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_MenuBar);
-
-	////if (ImGui::Button("Retrigger"))
-	////{
-	////	ReTriggerTree();
-	////}
+	if (myShouldRenderGraph)
+	{
+		auto& io = ImGui::GetIO();
+		ImGui::SetNextWindowPos(ImVec2(0, 18));
+		ImGui::SetNextWindowSize({io.DisplaySize.x,  io.DisplaySize.y});
+		ImGui::Begin("Content", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_MenuBar);
+	}
+	//if (ImGui::Button("Retrigger"))
+	//{
+	//	ReTriggerTree();
+	//}
 	//ImGui::SameLine();
-	////if (ImGui::Button("Save"))
-	////{
-	////	myLikeToSave = true;
-	////	
-	////}
+	//if (ImGui::Button("Save"))
+	//{
+	//	myLikeToSave = true;
+	//	
+	//}
 	//static bool showFlow = false;
 	//if (ImGui::Checkbox("Show Flow", &showFlow))
 	//{
@@ -671,11 +671,11 @@ void CGraphManager::PreFrame(float aDeltaTime)
 	//		
 	//}
 	//ImGui::SameLine();
-	////if (ImGui::Button("Load"))
-	////{
-	////	LoadTreeFromFile();
-	////	ReTriggerTree();
-	////}
+	//if (ImGui::Button("Load"))
+	//{
+	//	LoadTreeFromFile();
+	//	ReTriggerTree();
+	//}
 
 	for (auto& nodeInstance : myNodeInstancesInGraph)
 	{
@@ -691,14 +691,16 @@ void CGraphManager::PreFrame(float aDeltaTime)
 		timer = 0;
 	}
 
-
-	ed::SetCurrentEditor(g_Context);
-	ed::Begin("My Editor", ImVec2(0.0, 0.0f));
+	if (myShouldRenderGraph)
+	{
+		ed::SetCurrentEditor(g_Context);
+		ed::Begin("My Editor", ImVec2(0.0, 0.0f));
+	}
 }
 
 bool ArePinTypesCompatible(SPin& aFirst, SPin& aSecond)
 {
-	if ((aFirst.myVariableType == SPin::PinType::Flow && aSecond.myVariableType != SPin::PinType::Flow)	)
+	if ((aFirst.myVariableType == SPin::PinType::Flow && aSecond.myVariableType != SPin::PinType::Flow))
 	{
 		return false;
 	}
@@ -747,8 +749,7 @@ size_t uiLevenshteinDistance(const T& source, const T& target)
 			previous_diagonal_save = lev_dist[i];
 			if (source[i - 1] == target[j - 1]) {
 				lev_dist[i] = previous_diagonal;
-			}
-			else {
+			} else {
 				lev_dist[i] = min(min(lev_dist[i - 1], lev_dist[i]), previous_diagonal) + 1;
 			}
 			previous_diagonal = previous_diagonal_save;
@@ -760,17 +761,17 @@ size_t uiLevenshteinDistance(const T& source, const T& target)
 
 void CGraphManager::ConstructEditorTreeAndConnectLinks()
 {
-	for (auto &nodeInstance : myNodeInstancesInGraph)
-	{	
+	for (auto& nodeInstance : myNodeInstancesInGraph)
+	{
 		if (!nodeInstance->myHasSetEditorPosition)
 		{
 			ed::SetNodePosition(nodeInstance->myUID.AsInt(), ImVec2(nodeInstance->myEditorPosition[0], nodeInstance->myEditorPosition[1]));
 			nodeInstance->myHasSetEditorPosition = true;
 		}
-	
+
 		// Start drawing nodes.
 		ed::PushStyleVar(ed::StyleVar_NodePadding, ImVec4(8, 4, 8, 8));
-		ed::BeginNode(nodeInstance->myUID.AsInt());	
+		ed::BeginNode(nodeInstance->myUID.AsInt());
 		ImGui::PushID(nodeInstance->myUID.AsInt());
 		ImGui::BeginVertical("node");
 
@@ -780,11 +781,10 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 		ImGui::Spring(1);
 		ImGui::Dummy(ImVec2(0, 28));
 		ImGui::Spring(0);
-		
+
 		ImGui::EndHorizontal();
 		ax::rect HeaderRect = ImGui_GetItemRect();
 		ImGui::Spring(0, ImGui::GetStyle().ItemSpacing.y * 2.0f);
-	
 
 		bool previusWasOut = false;
 		bool isFirstInput = true;
@@ -799,28 +799,27 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 				}
 				isFirstIteration = false;
 			}
+
 			if (pin.myPinType == SPin::PinTypeInOut::PinTypeInOut_IN)
 			{
 				ed::BeginPin(pin.myUID.AsInt(), ed::PinKind::Input);
-				
+
 				ImGui::Text(pin.myText.c_str());
 				ImGui::SameLine(0, 0);
 				if (pin.myVariableType == SPin::PinType::Flow)
 				{
 					DrawPinIcon(pin, nodeInstance->IsPinConnected(pin), 255);
-				}
-				else
+				} else
 				{
 					DrawTypeSpecificPin(pin, nodeInstance);
-					
+
 				}
 
 
 				ed::EndPin();
 				previusWasOut = false;
-	
-			}
-			else
+
+			} else
 			{
 				if (isFirstInput)
 				{
@@ -828,10 +827,10 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 				}
 
 				ImGui::Indent(150.0f);
-								
+
 
 				ed::BeginPin(pin.myUID.AsInt(), ed::PinKind::Output);
-		
+
 				ImGui::Text(pin.myText.c_str());
 				ImGui::SameLine(0, 0);
 
@@ -841,32 +840,28 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 				ImGui::Unindent(150.0f);
 				isFirstInput = false;
 			}
-
-
 		}
-		
+
 		ImGui::EndVertical();
 		auto ContentRect = ImGui_GetItemRect();
 		ed::EndNode();
-
 		if (ImGui::IsItemVisible())
 		{
 			auto drawList = ed::GetNodeBackgroundDrawList(nodeInstance->myUID.AsInt());
-			
+
 			const auto halfBorderWidth = ed::GetStyle().NodeBorderWidth * 0.5f;
 			auto headerColor = nodeInstance->GetColor();
-			ImTextureID HeaderTextureId = ImGui_LoadTexture("Imgui/Sprites/BlueprintBackground.png");
 			const auto uv = ImVec2(
-				HeaderRect.w / (float)(4.0f * ImGui_GetTextureWidth(HeaderTextureId)),
-				HeaderRect.h / (float)(4.0f * ImGui_GetTextureHeight(HeaderTextureId)));
+				HeaderRect.w / (float)(4.0f * ImGui_GetTextureWidth(HeaderTextureID())),
+				HeaderRect.h / (float)(4.0f * ImGui_GetTextureHeight(HeaderTextureID())));
 
-				drawList->AddImageRounded(HeaderTextureId,
-					to_imvec(HeaderRect.top_left()) - ImVec2(8 - halfBorderWidth,  4 - halfBorderWidth),
-					to_imvec(HeaderRect.bottom_right()) + ImVec2( 8 - halfBorderWidth, 0),
-					ImVec2(0.0f, 0.0f), uv,
-					headerColor, ed::GetStyle().NodeRounding, 1 | 2);
+			drawList->AddImageRounded(HeaderTextureID(),
+				to_imvec(HeaderRect.top_left()) - ImVec2(8 - halfBorderWidth, 4 - halfBorderWidth),
+				to_imvec(HeaderRect.bottom_right()) + ImVec2(8 - halfBorderWidth, 0),
+				ImVec2(0.0f, 0.0f), uv,
+				headerColor, ed::GetStyle().NodeRounding, 1 | 2);
 
-			
+
 			auto headerSeparatorRect = ax::rect(HeaderRect.bottom_left(), ContentRect.top_right());
 			drawList->AddLine(
 				to_imvec(headerSeparatorRect.top_left()) + ImVec2(-(8 - halfBorderWidth), -0.5f),
@@ -887,7 +882,7 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 		ed::PinId inputPinId, outputPinId;
 		if (ed::QueryNewLink(&inputPinId, &outputPinId))
 		{
-			if (inputPinId && outputPinId) 
+			if (inputPinId && outputPinId)
 			{
 				if (ed::AcceptNewItem())
 				{
@@ -900,8 +895,7 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 					{
 						// User trying connect input and output on the same node :/, who does this!?! Indeed Ralmark, indeed....
 						// SetBlueScreenOnUserComputer(true)
-					}
-					else
+					} else
 					{
 						{
 							SPin* firstPin = firstNode->GetPinFromID(static_cast<unsigned int>(inputPinId.Get()));
@@ -934,7 +928,7 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 							{
 								canAddlink = false;
 							}
-						
+
 
 							if (canAddlink)
 							{
@@ -952,21 +946,19 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 								{
 									firstNode->RemoveLinkToVia(secondNode, static_cast<unsigned int>(inputPinId.Get()));
 									secondNode->RemoveLinkToVia(firstNode, static_cast<unsigned int>(outputPinId.Get()));
-								}
-								else
+								} else
 								{
 									// Depending on if you drew the new link from the output to the input we need to create the link as the flow FROM->TO to visualize the correct flow
 									if (firstPin->myPinType == SPin::PinTypeInOut::PinTypeInOut_IN)
 									{
-										myLinks.push_back({ ed::LinkId(linkId), outputPinId, inputPinId });
-									}
-									else
+										myLinks.push_back({ed::LinkId(linkId), outputPinId, inputPinId});
+									} else
 									{
-										myLinks.push_back({ ed::LinkId(linkId), inputPinId, outputPinId });
-									}		
+										myLinks.push_back({ed::LinkId(linkId), inputPinId, outputPinId});
+									}
 
 									std::cout << "push add link command!" << std::endl;
-									myUndoCommands.push({ ECommandAction::EAddLink, firstNode, secondNode, myLinks.back(), 0});
+									myUndoCommands.push({ECommandAction::EAddLink, firstNode, secondNode, myLinks.back(), 0});
 									myLikeToSave = true;
 									ReTriggerTree();
 								}
@@ -977,7 +969,7 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 			}
 		}
 	}
-	ed::EndCreate(); 
+	ed::EndCreate();
 
 	// Handle deletion action
 	if (ed::BeginDelete())
@@ -1005,7 +997,7 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 						if (myShouldPushCommand)
 						{
 							std::cout << "push remove link action!" << std::endl;
-							myUndoCommands.push({ ECommandAction::ERemoveLink, firstNode, secondNode, link, 0/*static_cast<unsigned int>(link.Id.Get())*//*, static_cast<unsigned int>(link.InputId.Get()), static_cast<unsigned int>(link.OutputId.Get())*/ });
+							myUndoCommands.push({ECommandAction::ERemoveLink, firstNode, secondNode, link, 0/*static_cast<unsigned int>(link.Id.Get())*//*, static_cast<unsigned int>(link.InputId.Get()), static_cast<unsigned int>(link.OutputId.Get())*/});
 						}
 
 						myLinks.erase(&link);
@@ -1028,16 +1020,15 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 					if ((*it)->myUID.AsInt() == nodeId.Get())
 					{
 
-						if (myShouldPushCommand) 
+						if (myShouldPushCommand)
 						{
 							std::cout << "Push delete command!" << std::endl;
 							myLikeToSave = true;
-							myUndoCommands.push({ ECommandAction::EDelete, (*it), nullptr,  {0,0,0}, (*it)->myUID.AsInt() });
+							myUndoCommands.push({ECommandAction::EDelete, (*it), nullptr,  {0,0,0}, (*it)->myUID.AsInt()});
 						}
-						
+
 						it = myNodeInstancesInGraph.erase(it);
-					}
-					else
+					} else
 					{
 						++it;
 					}
@@ -1046,8 +1037,8 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 			}
 		}
 	}
-	ed::EndDelete(); 
-	
+	ed::EndDelete();
+
 	auto openPopupPosition = ImGui::GetMousePos();
 	ed::Suspend();
 
@@ -1059,10 +1050,10 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 
 	ed::Suspend();
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8, 8));
-	
+
 	if (ImGui::BeginPopup("Create New Node"))
 	{
-		
+
 		auto newNodePostion = openPopupPosition;
 		CNodeType** types = CNodeTypeCollector::GetAllNodeTypes();
 		unsigned short noOfTypes = CNodeTypeCollector::GetNodeTypeCount();
@@ -1075,7 +1066,7 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 		}
 
 
-		
+
 		ImGui::PushItemWidth(100.0f);
 		ImGui::InputText("##edit", (char*)myMenuSeachField, 127);
 		if (mySetSearchFokus)
@@ -1119,7 +1110,7 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 					{
 						std::cout << "Push create command!" << std::endl;
 						myLikeToSave = true;
-						myUndoCommands.push({ ECommandAction::ECreate, node, nullptr, {0,0,0}, node->myUID.AsInt()});
+						myUndoCommands.push({ECommandAction::ECreate, node, nullptr, {0,0,0}, node->myUID.AsInt()});
 					}
 				}
 				int distance = static_cast<int>(distanceResults[i].myScore) - firstCost;
@@ -1129,8 +1120,7 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 				}
 			}
 
-		}
-		else
+		} else
 		{
 			for (auto& category : cats)
 			{
@@ -1157,7 +1147,7 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 							node->myHasSetEditorPosition = true;
 
 							myNodeInstancesInGraph.push_back(node);
-							
+
 							if (myShouldPushCommand)
 							{
 								std::cout << "Push create command!" << std::endl;
@@ -1170,10 +1160,9 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 				}
 			}
 
-		}		
+		}
 		ImGui::EndPopup();
-	}
-	else
+	} else
 	{
 		mySetSearchFokus = true;
 		memset(&myMenuSeachField[0], 0, sizeof(myMenuSeachField));
@@ -1183,7 +1172,7 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 	ed::Resume();
 
 	myShouldPushCommand = true;
-	
+
 	if (ed::BeginShortcut())
 	{
 		if (ed::AcceptCopy())
@@ -1198,7 +1187,7 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 
 		if (ed::AcceptUndo())
 		{
-			if (!myUndoCommands.empty()) 
+			if (!myUndoCommands.empty())
 			{
 				myShouldPushCommand = false;
 				ed::ResetShortCutAction();
@@ -1230,9 +1219,9 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 					secondPin = command.mySecondNodeInstance->GetPinFromID(static_cast<unsigned int>(command.myEditorLinkInfo.myOutputID.Get()));
 
 					if (firstPin->myPinType == SPin::PinTypeInOut::PinTypeInOut_IN)
-						myLinks.push_back({ command.myEditorLinkInfo.myID, command.myEditorLinkInfo.myInputID, command.myEditorLinkInfo.myOutputID });
+						myLinks.push_back({command.myEditorLinkInfo.myID, command.myEditorLinkInfo.myInputID, command.myEditorLinkInfo.myOutputID});
 					else
-						myLinks.push_back({ command.myEditorLinkInfo.myID, command.myEditorLinkInfo.myOutputID, command.myEditorLinkInfo.myInputID });
+						myLinks.push_back({command.myEditorLinkInfo.myID, command.myEditorLinkInfo.myOutputID, command.myEditorLinkInfo.myInputID});
 					ReTriggerTree();
 					break;
 				default:
@@ -1280,9 +1269,9 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 					secondPin = command.mySecondNodeInstance->GetPinFromID(static_cast<unsigned int>(command.myEditorLinkInfo.myOutputID.Get()));
 
 					if (firstPin->myPinType == SPin::PinTypeInOut::PinTypeInOut_IN)
-						myLinks.push_back({ command.myEditorLinkInfo.myID, command.myEditorLinkInfo.myInputID, command.myEditorLinkInfo.myOutputID });
+						myLinks.push_back({command.myEditorLinkInfo.myID, command.myEditorLinkInfo.myInputID, command.myEditorLinkInfo.myOutputID});
 					else
-						myLinks.push_back({ command.myEditorLinkInfo.myID, command.myEditorLinkInfo.myOutputID, command.myEditorLinkInfo.myInputID });
+						myLinks.push_back({command.myEditorLinkInfo.myID, command.myEditorLinkInfo.myOutputID, command.myEditorLinkInfo.myInputID});
 					ReTriggerTree();
 					break;
 				default:

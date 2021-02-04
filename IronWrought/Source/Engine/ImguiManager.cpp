@@ -5,7 +5,7 @@
 #include "Scene.h"
 #include "SceneManager.h"
 #pragma comment(lib, "imgui.lib")
-
+#include "GraphManager.h"
 #include "RenderManager.h"
 #include <psapi.h>
 
@@ -40,7 +40,7 @@ static ImFont* ImGui_LoadFont(ImFontAtlas& atlas, const char* name, float size, 
 }
 ImFontAtlas myFontAtlas;
 
-CImguiManager::CImguiManager()
+CImguiManager::CImguiManager() : myGraphManagerIsFullscreen(false)
 {
 	ImGui::DebugCheckVersionAndDataLayout("1.80 WIP", sizeof(ImGuiIO), sizeof(ImGuiStyle), sizeof(ImVec2), sizeof(ImVec4), sizeof(ImDrawVert), sizeof(unsigned int));
 	ImGui::CreateContext();
@@ -49,16 +49,37 @@ CImguiManager::CImguiManager()
 	myFontAtlas.Build();
 
 	ImGui::CreateContext(&myFontAtlas);
+
+	myGraphManager = new CGraphManager();
+	myGraphManager->Load();
 }
 
 CImguiManager::~CImguiManager()
 {
+	delete myGraphManager;
+	myGraphManager = nullptr;
 	ImGui::DestroyContext();
+}
+
+void CImguiManager::Render()
+{
+	ImGui::BeginMainMenuBar();
+	if (ImGui::Button("Display Nodescripts"))
+		myGraphManager->ToggleShouldRenderGraph();
+	ImGui::EndMainMenuBar();
+	myGraphManager->Render();
+	LevelSelect();
+	DebugWindow();
+}
+
+void CImguiManager::PostRender()
+{
+	myGraphManager->PostRender();
 }
 
 void CImguiManager::DebugWindow()
 {
-	if (ImGui::Begin("Debug info"))
+	if (ImGui::Begin("Debug info", nullptr))
 	{
 		ImGui::Text("Framerate: %.0f", ImGui::GetIO().Framerate);
 		ImGui::Text(GetSystemMemory().c_str());
@@ -70,7 +91,7 @@ void CImguiManager::DebugWindow()
 void CImguiManager::LevelSelect()
 {
 	//std::vector<std::string> files = CJsonReader::GetFilePathsInFolder(ASSETPATH + "Assets/Generated");
-	ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x - 200, 0));
+	ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x - 200, 18));
 	float x = 10.f + ((ImGui::GetFontSize() + 5.5f) * static_cast<float>(myLevelsToSelectFrom.size()));
 	ImGui::SetNextWindowSize({200.f,  x});
 
