@@ -25,7 +25,13 @@ public:
 	void LoadNodesFromClipboard();
 
 	static void ShowFlow(int aLinkID);
+
+	void Render();
+	void PostRender();
+
+	void ToggleShouldRenderGraph();
 private:
+	ImTextureID HeaderTextureID();
 	void WillBeCyclic(CNodeInstance* aFirst, CNodeInstance* aSecond, bool& aIsCyclic, CNodeInstance* aBase);
 	
 	CNodeInstance* GetNodeFromPinID(unsigned int anID);
@@ -65,7 +71,7 @@ private:
 
 	std::stack<EditorCommand> myUndoCommands;
 	std::stack<EditorCommand> myRedoCommands;
-
+	//ImTextureID myHeaderTextureID;
 	ImVector<SEditorLinkInfo> myLinks;
 	int myNextLinkIdCounter = 100;
 	bool myLikeToSave = false;
@@ -73,4 +79,6 @@ private:
 	char* myMenuSeachField = nullptr;
 	bool mySetSearchFokus = true;
 	bool myShouldPushCommand = true;
+	ImTextureID myHeaderTextureID;
+	bool myShouldRenderGraph;
 };

@@ -29,7 +29,6 @@
 
 #include "RenderManager.h"
 #include "ImguiManager.h"
-#include "GraphManager.h"
 #include "AudioManager.h"
 #include "InputMapper.h"
 
@@ -70,15 +69,12 @@ CEngine::CEngine(): myRenderSceneActive(true)
 	myAudioManager = new CAudioManager();
 	//myActiveScene = 0; //muc bad
 	myActiveState = CStateStack::EState::InGame;
-	myGraphManager = new CGraphManager();
 	//myDialogueSystem = new CDialogueSystem();
 }
 
 CEngine::~CEngine()
 {
 	ImGui_ImplDX11_Shutdown();
-	delete myGraphManager;
-	myGraphManager = nullptr;
 
 	delete myWindowHandler;
 	myWindowHandler = nullptr;
@@ -139,7 +135,6 @@ bool CEngine::Init(CWindowHandler::SWindowData& someWindowData)
 	ENGINE_ERROR_BOOL_MESSAGE(myFramework->Init(myWindowHandler), "Framework could not be initialized.");
 	ImGui_ImplWin32_Init(myWindowHandler->GetWindowHandle());
 	ImGui_ImplDX11_Init(myFramework->GetDevice(), myFramework->GetContext());
-	myGraphManager->Load();
 	myWindowHandler->SetInternalResolution();
 	ENGINE_ERROR_BOOL_MESSAGE(myModelFactory->Init(*this), "Model Factory could not be initiliazed.");
 	ENGINE_ERROR_BOOL_MESSAGE(myCameraFactory->Init(myWindowHandler), "Camera Factory could not be initialized.");
@@ -198,7 +193,7 @@ void CEngine::RenderFrame()
 	//IMGUI START
 	//myImguiManager->DebugWindow();
 	//levelSelect->RenderWindow();
-	CMainSingleton::ImguiManager().LevelSelect();
+	CMainSingleton::ImguiManager().Render();
 
 	//if (myEnabledEditorImgui)
 	//{
@@ -225,6 +220,9 @@ void CEngine::EndFrame()
 
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+	//ImGui_ImplDX11_InvalidateDeviceObjects();
+	CMainSingleton::ImguiManager().PostRender();
+
 	myFramework->EndFrame();
 
 	if (Input::GetInstance()->IsKeyPressed(VK_F1))

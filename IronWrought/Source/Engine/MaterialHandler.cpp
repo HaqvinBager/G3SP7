@@ -69,56 +69,60 @@ void CMaterialHandler::ReleaseMaterial(const std::string& aMaterialName)
 
 SVertexPaintData CMaterialHandler::RequestVertexColorID(int aGameObjectID)
 {
+	std::vector<std::string> jsonPaths = CJsonReader::GetFilePathsInFolder(myVertexLinksPath, "PolybrushLinks_");
 	SVertexPaintColorData colorData{ {}, 0 };
-	rapidjson::Document vertexLinks = CJsonReader::LoadDocument(myVertexLinksPath);
 	std::vector<std::string> materialNames;
-
-	if (vertexLinks.HasMember("links"))
+	for (auto& jsonPath : jsonPaths)
 	{
-		if (vertexLinks["links"].IsArray())
+		rapidjson::Document vertexLinks = CJsonReader::LoadDocument(myVertexLinksPath + jsonPath);
+
+		if (vertexLinks.HasMember("links"))
 		{
-			auto linksArray = vertexLinks["links"].GetArray();
-			for (unsigned int i = 0; i < linksArray.Size(); ++i)
+			if (vertexLinks["links"].IsArray())
 			{
-				for (const auto& gameObjectID : linksArray[i]["myGameObjectIDs"].GetArray())
+				auto linksArray = vertexLinks["links"].GetArray();
+				for (unsigned int i = 0; i < linksArray.Size(); ++i)
 				{
-					if (gameObjectID.GetInt() == aGameObjectID)
+					for (const auto& gameObjectID : linksArray[i]["myGameObjectIDs"].GetArray())
 					{
-						colorData = CBinReader::LoadVertexColorData(ASSETPATH + linksArray[i]["colorsPath"].GetString());
-
-						//if (myVertexColors.find(colorData.myVertexMeshID) == myVertexColors.end())
-						if (myVertexColorBuffers.find(colorData.myVertexMeshID) == myVertexColorBuffers.end())
+						if (gameObjectID.GetInt() == aGameObjectID)
 						{
-							//myVertexColors.emplace(colorData.myVertexMeshID, colorData.myColors);
-							D3D11_BUFFER_DESC vertexColorBufferDesc;
-							vertexColorBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-							vertexColorBufferDesc.ByteWidth = sizeof(colorData.myColors[0]) * static_cast<UINT>(colorData.myColors.size());
-							vertexColorBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-							vertexColorBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-							vertexColorBufferDesc.MiscFlags = 0;
-							vertexColorBufferDesc.StructureByteStride = 0;
+							colorData = CBinReader::LoadVertexColorData(ASSETPATH + linksArray[i]["colorsPath"].GetString());
 
-							D3D11_SUBRESOURCE_DATA subResourceData = { 0 };
-							subResourceData.pSysMem = colorData.myColors.data();
+							//if (myVertexColors.find(colorData.myVertexMeshID) == myVertexColors.end())
+							if (myVertexColorBuffers.find(colorData.myVertexMeshID) == myVertexColorBuffers.end())
+							{
+								//myVertexColors.emplace(colorData.myVertexMeshID, colorData.myColors);
+								D3D11_BUFFER_DESC vertexColorBufferDesc;
+								vertexColorBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+								vertexColorBufferDesc.ByteWidth = sizeof(colorData.myColors[0]) * static_cast<UINT>(colorData.myColors.size());
+								vertexColorBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+								vertexColorBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+								vertexColorBufferDesc.MiscFlags = 0;
+								vertexColorBufferDesc.StructureByteStride = 0;
+								D3D11_SUBRESOURCE_DATA subResourceData = { 0 };
+								subResourceData.pSysMem = colorData.myColors.data();
 
-							ID3D11Buffer* vertexColorBuffer;
-							ENGINE_HR_MESSAGE(CEngine::GetInstance()->myFramework->GetDevice()->CreateBuffer(&vertexColorBufferDesc, &subResourceData, &vertexColorBuffer), "Vertex Color Buffer could not be created.");
+								ID3D11Buffer* vertexColorBuffer;
+								ENGINE_HR_MESSAGE(CEngine::GetInstance()->myFramework->GetDevice()->CreateBuffer(&vertexColorBufferDesc, &subResourceData, &vertexColorBuffer), "Vertex Color Buffer could not be created.");
 
-							myVertexColorBuffers.emplace(colorData.myVertexMeshID, std::move(vertexColorBuffer));
-							myVertexColorReferences.emplace(colorData.myVertexMeshID, 0);
-						}
+								myVertexColorBuffers.emplace(colorData.myVertexMeshID, std::move(vertexColorBuffer));
+								myVertexColorReferences.emplace(colorData.myVertexMeshID, 0);
+							}
 
-						myVertexColorReferences[colorData.myVertexMeshID] += 1;
+							myVertexColorReferences[colorData.myVertexMeshID] += 1;
 
-						for (const auto& materialName : linksArray[i]["myMaterialNames"].GetArray())
-						{
-							RequestMaterial(materialName.GetString());
-							materialNames.emplace_back(materialName.GetString());
+							for (const auto& materialName : linksArray[i]["myMaterialNames"].GetArray())
+							{
+								RequestMaterial(materialName.GetString());
+								materialNames.emplace_back(materialName.GetString());
+							}
 						}
 					}
 				}
 			}
 		}
+
 	}
 	return { materialNames, static_cast<unsigned int>(colorData.myVertexMeshID) };
 }

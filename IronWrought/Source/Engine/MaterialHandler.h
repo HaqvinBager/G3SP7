@@ -42,7 +42,7 @@ private:
 
 	ID3D11Device* myDevice;
 	const std::string myMaterialPath = ASSETPATH + "Assets/Graphics/Textures/Materials/";
-	const std::string myVertexLinksPath = ASSETPATH + "Assets/Generated/PolybrushLinks_-10882.json";
+	const std::string myVertexLinksPath = ASSETPATH + "Assets/Generated/";
 
 private:
 	CMaterialHandler();

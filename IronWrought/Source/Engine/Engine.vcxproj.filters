@@ -847,12 +847,6 @@
     <ClInclude Include="Widgets.h">
       <Filter>Imgui\Blueprints</Filter>
     </ClInclude>
-    <ClInclude Include="CGraphManager.h">
-      <Filter>Imgui\Node Editor\Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="CNodeInstance.h">
-      <Filter>Imgui\Node Editor\Nodes</Filter>
-    </ClInclude>
     <ClInclude Include="ImguiManager.h">
       <Filter>Imgui\Manager</Filter>
     </ClInclude>
@@ -1001,6 +995,7 @@
     <None Include="Math2D.inl">
       <Filter>Imgui\Blueprints</Filter>
     </None>
+    <None Include="cpp.hint" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">

@@ -700,3 +700,12 @@ int ImGui_GetTextureHeight(ImTextureID texture)
     else
         return 0;
 }
+
+void Imgui_Test()
+{
+    if (g_pFontTextureID)
+    {
+        ImGui_DestroyTexture(g_pFontTextureID);
+        g_pFontTextureID = NULL;
+    }
+}

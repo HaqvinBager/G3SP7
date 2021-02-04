@@ -4,7 +4,7 @@
 #include "Component.h"
 #include "SpriteInstance.h"
 #include "EngineDefines.h"
-#include "PhysXWrapper.h"
+//#include "PhysXWrapper.h"
 
 class CModelComponent;
 class CCamera;
@@ -59,7 +59,7 @@ public:
 	CCameraComponent* MainCamera();
 	CEnvironmentLight* EnvironmentLight();
 	SNavMesh* NavMesh();
-	PxScene* PXScene();
+	//PxScene* PXScene();
 	std::vector<CGameObject*> ModelsToOutline() const;
 	std::vector<CPointLight*>& PointLights();
 	std::vector<CTextInstance*> Texts();
@@ -91,7 +91,7 @@ public:
 	bool AddInstances(std::vector<CGameObject*>& someGameObjects);
 	bool AddInstance(CSpriteInstance* aSprite);
 	//PhysX
-	bool AddPXScene(PxScene* aPXScene);
+	//bool AddPXScene(PxScene* aPXScene);
 	//POPULATE SCENE END
 public:
 //REMOVE SPECIFIC INSTANCE START
@@ -150,7 +150,7 @@ private:
 	CLineInstance* myNavMeshGrid;
 	CCameraComponent* myMainCamera;
 	//PhysX scene
-	PxScene* myPXScene;
+	//PxScene* myPXScene;
 //POINTERS END
 
 	bool myIsReadyToRender;
