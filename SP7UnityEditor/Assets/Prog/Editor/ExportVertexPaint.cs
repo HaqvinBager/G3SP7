@@ -2,6 +2,7 @@
 using UnityEditor;
 using System.Collections.Generic;
 using System.IO;
+using UnityEngine.SceneManagement;
 
 [System.Serializable]
 public struct VertexLinkCollection
@@ -36,12 +37,11 @@ public class ExportVertexPaint : Editor
             int startIndex = meshName.LastIndexOf(polybrushMesh) + polybrushMesh.Length;
             int endIndex = meshName.Length;
             string polyMeshID = meshName.Substring(startIndex, endIndex - startIndex);
-            int exportedMeshIndex = exportedMeshPaths.FindIndex(e => e.Contains(polyMeshID));
 
             bool hasFoundLink = false;
             foreach (VertexLink vertexLink in vertexLinks)
             {
-                if (vertexLink.colorsPath == exportedMeshPaths[exportedMeshIndex])
+                if (vertexLink.colorsPath == targetPath + "PolybrushColors_" + polyMeshID + "_Bin.bin")
                 {
                     if (!vertexLink.myGameObjectIDs.Contains(renderer.gameObject.GetInstanceID()))
                     {
@@ -62,15 +62,8 @@ public class ExportVertexPaint : Editor
                 vertexLinks.Add(newLink);
             }
 
-            // Json
-            VertexLinkCollection collection = new VertexLinkCollection();
-            collection.links = vertexLinks.ToArray();
-            string jsonString = JsonUtility.ToJson(collection);
-            string savePath = targetPath + "PolybrushLinks_" + polyMeshID + ".json";
-            System.IO.File.WriteAllText(savePath, jsonString);
-
             // Binary
-            Mesh exportedMeshObject = AssetDatabase.LoadAssetAtPath<Mesh>(exportedMeshPaths[exportedMeshIndex]);
+            Mesh exportedMeshObject = renderer.GetComponent<MeshFilter>().sharedMesh;
             if (int.TryParse(polyMeshID, out int polyMeshIDNumber))
             {
                 BinaryWriter bin;
@@ -92,9 +85,17 @@ public class ExportVertexPaint : Editor
 
                 bin.Write(colorsRGB);
                 bin.Close();
-                Debug.Log("Exported PolybrushMesh-" + polyMeshIDNumber + ".", exportedMeshObject);
+                Debug.Log("Exported PolybrushMesh_" + polyMeshIDNumber + ".", exportedMeshObject);
             }
         }
+
+        // Json
+        VertexLinkCollection collection = new VertexLinkCollection();
+        collection.links = vertexLinks.ToArray();
+        string jsonString = JsonUtility.ToJson(collection);
+        string savePath = targetPath + "PolybrushLinks_" + SceneManager.GetActiveScene().name + ".json";
+        System.IO.File.WriteAllText(savePath, jsonString);
+
         AssetDatabase.Refresh();
     }
 
@@ -122,15 +123,7 @@ public class ExportVertexPaint : Editor
             string meshName = filter.sharedMesh.name;
             if (meshName.Contains(polybrushMesh))
             {
-                int startIndex = meshName.LastIndexOf(polybrushMesh) + polybrushMesh.Length;
-                int endIndex = meshName.Length;
-                string polyMeshID = meshName.Substring(startIndex, endIndex - startIndex);
-                int exportedMeshIndex = exportedMeshPaths.FindIndex(e => e.Contains(polyMeshID));
-
-                if (exportedMeshIndex > -1)
-                {
-                    meshRenderers.Add(filter.GetComponent<MeshRenderer>());
-                }
+                meshRenderers.Add(filter.GetComponent<MeshRenderer>());
             }
         }
         return meshRenderers;
@@ -144,31 +137,21 @@ public class ExportVertexPaint : Editor
         {
             if (!matProperty[i].displayName.Contains("Base"))
             {
+                Debug.Log(matProperty[i].displayName);
                 if (matProperty[i].textureValue != null)
                 {
                     FileInfo fileInfo = new FileInfo(AssetDatabase.GetAssetPath(matProperty[i].textureValue));
-
-                    if (!texturePaths.Contains(fileInfo.Directory.Name))
-                        texturePaths.Add(fileInfo.Directory.Name);
+                    if (fileInfo.Name.Contains("_c")) 
+                    {
+                        if (!texturePaths.Contains(fileInfo.Directory.Name))
+                        {
+                            texturePaths.Add(fileInfo.Directory.Name);
+                            continue;
+                        }
+                    } 
                 }
             }
         }
         return texturePaths;
     }
 }
-
-//Object vertexPaintAsset = AssetDatabase.LoadAssetAtPath<Object>("Assets/Test.asset");
-//Mesh mesh = (Mesh)vertexPaintAsset;
-
-//VertexColors exportVertexColors = new VertexColors();
-//exportVertexColors.colors = mesh.colors;
-
-////Resources.Load("Assets/Resources/Vertex_test_mat_data.asset");
-//VertexPaintData[] data = Resources.FindObjectsOfTypeAll<VertexPaintData>();
-////Resources.Load<VertexPaintData>("Vertex_test_mat_data");
-//Debug.Log(data[0].baseColor.name);
-
-//string vertexJson = JsonUtility.ToJson(exportVertexColors);
-//string savePath = System.IO.Directory.GetCurrentDirectory() + "\\Assets\\" + vertexPaintAsset.name + ".json";
-//System.IO.File.WriteAllText(savePath, vertexJson);
-//AssetDatabase.Refresh();
