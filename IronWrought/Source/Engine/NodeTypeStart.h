@@ -14,7 +14,5 @@ public:
 	int OnEnter(class CNodeInstance* aTriggeringNodeInstance) override;
 	bool IsStartNode() override { return true; }
 	virtual std::string GetNodeName() { return "Start"; }
-	
-	
 };
 

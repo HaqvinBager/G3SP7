@@ -26,7 +26,7 @@ public:
 
 	static void ShowFlow(int aLinkID);
 
-	void Render();
+	void Update();
 	void PostRender();
 
 	void ToggleShouldRenderGraph();
@@ -81,4 +81,5 @@ private:
 	bool myShouldPushCommand = true;
 	ImTextureID myHeaderTextureID;
 	bool myShouldRenderGraph;
+	bool myScriptShouldRun;
 };

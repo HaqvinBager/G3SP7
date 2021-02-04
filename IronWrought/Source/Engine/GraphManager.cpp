@@ -42,16 +42,37 @@ void CGraphManager::Load()
 	memset(&myMenuSeachField[0], 0, sizeof(myMenuSeachField));
 	CGraphManager::LoadTreeFromFile();
 	myShouldRenderGraph = false;
+	myScriptShouldRun = false;
 }
 
 void CGraphManager::ReTriggerUpdateringTrees()
 {
 	//Locate start nodes, we support N start nodes, we might want to remove this, as we dont "support" different trees with different starrtnodes to be connected. It might work, might not
-	for (auto& nodeInstance : myNodeInstancesInGraph)
+	if (myScriptShouldRun)
 	{
-		if (nodeInstance->myNodeType->IsStartNode() && nodeInstance->myShouldTriggerAgain)
+		for (auto& nodeInstance : myNodeInstancesInGraph)
 		{
-			nodeInstance->Enter();
+			if (nodeInstance->myNodeType->IsStartNode())
+			{
+				for (auto& pin : nodeInstance->GetPins())
+				{
+					if (pin.myPinType == SPin::PinTypeInOut::PinTypeInOut_IN && pin.myVariableType == SPin::PinType::Bool)
+					{
+						bool data;
+						data = NodeData::Get<bool>(pin.myData);
+						if (data == true)
+						{
+							nodeInstance->myShouldTriggerAgain = true;
+							break;
+						}
+					}
+				}
+			}
+		
+			if (nodeInstance->myNodeType->IsStartNode() && nodeInstance->myShouldTriggerAgain)
+			{
+				nodeInstance->Enter();
+			}
 		}
 	}
 }
@@ -362,7 +383,7 @@ void CGraphManager::ShowFlow(int aLinkID)
 	myFlowsToBeShown.push_back(aLinkID);
 }
 
-void CGraphManager::Render()
+void CGraphManager::Update()
 {
 	PreFrame(CTimer::Dt());
 
@@ -653,11 +674,12 @@ void CGraphManager::PreFrame(float aDeltaTime)
 		ImGui::SetNextWindowPos(ImVec2(0, 18));
 		ImGui::SetNextWindowSize({io.DisplaySize.x,  io.DisplaySize.y});
 		ImGui::Begin("Content", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_MenuBar);
+		if (ImGui::Button("Run Script"))
+			myScriptShouldRun = !myScriptShouldRun;
 	}
-	//if (ImGui::Button("Retrigger"))
-	//{
-	//	ReTriggerTree();
-	//}
+
+	if(myScriptShouldRun)
+		ReTriggerUpdateringTrees();
 	//ImGui::SameLine();
 	//if (ImGui::Button("Save"))
 	//{
@@ -761,6 +783,7 @@ size_t uiLevenshteinDistance(const T& source, const T& target)
 
 void CGraphManager::ConstructEditorTreeAndConnectLinks()
 {
+	static bool previousValue;
 	for (auto& nodeInstance : myNodeInstancesInGraph)
 	{
 		if (!nodeInstance->myHasSetEditorPosition)

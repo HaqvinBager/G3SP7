@@ -66,8 +66,6 @@ public:
 	void RemoveScene(CStateStack::EState aState);
 	void ClearModelFactory();
 
-	void EnableEditorImgui(bool aIsEnabled);
-	bool EditorImguiEnabled();
 private:
 	static CEngine* ourInstance;
 	
@@ -96,5 +94,4 @@ private:
 	CAudioManager* myAudioManager;
 
 	bool myRenderSceneActive = false;
-	bool myEnabledEditorImgui = false;
 };

@@ -40,7 +40,7 @@ static ImFont* ImGui_LoadFont(ImFontAtlas& atlas, const char* name, float size, 
 }
 ImFontAtlas myFontAtlas;
 
-CImguiManager::CImguiManager() : myGraphManagerIsFullscreen(false)
+CImguiManager::CImguiManager() : myGraphManagerIsFullscreen(false), myIsEnabled(false)
 {
 	ImGui::DebugCheckVersionAndDataLayout("1.80 WIP", sizeof(ImGuiIO), sizeof(ImGuiStyle), sizeof(ImVec2), sizeof(ImVec4), sizeof(ImDrawVert), sizeof(unsigned int));
 	ImGui::CreateContext();
@@ -61,15 +61,24 @@ CImguiManager::~CImguiManager()
 	ImGui::DestroyContext();
 }
 
-void CImguiManager::Render()
+void CImguiManager::Update()
 {
-	ImGui::BeginMainMenuBar();
-	if (ImGui::Button("Display Nodescripts"))
-		myGraphManager->ToggleShouldRenderGraph();
-	ImGui::EndMainMenuBar();
-	myGraphManager->Render();
-	LevelSelect();
-	DebugWindow();
+	if (!myIsEnabled)
+	{
+		ImGui::BeginMainMenuBar();
+		if (ImGui::Button("Display Nodescripts"))
+			myGraphManager->ToggleShouldRenderGraph();
+		ImGui::EndMainMenuBar();
+		LevelSelect();
+		DebugWindow();
+	}
+	myGraphManager->Update();
+
+
+	if (Input::GetInstance()->IsKeyPressed(VK_F1))
+	{
+		myIsEnabled = !myIsEnabled;
+	}
 }
 
 void CImguiManager::PostRender()

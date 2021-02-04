@@ -167,13 +167,9 @@ float CEngine::BeginFrame()
 	myDebug->Update();
 	//CDebug::GetInstance()->Update();
 #endif
-
-	//if (myImguiIsEnabled)
-	//{
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
-
 	myAudioManager->Update();
 	CMainSingleton::DialogueSystem().Update();
 
@@ -183,52 +179,21 @@ float CEngine::BeginFrame()
 #include "ImGuiLevelSelect.h"
 void CEngine::RenderFrame()
 {
-	//CImGuiLevelSelect *levelSelect = new CImGuiLevelSelect();
 	if (!myRenderSceneActive)
 		return;
 
 	ENGINE_BOOL_POPUP(mySceneMap[myActiveState], "The Scene you want to render is nullptr");
 	myRenderManager->Render(*mySceneMap[myActiveState]);
-
-	//IMGUI START
-	//myImguiManager->DebugWindow();
-	//levelSelect->RenderWindow();
-	CMainSingleton::ImguiManager().Render();
-
-	//if (myEnabledEditorImgui)
-	//{
-	//	myGraphManager->PreFrame(CTimer::Dt());
-	//	myGraphManager->ConstructEditorTreeAndConnectLinks();
-	//	myGraphManager->PostFrame();
-	//}
-	//ImGui::ShowMetricsWindow();
-
-	//delete levelSelect;
-	//levelSelect = nullptr;
-	//}
-	//IMGUI END
+	CMainSingleton::ImguiManager().Update();
 }
 
 void CEngine::EndFrame()
 {
-	/*if (myImguiIsEnabled)
-	{*/
-	//if (myEnabledEditorImgui)
-	//{
-	//	ImGui::End();
-	//}
-
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-	//ImGui_ImplDX11_InvalidateDeviceObjects();
 	CMainSingleton::ImguiManager().PostRender();
 
 	myFramework->EndFrame();
-
-	if (Input::GetInstance()->IsKeyPressed(VK_F1))
-	{
-		EnableEditorImgui(!myEnabledEditorImgui);
-	}
 }
 
 CWindowHandler* CEngine::GetWindowHandler()
@@ -323,14 +288,4 @@ void CEngine::RemoveScene(CStateStack::EState aState)
 void CEngine::ClearModelFactory()
 {
 	myModelFactory->ClearFactory();
-}
-
-void CEngine::EnableEditorImgui(bool aIsEnabled)
-{
-	myEnabledEditorImgui = aIsEnabled;
-}
-
-bool CEngine::EditorImguiEnabled()
-{
-	return myEnabledEditorImgui;
 }
