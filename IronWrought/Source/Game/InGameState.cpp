@@ -48,13 +48,30 @@ void CInGameState::Awake(){}
 void CInGameState::Start()
 {
 	CScene* scene = new CScene();
-	std::vector<std::string> scenePaths;
-	scenePaths = CFolderUtility::GetFilePathsInFolder(ASSETPATH + "Assets\\Generated\\", ".json");
-	CMainSingleton::ImguiManager().LevelsToSelectFrom(scenePaths);
-	scene = CSceneManager::CreateScene(scenePaths[0].c_str());
+	//std::vector<std::string> scenePaths;
+	//scenePaths = CFolderUtility::GetFilePathsInFolder(ASSETPATH + "Assets\\Generated\\", ".json");
+	//CMainSingleton::ImguiManager().LevelsToSelectFrom(scenePaths);
+	//scene = CSceneManager::CreateScene(scenePaths[0].c_str());
 	//std::string scenePath = "Level_1.json";
 	//CScene* scene = new CScene();
 	//scene = CSceneManager::CreateScene(scenePath);
+
+
+	CGameObject* camera = new CGameObject(0);
+	camera->AddComponent<CCameraComponent>(*camera, 70.0f);
+	camera->AddComponent<CCameraControllerComponent>(*camera, 25.0f);
+	camera->myTransform->Position({0.0f, 1.0f, 0.0f});
+	camera->myTransform->Rotation({0.0f, 0.0f, 0.0f});
+	scene->AddInstance(camera);
+	scene->MainCamera(camera->GetComponent<CCameraComponent>());
+
+	CGameObject* envLight = new CGameObject(1);
+	envLight->AddComponent<CEnviromentLightComponent>(*envLight);
+	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetColor({0.0f,0.0f,1.0f});
+	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetIntensity(1.f);
+	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetDirection({1.0f,0.5f,-1.0f});
+	scene->AddInstance(envLight);
+	scene->EnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight());
 
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);
@@ -86,7 +103,7 @@ void CInGameState::Start()
 		gameObject->Start();
 	}
 
-	CEngine::GetInstance()->GetActiveScene().MainCamera()->Fade(true);
+	//CEngine::GetInstance()->GetActiveScene().MainCamera()->Fade(true);
 }
 
 void CInGameState::Stop()
