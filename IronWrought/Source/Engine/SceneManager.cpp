@@ -106,6 +106,10 @@ CScene* CSceneManager::CreateScene(std::string aJsonFile)//TEMP
 					std::string modelPath = jsonModel["fbxPath"].GetString();
 					CGameObject* modelGameObject = new CGameObject(instanceID);
 					modelGameObject->AddComponent<CModelComponent>(*modelGameObject, ASSETPATH + modelPath);
+					modelGameObject->myTransform->Scale(scale);
+					modelGameObject->myTransform->Rotation(rotation);
+					modelGameObject->myTransform->Position(position);
+
 					scene->AddInstance(modelGameObject);
 				}
 			}
