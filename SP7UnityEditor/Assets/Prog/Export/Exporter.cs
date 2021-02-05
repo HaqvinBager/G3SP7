@@ -118,7 +118,7 @@ public class Exporter
                 fbxPathGameObjectMap.Add(fbxPath, new List<STransform>());
             }
             STransform transform = new STransform();
-            transform.instanceID = allrenderers[i].gameObject.GetInstanceID();
+            transform.instanceID = allrenderers[i].transform.GetInstanceID();
             transform.position = allrenderers[i].transform.position;
             transform.rotation = allrenderers[i].transform.ConvertToIronWroughtRotation();
             transform.scale = allrenderers[i].transform.localScale;
