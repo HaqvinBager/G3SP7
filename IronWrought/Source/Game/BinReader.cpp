@@ -27,5 +27,10 @@ SVertexPaintColorData CBinReader::LoadVertexColorData(const std::string& aBinFil
 	data.myColors.resize(colorCount);
 	ptr += Read(data.myColors.data()[0], ptr, colorCount);
 
+	int vertexCount = 0;
+	ptr += Read(vertexCount, ptr);
+	data.myVertexPositions.resize(vertexCount);
+	ptr += Read(data.myVertexPositions.data()[0], ptr, vertexCount);
+
 	return std::move(data);
 }

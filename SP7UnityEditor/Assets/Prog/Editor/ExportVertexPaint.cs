@@ -76,14 +76,22 @@ public class ExportVertexPaint : Editor
                 bin.Write(exportedMeshObject.colors.Length);
 
                 Vector3[] colorsRGB = new Vector3[exportedMeshObject.colors.Length];
-                for (int i = 0; i < exportedMeshObject.colors.Length; ++i)
+                for (int i = exportedMeshObject.colors.Length - 1; i > -1; --i)
                 {
                     colorsRGB[i].x = exportedMeshObject.colors[i].r;
                     colorsRGB[i].y = exportedMeshObject.colors[i].g;
                     colorsRGB[i].z = exportedMeshObject.colors[i].b;
                 }
-
                 bin.Write(colorsRGB);
+
+                Vector3[] vertexPositions = exportedMeshObject.vertices;
+                bin.Write(vertexPositions.Length);
+                bin.Write(vertexPositions);
+
+                //Ta den FBXen vi kommer använda 
+
+                //Commandline tool 
+
                 bin.Close();
                 Debug.Log("Exported PolybrushMesh_" + polyMeshIDNumber + ".", exportedMeshObject);
             }

@@ -6,6 +6,10 @@
 #include "BinReader.h"
 #include "JsonReader.h"
 
+#include "ModelFactory.h"
+
+#include <unordered_map>
+
 std::array<ID3D11ShaderResourceView*, 3> CMaterialHandler::RequestMaterial(const std::string& aMaterialName)
 {
 	if (myMaterials.find(aMaterialName) == myMaterials.end())
@@ -67,10 +71,12 @@ void CMaterialHandler::ReleaseMaterial(const std::string& aMaterialName)
 	}
 }
 
-SVertexPaintData CMaterialHandler::RequestVertexColorID(int aGameObjectID)
+
+
+SVertexPaintData CMaterialHandler::RequestVertexColorID(int aGameObjectID, const std::string& aFbxModelPath)
 {
 	std::vector<std::string> jsonPaths = CJsonReader::GetFilePathsInFolder(myVertexLinksPath, "PolybrushLinks_");
-	SVertexPaintColorData colorData{ {}, 0 };
+	SVertexPaintColorData colorData{ {}, {}, 0 };
 	std::vector<std::string> materialNames;
 	for (auto& jsonPath : jsonPaths)
 	{
@@ -89,20 +95,38 @@ SVertexPaintData CMaterialHandler::RequestVertexColorID(int aGameObjectID)
 						{
 							colorData = CBinReader::LoadVertexColorData(ASSETPATH + linksArray[i]["colorsPath"].GetString());
 
-							//if (myVertexColors.find(colorData.myVertexMeshID) == myVertexColors.end())
+							std::vector<Vector3>& fbxVertexPositions = CModelFactory::GetInstance()->GetVertexPositions(aFbxModelPath);					
+							std::unordered_map<Vector3, Vector3, CMaterialHandler::VectorHasher, VertexPositionComparer> vertexPositionToColorMap;
+
+							const float epsilon = 0.001f;
+							for (const auto& ourFBXVertexPosition : fbxVertexPositions) {
+								vertexPositionToColorMap[ourFBXVertexPosition] = { .0f, .0f, .0f };								
+							}
+
+							for (unsigned int j = 0; j < colorData.myVertexPositions.size(); ++j) {						
+								vertexPositionToColorMap[{ -colorData.myVertexPositions[j].x, colorData.myVertexPositions[j].y, -colorData.myVertexPositions[j].z}] = colorData.myColors[j];						
+							}
+
+							std::vector<Vector3> rgbColorData = {};
+							for (auto& ourFBXVertexPositionValue : fbxVertexPositions) {
+								rgbColorData.push_back(vertexPositionToColorMap[ourFBXVertexPositionValue]);
+							}
+
+
 							if (myVertexColorBuffers.find(colorData.myVertexMeshID) == myVertexColorBuffers.end())
 							{
-								//myVertexColors.emplace(colorData.myVertexMeshID, colorData.myColors);
 								D3D11_BUFFER_DESC vertexColorBufferDesc;
 								vertexColorBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-								vertexColorBufferDesc.ByteWidth = sizeof(colorData.myColors[0]) * static_cast<UINT>(colorData.myColors.size());
+								//vertexColorBufferDesc.ByteWidth = sizeof(colorData.myColors[0]) * static_cast<UINT>(colorData.myColors.size());
+								vertexColorBufferDesc.ByteWidth = sizeof(rgbColorData[0]) * static_cast<UINT>(rgbColorData.size());
+
 								vertexColorBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 								vertexColorBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 								vertexColorBufferDesc.MiscFlags = 0;
 								vertexColorBufferDesc.StructureByteStride = 0;
 
 								D3D11_SUBRESOURCE_DATA subResourceData = { 0 };
-								subResourceData.pSysMem = colorData.myColors.data();
+								subResourceData.pSysMem = rgbColorData.data();
 
 								ID3D11Buffer* vertexColorBuffer;
 								ENGINE_HR_MESSAGE(CEngine::GetInstance()->myFramework->GetDevice()->CreateBuffer(&vertexColorBufferDesc, &subResourceData, &vertexColorBuffer), "Vertex Color Buffer could not be created.");
@@ -222,3 +246,57 @@ CMaterialHandler::CMaterialHandler()
 CMaterialHandler::~CMaterialHandler()
 {
 }
+
+
+//{
+//	std::vector<size_t> hashCodes;
+//	hashCodes.reserve(fbxVertexPositions.size());
+//	for (int k = 0; k < fbxVertexPositions.size(); ++k) {
+//		size_t hashCode = CMaterialHandler::VectorHasher()(fbxVertexPositions[k]);
+//		hashCodes.emplace_back(hashCode);
+//	}
+//	int tempCount = 0;
+//	for (const auto& hashCode : hashCodes) {
+//		printf("HashCode %i: %zi  \tVertexPos: \t%f, \t%f, \t%f\n", tempCount, hashCode, fbxVertexPositions[tempCount].x, fbxVertexPositions[tempCount].y, fbxVertexPositions[tempCount].z);
+//		tempCount++;
+//	}
+//}
+
+////printf("\n\n");
+
+//{
+//	std::vector<size_t> hashCodes;
+//	hashCodes.reserve(colorData.myVertexPositions.size());
+//	for (int k = 0; k < colorData.myVertexPositions.size(); ++k) {
+//		size_t hashCode = CMaterialHandler::VectorHasher()({ -colorData.myVertexPositions[k].x, colorData.myVertexPositions[k].y, -colorData.myVertexPositions[k].z });
+//		hashCodes.emplace_back(hashCode);
+//	}
+//	int tempCount = 0;
+//	for (const auto& hashCode : hashCodes) {
+//		printf("HashCode %i: %zi  \tVertexPos: \t%f, \t%f, \t%f\n", tempCount, hashCode, -colorData.myVertexPositions[tempCount].x, colorData.myVertexPositions[tempCount].y, -colorData.myVertexPositions[tempCount].z);									
+//		tempCount++;
+//	}
+//}
+
+//{
+
+//	std::vector<size_t> hashCodes;
+//	hashCodes.reserve(colorData.myVertexPositions.size());
+//	for (int k = 0; k < colorData.myVertexPositions.size(); ++k) {
+//		size_t hashCode = CMaterialHandler::VectorHasher()({ -colorData.myVertexPositions[k].x, colorData.myVertexPositions[k].y, -colorData.myVertexPositions[k].z });
+//		hashCodes.emplace_back(hashCode);
+//	}
+//	int tempCount = 0;
+//	for (const auto& hashCode : hashCodes) {
+//		printf("HashCode %i: %zi  \tVertexPos: \t%f, \t%f, \t%f\n", tempCount, hashCode, -colorData.myVertexPositions[tempCount].x, colorData.myVertexPositions[tempCount].y, -colorData.myVertexPositions[tempCount].z);
+//		tempCount++;
+//	}
+
+//	for (unsigned int j = 0; j < colorData.myVertexPositions.size(); ++j) {
+//		//vertexPositionToColorMap[colorData.myVertexPositions[j]] = colorData.myColors[j];
+//		vertexPositionToColorMap[{ -colorData.myVertexPositions[j].x, colorData.myVertexPositions[j].y, -colorData.myVertexPositions[j].z}] = colorData.myColors[j];
+
+//		//vertexPositionToColorMap[{ colorData.myVertexPositions[j].x - epsilon, colorData.myVertexPositions[j].y - epsilon, colorData.myVertexPositions[j].z - epsilon}] = colorData.myColors[j];
+//		//vertexPositionToColorMap[{ colorData.myVertexPositions[j].x + epsilon, colorData.myVertexPositions[j].y + epsilon, colorData.myVertexPositions[j].z + epsilon}] = colorData.myColors[j];
+//	}
+//}
