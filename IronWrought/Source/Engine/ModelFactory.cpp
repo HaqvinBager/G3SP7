@@ -17,13 +17,6 @@
 #pragma comment(lib, "ModelLoader_Release.lib")
 #endif
 
-#define TRIMSHEET_STRING "ts_"
-#define NUM_TRIM_SHEETS 2
-#define TRIMSHEET_1 "ts_1_Dungeon"
-#define TRIMSHEET_2 ""
-#define TRIMSHEET_PATH "Assets/Trimsheets/"	
-// Create functions for Trimsheets if they are to be used again. Instead of copypasted clutter.
-
 //#define USING_FBX_MATERIALS
 
 CModelFactory* CModelFactory::ourInstance = nullptr;
@@ -200,22 +193,6 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 
 	ID3D11Device* device = myEngine->myFramework->GetDevice();
 	std::string modelDirectoryAndName = modelDirectory + modelName;
-
-	// Check if model uses trimsheet.
-	// suffix ts_#
-	std::string suffix = aFilePath.substr(aFilePath.length() - 8, 4);
-	if (suffix.substr(0, 3) == TRIMSHEET_STRING)
-	{
-														// Info
-		int suffixNr	= static_cast<int>(suffix[3]);	// std::string suffix = "ts_1". "ts_#" ; # = an integer
-		suffixNr		= abs(49 - suffixNr);			// 49 == static_cast<int>('1'). The ASCII value of '1' is 49. '1' == 49, '2' == 50, '9' == 58 => 49 - (int)'2' = -1 and 49 - '3' = -2
-		if (suffixNr >= 0/*static_cast<int>(MIN_NUM_TRIMSHEETS_CHAR)*/ && suffixNr <= NUM_TRIM_SHEETS/*static_cast<int>(MAX_NUM_TRIMSHEETS_CHAR)*/)
-		{
-			std::array<std::string, NUM_TRIM_SHEETS> trimsheets = { TRIMSHEET_1, TRIMSHEET_2 };
-			modelDirectoryAndName = TRIMSHEET_PATH + trimsheets[suffixNr];
-		}
-	}											
-	// ! Check if model uses trimsheet
 
 	// Check for detail normal
 	ID3D11ShaderResourceView* detailNormal1 = nullptr;
@@ -515,27 +492,6 @@ CModel* CModelFactory::CreateInstancedModels(std::string aFilePath, int aNumberO
 
 	ID3D11Device* device = myEngine->myFramework->GetDevice();
 	std::string modelDirectoryAndName = modelDirectory + modelName;
-
-	//UPDATE THIS ON MONDAY
-	//std::map<int, std::string> trimsheets;
-	//trimsheets.emplace(static_cast<int>('1'), "ts_1_Dungeon");
-	//trimsheets.emplace(static_cast<int>('2'), "ts_2_Something");
-
-	// Check if model uses trimsheet.
-	// suffix ts_#
-	std::string suffix = aFilePath.substr(aFilePath.length() - 8, 4);
-	if (suffix.substr(0, 3) == TRIMSHEET_STRING)
-	{
-		// Info
-		int suffixNr = static_cast<int>(suffix[3]);	// std::string suffix = "ts_1". "ts_#" ; # = an integer
-		suffixNr = abs(49 - suffixNr);			// 49 == static_cast<int>('1'). The ASCII value of '1' is 49. '1' == 49, '2' == 50, '9' == 58 => 49 - (int)'2' = -1 and 49 - '3' = -2
-		if (suffixNr >= 0/*static_cast<int>(MIN_NUM_TRIMSHEETS_CHAR)*/ && suffixNr <= NUM_TRIM_SHEETS/*static_cast<int>(MAX_NUM_TRIMSHEETS_CHAR)*/)
-		{
-			std::array<std::string, NUM_TRIM_SHEETS> trimsheets = { TRIMSHEET_1, TRIMSHEET_2 };
-			modelDirectoryAndName = TRIMSHEET_PATH + trimsheets[suffixNr];
-		}
-	}
-	// ! Check if model uses trimsheet
 
 #ifdef USING_FBX_MATERIALS
 	std::vector<std::array<ID3D11ShaderResourceView*, 3>> materials;
