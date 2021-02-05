@@ -80,7 +80,7 @@ SVertexPaintData CMaterialHandler::RequestVertexColorID(int aGameObjectID, const
 	std::vector<std::string> materialNames;
 	for (auto& jsonPath : jsonPaths)
 	{
-		rapidjson::Document vertexLinks = CJsonReader::LoadDocument(myVertexLinksPath + jsonPath);
+		rapidjson::Document vertexLinks = CJsonReader::Get()->LoadDocument(myVertexLinksPath + jsonPath);
 
 		if (vertexLinks.HasMember("links"))
 		{
@@ -124,7 +124,6 @@ SVertexPaintData CMaterialHandler::RequestVertexColorID(int aGameObjectID, const
 								vertexColorBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 								vertexColorBufferDesc.MiscFlags = 0;
 								vertexColorBufferDesc.StructureByteStride = 0;
-
 								D3D11_SUBRESOURCE_DATA subResourceData = { 0 };
 								subResourceData.pSysMem = rgbColorData.data();
 

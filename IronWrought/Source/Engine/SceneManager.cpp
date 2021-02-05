@@ -22,7 +22,7 @@ CScene* CSceneManager::CreateScene(std::string aJsonFile)//TEMP
 {
 	CScene* scene = new CScene();
 
-		rapidjson::Document document = CJsonReader::LoadDocument(ASSETPATH + "Assets/Generated/" + aJsonFile);
+		rapidjson::Document document = CJsonReader::Get()->LoadDocument(ASSETPATH + "Assets/Generated/" + aJsonFile);
 		auto jsonarray = document["instancedGameobjects"].GetArray();
 		for (auto& jsongameobject : jsonarray) {
 
@@ -69,11 +69,11 @@ CScene* CSceneManager::CreateScene(std::string aJsonFile)//TEMP
 			instancedGameObject->AddComponent<CInstancedModelComponent>(*instancedGameObject, std::string(ASSETPATH + model_path), instancedTransforms);
 			scene->AddInstance(instancedGameObject);
 		}
-		scene->AddPXScene(CMainSingleton::PhysXWrapper().CreatePXScene());
+		//scene->AddPXScene(CMainSingleton::PhysXWrapper().CreatePXScene());
 
 		CGameObject* camera = new CGameObject(0);
 		camera->AddComponent<CCameraComponent>(*camera, 70.0f);
-		camera->AddComponent<CCameraControllerComponent>(*camera, 25.0f);
+		camera->AddComponent<CCameraControllerComponent>(*camera, 5.0f);
 		camera->myTransform->Position({ 0.0f, 1.0f, 0.0f });
 		camera->myTransform->Rotation({ 0.0f, 0.0f, 0.0f });
 		scene->AddInstance(camera);
@@ -99,7 +99,7 @@ CScene* CSceneManager::CreateScene(std::vector<std::string> aJsonFile)
 			continue;
 		}
 
-		rapidjson::Document document = CJsonReader::LoadDocument(ASSETPATH + "Assets/Generated/" + aJsonFile[i]);
+		rapidjson::Document document = CJsonReader::Get()->LoadDocument(ASSETPATH + "Assets/Generated/" + aJsonFile[i]);
 		auto jsonarray = document["instancedGameobjects"].GetArray();
 		for (auto& jsongameobject : jsonarray) {
 
@@ -150,7 +150,7 @@ CScene* CSceneManager::CreateScene(std::vector<std::string> aJsonFile)
 			instancedGameObject->AddComponent<CInstancedModelComponent>(*instancedGameObject, std::string(ASSETPATH + model_path), instancedTransforms);
 			scene->AddInstance(instancedGameObject);
 		}
-		scene->AddPXScene(CMainSingleton::PhysXWrapper().CreatePXScene());
+		//scene->AddPXScene(CMainSingleton::PhysXWrapper().CreatePXScene());
 
 		CGameObject* camera = new CGameObject(0);
 		camera->AddComponent<CCameraComponent>(*camera, 70.0f);

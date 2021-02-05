@@ -66,7 +66,7 @@ bool CWindowHandler::Init(CWindowHandler::SWindowData someWindowData)
 {
     myWindowData = someWindowData;
     
-    rapidjson::Document document = CJsonReader::LoadDocument("Json/Settings/WindowSettings.json");
+    rapidjson::Document document = CJsonReader::Get()->LoadDocument("Json/Settings/WindowSettings.json");
  
     if (document.HasMember("Window Width"))
         myWindowData.myWidth = document["Window Width"].GetInt();

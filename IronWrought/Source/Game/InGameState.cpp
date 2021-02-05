@@ -96,7 +96,7 @@ void CInGameState::Stop()
 
 void CInGameState::Update()
 {
-	CMainSingleton::PhysXWrapper().Simulate();
+	//CMainSingleton::PhysXWrapper().Simulate();
 	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
 	{
 		gameObject->Update();

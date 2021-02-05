@@ -26,7 +26,6 @@ class CForwardRenderer;
 class CVFXFactory;
 class CLineFactory;
 class CAudioManager;
-class CGraphManager;
 
 class CEngine
 {
@@ -67,8 +66,6 @@ public:
 	void RemoveScene(CStateStack::EState aState);
 	void ClearModelFactory();
 
-	void EnableEditorImgui(bool aIsEnabled);
-	bool EditorImguiEnabled();
 private:
 	static CEngine* ourInstance;
 	
@@ -96,8 +93,5 @@ private:
 	CMainSingleton* myMainSingleton;
 	CAudioManager* myAudioManager;
 
-	CGraphManager* myGraphManager;
-
 	bool myRenderSceneActive = false;
-	bool myEnabledEditorImgui = false;
 };
