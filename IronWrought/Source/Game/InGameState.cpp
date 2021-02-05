@@ -80,25 +80,25 @@ void CInGameState::Start()
 	scene->AddInstance(dn);
 
 	CGameObject* dn1 = new CGameObject(1235);
-	dn1->AddComponent<CModelComponent>(*dn1, "Assets/Graphics/DN1_dn06.fbx");
+	dn1->AddComponent<CModelComponent>(*dn1, "Assets/Graphics/DN1-dn06.fbx");
 	dn1->myTransform->Position({ -0.9f,0.0f,0.0f });
 	dn1->myTransform->Scale({100.0f,100.0f,100.0f});
 	scene->AddInstance(dn1);
 
 	CGameObject* dn2 = new CGameObject(1236);
-	dn2->AddComponent<CModelComponent>(*dn2, "Assets/Graphics/DN2_dn0105_AL.fbx");
+	dn2->AddComponent<CModelComponent>(*dn2, "Assets/Graphics/DN2-dn0105-AL.fbx");
 	dn2->myTransform->Position({ 0.2f,0.0f,0.0f });
 	dn2->myTransform->Scale({100.0f,100.0f,100.0f});
 	scene->AddInstance(dn2);
 
 	CGameObject* dn3 = new CGameObject(1237);
-	dn3->AddComponent<CModelComponent>(*dn3, "Assets/Graphics/DN3_dn070203.fbx");
+	dn3->AddComponent<CModelComponent>(*dn3, "Assets/Graphics/DN3-dn070203.fbx");
 	dn3->myTransform->Position({ 1.3f,0.0f,0.0f });
 	dn3->myTransform->Scale({100.0f,100.0f,100.0f});
 	scene->AddInstance(dn3);
 
 	CGameObject* dn4 = new CGameObject(1238);
-	dn4->AddComponent<CModelComponent>(*dn4, "Assets/Graphics/DN4_dn05030701.fbx");
+	dn4->AddComponent<CModelComponent>(*dn4, "Assets/Graphics/DN4-dn05030701.fbx");
 	dn4->myTransform->Position({ 2.4f,0.0f,0.0f });
 	dn4->myTransform->Scale({100.0f,100.0f,100.0f});
 	scene->AddInstance(dn4);

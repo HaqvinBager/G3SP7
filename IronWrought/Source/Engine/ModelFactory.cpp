@@ -192,22 +192,8 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 	ENGINE_HR_MESSAGE(myEngine->myFramework->GetDevice()->CreateInputLayout(layout, sizeof(layout) / sizeof(D3D11_INPUT_ELEMENT_DESC), vsData.data(), vsData.size(), &inputLayout), "Input Layout could not be created.");
 
 	ID3D11Device* device = myEngine->myFramework->GetDevice();
+
 	std::string modelDirectoryAndName = modelDirectory + modelName;
-
-	// Check for detail normal
-	ID3D11ShaderResourceView* detailNormal1 = nullptr;
-	ID3D11ShaderResourceView* detailNormal2 = nullptr;
-	ID3D11ShaderResourceView* detailNormal3 = nullptr;
-	ID3D11ShaderResourceView* detailNormal4 = nullptr;
-	detailNormal1 = GetShaderResourceView(device, "Assets/Graphics/Textures/DetailNormals/06_tga_dn_25cm_n.dds");
-	detailNormal2 = GetShaderResourceView(device, "Assets/Graphics/Textures/DetailNormals/01_tga_dn_CarbonFibre_n.dds");
-	detailNormal3 = GetShaderResourceView(device, "Assets/Graphics/Textures/DetailNormals/05_tga_dn_Wool_n.dds");
-	detailNormal4 = GetShaderResourceView(device, "Assets/Graphics/Textures/DetailNormals/04_tga_dn_PlasticPolymer_n.dds");
-	std::string dnsuffix = aFilePath.substr(aFilePath.length() - 7, 3);
-	if (dnsuffix == "_dn")
-	{
-
-	}
 
 #ifdef USING_FBX_MATERIALS
 	std::vector<std::array<ID3D11ShaderResourceView*, 3>> materials;
@@ -247,10 +233,44 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 	modelData.myMaterials = materials;
 	modelData.myMaterialNames = materialNames;
 
-	modelData.myDetailNormals[0] = detailNormal1;
-	modelData.myDetailNormals[1] = detailNormal2;
-	modelData.myDetailNormals[2] = detailNormal3;
-	modelData.myDetailNormals[3] = detailNormal4;
+	// Check for detail normal
+
+	/// DN4-dn05030701-AL.fbx
+	size_t firstOfDash = modelName.find_first_of("-");
+	if (firstOfDash != std::string::npos)
+	{
+		std::string subStr = modelName.substr(firstOfDash + 1, abs((int)(firstOfDash - modelName.length())));
+		if (subStr.find("-AL") != std::string::npos)
+		{
+			// Has alpha, register it
+			subStr = subStr.substr(0, subStr.length() - 3);
+		}
+		if (subStr.find("dn") == 0)
+		{
+			subStr = subStr.substr(2, subStr.length());
+			std::cout << subStr << std::endl;
+		}
+
+		short nrOfDNs = (short)subStr.length() / 2;
+		std::cout << "nr of "<< nrOfDNs << std::endl;
+
+		for (short i = 0; i < nrOfDNs; ++i)
+		{
+		}
+		ID3D11ShaderResourceView* detailNormal1 = nullptr;
+		ID3D11ShaderResourceView* detailNormal2 = nullptr;
+		ID3D11ShaderResourceView* detailNormal3 = nullptr;
+		ID3D11ShaderResourceView* detailNormal4 = nullptr;
+		detailNormal1 = GetShaderResourceView(device, "Assets/Graphics/Textures/DetailNormals/06_tga_dn_25cm_n.dds");
+		detailNormal2 = GetShaderResourceView(device, "Assets/Graphics/Textures/DetailNormals/01_tga_dn_CarbonFibre_n.dds");
+		detailNormal3 = GetShaderResourceView(device, "Assets/Graphics/Textures/DetailNormals/05_tga_dn_Wool_n.dds");
+		detailNormal4 = GetShaderResourceView(device, "Assets/Graphics/Textures/DetailNormals/04_tga_dn_PlasticPolymer_n.dds");
+
+		modelData.myDetailNormals[0] = detailNormal1;
+		modelData.myDetailNormals[1] = detailNormal2;
+		modelData.myDetailNormals[2] = detailNormal3;
+		modelData.myDetailNormals[3] = detailNormal4;
+	}
 
 	model->Init(modelData);
 
