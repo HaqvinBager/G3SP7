@@ -36,32 +36,34 @@ GBufferOutput main(VertexModelToPixel input)
         //      0.76f - 1.0f    == DETAILNORMAL_4
         // Note! This if-chain exists in 3 shaders: PBRPixelShader, GBufferPixelShader and DeferredRenderPassGBufferPixelShader
         // Make this better please
-        if (detailNormalStrength > DETAILNORMAL_4_STR_RANGE_MIN)
+        if (detailNormalStrength < DETAILNORMAL_STR_MAX)
         {
-            detailNormal = PixelShader_DetailNormal(vertToPixel, DETAILNORMAL_4).myColor.xyz;
-            detailNormalStrength = (detailNormalStrength - DETAILNORMAL_4_STR_RANGE_MIN + 0.01f) / DETAILNORMAL_STR_RANGE_DIFF;
+            if (detailNormalStrength > DETAILNORMAL_4_STR_RANGE_MIN)
+            {
+                detailNormal = PixelShader_DetailNormal(vertToPixel, DETAILNORMAL_4).myColor.xyz;
+                detailNormalStrength = (detailNormalStrength - DETAILNORMAL_4_STR_RANGE_MIN) / DETAILNORMAL_STR_RANGE_DIFF;
+            }
+            else if (detailNormalStrength > DETAILNORMAL_3_STR_RANGE_MIN)
+            {
+                detailNormal = PixelShader_DetailNormal(vertToPixel, DETAILNORMAL_3).myColor.xyz;
+                detailNormalStrength = (detailNormalStrength - DETAILNORMAL_3_STR_RANGE_MIN) / DETAILNORMAL_STR_RANGE_DIFF;
+            }
+            else if (detailNormalStrength > DETAILNORMAL_2_STR_RANGE_MIN)
+            {
+                detailNormal = PixelShader_DetailNormal(vertToPixel, DETAILNORMAL_2).myColor.xyz;
+                detailNormalStrength = (detailNormalStrength - DETAILNORMAL_2_STR_RANGE_MIN) / DETAILNORMAL_STR_RANGE_DIFF;
+            }
+            else
+            {
+                detailNormal = PixelShader_DetailNormal(vertToPixel, DETAILNORMAL_1).myColor.xyz;
+                detailNormalStrength = (detailNormalStrength - DETAILNORMAL_1_STR_RANGE_MIN) / DETAILNORMAL_STR_RANGE_DIFF;
+            }
+            
+            normal = normal * 0.5 + 0.5;
+            detailNormal = SetDetailNormalStrength(detailNormal, detailNormalStrength, strengthMultiplier);
+            detailNormal = detailNormal * 0.5 + 0.5;
+            normal = BlendRNM(normal, detailNormal);
         }
-        else if (detailNormalStrength > DETAILNORMAL_3_STR_RANGE_MIN)
-        {
-            detailNormal = PixelShader_DetailNormal(vertToPixel, DETAILNORMAL_3).myColor.xyz;
-            detailNormalStrength = (detailNormalStrength - DETAILNORMAL_3_STR_RANGE_MIN + 0.01f) / DETAILNORMAL_STR_RANGE_DIFF;
-        }
-        else if (detailNormalStrength > DETAILNORMAL_2_STR_RANGE_MIN)
-        {
-            detailNormal = PixelShader_DetailNormal(vertToPixel, DETAILNORMAL_2).myColor.xyz;
-            detailNormalStrength = (detailNormalStrength - DETAILNORMAL_2_STR_RANGE_MIN + 0.01f) / DETAILNORMAL_STR_RANGE_DIFF;
-        }
-        else
-        {
-            detailNormal = PixelShader_DetailNormal(vertToPixel, DETAILNORMAL_1).myColor.xyz;
-            detailNormalStrength = (detailNormalStrength - DETAILNORMAL_1_STR_RANGE_MIN + 0.01f) / DETAILNORMAL_STR_RANGE_DIFF;
-        }
-        
-        detailNormal = SetDetailNormalStrength(detailNormal, detailNormalStrength, strengthMultiplier);
-        normal = normal * 0.5 + 0.5;
-        detailNormal = detailNormal * 0.5 + 0.5;
-        normal = BlendRNM(normal, detailNormal);
-        
         //---
         
         // Blend all 4 ontop of eachother
@@ -106,6 +108,6 @@ GBufferOutput main(VertexModelToPixel input)
     output.myWorldPosition.w = metalness;
     output.myAlbedo.w        = perceptualRoughness;
     output.myNormal.w        = ambientOcclusion;
-    output.myVertexNormal    = emissive;
+    output.myVertexNormal.w    = emissive;
     return output;
 }

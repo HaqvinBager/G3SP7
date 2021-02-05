@@ -222,13 +222,14 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 	ID3D11ShaderResourceView* detailNormal2 = nullptr;
 	ID3D11ShaderResourceView* detailNormal3 = nullptr;
 	ID3D11ShaderResourceView* detailNormal4 = nullptr;
+	detailNormal1 = GetShaderResourceView(device, "Assets/Graphics/Textures/DetailNormals/06_tga_dn_25cm_n.dds");
+	detailNormal2 = GetShaderResourceView(device, "Assets/Graphics/Textures/DetailNormals/01_tga_dn_CarbonFibre_n.dds");
+	detailNormal3 = GetShaderResourceView(device, "Assets/Graphics/Textures/DetailNormals/05_tga_dn_Wool_n.dds");
+	detailNormal4 = GetShaderResourceView(device, "Assets/Graphics/Textures/DetailNormals/04_tga_dn_PlasticPolymer_n.dds");
 	std::string dnsuffix = aFilePath.substr(aFilePath.length() - 7, 3);
 	if (dnsuffix == "_dn")
 	{
-		detailNormal1 = GetShaderResourceView(device, "Assets/3D/Exempel_Modeller/DetailNormals/Tufted_Leather/dn_25cm_N.dds");
-		detailNormal2 = GetShaderResourceView(device, "Assets/3D/Exempel_Modeller/DetailNormals/4DN/dns/dn_CarbonFibre_n.dds");
-		detailNormal3 = GetShaderResourceView(device, "Assets/3D/Exempel_Modeller/DetailNormals/4DN/dns/dn_Wool_n.dds");
-		detailNormal4 = GetShaderResourceView(device, "Assets/3D/Exempel_Modeller/DetailNormals/4DN/dns/dn_PlasticPolymer_n.dds");
+
 	}
 
 #ifdef USING_FBX_MATERIALS
@@ -562,13 +563,15 @@ CModel* CModelFactory::CreateInstancedModels(std::string aFilePath, int aNumberO
 	ID3D11ShaderResourceView* detailNormal2 = nullptr;
 	ID3D11ShaderResourceView* detailNormal3 = nullptr;
 	ID3D11ShaderResourceView* detailNormal4 = nullptr;
+	detailNormal1 = GetShaderResourceView(device, "Assets/Graphics/Textures/DetailNormals/06_tga_dn_25cm_n.dds");
+	detailNormal2 = GetShaderResourceView(device, "Assets/Graphics/Textures/DetailNormals/01_tga_dn_CarbonFibre_n.dds");
+	detailNormal3 = GetShaderResourceView(device, "Assets/Graphics/Textures/DetailNormals/05_tga_dn_Wool_n.dds");
+	detailNormal4 = GetShaderResourceView(device, "Assets/Graphics/Textures/DetailNormals/04_tga_dn_PlasticPolymer_n.dds");
+
 	std::string dnsuffix = aFilePath.substr(aFilePath.length() - 7, 3);
 	if (dnsuffix == "_dn")
 	{
-		detailNormal1 = GetShaderResourceView(device, "Assets/3D/Exempel_Modeller/DetailNormals/Tufted_Leather/dn_25cm_N.dds");
-		detailNormal2 = GetShaderResourceView(device, "Assets/3D/Exempel_Modeller/DetailNormals/4DN/dns/dn_CarbonFibre_n.dds");
-		detailNormal3 = GetShaderResourceView(device, "Assets/3D/Exempel_Modeller/DetailNormals/4DN/dns/dn_Wool_n.dds");
-		detailNormal4 = GetShaderResourceView(device, "Assets/3D/Exempel_Modeller/DetailNormals/4DN/dns/dn_PlasticPolymer_n.dds");
+
 	}
 
 	CModel::SModelInstanceData modelInstanceData;

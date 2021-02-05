@@ -183,7 +183,7 @@ void CRenderManager::Render(CScene& aScene)
 	for (unsigned int i = 0; i < gameObjects.size(); ++i)
 	{
 		auto instance = gameObjects[i];
-		for (auto gameObjectToOutline : aScene.GetModelsToOutline()) {
+		for (auto gameObjectToOutline : aScene.ModelsToOutline()) {
 			if (instance == gameObjectToOutline) {
 				indicesOfOutlineModels.emplace_back(i);
 			}

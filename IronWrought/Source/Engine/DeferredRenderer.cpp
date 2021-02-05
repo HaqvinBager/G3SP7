@@ -184,7 +184,7 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 		myContext->VSSetShader(myModelVertexShader, nullptr, 0);
 
 		myContext->PSSetConstantBuffers(1, 1, &myObjectBuffer);
-		myContext->PSSetShaderResources(8, 4, &modelData.myDetailNormals[0]);
+		myContext->PSSetShaderResources(8, dnCounter, &modelData.myDetailNormals[0]);
 
 		myContext->PSSetShader(myCurrentGBufferPixelShader, nullptr, 0);
 		myContext->PSSetSamplers(0, 1, &modelData.mySamplerState);
@@ -214,6 +214,7 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 			}
 			myContext->IASetIndexBuffer(modelData.myMeshes[i].myIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 			myContext->PSSetShaderResources(5, 3, &modelData.myMaterials[modelData.myMeshes[i].myMaterialIndex][0]);
+			myContext->PSSetShaderResources(8, 4, &modelData.myDetailNormals[0]);
 			myContext->DrawIndexed(modelData.myMeshes[i].myNumberOfIndices, 0, 0);
 			CRenderManager::myNumberOfDrawCallsThisFrame++;
 		}

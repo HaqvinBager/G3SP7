@@ -14,8 +14,10 @@
 #define DETAILNORMAL_2_STR_RANGE_MIN 0.26f
 // Detail normal strength value 0.51f - 0.74f == DETAILNORMAL_3
 #define DETAILNORMAL_3_STR_RANGE_MIN 0.51f
-// Detail normal strength value 0.76f - 1.0f == DETAILNORMAL_4
+// Detail normal strength value 0.76f - 0.9f == DETAILNORMAL_4
 #define DETAILNORMAL_4_STR_RANGE_MIN 0.76f
+// Max, nothing
+#define DETAILNORMAL_STR_MAX 0.98f
 #define DETAILNORMAL_STR_RANGE_DIFF 0.23f
 
 #define DETAILNORMAL_DISTANCE_MAX 1.0f /* Don't go higher than 4.0f. Gives no noticable effect. */
