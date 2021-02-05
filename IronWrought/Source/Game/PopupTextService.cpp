@@ -24,7 +24,7 @@ using namespace rapidjson;
 
 bool CPopupTextService::Init()
 {
-	Document document = CJsonReader::LoadDocument("Json/UI/PopupTextServiceInit.json");
+	Document document = CJsonReader::Get()->LoadDocument("Json/UI/PopupTextServiceInit.json");
 	ENGINE_BOOL_POPUP(!document.HasParseError(), "Could not load 'Json/UI/PopupTextServiceInit.json'!");
 
 	const unsigned int damageNumbersPoolSize = document["Damage Numbers Pool Size"].GetInt();

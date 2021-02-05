@@ -518,6 +518,9 @@
     <ClCompile Include="NodeTypeMathToRadians.cpp">
       <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
     </ClCompile>
+    <ClCompile Include="JsonReader.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">

@@ -30,6 +30,7 @@ public:
 	void PostRender();
 
 	void ToggleShouldRenderGraph();
+	bool ShouldRenderGraph() { return myShouldRenderGraph; }
 private:
 	ImTextureID HeaderTextureID();
 	void WillBeCyclic(CNodeInstance* aFirst, CNodeInstance* aSecond, bool& aIsCyclic, CNodeInstance* aBase);

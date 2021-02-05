@@ -182,7 +182,7 @@ void CParticleFactory::ReadJsonValues(std::string aFilePath, CParticle::SParticl
 
     //std::ifstream inputStream(aFilePath);
     //IStreamWrapper inputWrapper(inputStream);
-    Document document = CJsonReader::LoadDocument(aFilePath);
+    Document document = CJsonReader::Get()->LoadDocument(aFilePath);
     //document.ParseStream(inputWrapper);
 
     someParticleData.myNumberOfParticles =          document["Max Number Of Particles"].GetInt();

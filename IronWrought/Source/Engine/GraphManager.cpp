@@ -3,12 +3,12 @@
 #include "rapidjson/document.h"
 #include "rapidjson/writer.h"
 #include "rapidjson/stringbuffer.h"
-#include "rapidjson/document.h"
 #include "rapidjson/filewritestream.h"
 #include "rapidjson/filereadstream.h"
 #include "rapidjson/prettywriter.h"
-#include <iostream>
+#include "JsonReader.h"
 #include <fstream>
+#include <iostream>
 #include <sstream>
 #include "NodeInstance.h"
 #include "NodeType.h"
@@ -182,7 +182,6 @@ SPin::PinType LoadPinData(NodeDataPtr& someDataToCopy, rapidjson::Value& someDat
 	}
 	return SPin::PinType::Unknown;
 }
-
 void CGraphManager::LoadTreeFromFile()
 {
 	for (auto& nodeInstance : myNodeInstancesInGraph)
@@ -194,29 +193,24 @@ void CGraphManager::LoadTreeFromFile()
 	myNodeInstancesInGraph.clear();
 	UID::myAllUIDs.clear();
 	UID::myGlobalUID = 0;
-
+	Document document;
 	{
-		std::ifstream inputFile("Imgui/NodeScripts/nodeinstances.json");
-		std::stringstream jsonDocumentBuffer;
-		std::string inputLine = "";
+		std::string path = "Imgui/NodeScripts/nodeinstances.json";
+		document = CJsonReader::Get()->LoadDocument(path);
 
-		if (inputFile.good()) {
-			while (std::getline(inputFile, inputLine))
+		if (document.HasMember("UID_MAX"))
+		{
+			auto uIDMax = document["UID_MAX"]["Num"].GetInt();
+			UID::myGlobalUID = uIDMax;
+		}
+		path += "hello";
+		if (document.HasMember("NodeInstances"))
+		{
+			auto nodeInstances = document["NodeInstances"].GetArray();
+
+			for (unsigned int i = 0; i < nodeInstances.Size(); ++i)
 			{
-				jsonDocumentBuffer << inputLine << "\n";
-			}
-			rapidjson::Document document;
-			document.Parse(jsonDocumentBuffer.str().c_str());
-
-			rapidjson::Value& uidmax = document["UID_MAX"];
-			int test = uidmax["Num"].GetInt();
-			UID::myGlobalUID = test;
-
-			rapidjson::Value& results = document["NodeInstances"];
-
-			for (rapidjson::SizeType i = 0; i < results.Size(); i++)
-			{
-				rapidjson::Value& nodeInstance = results[i];
+				auto nodeInstance = nodeInstances[i].GetObjectW();
 				CNodeInstance* object = new CNodeInstance(false);
 				int nodeType = nodeInstance["NodeType"].GetInt();
 				int UID = nodeInstance["UID"].GetInt();
@@ -239,13 +233,12 @@ void CGraphManager::LoadTreeFromFile()
 						object->ChangePinTypes(newType);
 					}
 				}
-
 				myNodeInstancesInGraph.push_back(object);
 			}
 		}
 	}
 	{
-		std::ifstream inputFile("Imgui/NodeScripts/links.json");
+		/*std::ifstream inputFile("Imgui/NodeScripts/links.json");
 		std::stringstream jsonDocumentBuffer;
 		std::string inputLine;
 
@@ -255,12 +248,15 @@ void CGraphManager::LoadTreeFromFile()
 				jsonDocumentBuffer << inputLine << "\n";
 			}
 			rapidjson::Document document;
-			document.Parse(jsonDocumentBuffer.str().c_str());
+			document.Parse(jsonDocumentBuffer.str().c_str());*/
 
 			//rapidjson::Value& results = document["Links"];
-
+		document = CJsonReader::Get()->LoadDocument("Imgui/NodeScripts/links.json");
+		if(document.HasMember("Links"))
+		{ 
+			auto links = document["Links"].GetArray();
 			myNextLinkIdCounter = 0;
-			for (rapidjson::SizeType i = 0; i < document["Links"].Size(); i++)
+			for (unsigned int i = 0; i < links.Size(); i++)
 			{
 				int id = document["Links"][i]["ID"].GetInt();
 				int inputID = document["Links"][i]["Input"].GetInt();
@@ -390,7 +386,6 @@ void CGraphManager::ShowFlow(int aLinkID)
 void CGraphManager::Update()
 {
 	PreFrame(CTimer::Dt());
-
 	if (myShouldRenderGraph)
 	{
 		ConstructEditorTreeAndConnectLinks();
@@ -639,9 +634,7 @@ void CGraphManager::WillBeCyclic(CNodeInstance* aFirst, CNodeInstance* /*aSecond
 		return;
 
 	if (aIsCyclic)
-	{
 		return;
-	}
 
 	std::vector<SPin>& pins = aFirst->GetPins();
 	for (auto& pin : pins)

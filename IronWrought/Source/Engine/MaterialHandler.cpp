@@ -74,7 +74,7 @@ SVertexPaintData CMaterialHandler::RequestVertexColorID(int aGameObjectID)
 	std::vector<std::string> materialNames;
 	for (auto& jsonPath : jsonPaths)
 	{
-		rapidjson::Document vertexLinks = CJsonReader::LoadDocument(myVertexLinksPath + jsonPath);
+		rapidjson::Document vertexLinks = CJsonReader::Get()->LoadDocument(myVertexLinksPath + jsonPath);
 
 		if (vertexLinks.HasMember("links"))
 		{

@@ -51,7 +51,7 @@ bool CDialogueSystem::Init()
 	CMainSingleton::PostMaster().Subscribe("DELevel2", this);
 	CMainSingleton::PostMaster().Subscribe("DELevel3", this);
 
-	rapidjson::Document document = CJsonReader::LoadDocument("Json/UI/DialogueSystemInit.json");
+	rapidjson::Document document = CJsonReader::Get()->LoadDocument("Json/UI/DialogueSystemInit.json");
 	ENGINE_BOOL_POPUP(!document.HasParseError(), "Could not load 'Json/UI/DialogueSystemInit.json'!");
 
 	CSpriteFactory* factory = CSpriteFactory::GetInstance();

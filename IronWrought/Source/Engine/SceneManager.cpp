@@ -22,7 +22,7 @@ CScene* CSceneManager::CreateScene(std::string aJsonFile)//TEMP
 {
 	CScene* scene = new CScene();
 
-		rapidjson::Document document = CJsonReader::LoadDocument(ASSETPATH + "Assets/Generated/" + aJsonFile);
+		rapidjson::Document document = CJsonReader::Get()->LoadDocument(ASSETPATH + "Assets/Generated/" + aJsonFile);
 		auto jsonarray = document["instancedGameobjects"].GetArray();
 		for (auto& jsongameobject : jsonarray) {
 
@@ -99,7 +99,7 @@ CScene* CSceneManager::CreateScene(std::vector<std::string> aJsonFile)
 			continue;
 		}
 
-		rapidjson::Document document = CJsonReader::LoadDocument(ASSETPATH + "Assets/Generated/" + aJsonFile[i]);
+		rapidjson::Document document = CJsonReader::Get()->LoadDocument(ASSETPATH + "Assets/Generated/" + aJsonFile[i]);
 		auto jsonarray = document["instancedGameobjects"].GetArray();
 		for (auto& jsongameobject : jsonarray) {
 

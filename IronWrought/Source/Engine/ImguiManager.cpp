@@ -56,14 +56,14 @@ CImguiManager::CImguiManager() : myGraphManagerIsFullscreen(false), myIsEnabled(
 
 CImguiManager::~CImguiManager()
 {
-	delete myGraphManager;
-	myGraphManager = nullptr;
+	//delete myGraphManager;
+	//myGraphManager = nullptr;
 	ImGui::DestroyContext();
 }
 
 void CImguiManager::Update()
 {
-	if (!myIsEnabled)
+	if (myIsEnabled)
 	{
 		ImGui::BeginMainMenuBar();
 		if (ImGui::Button("Display Nodescripts"))
@@ -78,6 +78,8 @@ void CImguiManager::Update()
 	if (Input::GetInstance()->IsKeyPressed(VK_F1))
 	{
 		myIsEnabled = !myIsEnabled;
+		if(myGraphManager->ShouldRenderGraph())
+			myGraphManager->ToggleShouldRenderGraph();
 	}
 }
 
@@ -123,8 +125,8 @@ void CImguiManager::LevelSelect()
 					CScene* myUnityScene = CSceneManager::CreateScene(buf);
 					CEngine::GetInstance()->AddScene(CStateStack::EState::InGame, myUnityScene);
 					CEngine::GetInstance()->SetActiveScene(CStateStack::EState::InGame);
+					myIsEnabled = !myIsEnabled;
 				}
-
 			}
 		}
 	/*	ImGui::TreePop();
