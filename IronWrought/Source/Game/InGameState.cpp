@@ -59,7 +59,7 @@ void CInGameState::Start()
 
 	CGameObject* camera = new CGameObject(0);
 	camera->AddComponent<CCameraComponent>(*camera, 70.0f);
-	camera->AddComponent<CCameraControllerComponent>(*camera, 25.0f);
+	camera->AddComponent<CCameraControllerComponent>(*camera, 5.0f);
 	camera->myTransform->Position({0.0f, 1.0f, 0.0f});
 	camera->myTransform->Rotation({0.0f, 0.0f, 0.0f});
 	scene->AddInstance(camera);
@@ -73,6 +73,37 @@ void CInGameState::Start()
 	scene->AddInstance(envLight);
 	scene->EnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight());
 
+	CGameObject* dn = new CGameObject(1234);
+	dn->AddComponent<CModelComponent>(*dn, "Assets/Graphics/DN.fbx");
+	dn->myTransform->Position({ -2.0f,0.0f,0.0f });
+	dn->myTransform->Scale({100.0f,100.0f,100.0f});
+	scene->AddInstance(dn);
+
+	CGameObject* dn1 = new CGameObject(1235);
+	dn1->AddComponent<CModelComponent>(*dn1, "Assets/Graphics/DN1_dn06.fbx");
+	dn1->myTransform->Position({ -0.9f,0.0f,0.0f });
+	dn1->myTransform->Scale({100.0f,100.0f,100.0f});
+	scene->AddInstance(dn1);
+
+	CGameObject* dn2 = new CGameObject(1236);
+	dn2->AddComponent<CModelComponent>(*dn2, "Assets/Graphics/DN2_dn0105_AL.fbx");
+	dn2->myTransform->Position({ 0.2f,0.0f,0.0f });
+	dn2->myTransform->Scale({100.0f,100.0f,100.0f});
+	scene->AddInstance(dn2);
+
+	CGameObject* dn3 = new CGameObject(1237);
+	dn3->AddComponent<CModelComponent>(*dn3, "Assets/Graphics/DN3_dn070203.fbx");
+	dn3->myTransform->Position({ 1.3f,0.0f,0.0f });
+	dn3->myTransform->Scale({100.0f,100.0f,100.0f});
+	scene->AddInstance(dn3);
+
+	CGameObject* dn4 = new CGameObject(1238);
+	dn4->AddComponent<CModelComponent>(*dn4, "Assets/Graphics/DN4_dn05030701.fbx");
+	dn4->myTransform->Position({ 2.4f,0.0f,0.0f });
+	dn4->myTransform->Scale({100.0f,100.0f,100.0f});
+	scene->AddInstance(dn4);
+	
+//-------------------
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);
 
