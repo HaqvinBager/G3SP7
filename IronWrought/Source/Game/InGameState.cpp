@@ -67,7 +67,7 @@ void CInGameState::Start()
 
 	CGameObject* envLight = new CGameObject(1);
 	envLight->AddComponent<CEnviromentLightComponent>(*envLight);
-	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetColor({1.0f,1.0f,1.0f});
+	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetColor({0.0f,0.0f,1.0f});
 	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetIntensity(1.f);
 	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetDirection({1.0f,0.5f,-1.0f});
 	scene->AddInstance(envLight);
@@ -291,46 +291,57 @@ void TEMP_DeferredRenderingTests(CScene* scene)
 	scene->AddInstance(dn);
 	scene->AddInstance(dn4);
 
-	constexpr int instancedCount = 300;
-	std::vector<SM::Matrix> transforms(instancedCount);
-	x = -3.0f;
-	y = -10.0f;
-	for (int i = 0; i < instancedCount; ++i)
-	{
-		x -= 3.0f;
-		if ((i + 1) % 10 == 0)
-		{
-			x = -3.0f;
-			y += 3.0f;
-		}
-
-		SM::Matrix transform;
-		transforms[i] = transform;
-		transforms[i] *= SM::Matrix::CreateScale(0.01f);
-		transforms[i].Translation({ x, y, 0.0f });
-	}
-	CGameObject* instancedGameObject = new CGameObject(999);
-	instancedGameObject->AddComponent<CInstancedModelComponent>(*instancedGameObject
-																, std::string(ASSETPATH + "Assets/Graphics/Exempel_Modeller/Wall/Wall.fbx")
-																//, "Assets/Graphics/Exempel_Modeller/DetailNormals/4DN/4DNs_dn.fbx"
-																, transforms
-																, false);
+	//constexpr int instancedCount = 300;
+	//std::vector<SM::Matrix> transforms(instancedCount);
+	//x = -3.0f;
+	//y = -10.0f;
+	//for (int i = 0; i < instancedCount; ++i)
+	//{
+	//	x -= 3.0f;
+	//	if ((i + 1) % 10 == 0)
+	//	{
+	//		x = -3.0f;
+	//		y += 3.0f;
+	//	}
+	//
+	//	SM::Matrix transform;
+	//	transforms[i] = transform;
+	//	transforms[i] *= SM::Matrix::CreateScale(0.01f);
+	//	transforms[i].Translation({ x, y, 0.0f });
+	//}
+	//CGameObject* instancedGameObject = new CGameObject(999);
+	//instancedGameObject->AddComponent<CInstancedModelComponent>(*instancedGameObject
+	//															, std::string(ASSETPATH + "Assets/Graphics/Exempel_Modeller/Wall/Wall.fbx")
+	//															//, "Assets/Graphics/Exempel_Modeller/DetailNormals/4DN/4DNs_dn.fbx"
+	//															, transforms
+	//															, false);
 	//scene->AddInstance(instancedGameObject);
 }
 
-#include "animationLoader.h"
+#include "animationLoader.h"// <-- include för AnimationLoader funktioner: AddAnimationsToGameObject() osv
 void TEMP_SetUpAnimationTest(CScene* aScene)
 {
-	CGameObject* animObj = new CGameObject(123123123);
-	std::string rig = "Assets/Temp/Mixamo/SK.fbx";
+	CGameObject* go = new CGameObject(123123123);
+	//std::string skinnedModelPath = "Assets/Temp/Mixamo/SK.fbx";// <-- Skinnad mesh fbx. 
+	std::string skinnedModelPath = "Assets/Temp/Robot/CH_E_Robot_SK.fbx";// <-- Skinnad mesh fbx. 
 
-	animObj->AddComponent<CModelComponent>(*animObj, rig);
+	go->AddComponent<CModelComponent>(*go, skinnedModelPath);// <-- Måste ha vanlig CModelComp för rendering
+	
+	// Fixar allt. Behöver ett CGameObject med e CModelComponent på och path:en för modellen.
+	CAnimationComponent* animComp = AnimationLoader::AddAnimationsToGameObject(go, skinnedModelPath);
 
-	CAnimationComponent* animComp = AnimationLoader::AddAnimationsToGameObject(animObj, rig);
-	animComp->BlendLerpBetween(5, 0, 0.0f);
-	g_TempAnimObject = animObj;
+	//animComp->BlendLerpBetween(5/*Index för första animation, ligger på blend 0.0f*/
+	//						   , 0/*Index för andra animation, ligger på blend 1.0f*/
+	//						   , 0.0f/*Blend/Lerp värde. 0.0f => spela 100% av första animationen.
+	//								 * 1.0f => spela 100% av andra animationen.
+	//								 * 0.5f => spela 50/50% av första/andra.
+	//								 */
+	//						   );
+	animComp->BlendToAnimation(4/*Index för animation att blenda till*/, 1.0f/*Hur långsam blendingen ska vara*/);
 
-	aScene->AddInstance(animObj);
+	g_TempAnimObject = go;
+
+	aScene->AddInstance(go);
 }
 #define GetAnimComp g_TempAnimObject->GetComponent<CAnimationComponent>()
 void TEMP_AnimObjectControl()

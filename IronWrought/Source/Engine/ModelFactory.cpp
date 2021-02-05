@@ -196,8 +196,7 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 	// suffix ts_#
 	std::string suffix = aFilePath.substr(aFilePath.length() - 8, 4);
 	if (suffix.substr(0, 3) == TRIMSHEET_STRING)
-	{
-														// Info
+	{													// Info
 		int suffixNr	= static_cast<int>(suffix[3]);	// std::string suffix = "ts_1". "ts_#" ; # = an integer
 		suffixNr		= abs(49 - suffixNr);			// 49 == static_cast<int>('1'). The ASCII value of '1' is 49. '1' == 49, '2' == 50, '9' == 58 => 49 - (int)'2' = -1 and 49 - '3' = -2
 		if (suffixNr >= 0/*static_cast<int>(MIN_NUM_TRIMSHEETS_CHAR)*/ && suffixNr <= NUM_TRIM_SHEETS/*static_cast<int>(MAX_NUM_TRIMSHEETS_CHAR)*/)

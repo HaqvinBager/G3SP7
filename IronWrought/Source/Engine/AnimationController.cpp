@@ -373,7 +373,7 @@ void CAnimationController::SetBoneTransforms(std::vector<aiMatrix4x4>& aTransfor
 		aTransformsVector[i] = myBoneInfo[i].myFinalTransformation;
 	}
 }
-
+#ifdef _DEBUG
 void CAnimationController::UpdateAnimationTimeConstant(const float aStep)
 {
 	float dt = aStep;// Close to good (right)
@@ -406,7 +406,7 @@ void CAnimationController::UpdateAnimationTimeConstant(const float aStep)
 		}
 	}
 }
-
+#endif
 void CAnimationController::UpdateAnimationTimes()
 {
 	//float dt = CTimer::Dt() * ((float)myAnimations[myAnim0Index]->mAnimations[0]->mDuration / TEMP_FRAMES_PER_SECOND);
