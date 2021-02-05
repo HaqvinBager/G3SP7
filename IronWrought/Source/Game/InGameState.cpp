@@ -30,7 +30,6 @@
 
 
 void TEMP_DeferredRenderingTests(CScene* aScene);
-void TEMP_VertexPaintTest(CScene* aScene);
 
 CInGameState::CInGameState(CStateStack& aStateStack, const CStateStack::EState aState)
 	: CState(aStateStack, aState),
@@ -54,8 +53,7 @@ void CInGameState::Start()
 	scene = CSceneManager::CreateScene(scenePaths[0].c_str());
 	//std::string scenePath = "Level_1.json";
 	//CScene* scene = new CScene();
-	//scene = CSceneManager::CreateScene(scenePath);
-
+	//scene = CSceneManager::CreateScene(scenePath);	
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);
 
@@ -259,15 +257,4 @@ void CInGameState::Receive(const SMessage& /*aMessage*/)
 //																, transforms
 //																, false);
 //	scene->AddInstance(instancedGameObject);
-//}
-
-//#include "MaterialHandler.h"
-//void TEMP_VertexPaintTest(CScene* aScene)
-//{
-//	int gameObjectGUID = -10882;
-//	CGameObject* vertexPaintTest = new CGameObject(gameObjectGUID);
-//	vertexPaintTest->AddComponent<CModelComponent>(*vertexPaintTest, std::string(ASSETPATH + "Assets/Graphics/Exempel_Modeller/Primitives/Plane_v2.fbx"));
-//	//vertexPaintTest->GetComponent<CTransformComponent>()->Move({ 10.0f,0.0f,-10.0f });
-//
-//	aScene->AddInstance(vertexPaintTest);
 //}

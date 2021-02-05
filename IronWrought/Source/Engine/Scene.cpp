@@ -34,7 +34,7 @@
 
 #include "Debug.h"
 //SETUP START
-CScene::CScene()
+CScene::CScene(const unsigned int aGameObjectCount)
 	: myIsReadyToRender(false)
 	, myMainCamera(nullptr)
 	, myEnvironmentLight(nullptr)
@@ -44,6 +44,8 @@ CScene::CScene()
 	//, myPlayer(nullptr)
 	//, myBoss(nullptr)
 {
+	myGameObjects.reserve(aGameObjectCount);
+
 	myModelsToOutline.resize(2);
 	for (unsigned int i = 0; i < myModelsToOutline.size(); ++i)
 	{

@@ -31,7 +31,7 @@ class CScene {
 	friend class CMenuState;
 public:
 //SETUP START
-	CScene();
+	CScene(const unsigned int aGameObjectCount = 0);
 	~CScene();
 
 	//static CScene* GetInstance();
