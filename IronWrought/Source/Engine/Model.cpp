@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Model.h"
+#include "MaterialHandler.h"
 
 CModel::CModel() 
 	: myModelData()
@@ -9,7 +10,23 @@ CModel::CModel()
 {
 }
 
-CModel::~CModel() {
+CModel::~CModel() 
+{
+	for (unsigned int i = 0; i < myModelData.myMaterialNames.size(); ++i)
+	{
+		CMainSingleton::MaterialHandler().ReleaseMaterial(myModelData.myMaterialNames[i]);
+		myModelData.myMaterials[i][0] = nullptr;
+		myModelData.myMaterials[i][1] = nullptr;
+		myModelData.myMaterials[i][2] = nullptr;
+	}
+
+	for (unsigned int i = 0; i < myModelInstanceData.myMaterialNames.size(); ++i)
+	{
+		CMainSingleton::MaterialHandler().ReleaseMaterial(myModelInstanceData.myMaterialNames[i]);
+		myModelInstanceData.myMaterials[i][0] = nullptr;
+		myModelInstanceData.myMaterials[i][1] = nullptr;
+		myModelInstanceData.myMaterials[i][2] = nullptr;
+	}
 }
 
 void CModel::Init(SModelData data) {

@@ -26,8 +26,6 @@ class CForwardRenderer;
 class CVFXFactory;
 class CLineFactory;
 class CAudioManager;
-class CImguiManager;
-//class CDialogueSystem;
 
 class CEngine
 {
@@ -37,6 +35,7 @@ class CEngine
 	friend class CLightFactory;
 	friend class CRenderManager;
 	friend class CLineFactory;
+	friend class CMaterialHandler;
 
 public:
 	CEngine();
@@ -67,8 +66,6 @@ public:
 	void RemoveScene(CStateStack::EState aState);
 	void ClearModelFactory();
 
-	void EnableEditorImgui(bool aIsEnabled);
-	bool EditorImguiEnabled();
 private:
 	static CEngine* ourInstance;
 	
@@ -95,10 +92,6 @@ private:
 	CInputMapper* myInputMapper;
 	CMainSingleton* myMainSingleton;
 	CAudioManager* myAudioManager;
-	//CDialogueSystem* myDialogueSystem;
-
-	CImguiManager* myImguiManager;
 
 	bool myRenderSceneActive = false;
-	bool myEnabledEditorImgui = false;
 };

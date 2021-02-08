@@ -3,6 +3,8 @@
 #include "JsonReader.h"
 #include "imgui_impl_win32.h"
 
+IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 LRESULT CWindowHandler::WinProc(_In_ HWND hwnd, _In_ UINT uMsg, _In_ WPARAM wParam, _In_ LPARAM lParam)
 {
     static CWindowHandler* windowHandler = nullptr;
@@ -64,7 +66,7 @@ bool CWindowHandler::Init(CWindowHandler::SWindowData someWindowData)
 {
     myWindowData = someWindowData;
     
-    rapidjson::Document document = CJsonReader::LoadDocument("Json/Settings/WindowSettings.json");
+    rapidjson::Document document = CJsonReader::Get()->LoadDocument("Json/Settings/WindowSettings.json");
  
     if (document.HasMember("Window Width"))
         myWindowData.myWidth = document["Window Width"].GetInt();

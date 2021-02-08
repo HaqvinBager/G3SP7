@@ -25,6 +25,9 @@ public:
 
 	void Release();
 
+public:
+	static unsigned int myNumberOfDrawCallsThisFrame;
+
 private:
 	void Clear(DirectX::SimpleMath::Vector4 aClearColor);
 
@@ -54,7 +57,6 @@ private:
 	CFullscreenTexture myVignetteTexture;
 	CFullscreenTexture myDeferredTexture;
 	CGBuffer myGBuffer;
-
 
 	DirectX::SimpleMath::Vector4 myClearColor;
 

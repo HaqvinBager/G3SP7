@@ -27,7 +27,7 @@ CCameraControllerComponent::~CCameraControllerComponent()
 
 void CCameraControllerComponent::Awake()
 {
-	myCamera = CEngine::GetInstance()->GetActiveScene().GetMainCamera();
+	myCamera = CEngine::GetInstance()->GetActiveScene().MainCamera();
 }
 
 void CCameraControllerComponent::Start()

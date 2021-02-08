@@ -21,7 +21,7 @@ CNavMeshComponent::~CNavMeshComponent()
 
 void CNavMeshComponent::Awake()
 {
-	myNavMesh = CEngine::GetInstance()->GetActiveScene().GetNavMesh();
+	myNavMesh = CEngine::GetInstance()->GetActiveScene().NavMesh();
 }
 
 void CNavMeshComponent::Start()

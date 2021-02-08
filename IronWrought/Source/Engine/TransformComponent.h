@@ -11,6 +11,7 @@ public:
 	void Awake() override;
 	void Start() override;
 	void Update() override;
+	void LateUpdate() override;
 
 	void Position(DirectX::SimpleMath::Vector3 aPosition);
 	DirectX::SimpleMath::Vector3 Position() const;
@@ -19,11 +20,12 @@ public:
 	void Rotation(DirectX::SimpleMath::Quaternion aQuaternion);
 	DirectX::SimpleMath::Quaternion Rotation() const;
 
-	void Scale(float aScale);
-	float Scale() const;
+	void Scale(DirectX::SimpleMath::Vector3 aScale);
+	DirectX::SimpleMath::Vector3 Scale() const;
 
 	DirectX::SimpleMath::Matrix& Transform();
-	DirectX::SimpleMath::Matrix GetMatrix() const;
+	DirectX::SimpleMath::Matrix GetWorldMatrix() const;
+	DirectX::SimpleMath::Matrix GetLocalMatrix() const;
 
 	void Transform(DirectX::SimpleMath::Vector3 aPosition, DirectX::SimpleMath::Vector3 aRotation);
 
@@ -36,9 +38,32 @@ public:
 	//To be Removed 2020-01-12 -> 2020-01-22 /Axel
 	void SetOutlineScale();
 
+	/// <summary>
+	/// :(
+	/// </summary>
+	void PrepareToOrphan()
+	{
+
+	}
+	void SetParent(CTransformComponent* aParent); /*{ myParent = aParent; }*/
+	void RemoveParent();
+
 private:
-	float myScale;
+	DirectX::SimpleMath::Vector3 myScale;
 	// TODO: Move speed into "Resource Component"
-	DirectX::SimpleMath::Matrix myTransform;
-	std::string hej;
+	DirectX::SimpleMath::Matrix myLocalTransform;
+	DirectX::SimpleMath::Matrix myWorldTransform;
+	DirectX::SimpleMath::Vector3 myParentOffset;
+
+	//DirectX::SimpleMath::Vector3 myLocalPosition;
+	//DirectX::SimpleMath::Vector3 myLocalRotation;
+	//DirectX::SimpleMath::Vector3 myLocalScale;
+
+	//DirectX::SimpleMath::Vector3 myWorldPosition;
+	//DirectX::SimpleMath::Vector3 myWorldRotation;
+	//DirectX::SimpleMath::Vector3 myWorldScale;
+
+	CTransformComponent* myParent;
+	//float myScale;
+	//bool scalediff;
 };

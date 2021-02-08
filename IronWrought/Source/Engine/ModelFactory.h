@@ -18,6 +18,10 @@ public:
 	CModel* GetInstancedModel(std::string aFilePath, int aNumberOfInstanced);	
 	CModel* GetOutlineModelSubset();
 
+	std::vector<DirectX::SimpleMath::Vector3>& GetVertexPositions(const std::string& aFilePath);
+
+	void ClearModel(std::string aFilePath, int aNumberOfInstances = 0);
+
 private:
 	struct SInstancedModel
 	{
@@ -49,6 +53,9 @@ private:
 private:
 	std::map<std::string, CModel*> myModelMap;
 	std::map<SInstancedModel, CModel*> myInstancedModelMap;
+	std::map<std::string, int> myModelMapReferences;
+	std::map<std::string, int> myInstancedModelMapReferences;
+	std::map<std::string, std::vector<DirectX::SimpleMath::Vector3>> myFBXVertexMap;
 	CEngine* myEngine;
 	CModel* myOutlineModelSubset;
 	static CModelFactory* ourInstance;

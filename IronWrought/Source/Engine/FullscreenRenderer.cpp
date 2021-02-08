@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "FullscreenRenderer.h"
 #include "DirectXFramework.h"
+#include "RenderManager.h"
 #include <fstream>
 
 CFullscreenRenderer::CFullscreenRenderer() 
@@ -88,6 +89,7 @@ void CFullscreenRenderer::Render(FullscreenShader anEffect) {
 	myContext->PSSetSamplers(0, 1, &mySampler);
 
 	myContext->Draw(3, 0);
+	CRenderManager::myNumberOfDrawCallsThisFrame++;
 
 	ID3D11ShaderResourceView* nullView = NULL;
 	myContext->PSSetShaderResources(0, 1, &nullView);

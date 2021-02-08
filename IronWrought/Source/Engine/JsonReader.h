@@ -1,17 +1,22 @@
 #pragma once
+#include "rapidjson/document.h"
+#include "rapidjson/istreamwrapper.h"
 #include <fstream>
-#include "../Includes/rapidjson/document.h"
-#include "../Includes/rapidjson/istreamwrapper.h"
+
+#include <string>
+#include <filesystem>
 
 class CJsonReader
 {
 public:
-	static rapidjson::Document LoadDocument(const std::string json_path)
-	{
-		std::ifstream stream(json_path);
-		rapidjson::IStreamWrapper wrapper(stream);
-		rapidjson::Document document;
-		document.ParseStream(wrapper);
-		return document;
-	}
+	static CJsonReader* Get();
+
+	/*static*/ rapidjson::Document LoadDocument(const std::string& json_path);
+
+	static std::vector<std::string> GetFilePathsInFolder(const std::string& aFolder, const std::string& aPrefix = "");
+
+private:
+	CJsonReader() {}
+	~CJsonReader() {}
+	static CJsonReader* ourInstance;
 };

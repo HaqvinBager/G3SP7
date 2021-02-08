@@ -1,0 +1,24 @@
+{
+    "NodeInstances": [
+        {
+            "NodeType": 1,
+            "UID": 300,
+            "Position": {
+                "X": 0,
+                "Y": 10
+            },
+            "Pins": [
+                "Pin",
+                {
+                    "UID": 301,
+                    "DATA": "0"
+                },
+                "Pin",
+                {
+                    "UID": 302,
+                    "DATA": ""
+                }
+            ]
+        }
+    ]
+}

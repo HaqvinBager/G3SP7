@@ -8,7 +8,7 @@ class CUtility
 {
 public:
 	static DirectX::SimpleMath::Vector2 WorldToScreen(DirectX::SimpleMath::Vector3 aWorldPos) {
-		DirectX::SimpleMath::Vector2 screen = DirectX::XMVector3Project(aWorldPos, 0, 0, CEngine::GetInstance()->GetWindowHandler()->GetResolution().x, CEngine::GetInstance()->GetWindowHandler()->GetResolution().y, 0, 1, CEngine::GetInstance()->GetActiveScene().GetMainCamera()->GetProjection(), CEngine::GetInstance()->GetActiveScene().GetMainCamera()->GetViewMatrix(), DirectX::XMMatrixIdentity());
+		DirectX::SimpleMath::Vector2 screen = DirectX::XMVector3Project(aWorldPos, 0, 0, CEngine::GetInstance()->GetWindowHandler()->GetResolution().x, CEngine::GetInstance()->GetWindowHandler()->GetResolution().y, 0, 1, CEngine::GetInstance()->GetActiveScene().MainCamera()->GetProjection(), CEngine::GetInstance()->GetActiveScene().MainCamera()->GetViewMatrix(), DirectX::XMMatrixIdentity());
 
 		screen.x /= CEngine::GetInstance()->GetWindowHandler()->GetResolution().x;
 		screen.y /= CEngine::GetInstance()->GetWindowHandler()->GetResolution().y;

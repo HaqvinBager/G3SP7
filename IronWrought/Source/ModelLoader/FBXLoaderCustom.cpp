@@ -148,12 +148,6 @@ int CFBXLoaderCustom::DetermineAndLoadVerticies(aiMesh* fbxMesh, CLoaderMesh* aL
 	hasTextures = fbxMesh->HasTextureCoords(TEXTURE_SET_0);
 	hasBones = fbxMesh->HasBones();
 
-	
-	//for (unsigned int i = 0; i < fbxMesh->mNumVertices; ++i)
-	//{
-	//	fbxMesh->mVertices[i] *= ENGINE_SCALE;
-	//}
-
 	float* data = new float[(vertexBufferSize / 4) * fbxMesh->mNumVertices];
 	if (hasPositions && hasNormals && hasTangents && hasTextures && hasBones) {
 		for (unsigned int i = 0, dataIndex = 0; i < fbxMesh->mNumVertices; i++, dataIndex += (vertexBufferSize / 4)) {
@@ -282,6 +276,7 @@ int CFBXLoaderCustom::DetermineAndLoadVerticies(aiMesh* fbxMesh, CLoaderMesh* aL
 	}
 
 	memmove(aLoaderMesh->myVerticies, data, vertexBufferSize* fbxMesh->mNumVertices);
+	delete data;
 	return vertexBufferSize;
 }
 
@@ -405,4 +400,16 @@ void CFBXLoaderCustom::LoadTexture(int aType, std::vector<std::string>& someText
 	}
 
 	someTextures.emplace_back(filePath);
+}
+
+CLoaderModel::~CLoaderModel()
+{
+	for (unsigned int i = 0; i < myMeshes.size(); ++i)
+	{
+		myMeshes[i]->~CLoaderMesh();
+	}
+	myMeshes.clear();
+
+	delete myScene;
+	myScene = nullptr;
 }

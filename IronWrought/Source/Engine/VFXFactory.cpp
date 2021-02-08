@@ -207,7 +207,7 @@ void CVFXFactory::ReadJsonValues(std::string aFilePath, CVFXBase::SVFXBaseData& 
 
     //std::ifstream input_stream(aFilePath);
     //IStreamWrapper input_wrapper(input_stream);
-    Document document = CJsonReader::LoadDocument(aFilePath);
+    Document document = CJsonReader::Get()->LoadDocument(aFilePath);
     //document.ParseStream(input_wrapper);
 
     someVFXBaseData.myIsActive = false;

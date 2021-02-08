@@ -67,7 +67,7 @@ void CCanvas::Init(std::string aFilePath, CScene& aScene, bool addToScene)
 {
 	//std::ifstream inputStream(aFilePath);
 	//IStreamWrapper inputWrapper(inputStream);
-	Document document = CJsonReader::LoadDocument(aFilePath);
+	Document document = CJsonReader::Get()->LoadDocument(aFilePath);
 	//document.ParseStream(inputWrapper);
 
 	if (document.HasMember("Buttons"))

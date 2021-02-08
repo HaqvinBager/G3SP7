@@ -8,6 +8,7 @@
 #include "ModelMath.h"
 #include "Model.h"
 #include <UnityFactory.h>
+#include "MaterialHandler.h"
 
 
 #ifdef _DEBUG
@@ -73,8 +74,12 @@ CModel* CModelFactory::GetModel(std::string aFilePath)
 {
 	if (myModelMap.find(aFilePath) == myModelMap.end())
 	{
+		myModelMapReferences[aFilePath] = 1;
 		return LoadModel(aFilePath);
 	}
+	
+	myModelMapReferences[aFilePath] += 1;
+	
 	return myModelMap.at(aFilePath);
 }
 
@@ -95,6 +100,21 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 	meshData.resize(numberOfMeshes);
 
 	CLoaderMesh* mesh = loaderModel->myMeshes[0];
+
+
+	unsigned int vertexSize = mesh->myVertexBufferSize;
+	unsigned int vertexCount = mesh->myVertexCount;
+
+	std::vector<Vector3> vertexPositions;
+	vertexPositions.reserve(vertexCount);
+	for (unsigned i = 0; i < vertexCount * vertexSize; i += vertexSize) {
+		Vector3 vertexPosition = {};
+		memcpy(&vertexPosition, &mesh->myVerticies[i], sizeof(Vector3));
+		vertexPositions.emplace_back(vertexPosition);
+	}
+	myFBXVertexMap.emplace(aFilePath, vertexPositions);
+
+
 	for (unsigned int i = 0; i < numberOfMeshes; ++i)
 	{
 		mesh = loaderModel->myMeshes[i];
@@ -180,6 +200,7 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 		{"UV", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"BONEID", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"BONEWEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+
 		{"INSTANCETRANSFORM", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
 		{"INSTANCETRANSFORM", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
 		{"INSTANCETRANSFORM", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
@@ -223,12 +244,11 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 
 #ifdef USING_FBX_MATERIALS
 	std::vector<std::array<ID3D11ShaderResourceView*, 3>> materials;
+	std::vector<std::string> materialNames;
 	for (unsigned int i = 0; i < loaderModel->myMaterials.size(); ++i) {
 		std::string materialName = loaderModel->myMaterials[loaderModel->myMaterialIndices[i]];
-		ID3D11ShaderResourceView* diffuseResourceView = GetShaderResourceView(device, (modelDirectory + materialName/*modelDirectoryAndName*/ + "_c.dds"));
-		ID3D11ShaderResourceView* materialResourceView = GetShaderResourceView(device, (modelDirectory + materialName/*modelDirectoryAndName*/ + "_m.dds"));
-		ID3D11ShaderResourceView* normalResourceView = GetShaderResourceView(device, (modelDirectory + materialName/*modelDirectoryAndName*/ + "_n.dds"));
-		materials.push_back({ diffuseResourceView, materialResourceView, normalResourceView });
+		materials.push_back(CMainSingleton::MaterialHandler().RequestMaterial(materialName));
+		materialNames.push_back(materialName);
 	}
 #else
 	std::vector<std::array<ID3D11ShaderResourceView*, 3>> materials;
@@ -240,6 +260,7 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 	}
 #endif
 
+	delete loaderModel;
 
 	//Model
 	CModel* model = new CModel();
@@ -253,6 +274,7 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 	modelData.myPrimitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	modelData.myInputLayout = inputLayout;
 	modelData.myMaterials = materials;
+	modelData.myMaterialNames = materialNames;
 
 	modelData.myDetailNormals[0] = detailNormal1;
 	modelData.myDetailNormals[1] = detailNormal2;
@@ -303,13 +325,47 @@ CModel* CModelFactory::GetOutlineModelSubset()
 	return myOutlineModelSubset;
 }
 
+std::vector<DirectX::SimpleMath::Vector3>& CModelFactory::GetVertexPositions(const std::string& aFilePath)
+{
+	return myFBXVertexMap.at(aFilePath);
+}
+
+void CModelFactory::ClearModel(std::string aFilePath, int aNumberOfInstances)
+{
+	if (myModelMap.find(aFilePath) != myModelMap.end())
+	{
+		myModelMapReferences[aFilePath] -= 1;
+		if (myModelMapReferences[aFilePath] <= 0)
+		{
+			myModelMapReferences[aFilePath] = 0;
+			myModelMap[aFilePath]->~CModel();
+			myModelMap.erase(aFilePath);
+		}
+	}
+
+	if (myInstancedModelMap.find({ aFilePath, aNumberOfInstances }) != myInstancedModelMap.end())
+	{
+		myInstancedModelMapReferences[aFilePath] -= 1;
+		if (myInstancedModelMapReferences[aFilePath] <= 0)
+		{
+			myInstancedModelMapReferences[aFilePath] = 0;
+			myInstancedModelMap[{ aFilePath, aNumberOfInstances }]->~CModel();
+			myInstancedModelMap.erase({ aFilePath, aNumberOfInstances });
+		}
+	}
+}
+
 CModel* CModelFactory::GetInstancedModel(std::string aFilePath, int aNumberOfInstanced)
 {
 	SInstancedModel instancedModel = {aFilePath, aNumberOfInstanced};
 	if (myInstancedModelMap.find(instancedModel) == myInstancedModelMap.end())
 	{
+		myInstancedModelMapReferences[aFilePath] = 1;
 		return CreateInstancedModels(aFilePath, aNumberOfInstanced);
 	}
+
+	myInstancedModelMapReferences[aFilePath] += 1;
+
 	return myInstancedModelMap[instancedModel];
 }
 
@@ -318,7 +374,7 @@ void CModelFactory::ClearFactory()
 	auto itPBR = myModelMap.begin();
 	while (itPBR != myModelMap.end())
 	{
-		delete itPBR->second;
+		//delete itPBR->second;
 		itPBR->second = nullptr;
 		++itPBR;
 	}
@@ -495,12 +551,11 @@ CModel* CModelFactory::CreateInstancedModels(std::string aFilePath, int aNumberO
 
 #ifdef USING_FBX_MATERIALS
 	std::vector<std::array<ID3D11ShaderResourceView*, 3>> materials;
+	std::vector<std::string> materialNames;
 	for (unsigned int i = 0; i < loaderModel->myMaterials.size(); ++i) {
 		std::string materialName = loaderModel->myMaterials[loaderModel->myMaterialIndices[i]];
-		ID3D11ShaderResourceView* diffuseResourceView = GetShaderResourceView(device, (modelDirectory + materialName/*modelDirectoryAndName*/ + "_c.dds"));
-		ID3D11ShaderResourceView* materialResourceView = GetShaderResourceView(device, (modelDirectory + materialName/*modelDirectoryAndName*/ + "_m.dds"));
-		ID3D11ShaderResourceView* normalResourceView = GetShaderResourceView(device, (modelDirectory + materialName/*modelDirectoryAndName*/ + "_n.dds"));
-		materials.push_back({ diffuseResourceView, materialResourceView, normalResourceView });
+		materials.push_back(CMainSingleton::MaterialHandler().RequestMaterial(materialName));
+		materialNames.push_back(materialName);
 	}
 #else
 	std::vector<std::array<ID3D11ShaderResourceView*, 3>> materials;
@@ -533,6 +588,7 @@ CModel* CModelFactory::CreateInstancedModels(std::string aFilePath, int aNumberO
 	modelInstanceData.myPrimitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	modelInstanceData.myInputLayout = inputLayout;
 	modelInstanceData.myMaterials = materials;
+	modelInstanceData.myMaterialNames = materialNames;
 
 	modelInstanceData.myDetailNormals[0] = detailNormal1;
 	modelInstanceData.myDetailNormals[1] = detailNormal2;

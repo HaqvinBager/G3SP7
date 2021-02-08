@@ -54,7 +54,8 @@ Generated\ Files/
 *_p.c
 *_h.h
 *.ilk
-*.meta
+*.ini
+#.meta
 *.obj
 !*IronWrought/Bin/Levels/
 *.iobj
@@ -351,4 +352,5 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
-SP7UnityEditor/Assets/Generated/
+
+

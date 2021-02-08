@@ -32,7 +32,7 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'" Label="Configuration">
@@ -62,7 +62,7 @@
     <TargetName>$(ProjectName)_$(Configuration)</TargetName>
     <IntDir>$(ProjectDir)..\..\Temp\$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir>$(ProjectDir)..\..\Lib\</OutDir>
-    <IncludePath>$(IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\DirectXTK\Inc\;$(ProjectDir)..\Game\;$(ProjectDir)..\ModelLoader\;$(ProjectDir)..\UnityImporterApp\;$(ProjectDir)..\Includes\;$(SolutionDir)PhysXWrapper\;$(SolutionDir)Includes\PhysX-4.1\physx\include\;$(SolutionDir)Includes\PhysX-4.1\pxshared\include\</IncludePath>
+    <IncludePath>$(IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\DirectXTK\Inc\;$(ProjectDir)..\Game\;$(ProjectDir)..\ModelLoader\;$(ProjectDir)..\UnityImporterApp\;$(ProjectDir)..\Includes\;$(SolutionDir)PhysXWrapper\;$(SolutionDir)Includes\PhysX-4.1\physx\include\;$(SolutionDir)Includes\PhysX-4.1\pxshared\include\;$(SolutionDir)Includes\ImGui\Core;$(SolutionDir)Includes\ImGui\Helpers;$(SolutionDir)Includes\ImGui\NodeEditor;</IncludePath>
     <LibraryPath>$(SolutionDir)../Lib/;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)..\Lib\physxlib\debug\</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -70,7 +70,7 @@
     <TargetName>$(ProjectName)_$(Configuration)</TargetName>
     <IntDir>$(ProjectDir)..\..\Temp\$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir>$(ProjectDir)..\..\Lib\</OutDir>
-    <IncludePath>$(IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\DirectXTK\Inc\;$(ProjectDir)..\Game\;$(ProjectDir)..\ModelLoader\;$(ProjectDir)..\UnityImporterApp\;$(ProjectDir)..\Includes\;$(SolutionDir)PhysXWrapper\;$(SolutionDir)Includes\PhysX-4.1\physx\include\;$(SolutionDir)Includes\PhysX-4.1\pxshared\include\</IncludePath>
+    <IncludePath>$(IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\DirectXTK\Inc\;$(ProjectDir)..\Game\;$(ProjectDir)..\ModelLoader\;$(ProjectDir)..\UnityImporterApp\;$(ProjectDir)..\Includes\;$(SolutionDir)Includes\PhysX-4.1\physx\include\;$(SolutionDir)Includes\PhysX-4.1\pxshared\include\;$(SolutionDir)Includes\ImGui\Core;$(SolutionDir)Includes\ImGui\Helpers;$(SolutionDir)Includes\ImGui\NodeEditor;</IncludePath>
     <LibraryPath>$(SolutionDir)../Lib/;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)..\Lib\physxlib\release\</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">
@@ -78,7 +78,7 @@
     <TargetName>$(ProjectName)_$(Configuration)</TargetName>
     <IntDir>$(ProjectDir)..\..\Temp\$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir>$(ProjectDir)..\..\Lib\</OutDir>
-    <IncludePath>$(IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\DirectXTK\Inc\;$(ProjectDir)..\Game\;$(ProjectDir)..\ModelLoader\;$(ProjectDir)..\UnityImporterApp\;$(ProjectDir)..\Includes\;$(SolutionDir)PhysXWrapper\</IncludePath>
+    <IncludePath>$(SolutionDir)imgui_ne\ThirdParty\imgui;$(SolutionDir)imgui_ne\NodeEditor\include\;$(IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\DirectXTK\Inc\;$(ProjectDir)..\Game\;$(ProjectDir)..\ModelLoader\;$(ProjectDir)..\UnityImporterApp\;$(ProjectDir)..\Includes\;$(SolutionDir)PhysXWrapper\;$(SolutionDir)Includes\PhysX-4.1\physx\include\;$(SolutionDir)Includes\PhysX-4.1\pxshared\include\</IncludePath>
     <LibraryPath>$(SolutionDir)../Lib/;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -92,7 +92,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <ForcedIncludeFiles>StdAfx.h;%(ForcedINcludeFiles)</ForcedIncludeFiles>
-      <AdditionalIncludeDirectories>$(SolutionDir)Includes/Imgui/%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>
       </AdditionalUsingDirectories>
     </ClCompile>
@@ -124,7 +124,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <ForcedIncludeFiles>StdAfx.h;%(ForcedINcludeFiles)</ForcedIncludeFiles>
-      <AdditionalIncludeDirectories>$(SolutionDir)Includes/Imgui/%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -150,7 +150,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <ForcedIncludeFiles>StdAfx.h;%(ForcedINcludeFiles)</ForcedIncludeFiles>
-      <AdditionalIncludeDirectories>$(SolutionDir)Includes/Imgui/%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)imgui_ne\ThirdParty\imgui;$(SolutionDir)imgui_ne\NodeEditor\include\;%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -164,13 +164,20 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\Includes\Imgui\imgui.h" />
-    <ClInclude Include="..\Includes\Imgui\imgui_impl_dx11.h" />
-    <ClInclude Include="..\Includes\Imgui\imgui_impl_win32.h" />
-    <ClInclude Include="..\Includes\Imgui\imgui_internal.h" />
-    <ClInclude Include="..\Includes\Imgui\imstb_rectpack.h" />
-    <ClInclude Include="..\Includes\Imgui\imstb_textedit.h" />
-    <ClInclude Include="..\Includes\Imgui\imstb_truetype.h" />
+    <ClInclude Include="..\Includes\ImGui\Core\imconfig.h" />
+    <ClInclude Include="..\Includes\ImGui\Core\imgui.h" />
+    <ClInclude Include="..\Includes\ImGui\Core\imgui_impl_dx11.h" />
+    <ClInclude Include="..\Includes\ImGui\Core\imgui_impl_win32.h" />
+    <ClInclude Include="..\Includes\ImGui\Core\imgui_internal.h" />
+    <ClInclude Include="..\Includes\ImGui\Core\imstb_rectpack.h" />
+    <ClInclude Include="..\Includes\ImGui\Core\imstb_textedit.h" />
+    <ClInclude Include="..\Includes\ImGui\Core\imstb_truetype.h" />
+    <ClInclude Include="..\Includes\ImGui\NodeEditor\crude_json.h" />
+    <ClInclude Include="..\Includes\ImGui\NodeEditor\imgui_bezier_math.h" />
+    <ClInclude Include="..\Includes\ImGui\NodeEditor\imgui_canvas.h" />
+    <ClInclude Include="..\Includes\ImGui\NodeEditor\imgui_extra_math.h" />
+    <ClInclude Include="..\Includes\ImGui\NodeEditor\imgui_node_editor.h" />
+    <ClInclude Include="..\Includes\ImGui\NodeEditor\imgui_node_editor_internal.h" />
     <ClInclude Include="AnimatedUIElement.h" />
     <ClInclude Include="AnimationComponent.h" />
     <ClInclude Include="AnimationController.h" />
@@ -180,15 +187,43 @@
     <ClInclude Include="AudioChannel.h" />
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Behaviour.h" />
+    <ClInclude Include="Builders.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraComponent.h" />
     <ClInclude Include="CameraFactory.h" />
     <ClInclude Include="Canvas.h" />
     <ClInclude Include="CapsuleColliderComponent.h" />
+    <ClInclude Include="GraphManager.h" />
+    <ClInclude Include="NodeInstance.h" />
+    <ClInclude Include="NodeType.h" />
+    <ClInclude Include="NodeTypeGetMousePosition.h" />
+    <ClInclude Include="NodeTypeMathAbs.h" />
+    <ClInclude Include="NodeTypeMathAdd.h" />
+    <ClInclude Include="NodeTypeMathAtan2.h" />
+    <ClInclude Include="NodeTypeMathCeil.h" />
+    <ClInclude Include="NodeTypeMathCos.h" />
+    <ClInclude Include="NodeTypeMathDistance.h" />
+    <ClInclude Include="NodeTypeMathDot.h" />
+    <ClInclude Include="NodeTypeMathFloor.h" />
+    <ClInclude Include="NodeTypeMathLerp.h" />
+    <ClInclude Include="NodeTypeMathMax.h" />
+    <ClInclude Include="NodeTypeMathMin.h" />
+    <ClInclude Include="NodeTypeMathMul.h" />
+    <ClInclude Include="NodeTypeMathSaturate.h" />
+    <ClInclude Include="NodeTypeMathSin.h" />
+    <ClInclude Include="NodeTypeMathSmoothstep.h" />
+    <ClInclude Include="NodeTypeMathStorage.h" />
+    <ClInclude Include="NodeTypeMathSub.h" />
+    <ClInclude Include="NodeTypeMathToDegrees.h" />
+    <ClInclude Include="NodeTypeMathToRadians.h" />
+    <ClInclude Include="NodeTypePrint.h" />
+    <ClInclude Include="NodeTypeStart.h" />
+    <ClInclude Include="ImGuiLevelSelect.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="ContactReportCallback.h" />
     <ClInclude Include="DeferredRenderer.h" />
+    <ClInclude Include="Drawing.h" />
     <ClInclude Include="EngineDefines.h" />
     <ClInclude Include="FMod.h" />
     <ClInclude Include="CircleColliderComponent.h" />
@@ -196,14 +231,18 @@
     <ClInclude Include="Component.h" />
     <ClInclude Include="FModWrapper.h" />
     <ClInclude Include="EnviromentLightComponent.h" />
+    <ClInclude Include="FolderUtility.h" />
     <ClInclude Include="Funneling.h" />
     <ClInclude Include="GBuffer.h" />
     <ClInclude Include="ImguiManager.h" />
     <ClInclude Include="InstancedModelComponent.h" />
     <ClInclude Include="JsonReader.h" />
     <ClInclude Include="MainSingleton.h" />
+    <ClInclude Include="MaterialHandler.h" />
+    <ClInclude Include="Math2D.h" />
     <ClInclude Include="Message.h" />
     <ClInclude Include="MessageType.h" />
+    <ClInclude Include="NodeTypes.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="PerlinNoise.h" />
     <ClInclude Include="PhysXWrapper.h" />
@@ -218,6 +257,7 @@
     <ClInclude Include="RectangleColliderComponent.h" />
     <ClInclude Include="RigidBodyComponent.h" />
     <ClInclude Include="RigidDynamicBody.h" />
+    <ClInclude Include="SceneManager.h" />
     <ClInclude Include="StackWalker.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="DebugTimerUtility.h" />
@@ -272,17 +312,21 @@
     <ClInclude Include="VFXFactory.h" />
     <ClInclude Include="VFXInstance.h" />
     <ClInclude Include="VFXRenderer.h" />
+    <ClInclude Include="Widgets.h" />
     <ClInclude Include="WindowHandler.h" />
     <ClInclude Include="WinInclude.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Includes\Imgui\imgui.cpp" />
-    <ClCompile Include="..\Includes\Imgui\imgui_demo.cpp" />
-    <ClCompile Include="..\Includes\Imgui\imgui_draw.cpp" />
-    <ClCompile Include="..\Includes\Imgui\imgui_impl_dx11.cpp" />
-    <ClCompile Include="..\Includes\Imgui\imgui_impl_win32.cpp" />
-    <ClCompile Include="..\Includes\Imgui\imgui_tables.cpp" />
-    <ClCompile Include="..\Includes\Imgui\imgui_widgets.cpp" />
+    <ClCompile Include="..\Includes\ImGui\Core\imgui.cpp" />
+    <ClCompile Include="..\Includes\ImGui\Core\imgui_demo.cpp" />
+    <ClCompile Include="..\Includes\ImGui\Core\imgui_draw.cpp" />
+    <ClCompile Include="..\Includes\ImGui\Core\imgui_impl_dx11.cpp" />
+    <ClCompile Include="..\Includes\ImGui\Core\imgui_impl_win32.cpp" />
+    <ClCompile Include="..\Includes\ImGui\Core\imgui_widgets.cpp" />
+    <ClCompile Include="..\Includes\ImGui\NodeEditor\crude_json.cpp" />
+    <ClCompile Include="..\Includes\ImGui\NodeEditor\imgui_canvas.cpp" />
+    <ClCompile Include="..\Includes\ImGui\NodeEditor\imgui_node_editor.cpp" />
+    <ClCompile Include="..\Includes\ImGui\NodeEditor\imgui_node_editor_api.cpp" />
     <ClCompile Include="AnimatedUIElement.cpp" />
     <ClCompile Include="AnimationComponent.cpp" />
     <ClCompile Include="AnimationController.cpp" />
@@ -291,15 +335,44 @@
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="AudioChannel.cpp" />
     <ClCompile Include="AudioManager.cpp" />
+    <ClCompile Include="Builders.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraComponent.cpp" />
     <ClCompile Include="CameraFactory.cpp" />
     <ClCompile Include="Canvas.cpp" />
     <ClCompile Include="CapsuleColliderComponent.cpp" />
+    <ClCompile Include="GraphManager.cpp" />
+    <ClCompile Include="JsonReader.cpp" />
+    <ClCompile Include="NodeInstance.cpp" />
+    <ClCompile Include="NodeType.cpp" />
+    <ClCompile Include="NodeTypeGetMousePosition.cpp" />
+    <ClCompile Include="NodeTypeMathAbs.cpp" />
+    <ClCompile Include="NodeTypeMathAdd.cpp" />
+    <ClCompile Include="NodeTypeMathAtan2.cpp" />
+    <ClCompile Include="NodeTypeMathCeil.cpp" />
+    <ClCompile Include="NodeTypeMathCos.cpp" />
+    <ClCompile Include="NodeTypeMathDistance.cpp" />
+    <ClCompile Include="NodeTypeMathDot.cpp" />
+    <ClCompile Include="NodeTypeMathFloor.cpp" />
+    <ClCompile Include="NodeTypeMathLerp.cpp" />
+    <ClCompile Include="NodeTypeMathMax.cpp" />
+    <ClCompile Include="NodeTypeMathMin.cpp" />
+    <ClCompile Include="NodeTypeMathMul.cpp" />
+    <ClCompile Include="NodeTypeMathSaturate.cpp" />
+    <ClCompile Include="NodeTypeMathSin.cpp" />
+    <ClCompile Include="NodeTypeMathSmoothstep.cpp" />
+    <ClCompile Include="NodeTypeMathStorage.cpp" />
+    <ClCompile Include="NodeTypeMathSub.cpp" />
+    <ClCompile Include="NodeTypeMathToDegrees.cpp" />
+    <ClCompile Include="NodeTypeMathToRadians.cpp" />
+    <ClCompile Include="NodeTypePrint.cpp" />
+    <ClCompile Include="NodeTypeStart.cpp" />
+    <ClCompile Include="ImGuiLevelSelect.cpp" />
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="ContactReportCallback.cpp" />
     <ClCompile Include="DeferredRenderer.cpp" />
+    <ClCompile Include="Drawing.cpp" />
     <ClCompile Include="FMod.cpp" />
     <ClCompile Include="CircleColliderComponent.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
@@ -314,6 +387,7 @@
     <ClCompile Include="InputMapper.cpp" />
     <ClCompile Include="InstancedModelComponent.cpp" />
     <ClCompile Include="MainSingleton.cpp" />
+    <ClCompile Include="MaterialHandler.cpp" />
     <ClCompile Include="ParticleEmitterComponent.cpp" />
     <ClCompile Include="PerlinNoise.cpp" />
     <ClCompile Include="PhysXWrapper.cpp" />
@@ -322,6 +396,7 @@
     <ClCompile Include="RectangleColliderComponent.cpp" />
     <ClCompile Include="RigidBodyComponent.cpp" />
     <ClCompile Include="RigidDynamicBody.cpp" />
+    <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="StackWalker.cpp" />
     <ClCompile Include="State.cpp" />
     <ClCompile Include="DirectXFramework.cpp" />
@@ -373,6 +448,7 @@
     <ClCompile Include="VFXFactory.cpp" />
     <ClCompile Include="VFXInstance.cpp" />
     <ClCompile Include="VFXRenderer.cpp" />
+    <ClCompile Include="Widgets.cpp" />
     <ClCompile Include="WindowHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -443,6 +519,22 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="DeferredVertexPaintPixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="DeferredVertexPaintVertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="DeferredVertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
@@ -662,12 +754,17 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Includes\ImGui\NodeEditor\imgui_bezier_math.inl" />
+    <None Include="..\Includes\ImGui\NodeEditor\imgui_extra_math.inl" />
+    <None Include="..\Includes\ImGui\NodeEditor\imgui_node_editor_internal.inl" />
+    <None Include="cpp.hint" />
     <None Include="DeferredPBRFunctions.hlsli" />
     <None Include="DeferredSamplingFunctions.hlsli" />
     <None Include="DeferredShaderStructs.hlsli" />
     <None Include="DetailNormalHelpers.hlsli" />
     <None Include="FullscreenShaderStructs.hlsli" />
     <None Include="LineShaderStructs.hlsli" />
+    <None Include="Math2D.inl" />
     <None Include="MathHelpers.hlsli" />
     <None Include="ParticleShaderStructs.hlsli" />
     <None Include="PBRAmbience.hlsli" />
@@ -677,6 +774,9 @@
     <None Include="SpriteShaderStructs.hlsli" />
     <None Include="SpriteVFXShaderStructs.hlsli" />
     <None Include="VFXShaderStructs.hlsli" />
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="..\Includes\ImGui\NodeEditor\imgui_node_editor.natvis" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
