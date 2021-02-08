@@ -18,7 +18,7 @@
 
 #include <algorithm>
 
-//#define USING_DEFERRED
+#define USING_DEFERRED
 
 unsigned int CRenderManager::myNumberOfDrawCallsThisFrame = 0;
 

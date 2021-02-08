@@ -238,7 +238,7 @@ void TEMP_SetUpAnimationTest(CScene* aScene)
 
 	go->AddComponent<CModelComponent>(*go, skinnedModelPath);// <-- Måste ha vanlig CModelComp för rendering
 	
-	// Fixar allt. Behöver ett CGameObject med e CModelComponent på och path:en för modellen.
+	// Fixar allt. Behöver ett CGameObject med en CModelComponent på och path:en för modellen.
 	CAnimationComponent* animComp = AnimationLoader::AddAnimationsToGameObject(go, skinnedModelPath);
 	animComp->BlendToAnimation(1/*Index för animation att blenda till*/, 1.0f/*Hur långsam blendingen ska vara*/);
 

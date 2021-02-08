@@ -10,6 +10,7 @@
 #include "GameObject.h"
 #include "CameraComponent.h"
 #include "ModelComponent.h"
+#include "AnimationComponent.h"
 #include "InstancedModelComponent.h"
 #include "MaterialHandler.h"
 
@@ -34,6 +35,8 @@ CDeferredRenderer::CDeferredRenderer()
 	, myRenderPassGBuffer(nullptr)
 	, myCurrentRenderPassShader(nullptr)
 	, myRenderPassIndex(9)
+	, myBoneBuffer(nullptr)
+	, myBoneBufferData()
 {}
 
 CDeferredRenderer::~CDeferredRenderer()
@@ -69,6 +72,9 @@ bool CDeferredRenderer::Init(CDirectXFramework* aFramework)
 	bufferDescription.ByteWidth = sizeof(SPointLightBufferData);
 	ENGINE_HR_MESSAGE(device->CreateBuffer(&bufferDescription, nullptr, &myPointLightBuffer), "Point Light Buffer could not be created.");
 
+	bufferDescription.ByteWidth = static_cast<UINT>(sizeof(SBoneBufferData) + (16 - (sizeof(SBoneBufferData) % 16)));
+	ENGINE_HR_BOOL_MESSAGE(device->CreateBuffer(&bufferDescription, nullptr, &myBoneBuffer), "Bone Buffer could not be created.");
+
 	std::ifstream vsFile;
 	vsFile.open("Shaders/DeferredVertexShader.cso", std::ios::binary);
 	std::string vsData = { std::istreambuf_iterator<char>(vsFile), std::istreambuf_iterator<char>() };
@@ -77,12 +83,17 @@ bool CDeferredRenderer::Init(CDirectXFramework* aFramework)
 
 	vsFile.open("Shaders/DeferredModelVertexShader.cso", std::ios::binary);
 	vsData = { std::istreambuf_iterator<char>(vsFile), std::istreambuf_iterator<char>() };
-	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateVertexShader(vsData.data(), vsData.size(), nullptr, &myModelVertexShader), "Fullscreen Vertex Shader could not be created.");
+	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateVertexShader(vsData.data(), vsData.size(), nullptr, &myModelVertexShader), "Model Vertex Shader could not be created.");
+	vsFile.close();
+
+	vsFile.open("Shaders/DeferredAnimationVertexShader.cso", std::ios::binary);
+	vsData = { std::istreambuf_iterator<char>(vsFile), std::istreambuf_iterator<char>() };
+	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateVertexShader(vsData.data(), vsData.size(), nullptr, &myAnimationVertexShader), "Animation Vertex Shader could not be created.");
 	vsFile.close();
 
 	vsFile.open("Shaders/DeferredInstancedModelVertexShader.cso", std::ios::binary);
 	vsData = { std::istreambuf_iterator<char>(vsFile), std::istreambuf_iterator<char>() };
-	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateVertexShader(vsData.data(), vsData.size(), nullptr, &myInstancedModelVertexShader), "Fullscreen Vertex Shader could not be created.");
+	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateVertexShader(vsData.data(), vsData.size(), nullptr, &myInstancedModelVertexShader), "Instanced Model Vertex Shader could not be created.");
 	vsFile.close();
 
 	std::ifstream ps1File;
@@ -181,7 +192,18 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 		myContext->IASetInputLayout(modelData.myInputLayout);
 
 		myContext->VSSetConstantBuffers(1, 1, &myObjectBuffer);
-		myContext->VSSetShader(myModelVertexShader, nullptr, 0);
+		if (gameObject->GetComponent<CAnimationComponent>() != nullptr) {
+			memcpy(myBoneBufferData.myBones, gameObject->GetComponent<CAnimationComponent>()->GetBones().data(), sizeof(Matrix) * 64);
+
+			BindBuffer(myBoneBuffer, myBoneBufferData, "Bone Buffer");
+
+			myContext->VSSetConstantBuffers(4, 1, &myBoneBuffer);
+			myContext->VSSetShader(myAnimationVertexShader, nullptr, 0);
+		}
+		else
+		{
+			myContext->VSSetShader(myModelVertexShader, nullptr, 0);
+		}
 
 		myContext->PSSetConstantBuffers(1, 1, &myObjectBuffer);
 		myContext->PSSetShaderResources(8, 4, &modelData.myDetailNormals[0]);

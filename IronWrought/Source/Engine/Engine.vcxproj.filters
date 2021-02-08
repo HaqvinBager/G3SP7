@@ -145,6 +145,9 @@
     <FxCompile Include="DeferredVertexPaintPixelShader.hlsl">
       <Filter>Shaders\Vertex Paint</Filter>
     </FxCompile>
+    <FxCompile Include="DeferredAnimationVertexShader.hlsl">
+      <Filter>Shaders\Deferred</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimationComponent.cpp">

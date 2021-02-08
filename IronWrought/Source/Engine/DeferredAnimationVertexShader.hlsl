@@ -1,8 +1,8 @@
-#include "ShaderStructs.hlsli"
+#include "DeferredShaderStructs.hlsli"
 
-VertexToPixel main(VertexInput input)
+VertexModelToPixel main(VertexModelInput input)
 {
-    VertexToPixel returnValue;
+    VertexModelToPixel returnValue;
      
     returnValue.myPosition = input.myPosition;
 
@@ -48,18 +48,16 @@ VertexToPixel main(VertexInput input)
     float4 vertexViewPos = mul(toCamera, vertexWorldPos);
     float4 vertexProjectionPos = mul(toProjection, vertexViewPos);
     
-    returnValue.myPosition = vertexProjectionPos;
-    
     float3x3 toWorldRotation = (float3x3) toWorld;
     float3 vertexWorldNormal = mul(toWorldRotation, input.myNormal.xyz);
     float3 vertexWorldTangent = mul(toWorldRotation, input.myTangent.xyz);
-    float3 vertexWorldBinormal = mul(toWorldRotation, input.myBiNormal.xyz);
-    
+    float3 vertexWorldBinormal = mul(toWorldRotation, input.myBiTangent.xyz);
+
+    returnValue.myPosition = vertexProjectionPos;
     returnValue.myWorldPosition = vertexWorldPos;
     returnValue.myNormal = float4(vertexWorldNormal, 0);
     returnValue.myTangent = float4(vertexWorldTangent, 0);
-    returnValue.myBiNormal = float4(vertexWorldBinormal, 0);
+    returnValue.myBinormal = float4(vertexWorldBinormal, 0);
     returnValue.myUV = input.myUV;
-      
     return returnValue;
 }
