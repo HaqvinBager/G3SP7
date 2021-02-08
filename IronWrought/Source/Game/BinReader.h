@@ -3,6 +3,7 @@
 
 struct SVertexPaintColorData {
 	std::vector<Vector3> myColors;
+	std::vector<Vector3> myVertexPositions;
 	int myVertexMeshID;
 };
 
@@ -20,7 +21,7 @@ private:
 	static size_t Read(T& aData, char* aStreamPtr, const unsigned int aCount = 1)
 	{
 		memcpy(&aData, aStreamPtr, sizeof(T) * aCount);
-		return sizeof(T);
+		return sizeof(T) * aCount;
 	}
 
 	static std::string ReadStringAuto(char* aStreamPtr)

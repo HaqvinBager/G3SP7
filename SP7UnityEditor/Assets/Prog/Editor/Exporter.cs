@@ -4,12 +4,13 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEditor;
 using UnityEditor.SceneManagement;
+using UnityEngine.Polybrush;
 
 
 [System.Serializable]
 public struct STransform
 {
-    public float instanceID;
+    public int instanceID;
     public Vector3 position;
     public Vector3 rotation;
     public Vector3 scale;
@@ -38,6 +39,7 @@ public struct SInstancedGameObject
 public struct SScene
 {
     public SInstancedGameObject[] instancedGameobjects;
+    public SGameObject[] modelGameObjects;
 }
 
 public class Exporter 
@@ -46,8 +48,6 @@ public class Exporter
     static void ExportScene()
     {
         List<GameObject> allScenesActiveObjects = new List<GameObject>();
-
-
         for (int i = 0; i < SceneManager.sceneCount; ++i)
         {
             GameObject[] gameobjects = SceneManager.GetSceneAt(i).GetRootGameObjects();
@@ -62,7 +62,6 @@ public class Exporter
             }
         }
 
-
         for (int i = 0; i < SceneManager.sceneCount; ++i)
         {
             GameObject[] gameobjects = SceneManager.GetSceneAt(i).GetRootGameObjects();
@@ -76,7 +75,6 @@ public class Exporter
                 }
             }
 
-
             ExportAScene(SceneManager.GetSceneAt(i));
 
             foreach (var gameobject in activeobjects)
@@ -89,36 +87,26 @@ public class Exporter
         {
             gameObject.SetActive(true);
         }
-
     }
 
     private static void ExportAScene(Scene aScene)
     {
-
-        //GameObject[] rootGameObjects = aScene.GetRootGameObjects();
-        Renderer[] allrenderers = GameObject.FindObjectsOfType<Renderer>();
-
-
-        Dictionary<string, List<STransform>> fbxPathGameObjectMap = new Dictionary<string, List<STransform>>();
-        List<Renderer> renderers = new List<Renderer>();
-
+        List<Renderer> alreadyExportedRenderers = ExportVertexPaint.ExportVertexPainting(aScene);
+        Renderer[] allrenderers = GameObject.FindObjectsOfType<Renderer>();       
+        Dictionary<string, List<STransform>> fbxPathGameObjectMap = new Dictionary<string, List<STransform>>();   
         List<string> fbxpaths = new List<string>();
-
-
-        //foreach (Renderer go in allrenderers)
+     
         for (int i = 0; i < allrenderers.Length; ++i)
-        //for (int i = 0; i < rootGameObjects.Length; ++i)
-
         {
+            if (alreadyExportedRenderers.Contains(allrenderers[i]))
+                continue;
 
             string fbxPath = AssetDatabase.GetAssetPath(PrefabUtility.GetCorrespondingObjectFromOriginalSource(allrenderers[i].GetComponent<MeshFilter>().sharedMesh));
-
             if (!fbxPathGameObjectMap.ContainsKey(fbxPath))
-            {
                 fbxPathGameObjectMap.Add(fbxPath, new List<STransform>());
-            }
+            
             STransform transform = new STransform();
-            transform.instanceID = allrenderers[i].gameObject.GetInstanceID();
+            transform.instanceID = allrenderers[i].transform.GetInstanceID();
             transform.position = allrenderers[i].transform.position;
             transform.rotation = allrenderers[i].transform.ConvertToIronWroughtRotation();
             transform.scale = allrenderers[i].transform.localScale;
@@ -128,8 +116,8 @@ public class Exporter
             {
                 fbxpaths.Add(fbxPath);
             }
-            // Debug.Log(fbxPath + " Count: " + fbxPathMap[fbxPath]);
         }
+
         List<SInstancedGameObject> instancedGameObjects = new List<SInstancedGameObject>();
         for (int i = 0; i < fbxpaths.Count; ++i)
         {
@@ -140,9 +128,25 @@ public class Exporter
             instancedGameObjects.Add(instancedGameObject);
         }
 
-        Debug.Log(aScene.name);
+        List<SGameObject> gameObjects = new List<SGameObject>();
+        foreach(var renderer in alreadyExportedRenderers)
+        {
+            SGameObject gameObject = new SGameObject();
+            //Få tag i original-FBXen som användes till denna Vertex-paintade gameobject
+            string fbxPath = AssetDatabase.GetAssetPath(
+                PrefabUtility.GetCorrespondingObjectFromOriginalSource(
+                     renderer.GetComponent<PolybrushMesh>().m_OriginalMeshObject));
+            gameObject.model.fbxPath = fbxPath;
+            gameObject.transform.instanceID = renderer.transform.GetInstanceID();
+            gameObject.transform.position = renderer.transform.ConvertToIronWroughtPosition();
+            gameObject.transform.rotation = renderer.transform.ConvertToIronWroughtRotation();
+            gameObject.transform.scale = renderer.transform.ConvertToIronWroughtScale();
+            gameObjects.Add(gameObject);
+        }
+
         SScene sceneObject = new SScene();
         sceneObject.instancedGameobjects = instancedGameObjects.ToArray();
+        sceneObject.modelGameObjects = gameObjects.ToArray();
         string jsonGameObject = JsonUtility.ToJson(sceneObject);
         string savePath = System.IO.Directory.GetCurrentDirectory() + "\\Assets\\Generated\\";
         if (!System.IO.Directory.Exists(savePath))

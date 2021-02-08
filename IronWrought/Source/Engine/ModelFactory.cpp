@@ -10,6 +10,7 @@
 #include <UnityFactory.h>
 #include "MaterialHandler.h"
 
+
 #ifdef _DEBUG
 #pragma comment(lib, "ModelLoader_Debug.lib")
 #endif
@@ -99,6 +100,21 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 	meshData.resize(numberOfMeshes);
 
 	CLoaderMesh* mesh = loaderModel->myMeshes[0];
+
+
+	unsigned int vertexSize = mesh->myVertexBufferSize;
+	unsigned int vertexCount = mesh->myVertexCount;
+
+	std::vector<Vector3> vertexPositions;
+	vertexPositions.reserve(vertexCount);
+	for (unsigned i = 0; i < vertexCount * vertexSize; i += vertexSize) {
+		Vector3 vertexPosition = {};
+		memcpy(&vertexPosition, &mesh->myVerticies[i], sizeof(Vector3));
+		vertexPositions.emplace_back(vertexPosition);
+	}
+	myFBXVertexMap.emplace(aFilePath, vertexPositions);
+
+
 	for (unsigned int i = 0; i < numberOfMeshes; ++i)
 	{
 		mesh = loaderModel->myMeshes[i];
@@ -309,6 +325,11 @@ CModel* CModelFactory::GetOutlineModelSubset()
 	myOutlineModelSubset->Init(modelData);
 
 	return myOutlineModelSubset;
+}
+
+std::vector<DirectX::SimpleMath::Vector3>& CModelFactory::GetVertexPositions(const std::string& aFilePath)
+{
+	return myFBXVertexMap.at(aFilePath);
 }
 
 void CModelFactory::ClearModel(std::string aFilePath, int aNumberOfInstances)

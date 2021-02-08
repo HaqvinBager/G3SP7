@@ -9,9 +9,14 @@ CModelComponent::CModelComponent(CGameObject& aParent, const std::string& aFBXPa
 	myModel = CModelFactory::GetInstance()->GetModel(aFBXPath);
 	myModelPath = aFBXPath;
 
-	SVertexPaintData vertexPaintData = CMainSingleton::MaterialHandler().RequestVertexColorID(aParent.InstanceID());
+	SVertexPaintData vertexPaintData = CMainSingleton::MaterialHandler().RequestVertexColorID(aParent.InstanceID(), aFBXPath);
 	myVertexPaintColorID = vertexPaintData.myVertexColorID;
 	myVertexPaintMaterialNames = vertexPaintData.myRGBMaterialNames;
+
+
+
+
+
 }
 
 CModelComponent::~CModelComponent()
