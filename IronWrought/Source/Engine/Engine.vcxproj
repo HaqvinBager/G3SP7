@@ -62,7 +62,7 @@
     <TargetName>$(ProjectName)_$(Configuration)</TargetName>
     <IntDir>$(ProjectDir)..\..\Temp\$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir>$(ProjectDir)..\..\Lib\</OutDir>
-    <IncludePath>$(SolutionDir)imgui_ne\ThirdParty\imgui;$(SolutionDir)imgui_ne\NodeEditor\include\;$(IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\DirectXTK\Inc\;$(ProjectDir)..\Game\;$(ProjectDir)..\ModelLoader\;$(ProjectDir)..\UnityImporterApp\;$(ProjectDir)..\Includes\;$(SolutionDir)PhysXWrapper\;$(SolutionDir)Includes\PhysX-4.1\physx\include\;$(SolutionDir)Includes\PhysX-4.1\pxshared\include\</IncludePath>
+    <IncludePath>$(IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\DirectXTK\Inc\;$(ProjectDir)..\Game\;$(ProjectDir)..\ModelLoader\;$(ProjectDir)..\UnityImporterApp\;$(ProjectDir)..\Includes\;$(SolutionDir)PhysXWrapper\;$(SolutionDir)Includes\PhysX-4.1\physx\include\;$(SolutionDir)Includes\PhysX-4.1\pxshared\include\;$(SolutionDir)Includes\ImGui\Core;$(SolutionDir)Includes\ImGui\Helpers;$(SolutionDir)Includes\ImGui\NodeEditor;</IncludePath>
     <LibraryPath>$(SolutionDir)../Lib/;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)..\Lib\physxlib\debug\</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -70,7 +70,7 @@
     <TargetName>$(ProjectName)_$(Configuration)</TargetName>
     <IntDir>$(ProjectDir)..\..\Temp\$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir>$(ProjectDir)..\..\Lib\</OutDir>
-    <IncludePath>$(SolutionDir)imgui_ne\ThirdParty\imgui;$(SolutionDir)imgui_ne\NodeEditor\include\;$(IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\DirectXTK\Inc\;$(ProjectDir)..\Game\;$(ProjectDir)..\ModelLoader\;$(ProjectDir)..\UnityImporterApp\;$(ProjectDir)..\Includes\;$(SolutionDir)Includes\PhysX-4.1\physx\include\;$(SolutionDir)Includes\PhysX-4.1\pxshared\include\</IncludePath>
+    <IncludePath>$(IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\DirectXTK\Inc\;$(ProjectDir)..\Game\;$(ProjectDir)..\ModelLoader\;$(ProjectDir)..\UnityImporterApp\;$(ProjectDir)..\Includes\;$(SolutionDir)Includes\PhysX-4.1\physx\include\;$(SolutionDir)Includes\PhysX-4.1\pxshared\include\;$(SolutionDir)Includes\ImGui\Core;$(SolutionDir)Includes\ImGui\Helpers;$(SolutionDir)Includes\ImGui\NodeEditor;</IncludePath>
     <LibraryPath>$(SolutionDir)../Lib/;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)..\Lib\physxlib\release\</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">
@@ -92,7 +92,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <ForcedIncludeFiles>StdAfx.h;%(ForcedINcludeFiles)</ForcedIncludeFiles>
-      <AdditionalIncludeDirectories>$(SolutionDir)imgui_ne\ThirdParty\imgui;$(SolutionDir)imgui_ne\NodeEditor\include\;%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>
       </AdditionalUsingDirectories>
     </ClCompile>
@@ -124,7 +124,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <ForcedIncludeFiles>StdAfx.h;%(ForcedINcludeFiles)</ForcedIncludeFiles>
-      <AdditionalIncludeDirectories>$(SolutionDir)imgui_ne\ThirdParty\imgui;$(SolutionDir)imgui_ne\NodeEditor\include\;%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -164,8 +164,20 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\imgui_ne\ThirdParty\imgui\imgui_impl_dx11.h" />
-    <ClInclude Include="..\imgui_ne\ThirdParty\imgui\imgui_impl_win32.h" />
+    <ClInclude Include="..\Includes\ImGui\Core\imconfig.h" />
+    <ClInclude Include="..\Includes\ImGui\Core\imgui.h" />
+    <ClInclude Include="..\Includes\ImGui\Core\imgui_impl_dx11.h" />
+    <ClInclude Include="..\Includes\ImGui\Core\imgui_impl_win32.h" />
+    <ClInclude Include="..\Includes\ImGui\Core\imgui_internal.h" />
+    <ClInclude Include="..\Includes\ImGui\Core\imstb_rectpack.h" />
+    <ClInclude Include="..\Includes\ImGui\Core\imstb_textedit.h" />
+    <ClInclude Include="..\Includes\ImGui\Core\imstb_truetype.h" />
+    <ClInclude Include="..\Includes\ImGui\NodeEditor\crude_json.h" />
+    <ClInclude Include="..\Includes\ImGui\NodeEditor\imgui_bezier_math.h" />
+    <ClInclude Include="..\Includes\ImGui\NodeEditor\imgui_canvas.h" />
+    <ClInclude Include="..\Includes\ImGui\NodeEditor\imgui_extra_math.h" />
+    <ClInclude Include="..\Includes\ImGui\NodeEditor\imgui_node_editor.h" />
+    <ClInclude Include="..\Includes\ImGui\NodeEditor\imgui_node_editor_internal.h" />
     <ClInclude Include="AnimatedUIElement.h" />
     <ClInclude Include="Animation.h" />
     <ClInclude Include="AnimationComponent.h" />
@@ -307,15 +319,16 @@
     <ClInclude Include="WinInclude.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\imgui_ne\ThirdParty\imgui\imgui_impl_dx11.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)imgui_ne\ThirdParty\imgui;$(SolutionDir)imgui_ne\ThirdParty\stb_image;$(SolutionDir)imgui_ne\NodeEditor\include\;%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)imgui_ne\ThirdParty\imgui;$(SolutionDir)imgui_ne\ThirdParty\stb_image;$(SolutionDir)imgui_ne\NodeEditor\include\;%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">$(SolutionDir)imgui_ne\ThirdParty\imgui;$(SolutionDir)imgui_ne\ThirdParty\stb_image;$(SolutionDir)imgui_ne\NodeEditor\include\;%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
-      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Level4</WarningLevel>
-      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Level4</WarningLevel>
-      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Level4</WarningLevel>
-    </ClCompile>
-    <ClCompile Include="..\imgui_ne\ThirdParty\imgui\imgui_impl_win32.cpp" />
+    <ClCompile Include="..\Includes\ImGui\Core\imgui.cpp" />
+    <ClCompile Include="..\Includes\ImGui\Core\imgui_demo.cpp" />
+    <ClCompile Include="..\Includes\ImGui\Core\imgui_draw.cpp" />
+    <ClCompile Include="..\Includes\ImGui\Core\imgui_impl_dx11.cpp" />
+    <ClCompile Include="..\Includes\ImGui\Core\imgui_impl_win32.cpp" />
+    <ClCompile Include="..\Includes\ImGui\Core\imgui_widgets.cpp" />
+    <ClCompile Include="..\Includes\ImGui\NodeEditor\crude_json.cpp" />
+    <ClCompile Include="..\Includes\ImGui\NodeEditor\imgui_canvas.cpp" />
+    <ClCompile Include="..\Includes\ImGui\NodeEditor\imgui_node_editor.cpp" />
+    <ClCompile Include="..\Includes\ImGui\NodeEditor\imgui_node_editor_api.cpp" />
     <ClCompile Include="AnimatedUIElement.cpp" />
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="AnimationComponent.cpp" />
@@ -743,6 +756,9 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Includes\ImGui\NodeEditor\imgui_bezier_math.inl" />
+    <None Include="..\Includes\ImGui\NodeEditor\imgui_extra_math.inl" />
+    <None Include="..\Includes\ImGui\NodeEditor\imgui_node_editor_internal.inl" />
     <None Include="cpp.hint" />
     <None Include="DeferredPBRFunctions.hlsli" />
     <None Include="DeferredSamplingFunctions.hlsli" />
@@ -760,6 +776,9 @@
     <None Include="SpriteShaderStructs.hlsli" />
     <None Include="SpriteVFXShaderStructs.hlsli" />
     <None Include="VFXShaderStructs.hlsli" />
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="..\Includes\ImGui\NodeEditor\imgui_node_editor.natvis" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
