@@ -153,9 +153,6 @@
     <ClCompile Include="CircleColliderComponent.cpp">
       <Filter>GameObject and Component\Component</Filter>
     </ClCompile>
-    <ClCompile Include="Animation.cpp">
-      <Filter>Animation</Filter>
-    </ClCompile>
     <ClCompile Include="AnimMathFunc.cpp">
       <Filter>Animation</Filter>
     </ClCompile>
@@ -435,9 +432,6 @@
     </ClInclude>
     <ClInclude Include="CircleColliderComponent.h">
       <Filter>GameObject and Component\Component</Filter>
-    </ClInclude>
-    <ClInclude Include="Animation.h">
-      <Filter>Animation</Filter>
     </ClInclude>
     <ClInclude Include="AnimationController.h">
       <Filter>Animation</Filter>

@@ -361,7 +361,7 @@ void CAnimationController::SetBoneTransforms(std::vector<aiMatrix4x4>& aTransfor
 		float animationTime = fmodf(timeInTicks, duration);// In SP6 Project: mDuration is duration in frames. I.e 34frames for Undead Idle  @ 24fps
 		// 40.0f which is the actual nr of frames the animation has does not move the model, i.e the animation stands still
 		// Seems to be cause FindScaling/Rotation/Position() are returning the value of the first node they find which had 41.something mTime. if(AnimationTime < node.key[i]->mTime) return i
-		std::cout << timeInTicks << " " << duration << "  " << animationTime << std::endl;
+		//std::cout << timeInTicks << " " << duration << "  " << animationTime << std::endl;
 
 		ReadNodeHeirarchy(myAnimations[myAnim0Index], animationTime, myAnimations[myAnim0Index]->mRootNode, Identity, 2);//stopAnimLevel=2
 	}
@@ -411,8 +411,8 @@ void CAnimationController::UpdateAnimationTimes()
 {
 	//float dt = CTimer::Dt() * ((float)myAnimations[myAnim0Index]->mAnimations[0]->mDuration / TEMP_FRAMES_PER_SECOND);
 	//float dt = CTimer::Dt() * TEMP_FRAMES_PER_SECOND);
-	float dt = CTimer::Dt() * 12.0f;// Close to good (right)
-
+	//float dt = CTimer::Dt() * 12.0f;// Close to good (right)
+	float dt = 1.0f / TEMP_FRAMES_PER_SECOND;
 	myAnimationTime0 += dt;
 	if (myBlendingTime > 0.f)
 	{

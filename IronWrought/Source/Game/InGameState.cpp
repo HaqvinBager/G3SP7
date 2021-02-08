@@ -322,13 +322,17 @@ void TEMP_DeferredRenderingTests(CScene* scene)
 void TEMP_SetUpAnimationTest(CScene* aScene)
 {
 	CGameObject* go = new CGameObject(123123123);
-	//std::string skinnedModelPath = "Assets/Temp/Mixamo/SK.fbx";// <-- Skinnad mesh fbx. 
-	std::string skinnedModelPath = "Assets/Temp/Robot/CH_E_Robot_SK.fbx";// <-- Skinnad mesh fbx. 
+	 std::string skinnedModelPath = "Assets/Temp/Mixamo/SK.fbx";// <-- Skinnad mesh fbx. 
+	//std::string skinnedModelPath = "Assets/Temp/Robot/CH_E_Robot_SK.fbx";// <-- Skinnad mesh fbx. 
+	//std::string skinnedModelPath = "Assets/Temp/fbx2019v2020_0_1/CH_E_Robot_SK_.fbx";
+	//std::string skinnedModelPath = "Assets/Temp/Maya2019_2/CH_E_Robot_SK.fbx";
+	//std::string skinnedModelPath = "Assets/Temp/Main Character/CH_PL_SK.fbx";// <-- Skinnad mesh fbx. 
 
 	go->AddComponent<CModelComponent>(*go, skinnedModelPath);// <-- Måste ha vanlig CModelComp för rendering
 	
 	// Fixar allt. Behöver ett CGameObject med e CModelComponent på och path:en för modellen.
 	CAnimationComponent* animComp = AnimationLoader::AddAnimationsToGameObject(go, skinnedModelPath);
+	animComp->BlendToAnimation(1/*Index för animation att blenda till*/, 1.0f/*Hur långsam blendingen ska vara*/);
 
 	//animComp->BlendLerpBetween(5/*Index för första animation, ligger på blend 0.0f*/
 	//						   , 0/*Index för andra animation, ligger på blend 1.0f*/
@@ -337,7 +341,6 @@ void TEMP_SetUpAnimationTest(CScene* aScene)
 	//								 * 0.5f => spela 50/50% av första/andra.
 	//								 */
 	//						   );
-	animComp->BlendToAnimation(4/*Index för animation att blenda till*/, 1.0f/*Hur långsam blendingen ska vara*/);
 
 	g_TempAnimObject = go;
 

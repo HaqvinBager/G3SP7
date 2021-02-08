@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "Model.h"
-#include "Animation.h"
 
 CModel::CModel() 
 	: myModelData()
