@@ -3,12 +3,12 @@
 #include "rapidjson/document.h"
 #include "rapidjson/writer.h"
 #include "rapidjson/stringbuffer.h"
-#include "rapidjson/document.h"
 #include "rapidjson/filewritestream.h"
 #include "rapidjson/filereadstream.h"
 #include "rapidjson/prettywriter.h"
-#include <iostream>
+#include "JsonReader.h"
 #include <fstream>
+#include <iostream>
 #include <sstream>
 #include "NodeInstance.h"
 #include "NodeType.h"
@@ -42,16 +42,37 @@ void CGraphManager::Load()
 	memset(&myMenuSeachField[0], 0, sizeof(myMenuSeachField));
 	LoadTreeFromFile();
 	myShouldRenderGraph = false;
+	myScriptShouldRun = false;
 }
 
 void CGraphManager::ReTriggerUpdateringTrees()
 {
 	//Locate start nodes, we support N start nodes, we might want to remove this, as we dont "support" different trees with different starrtnodes to be connected. It might work, might not
-	for (auto& nodeInstance : myNodeInstancesInGraph)
+	if (myScriptShouldRun)
 	{
-		if (nodeInstance->myNodeType->IsStartNode() && nodeInstance->myShouldTriggerAgain)
+		for (auto& nodeInstance : myNodeInstancesInGraph)
 		{
-			nodeInstance->Enter();
+			if (nodeInstance->myNodeType->IsStartNode())
+			{
+				for (auto& pin : nodeInstance->GetPins())
+				{
+					if (pin.myPinType == SPin::PinTypeInOut::PinTypeInOut_IN && pin.myVariableType == SPin::PinType::Bool)
+					{
+						bool data;
+						data = NodeData::Get<bool>(pin.myData);
+						if (data == true)
+						{
+							nodeInstance->myShouldTriggerAgain = true;
+							break;
+						}
+					}
+				}
+			}
+		
+			if (nodeInstance->myNodeType->IsStartNode() && nodeInstance->myShouldTriggerAgain)
+			{
+				nodeInstance->Enter();
+			}
 		}
 	}
 }
@@ -161,7 +182,6 @@ SPin::PinType LoadPinData(NodeDataPtr& someDataToCopy, rapidjson::Value& someDat
 	}
 	return SPin::PinType::Unknown;
 }
-
 void CGraphManager::LoadTreeFromFile()
 {
 	for (auto& nodeInstance : myNodeInstancesInGraph)
@@ -173,29 +193,24 @@ void CGraphManager::LoadTreeFromFile()
 	myNodeInstancesInGraph.clear();
 	UID::myAllUIDs.clear();
 	UID::myGlobalUID = 0;
-
+	Document document;
 	{
-		std::ifstream inputFile("Imgui/NodeScripts/nodeinstances.json");
-		std::stringstream jsonDocumentBuffer;
-		std::string inputLine = "";
+		std::string path = "Imgui/NodeScripts/nodeinstances.json";
+		document = CJsonReader::Get()->LoadDocument(path);
 
-		if (inputFile.good()) {
-			while (std::getline(inputFile, inputLine))
+		if (document.HasMember("UID_MAX"))
+		{
+			auto uIDMax = document["UID_MAX"]["Num"].GetInt();
+			UID::myGlobalUID = uIDMax;
+		}
+		path += "hello";
+		if (document.HasMember("NodeInstances"))
+		{
+			auto nodeInstances = document["NodeInstances"].GetArray();
+
+			for (unsigned int i = 0; i < nodeInstances.Size(); ++i)
 			{
-				jsonDocumentBuffer << inputLine << "\n";
-			}
-			rapidjson::Document document;
-			document.Parse(jsonDocumentBuffer.str().c_str());
-
-			rapidjson::Value& uidmax = document["UID_MAX"];
-			int test = uidmax["Num"].GetInt();
-			UID::myGlobalUID = test;
-
-			rapidjson::Value& results = document["NodeInstances"];
-
-			for (rapidjson::SizeType i = 0; i < results.Size(); i++)
-			{
-				rapidjson::Value& nodeInstance = results[i];
+				auto nodeInstance = nodeInstances[i].GetObjectW();
 				CNodeInstance* object = new CNodeInstance(false);
 				int nodeType = nodeInstance["NodeType"].GetInt();
 				int UID = nodeInstance["UID"].GetInt();
@@ -218,13 +233,12 @@ void CGraphManager::LoadTreeFromFile()
 						object->ChangePinTypes(newType);
 					}
 				}
-
 				myNodeInstancesInGraph.push_back(object);
 			}
 		}
 	}
 	{
-		std::ifstream inputFile("Imgui/NodeScripts/links.json");
+		/*std::ifstream inputFile("Imgui/NodeScripts/links.json");
 		std::stringstream jsonDocumentBuffer;
 		std::string inputLine;
 
@@ -234,12 +248,15 @@ void CGraphManager::LoadTreeFromFile()
 				jsonDocumentBuffer << inputLine << "\n";
 			}
 			rapidjson::Document document;
-			document.Parse(jsonDocumentBuffer.str().c_str());
+			document.Parse(jsonDocumentBuffer.str().c_str());*/
 
 			//rapidjson::Value& results = document["Links"];
-
+		document = CJsonReader::Get()->LoadDocument("Imgui/NodeScripts/links.json");
+		if(document.HasMember("Links"))
+		{ 
+			auto links = document["Links"].GetArray();
 			myNextLinkIdCounter = 0;
-			for (rapidjson::SizeType i = 0; i < document["Links"].Size(); i++)
+			for (unsigned int i = 0; i < links.Size(); i++)
 			{
 				int id = document["Links"][i]["ID"].GetInt();
 				int inputID = document["Links"][i]["Input"].GetInt();
@@ -366,10 +383,9 @@ void CGraphManager::ShowFlow(int aLinkID)
 	myFlowsToBeShown.push_back(aLinkID);
 }
 
-void CGraphManager::Render()
+void CGraphManager::Update()
 {
 	PreFrame(CTimer::Dt());
-
 	if (myShouldRenderGraph)
 	{
 		ConstructEditorTreeAndConnectLinks();
@@ -618,9 +634,7 @@ void CGraphManager::WillBeCyclic(CNodeInstance* aFirst, CNodeInstance* /*aSecond
 		return;
 
 	if (aIsCyclic)
-	{
 		return;
-	}
 
 	std::vector<SPin>& pins = aFirst->GetPins();
 	for (auto& pin : pins)
@@ -657,11 +671,12 @@ void CGraphManager::PreFrame(float aDeltaTime)
 		ImGui::SetNextWindowPos(ImVec2(0, 18));
 		ImGui::SetNextWindowSize({io.DisplaySize.x,  io.DisplaySize.y});
 		ImGui::Begin("Content", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_MenuBar);
+		if (ImGui::Button("Run Script"))
+			myScriptShouldRun = !myScriptShouldRun;
 	}
-	//if (ImGui::Button("Retrigger"))
-	//{
-	//	ReTriggerTree();
-	//}
+
+	if(myScriptShouldRun)
+		ReTriggerUpdateringTrees();
 	//ImGui::SameLine();
 	//if (ImGui::Button("Save"))
 	//{
@@ -765,6 +780,7 @@ size_t uiLevenshteinDistance(const T& source, const T& target)
 
 void CGraphManager::ConstructEditorTreeAndConnectLinks()
 {
+	static bool previousValue;
 	for (auto& nodeInstance : myNodeInstancesInGraph)
 	{
 		if (!nodeInstance->myHasSetEditorPosition)

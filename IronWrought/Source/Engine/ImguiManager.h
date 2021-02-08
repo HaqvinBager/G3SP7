@@ -10,7 +10,7 @@ class CImguiManager
 public:
 	CImguiManager();
 	~CImguiManager();
-	void Render();
+	void Update();
 	void PostRender();
 	void DebugWindow();
 	void LevelSelect();
@@ -21,4 +21,5 @@ private:
 	const std::string GetDrawCalls();
 	std::vector<std::string> myLevelsToSelectFrom;
 	bool myGraphManagerIsFullscreen;
+	bool myIsEnabled;
 };

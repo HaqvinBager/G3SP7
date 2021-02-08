@@ -23,14 +23,13 @@ public class ExportVertexPaint : Editor
     static string targetPath = "Assets\\Generated\\";
     static string polybrushMesh = "PolybrushMesh";
 
-    [MenuItem("Export/Export Vertex Painting")]
-    public static void ExtractColorsFromMeshes()
+    //[MenuItem("Export/Export Vertex Painting")]
+    public static List<Renderer> ExportVertexPainting(Scene aScene)
     {
+        List<Renderer> exportedVertexPaintObjects = new List<Renderer>();
         List<VertexLink> vertexLinks = new List<VertexLink>();
-
         List<MeshRenderer> meshRenderers = GetAllVertexPaintedMeshRenderers();
-        List<string> exportedMeshPaths = GetAllExportedPolyBrushMeshPaths();
-
+      
         foreach (MeshRenderer renderer in meshRenderers)
         {
             string meshName = renderer.GetComponent<MeshFilter>().sharedMesh.name;
@@ -43,9 +42,10 @@ public class ExportVertexPaint : Editor
             {
                 if (vertexLink.colorsPath == targetPath + "PolybrushColors_" + polyMeshID + "_Bin.bin")
                 {
-                    if (!vertexLink.myGameObjectIDs.Contains(renderer.gameObject.GetInstanceID()))
+                    if (!vertexLink.myGameObjectIDs.Contains(renderer.transform.GetInstanceID()))
                     {
-                        vertexLink.myGameObjectIDs.Add(renderer.gameObject.GetInstanceID());
+                        vertexLink.myGameObjectIDs.Add(renderer.transform.GetInstanceID());
+                        exportedVertexPaintObjects.Add(renderer);
                         hasFoundLink = true;
                         break;
                     }
@@ -57,7 +57,8 @@ public class ExportVertexPaint : Editor
                 VertexLink newLink = new VertexLink();
                 newLink.colorsPath = targetPath + "PolybrushColors_" + polyMeshID + "_Bin.bin";
                 newLink.myGameObjectIDs = new List<int>();
-                newLink.myGameObjectIDs.Add(renderer.gameObject.GetInstanceID());
+                newLink.myGameObjectIDs.Add(renderer.transform.GetInstanceID());
+                exportedVertexPaintObjects.Add(renderer);
                 newLink.myMaterialNames = ExtractTexturePathsFromMaterials(renderer.sharedMaterials);
                 vertexLinks.Add(newLink);
             }
@@ -67,25 +68,26 @@ public class ExportVertexPaint : Editor
             if (int.TryParse(polyMeshID, out int polyMeshIDNumber))
             {
                 BinaryWriter bin;
-
-                if (!System.IO.Directory.Exists(targetPath))
-                    System.IO.Directory.CreateDirectory(targetPath);
+                if (!Directory.Exists(targetPath))
+                    Directory.CreateDirectory(targetPath);
 
                 bin = new BinaryWriter(new FileStream(targetPath + "PolybrushColors_" + polyMeshID + "_Bin.bin", FileMode.Create));
                 bin.Write(polyMeshIDNumber);
                 bin.Write(exportedMeshObject.colors.Length);
 
                 Vector3[] colorsRGB = new Vector3[exportedMeshObject.colors.Length];
-                for (int i = 0; i < exportedMeshObject.colors.Length; ++i)
+                for (int i = exportedMeshObject.colors.Length - 1; i > -1; --i)
                 {
                     colorsRGB[i].x = exportedMeshObject.colors[i].r;
                     colorsRGB[i].y = exportedMeshObject.colors[i].g;
                     colorsRGB[i].z = exportedMeshObject.colors[i].b;
                 }
-
                 bin.Write(colorsRGB);
-                bin.Close();
-                Debug.Log("Exported PolybrushMesh_" + polyMeshIDNumber + ".", exportedMeshObject);
+
+                Vector3[] vertexPositions = exportedMeshObject.vertices;
+                bin.Write(vertexPositions.Length);
+                bin.Write(vertexPositions);
+                bin.Close();            
             }
         }
 
@@ -93,10 +95,10 @@ public class ExportVertexPaint : Editor
         VertexLinkCollection collection = new VertexLinkCollection();
         collection.links = vertexLinks.ToArray();
         string jsonString = JsonUtility.ToJson(collection);
-        string savePath = targetPath + "PolybrushLinks_" + SceneManager.GetActiveScene().name + ".json";
-        System.IO.File.WriteAllText(savePath, jsonString);
+        string savePath = targetPath + "PolybrushLinks_" + aScene.name + ".json";
+        File.WriteAllText(savePath, jsonString);
 
-        AssetDatabase.Refresh();
+        return exportedVertexPaintObjects;
     }
 
     static List<string> GetAllExportedPolyBrushMeshPaths()
@@ -137,7 +139,6 @@ public class ExportVertexPaint : Editor
         {
             if (!matProperty[i].displayName.Contains("Base"))
             {
-                Debug.Log(matProperty[i].displayName);
                 if (matProperty[i].textureValue != null)
                 {
                     FileInfo fileInfo = new FileInfo(AssetDatabase.GetAssetPath(matProperty[i].textureValue));

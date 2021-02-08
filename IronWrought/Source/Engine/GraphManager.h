@@ -26,10 +26,11 @@ public:
 
 	static void ShowFlow(int aLinkID);
 
-	void Render();
+	void Update();
 	void PostRender();
 
 	void ToggleShouldRenderGraph();
+	bool ShouldRenderGraph() { return myShouldRenderGraph; }
 private:
 	ImTextureID HeaderTextureID();
 	void WillBeCyclic(CNodeInstance* aFirst, CNodeInstance* aSecond, bool& aIsCyclic, CNodeInstance* aBase);
@@ -81,4 +82,5 @@ private:
 	bool myShouldPushCommand = true;
 	ImTextureID myHeaderTextureID;
 	bool myShouldRenderGraph;
+	bool myScriptShouldRun;
 };

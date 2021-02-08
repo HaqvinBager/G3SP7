@@ -6,8 +6,8 @@
 #include "AudioChannel.h"
 #include "MainSingleton.h"
 #include "PostMaster.h"
-#include "rapidjson\document.h"
-#include "rapidjson\istreamwrapper.h"
+//#include "rapidjson\document.h"
+//#include "rapidjson\istreamwrapper.h"
 #include "JsonReader.h"
 
 /*////////////////////////////////////
@@ -32,7 +32,7 @@ CAudioManager::CAudioManager() : myWrapper() {
 
 	//std::ifstream inputStream("Json/Audio/AudioPaths.json");
 	//IStreamWrapper inputWrapper(inputStream);
-	Document document = CJsonReader::LoadDocument("Json/Audio/AudioPaths.json");
+	Document document = CJsonReader::Get()->LoadDocument("Json/Audio/AudioPaths.json");
 	//document.ParseStream(inputWrapper);
 
 	if (document.HasParseError()) { return; }

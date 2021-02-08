@@ -40,7 +40,7 @@ CCameraComponent::~CCameraComponent()
 
 void CCameraComponent::Awake()
 {
-	rapidjson::Document document = CJsonReader::LoadDocument("Json/Settings/CameraInit.json");
+	rapidjson::Document document = CJsonReader::Get()->LoadDocument("Json/Settings/CameraInit.json");
 
 	myFadingPlane = new CSpriteInstance();
 	myFadingPlane->Init(CSpriteFactory::GetInstance()->GetSprite(document["Fade Screen Path"].GetString()));

@@ -106,6 +106,6 @@ GBufferOutput main(VertexModelToPixel input)
     output.myWorldPosition.w = metalness;
     output.myAlbedo.w        = perceptualRoughness;
     output.myNormal.w        = ambientOcclusion;
-    output.myVertexNormal    = emissive;
+    output.myVertexNormal.w  = emissive;
     return output;
 }
