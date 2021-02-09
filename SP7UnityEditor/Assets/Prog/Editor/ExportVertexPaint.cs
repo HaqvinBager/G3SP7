@@ -116,31 +116,43 @@ public class ExportVertexPaint : Editor
             }
 
             // Binary
-            Mesh exportedMeshObject = AssetDatabase.LoadAssetAtPath<Mesh>(AssetDatabase.GUIDToAssetPath(polyBrushObject.originalFBXGUID));         
-            if (int.TryParse(polyMeshID, out int polyMeshIDNumber))
+            //GameObject originalFBX = AssetDatabase.LoadAssetAtPath<GameObject>(AssetDatabase.GUIDToAssetPath(polyBrushObject.originalFBXGUID));
+            //originalFBX.GetComponent<MeshFilter>().sharedMesh.Ping();
+
+            if(polyBrushObject.TryGetComponent(out MeshFilter meshFilter))
             {
-                BinaryWriter bin;
-                if (!Directory.Exists(targetPath))
-                    Directory.CreateDirectory(targetPath);
-
-                bin = new BinaryWriter(new FileStream(targetPath + "PolybrushColors_" + polyMeshID + "_Bin.bin", FileMode.Create));
-                bin.Write(polyMeshIDNumber);
-                bin.Write(exportedMeshObject.colors.Length);
-
-                Vector3[] colorsRGB = new Vector3[exportedMeshObject.colors.Length];
-                for (int i = exportedMeshObject.colors.Length - 1; i > -1; --i)
+                Mesh exportedMeshObject = meshFilter.sharedMesh;
+                //AssetDatabase.LoadAssetAtPath<Mesh>(AssetDatabase.GUIDToAssetPath(polyBrushObject.originalFBXGUID));         
+                if (int.TryParse(polyMeshID, out int polyMeshIDNumber))
                 {
-                    colorsRGB[i].x = exportedMeshObject.colors[i].r;
-                    colorsRGB[i].y = exportedMeshObject.colors[i].g;
-                    colorsRGB[i].z = exportedMeshObject.colors[i].b;
-                }
-                bin.Write(colorsRGB);
+                    BinaryWriter bin;
+                    if (!Directory.Exists(targetPath))
+                        Directory.CreateDirectory(targetPath);
 
-                Vector3[] vertexPositions = exportedMeshObject.vertices;
-                bin.Write(vertexPositions.Length);
-                bin.Write(vertexPositions);
-                bin.Close();            
+                    bin = new BinaryWriter(new FileStream(targetPath + "PolybrushColors_" + polyMeshID + "_Bin.bin", FileMode.Create));
+                    bin.Write(polyMeshIDNumber);
+                    bin.Write(exportedMeshObject.colors.Length);
+
+                    Vector3[] colorsRGB = new Vector3[exportedMeshObject.colors.Length];
+                    for (int i = exportedMeshObject.colors.Length - 1; i > -1; --i)
+                    {
+                        colorsRGB[i].x = exportedMeshObject.colors[i].r;
+                        colorsRGB[i].y = exportedMeshObject.colors[i].g;
+                        colorsRGB[i].z = exportedMeshObject.colors[i].b;
+                    }
+                    bin.Write(colorsRGB);
+
+                    Vector3[] vertexPositions = exportedMeshObject.vertices;
+                    bin.Write(vertexPositions.Length);
+                    bin.Write(vertexPositions);
+                    bin.Close();
+                }
             }
+            else
+            {
+                Debug.LogWarning("Expected to find a MeshFilter Component on " + polyBrushObject.name, polyBrushObject.gameObject);
+            }
+    
         }
 
         // Json
