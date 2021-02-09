@@ -915,7 +915,7 @@ static void             RenderWindowOuterBorders(ImGuiWindow* window);
 static void             RenderWindowDecorations(ImGuiWindow* window, const ImRect& title_bar_rect, bool title_bar_is_highlight, int resize_grip_count, const ImU32 resize_grip_col[4], float resize_grip_draw_size);
 static void             RenderWindowTitleBarContents(ImGuiWindow* window, const ImRect& title_bar_rect, const char* name, bool* p_open);
 
-IMGUI_API bool BeginTable(const char* str_id, int columns_count, ImGuiTableFlags flags, const ImVec2& outer_size, float inner_width)
+IMGUI_API bool BeginTable(const char* /*str_id*/, int /*columns_count*/, ImGuiTableFlags /*flags*/, const ImVec2& /*outer_size*/, float /*inner_width*/)
 {
     return IMGUI_API bool();
 }
@@ -2233,7 +2233,7 @@ static void SetCursorPosYAndSetupForPrevLine(float pos_y, float line_height)
     // The clipper should probably have a 4th step to display the last item in a regular manner.
     ImGuiContext& g = *GImGui;
     ImGuiWindow* window = g.CurrentWindow;
-    float off_y = pos_y - window->DC.CursorPos.y;
+    //float off_y = pos_y - window->DC.CursorPos.y;
     window->DC.CursorPos.y = pos_y;
     window->DC.CursorMaxPos.y = ImMax(window->DC.CursorMaxPos.y, pos_y);
     window->DC.CursorPosPrevLine.y = window->DC.CursorPos.y - line_height;  // Setting those fields so that SetScrollHereY() can properly function after the end of our clipper usage.
@@ -2303,8 +2303,8 @@ void ImGuiListClipper::End()
 
 bool ImGuiListClipper::Step()
 {
-    ImGuiContext& g = *GImGui;
-    ImGuiWindow* window = g.CurrentWindow;
+    //ImGuiContext& g = *GImGui;
+    //ImGuiWindow* window = g.CurrentWindow;
 
 #ifdef IMGUI_HAS_TABLE
 
@@ -7758,6 +7758,7 @@ static void ImGui::BeginLayout(ImGuiID id, ImGuiLayoutType type, ImVec2 size, fl
 
 static void ImGui::EndLayout(ImGuiLayoutType type)
 {
+    type;
     ImGuiWindow* window = GetCurrentWindow();
     IM_ASSERT(window->DC.CurrentLayout);
     IM_ASSERT(window->DC.CurrentLayout->Type == type);
@@ -7918,6 +7919,7 @@ static void ImGui::PushLayout(ImGuiLayout* layout)
 
 static void ImGui::PopLayout(ImGuiLayout* layout)
 {
+    layout;
     ImGuiWindow* window = GetCurrentWindow();
 
     IM_ASSERT(!window->DC.LayoutStack.empty());
@@ -8357,6 +8359,7 @@ void ImGui::SuspendLayout()
 void ImGui::ResumeLayout()
 {
     ImGuiWindow* window = GetCurrentWindow();
+    window;
     IM_ASSERT(!window->DC.CurrentLayout);
     IM_ASSERT(!window->DC.LayoutStack.empty());
     PopLayout(NULL);
