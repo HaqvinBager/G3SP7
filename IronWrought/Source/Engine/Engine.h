@@ -26,6 +26,7 @@ class CForwardRenderer;
 class CVFXFactory;
 class CLineFactory;
 class CAudioManager;
+class CPhysXWrapper;
 
 class CEngine
 {
@@ -75,6 +76,7 @@ private:
 	CRenderManager* myRenderManager;
 	CTimer* myTimer;
 	CDebug* myDebug;
+	CPhysXWrapper* myPhysxWrapper;
 
 	//unsigned int myActiveScene;
 	CStateStack::EState myActiveState;

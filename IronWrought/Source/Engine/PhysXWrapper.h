@@ -1,5 +1,6 @@
 #pragma once
 #include <PxPhysicsAPI.h>
+#include <SimpleMath.h>
 
 using namespace physx;
 
@@ -18,7 +19,7 @@ public:
 
 	void Simulate();
 
-	RigidDynamicBody* CreateDynamicRigidbody(Vector3 aPos);
+	RigidDynamicBody* CreateDynamicRigidbody(DirectX::SimpleMath::Vector3 aPos);
 private:
 	PxFoundation* myFoundation;
 	PxPhysics* myPhysics;

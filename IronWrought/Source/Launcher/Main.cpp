@@ -102,7 +102,7 @@ int CreateMiniDump(EXCEPTION_POINTERS* someExceptionPointers, std::wstring &aSub
 	HANDLE hDumpFile;
 	SYSTEMTIME stLocalTime;
 	MINIDUMP_EXCEPTION_INFORMATION ExpParam;
-
+	
 	GetLocalTime(&stLocalTime);
 	//GetTempPath(dwBufferSize, szPath);
 
