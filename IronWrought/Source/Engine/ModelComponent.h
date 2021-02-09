@@ -1,7 +1,6 @@
 #pragma once
 #include "Behaviour.h"
 
-class CModelInstance;
 class CGameObject;
 class CModel;
 

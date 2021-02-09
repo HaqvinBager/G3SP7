@@ -545,6 +545,12 @@
     <ClCompile Include="..\Includes\ImGui\NodeEditor\imgui_node_editor_api.cpp">
       <Filter>Imgui\Node Editor\Core</Filter>
     </ClCompile>
+    <ClCompile Include="DecalRenderer.cpp">
+      <Filter>Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="DecalComponent.cpp">
+      <Filter>GameObject and Component\Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1007,6 +1013,12 @@
     </ClInclude>
     <ClInclude Include="..\Includes\ImGui\Core\imconfig.h">
       <Filter>Imgui\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="DecalRenderer.h">
+      <Filter>Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="DecalComponent.h">
+      <Filter>GameObject and Component\Component</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
