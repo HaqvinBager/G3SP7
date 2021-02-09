@@ -9,10 +9,12 @@
 #include <fstream>
 
 #include "AnimMathFunc.h"
-#include "Timer.h"
+
+#define ANIMATION_DURATION_IN_MILLISECONDS
 
 #define NUM_BONES_PER_VERTEX 4
-#define TEMP_FRAMES_PER_SECOND 24.0f//30.0f // Original was 25.0f
+
+#define ANIMATED_AT_FRAMES_PER_SECOND 24.0f//30.0f // Original was 25.0f
 
 struct VertexBoneDataAnim
 {
@@ -122,6 +124,12 @@ public:
 
 private:
 	bool AnimationIndexWithinRange(uint anIndex);
+
+	void UpdateAnimationTimeMilliseconds();
+	void UpdateAnimationTimeFrames();
+	// #ifndef ANIMATION_DURATION_IN_MILLISECONDS
+	void ConvertAnimationTimesToFrames(aiScene* aScene);
+
 private:
 	float myAnimationTime0;
 	float myAnimationTime1;
@@ -143,7 +151,7 @@ private:
 	aiVector3D myRotation;
 
 	// Holds the animations that we play. Each animation modifies bonetransforms depending on animation time.
-	std::vector<const aiScene*>			myAnimations;
+	std::vector<aiScene*>				myAnimations;// was std::vector<const aiScene*>
 	aiMatrix4x4							myGlobalInverseTransform;
 	std::map<std::string, uint>			myBoneMapping;
 	std::vector<MeshEntry>				myEntries;

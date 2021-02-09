@@ -58,7 +58,7 @@ void CInGameState::Start()
 
 	CGameObject* camera = new CGameObject(0);
 	camera->AddComponent<CCameraComponent>(*camera, 70.0f);
-	camera->AddComponent<CCameraControllerComponent>(*camera, 3.0f);
+	camera->AddComponent<CCameraControllerComponent>(*camera, 1.5f);
 	camera->myTransform->Position({0.0f, 1.0f, 0.0f});
 	camera->myTransform->Rotation({0.0f, 0.0f, 0.0f});
 	scene->AddInstance(camera);
@@ -242,8 +242,8 @@ void TEMP_DeferredRenderingTests(CScene* scene)
 void TEMP_SetUpAnimationTest(CScene* aScene)
 {
 	CGameObject* go = new CGameObject(123123123);
-	 std::string skinnedModelPath = "Assets/Temp/Mixamo/SK.fbx";// <-- Skinnad mesh fbx. 
-	//std::string skinnedModelPath = "Assets/Temp/Robot/CH_E_Robot_SK.fbx";// <-- Skinnad mesh fbx. 
+	//std::string skinnedModelPath = "Assets/Temp/Mixamo/SK.fbx";// <-- Skinnad mesh fbx. 
+	std::string skinnedModelPath = "Assets/Temp/Robot/CH_E_Robot_SK.fbx";// <-- Skinnad mesh fbx. 
 	//std::string skinnedModelPath = "Assets/Temp/fbx2019v2020_0_1/CH_E_Robot_SK_.fbx";
 	//std::string skinnedModelPath = "Assets/Temp/Maya2019_2/CH_E_Robot_SK.fbx";
 	//std::string skinnedModelPath = "Assets/Temp/Main Character/CH_PL_SK.fbx";// <-- Skinnad mesh fbx. 
@@ -268,14 +268,14 @@ void TEMP_SetUpAnimationTest(CScene* aScene)
 	go2->AddComponent<CModelComponent>(*go2, skinnedModelPath);
 	go2->myTransform->Position({ -2.0f,0.f,0.f });
 	//CAnimationComponent* animComp2 = AnimationLoader::AddAnimationsToGameObject(go2, skinnedModelPath);
-	//animComp2->BlendToAnimation(5/*Index för animation att blenda till*/, 1.0f/*Hur långsam blendingen ska vara*/);
+	//animComp2->BlendToAnimation(2/*Index för animation att blenda till*/, 1.0f/*Hur långsam blendingen ska vara*/);
 	aScene->AddInstance(go2);
 
 }
 #define GetAnimComp g_TempAnimObject->GetComponent<CAnimationComponent>()
 void TEMP_AnimObjectControl()
 {
-	// Steps animation roughly??? 1 frame? Maybe idk. (Aki)
+	// Steps animation roughly??? 1 frame? Maybe idk. Should atleast. (Aki)
 #ifdef ANIMATION_DEBUG
 	if (Input::GetInstance()->IsKeyPressed(VK_LEFT))
 	{
@@ -290,58 +290,51 @@ void TEMP_AnimObjectControl()
 	float blend = 1.0f;// >1.0f is scary
 	if (Input::GetInstance()->IsKeyPressed('1'))
 	{
-		//GetAnimComp->SetBlend(1, 5, blend);
 		GetAnimComp->BlendToAnimation(1, blend);
 	}
 	if (Input::GetInstance()->IsKeyPressed('2'))
 	{
-		//GetAnimComp->SetBlend(2, 5, blend);
 		GetAnimComp->BlendToAnimation(2, blend);
 	}
 	if (Input::GetInstance()->IsKeyPressed('3'))
 	{
-		//GetAnimComp->SetBlend(3, 5, blend);
-		GetAnimComp->BlendToAnimation(3, blend);
+		//GetAnimComp->BlendToAnimation(3, blend);
 	}
 	if (Input::GetInstance()->IsKeyPressed('4'))
 	{
-		//GetAnimComp->SetBlend(4, 5, blend);
-		GetAnimComp->BlendToAnimation(4, blend);
+		//GetAnimComp->BlendToAnimation(4, blend);
 	}
 	if (Input::GetInstance()->IsKeyPressed('5'))
 	{
-		//GetAnimComp->SetBlend(5, 5, blend);
-		GetAnimComp->BlendToAnimation(5, blend);
+		//GetAnimComp->BlendToAnimation(5, blend);
 	}
 	if (Input::GetInstance()->IsKeyPressed('6'))
 	{
-		//GetAnimComp->SetBlend(6, 5, blend);
-		GetAnimComp->BlendToAnimation(6, blend);
+		//GetAnimComp->BlendToAnimation(6, blend);
 	}
 
 	if (Input::GetInstance()->IsKeyPressed(VK_F2))
 	{
-		GetAnimComp->BlendLerpBetween(4, 5, 0.0f);
+		//GetAnimComp->BlendLerpBetween(4, 5, 0.0f);
+		GetAnimComp->BlendLerpBetween(1, 2, 0.0f);
 	}
-	if (Input::GetInstance()->IsKeyPressed(VK_F3))
-	{
-		GetAnimComp->BlendLerpBetween(1, 3, 0.0f);
-	}
-	if (Input::GetInstance()->IsKeyPressed(VK_F4))
-	{
-		GetAnimComp->BlendLerpBetween(2, 6, 0.0f);
-	}
+	//if (Input::GetInstance()->IsKeyPressed(VK_F3))
+	//{
+	//	GetAnimComp->BlendLerpBetween(1, 3, 0.0f);
+	//}
+	//if (Input::GetInstance()->IsKeyPressed(VK_F4))
+	//{
+	//	GetAnimComp->BlendLerpBetween(2, 6, 0.0f);
+	//}
 
 	static float blendLerp = 0.0f;
 	if (Input::GetInstance()->IsKeyPressed('9'))
 	{
-		//GetAnimComp->SetBlend(6, 5, blend);
 		GetAnimComp->BlendLerp(blendLerp += 0.1f);
 		std::cout << __FUNCTION__ << " blendLerp @ " << blendLerp << std::endl;
 	}
 	if (Input::GetInstance()->IsKeyPressed('0'))
 	{
-		//GetAnimComp->SetBlend(6, 5, blend);
 		GetAnimComp->BlendLerp(blendLerp -= 0.1f);
 		std::cout << __FUNCTION__ << " blendLerp @ " << blendLerp << std::endl;
 	}

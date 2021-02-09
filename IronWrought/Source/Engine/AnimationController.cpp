@@ -1,7 +1,8 @@
 #include "stdafx.h"
 #include "AnimationController.h"
+#include "Timer.h"
 
-#include "../ModelLoader/modelExceptionTools.h"
+constexpr float f_milliseconds = 1000.0f;
 
 CAnimationController::CAnimationController()
 	: myNumOfBones(0)
@@ -105,6 +106,10 @@ bool CAnimationController::ImportAnimation(const std::string& fileName)
 		myAnimations.emplace_back(importer.GetOrphanedScene());
 	else
 		return false;
+
+#ifndef ANIMATION_DURATION_IN_MILLISECONDS
+	ConvertAnimationTimesToFrames(myAnimations[myAnim0Index]);
+#endif
 
 	// If the import failed, report it
 	if (!myAnimations[myAnim0Index])
@@ -329,15 +334,23 @@ void CAnimationController::SetBoneTransforms(std::vector<aiMatrix4x4>& aTransfor
 	{
 		// Ticks == Frames
 		float ticksPerSecond = static_cast<float>(myAnimations[myAnim0Index]->mAnimations[0]->mTicksPerSecond);
-		ticksPerSecond = (ticksPerSecond != 0) ? ticksPerSecond : TEMP_FRAMES_PER_SECOND;
+		ticksPerSecond = (ticksPerSecond != 0) ? ticksPerSecond : ANIMATED_AT_FRAMES_PER_SECOND;
 		
+#ifdef ANIMATION_DURATION_IN_MILLISECONDS
+		float timeInTicks = myAnimationTime0;
+#else
 		float timeInTicks = myAnimationTime0 * ticksPerSecond;
+#endif
 		float animationTime0 = fmodf(timeInTicks, static_cast<float>(myAnimations[myAnim0Index]->mAnimations[0]->mDuration));
 		
 		ticksPerSecond = static_cast<float>(myAnimations[myAnim1Index]->mAnimations[0]->mTicksPerSecond);
-		ticksPerSecond = (ticksPerSecond != 0) ? ticksPerSecond : TEMP_FRAMES_PER_SECOND;
+		ticksPerSecond = (ticksPerSecond != 0) ? ticksPerSecond : ANIMATED_AT_FRAMES_PER_SECOND;
 		
+#ifdef ANIMATION_DURATION_IN_MILLISECONDS
+		timeInTicks = myAnimationTime1;
+#else
 		timeInTicks = myAnimationTime1 * ticksPerSecond;
+#endif
 		float animationTime1 = fmodf(timeInTicks, static_cast<float>(myAnimations[myAnim1Index]->mAnimations[0]->mDuration));
 		
 		ReadNodeHeirarchy(	myAnimations[myAnim1Index], myAnimations[myAnim0Index]
@@ -348,9 +361,15 @@ void CAnimationController::SetBoneTransforms(std::vector<aiMatrix4x4>& aTransfor
 	else
 	{
 		float ticksPerSecond = static_cast<float>(myAnimations[myAnim0Index]->mAnimations[0]->mTicksPerSecond);
-		ticksPerSecond = (ticksPerSecond != 0) ? ticksPerSecond : TEMP_FRAMES_PER_SECOND;
+		ticksPerSecond = (ticksPerSecond != 0) ? ticksPerSecond : ANIMATED_AT_FRAMES_PER_SECOND;
 
-		float timeInTicks = myAnimationTime0 * ticksPerSecond /** 40.0f*//*ticksPerSecond*/ ;
+
+#ifdef ANIMATION_DURATION_IN_MILLISECONDS
+		float timeInTicks = myAnimationTime0;
+#else
+		float timeInTicks = myAnimationTime0 * ticksPerSecond;
+#endif
+		//float timeInTicks = myAnimationTime0 * ticksPerSecond /** 40.0f*//*ticksPerSecond*/ ;
 		//float timeInTicks = myAnimationTime0;//Suuuper slow
 		//float timeInTicks = (myAnimationTime0 / CTimer::Dt()) * ticksPerSecond;//Super speed //(Update is using dt = CTimer::Dt())
 		//float timeInTicks = myAnimationTime0 * (ticksPerSecond / CTimer::Dt());/Super speed //(Update is using dt = CTimer::Dt())
@@ -361,7 +380,7 @@ void CAnimationController::SetBoneTransforms(std::vector<aiMatrix4x4>& aTransfor
 		float animationTime = fmodf(timeInTicks, duration);// In SP6 Project: mDuration is duration in frames. I.e 34frames for Undead Idle  @ 24fps
 		// 40.0f which is the actual nr of frames the animation has does not move the model, i.e the animation stands still
 		// Seems to be cause FindScaling/Rotation/Position() are returning the value of the first node they find which had 41.something mTime. if(AnimationTime < node.key[i]->mTime) return i
-		//std::cout << timeInTicks << " " << duration << "  " << animationTime << std::endl;
+//std::cout << "tps: "<< ticksPerSecond << ", timeInTicks: " << timeInTicks << ", duration: " << duration << ", animationTime: " << animationTime << std::endl;
 
 		ReadNodeHeirarchy(myAnimations[myAnim0Index], animationTime, myAnimations[myAnim0Index]->mRootNode, Identity, 2);//stopAnimLevel=2
 	}
@@ -409,37 +428,11 @@ void CAnimationController::UpdateAnimationTimeConstant(const float aStep)
 #endif
 void CAnimationController::UpdateAnimationTimes()
 {
-	//float dt = CTimer::Dt() * ((float)myAnimations[myAnim0Index]->mAnimations[0]->mDuration / TEMP_FRAMES_PER_SECOND);
-	//float dt = CTimer::Dt() * TEMP_FRAMES_PER_SECOND);
-	//float dt = CTimer::Dt() * 12.0f;// Close to good (right)
-	float dt = 1.0f / TEMP_FRAMES_PER_SECOND;
-	myAnimationTime0 += dt;
-	if (myBlendingTime > 0.f)
-	{
-		myBlendingTime -= dt * myBlendingTimeMul;
-		if (myBlendingTime <= 0.f)
-		{
-			myAnimationTime0 = myAnimationTime1;
-		}
-		if (myUpdateBoth)
-		{
-			myAnimationTime1 += dt;
-		}
-	}
-	else
-	{
-		myAnimationTime1 += dt;
-	}
-
-	if (myTemporary)// If the animation was temporary, return to the previous animation after the playtime is over
-	{
-		myPlayTime -= dt;
-		if (myPlayTime <= 0.f)
-		{
-			myTemporary = false;
-			BlendToAnimation(myAnim1Index);
-		}
-	}
+#ifdef ANIMATION_DURATION_IN_MILLISECONDS
+	UpdateAnimationTimeMilliseconds();
+#else
+	UpdateAnimationTimeFrames();
+#endif
 }
 
 void CAnimationController::BlendToAnimation(uint anAnimationIndex, bool anUpdateBoth, float aBlendDuration, bool aTemporary, float aTime)
@@ -493,6 +486,109 @@ const float CAnimationController::Animation1Duration()
 bool CAnimationController::AnimationIndexWithinRange(uint anIndex)
 {
 	return anIndex == myAnim0Index || anIndex >= static_cast<uint>(myAnimations.size());
+}
+
+void CAnimationController::UpdateAnimationTimeMilliseconds()
+{
+	myAnimationTime0 = CTimer::Time() * f_milliseconds;
+	if (myBlendingTime > 0.f)
+	{
+		myBlendingTime -= CTimer::Dt() * f_milliseconds * myBlendingTimeMul;
+		if (myBlendingTime <= 0.f)
+		{
+			myAnimationTime0 = myAnimationTime1;
+		}
+		if (myUpdateBoth)
+		{
+			myAnimationTime1 = CTimer::Time() * f_milliseconds;
+		}
+	}
+	else
+	{
+		myAnimationTime1 = CTimer::Time() * f_milliseconds;
+	}
+
+	if (myTemporary)// If the animation was temporary, return to the previous animation after the playtime is over
+	{
+		myPlayTime -= CTimer::Dt() * f_milliseconds;// Not verified if it works with ANIMATION_DURATION_IN_MILLISECONDS
+		if (myPlayTime <= 0.f)
+		{
+			myTemporary = false;
+			BlendToAnimation(myAnim1Index);
+		}
+	}
+}
+
+void CAnimationController::UpdateAnimationTimeFrames()
+{
+	float dt = CTimer::Dt();
+	//float dt = CTimer::Dt() * ((float)myAnimations[myAnim0Index]->mAnimations[0]->mDuration / ANIMATED_AT_FRAMES_PER_SECOND);
+	//float dt = CTimer::Dt() * ANIMATED_AT_FRAMES_PER_SECOND;
+	//float dt = CTimer::Dt() * 12.0f;// Close to good (right)
+	//float dt = 1.0f / ANIMATED_AT_FRAMES_PER_SECOND;
+
+	//std::cout << "dt: " << dt << std::endl;
+
+	//static float totalTime = 0.0f;
+	//const float time = CTimer::Time();
+	//std::cout << "t " << time - totalTime << std::endl;
+	//if (time >= totalTime + 1.0f)
+	//{
+	//	totalTime = time;
+	//}
+	//std::cout << "----" << std::endl;
+
+	myAnimationTime0 += dt;
+	//std::cout << myAnimationTime0 << std::endl;
+	if (myBlendingTime > 0.f)
+	{
+		myBlendingTime -= dt * myBlendingTimeMul;
+		if (myBlendingTime <= 0.f)
+		{
+			myAnimationTime0 = myAnimationTime1;
+		}
+		if (myUpdateBoth)
+		{
+			myAnimationTime1 += dt;
+		}
+	}
+	else
+	{
+		myAnimationTime1 += dt;
+	}
+
+	if (myTemporary)// If the animation was temporary, return to the previous animation after the playtime is over
+	{
+		myPlayTime -= dt;
+		if (myPlayTime <= 0.f)
+		{
+			myTemporary = false;
+			BlendToAnimation(myAnim1Index);
+		}
+	}
+}
+
+void CAnimationController::ConvertAnimationTimesToFrames(aiScene* aScene)
+{
+	const float convertToFrame = (ANIMATED_AT_FRAMES_PER_SECOND / f_milliseconds);
+	aiAnimation* animation = aScene->mAnimations[0];
+
+	animation->mDuration *= convertToFrame;
+	for (uint i = 0; i < animation->mNumChannels; ++i)
+	{
+		for (uint s = 0; s < animation->mChannels[i]->mNumScalingKeys; ++s)
+		{
+			animation->mChannels[i]->mScalingKeys[s].mTime *= convertToFrame;
+		}
+		for (uint r = 0; r < animation->mChannels[i]->mNumRotationKeys; ++r)
+		{
+			animation->mChannels[i]->mRotationKeys[r].mTime *= convertToFrame;
+		}
+		for (uint p = 0; p < animation->mChannels[i]->mNumPositionKeys; ++p)
+		{
+			animation->mChannels[i]->mPositionKeys[p].mTime *= convertToFrame;
+		}
+	}
 }
 
 
