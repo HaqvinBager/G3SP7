@@ -70,23 +70,36 @@ private:
 		DirectX::SimpleMath::Vector4 myPositionAndRange;
 	} myPointLightBufferData;
 
+	struct SBoneBufferData {
+		/*SlimMatrix44*/Matrix myBones[64];
+	} myBoneBufferData;
+
+	static_assert((sizeof(SBoneBufferData) % 16) == 0, "SBoneBufferData size not padded correctly");
+
 private:
 	bool LoadRenderPassPixelShaders(ID3D11Device* aDevice);
 
 	ID3D11DeviceContext* myContext;
+// Buffers;
 	ID3D11Buffer* myFrameBuffer;
 	ID3D11Buffer* myObjectBuffer;
 	ID3D11Buffer* myLightBuffer;
 	ID3D11Buffer* myPointLightBuffer;
+	ID3D11Buffer* myBoneBuffer;
+
 	ID3D11InputLayout* myVertexPaintInputLayout;
+// Vertex shaders.
 	ID3D11VertexShader* myFullscreenShader;
 	ID3D11VertexShader* myModelVertexShader;
+	ID3D11VertexShader* myAnimationVertexShader;
 	ID3D11VertexShader* myVertexPaintModelVertexShader;
 	ID3D11VertexShader* myInstancedModelVertexShader;
+// Pixel shaders.
 	ID3D11PixelShader* myGBufferPixelShader;
 	ID3D11PixelShader* myVertexPaintPixelShader;
 	ID3D11PixelShader* myEnvironmentLightShader;
 	ID3D11PixelShader* myPointLightShader;
+// Sampler.
 	ID3D11SamplerState* mySamplerState;
 
 	std::vector<ID3D11PixelShader*> myRenderPassShaders;

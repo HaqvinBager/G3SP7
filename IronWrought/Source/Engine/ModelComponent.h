@@ -31,27 +31,3 @@ private:
 	std::vector<std::string> myVertexPaintMaterialNames;
 	unsigned int myVertexPaintColorID;
 };
-
-
-//public:
-//	CModel* GetModel() { return myModel; }
-//	// Temp
-//	CModel* SetModel(CModel* aModel)
-//	{
-//		CModel* oldModel = myModel;
-//		myModel = aModel;
-//		return oldModel;
-//	}
-//	// !Temp
-//	DirectX::SimpleMath::Matrix GetTransform() { return myTransform; };
-//	DirectX::SimpleMath::Vector2 GetUVOffset() { return myUVOffset; };
-//	void SetUVOffset(DirectX::SimpleMath::Vector2 aUVOffset) { myUVOffset = aUVOffset; };
-//
-//private:
-//	CModel* myModel;
-//	DirectX::SimpleMath::Matrix myTransform;
-//	DirectX::SimpleMath::Vector2 myUVOffset;
-//	DirectX::SimpleMath::Vector3 myScale;
-//	std::array<SlimMatrix44, 64> myBones{ };
-//  SModelInstanceAnimationBlend myBlend;
-//};
