@@ -222,8 +222,20 @@ void TEMP_DeferredRenderingTests(CScene* scene)
 	dn4->GetComponent<CTransformComponent>()->Position({8.0f,0.0f,0.0f});
 	dn4->GetComponent<CTransformComponent>()->Scale({100.0f,100.0f,100.0f});
 
+	CGameObject* dn_2 = new CGameObject(1340);
+	dn_2->AddComponent<CModelComponent>(*dn_2, ASSETPATH + "Assets/Graphics/Exempel_Modeller/DetailNormals/Tufted_Leather/tufted_leather_dn.fbx");
+	dn_2->GetComponent<CTransformComponent>()->Position({5.0f,0.0f,0.0f});
+	dn_2->GetComponent<CTransformComponent>()->Scale({100.0f,100.0f,100.0f});
+
+	CGameObject* dn4_2 = new CGameObject(1341);
+	dn4_2->AddComponent<CModelComponent>(*dn4_2, ASSETPATH + "Assets/Graphics/Exempel_Modeller/DetailNormals/4DN/4DNs_dn.fbx");
+	dn4_2->GetComponent<CTransformComponent>()->Position({3.0f,0.0f,0.0f});
+	dn4_2->GetComponent<CTransformComponent>()->Scale({100.0f,100.0f,100.0f});
+
 	scene->AddInstance(dn);
-	scene->AddInstance(dn4);	
+	scene->AddInstance(dn4);
+	scene->AddInstance(dn_2);
+	scene->AddInstance(dn4_2);	
 }
 
 #include "animationLoader.h"// <-- include för AnimationLoader funktioner: AddAnimationsToGameObject() osv
@@ -249,10 +261,16 @@ void TEMP_SetUpAnimationTest(CScene* aScene)
 	//								 * 0.5f => spela 50/50% av första/andra.
 	//								 */
 	//						   );
-
 	g_TempAnimObject = go;
-
 	aScene->AddInstance(go);
+
+	CGameObject* go2 = new CGameObject(123123124);
+	go2->AddComponent<CModelComponent>(*go2, skinnedModelPath);
+	go2->myTransform->Position({ -2.0f,0.f,0.f });
+	//CAnimationComponent* animComp2 = AnimationLoader::AddAnimationsToGameObject(go2, skinnedModelPath);
+	//animComp2->BlendToAnimation(5/*Index för animation att blenda till*/, 1.0f/*Hur långsam blendingen ska vara*/);
+	aScene->AddInstance(go2);
+
 }
 #define GetAnimComp g_TempAnimObject->GetComponent<CAnimationComponent>()
 void TEMP_AnimObjectControl()

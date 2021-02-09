@@ -177,7 +177,7 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 		CModel* model = modelComponent->GetMyModel();
 		CModel::SModelData modelData = model->GetModelData();
 
-		myObjectBufferData.myToWorld = gameObject->myTransform->GetWorldMatrix();
+		myObjectBufferData.myToWorld = gameObject->myTransform->Transform();
 		int dnCounter = 0;
 		for (auto detailNormal : model->GetModelData().myDetailNormals)
 		{
@@ -187,16 +187,12 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 		myObjectBufferData.myNumberOfDetailNormals = dnCounter;
 
 		BindBuffer(myObjectBuffer, myObjectBufferData, "Object Buffer");
-
-		myContext->IASetPrimitiveTopology(modelData.myPrimitiveTopology);
-		myContext->IASetInputLayout(modelData.myInputLayout);
-
-		myContext->VSSetConstantBuffers(1, 1, &myObjectBuffer);
+		
 		if (gameObject->GetComponent<CAnimationComponent>() != nullptr) {
 			memcpy(myBoneBufferData.myBones, gameObject->GetComponent<CAnimationComponent>()->GetBones().data(), sizeof(Matrix) * 64);
-
+		
 			BindBuffer(myBoneBuffer, myBoneBufferData, "Bone Buffer");
-
+		
 			myContext->VSSetConstantBuffers(4, 1, &myBoneBuffer);
 			myContext->VSSetShader(myAnimationVertexShader, nullptr, 0);
 		}
@@ -204,6 +200,10 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 		{
 			myContext->VSSetShader(myModelVertexShader, nullptr, 0);
 		}
+		myContext->IASetPrimitiveTopology(modelData.myPrimitiveTopology);
+		myContext->IASetInputLayout(modelData.myInputLayout);
+
+		myContext->VSSetConstantBuffers(1, 1, &myObjectBuffer);
 
 		myContext->PSSetConstantBuffers(1, 1, &myObjectBuffer);
 		myContext->PSSetShaderResources(8, 4, &modelData.myDetailNormals[0]);
