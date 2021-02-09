@@ -128,8 +128,8 @@ CEngine::~CEngine()
 	delete myMainSingleton;
 	myMainSingleton = nullptr;
 
-	//delete myPhysxWrapper;
-	//myPhysxWrapper = nullptr;
+	delete myPhysxWrapper;
+	myPhysxWrapper = nullptr;
 
 	ourInstance = nullptr;
 }
@@ -156,7 +156,7 @@ bool CEngine::Init(CWindowHandler::SWindowData& someWindowData)
 
 	ENGINE_ERROR_BOOL_MESSAGE(CMainSingleton::PopupTextService().Init(), "Popup Text Service could not be initialized.");
 	ENGINE_ERROR_BOOL_MESSAGE(CMainSingleton::DialogueSystem().Init(), "Dialogue System could not be initialized.");
-	//ENGINE_ERROR_BOOL_MESSAGE(myPhysxWrapper->Init(), "PhysX could not be initialized.");
+	ENGINE_ERROR_BOOL_MESSAGE(myPhysxWrapper->Init(), "PhysX could not be initialized.");
 	InitWindowsImaging();
 
 	return true;

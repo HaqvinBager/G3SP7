@@ -56,6 +56,8 @@ public:
 	const CStateStack::EState AddScene(const CStateStack::EState aState, CScene* aScene);
 	void SetActiveScene(const CStateStack::EState aState);
 	CScene& GetActiveScene();
+	
+	CPhysXWrapper& GetPhysx() { return *myPhysxWrapper; }
 
 	void ModelViewerSetScene(CScene* aScene);
 	//void PopBackScene();
