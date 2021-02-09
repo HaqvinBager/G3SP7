@@ -161,7 +161,7 @@ void CForwardRenderer::Render(CEnvironmentLight* anEnvironmentLight, std::vector
 
 		CModel::SModelData modelData = model->GetModelData();
 
-		myObjectBufferData.myToWorld = gameobject->GetComponent<CTransformComponent>()->Transform();
+		myObjectBufferData.myToWorld = gameobject->myTransform->Transform();
 
 		int counter = 0;
 		for (auto detailNormal : model->GetModelData().myDetailNormals)
@@ -175,6 +175,12 @@ void CForwardRenderer::Render(CEnvironmentLight* anEnvironmentLight, std::vector
 
 		BindBuffer(myObjectBuffer, myObjectBufferData, "Object Buffer");
 
+		/* 2021 02 09 (Minor issue)
+		* If a model has AnimatedVertexShader but no CAnimationComponent it will use the bone data from the last bound BoneData. Meaning it will mimic another 
+		* GameObjects animations.
+		* Since a model gets its vertexshader in ModelFactory based on if it has bones in its mesh it is hard to avoid identical models getting the same type of vertex shader.
+		* Sort of a non-issue since we are required to use deferred rendering (and all animated models should be passed through deferred).
+		*/
 		if (gameobject->GetComponent<CAnimationComponent>() != nullptr) {
 			memcpy(myBoneBufferData.myBones, gameobject->GetComponent<CAnimationComponent>()->GetBones().data(), sizeof(SlimMatrix44) * 64);
 
