@@ -6,18 +6,25 @@ using namespace physx;
 class ContactReportCallback;
 class RigidDynamicBody;
 
-enum class materialfriction 
-{
-	metal,
-	wood,
-	bounce,
-	none
 
-};
 
 class CPhysXWrapper
 {
 public:
+
+	enum class materialfriction
+	{
+		metal,
+		wood,
+		bounce,
+		basic,
+		none
+		
+
+	};
+
+public:
+
 	CPhysXWrapper();
 	~CPhysXWrapper();
 

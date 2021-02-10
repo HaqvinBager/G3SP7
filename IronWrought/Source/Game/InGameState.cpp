@@ -62,7 +62,8 @@ void CInGameState::Start()
 
 	physxmaterialtestobject->AddComponent<CModelComponent>(*physxmaterialtestobject, std::string(ASSETPATH + "Assets/Graphics/Exempel_Modeller/Wall/Wall.fbx"));
 	physxmaterialtestobject->AddComponent<CRigidBodyComponent>(*physxmaterialtestobject);
-	physxmaterialtestobject->GetComponent<CTransformComponent>()->Position({ 5.0f, 5.0f, 5.0f });
+	physxmaterialtestobject->GetComponent<CTransformComponent>()->Position({ 5.0f, 190.0f, 5.0f });
+
 
 	scene->AddInstance(physxmaterialtestobject);
 
