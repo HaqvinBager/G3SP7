@@ -27,7 +27,7 @@
 #include <iostream>
 #include "SceneManager.h"
 #include "FolderUtility.h"
-
+#include "StateMachineComponent.h"
 
 void TEMP_DeferredRenderingTests(CScene* aScene);
 
@@ -64,8 +64,11 @@ void CInGameState::Start()
 	physxmaterialtestobject->AddComponent<CRigidBodyComponent>(*physxmaterialtestobject);
 	physxmaterialtestobject->GetComponent<CTransformComponent>()->Position({ 5.0f, 190.0f, 5.0f });
 
-
 	scene->AddInstance(physxmaterialtestobject);
+
+	CGameObject* stateMachineObject = new CGameObject(200);
+	stateMachineObject->AddComponent<CStateMachineComponent>(*stateMachineObject);
+	scene->AddInstance(stateMachineObject);
 
 	myExitLevel = false;
 

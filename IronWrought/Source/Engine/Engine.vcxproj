@@ -198,8 +198,9 @@
     <ClInclude Include="CameraFactory.h" />
     <ClInclude Include="Canvas.h" />
     <ClInclude Include="CapsuleColliderComponent.h" />
-    <ClInclude Include="CStateMachineComponent.h" />
+    <ClInclude Include="StateMachineComponent.h" />
     <ClInclude Include="GraphManager.h" />
+    <ClInclude Include="ImGuiStateMachine.h" />
     <ClInclude Include="NodeInstance.h" />
     <ClInclude Include="NodeType.h" />
     <ClInclude Include="NodeTypeGetMousePosition.h" />
@@ -347,8 +348,9 @@
     <ClCompile Include="CameraFactory.cpp" />
     <ClCompile Include="Canvas.cpp" />
     <ClCompile Include="CapsuleColliderComponent.cpp" />
-    <ClCompile Include="CStateMachineComponent.cpp" />
+    <ClCompile Include="StateMachineComponent.cpp" />
     <ClCompile Include="GraphManager.cpp" />
+    <ClCompile Include="ImGuiStateMachine.cpp" />
     <ClCompile Include="JsonReader.cpp" />
     <ClCompile Include="NodeInstance.cpp" />
     <ClCompile Include="NodeType.cpp" />

@@ -4,7 +4,7 @@
 #include "Engine.h"
 #include "Scene.h"
 #include "SceneManager.h"
-#pragma comment(lib, "imgui.lib")
+#include "ImGuiStateMachine.h"
 #include "GraphManager.h"
 #include "RenderManager.h"
 #include <psapi.h>
@@ -52,6 +52,8 @@ CImguiManager::CImguiManager() : myGraphManagerIsFullscreen(false), myIsEnabled(
 
 	myGraphManager = new CGraphManager();
 	myGraphManager->Load();
+
+	myStateMachine = new ImGuiStateMachine();
 }
 
 CImguiManager::~CImguiManager()
@@ -68,6 +70,8 @@ void CImguiManager::Update()
 		ImGui::BeginMainMenuBar();
 		if (ImGui::Button("Display Nodescripts"))
 			myGraphManager->ToggleShouldRenderGraph();
+		if (ImGui::Button("State Machine Editor"))
+			myStateMachine->ToggleStateMachine();
 		ImGui::EndMainMenuBar();
 		LevelSelect();
 		DebugWindow();
@@ -81,6 +85,12 @@ void CImguiManager::Update()
 		if(myGraphManager->ShouldRenderGraph())
 			myGraphManager->ToggleShouldRenderGraph();
 	}
+
+	if (myIsEnabled) {
+		if (myStateMachine->ShouldRender())
+			myStateMachine->OnInspectorGUI();
+	}
+
 }
 
 void CImguiManager::PostRender()

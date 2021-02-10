@@ -3,6 +3,7 @@
 #include <string>
 
 class CGraphManager;
+class ImGuiStateMachine;
 struct ImFontAtlas;
 
 class CImguiManager
@@ -22,4 +23,6 @@ private:
 	std::vector<std::string> myLevelsToSelectFrom;
 	bool myGraphManagerIsFullscreen;
 	bool myIsEnabled;
+
+	ImGuiStateMachine* myStateMachine;
 };
