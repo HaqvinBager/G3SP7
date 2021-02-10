@@ -2,13 +2,14 @@
 #include "RigidBodyComponent.h"
 #include "PhysXWrapper.h"
 #include "RigidDynamicBody.h"
+#include "Engine.h"
 
 
 CRigidBodyComponent::CRigidBodyComponent(CGameObject& aParent, bool isStatic) 
 	: CComponent(aParent)
 {
 	if (isStatic == false) {
-		//myDynamicRigidBody = CMainSingleton::PhysXWrapper().CreateDynamicRigidbody(aParent.GetComponent<CTransformComponent>()->Position());
+		myDynamicRigidBody = CEngine::GetInstance()->GetPhysx().CreateDynamicRigidbody(aParent.GetComponent<CTransformComponent>()->Position());
 	}
 	else {
 		myDynamicRigidBody = nullptr;

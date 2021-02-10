@@ -58,6 +58,14 @@ void CInGameState::Start()
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);
 
+	CGameObject* physxmaterialtestobject = new CGameObject(60);
+
+	physxmaterialtestobject->AddComponent<CModelComponent>(*physxmaterialtestobject, std::string(ASSETPATH + "Assets/Graphics/Exempel_Modeller/Wall/Wall.fbx"));
+	physxmaterialtestobject->AddComponent<CRigidBodyComponent>(*physxmaterialtestobject);
+	physxmaterialtestobject->GetComponent<CTransformComponent>()->Position({ 5.0f, 5.0f, 5.0f });
+
+	scene->AddInstance(physxmaterialtestobject);
+
 	myExitLevel = false;
 
 	std::vector<CGameObject*>& gameObjects = CEngine::GetInstance()->GetActiveScene().myGameObjects;

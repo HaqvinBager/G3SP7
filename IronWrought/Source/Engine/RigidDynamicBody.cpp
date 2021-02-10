@@ -43,7 +43,7 @@ RigidDynamicBody::RigidDynamicBody(physx::PxPhysics& aPhysX, const Vector3 aPosi
 	// Use shape as a seperate resource
 	constexpr float imageSize = 64;
 	constexpr float fluffiness = 3;
-	constexpr physx::PxReal radius = (imageSize / 10) - fluffiness;
+	constexpr physx::PxReal radius = (imageSize) - fluffiness;
 	physx::PxShape* shape = aPhysX.createShape(physx::PxSphereGeometry(radius), *material, true);
 
 	myBody->attachShape(*shape);
