@@ -136,15 +136,15 @@ PxMaterial* CPhysXWrapper::CreateMaterial(materialfriction amaterial)
 
 void CPhysXWrapper::Simulate()
 {
-//	if (CEngine::GetInstance()->GetActiveScene().PXScene() != nullptr) {
-//		CEngine::GetInstance()->GetActiveScene().PXScene()->simulate(CTimer::Dt());
-//		CEngine::GetInstance()->GetActiveScene().PXScene()->fetchResults(true);
-//	}
+	if (CEngine::GetInstance()->GetActiveScene().PXScene() != nullptr) {
+		CEngine::GetInstance()->GetActiveScene().PXScene()->simulate(CTimer::Dt());
+		CEngine::GetInstance()->GetActiveScene().PXScene()->fetchResults(true);
+	}
 }
 
 RigidDynamicBody* CPhysXWrapper::CreateDynamicRigidbody(Vector3 aPos)
 {
 	RigidDynamicBody* dynamicBody = new RigidDynamicBody(*myPhysics, aPos);
-	//CEngine::GetInstance()->GetActiveScene().PXScene()->addActor(dynamicBody->GetBody());
+	CEngine::GetInstance()->GetActiveScene().PXScene()->addActor(dynamicBody->GetBody());
 	return dynamicBody;
 }

@@ -54,6 +54,7 @@ void CInGameState::Start()
 	//std::string scenePath = "Level_1.json";
 	//CScene* scene = new CScene();
 	//scene = CSceneManager::CreateScene(scenePath);	
+	scene->AddPXScene(CEngine::GetInstance()->GetPhysx().CreatePXScene());
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);
 
@@ -94,7 +95,7 @@ void CInGameState::Stop()
 
 void CInGameState::Update()
 {
-	//CMainSingleton::PhysXWrapper().Simulate();
+	CEngine::GetInstance()->GetPhysx().Simulate();
 	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
 	{
 		gameObject->Update();
