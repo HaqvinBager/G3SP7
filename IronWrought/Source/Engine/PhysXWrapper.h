@@ -6,6 +6,15 @@ using namespace physx;
 class ContactReportCallback;
 class RigidDynamicBody;
 
+enum class materialfriction 
+{
+	metal,
+	wood,
+	bounce,
+	none
+
+};
+
 class CPhysXWrapper
 {
 public:
@@ -15,6 +24,9 @@ public:
 	bool Init();
 
 	PxScene* CreatePXScene();
+
+
+	PxMaterial* CreateMaterial(materialfriction amaterial);
 
 	void Simulate();
 

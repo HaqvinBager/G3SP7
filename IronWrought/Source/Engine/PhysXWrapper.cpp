@@ -109,6 +109,31 @@ PxScene* CPhysXWrapper::CreatePXScene()
 	return pXScene;
 }
 
+
+
+PxMaterial* CPhysXWrapper::CreateMaterial(materialfriction amaterial)
+{
+	switch ((materialfriction)amaterial)
+	{
+	case materialfriction::metal:
+		return myPhysics->createMaterial(1.0f, 1.0f, 0.0f);
+		break;
+	case materialfriction::wood:
+		return myPhysics->createMaterial(0.2f, 0.5f, 0.3f);
+
+		break;
+	case materialfriction::bounce:
+		return myPhysics->createMaterial(0.0f, 0.0f, 1.0f);
+		break;
+	case materialfriction::none:
+		return myPXMaterial;
+		break;
+	default:
+		break;
+	}
+	return nullptr;
+}
+
 void CPhysXWrapper::Simulate()
 {
 //	if (CEngine::GetInstance()->GetActiveScene().PXScene() != nullptr) {
