@@ -550,6 +550,9 @@
     <ClCompile Include="AnimationController.cpp">
       <Filter>Animation</Filter>
     </ClCompile>
+    <ClCompile Include="CStateMachineComponent.cpp">
+      <Filter>GameObject and Component\Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1009,6 +1012,9 @@
     </ClInclude>
     <ClInclude Include="State.h" />
     <ClInclude Include="StateStack.h" />
+    <ClInclude Include="CStateMachineComponent.h">
+      <Filter>GameObject and Component\Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">

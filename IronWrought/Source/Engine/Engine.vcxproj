@@ -198,6 +198,7 @@
     <ClInclude Include="CameraFactory.h" />
     <ClInclude Include="Canvas.h" />
     <ClInclude Include="CapsuleColliderComponent.h" />
+    <ClInclude Include="CStateMachineComponent.h" />
     <ClInclude Include="GraphManager.h" />
     <ClInclude Include="NodeInstance.h" />
     <ClInclude Include="NodeType.h" />
@@ -346,6 +347,7 @@
     <ClCompile Include="CameraFactory.cpp" />
     <ClCompile Include="Canvas.cpp" />
     <ClCompile Include="CapsuleColliderComponent.cpp" />
+    <ClCompile Include="CStateMachineComponent.cpp" />
     <ClCompile Include="GraphManager.cpp" />
     <ClCompile Include="JsonReader.cpp" />
     <ClCompile Include="NodeInstance.cpp" />
