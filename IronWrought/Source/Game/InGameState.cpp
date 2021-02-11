@@ -55,6 +55,7 @@ void CInGameState::Start()
 	//CScene* scene = new CScene();
 	//scene = CSceneManager::CreateScene(scenePath);	
 	scene->AddPXScene(CEngine::GetInstance()->GetPhysx().CreatePXScene());
+	
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);
 
@@ -119,6 +120,8 @@ void CInGameState::Update()
 	{
 		myStateStack.PopTopAndPush(CStateStack::EState::InGame);
 	}
+
+	
 }
 
 void CInGameState::ReceiveEvent(const EInputEvent aEvent)

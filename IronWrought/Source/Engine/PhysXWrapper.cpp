@@ -4,6 +4,7 @@
 #include "Scene.h"
 #include "Engine.h"
 #include "RigidDynamicBody.h"
+#include <iostream>
 
 PxFilterFlags contactReportFilterShader(PxFilterObjectAttributes attributes0, PxFilterData filterData0,
 	PxFilterObjectAttributes attributes1, PxFilterData filterData1,
@@ -108,6 +109,46 @@ PxScene* CPhysXWrapper::CreatePXScene()
 
 	return pXScene;
 }
+
+PxRaycastBuffer CPhysXWrapper::Raycast(Vector3 aOrigin, Vector3 aDirection, float aDistance)
+{
+	PxScene* scene = CEngine::GetInstance()->GetActiveScene().PXScene();
+	PxVec3 origin;
+	origin.x = aOrigin.x;
+	origin.y = aOrigin.y;
+	origin.z = aOrigin.z;
+
+
+	PxVec3 unitDir;
+
+	unitDir.x = aDirection.x;
+	unitDir.y = aDirection.y;
+	unitDir.z = aDirection.z;
+
+	PxReal maxDistance = aDistance;
+	PxRaycastBuffer hit;
+
+	scene->raycast(origin, unitDir, maxDistance, hit);
+	
+		RaycastHit(hit.block.position, hit.block.normal);
+		
+	
+
+	return hit;
+}
+
+void CPhysXWrapper::RaycastHit(PxVec3 position, PxVec3 normal)
+{
+	std::cout << "x: " << position.x << std::endl;
+	std::cout << "y: " << position.y << std::endl;
+	std::cout << "z: " << position.z << std::endl << std::endl;
+
+
+	std::cout << normal.x << std::endl;
+
+}
+
+
 
 
 
