@@ -93,10 +93,16 @@ cbuffer BoneBuffer : register(b4)
 // Cubemap used for environment light shading
 TextureCube environmentTexture : register(t0);
 // GBuffer Textures: textures stored in the GBuffer, contains data for models. Used for environment and point light calculations
-Texture2D worldPositionTexture      : register(t1);
-Texture2D albedoTextureGBuffer      : register(t2);
-Texture2D normalTextureGBuffer      : register(t3);
-Texture2D vertexNormalTexture       : register(t4);
+//Texture2D worldPositionTexture      : register(t1);
+//Texture2D albedoTextureGBuffer      : register(t2);
+//Texture2D normalTextureGBuffer      : register(t3);
+//Texture2D vertexNormalTexture       : register(t4);
+
+Texture2D albedoTextureGBuffer        : register(t1);
+Texture2D normalTextureGBuffer        : register(t2);
+Texture2D vertexNormalTextureGBuffer  : register(t3);
+Texture2D materialTextureGBuffer      : register(t4);
+
 // Model textures (used to create GBuffer textures )
 Texture2D albedoTexture     : register(t5);
 Texture2D materialTexture   : register(t6);

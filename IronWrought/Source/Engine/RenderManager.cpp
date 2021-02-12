@@ -22,7 +22,7 @@
 
 unsigned int CRenderManager::myNumberOfDrawCallsThisFrame = 0;
 
-CRenderManager::CRenderManager() /*: myScene(*CScene::GetInstance())*/
+CRenderManager::CRenderManager()
 	: myDoFullRender(true)
 	, myClearColor(0.8f, 0.5f, 0.5f, 1.0f)
 {
@@ -163,11 +163,12 @@ void CRenderManager::Render(CScene& aScene)
 	myIntermediateDepth.SetAsResourceOnSlot(21);
 	
 	myDeferredRenderer.Render(maincamera, environmentlight);
-	//myDeferredRenderer.Render(maincamera, onlyPointLights);
+	myDeferredRenderer.Render(maincamera, onlyPointLights);
 
 	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_DISABLE);
 	myIntermediateTexture.SetAsActiveTarget();
 	myDeferredTexture.SetAsResourceOnSlot(0);
+	//myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCRENSHADER_GAMMACORRECTION);// When testing gbuffer stuff with no bloom
 	if(myDoFullRender)
 		myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCRENSHADER_GAMMACORRECTION);
 	else
@@ -274,7 +275,7 @@ void CRenderManager::Render(CScene& aScene)
 	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_DISABLE);
 	myRenderStateManager.SetDepthStencilState(CRenderStateManager::DepthStencilStates::DEPTHSTENCILSTATE_DEFAULT);
 
-	// Hope this works!
+	// Hope this works! IT DOES :D
 	myDoFullRender ? RenderBloom() : RenderWithoutBloom();
 
 	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_ALPHABLEND);

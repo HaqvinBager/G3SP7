@@ -123,14 +123,10 @@ CGBuffer CFullscreenTextureFactory::CreateGBuffer(DirectX::SimpleMath::Vector2 a
 {
 	std::array<DXGI_FORMAT, static_cast<size_t>(CGBuffer::EGBufferTextures::COUNT)> textureFormats =
 	{
-		DXGI_FORMAT_R32G32B32A32_FLOAT,
 		DXGI_FORMAT_R8G8B8A8_UNORM,
 		DXGI_FORMAT_R16G16B16A16_SNORM,
 		DXGI_FORMAT_R16G16B16A16_SNORM,
-		//DXGI_FORMAT_R8_UNORM,
-		//DXGI_FORMAT_R8_UNORM,
-		//DXGI_FORMAT_R8_UNORM,
-		//DXGI_FORMAT_R8_UNORM,
+		DXGI_FORMAT_R8G8B8A8_UNORM,
 	};
 
 	//Creating textures, rendertargets, shaderresources and a viewport
