@@ -42,8 +42,12 @@ public struct SScene
     public SGameObject[] modelGameObjects;
 }
 
-public class Exporter 
+public class Exporter
 {
+  
+
+
+
     [MenuItem("Export/Export Scene")]
     static void ExportScene()
     {
@@ -91,14 +95,14 @@ public class Exporter
 
     private static void ExportAScene(Scene aScene)
     {
-        List<Renderer> alreadyExportedRenderers = ExportVertexPaint.ExportVertexPainting(aScene);
+        List<GameObject> alreadyExportedRenderers = ExportVertexPaint.ExportVertexPainting(aScene);
         Renderer[] allrenderers = GameObject.FindObjectsOfType<Renderer>();       
         Dictionary<string, List<STransform>> fbxPathGameObjectMap = new Dictionary<string, List<STransform>>();   
         List<string> fbxpaths = new List<string>();
      
         for (int i = 0; i < allrenderers.Length; ++i)
         {
-            if (alreadyExportedRenderers.Contains(allrenderers[i]))
+            if (alreadyExportedRenderers.Contains(allrenderers[i].gameObject))
                 continue;
 
             string fbxPath = AssetDatabase.GetAssetPath(PrefabUtility.GetCorrespondingObjectFromOriginalSource(allrenderers[i].GetComponent<MeshFilter>().sharedMesh));
@@ -129,19 +133,23 @@ public class Exporter
         }
 
         List<SGameObject> gameObjects = new List<SGameObject>();
-        foreach(var renderer in alreadyExportedRenderers)
+        foreach(var vertexPaintedObject in alreadyExportedRenderers)
         {
-            SGameObject gameObject = new SGameObject();
             //Få tag i original-FBXen som användes till denna Vertex-paintade gameobject
-            string fbxPath = AssetDatabase.GetAssetPath(
-                PrefabUtility.GetCorrespondingObjectFromOriginalSource(
-                     renderer.GetComponent<PolybrushMesh>().m_OriginalMeshObject));
-            gameObject.model.fbxPath = fbxPath;
-            gameObject.transform.instanceID = renderer.transform.GetInstanceID();
-            gameObject.transform.position = renderer.transform.ConvertToIronWroughtPosition();
-            gameObject.transform.rotation = renderer.transform.ConvertToIronWroughtRotation();
-            gameObject.transform.scale = renderer.transform.ConvertToIronWroughtScale();
-            gameObjects.Add(gameObject);
+            //string fbxPath = AssetDatabase.GetAssetPath(
+            //    PrefabUtility.GetCorrespondingObjectFromOriginalSource(
+            //         renderer.GetComponent<PolybrushMesh>().m_OriginalMeshObject));
+
+            if (vertexPaintedObject.TryGetComponent(out PolybrushFBX polyBrushFBX)){
+                SGameObject gameObject = new SGameObject();
+                string fbxPath = AssetDatabase.GUIDToAssetPath(polyBrushFBX.originalFBXGUID);
+                gameObject.model.fbxPath = fbxPath;
+                gameObject.transform.instanceID = vertexPaintedObject.transform.GetInstanceID();
+                gameObject.transform.position = vertexPaintedObject.transform.ConvertToIronWroughtPosition();
+                gameObject.transform.rotation = vertexPaintedObject.transform.ConvertToIronWroughtRotation();
+                gameObject.transform.scale = vertexPaintedObject.transform.ConvertToIronWroughtScale();
+                gameObjects.Add(gameObject);
+            }
         }
 
         SScene sceneObject = new SScene();

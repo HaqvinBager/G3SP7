@@ -56,6 +56,13 @@ void CCameraControllerComponent::Update()
 		//UpdateFreeCam(); // TEMPORARY 2021-01-08 Nico & Axel
 		//GameObject().myTransform->Position(myPlayer->GameObject().myTransform->Position() + myOffset);
 	}
+
+	if (Input::GetInstance()->IsKeyPressed(VK_SPACE))
+	{
+
+		CEngine::GetInstance()->GetPhysx().Raycast(GameObject().myTransform->Position(), GameObject().myTransform->Transform().Forward(), 50000.0f);
+	}
+
 }
 
 float WrapAngle(float anAngle)

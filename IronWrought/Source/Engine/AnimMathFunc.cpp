@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "AnimMathFunc.h"
 
-
-
 void set_float4(float f[4], float a, float b, float c, float d)
 {
 	f[0] = a;
@@ -31,7 +29,8 @@ uint FindRotation(float AnimationTime, const aiNodeAnim* pNodeAnim)
 			return i;
 		}
 	}
-
+// This is an 'ugly-fix'
+// In short: bypasses the error by returning the last working key
 	return pNodeAnim->mNumRotationKeys - 2;
 
 	//assert(0);
@@ -52,10 +51,12 @@ void CalcInterpolatedRotation(aiQuaternion& Out, float AnimationTime, const aiNo
 	assert(NextRotationIndex < pNodeAnim->mNumRotationKeys);
 	float DeltaTime = static_cast<float>(pNodeAnim->mRotationKeys[NextRotationIndex].mTime - pNodeAnim->mRotationKeys[RotationIndex].mTime);
 	float Factor = (AnimationTime - (float)pNodeAnim->mRotationKeys[RotationIndex].mTime) / DeltaTime;
+// This if just stops the assert below it from triggering. SP6 animations had some anims with issues and this was faster than having SG debug their animations.
 	if (!(Factor >= 0.0f && Factor <= 1.0f))
 	{
 		Factor = 0.0f;
 	}
+// ! If, that stops the assert below it 
 	assert(Factor >= 0.0f && Factor <= 1.0f);
 	const aiQuaternion& StartRotationQ = pNodeAnim->mRotationKeys[RotationIndex].mValue;
 	const aiQuaternion& EndRotationQ = pNodeAnim->mRotationKeys[NextRotationIndex].mValue;
@@ -67,6 +68,12 @@ uint FindScaling(float AnimationTime, const aiNodeAnim* pNodeAnim)
 {
 	assert(pNodeAnim->mNumScalingKeys > 0);
 
+	// 2021 02 02 Testing/ Figuring out animation speed
+	//for (uint i = 0; i < pNodeAnim->mNumScalingKeys - 1; i++)
+	//{
+	//	std::cout << (float)pNodeAnim->mScalingKeys[i + 1].mTime << std::endl;
+	//}
+
 	for (uint i = 0; i < pNodeAnim->mNumScalingKeys - 1; i++)
 	{
 		if (AnimationTime < (float)pNodeAnim->mScalingKeys[i + 1].mTime)
@@ -75,7 +82,10 @@ uint FindScaling(float AnimationTime, const aiNodeAnim* pNodeAnim)
 		}
 	}
 
+// This is an 'ugly-fix'
+// In short: bypasses the error by returning the last working key
 	return pNodeAnim->mNumScalingKeys - 2;
+	
 	//assert(0);
 	//return 0xFFFFFFFF;
 }
@@ -94,10 +104,12 @@ void CalcInterpolatedScaling(aiVector3D& Out, float AnimationTime, const aiNodeA
 	assert(NextScalingIndex < pNodeAnim->mNumScalingKeys);
 	float DeltaTime = static_cast<float>(pNodeAnim->mScalingKeys[NextScalingIndex].mTime - pNodeAnim->mScalingKeys[ScalingIndex].mTime);
 	float Factor = (AnimationTime - (float)pNodeAnim->mScalingKeys[ScalingIndex].mTime) / DeltaTime;
+// This if just stops the assert below it from triggering. SP6 animations had some anims with issues and this was faster than having SG debug their animations.
 	if (!(Factor >= 0.0f && Factor <= 1.0f))
 	{
 		Factor = 0.0f;
 	}
+// ! If, that stops the assert below it 
 	assert(Factor >= 0.0f && Factor <= 1.0f);
 	const aiVector3D& StartScaling = pNodeAnim->mScalingKeys[ScalingIndex].mValue;
 	const aiVector3D& EndScaling = pNodeAnim->mScalingKeys[NextScalingIndex].mValue;
@@ -116,7 +128,10 @@ uint FindPosition(float AnimationTime, const aiNodeAnim* pNodeAnim)
 		}
 	}
 
+// This is an 'ugly-fix'
+// In short: bypasses the error by returning the last working key
 	return pNodeAnim->mNumPositionKeys - 2;
+	
 	//assert(0);
 	//return 0xFFFFFFFF;
 }
@@ -135,10 +150,12 @@ void CalcInterpolatedPosition(aiVector3D& Out, float AnimationTime, const aiNode
 	assert(NextPositionIndex < pNodeAnim->mNumPositionKeys);
 	float DeltaTime = static_cast<float>(pNodeAnim->mPositionKeys[NextPositionIndex].mTime - pNodeAnim->mPositionKeys[PositionIndex].mTime);
 	float Factor = (AnimationTime - (float)pNodeAnim->mPositionKeys[PositionIndex].mTime) / DeltaTime;
+// This if just stops the assert below it from triggering. SP6 animations had some anims with issues and this was faster than having SG debug their animations.
 	if (!(Factor >= 0.0f && Factor <= 1.0f))
 	{
 		Factor = 0.0f;
 	}
+// ! If, that stops the assert below it 
 	assert(Factor >= 0.0f && Factor <= 1.0f);
 	const aiVector3D& StartPosition = pNodeAnim->mPositionKeys[PositionIndex].mValue;
 	const aiVector3D& EndPosition = pNodeAnim->mPositionKeys[NextPositionIndex].mValue;
@@ -215,10 +232,10 @@ GLboolean abortGLInit(const char* abortMessage)
 	exit(-61);									// quit and return False
 }
 
-void logInfo(const std::string& logString)
+void logInfo(const std::string& /*logString*/)
 {
 	// Will add message to File with "info" Tag
-	Assimp::DefaultLogger::get()->info(logString.c_str());
+	//Assimp::DefaultLogger::get()->info(logString.c_str());
 }
 
 
@@ -226,26 +243,26 @@ void createAILogger()
 {
 	// Change this line to normal if you not want to analyse the import process
 	//Assimp::Logger::LogSeverity severity = Assimp::Logger::NORMAL;
-	Assimp::Logger::LogSeverity severity = Assimp::Logger::VERBOSE;
-
-	// Create a logger instance for Console Output
-	Assimp::DefaultLogger::create("", severity, aiDefaultLogStream_STDOUT);
-
-	// Create a logger instance for File Output (found in project folder or near .exe)
-	Assimp::DefaultLogger::create("assimp_log.txt", severity, aiDefaultLogStream_FILE);
-
-	// Now I am ready for logging my stuff
-	Assimp::DefaultLogger::get()->info("this is my info-call");
+	//Assimp::Logger::LogSeverity severity = Assimp::Logger::VERBOSE;
+	//
+	//// Create a logger instance for Console Output
+	//Assimp::DefaultLogger::create("", severity, aiDefaultLogStream_STDOUT);
+	//
+	//// Create a logger instance for File Output (found in project folder or near .exe)
+	//Assimp::DefaultLogger::create("assimp_log.txt", severity, aiDefaultLogStream_FILE);
+	//
+	//// Now I am ready for logging my stuff
+	//Assimp::DefaultLogger::get()->info("this is my info-call");
 }
 
 void destroyAILogger()
 {
 	// Kill it after the work is done
-	Assimp::DefaultLogger::kill();
+	//Assimp::DefaultLogger::kill();
 }
 
-void logDebug(const char* logString)
+void logDebug(const char* /*logString*/)
 {
 	// Will add message to File with "debug" Tag
-	Assimp::DefaultLogger::get()->debug(logString);
+	//Assimp::DefaultLogger::get()->debug(logString);
 }

@@ -27,7 +27,6 @@
 #include "Camera.h"
 #include "CameraComponent.h"
 
-#include "PhysXWrapper.h"
 #include "CollisionManager.h"
 
 #include "NavmeshLoader.h"
@@ -40,6 +39,7 @@ CScene::CScene(const unsigned int aGameObjectCount)
 	, myEnvironmentLight(nullptr)
 	, myNavMesh(nullptr)
 	, myNavMeshGrid(nullptr)
+	, myPXScene(nullptr)
 	//, myEnemyBehavior(nullptr)
 	//, myPlayer(nullptr)
 	//, myBoss(nullptr)
@@ -81,9 +81,10 @@ CScene::~CScene()
 	myGrid = nullptr;
 	delete myGrid;
 #endif
-
-	//myPXScene->release();
-	//myPXScene = nullptr;
+	if (myPXScene != nullptr) {
+		myPXScene->release();
+		myPXScene = nullptr;
+	}
 
 	// Any CScene that is not InGame's scene will not hold a NavMesh
 	if (myNavMesh)
@@ -169,10 +170,10 @@ SNavMesh* CScene::NavMesh()
 	return myNavMesh;
 }
 
-//PxScene* CScene::PXScene()
-//{
-//	return myPXScene;
-//}
+PxScene* CScene::PXScene()
+{
+	return myPXScene;
+}
 
 std::vector<CGameObject*> CScene::ModelsToOutline() const
 {
@@ -424,14 +425,14 @@ bool CScene::AddInstance(CSpriteInstance* aSprite)
 	return true;
 }
 //PhysX
-//bool CScene::AddPXScene(PxScene* aPXScene)
-//{
-//	if (!aPXScene) {
-//		return false;
-//	}
-//	myPXScene = aPXScene;
-//	return true;
-//}
+bool CScene::AddPXScene(PxScene* aPXScene)
+{
+	if (!aPXScene) {
+		return false;
+	}
+	myPXScene = aPXScene;
+	return true;
+}
 //POPULATE SCENE END
 //REMOVE SPECIFIC INSTANCE START
 bool CScene::RemoveInstance(CPointLight* aPointLight)

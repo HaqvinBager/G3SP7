@@ -26,6 +26,7 @@ class CForwardRenderer;
 class CVFXFactory;
 class CLineFactory;
 class CAudioManager;
+class CPhysXWrapper;
 
 class CEngine
 {
@@ -55,6 +56,8 @@ public:
 	const CStateStack::EState AddScene(const CStateStack::EState aState, CScene* aScene);
 	void SetActiveScene(const CStateStack::EState aState);
 	CScene& GetActiveScene();
+	
+	CPhysXWrapper& GetPhysx() { return *myPhysxWrapper; }
 
 	void ModelViewerSetScene(CScene* aScene);
 	//void PopBackScene();
@@ -75,6 +78,7 @@ private:
 	CRenderManager* myRenderManager;
 	CTimer* myTimer;
 	CDebug* myDebug;
+	CPhysXWrapper* myPhysxWrapper;
 
 	//unsigned int myActiveScene;
 	CStateStack::EState myActiveState;
