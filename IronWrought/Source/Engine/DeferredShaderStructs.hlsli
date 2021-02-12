@@ -83,6 +83,11 @@ cbuffer PointLightBuffer : register(b3)
     float4 myPositionAndRange;
 }
 
+cbuffer BoneBuffer : register(b4)
+{
+    matrix myBones[64];
+};
+
 // Cubemap used for environment light shading
 TextureCube environmentTexture : register(t0);
 // GBuffer Textures: textures stored in the GBuffer, contains data for models. Used for environment and point light calculations

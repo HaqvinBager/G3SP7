@@ -39,6 +39,7 @@
 #include "MainSingleton.h"
 #include "MaterialHandler.h"
 #include "StateStack.h"
+#include "PhysXWrapper.h"
 
 #pragma comment(lib, "runtimeobject.lib")
 #pragma comment(lib, "d3d11.lib")
@@ -69,6 +70,7 @@ CEngine::CEngine(): myRenderSceneActive(true)
 	myAudioManager = new CAudioManager();
 	//myActiveScene = 0; //muc bad
 	myActiveState = CStateStack::EState::InGame;
+	myPhysxWrapper = new CPhysXWrapper();
 	//myDialogueSystem = new CDialogueSystem();
 }
 
@@ -126,6 +128,9 @@ CEngine::~CEngine()
 	delete myMainSingleton;
 	myMainSingleton = nullptr;
 
+	delete myPhysxWrapper;
+	myPhysxWrapper = nullptr;
+
 	ourInstance = nullptr;
 }
 
@@ -151,6 +156,7 @@ bool CEngine::Init(CWindowHandler::SWindowData& someWindowData)
 
 	ENGINE_ERROR_BOOL_MESSAGE(CMainSingleton::PopupTextService().Init(), "Popup Text Service could not be initialized.");
 	ENGINE_ERROR_BOOL_MESSAGE(CMainSingleton::DialogueSystem().Init(), "Dialogue System could not be initialized.");
+	ENGINE_ERROR_BOOL_MESSAGE(myPhysxWrapper->Init(), "PhysX could not be initialized.");
 	InitWindowsImaging();
 
 	return true;
