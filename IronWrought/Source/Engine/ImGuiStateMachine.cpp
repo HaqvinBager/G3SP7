@@ -6,8 +6,8 @@
 #include "Scene.h"
 
 #include <imgui.h>
-ImGuiStateMachine::ImGuiStateMachine()
-	: myIsEnabled(false)
+ImGuiStateMachine::ImGuiStateMachine(const char* aWindowName)
+	: CImGuiWindow(aWindowName)
 	, myAddStateData()
 {
 }
@@ -21,10 +21,15 @@ void ImGuiStateMachine::OnInspectorGUI()
 	CScene& scene = CEngine::GetInstance()->GetActiveScene();
 	auto stateMachine = scene.FindFirstObjectWithComponent<CStateMachineComponent>();
 
-	ImGui::Begin("State Machine Editor");
-	
-	ShowAddStateButton(stateMachine);
+	if (stateMachine == nullptr) {
+		ImGui::Begin("No StateMachine Active in this Scene");
+		ImGui::End();
+		return;
+	}
 
+
+	ImGui::Begin("State Machine Editor");	
+	ShowAddStateButton(stateMachine);
 
 	CStateMachineComponent::SerializedObject data = stateMachine->GetData();
 	for (const auto& state : data.myStates) {

@@ -9,6 +9,8 @@
 #include "RenderManager.h"
 #include <psapi.h>
 
+#include "ImGuiWindowDefines.h"
+
 #pragma comment(lib, "psapi.lib")
 
 static ImFont* ImGui_LoadFont(ImFontAtlas& atlas, const char* name, float size, const ImVec2& displayOffset = ImVec2(0, 0))
@@ -53,11 +55,19 @@ CImguiManager::CImguiManager() : myGraphManagerIsFullscreen(false), myIsEnabled(
 	myGraphManager = new CGraphManager();
 	myGraphManager->Load();
 
-	myStateMachine = new ImGuiStateMachine();
+	myWindows.emplace_back(new ImGuiAnimationComponent("Animation"));
+	myWindows.emplace_back(new ImGuiStateMachine("StateMachine"));
+	myWindows.emplace_back(new ImGuiHaqvin("Haqvin"));
+
+
 }
 
 CImguiManager::~CImguiManager()
 {
+	for (auto& window : myWindows)
+		delete window;
+
+	myWindows.clear();
 	//delete myGraphManager;
 	//myGraphManager = nullptr;
 	ImGui::DestroyContext();
@@ -70,14 +80,18 @@ void CImguiManager::Update()
 		ImGui::BeginMainMenuBar();
 		if (ImGui::Button("Display Nodescripts"))
 			myGraphManager->ToggleShouldRenderGraph();
-		if (ImGui::Button("State Machine Editor"))
-			myStateMachine->ToggleStateMachine();
+
+		for (const auto& window : myWindows) {
+			if (ImGui::Button(window->Name())) {
+				*window->IsOpen() = !*window->IsOpen();
+			}
+		}
 		ImGui::EndMainMenuBar();
 		LevelSelect();
 		DebugWindow();
 	}
-	myGraphManager->Update();
 
+	myGraphManager->Update();
 
 	if (Input::GetInstance()->IsKeyPressed(VK_F1))
 	{
@@ -87,10 +101,12 @@ void CImguiManager::Update()
 	}
 
 	if (myIsEnabled) {
-		if (myStateMachine->ShouldRender())
-			myStateMachine->OnInspectorGUI();
+		for (const auto& window : myWindows) {
+			if (*window->IsOpen()) {
+				window->OnInspectorGUI();
+			}
+		}
 	}
-
 }
 
 void CImguiManager::PostRender()

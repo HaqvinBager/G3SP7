@@ -198,6 +198,10 @@
     <ClInclude Include="CameraFactory.h" />
     <ClInclude Include="Canvas.h" />
     <ClInclude Include="CapsuleColliderComponent.h" />
+    <ClInclude Include="ImGuiAnimationComponent.h" />
+    <ClInclude Include="ImGuiHaqvin.h" />
+    <ClInclude Include="ImGuiWindow.h" />
+    <ClInclude Include="ImGuiWindowDefines.h" />
     <ClInclude Include="StateMachineComponent.h" />
     <ClInclude Include="GraphManager.h" />
     <ClInclude Include="ImGuiStateMachine.h" />
@@ -348,6 +352,8 @@
     <ClCompile Include="CameraFactory.cpp" />
     <ClCompile Include="Canvas.cpp" />
     <ClCompile Include="CapsuleColliderComponent.cpp" />
+    <ClCompile Include="ImGuiAnimationComponent.cpp" />
+    <ClCompile Include="ImGuiHaqvin.cpp" />
     <ClCompile Include="StateMachineComponent.cpp" />
     <ClCompile Include="GraphManager.cpp" />
     <ClCompile Include="ImGuiStateMachine.cpp" />

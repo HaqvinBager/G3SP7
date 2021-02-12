@@ -1,23 +1,19 @@
 #pragma once
-
+#include "ImGuiWindow.h"
 class CStateMachineComponent;
 
-class ImGuiStateMachine
+class ImGuiStateMachine : public CImGuiWindow
 {
 public:
-	ImGuiStateMachine();
+	ImGuiStateMachine(const char* aWindowName);
 	~ImGuiStateMachine();
 
-	void OnInspectorGUI();
-	void ToggleStateMachine() { myIsEnabled = !myIsEnabled; }
-	const bool ShouldRender() const { return myIsEnabled; }
+	void OnInspectorGUI() override;
 
 private:
 	void ShowAddStateButton(CStateMachineComponent* aStateMachine);
 
 private:
-	bool myIsEnabled;
-
 	struct SAddStateData {
 		bool myAddStateFlag;
 		bool myAddStateNameFlag;

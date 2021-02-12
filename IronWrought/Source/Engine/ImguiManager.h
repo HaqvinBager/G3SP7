@@ -3,7 +3,8 @@
 #include <string>
 
 class CGraphManager;
-class ImGuiStateMachine;
+class CImGuiWindow;
+
 struct ImFontAtlas;
 
 class CImguiManager
@@ -24,5 +25,6 @@ private:
 	bool myGraphManagerIsFullscreen;
 	bool myIsEnabled;
 
-	ImGuiStateMachine* myStateMachine;
+
+	std::vector<CImGuiWindow*> myWindows;
 };
