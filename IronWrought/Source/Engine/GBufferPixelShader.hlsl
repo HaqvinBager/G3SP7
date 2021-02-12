@@ -84,28 +84,17 @@ GBufferOutput main(VertexModelToPixel input)
     float perceptualRoughness   = PixelShader_PerceptualRoughness(vertToPixel).myColor.r;
     float emissive              = PixelShader_Emissive(vertToPixel).myColor.r;
     
-    // Original, using 8 textures
-    //GBufferOutput output;
-    //output.myWorldPosition = input.myWorldPosition;
-    //output.myAlbedo = float4(albedo, 1.0f);
-    //output.myNormal = float4(normal, 1.0f);
-    //output.myVertexNormal = float4(input.myNormal.xyz, 1.0f);
-    //output.myMetalness = metalness;
-    //output.myRoughness = perceptualRoughness;
-    //output.myAmbientOcclusion = ambientOcclusion;
-    //output.myEmissive = emissive;
-    //return output;
-    
     // Using 4 textures
     GBufferOutput output;
     output.myWorldPosition  = input.myWorldPosition;
     output.myAlbedo         = float4(albedo, 1.0f);
-    output.myNormal         = float4(normal, 1.0f);
+    output.myNormal = float4(normal, 1.0f);
+    //output.myNormal = float4(metalness, normal.y, ambientOcclusion, normal.x);
     output.myVertexNormal   = float4(input.myNormal.xyz, 1.0f);
     
     output.myWorldPosition.w = metalness;
     output.myAlbedo.w        = perceptualRoughness;
-    output.myNormal.w        = ambientOcclusion;
+    output.myNormal.w = ambientOcclusion;
     output.myVertexNormal.w  = emissive;
     return output;
 }

@@ -45,10 +45,10 @@ private:
 private:
 	struct SFrameBufferData
 	{
-		DirectX::SimpleMath::Matrix myToCamera;
-		DirectX::SimpleMath::Matrix myToCameraInverse;
-		DirectX::SimpleMath::Matrix myToProjection;
-		DirectX::SimpleMath::Matrix myToProjectionInverse;
+		DirectX::SimpleMath::Matrix myToCameraSpace;
+		DirectX::SimpleMath::Matrix myToWorldFromCamera;
+		DirectX::SimpleMath::Matrix myToProjectionSpace;
+		DirectX::SimpleMath::Matrix myToCameraFromProjection;
 		DirectX::SimpleMath::Vector4 myCameraPosition;
 	} myFrameBufferData;
 	

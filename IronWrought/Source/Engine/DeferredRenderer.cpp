@@ -147,10 +147,10 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 {
 	SM::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
 	myFrameBufferData.myCameraPosition = SM::Vector4{ cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f };
-	myFrameBufferData.myToCamera = cameraMatrix.Invert();
-	myFrameBufferData.myToCameraInverse = cameraMatrix;
-	myFrameBufferData.myToProjection = aCamera->GetProjection();
-	myFrameBufferData.myToProjectionInverse = aCamera->GetProjection().Invert();
+	myFrameBufferData.myToCameraSpace = cameraMatrix.Invert();
+	myFrameBufferData.myToWorldFromCamera = cameraMatrix;
+	myFrameBufferData.myToProjectionSpace = aCamera->GetProjection();
+	myFrameBufferData.myToCameraFromProjection = aCamera->GetProjection().Invert();
 
 	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
 
@@ -323,10 +323,10 @@ void CDeferredRenderer::Render(CCameraComponent* aCamera, CEnvironmentLight* anE
 
 	SM::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
 	myFrameBufferData.myCameraPosition = SM::Vector4{ cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f };
-	myFrameBufferData.myToCamera = cameraMatrix.Invert();
-	myFrameBufferData.myToCameraInverse = cameraMatrix;
-	myFrameBufferData.myToProjection = aCamera->GetProjection();
-	myFrameBufferData.myToProjectionInverse = aCamera->GetProjection().Invert();
+	myFrameBufferData.myToCameraSpace = cameraMatrix.Invert();
+	myFrameBufferData.myToWorldFromCamera = cameraMatrix;
+	myFrameBufferData.myToProjectionSpace = aCamera->GetProjection();
+	myFrameBufferData.myToCameraFromProjection = aCamera->GetProjection().Invert();
 	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
 
 	myContext->PSSetConstantBuffers(0, 1, &myFrameBuffer);
@@ -366,10 +366,10 @@ void CDeferredRenderer::Render(CCameraComponent* aCamera, std::vector<CPointLigh
 
 	SM::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
 	myFrameBufferData.myCameraPosition = SM::Vector4{ cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f };
-	myFrameBufferData.myToCamera = cameraMatrix.Invert();
-	myFrameBufferData.myToCameraInverse = cameraMatrix;
-	myFrameBufferData.myToProjection = aCamera->GetProjection();
-	myFrameBufferData.myToProjectionInverse = aCamera->GetProjection().Invert();
+	myFrameBufferData.myToCameraSpace = cameraMatrix.Invert();
+	myFrameBufferData.myToWorldFromCamera = cameraMatrix;
+	myFrameBufferData.myToProjectionSpace = aCamera->GetProjection();
+	myFrameBufferData.myToCameraFromProjection = aCamera->GetProjection().Invert();
 	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
 	myContext->PSSetConstantBuffers(0, 1, &myFrameBuffer);
 

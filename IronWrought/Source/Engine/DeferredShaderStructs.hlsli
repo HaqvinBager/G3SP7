@@ -59,10 +59,10 @@ struct PixelOutput
 
 cbuffer FrameBuffer : register(b0)
 {
-    float4x4 toCamera;
-    float4x4 toCameraInverse;
-    float4x4 toProjection;
-    float4x4 toProjectionInverse;
+    float4x4 toCameraSpace;
+    float4x4 toWorldFromCamera;
+    float4x4 toProjectionSpace;
+    float4x4 toCameraFromProjection;
     float4 cameraPosition;
 }
 

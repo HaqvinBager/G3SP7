@@ -31,7 +31,6 @@ PixelOutput main(VertexToPixel input)
     float3 radiance = ambiance + directionalLight + emissive;
 
     output.myColor.rgb = radiance;
-    //output.myColor.rgb = worldPosition % 1.0f;
     output.myColor.a = 1.0f;
     return output;
 }

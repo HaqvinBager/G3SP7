@@ -7,20 +7,16 @@ PixelOutput PixelShader_WorldPosition(VertexToPixel input)
     PixelOutput output;
     
     // World Pos texture
-    float4 worldPos = worldPositionTexture.Sample(defaultSampler, input.myUV.xy).rgba;
-    //float4 camPos = mul(worldPos, toCamera);
-    //float4 projPos = mul(camPos, toProjection);
-    //projPos /= projPos.w;
+    //float4 worldPos = worldPositionTexture.Sample(defaultSampler, input.myUV.xy).rgba;
     
     // Depth sampling
-    //float z = depthTexture.Sample(defaultSampler, input.myUV.xy).r;
-    //float x = input.myUV.x * 2.0f - 1;
-    //float y = (1 - input.myUV.y) * 2.0f - 1;
-    //float4 projectedPos = float4(x, y, z, 1.0f);
-    //float4 viewSpacePos = mul(projectedPos, toProjectionInverse);
-    //viewSpacePos /= viewSpacePos.w;
-    
-    //float4 worldPos = mul(viewSpacePos, toCameraInverse);
+    float z = depthTexture.Sample(defaultSampler, input.myUV.xy).r;
+    float x = input.myUV.x * 2.0f - 1;
+    float y = (1 - input.myUV.y) * 2.0f - 1;
+    float4 projectedPos = float4(x, y, z, 1.0f);
+    float4 viewSpacePos = mul(toCameraFromProjection, projectedPos);
+    viewSpacePos /= viewSpacePos.w;
+    float4 worldPos = mul(toWorldFromCamera, viewSpacePos);
 
     output.myColor.rgb = worldPos.rgb;
     output.myColor.a = 1.0f;
@@ -239,6 +235,17 @@ PixelOutput GBuffer_Normal(VertexToPixel input)
 {
     PixelOutput output;
     float3 normal = normalTextureGBuffer.Sample(defaultSampler, input.myUV.xy).rgb;
+    
+    
+    //float3 normal;
+    //normal.xy = normalTextureGBuffer.Sample(defaultSampler, input.myUV.xy).ag;
+    //// Recreate z
+    //normal.z = 0.0f;
+    //normal = (normal * 2.0f) - 1.0f; // Comment this for Normal shader render pass
+    //normal.z = sqrt(1 - saturate((normal.x * normal.x) + (normal.y * normal.y)));
+    ////normal = (normal * 0.5f) + 0.5f;// Found in TGA modelviewer shader code, but seems to cause issues here.
+    ////normal = normalize(normal);
+    
     output.myColor.rgb = normal;
     output.myColor.a = 1.0f;
     return output;

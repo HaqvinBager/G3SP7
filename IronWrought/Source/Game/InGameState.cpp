@@ -46,15 +46,14 @@ void CInGameState::Awake(){}
 
 void CInGameState::Start()
 {
-	CScene* scene = CSceneManager::CreateEmpty()/*new CScene()*/;
+	CScene* scene = /*new CScene()*/CSceneManager::CreateEmpty();
 	//std::vector<std::string> scenePaths;
 	//scenePaths = CFolderUtility::GetFilePathsInFolder(ASSETPATH + "Assets\\Generated\\", ".json");
 	//CMainSingleton::ImguiManager().LevelsToSelectFrom(scenePaths);
 	//scene = CSceneManager::CreateScene(scenePaths[0].c_str());
-	//std::string scenePath = "Level_1.json";
-	//CScene* scene = new CScene();
-	//scene = CSceneManager::CreateScene(scenePath);	
+
 	TEMP_DeferredRenderingTests(scene);
+	
 	scene->AddPXScene(CEngine::GetInstance()->GetPhysx().CreatePXScene());
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);

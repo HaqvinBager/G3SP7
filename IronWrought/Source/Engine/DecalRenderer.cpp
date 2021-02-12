@@ -44,8 +44,8 @@ void CDecalRenderer::Render(CCameraComponent* aCamera, std::vector<CGameObject*>
 {
 	SM::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
 	myFrameBufferData.myCameraPosition = SM::Vector4{ cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f };
-	myFrameBufferData.myToCamera = cameraMatrix.Invert();
-	myFrameBufferData.myToProjection = aCamera->GetProjection();
+	myFrameBufferData.myToCameraSpace = cameraMatrix.Invert();
+	myFrameBufferData.myToProjectionSpace = aCamera->GetProjection();
 
 	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
 
