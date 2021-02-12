@@ -198,7 +198,9 @@
     <ClInclude Include="CameraFactory.h" />
     <ClInclude Include="Canvas.h" />
     <ClInclude Include="CapsuleColliderComponent.h" />
+    <ClInclude Include="Decal.h" />
     <ClInclude Include="DecalComponent.h" />
+    <ClInclude Include="DecalFactory.h" />
     <ClInclude Include="DecalRenderer.h" />
     <ClInclude Include="GraphManager.h" />
     <ClInclude Include="NodeInstance.h" />
@@ -348,7 +350,9 @@
     <ClCompile Include="CameraFactory.cpp" />
     <ClCompile Include="Canvas.cpp" />
     <ClCompile Include="CapsuleColliderComponent.cpp" />
+    <ClCompile Include="Decal.cpp" />
     <ClCompile Include="DecalComponent.cpp" />
+    <ClCompile Include="DecalFactory.cpp" />
     <ClCompile Include="DecalRenderer.cpp" />
     <ClCompile Include="GraphManager.cpp" />
     <ClCompile Include="JsonReader.cpp" />
@@ -467,6 +471,16 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">4.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="DecalPixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="DecalVertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Vertex</ShaderType>
     </FxCompile>
     <FxCompile Include="DeferredAnimationVertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
@@ -771,6 +785,7 @@
     <None Include="..\Includes\ImGui\NodeEditor\imgui_extra_math.inl" />
     <None Include="..\Includes\ImGui\NodeEditor\imgui_node_editor_internal.inl" />
     <None Include="cpp.hint" />
+    <None Include="DecalShaderStructs.hlsli" />
     <None Include="DeferredPBRFunctions.hlsli" />
     <None Include="DeferredSamplingFunctions.hlsli" />
     <None Include="DeferredShaderStructs.hlsli" />

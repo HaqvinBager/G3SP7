@@ -1,6 +1,8 @@
 #pragma once
 
-class CEngine;
+struct ID3D11DeviceContext;
+struct ID3D11Buffer;
+class CDirectXFramework;
 class CCameraComponent;
 class CGameObject;
 
@@ -26,6 +28,8 @@ private:
 		myContext->Unmap(aBuffer, 0);
 	}
 
+	bool CreatePixelShader(std::string aFilepath, CDirectXFramework* aFramework, ID3D11PixelShader** outPixelShader);
+
 private:
 	struct SFrameBufferData
 	{
@@ -37,14 +41,12 @@ private:
 	struct SObjectBufferData
 	{
 		DirectX::SimpleMath::Matrix myToWorld;
-		unsigned int myNumberOfDetailNormals;
-		unsigned int myNumberOfTextureSets;
-		unsigned int myPadding[2];
 	} myObjectBufferData;
 
 private:
 	ID3D11DeviceContext* myContext;
 	ID3D11Buffer* myFrameBuffer;
 	ID3D11Buffer* myObjectBuffer;
+	ID3D11PixelShader* myPixelShader;
 };
 

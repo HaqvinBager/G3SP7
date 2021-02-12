@@ -2,6 +2,10 @@
 #include "DecalRenderer.h"
 #include "RenderManager.h"
 #include "CameraComponent.h"
+#include "DecalComponent.h"
+#include "Decal.h"
+
+#include <fstream>
 
 CDecalRenderer::CDecalRenderer()
 	: myContext(nullptr)
@@ -36,80 +40,58 @@ bool CDecalRenderer::Init(CDirectXFramework* aFramework)
 	return true;
 }
 
-void CDecalRenderer::Render(CCameraComponent* /*aCamera*/, std::vector<CGameObject*>& /*aGameObjectList*/)
+void CDecalRenderer::Render(CCameraComponent* aCamera, std::vector<CGameObject*>& aGameObjectList)
 {
-	//SM::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
-	//myFrameBufferData.myCameraPosition = SM::Vector4{ cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f };
-	//myFrameBufferData.myToCamera = cameraMatrix.Invert();
-	//myFrameBufferData.myToProjection = aCamera->GetProjection();
+	SM::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
+	myFrameBufferData.myCameraPosition = SM::Vector4{ cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f };
+	myFrameBufferData.myToCamera = cameraMatrix.Invert();
+	myFrameBufferData.myToProjection = aCamera->GetProjection();
 
-	//BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
+	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
 
-	//myContext->VSSetConstantBuffers(0, 1, &myFrameBuffer);
-	//myContext->PSSetConstantBuffers(0, 1, &myFrameBuffer);
+	myContext->VSSetConstantBuffers(0, 1, &myFrameBuffer);
+	myContext->PSSetConstantBuffers(0, 1, &myFrameBuffer);
 
-	//for (auto& gameObject : aGameObjectList)
-	//{
-	//	CModelComponent* modelComponent = gameObject->GetComponent<CModelComponent>();
-	//	if (modelComponent == nullptr)
-	//		continue;
+	for (auto& gameObject : aGameObjectList)
+	{
+		CDecalComponent* decalComponent = gameObject->GetComponent<CDecalComponent>();
+		if (decalComponent == nullptr)
+			continue;
 
-	//	if (modelComponent->GetMyModel() == nullptr)
-	//		continue;
+		if (decalComponent->GetMyDecal() == nullptr)
+			continue;
 
-	//	CModel* model = modelComponent->GetMyModel();
-	//	CModel::SModelData modelData = model->GetModelData();
+		CDecal* decal = decalComponent->GetMyDecal();
+		CDecal::SDecalData decalData = decal->GetDecalData();
 
-	//	myObjectBufferData.myToWorld = gameObject->myTransform->GetWorldMatrix();
-	//	int dnCounter = 0;
-	//	for (auto detailNormal : model->GetModelData().myDetailNormals)
-	//	{
-	//		if (detailNormal)
-	//			++dnCounter;
-	//	}
-	//	myObjectBufferData.myNumberOfDetailNormals = dnCounter;
+		myObjectBufferData.myToWorld = gameObject->myTransform->GetWorldMatrix();
+		BindBuffer(myObjectBuffer, myObjectBufferData, "Object Buffer");
 
-	//	BindBuffer(myObjectBuffer, myObjectBufferData, "Object Buffer");
+		myContext->IASetPrimitiveTopology(decalData.myPrimitiveTopology);
+		myContext->IASetInputLayout(decalData.myInputLayout);
 
-	//	myContext->IASetPrimitiveTopology(modelData.myPrimitiveTopology);
-	//	myContext->IASetInputLayout(modelData.myInputLayout);
+		myContext->VSSetConstantBuffers(1, 1, &myObjectBuffer);
+		myContext->VSSetShader(decalData.myVertexShader, nullptr, 0);
 
-	//	myContext->VSSetConstantBuffers(1, 1, &myObjectBuffer);
-	//	myContext->VSSetShader(myModelVertexShader, nullptr, 0);
+		myContext->PSSetConstantBuffers(1, 1, &myObjectBuffer);
 
-	//	myContext->PSSetConstantBuffers(1, 1, &myObjectBuffer);
-	//	myContext->PSSetShaderResources(8, 4, &modelData.myDetailNormals[0]);
+		myContext->PSSetShader(myPixelShader, nullptr, 0);
+		myContext->PSSetSamplers(0, 1, &decalData.mySamplerState);
 
-	//	myContext->PSSetShader(myCurrentGBufferPixelShader, nullptr, 0);
-	//	myContext->PSSetSamplers(0, 1, &modelData.mySamplerState);
+		myContext->IASetVertexBuffers(0, 1, &decalData.myMesh.myVertexBuffer, &decalData.myMesh.myStride, &decalData.myMesh.myOffset);
+		myContext->IASetIndexBuffer(decalData.myMesh.myIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+		myContext->PSSetShaderResources(5, 3, &decalData.myMaterials[decalData.myMesh.myMaterialIndex][0]);
+		myContext->DrawIndexed(decalData.myMesh.myNumberOfIndices, 0, 0);
+		CRenderManager::myNumberOfDrawCallsThisFrame++;
+	}
+}
 
-	//	// Vertex Paint
-	//	unsigned int vertexColorID = modelComponent->VertexPaintColorID();
-
-	//	// Render all meshes
-	//	for (unsigned int i = 0; i < modelData.myMeshes.size(); ++i)
-	//	{
-	//		if (vertexColorID > 0)
-	//		{
-	//			auto vertexPaintMaterials = CMainSingleton::MaterialHandler().GetVertexPaintMaterials(modelComponent->VertexPaintMaterialNames());
-	//			ID3D11Buffer* vertexColorBuffer = CMainSingleton::MaterialHandler().GetVertexColorBuffer(vertexColorID);
-	//			UINT stride = sizeof(DirectX::SimpleMath::Vector3);
-	//			ID3D11Buffer* bufferPointers[2] = { modelData.myMeshes[i].myVertexBuffer, vertexColorBuffer };
-	//			UINT strides[2] = { modelData.myMeshes[i].myStride, stride };
-	//			UINT offsets[2] = { 0, 0 };
-	//			myContext->IASetInputLayout(myVertexPaintInputLayout);
-	//			myContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
-	//			myContext->VSSetShader(myVertexPaintModelVertexShader, nullptr, 0);
-	//			myContext->PSSetShader(myVertexPaintPixelShader, nullptr, 0);
-	//			myContext->PSSetShaderResources(12, 9, &vertexPaintMaterials[0]/*&myVertexPaintMaterials[0]*/);
-	//		}
-	//		else {
-	//			myContext->IASetVertexBuffers(0, 1, &modelData.myMeshes[i].myVertexBuffer, &modelData.myMeshes[i].myStride, &modelData.myMeshes[i].myOffset);
-	//		}
-	//		myContext->IASetIndexBuffer(modelData.myMeshes[i].myIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	//		myContext->PSSetShaderResources(5, 3, &modelData.myMaterials[modelData.myMeshes[i].myMaterialIndex][0]);
-	//		myContext->DrawIndexed(modelData.myMeshes[i].myNumberOfIndices, 0, 0);
-	//		CRenderManager::myNumberOfDrawCallsThisFrame++;
-	//	}
-	//}
+bool CDecalRenderer::CreatePixelShader(std::string aFilepath, CDirectXFramework* aFramework, ID3D11PixelShader** outPixelShader)
+{
+	std::ifstream psFile;
+	psFile.open(aFilepath, std::ios::binary);
+	std::string psData = { std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>() };
+	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreatePixelShader(psData.data(), psData.size(), nullptr, outPixelShader), "Pixel Shader could not be created.");
+	psFile.close();
+	return true;
 }

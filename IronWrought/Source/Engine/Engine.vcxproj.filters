@@ -148,6 +148,12 @@
     <FxCompile Include="DeferredAnimationVertexShader.hlsl">
       <Filter>Shaders\Deferred</Filter>
     </FxCompile>
+    <FxCompile Include="DecalPixelShader.hlsl">
+      <Filter>Shaders\Decal</Filter>
+    </FxCompile>
+    <FxCompile Include="DecalVertexShader.hlsl">
+      <Filter>Shaders\Decal</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimationComponent.cpp">
@@ -555,6 +561,12 @@
     <ClCompile Include="StateStack.cpp" />
     <ClCompile Include="AnimationController.cpp">
       <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Decal.cpp">
+      <Filter>Decal</Filter>
+    </ClCompile>
+    <ClCompile Include="DecalFactory.cpp">
+      <Filter>Decal</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1021,6 +1033,12 @@
     </ClInclude>
     <ClInclude Include="State.h" />
     <ClInclude Include="StateStack.h" />
+    <ClInclude Include="Decal.h">
+      <Filter>Decal</Filter>
+    </ClInclude>
+    <ClInclude Include="DecalFactory.h">
+      <Filter>Decal</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">
@@ -1080,6 +1098,9 @@
     </None>
     <None Include="..\Includes\ImGui\NodeEditor\imgui_node_editor_internal.inl">
       <Filter>Imgui\Node Editor\Core</Filter>
+    </None>
+    <None Include="DecalShaderStructs.hlsli">
+      <Filter>Shaders\Decal</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -1250,6 +1271,12 @@
     </Filter>
     <Filter Include="Imgui\Core">
       <UniqueIdentifier>{100a0dc1-32c8-4e4b-8d00-f091b7106618}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Decal">
+      <UniqueIdentifier>{4e7bf04d-b17d-4c9d-92ad-e4b07cbbe120}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Decal">
+      <UniqueIdentifier>{fbb72eea-2e5f-4249-b6ca-925d6233bdde}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

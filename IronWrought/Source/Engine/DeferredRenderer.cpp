@@ -117,11 +117,7 @@ bool CDeferredRenderer::Init(CDirectXFramework* aFramework)
 	LoadRenderPassPixelShaders(aFramework->GetDevice());
 
 	CreatePixelShader("Shaders/DeferredVertexPaintPixelShader.cso", aFramework, &myVertexPaintPixelShader);
-	//CreateVertexShader("Shaders/DeferredVertexPaintVertexShader.cso", aFramework, &myVertexPaintModelVertexShader);
-	vsFile.open("Shaders/DeferredVertexPaintVertexShader.cso", std::ios::binary);
-	vsData = { std::istreambuf_iterator<char>(vsFile), std::istreambuf_iterator<char>() };
-	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateVertexShader(vsData.data(), vsData.size(), nullptr, &myVertexPaintModelVertexShader), "Vertex Paint Vertex Shader could not be created.");
-	vsFile.close();
+	CreateVertexShader("Shaders/DeferredVertexPaintVertexShader.cso", aFramework, &myVertexPaintModelVertexShader, vsData);
 
 	// Vertex Paint input layout
 	D3D11_INPUT_ELEMENT_DESC layout[] =
@@ -152,7 +148,9 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 	SM::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
 	myFrameBufferData.myCameraPosition = SM::Vector4{ cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f };
 	myFrameBufferData.myToCamera = cameraMatrix.Invert();
+	myFrameBufferData.myToCameraInverse = cameraMatrix;
 	myFrameBufferData.myToProjection = aCamera->GetProjection();
+	myFrameBufferData.myToProjectionInverse = aCamera->GetProjection().Invert();
 
 	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
 
@@ -325,7 +323,10 @@ void CDeferredRenderer::Render(CCameraComponent* aCamera, CEnvironmentLight* anE
 
 	SM::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
 	myFrameBufferData.myCameraPosition = SM::Vector4{ cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f };
+	myFrameBufferData.myToCamera = cameraMatrix.Invert();
+	myFrameBufferData.myToCameraInverse = cameraMatrix;
 	myFrameBufferData.myToProjection = aCamera->GetProjection();
+	myFrameBufferData.myToProjectionInverse = aCamera->GetProjection().Invert();
 	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
 
 	myContext->PSSetConstantBuffers(0, 1, &myFrameBuffer);
@@ -365,7 +366,10 @@ void CDeferredRenderer::Render(CCameraComponent* aCamera, std::vector<CPointLigh
 
 	SM::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
 	myFrameBufferData.myCameraPosition = SM::Vector4{ cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f };
+	myFrameBufferData.myToCamera = cameraMatrix.Invert();
+	myFrameBufferData.myToCameraInverse = cameraMatrix;
 	myFrameBufferData.myToProjection = aCamera->GetProjection();
+	myFrameBufferData.myToProjectionInverse = aCamera->GetProjection().Invert();
 	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
 	myContext->PSSetConstantBuffers(0, 1, &myFrameBuffer);
 
@@ -396,11 +400,12 @@ void CDeferredRenderer::Render(CCameraComponent* aCamera, std::vector<CPointLigh
 
 }
 
-bool CDeferredRenderer::CreateVertexShader(std::string aFilepath, CDirectXFramework* aFramework, ID3D11VertexShader** outVertexShader)
+bool CDeferredRenderer::CreateVertexShader(std::string aFilepath, CDirectXFramework* aFramework, ID3D11VertexShader** outVertexShader, std::string& outShaderData)
 {
 	std::ifstream vsFile;
 	vsFile.open(aFilepath, std::ios::binary);
 	std::string vsData = { std::istreambuf_iterator<char>(vsFile), std::istreambuf_iterator<char>() };
+	outShaderData = vsData;
 	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateVertexShader(vsData.data(), vsData.size(), nullptr, outVertexShader), "Vertex Shader could not be created.");
 	vsFile.close();
 	return true;

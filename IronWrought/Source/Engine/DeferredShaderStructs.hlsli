@@ -60,7 +60,9 @@ struct PixelOutput
 cbuffer FrameBuffer : register(b0)
 {
     float4x4 toCamera;
+    float4x4 toCameraInverse;
     float4x4 toProjection;
+    float4x4 toProjectionInverse;
     float4 cameraPosition;
 }
 
@@ -95,10 +97,6 @@ Texture2D worldPositionTexture      : register(t1);
 Texture2D albedoTextureGBuffer      : register(t2);
 Texture2D normalTextureGBuffer      : register(t3);
 Texture2D vertexNormalTexture       : register(t4);
-//Texture2D metalnessTexture          : register(t5);
-//Texture2D roughnessTexture          : register(t6);
-//Texture2D ambientOcclusionTexture   : register(t7);
-//Texture2D emissiveTexture           : register(t8);
 // Model textures (used to create GBuffer textures )
 Texture2D albedoTexture     : register(t5);
 Texture2D materialTexture   : register(t6);
@@ -107,6 +105,8 @@ Texture2D normalTexture     : register(t7);
 Texture2D detailNormals[4] : register(t8);
 // Vertex Paint Materials
 Texture2D vertexPaintTextures[9] : register(t12);
+
+Texture2D depthTexture : register(t21);
 
 sampler defaultSampler : register(s0);
 

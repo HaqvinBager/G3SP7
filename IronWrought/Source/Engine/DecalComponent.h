@@ -2,7 +2,7 @@
 #include "Behaviour.h"
 
 class CGameObject;
-class CModel;
+class CDecal;
 
 class CDecalComponent : public CBehaviour
 {
@@ -14,15 +14,13 @@ public:
 	void Start() override;
 	void Update() override;
 
-	void SetModel(const std::string& aFBXPath);
-
-	CModel* GetMyModel() const;
+	CDecal* GetMyDecal() const;
 
 	void OnEnable() override;
 	void OnDisable() override;
 
 private:
-	CModel* myModel;
-	std::string myModelPath;
+	CDecal* myDecal;
+	std::string myDecalPath;
 };
 

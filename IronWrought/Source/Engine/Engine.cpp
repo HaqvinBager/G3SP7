@@ -26,6 +26,7 @@
 #include "VFXFactory.h"
 #include "LineFactory.h"
 #include "SpriteFactory.h"
+#include "DecalFactory.h"
 
 #include "RenderManager.h"
 #include "ImguiManager.h"
@@ -62,6 +63,7 @@ CEngine::CEngine(): myRenderSceneActive(true)
 	myLineFactory = new CLineFactory();
 	mySpriteFactory = new CSpriteFactory();
 	myTextFactory = new CTextFactory();
+	myDecalFactory = new CDecalFactory();
 	myInputMapper = new CInputMapper();
 	myDebug = new CDebug();
 	myRenderManager = nullptr;
@@ -112,6 +114,8 @@ CEngine::~CEngine()
 	mySpriteFactory = nullptr;
 	delete myTextFactory;
 	myTextFactory = nullptr;
+	delete myDecalFactory;
+	myDecalFactory = nullptr;
 	delete myInputMapper;
 	myInputMapper = nullptr;
 
@@ -141,7 +145,7 @@ bool CEngine::Init(CWindowHandler::SWindowData& someWindowData)
 	ImGui_ImplWin32_Init(myWindowHandler->GetWindowHandle());
 	ImGui_ImplDX11_Init(myFramework->GetDevice(), myFramework->GetContext());
 	myWindowHandler->SetInternalResolution();
-	ENGINE_ERROR_BOOL_MESSAGE(myModelFactory->Init(*this), "Model Factory could not be initiliazed.");
+	ENGINE_ERROR_BOOL_MESSAGE(myModelFactory->Init(myFramework), "Model Factory could not be initiliazed.");
 	ENGINE_ERROR_BOOL_MESSAGE(myCameraFactory->Init(myWindowHandler), "Camera Factory could not be initialized.");
 	ENGINE_ERROR_BOOL_MESSAGE(CMainSingleton::MaterialHandler().Init(myFramework), "Material Handler could not be initialized.");
 	myRenderManager = new CRenderManager();
@@ -152,6 +156,7 @@ bool CEngine::Init(CWindowHandler::SWindowData& someWindowData)
 	ENGINE_ERROR_BOOL_MESSAGE(myLineFactory->Init(myFramework), "Line Factory could not be initialized.");
 	ENGINE_ERROR_BOOL_MESSAGE(mySpriteFactory->Init(myFramework), "Sprite Factory could not be initialized.");
 	ENGINE_ERROR_BOOL_MESSAGE(myTextFactory->Init(myFramework), "Text Factory could not be initialized.");
+	ENGINE_ERROR_BOOL_MESSAGE(myDecalFactory->Init(myFramework), "Decal Factory could not be initialized.");
 	ENGINE_ERROR_BOOL_MESSAGE(myInputMapper->Init(), "InputMapper could not be initialized.");
 
 	ENGINE_ERROR_BOOL_MESSAGE(CMainSingleton::PopupTextService().Init(), "Popup Text Service could not be initialized.");

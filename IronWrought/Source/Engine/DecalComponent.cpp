@@ -1,20 +1,20 @@
 #include "stdafx.h"
 #include "DecalComponent.h"
 #include "ModelComponent.h"
-#include "ModelFactory.h"
+#include "DecalFactory.h"
 #include "GameObject.h"
-#include "Model.h"
+#include "Decal.h"
 
-CDecalComponent::CDecalComponent(CGameObject& aParent, const std::string& /*aFBXPath*/)
+CDecalComponent::CDecalComponent(CGameObject& aParent, const std::string& aFBXPath)
     : CBehaviour(aParent)
 {
-    myModel = CModelFactory::GetInstance()->GetModel(aFBXPath);
-    myModelPath = aFBXPath;
+    myDecal = CDecalFactory::GetInstance()->GetDecal(aFBXPath);
+    myDecalPath = aFBXPath;
 }
 
 CDecalComponent::~CDecalComponent()
 {
-    CModelFactory::GetInstance()->ClearModel(myModelPath);
+    CDecalFactory::GetInstance()->ClearDecal(myDecalPath);
 }
 
 void CDecalComponent::Awake()
@@ -29,13 +29,9 @@ void CDecalComponent::Update()
 {
 }
 
-void CDecalComponent::SetModel(const std::string& /*aFBXPath*/)
+CDecal* CDecalComponent::GetMyDecal() const
 {
-}
-
-CModel* CDecalComponent::GetMyModel() const
-{
-    return nullptr;
+    return myDecal;
 }
 
 void CDecalComponent::OnEnable()

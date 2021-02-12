@@ -5,8 +5,24 @@
 PixelOutput PixelShader_WorldPosition(VertexToPixel input)
 {
     PixelOutput output;
-    float3 worldPos = worldPositionTexture.Sample(defaultSampler, input.myUV.xy).rgb;
-    output.myColor.rgb = worldPos;
+    
+    // World Pos texture
+    float4 worldPos = worldPositionTexture.Sample(defaultSampler, input.myUV.xy).rgba;
+    //float4 camPos = mul(worldPos, toCamera);
+    //float4 projPos = mul(camPos, toProjection);
+    //projPos /= projPos.w;
+    
+    // Depth sampling
+    //float z = depthTexture.Sample(defaultSampler, input.myUV.xy).r;
+    //float x = input.myUV.x * 2.0f - 1;
+    //float y = (1 - input.myUV.y) * 2.0f - 1;
+    //float4 projectedPos = float4(x, y, z, 1.0f);
+    //float4 viewSpacePos = mul(projectedPos, toProjectionInverse);
+    //viewSpacePos /= viewSpacePos.w;
+    
+    //float4 worldPos = mul(viewSpacePos, toCameraInverse);
+
+    output.myColor.rgb = worldPos.rgb;
     output.myColor.a = 1.0f;
     return output;
 }
@@ -256,7 +272,7 @@ PixelOutput GBuffer_AmbientOcclusion(VertexToPixel input)
 PixelOutput GBuffer_Metalness(VertexToPixel input)
 {
     PixelOutput output;
-    float metalness =  worldPositionTexture.Sample(defaultSampler, input.myUV.xy).a;
+    float metalness = worldPositionTexture.Sample(defaultSampler, input.myUV.xy).a;
     output.myColor.rgb = metalness.xxx;
     output.myColor.a = 1.0f;
     return output;
