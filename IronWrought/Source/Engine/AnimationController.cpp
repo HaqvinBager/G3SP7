@@ -181,6 +181,13 @@ void CAnimationController::LoadBones(uint aMeshIndex, const aiMesh* aMesh)
 
 		myBoneMapping[BoneName] = BoneIndex;
 		myBoneInfo[BoneIndex].myBoneOffset = aMesh->mBones[i]->mOffsetMatrix;
+		auto m = aMesh->mBones[i]->mOffsetMatrix;
+		std::cout << BoneName << std::endl;
+		std::cout << m.a1 << " " << m.a2 << " " << m.a3 << std::endl;
+		std::cout << m.b1 << " " << m.b2 << " " << m.b3 << std::endl;
+		std::cout << m.d1 << " " << m.c2 << " " << m.c3 << std::endl;
+		std::cout << m.d1 << " " << m.d2 << " " << m.d3 << std::endl;
+		std::cout << "------" << std::endl;
 
 		for (uint j = 0; j < aMesh->mBones[i]->mNumWeights; j++)
 		{

@@ -151,7 +151,7 @@ void CInGameState::Receive(const SMessage& /*aMessage*/)
 
 void TEMP_DeferredRenderingTests(CScene* scene)
 {
-	constexpr int numPointLights = 32;
+	constexpr int numPointLights = 6;
 	std::vector<CGameObject*> pointLights;
 	float x = -2.0f;
 	float y = 1.0f;
@@ -241,36 +241,51 @@ void TEMP_DeferredRenderingTests(CScene* scene)
 #include "animationLoader.h"// <-- include för AnimationLoader funktioner: AddAnimationsToGameObject() osv
 void TEMP_SetUpAnimationTest(CScene* aScene)
 {
-	CGameObject* go = new CGameObject(123123123);
-	//std::string skinnedModelPath = "Assets/Temp/Mixamo/SK.fbx";// <-- Skinnad mesh fbx. 
-	std::string skinnedModelPath = "Assets/Temp/Robot/CH_E_Robot_SK.fbx";// <-- Skinnad mesh fbx. 
-	//std::string skinnedModelPath = "Assets/Temp/fbx2019v2020_0_1/CH_E_Robot_SK_.fbx";
-	//std::string skinnedModelPath = "Assets/Temp/Maya2019_2/CH_E_Robot_SK.fbx";
-	//std::string skinnedModelPath = "Assets/Temp/Main Character/CH_PL_SK.fbx";// <-- Skinnad mesh fbx. 
+	//CGameObject* go = new CGameObject(123123123);
+	////std::string skinnedModelPath = "Assets/Temp/Mixamo/SK.fbx";// <-- Skinnad mesh fbx. 
+	//std::string skinnedModelPath = "Assets/Temp/Robot/CH_E_Robot_SK.fbx";// <-- Skinnad mesh fbx. 
+	////std::string skinnedModelPath = "Assets/Temp/fbx2019v2020_0_1/CH_E_Robot_SK_.fbx";
+	////std::string skinnedModelPath = "Assets/Temp/Maya2019_2/CH_E_Robot_SK.fbx";
+	////std::string skinnedModelPath = "Assets/Temp/Main Character/CH_PL_SK.fbx";// <-- Skinnad mesh fbx. 
+	//
+	//go->AddComponent<CModelComponent>(*go, skinnedModelPath);// <-- Måste ha vanlig CModelComp för rendering
+	//
+	//// Fixar allt. Behöver ett CGameObject med en CModelComponent på och path:en för modellen.
+	//CAnimationComponent* animComp = AnimationLoader::AddAnimationsToGameObject(go, skinnedModelPath);
+	//animComp->BlendToAnimation(1/*Index för animation att blenda till*/, 1.0f/*Hur långsam blendingen ska vara*/);
+	//
+	////animComp->BlendLerpBetween(5/*Index för första animation, ligger på blend 0.0f*/
+	////						   , 0/*Index för andra animation, ligger på blend 1.0f*/
+	////						   , 0.0f/*Blend/Lerp värde. 0.0f => spela 100% av första animationen.
+	////								 * 1.0f => spela 100% av andra animationen.
+	////								 * 0.5f => spela 50/50% av första/andra.
+	////								 */
+	////						   );
+	//g_TempAnimObject = go;
+	//aScene->AddInstance(go);
+	//
+	//CGameObject* go2 = new CGameObject(123123124);
+	//go2->AddComponent<CModelComponent>(*go2, skinnedModelPath);
+	//go2->myTransform->Position({ -2.0f,0.f,0.f });
+	////CAnimationComponent* animComp2 = AnimationLoader::AddAnimationsToGameObject(go2, skinnedModelPath);
+	////animComp2->BlendToAnimation(2/*Index för animation att blenda till*/, 1.0f/*Hur långsam blendingen ska vara*/);
+	//aScene->AddInstance(go2);
 
-	go->AddComponent<CModelComponent>(*go, skinnedModelPath);// <-- Måste ha vanlig CModelComp för rendering
-	
-	// Fixar allt. Behöver ett CGameObject med en CModelComponent på och path:en för modellen.
-	CAnimationComponent* animComp = AnimationLoader::AddAnimationsToGameObject(go, skinnedModelPath);
-	animComp->BlendToAnimation(1/*Index för animation att blenda till*/, 1.0f/*Hur långsam blendingen ska vara*/);
-
-	//animComp->BlendLerpBetween(5/*Index för första animation, ligger på blend 0.0f*/
-	//						   , 0/*Index för andra animation, ligger på blend 1.0f*/
-	//						   , 0.0f/*Blend/Lerp värde. 0.0f => spela 100% av första animationen.
-	//								 * 1.0f => spela 100% av andra animationen.
-	//								 * 0.5f => spela 50/50% av första/andra.
-	//								 */
-	//						   );
-	g_TempAnimObject = go;
-	aScene->AddInstance(go);
-
-	CGameObject* go2 = new CGameObject(123123124);
-	go2->AddComponent<CModelComponent>(*go2, skinnedModelPath);
-	go2->myTransform->Position({ -2.0f,0.f,0.f });
-	//CAnimationComponent* animComp2 = AnimationLoader::AddAnimationsToGameObject(go2, skinnedModelPath);
-	//animComp2->BlendToAnimation(2/*Index för animation att blenda till*/, 1.0f/*Hur långsam blendingen ska vara*/);
-	aScene->AddInstance(go2);
-
+	CGameObject* go3 = new CGameObject(123123125);
+	//std::string bugTestModel = "Assets/Temp/Block/blockSK.fbx"; 
+	//std::string bugTestModel = "Assets/Temp/Robot/CH_E_Robot_SK_OrinetJointTest.fbx";
+	std::string bugTestModel = "Assets/Whacky/WhackySK.fbx";
+	//std::string bugTestModel = "Assets/Temp/Robot_Block/robot_block_SK.fbx"; 
+	//std::string bugTestModel = "Assets/Temp/Robot/CH_E_Robot_SK.fbx"; 
+	//std::string bugTestModel = "Assets/Temp/Robot/CH_E_Robot_SKMOD.fbx"; 
+	//std::string bugTestModel = "Assets/Temp/RobotSK3/robot_SK3.fbx"; 
+	//std::string bugTestModel = "Assets/Temp/EasterEggRobot/EasterEgg_robot_SK.fbx"; 
+	go3->AddComponent<CModelComponent>(*go3, bugTestModel);
+	go3->myTransform->Position({ 0.0f,0.f,0.f });
+	CAnimationComponent* animComp2 = AnimationLoader::AddAnimationsToGameObject(go3, bugTestModel);
+	animComp2->BlendToAnimation(0/*Index för animation att blenda till*/, 1.0f/*Hur långsam blendingen ska vara*/);
+	aScene->AddInstance(go3);
+	g_TempAnimObject = go3;
 }
 #define GetAnimComp g_TempAnimObject->GetComponent<CAnimationComponent>()
 void TEMP_AnimObjectControl()
@@ -298,19 +313,23 @@ void TEMP_AnimObjectControl()
 	}
 	if (Input::GetInstance()->IsKeyPressed('3'))
 	{
-		//GetAnimComp->BlendToAnimation(3, blend);
+		GetAnimComp->BlendToAnimation(3, blend);
 	}
 	if (Input::GetInstance()->IsKeyPressed('4'))
 	{
-		//GetAnimComp->BlendToAnimation(4, blend);
+		GetAnimComp->BlendToAnimation(4, blend);
 	}
 	if (Input::GetInstance()->IsKeyPressed('5'))
 	{
-		//GetAnimComp->BlendToAnimation(5, blend);
+		GetAnimComp->BlendToAnimation(5, blend);
 	}
 	if (Input::GetInstance()->IsKeyPressed('6'))
 	{
-		//GetAnimComp->BlendToAnimation(6, blend);
+		GetAnimComp->BlendToAnimation(6, blend);
+	}
+	if (Input::GetInstance()->IsKeyPressed('7'))
+	{
+		GetAnimComp->BlendToAnimation(7, blend);
 	}
 
 	if (Input::GetInstance()->IsKeyPressed(VK_F2))
