@@ -48,7 +48,7 @@ void CInGameState::Start()
 {
 	CScene* scene = new CScene();
 	std::vector<std::string> scenePaths;
-	scenePaths = CFolderUtility::GetFilePathsInFolder(ASSETPATH + "Assets\\Generated\\", ".json");
+	scenePaths = CFolderUtility::GetFilePathsInFolder(ASSETPATH + "Assets\\Generated\\", ".json", "Level");
 	CMainSingleton::ImguiManager().LevelsToSelectFrom(scenePaths);
 	scene = CSceneManager::CreateScene(scenePaths[0].c_str());
 	//std::string scenePath = "Level_1.json";
