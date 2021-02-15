@@ -21,96 +21,94 @@ CSceneManager::~CSceneManager()
 
 CScene* CSceneManager::CreateScene(std::string aJsonFile)//TEMP
 {
-
-
-
 	CScene* scene = new CScene(1);
-
 	rapidjson::Document document = CJsonReader::Get()->LoadDocument(ASSETPATH + "Assets/Generated/" + aJsonFile);
-	auto jsonarray = document["instancedGameobjects"].GetArray();
-	for (auto& jsongameobject : jsonarray) {
-
-		CGameObject* instancedGameObject = new CGameObject(0);
-		std::string model_path;
-		//float instanceID;
-		Vector3 position;
-		Vector3 rotation;
-		Vector3 scale;
-
-		auto jsonmodelpath = jsongameobject["model"].GetObjectW();
-		model_path = jsonmodelpath["fbxPath"].GetString();
-		auto jsonTransforms = jsongameobject["transforms"].GetArray();
-		std::vector<DirectX::SimpleMath::Matrix> instancedTransforms;
-		for (auto& jsonTransform : jsonTransforms) {
-			//auto jsoninstanceID = jsontransform["instanceID"].GetObjectW();
-			auto jsonposition = jsonTransform["position"].GetObjectW();
-			auto jsonrotation = jsonTransform["rotation"].GetObjectW();
-			auto jsonscale = jsonTransform["scale"].GetObjectW();
-
-			//instanceID = jsoninstanceID[""].GetFloat();
-
-			position.x = jsonposition["x"].GetFloat();
-			position.y = jsonposition["y"].GetFloat();
-			position.z = jsonposition["z"].GetFloat();
-
-			rotation.x = jsonrotation["x"].GetFloat();
-			rotation.y = jsonrotation["y"].GetFloat();
-			rotation.z = jsonrotation["z"].GetFloat();
-
-			scale.x = jsonscale["x"].GetFloat();
-			scale.y = jsonscale["y"].GetFloat();
-			scale.z = jsonscale["z"].GetFloat();
-
-			CGameObject temp(0);
-			CTransformComponent transform(temp);
-			transform.Scale(scale);
-			transform.Position(position);
-			transform.Rotation(rotation);
-			instancedTransforms.emplace_back(transform.GetLocalMatrix());
-		}
-		instancedGameObject->AddComponent<CInstancedModelComponent>(*instancedGameObject, ASSETPATH + model_path, instancedTransforms);
-		scene->AddInstance(instancedGameObject);
-	}
-	//scene->AddPXScene(CMainSingleton::PhysXWrapper().CreatePXScene());
+	if (document.HasMember("instancedGameObjects")) {
 
 
-	if (document.HasMember("modelGameObjects")) {
-		auto jsonGameObjectArray = document["modelGameObjects"].GetArray();
-		for (const auto& jsonModelGameObject : jsonGameObjectArray) {
-			if (jsonModelGameObject.HasMember("transform")) {
-				const auto& jsonTransform = jsonModelGameObject["transform"].GetObjectW();
+		auto jsonarray = document["instancedGameobjects"].GetArray();
+		for (auto& jsongameobject : jsonarray) {
 
+			CGameObject* instancedGameObject = new CGameObject(0);
+			std::string model_path;
+			//float instanceID;
+			Vector3 position;
+			Vector3 rotation;
+			Vector3 scale;
+
+			auto jsonmodelpath = jsongameobject["model"].GetObjectW();
+			model_path = jsonmodelpath["fbxPath"].GetString();
+			auto jsonTransforms = jsongameobject["transforms"].GetArray();
+			std::vector<DirectX::SimpleMath::Matrix> instancedTransforms;
+			for (auto& jsonTransform : jsonTransforms) {
+				//auto jsoninstanceID = jsontransform["instanceID"].GetObjectW();
 				auto jsonposition = jsonTransform["position"].GetObjectW();
 				auto jsonrotation = jsonTransform["rotation"].GetObjectW();
 				auto jsonscale = jsonTransform["scale"].GetObjectW();
 
-				int instanceID = jsonTransform["instanceID"].GetInt();
+				//instanceID = jsoninstanceID[""].GetFloat();
 
-				Vector3 position = {};
 				position.x = jsonposition["x"].GetFloat();
 				position.y = jsonposition["y"].GetFloat();
 				position.z = jsonposition["z"].GetFloat();
 
-				Vector3 rotation = {};
 				rotation.x = jsonrotation["x"].GetFloat();
 				rotation.y = jsonrotation["y"].GetFloat();
 				rotation.z = jsonrotation["z"].GetFloat();
 
-				Vector3 scale = {};
 				scale.x = jsonscale["x"].GetFloat();
 				scale.y = jsonscale["y"].GetFloat();
 				scale.z = jsonscale["z"].GetFloat();
 
-				if (jsonModelGameObject.HasMember("model")) {
-					const auto& jsonModel = jsonModelGameObject["model"].GetObjectW();
-					std::string modelPath = jsonModel["fbxPath"].GetString();
-					CGameObject* modelGameObject = new CGameObject(instanceID);
-					modelGameObject->AddComponent<CModelComponent>(*modelGameObject, ASSETPATH + modelPath);
-					modelGameObject->myTransform->Scale(scale);
-					modelGameObject->myTransform->Rotation(rotation);
-					modelGameObject->myTransform->Position(position);
+				CGameObject temp(0);
+				CTransformComponent transform(temp);
+				transform.Scale(scale);
+				transform.Position(position);
+				transform.Rotation(rotation);
+				instancedTransforms.emplace_back(transform.GetLocalMatrix());
+			}
+			instancedGameObject->AddComponent<CInstancedModelComponent>(*instancedGameObject, ASSETPATH + model_path, instancedTransforms);
+			scene->AddInstance(instancedGameObject);
+		}
 
-					scene->AddInstance(modelGameObject);
+		if (document.HasMember("modelGameObjects")) {
+			auto jsonGameObjectArray = document["modelGameObjects"].GetArray();
+			for (const auto& jsonModelGameObject : jsonGameObjectArray) {
+				if (jsonModelGameObject.HasMember("transform")) {
+					const auto& jsonTransform = jsonModelGameObject["transform"].GetObjectW();
+
+					auto jsonposition = jsonTransform["position"].GetObjectW();
+					auto jsonrotation = jsonTransform["rotation"].GetObjectW();
+					auto jsonscale = jsonTransform["scale"].GetObjectW();
+
+					int instanceID = jsonTransform["instanceID"].GetInt();
+
+					Vector3 position = {};
+					position.x = jsonposition["x"].GetFloat();
+					position.y = jsonposition["y"].GetFloat();
+					position.z = jsonposition["z"].GetFloat();
+
+					Vector3 rotation = {};
+					rotation.x = jsonrotation["x"].GetFloat();
+					rotation.y = jsonrotation["y"].GetFloat();
+					rotation.z = jsonrotation["z"].GetFloat();
+
+					Vector3 scale = {};
+					scale.x = jsonscale["x"].GetFloat();
+					scale.y = jsonscale["y"].GetFloat();
+					scale.z = jsonscale["z"].GetFloat();
+
+					if (jsonModelGameObject.HasMember("model")) {
+						const auto& jsonModel = jsonModelGameObject["model"].GetObjectW();
+						std::string modelPath = jsonModel["fbxPath"].GetString();
+						CGameObject* modelGameObject = new CGameObject(instanceID);
+						modelGameObject->AddComponent<CModelComponent>(*modelGameObject, ASSETPATH + modelPath);
+						modelGameObject->myTransform->Scale(scale);
+						modelGameObject->myTransform->Rotation(rotation);
+						modelGameObject->myTransform->Position(position);
+
+						scene->AddInstance(modelGameObject);
+					}
 				}
 			}
 		}
