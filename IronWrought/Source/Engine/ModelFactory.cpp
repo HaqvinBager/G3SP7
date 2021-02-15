@@ -20,6 +20,8 @@
 
 #define USING_FBX_MATERIALS
 
+//#define ALLOW_ANIMATIONS
+
 CModelFactory* CModelFactory::ourInstance = nullptr;
 CModelFactory* CModelFactory::GetInstance()
 {
@@ -150,10 +152,14 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 
 	//VertexShader
 	std::ifstream vsFile;
+#ifdef ALLOW_ANIMATIONS
 	if (mesh->myModel->myNumBones > 0)
 		vsFile.open("Shaders/AnimatedVertexShader.cso", std::ios::binary);
 	else 
 		vsFile.open("Shaders/VertexShader.cso", std::ios::binary);
+#else
+	vsFile.open("Shaders/VertexShader.cso", std::ios::binary);
+#endif
 	
 	std::string vsData = { std::istreambuf_iterator<char>(vsFile), std::istreambuf_iterator<char>() };
 	ID3D11VertexShader* vertexShader;
@@ -262,7 +268,9 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 	modelData.myDetailNormals[3] = detailNormal4;
 
 	model->Init(modelData);
+#ifdef ALLOW_ANIMATIONS
 	model->HasBones(mesh->myModel->myNumBones > 0);
+#endif
 
 	myModelMap.emplace(aFilePath, model);
 	return model;
@@ -444,10 +452,10 @@ CModel* CModelFactory::CreateInstancedModels(std::string aFilePath, int aNumberO
 
 	ID3D11Buffer* instanceBuffer;
 	ENGINE_HR_MESSAGE(myEngine->myFramework->GetDevice()->CreateBuffer(&instanceBufferDesc, nullptr, &instanceBuffer), "Instance Buffer could not be created.");
-
-
+	
 	//VertexShader
 	std::ifstream vsFile;
+#ifdef ALLOW_ANIMATIONS
 	if (mesh->myModel->myNumBones > 0)
 	{
 		vsFile.open("Shaders/AnimatedVertexShader.cso", std::ios::binary);
@@ -455,6 +463,9 @@ CModel* CModelFactory::CreateInstancedModels(std::string aFilePath, int aNumberO
 	else {
 		vsFile.open("Shaders/InstancedVertexShader.cso", std::ios::binary);
 	}
+#else
+	vsFile.open("Shaders/InstancedVertexShader.cso", std::ios::binary);
+#endif
 
 	std::string vsData = { std::istreambuf_iterator<char>(vsFile), std::istreambuf_iterator<char>() };
 	ID3D11VertexShader* vertexShader;
