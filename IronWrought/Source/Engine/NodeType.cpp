@@ -30,6 +30,9 @@
 //#include "CNodeTypeForEachGameObject.h"
 //#include "CNodeTypeVolumeTrigger.h"
 //#include "CNodeTypeTimer.h"
+#include "NodeTypePrintAction.h"
+#include "NodeTypeFloatDecision.h"
+#include "NodeTypeRunDecisionTree.h"
 
 CNodeType* CNodeTypeCollector::myTypes[128];
 unsigned short CNodeTypeCollector::myTypeCounter = 0;
@@ -69,6 +72,13 @@ void CNodeTypeCollector::PopulateTypes()
 	//RegisterType<CNodeTypeForEachGameObject>();
 	//RegisterType<CNodeTypeVolumeTrigger>();
 	//RegisterType<CNodeTypeTimer>();
+	RegisterType<CNodeTypePrintAction>();
+	RegisterType<CNodeTypeFloatDecision>();
+	RegisterType<CNodeTypeRunDecisionTree>();
+}
+
+void CNodeType::ClearNodeInstanceFromMap(CNodeInstance* /*aTriggeringNodeInstance*/)
+{
 }
 
 int CNodeType::DoEnter(CNodeInstance* aTriggeringNodeInstance)
@@ -83,7 +93,7 @@ std::vector<SPin> CNodeType::GetPins()
 	return myPins;
 }
 
-void CNodeType::GetDataOnPin(CNodeInstance* aTriggeringNodeInstance, unsigned int aPinIndex, SPin::PinType& outType, NodeDataPtr& someData, size_t& outSize)
+void CNodeType::GetDataOnPin(CNodeInstance* aTriggeringNodeInstance, unsigned int aPinIndex, SPin::EPinType& outType, NodeDataPtr& someData, size_t& outSize)
 {
 	aTriggeringNodeInstance->FetchData(outType, someData, outSize, aPinIndex);
 }

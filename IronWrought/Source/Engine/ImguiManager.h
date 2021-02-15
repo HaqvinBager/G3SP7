@@ -11,7 +11,6 @@ public:
 	CImguiManager();
 	~CImguiManager();
 	void Update();
-	void PostRender();
 	void DebugWindow();
 	void LevelSelect();
 	void LevelsToSelectFrom(std::vector<std::string> someLevelsToSelectFrom);

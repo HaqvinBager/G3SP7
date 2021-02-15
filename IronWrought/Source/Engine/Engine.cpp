@@ -191,8 +191,6 @@ void CEngine::EndFrame()
 {
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-	CMainSingleton::ImguiManager().PostRender();
-
 	myFramework->EndFrame();
 }
 

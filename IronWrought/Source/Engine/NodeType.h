@@ -22,7 +22,7 @@ public:
 		myAllUIDs.push_back(myID);
 	}
 
-	const unsigned int AsInt() const {return myID;}
+	const unsigned int AsInt() const { return myID; }
 
 	UID& operator=(const UID& other)
 	{
@@ -55,14 +55,15 @@ public:
 	static std::vector<unsigned int> myAllUIDs;
 	static unsigned int myGlobalUID;
 private:
-	unsigned int myID = 0;
+	unsigned int myID;
 
 };
 
 
 struct SPin
 {
-	enum class PinType
+
+	enum class EPinType
 	{
 		Flow,
 		Bool,
@@ -72,14 +73,14 @@ struct SPin
 		Unknown,
 	};
 
-	enum class PinTypeInOut
+	enum class EPinTypeInOut
 	{
 		PinTypeInOut_IN,
 		PinTypeInOut_OUT
 	};
 
 
-	SPin(std::string aText, PinTypeInOut aType = PinTypeInOut::PinTypeInOut_IN, PinType aVarType = PinType::Flow)
+	SPin(std::string aText, EPinTypeInOut aType = EPinTypeInOut::PinTypeInOut_IN, EPinType aVarType = EPinType::Flow)
 		:myText(aText)
 	{
 		myVariableType = aVarType;
@@ -106,15 +107,17 @@ struct SPin
 
 	std::string myText;
 	UID myUID;
-	PinType myVariableType = PinType::Flow;
+	EPinType myVariableType = EPinType::Flow;
 	NodeDataPtr myData = nullptr;
-	PinTypeInOut myPinType;
+	EPinTypeInOut myPinType;
 };
+
+
 
 class CNodeType
 {
 public:
-
+	virtual void ClearNodeInstanceFromMap(class CNodeInstance* aTriggeringNodeInstance);
 	int DoEnter(class CNodeInstance* aTriggeringNodeInstance);
 	virtual std::string GetNodeName() { return "N/A"; }
 
@@ -125,7 +128,7 @@ public:
 	{
 		for (auto& pin : myPins)
 		{
-			if (pin.myVariableType == SPin::PinType::Flow)
+			if (pin.myVariableType == SPin::EPinType::Flow)
 			{
 				return true;
 			}
@@ -136,8 +139,8 @@ public:
 	virtual void DebugUpdate(class CNodeInstance*) {}
 
 	int myID = -1;
-	
-	
+
+
 protected:
 	template <class T>
 	void DeclareDataOnPinIfNecessary(SPin& aPin)
@@ -146,12 +149,12 @@ protected:
 		{
 			aPin.myData = new T;
 		}
-		
+
 	}
-	virtual int OnEnter(class CNodeInstance* /*aTriggeringNodeInstance*/){return -1;};
-	void GetDataOnPin(CNodeInstance* aTriggeringNodeInstance,unsigned int aPinIndex, SPin::PinType& outType, void*& someData, size_t& outSize);
+	virtual int OnEnter(class CNodeInstance* /*aTriggeringNodeInstance*/) { return -1; };
+	void GetDataOnPin(CNodeInstance* aTriggeringNodeInstance, unsigned int aPinIndex, SPin::EPinType& outType, void*& someData, size_t& outSize);
 	std::vector<SPin> myPins;
-	
+
 
 
 };
