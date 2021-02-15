@@ -9,7 +9,7 @@
 #define DETAILNORMAL_4 3
 
 // Detail normal strength value 0.1f - 0.24f == DETAILNORMAL_1
-#define DETAILNORMAL_1_STR_RANGE_MIN 0.01f
+#define DETAILNORMAL_1_STR_RANGE_MIN 0.02f
 // Detail normal strength value 0.26f - 0.49f == DETAILNORMAL_2
 #define DETAILNORMAL_2_STR_RANGE_MIN 0.26f
 // Detail normal strength value 0.51f - 0.74f == DETAILNORMAL_3

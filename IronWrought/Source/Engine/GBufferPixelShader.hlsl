@@ -30,7 +30,7 @@ GBufferOutput main(VertexModelToPixel input)
         // Blend based on detail normal strength
         // X3512 Sampler array index must be literal expression => DETAILNORMAL_#
         // Sampled detail normal strength value: 
-        //      0.1f - 0.24f    == DETAILNORMAL_1
+        //      0.2f - 0.24f    == DETAILNORMAL_1
         //      0.26f - 0.49f   == DETAILNORMAL_2
         //      0.51f - 0.74f   == DETAILNORMAL_3
         //      0.76f - 1.0f    == DETAILNORMAL_4
@@ -106,6 +106,6 @@ GBufferOutput main(VertexModelToPixel input)
     output.myWorldPosition.w = metalness;
     output.myAlbedo.w        = perceptualRoughness;
     output.myNormal.w        = ambientOcclusion;
-    output.myVertexNormal    = emissive;
+    output.myVertexNormal.w  = emissive;
     return output;
 }

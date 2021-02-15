@@ -121,8 +121,6 @@ void CRenderManager::Render(CScene& aScene)
 	std::vector<CGameObject*> instancedGameObjects;
 	std::vector<CGameObject*> instancedGameObjectsWithAlpha;
 	std::vector<int> indicesOfOutlineModels;
-	std::vector<LightPair> pointlights;
-	std::vector<LightPair> pointLightsInstanced;
 
 #ifdef USING_DEFERRED // Define found under #includes
 #pragma region Deferred
@@ -178,12 +176,15 @@ void CRenderManager::Render(CScene& aScene)
 #pragma endregion ! Deferred
 #else
 #pragma region Forward
+	std::vector<LightPair> pointlights;
+	std::vector<LightPair> pointLightsInstanced;
+
 	myIntermediateTexture.SetAsActiveTarget(&myIntermediateDepth);
 
 	for (unsigned int i = 0; i < gameObjects.size(); ++i)
 	{
 		auto instance = gameObjects[i];
-		for (auto gameObjectToOutline : aScene.GetModelsToOutline()) {
+		for (auto gameObjectToOutline : aScene.ModelsToOutline()) {
 			if (instance == gameObjectToOutline) {
 				indicesOfOutlineModels.emplace_back(i);
 			}

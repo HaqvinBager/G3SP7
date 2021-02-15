@@ -145,6 +145,9 @@
     <FxCompile Include="DeferredVertexPaintPixelShader.hlsl">
       <Filter>Shaders\Vertex Paint</Filter>
     </FxCompile>
+    <FxCompile Include="DeferredAnimationVertexShader.hlsl">
+      <Filter>Shaders\Deferred</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimationComponent.cpp">
@@ -158,9 +161,6 @@
     </ClCompile>
     <ClCompile Include="CircleColliderComponent.cpp">
       <Filter>GameObject and Component\Component</Filter>
-    </ClCompile>
-    <ClCompile Include="Animation.cpp">
-      <Filter>Animation</Filter>
     </ClCompile>
     <ClCompile Include="AnimMathFunc.cpp">
       <Filter>Animation</Filter>
@@ -590,6 +590,14 @@
     <ClCompile Include="GraphNodeTimerManager.cpp">
       <Filter>Imgui\Node Editor\Node Editor Managers\NodeType Managers</Filter>
     </ClCompile>
+    <ClCompile Include="State.cpp" />
+    <ClCompile Include="StateStack.cpp" />
+    <ClCompile Include="AnimationController.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="CStateMachineComponent.cpp">
+      <Filter>GameObject and Component\Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -603,9 +611,6 @@
     </ClInclude>
     <ClInclude Include="CircleColliderComponent.h">
       <Filter>GameObject and Component\Component</Filter>
-    </ClInclude>
-    <ClInclude Include="Animation.h">
-      <Filter>Animation</Filter>
     </ClInclude>
     <ClInclude Include="AnimationController.h">
       <Filter>Animation</Filter>
@@ -846,9 +851,6 @@
     </ClInclude>
     <ClInclude Include="StringIDLoader.h">
       <Filter>StringID</Filter>
-    </ClInclude>
-    <ClInclude Include="animationEnums.h">
-      <Filter>Animation</Filter>
     </ClInclude>
     <ClInclude Include="AnimatedUIElement.h">
       <Filter>Sprite</Filter>
@@ -1100,6 +1102,11 @@
     </ClInclude>
     <ClInclude Include="GraphNodeTimerManager.h">
       <Filter>Imgui\Node Editor\Node Editor Managers\NodeType Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="State.h" />
+    <ClInclude Include="StateStack.h" />
+    <ClInclude Include="CStateMachineComponent.h">
+      <Filter>GameObject and Component\Component</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

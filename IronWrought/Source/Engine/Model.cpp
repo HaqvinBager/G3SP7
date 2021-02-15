@@ -1,12 +1,12 @@
 #include "stdafx.h"
 #include "Model.h"
-#include "Animation.h"
 #include "MaterialHandler.h"
 
 CModel::CModel() 
 	: myModelData()
 	, myModelInstanceData()
 	, myInstanceCount(0)
+	, myHasBones(false)
 {
 }
 

@@ -84,7 +84,7 @@ SVertexPaintData CMaterialHandler::RequestVertexColorID(int aGameObjectID, const
 				auto linksArray = vertexLinks["links"].GetArray();
 				for (unsigned int i = 0; i < linksArray.Size(); ++i)
 				{
-					for (const auto& gameObjectID : linksArray[i]["myGameObjectIDs"].GetArray())
+					for (const auto& gameObjectID : linksArray[i]["myTransformIDs"].GetArray())
 					{
 						if (gameObjectID.GetInt() == aGameObjectID)
 						{
