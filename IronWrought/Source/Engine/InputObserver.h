@@ -12,9 +12,7 @@ public:
 		KeyEnter,
 		KeyShiftDown,
 		KeyShiftRelease,
-		Key1,
-		Key2,
-		Key3,
+		KeyW,
 		KeyA,
 		KeyS,
 		KeyD
@@ -27,15 +25,16 @@ public:
 		MoveDown,
 		AttackClick,
 		OpenMenuPress,
-		Ability1,
-		Ability2,
-		Ability3,
 		LoadLevel,
 		PauseGame,
 		QuitGame,
 		MiddleMouseMove,
 		StandStill,
-		Moving
+		Moving,
+		MoveForward,
+		MoveBackward,
+		MoveLeft,
+		MoveRight
 	};
 
 public:

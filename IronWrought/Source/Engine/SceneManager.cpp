@@ -19,6 +19,29 @@ CSceneManager::~CSceneManager()
 {
 }
 
+CScene* CSceneManager::CreateEmpty()
+{
+
+	CGameObject* camera = new CGameObject(0);
+	camera->AddComponent<CCameraComponent>(*camera, 70.0f);
+	camera->AddComponent<CCameraControllerComponent>(*camera, 5.0f);
+	camera->myTransform->Position({ 0.0f, 1.0f, 0.0f });
+	camera->myTransform->Rotation({ 0.0f, 0.0f, 0.0f });
+
+	CGameObject* envLight = new CGameObject(1);
+	envLight->AddComponent<CEnviromentLightComponent>(*envLight);
+	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetIntensity(1.f);
+	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetDirection({ 0.0f,0.0f,-1.0f });
+
+	CScene* emptyScene = new CScene(2);
+	emptyScene ->AddInstance(camera);
+	emptyScene ->MainCamera(camera->GetComponent<CCameraComponent>());
+	emptyScene ->EnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight());
+	emptyScene ->AddInstance(envLight);
+
+	return emptyScene;
+}
+
 CScene* CSceneManager::CreateScene(std::string aJsonFile)//TEMP
 {
 

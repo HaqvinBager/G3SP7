@@ -149,13 +149,14 @@ void CTransformComponent::Transform(DirectX::SimpleMath::Vector3 aPosition, Dire
 
 DirectX::SimpleMath::Matrix& CTransformComponent::Transform()
 {
-	return myLocalTransform;
+	return myWorldTransform;
 }
 
 void CTransformComponent::Move(DirectX::SimpleMath::Vector3 aMovement)
 {
 	//Position(myLocalTransform.Translation() + aMovement);
 	myLocalTransform.Translation(myLocalTransform.Translation() + aMovement);
+	//myWorldTransform.Translation(myLocalTransform.Translation() + aMovement);
 }
 
 void CTransformComponent::MoveLocal(DirectX::SimpleMath::Vector3 aMovement)
