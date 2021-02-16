@@ -28,7 +28,7 @@
 #include "SceneManager.h"
 #include "FolderUtility.h"
 
-
+#include "animationLoader.h"
 void TEMP_DeferredRenderingTests(CScene* aScene);
 
 CInGameState::CInGameState(CStateStack& aStateStack, const CStateStack::EState aState)
@@ -43,30 +43,20 @@ void CInGameState::Awake(){}
 
 #include "PointLight.h"
 #include "PointLightComponent.h"
-
+#include "PlayerControllerComponent.h"
 void CInGameState::Start()
 {
 	CScene* scene = new CScene();
-	std::vector<std::string> scenePaths;
-	scenePaths = CFolderUtility::GetFilePathsInFolder(ASSETPATH + "Assets\\Generated\\", ".json");
+	std::vector<std::string> scenePaths = CFolderUtility::GetFilePathsInFolder(ASSETPATH + "Assets\\Generated\\", ".json");
 	CMainSingleton::ImguiManager().LevelsToSelectFrom(scenePaths);
 	scene = CSceneManager::CreateScene(scenePaths[0].c_str());
-	//std::string scenePath = "Level_1.json";
-	//CScene* scene = new CScene();
-	//scene = CSceneManager::CreateScene(scenePath);	
+
 	scene->AddPXScene(CEngine::GetInstance()->GetPhysx().CreatePXScene());
 	
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);
 
-	CGameObject* physxmaterialtestobject = new CGameObject(60);
-
-	physxmaterialtestobject->AddComponent<CModelComponent>(*physxmaterialtestobject, std::string(ASSETPATH + "Assets/Graphics/Exempel_Modeller/Wall/Wall.fbx"));
-	physxmaterialtestobject->AddComponent<CRigidBodyComponent>(*physxmaterialtestobject);
-	physxmaterialtestobject->GetComponent<CTransformComponent>()->Position({ 5.0f, 190.0f, 5.0f });
-
-
-	scene->AddInstance(physxmaterialtestobject);
+	
 
 	myExitLevel = false;
 
