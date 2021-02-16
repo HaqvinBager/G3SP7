@@ -39,6 +39,7 @@ private:
 	CNodeInstance* GetNodeFromNodeID(unsigned int anID);
 	void DrawTypeSpecificPin(struct SPin& aPin, CNodeInstance* aNodeInstance);
 	std::unordered_map<std::string, std::vector<CNodeInstance*>> myGraphs;
+	std::unordered_map<std::string, std::vector<int>> myGameObjectIDsMap;
 	std::vector<std::string> myKeys;
 
 	struct SEditorLinkInfo

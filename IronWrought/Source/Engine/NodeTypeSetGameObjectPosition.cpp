@@ -2,6 +2,7 @@
 #include "NodeTypeSetGameObjectPosition.h"
 #include "NodeInstance.h"
 #include "Scene.h"
+#include "Engine.h"
 
 CNodeTypeSetGameObjectPosition::CNodeTypeSetGameObjectPosition()
 {
@@ -14,6 +15,14 @@ CNodeTypeSetGameObjectPosition::CNodeTypeSetGameObjectPosition()
 
 int CNodeTypeSetGameObjectPosition::OnEnter(CNodeInstance* /*aTriggeringNodeInstance*/)
 {
+	//TODO
+	//Figure out något sätt att accessa myIDGameObjectMap från CGraphManager!
+
+
+	//aTriggeringNodeInstance->get
+	
+	//CEngine::GetInstance()->GetActiveScene().FindObjectWithID()
+
 	//SPin::EPinType outType;
 	//NodeDataPtr someData = nullptr;
 	//size_t outSize = 0;
