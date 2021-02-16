@@ -46,10 +46,10 @@ CScene* CSceneManager::CreateScene(std::string aJsonFile)//TEMP
 {
 	CScene* scene = new CScene(1);
 	rapidjson::Document document = CJsonReader::Get()->LoadDocument(ASSETPATH + "Assets/Generated/" + aJsonFile);
-	if (document.HasMember("instancedGameObjects")) {
+	if (document.HasMember("instancedGameobjects")) {
 
 
-		auto jsonarray = document["instancedGameObjects"].GetArray();
+		auto jsonarray = document["instancedGameobjects"].GetArray();
 		for (auto& jsongameobject : jsonarray) {
 
 			CGameObject* instancedGameObject = new CGameObject(0);
