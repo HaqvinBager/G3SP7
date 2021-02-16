@@ -154,17 +154,18 @@ CScene* CSceneManager::CreateScene(std::string aJsonFile)//TEMP
 	scene->AddInstance(envLight);
 	scene->EnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight());*/
 
-	CGameObject* player = new CGameObject(999);
-	player->AddComponent<CModelComponent>(*player, ASSETPATH + "Assets/Graphics/Character/Main Character/CH_PL_SK.fbx");
-	player->AddComponent<CPlayerControllerComponent>(*player);
-	scene->AddInstance(player);
+	//CGameObject* player = new CGameObject(999);
+	//player->AddComponent<CModelComponent>(*player, ASSETPATH + "Assets/Graphics/Character/Main Character/CH_PL_SK.fbx");
+	//player->AddComponent<CPlayerControllerComponent>(*player);
+	//scene->AddInstance(player);
 
 	CGameObject* camera = new CGameObject(1000);
 	camera->AddComponent<CCameraComponent>(*camera, 65.0f);
-	camera->AddComponent<CCameraControllerComponent>(*camera, 2.0f);
-	camera->myTransform->SetParent(player->myTransform);
-	camera->myTransform->Position({ 0.0f, 1.6f, -0.2f });
-	camera->myTransform->Rotation({ 0.0f, 180.0f, 0.0f });
+	camera->AddComponent<CCameraControllerComponent>(*camera, 5.0f);
+	//camera->myTransform->Position({ 0.0f, 1.6f, -0.2f });
+	//player->myTransform->SetParent(camera->myTransform);
+	//camera->myTransform->SetParent(player->myTransform);
+	//camera->myTransform->Rotation({ 0.0f, 180.0f, 0.0f });
 
 	scene->AddInstance(camera);
 	scene->MainCamera(camera->GetComponent<CCameraComponent>());
