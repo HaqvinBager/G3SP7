@@ -227,11 +227,11 @@ public class ExportVertexPaint : Editor
 
                     if (fileInfo.Name.ToLower().Contains("_c")) 
                     {
-                        if (!texturePaths.Contains(fileInfo.Directory.Name))
-                        {
+                        //if (!texturePaths.Contains(fileInfo.Directory.Name))
+                        //{
                             texturePaths.Add(fileInfo.Directory.Name);
                             continue;
-                        }
+                        //}
                     } 
                 }
             }
