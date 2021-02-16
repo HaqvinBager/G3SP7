@@ -6,13 +6,12 @@
 #include "NodeTypeMathAdd.h"
 #include "NodeTypeMathSub.h"
 #include "NodeTypeMathMul.h"
-//#include "CNodeTypeGetGameObjectPosition.h"
-//#include "CNodeTypeSetGameObjectPosition.h"
+#include "NodeTypeGetGameObjectPosition.h"
+#include "NodeTypeSetGameObjectPosition.h"
 #include "NodeTypeMathCos.h"
 #include "NodeTypeMathSin.h"
 #include "NodeTypeMathAbs.h"
 #include "NodeTypeMathAtan2.h"
-//#include "CNodeTypeCreateGameObject.h"
 #include "NodeTypeMathCeil.h"
 #include "NodeTypeMathFloor.h"
 #include "NodeTypeMathToRadians.h"
@@ -25,11 +24,10 @@
 #include "NodeTypeMathMax.h"
 #include "NodeTypeMathMin.h"
 #include "NodeTypeMathDistance.h"
-//#include "CNodeTypeSetGameObjectScale.h"
 #include "NodeTypeGetMousePosition.h"
-//#include "CNodeTypeForEachGameObject.h"
-//#include "CNodeTypeVolumeTrigger.h"
-//#include "CNodeTypeTimer.h"
+#include "NodeTypeForEachGameObject.h"
+#include "NodeTypeVolumeTrigger.h"
+#include "NodeTypeTimer.h"
 #include "NodeTypePrintAction.h"
 #include "NodeTypeFloatDecision.h"
 #include "NodeTypeRunDecisionTree.h"
@@ -48,13 +46,12 @@ void CNodeTypeCollector::PopulateTypes()
 	RegisterType<CNodeTypeMathAdd>();
 	RegisterType<CNodeTypeMathSub>();
 	RegisterType<CNodeTypeMathMul>();
-	//RegisterType<CNodeTypeGetGameObjectPosition>();
-	//RegisterType<CNodeTypeSetGameObjectPosition>();
+	RegisterType<CNodeTypeGetGameObjectPosition>();
+	RegisterType<CNodeTypeSetGameObjectPosition>();
 	RegisterType<CNodeTypeMathCos>();
 	RegisterType<CNodeTypeMathSin>();
 	RegisterType<CNodeTypeMathAbs>();
 	RegisterType<CNodeTypeMathAtan2>();
-	//RegisterType<CNodeTypeCreateGameObject>();
 	RegisterType<CNodeTypeMathCeil>();
 	RegisterType<CNodeTypeMathFloor>();
 	RegisterType<CNodeTypeMathToRadians>();
@@ -67,11 +64,10 @@ void CNodeTypeCollector::PopulateTypes()
 	RegisterType<CNodeTypeMathMax>();
 	RegisterType<CNodeTypeMathMin>();
 	RegisterType<CNodeTypeMathDistance>();
-	//RegisterType<CNodeTypeSetGameObjectScale>();
 	RegisterType<CNodeTypeGetMousePosition>();
-	//RegisterType<CNodeTypeForEachGameObject>();
-	//RegisterType<CNodeTypeVolumeTrigger>();
-	//RegisterType<CNodeTypeTimer>();
+	RegisterType<CNodeTypeForEachGameObject>();
+	RegisterType<CNodeTypeVolumeTrigger>();
+	RegisterType<CNodeTypeTimer>();
 	RegisterType<CNodeTypePrintAction>();
 	RegisterType<CNodeTypeFloatDecision>();
 	RegisterType<CNodeTypeRunDecisionTree>();

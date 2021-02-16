@@ -39,7 +39,7 @@ int CNodeTypeRunDecisionTree::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 
 void CNodeTypeRunDecisionTree::ClearNodeInstanceFromMap(CNodeInstance* aTriggeringNodeInstance)
 {
-	for (auto it : myTreesToRun)
+	for (auto& it : myTreesToRun)
 	{
 		if (it.first == aTriggeringNodeInstance)
 		{

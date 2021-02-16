@@ -59,7 +59,6 @@ private:
 
 };
 
-
 struct SPin
 {
 
@@ -112,8 +111,6 @@ struct SPin
 	EPinTypeInOut myPinType;
 };
 
-
-
 class CNodeType
 {
 public:
@@ -140,7 +137,6 @@ public:
 
 	int myID = -1;
 
-
 protected:
 	template <class T>
 	void DeclareDataOnPinIfNecessary(SPin& aPin)
@@ -149,14 +145,10 @@ protected:
 		{
 			aPin.myData = new T;
 		}
-
 	}
 	virtual int OnEnter(class CNodeInstance* /*aTriggeringNodeInstance*/) { return -1; };
 	void GetDataOnPin(CNodeInstance* aTriggeringNodeInstance, unsigned int aPinIndex, SPin::EPinType& outType, void*& someData, size_t& outSize);
 	std::vector<SPin> myPins;
-
-
-
 };
 
 class CNodeTypeCollector
@@ -186,4 +178,3 @@ public:
 	static unsigned short myTypeCounter;
 	static unsigned short myTypeCount;
 };
-
