@@ -4,15 +4,15 @@
 
 CNodeTypeMathMax::CNodeTypeMathMax()
 {
-	myPins.push_back(SPin("Val1", SPin::PinTypeInOut::PinTypeInOut_IN, SPin::PinType::Float)); // Pin index 0
-	myPins.push_back(SPin("Val2", SPin::PinTypeInOut::PinTypeInOut_IN, SPin::PinType::Float)); // Pin index 1
-	myPins.push_back(SPin("OUT", SPin::PinTypeInOut::PinTypeInOut_OUT, SPin::PinType::Float)); // Pin index 2
+	myPins.push_back(SPin("Val1", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Float)); // Pin index 0
+	myPins.push_back(SPin("Val2", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Float)); // Pin index 1
+	myPins.push_back(SPin("OUT", SPin::EPinTypeInOut::PinTypeInOut_OUT, SPin::EPinType::Float)); // Pin index 2
 }
 
 int CNodeTypeMathMax::OnEnter(class CNodeInstance* aTriggeringNodeInstance)
 {
 	// Three variables we can fill with data when we aquire data from another node
-	SPin::PinType outType;
+	SPin::EPinType outType;
 	NodeDataPtr someData = nullptr;
 	size_t outSize = 0;
 	// End

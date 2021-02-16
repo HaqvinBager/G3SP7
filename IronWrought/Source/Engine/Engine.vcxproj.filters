@@ -545,6 +545,51 @@
     <ClCompile Include="..\Includes\ImGui\NodeEditor\imgui_node_editor_api.cpp">
       <Filter>Imgui\Node Editor\Core</Filter>
     </ClCompile>
+    <ClCompile Include="DecisionNode.cpp">
+      <Filter>Decision Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="ActionNode.cpp">
+      <Filter>Decision Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="FloatDecisionNode.cpp">
+      <Filter>Decision Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="PrintActionNode.cpp">
+      <Filter>Decision Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="DecisionTreeManager.cpp">
+      <Filter>Decision Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeFloatDecision.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Base Library\Decision Tree\Decision</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypePrintAction.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Base Library\Decision Tree\Action</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeRunDecisionTree.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Base Library\Decision Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeTimer.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Base Library\Timer</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeVolumeTrigger.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Base Library\Trigger</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeForEachGameObject.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Base Library\Game Object</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeGetGameObjectPosition.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Base Library\Game Object</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeSetGameObjectPosition.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Base Library\Game Object</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphNodeCollisionManager.cpp">
+      <Filter>Imgui\Node Editor\Node Editor Managers\NodeType Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphNodeTimerManager.cpp">
+      <Filter>Imgui\Node Editor\Node Editor Managers\NodeType Managers</Filter>
+    </ClCompile>
     <ClCompile Include="State.cpp" />
     <ClCompile Include="StateStack.cpp" />
     <ClCompile Include="AnimationController.cpp">
@@ -1010,6 +1055,54 @@
     <ClInclude Include="..\Includes\ImGui\Core\imconfig.h">
       <Filter>Imgui\Core</Filter>
     </ClInclude>
+    <ClInclude Include="ActionNode.h">
+      <Filter>Decision Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseDecisionNode.h">
+      <Filter>Decision Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="DecisionNode.h">
+      <Filter>Decision Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="FloatDecisionNode.h">
+      <Filter>Decision Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="PrintActionNode.h">
+      <Filter>Decision Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="DecisionTreeManager.h">
+      <Filter>Decision Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeFloatDecision.h">
+      <Filter>Imgui\Node Editor\Nodes\Base Library\Decision Tree\Decision</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypePrintAction.h">
+      <Filter>Imgui\Node Editor\Nodes\Base Library\Decision Tree\Action</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeRunDecisionTree.h">
+      <Filter>Imgui\Node Editor\Nodes\Base Library\Decision Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeTimer.h">
+      <Filter>Imgui\Node Editor\Nodes\Base Library\Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeVolumeTrigger.h">
+      <Filter>Imgui\Node Editor\Nodes\Base Library\Trigger</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeForEachGameObject.h">
+      <Filter>Imgui\Node Editor\Nodes\Base Library\Game Object</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeGetGameObjectPosition.h">
+      <Filter>Imgui\Node Editor\Nodes\Base Library\Game Object</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeSetGameObjectPosition.h">
+      <Filter>Imgui\Node Editor\Nodes\Base Library\Game Object</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphNodeCollisionManager.h">
+      <Filter>Imgui\Node Editor\Node Editor Managers\NodeType Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphNodeTimerManager.h">
+      <Filter>Imgui\Node Editor\Node Editor Managers\NodeType Managers</Filter>
+    </ClInclude>
     <ClInclude Include="State.h" />
     <ClInclude Include="StateStack.h" />
     <ClInclude Include="CStateMachineComponent.h">
@@ -1221,9 +1314,6 @@
     <Filter Include="Imgui\Node Editor\Nodes\Base Library\Trigger">
       <UniqueIdentifier>{91609e06-4217-4759-beb5-82276c4b60bc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Imgui\Node Editor\Nodes\Base Library\Gameobject">
-      <UniqueIdentifier>{8bbe5362-d12e-4d25-9a8f-5cd174138235}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Shaders\Deferred Render Passes">
       <UniqueIdentifier>{4e1a5e39-8e5c-4cda-9552-2d86c85c158e}</UniqueIdentifier>
     </Filter>
@@ -1244,6 +1334,21 @@
     </Filter>
     <Filter Include="Imgui\Core">
       <UniqueIdentifier>{100a0dc1-32c8-4e4b-8d00-f091b7106618}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Decision Tree">
+      <UniqueIdentifier>{b8340d6e-3231-47ae-bf03-265453331bc3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Nodes\Base Library\Decision Tree">
+      <UniqueIdentifier>{ca9bd566-2c6c-4fa1-8c61-915990d8a05d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Nodes\Base Library\Decision Tree\Decision">
+      <UniqueIdentifier>{51c6e420-e832-4070-bd70-9d8819a8d136}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Nodes\Base Library\Decision Tree\Action">
+      <UniqueIdentifier>{b6faa346-a15d-4302-a326-2f5d9d4ee004}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Nodes\Base Library\Game Object">
+      <UniqueIdentifier>{8bbe5362-d12e-4d25-9a8f-5cd174138235}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

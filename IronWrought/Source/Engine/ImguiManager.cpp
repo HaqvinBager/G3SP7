@@ -4,12 +4,11 @@
 #include "Engine.h"
 #include "Scene.h"
 #include "SceneManager.h"
-#pragma comment(lib, "imgui.lib")
 #include "GraphManager.h"
 #include "RenderManager.h"
 #include <psapi.h>
 
-#pragma comment(lib, "psapi.lib")
+//#pragma comment(lib, "psapi.lib")
 
 static ImFont* ImGui_LoadFont(ImFontAtlas& atlas, const char* name, float size, const ImVec2& displayOffset = ImVec2(0, 0))
 {
@@ -81,11 +80,6 @@ void CImguiManager::Update()
 		if(myGraphManager->ShouldRenderGraph())
 			myGraphManager->ToggleShouldRenderGraph();
 	}
-}
-
-void CImguiManager::PostRender()
-{
-	myGraphManager->PostRender();
 }
 
 void CImguiManager::DebugWindow()
