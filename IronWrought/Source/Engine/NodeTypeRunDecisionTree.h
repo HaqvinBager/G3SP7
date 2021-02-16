@@ -16,4 +16,3 @@ public:
 private:
 	std::unordered_map<CNodeInstance*, IBaseDecisionNode*> myTreesToRun;
 };
-
