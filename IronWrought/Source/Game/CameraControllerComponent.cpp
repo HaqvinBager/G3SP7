@@ -43,7 +43,7 @@ void CCameraControllerComponent::Update()
 	{
 		bool showCursor = CEngine::GetInstance()->GetWindowHandler()->CursorLocked();
 		CEngine::GetInstance()->GetWindowHandler()->LockCursor(!showCursor);
-		myCameraMode = (myCameraMode == ECameraMode::UnlockCursor) ? ECameraMode::PlayerFirstPerson : ECameraMode::UnlockCursor;
+		myCameraMode = (myCameraMode == ECameraMode::UnlockCursor) ? ECameraMode::FreeCam : ECameraMode::UnlockCursor;
 	}
 	// ! TEMPORARY
 
