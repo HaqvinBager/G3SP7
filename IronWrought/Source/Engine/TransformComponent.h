@@ -21,6 +21,7 @@ public:
 	DirectX::SimpleMath::Quaternion Rotation() const;
 
 	void Scale(DirectX::SimpleMath::Vector3 aScale);
+	void Scale(float aScale);
 	DirectX::SimpleMath::Vector3 Scale() const;
 
 	DirectX::SimpleMath::Matrix& Transform();
@@ -45,7 +46,7 @@ public:
 	{
 
 	}
-	void SetParent(CTransformComponent* aParent); /*{ myParent = aParent; }*/
+	void SetParent(CTransformComponent* aParent);
 	void RemoveParent();
 
 private:

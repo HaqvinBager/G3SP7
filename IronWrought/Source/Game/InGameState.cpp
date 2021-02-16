@@ -28,7 +28,7 @@
 #include "SceneManager.h"
 #include "FolderUtility.h"
 
-
+#include "animationLoader.h"
 void TEMP_DeferredRenderingTests(CScene* aScene);
 
 CInGameState::CInGameState(CStateStack& aStateStack, const CStateStack::EState aState)
@@ -43,14 +43,18 @@ void CInGameState::Awake(){}
 
 #include "PointLight.h"
 #include "PointLightComponent.h"
-
+#include "PlayerControllerComponent.h"
 void CInGameState::Start()
 {
+	//CScene* scene = CSceneManager::CreateEmpty();
 	CScene* scene = new CScene();
-	std::vector<std::string> scenePaths;
-	scenePaths = CFolderUtility::GetFilePathsInFolder(ASSETPATH + "Assets\\Generated\\", ".json");
-	CMainSingleton::ImguiManager().LevelsToSelectFrom(scenePaths);
-	scene = CSceneManager::CreateScene(scenePaths[0].c_str());
+
+	//CScene* scene = new CScene();
+	//std::vector<std::string> scenePaths;
+	//scenePaths = CFolderUtility::GetFilePathsInFolder(ASSETPATH + "Assets\\Generated\\", ".json");
+	//CMainSingleton::ImguiManager().LevelsToSelectFrom(scenePaths);
+	//scene = CSceneManager::CreateScene(scenePaths[0].c_str());
+
 	//std::string scenePath = "Level_1.json";
 	//CScene* scene = new CScene();
 	//scene = CSceneManager::CreateScene(scenePath);	
@@ -59,14 +63,36 @@ void CInGameState::Start()
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);
 
-	CGameObject* physxmaterialtestobject = new CGameObject(60);
+	//CGameObject* physxmaterialtestobject = new CGameObject(60);
+	//
+	//physxmaterialtestobject->AddComponent<CModelComponent>(*physxmaterialtestobject, std::string(ASSETPATH + "Assets/Graphics/Exempel_Modeller/Wall/Wall.fbx"));
+	//physxmaterialtestobject->AddComponent<CRigidBodyComponent>(*physxmaterialtestobject);
+	//physxmaterialtestobject->GetComponent<CTransformComponent>()->Position({ 10.0f, 190.0f, 5.0f });
+	//
+	//scene->AddInstance(physxmaterialtestobject);
 
-	physxmaterialtestobject->AddComponent<CModelComponent>(*physxmaterialtestobject, std::string(ASSETPATH + "Assets/Graphics/Exempel_Modeller/Wall/Wall.fbx"));
-	physxmaterialtestobject->AddComponent<CRigidBodyComponent>(*physxmaterialtestobject);
-	physxmaterialtestobject->GetComponent<CTransformComponent>()->Position({ 5.0f, 190.0f, 5.0f });
+	CGameObject* player = new CGameObject(999);
+	player->AddComponent<CModelComponent>(*player, ASSETPATH + "Assets/Graphics/Character/Main Character/CH_PL_SK.fbx");
+	player->AddComponent<CPlayerControllerComponent>(*player);
+	scene->AddInstance(player);
 
+	CGameObject* camera = new CGameObject(1000);
+	camera->AddComponent<CCameraComponent>(*camera, 65.0f);
+	camera->AddComponent<CCameraControllerComponent>(*camera, 2.0f);
+	camera->myTransform->SetParent(player->myTransform);
+	camera->myTransform->Position({ 0.0f, 1.6f, -0.2f });
+	camera->myTransform->Rotation({ 0.0f, 180.0f, 0.0f });
 
-	scene->AddInstance(physxmaterialtestobject);
+	scene->AddInstance(camera);
+	scene->MainCamera(camera->GetComponent<CCameraComponent>());
+
+	CGameObject* envLight = new CGameObject(1);
+	envLight->AddComponent<CEnviromentLightComponent>(*envLight);
+	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetIntensity(1.f);
+	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetDirection({ 0.0f,0.0f,-1.0f });
+
+	scene ->EnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight());
+	scene ->AddInstance(envLight);
 
 	myExitLevel = false;
 
