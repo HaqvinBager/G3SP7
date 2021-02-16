@@ -49,15 +49,11 @@ void CInGameState::Start()
 	//CScene* scene = CSceneManager::CreateEmpty();
 	CScene* scene = new CScene();
 
-	//CScene* scene = new CScene();
 	//std::vector<std::string> scenePaths;
 	//scenePaths = CFolderUtility::GetFilePathsInFolder(ASSETPATH + "Assets\\Generated\\", ".json");
 	//CMainSingleton::ImguiManager().LevelsToSelectFrom(scenePaths);
 	//scene = CSceneManager::CreateScene(scenePaths[0].c_str());
 
-	//std::string scenePath = "Level_1.json";
-	//CScene* scene = new CScene();
-	//scene = CSceneManager::CreateScene(scenePath);	
 	scene->AddPXScene(CEngine::GetInstance()->GetPhysx().CreatePXScene());
 	
 	CEngine::GetInstance()->AddScene(myState, scene);
@@ -74,23 +70,17 @@ void CInGameState::Start()
 	CGameObject* player = new CGameObject(999);
 	player->AddComponent<CModelComponent>(*player, ASSETPATH + "Assets/Graphics/Character/Main Character/CH_PL_SK.fbx");
 	player->AddComponent<CPlayerControllerComponent>(*player);
+	player->myTransform->Rotation({ 0.0f, 180.0f, 0.0f });
 	scene->AddInstance(player);
-
-	CGameObject* camera = new CGameObject(1000);
-	camera->AddComponent<CCameraComponent>(*camera, 65.0f);
-	camera->AddComponent<CCameraControllerComponent>(*camera, 2.0f);
-	camera->myTransform->SetParent(player->myTransform);
-	camera->myTransform->Position({ 0.0f, 1.6f, -0.2f });
-	camera->myTransform->Rotation({ 0.0f, 180.0f, 0.0f });
-
+	CGameObject* camera = CCameraControllerComponent::CreatePlayerFirstPersonCamera(player);
 	scene->AddInstance(camera);
 	scene->MainCamera(camera->GetComponent<CCameraComponent>());
-
+	
 	CGameObject* envLight = new CGameObject(1);
 	envLight->AddComponent<CEnviromentLightComponent>(*envLight);
 	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetIntensity(1.f);
 	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetDirection({ 0.0f,0.0f,-1.0f });
-
+	
 	scene ->EnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight());
 	scene ->AddInstance(envLight);
 
