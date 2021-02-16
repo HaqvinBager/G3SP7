@@ -168,7 +168,14 @@ public class ExportVertexPaint : Editor
         VertexLinkCollection collection = new VertexLinkCollection();
         collection.links = vertexLinks.ToArray();
         string jsonString = JsonUtility.ToJson(collection);
+
+        if (!File.Exists("Assets\\Generated"))
+            Directory.CreateDirectory(Directory.GetCurrentDirectory() +  "\\" + targetPath);
+            //File.Create(targetPath);
+
         string savePath = targetPath + "PolybrushLinks_" + aScene.name + ".json";
+
+
         File.WriteAllText(savePath, jsonString);
 
         return exportedVertexPaintObjects;

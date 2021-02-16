@@ -8,6 +8,7 @@
 #include "EnviromentLightComponent.h"
 #include "ModelComponent.h"
 #include <iostream>
+#include <PlayerControllerComponent.h>
 
 
 
@@ -46,10 +47,10 @@ CScene* CSceneManager::CreateScene(std::string aJsonFile)//TEMP
 {
 	CScene* scene = new CScene(1);
 	rapidjson::Document document = CJsonReader::Get()->LoadDocument(ASSETPATH + "Assets/Generated/" + aJsonFile);
-	if (document.HasMember("instancedGameObjects")) {
+	if (document.HasMember("instancedGameobjects")) {
 
 
-		auto jsonarray = document["instancedGameObjects"].GetArray();
+		auto jsonarray = document["instancedGameobjects"].GetArray();
 		for (auto& jsongameobject : jsonarray) {
 
 			CGameObject* instancedGameObject = new CGameObject(0);
@@ -137,12 +138,19 @@ CScene* CSceneManager::CreateScene(std::string aJsonFile)//TEMP
 		}
 	}
 
+	//CGameObject* player = new CGameObject(999);
+	//player->AddComponent<CModelComponent>(*player, ASSETPATH + "Assets/Graphics/Character/Main Character/CH_PL_SK.fbx");
+	//player->AddComponent<CPlayerControllerComponent>(*player);
+	//scene->AddInstance(player);
 
-	CGameObject* camera = new CGameObject(0);
-	camera->AddComponent<CCameraComponent>(*camera, 70.0f);
+	CGameObject* camera = new CGameObject(1000);
+	camera->AddComponent<CCameraComponent>(*camera, 65.0f);
 	camera->AddComponent<CCameraControllerComponent>(*camera, 5.0f);
-	camera->myTransform->Position({ 0.0f, 1.0f, 0.0f });
-	camera->myTransform->Rotation({ 0.0f, 0.0f, 0.0f });
+	//camera->myTransform->Position({ 0.0f, 1.6f, -0.2f });
+	//player->myTransform->SetParent(camera->myTransform);
+	//camera->myTransform->SetParent(player->myTransform);
+	//camera->myTransform->Rotation({ 0.0f, 180.0f, 0.0f });
+
 	scene->AddInstance(camera);
 	scene->MainCamera(camera->GetComponent<CCameraComponent>());
 
@@ -150,8 +158,9 @@ CScene* CSceneManager::CreateScene(std::string aJsonFile)//TEMP
 	envLight->AddComponent<CEnviromentLightComponent>(*envLight);
 	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetIntensity(1.f);
 	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetDirection({ 0.0f,0.0f,-1.0f });
-	scene->AddInstance(envLight);
+
 	scene->EnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight());
+	scene->AddInstance(envLight);
 
 
 	return scene;
