@@ -6,8 +6,8 @@ VertexModelToPixel main(VertexModelInput input)
 
     float4 vertexObjectPos      = input.myPosition.xyzw;
     float4 vertexWorldPos       = mul(toWorld, vertexObjectPos);
-    float4 vertexViewPos        = mul(toCamera, vertexWorldPos);
-    float4 vertexProjectionPos  = mul(toProjection, vertexViewPos);
+    float4 vertexViewPos        = mul(toCameraSpace, vertexWorldPos);
+    float4 vertexProjectionPos  = mul(toProjectionSpace, vertexViewPos);
     
     float3x3 toWorldRotation    = (float3x3) toWorld;
     float3 vertexWorldNormal    = mul(toWorldRotation, input.myNormal.xyz);

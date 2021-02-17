@@ -1,27 +1,23 @@
 #pragma once
-#include <vector>
-#include "SimpleMath.h"
 
 struct ID3D11DeviceContext;
 struct ID3D11Buffer;
 class CDirectXFramework;
-class CCamera;
-class CVFXInstance;
-class CGameObject;
 class CCameraComponent;
+class CGameObject;
 
-class CVFXRenderer {
+class CDecalRenderer
+{
 public:
-	CVFXRenderer();
-	~CVFXRenderer();
+	CDecalRenderer();
+	~CDecalRenderer();
 
 	bool Init(CDirectXFramework* aFramework);
-
 	void Render(CCameraComponent* aCamera, std::vector<CGameObject*>& aGameObjectList);
 
 private:
 	template<class T>
-	void BindBuffer(ID3D11Buffer* aBuffer, T& someBufferData, std::string aBufferType) 
+	void BindBuffer(ID3D11Buffer* aBuffer, T& someBufferData, std::string aBufferType)
 	{
 		D3D11_MAPPED_SUBRESOURCE bufferData;
 		ZeroMemory(&bufferData, sizeof(D3D11_MAPPED_SUBRESOURCE));
@@ -32,37 +28,25 @@ private:
 		myContext->Unmap(aBuffer, 0);
 	}
 
+	bool CreatePixelShader(std::string aFilepath, CDirectXFramework* aFramework, ID3D11PixelShader** outPixelShader);
+
 private:
-	struct SFrameBufferData {
+	struct SFrameBufferData
+	{
 		DirectX::SimpleMath::Matrix myToCameraSpace;
 		DirectX::SimpleMath::Matrix myToProjectionSpace;
+		DirectX::SimpleMath::Vector4 myCameraPosition;
 	} myFrameBufferData;
 
-	struct SObjectBufferData {
+	struct SObjectBufferData
+	{
 		DirectX::SimpleMath::Matrix myToWorld;
 	} myObjectBufferData;
-
-	struct STextureScrollingData {
-		DirectX::SimpleMath::Vector2 scrollSpeed1;
-		DirectX::SimpleMath::Vector2 scrollSpeed2;
-		DirectX::SimpleMath::Vector2 scrollSpeed3;
-		DirectX::SimpleMath::Vector2 scrollSpeed4;
-
-		float uvScale1;
-		float uvScale2;
-		float uvScale3;
-		float uvScale4;
-		float scrollTimer;
-		float opacityStrength;
-		DirectX::SimpleMath::Vector2 padding;
-	} myTextureScrollingData;
 
 private:
 	ID3D11DeviceContext* myContext;
 	ID3D11Buffer* myFrameBuffer;
 	ID3D11Buffer* myObjectBuffer;
-	ID3D11Buffer* myTextureScrollingBuffer;
-
-	float myTime;
+	ID3D11PixelShader* myPixelShader;
 };
 
