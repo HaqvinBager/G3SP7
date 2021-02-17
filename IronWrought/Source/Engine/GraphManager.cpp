@@ -754,7 +754,7 @@ void CGraphManager::PreFrame(float aDeltaTime)
 			{
 				selected = i;
 
-				if (ImGui::IsMouseDoubleClicked(0))
+				if (ImGui::IsMouseClicked(0))
 				{
 					myCurrentKey = myKeys[i];
 					myCurrentPath = "Imgui/NodeScripts/" + myKeys[i] + "/" + myKeys[i];
