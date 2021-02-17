@@ -46,14 +46,10 @@ CDeferredRenderer::~CDeferredRenderer()
 bool CDeferredRenderer::Init(CDirectXFramework* aFramework)
 {
 	myContext = aFramework->GetContext();
-	if (!myContext){
-		return false; // Maybe we should fix proper error handling?? :S
-	}
+	ENGINE_ERROR_BOOL_MESSAGE(myContext, "Context could not be acquired from Framework.");
 
 	ID3D11Device* device = aFramework->GetDevice();
-	if (!device) {
-		return false;
-	}
+	ENGINE_ERROR_BOOL_MESSAGE(device, "Device could not be acquired from Framework.");
 
 	D3D11_BUFFER_DESC bufferDescription = { 0 };
 	bufferDescription.Usage = D3D11_USAGE_DYNAMIC;
@@ -139,6 +135,13 @@ bool CDeferredRenderer::Init(CDirectXFramework* aFramework)
 	samplerDesc.MinLOD = 0;
 	samplerDesc.MaxLOD = 10;
 	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateSamplerState(&samplerDesc, &mySamplerState), "Sampler could not be created.");
+
+	samplerDesc = CD3D11_SAMPLER_DESC{ CD3D11_DEFAULT{} };
+	samplerDesc.BorderColor[0] = 1.0f;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+
+	ENGINE_HR_BOOL_MESSAGE(device->CreateSamplerState(&samplerDesc, &myShadowSampler), "Shadow Sampler could not be created.");
 
 	return true;
 }
@@ -320,7 +323,6 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 
 void CDeferredRenderer::Render(CCameraComponent* aCamera, CEnvironmentLight* anEnvironmentLight)
 {
-
 	SM::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
 	myFrameBufferData.myCameraPosition = SM::Vector4{ cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f };
 	myFrameBufferData.myToCameraSpace = cameraMatrix.Invert();
@@ -336,6 +338,9 @@ void CDeferredRenderer::Render(CCameraComponent* aCamera, CEnvironmentLight* anE
 	// Update lightbufferdata and fill lightbuffer
 	myLightBufferData.myDirectionalLightDirection = anEnvironmentLight->GetDirection();
 	myLightBufferData.myDirectionalLightColor = anEnvironmentLight->GetColor();
+	myLightBufferData.myDirectionalLightPosition = anEnvironmentLight->GetShadowPosition();
+	myLightBufferData.myDirectionalLightTransform = anEnvironmentLight->GetShadowTransform();
+	myLightBufferData.myDirectionalLightView = anEnvironmentLight->GetShadowView();
 	BindBuffer(myLightBuffer, myLightBufferData, "Light Buffer");
 	myContext->PSSetConstantBuffers(2, 1, &myLightBuffer);
 
@@ -354,6 +359,7 @@ void CDeferredRenderer::Render(CCameraComponent* aCamera, CEnvironmentLight* anE
 		myContext->PSSetShader(myEnvironmentLightShader, nullptr, 0);
 
 	myContext->PSSetSamplers(0, 1, &mySamplerState);
+	myContext->PSSetSamplers(1, 1, &myShadowSampler);
 
 	myContext->Draw(3, 0);
 	CRenderManager::myNumberOfDrawCallsThisFrame++;

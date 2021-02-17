@@ -103,6 +103,7 @@ void CFullscreenRenderer::Render(FullscreenShader anEffect) {
 	myContext->PSSetShaderResources(8, 1, &nullView);
 	myContext->PSSetShaderResources(9, 1, &nullView);
 	myContext->PSSetShaderResources(21, 1, &nullView);
+	myContext->PSSetShaderResources(22, 1, &nullView);
 
 	myContext->GSSetShader(nullptr, nullptr, 0);
 }

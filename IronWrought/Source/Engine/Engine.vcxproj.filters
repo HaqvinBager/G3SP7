@@ -568,6 +568,9 @@
     <ClCompile Include="DecalFactory.cpp">
       <Filter>Decal</Filter>
     </ClCompile>
+    <ClCompile Include="ShadowRenderer.cpp">
+      <Filter>Renderers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1038,6 +1041,9 @@
     </ClInclude>
     <ClInclude Include="DecalFactory.h">
       <Filter>Decal</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowRenderer.h">
+      <Filter>Renderers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

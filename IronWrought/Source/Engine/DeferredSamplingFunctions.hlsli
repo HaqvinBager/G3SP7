@@ -212,6 +212,7 @@ PixelOutput PixelShader_Emissive(Texture2D aMaterialTexture, VertexToPixel input
     output.myColor.a = 1.0f;
     return output;
 }
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -296,4 +297,67 @@ PixelOutput GBuffer_Emissive(VertexToPixel input)
     output.myColor.rgb = emissive.xxx;
     output.myColor.a = 1.0f;
     return output;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+// SHADOWS SHADOWS SHADOWS SHADOWS SHADOWS SHADOWS SHADOWS SHADOWS SHADOWS SHADOWS SHADOWS
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+
+float SampleShadowPos(float3 projectionPos)
+{
+    float2 uvCoords = projectionPos.xy;
+    uvCoords *= float2(0.5f, -0.5f);
+    uvCoords += float2(0.5f, 0.5f);
+
+    float nonLinearDepth = shadowDepthTexture.Sample(shadowSampler, uvCoords).r;
+    float oob = 1.0f;
+    if (projectionPos.x > 1.0f || projectionPos.x < -1.0f || projectionPos.y > 1.0f || projectionPos.y < -1.0f)
+    {
+        oob = 0.0f;
+    }
+
+    float a = nonLinearDepth * oob;
+    float b = projectionPos.z;
+    b = invLerp(-0.5f, 0.5f, b) * oob;
+
+    b *= oob;
+
+    if (b - a < 0.001f)
+    {
+        return 0.0f;
+    }
+    else
+    {
+        return 1.0f;
+    }
+}
+
+float3 ShadowFactor(float3 worldPosition)
+{
+    worldPosition -= directionalLightPosition.xyz;
+    float4 viewPos = mul(worldPosition, toDirectionalLightTransform);
+    float4 projectionPos = mul(viewPos, toDirectionalLightView);
+    float3 viewCoords = projectionPos.xyz;
+
+    float total = 0.0f;
+    for (float x = -1.0; x < 1.5f; x += 1.0f)
+    {
+        for (float y = -1.0; y < 1.5f; y += 1.0f)
+        {
+            //2048.0f * 4.0f,
+            float3 off;
+            off.x = x / (2048.0f * 4.0f);
+            off.y = y / (2048.0f * 4.0f);
+            off.z = 0.0f;
+            total += SampleShadowPos(viewCoords + off);
+        }
+    }
+    total /= 9.0f;
+    return total;
 }

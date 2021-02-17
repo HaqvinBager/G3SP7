@@ -266,6 +266,7 @@
     <ClInclude Include="RigidBodyComponent.h" />
     <ClInclude Include="RigidDynamicBody.h" />
     <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="ShadowRenderer.h" />
     <ClInclude Include="StackWalker.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="DebugTimerUtility.h" />
@@ -350,6 +351,7 @@
     <ClCompile Include="CameraFactory.cpp" />
     <ClCompile Include="Canvas.cpp" />
     <ClCompile Include="CapsuleColliderComponent.cpp" />
+    <ClCompile Include="ShadowRenderer.cpp" />
     <ClCompile Include="Decal.cpp" />
     <ClCompile Include="DecalComponent.cpp" />
     <ClCompile Include="DecalFactory.cpp" />

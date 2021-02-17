@@ -162,9 +162,9 @@ void TEMP_DeferredRenderingTests(CScene* scene)
 
 	CGameObject* chest44 = new CGameObject(132342347);
 	chest44->AddComponent<CModelComponent>(*chest44, std::string(ASSETPATH + "Assets/Graphics/Exempel_Modeller/Wall/Wall.fbx"));
-	chest44->GetComponent<CTransformComponent>()->Position({2.0f,0.0f,5.0f});
-	//chest4->myTransform->Scale({ 100.0f,100.0f,100.0f });
-	chest44->myTransform->Rotation({ 0.0f,-90.0f,0.0f });
+	chest44->GetComponent<CTransformComponent>()->Position({2.0f,-1.0f,-20.0f});
+	chest44->myTransform->Rotation({ 90.0f,0.0f,0.0f });
+	chest44->myTransform->Scale({ 50.0f,50.0f,50.0f });
 
 	scene->AddInstance(chest);
 	scene->AddInstance(chest4);

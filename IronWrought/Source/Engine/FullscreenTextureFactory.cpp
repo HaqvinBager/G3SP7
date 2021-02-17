@@ -76,6 +76,23 @@ CFullscreenTexture CFullscreenTextureFactory::CreateTexture(ID3D11Texture2D* aTe
 
 CFullscreenTexture CFullscreenTextureFactory::CreateDepth(SM::Vector2 aSize, DXGI_FORMAT aFormat) {
 	
+	DXGI_FORMAT stencilViewFormat = DXGI_FORMAT_UNKNOWN;
+	DXGI_FORMAT shaderResourceViewFormat = DXGI_FORMAT_UNKNOWN;
+
+	switch (aFormat)
+	{
+	case DXGI_FORMAT_R24G8_TYPELESS:
+		stencilViewFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		shaderResourceViewFormat = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+		break;
+	case DXGI_FORMAT_R32_TYPELESS:
+		stencilViewFormat = DXGI_FORMAT_D32_FLOAT;
+		shaderResourceViewFormat = DXGI_FORMAT_R32_FLOAT;
+		break;
+	default:
+		break;
+	}
+
 	D3D11_TEXTURE2D_DESC depthStencilDesc = { 0 };
 	depthStencilDesc.Width = static_cast<unsigned int>(aSize.x);
 	depthStencilDesc.Height = static_cast<unsigned int>(aSize.y);
@@ -90,13 +107,13 @@ CFullscreenTexture CFullscreenTextureFactory::CreateDepth(SM::Vector2 aSize, DXG
 	depthStencilDesc.MiscFlags = 0;
 
 	D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
-	depthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	depthStencilViewDesc.Format = stencilViewFormat;
 	depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	depthStencilViewDesc.Texture2D.MipSlice = 0;
 	depthStencilViewDesc.Flags = 0;
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
-	shaderResourceViewDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+	shaderResourceViewDesc.Format = shaderResourceViewFormat;
 	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
 	shaderResourceViewDesc.Texture2D.MipLevels = 1;

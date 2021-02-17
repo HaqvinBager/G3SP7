@@ -62,6 +62,9 @@ private:
 
 	struct SLightBufferData 
 	{
+		DirectX::SimpleMath::Matrix myDirectionalLightTransform;
+		DirectX::SimpleMath::Matrix myDirectionalLightView;
+		DirectX::SimpleMath::Vector4 myDirectionalLightPosition;
 		DirectX::SimpleMath::Vector4 myDirectionalLightDirection;
 		DirectX::SimpleMath::Vector4 myDirectionalLightColor;
 	} myLightBufferData;
@@ -101,8 +104,9 @@ private:
 	ID3D11PixelShader* myVertexPaintPixelShader;
 	ID3D11PixelShader* myEnvironmentLightShader;
 	ID3D11PixelShader* myPointLightShader;
-// Sampler.
+// Samplers.
 	ID3D11SamplerState* mySamplerState;
+	ID3D11SamplerState* myShadowSampler;
 
 	std::vector<ID3D11PixelShader*> myRenderPassShaders;
 	ID3D11PixelShader* myCurrentRenderPassShader;

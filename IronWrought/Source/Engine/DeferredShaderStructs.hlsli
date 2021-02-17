@@ -75,6 +75,9 @@ cbuffer ObjectBuffer : register(b1)
 
 cbuffer LightBuffer : register(b2)
 {
+    float4x4 toDirectionalLightTransform;
+    float4x4 toDirectionalLightView;
+    float4 directionalLightPosition; // For shadow calculations
     float4 toDirectionalLight;
     float4 directionalLightColor;
 }
@@ -112,9 +115,11 @@ Texture2D detailNormals[4] : register(t8);
 // Vertex Paint Materials
 Texture2D vertexPaintTextures[9] : register(t12);
 
-Texture2D depthTexture : register(t21);
+Texture2D depthTexture          : register(t21);
+Texture2D shadowDepthTexture    : register(t22);
 
 sampler defaultSampler : register(s0);
+sampler shadowSampler  : register(s1);
 
 #define RED_ALBEDO      0
 #define RED_MATERIAL    1
