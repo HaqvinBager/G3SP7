@@ -114,6 +114,8 @@ public class Exporter
             STransform transform = new STransform();
 
             GameObject prefabParent = PrefabUtility.GetOutermostPrefabInstanceRoot(allrenderers[i]);
+            prefabParent.Ping();
+
 
             transform.instanceID = prefabParent.transform.GetInstanceID();
             //allrenderers[i].transform.GetInstanceID();
@@ -151,7 +153,10 @@ public class Exporter
                 SGameObject gameObject = new SGameObject();
                 string fbxPath = AssetDatabase.GUIDToAssetPath(polyBrushFBX.originalFBXGUID);
                 gameObject.model.fbxPath = fbxPath;
-                gameObject.transform.instanceID = vertexPaintedObject.transform.GetInstanceID();
+
+                GameObject prefabParent = PrefabUtility.GetOutermostPrefabInstanceRoot(vertexPaintedObject);
+
+                gameObject.transform.instanceID = prefabParent.transform.GetInstanceID();
                 gameObject.transform.position = vertexPaintedObject.transform.ConvertToIronWroughtPosition();
                 gameObject.transform.rotation = vertexPaintedObject.transform.ConvertToIronWroughtRotation();
                 gameObject.transform.scale = vertexPaintedObject.transform.ConvertToIronWroughtScale();

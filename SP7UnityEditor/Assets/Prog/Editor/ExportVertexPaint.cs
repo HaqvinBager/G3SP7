@@ -119,6 +119,7 @@ public class ExportVertexPaint : Editor
             {
                 VertexLink newLink = new VertexLink();
                 GameObject prefabRoot = PrefabUtility.GetOutermostPrefabInstanceRoot(polyBrushObject);
+              //  prefabRoot.Ping();
                 newLink.colorsPath = targetPath + "PolybrushColors_" + polyMeshID + "_Bin.bin";
                 newLink.myTransformIDs = new List<int>();
                 newLink.myTransformIDs.Add(prefabRoot.transform.GetInstanceID());
