@@ -75,45 +75,63 @@ CFullscreenTexture CFullscreenTextureFactory::CreateTexture(ID3D11Texture2D* aTe
 }
 
 CFullscreenTexture CFullscreenTextureFactory::CreateDepth(SM::Vector2 aSize, DXGI_FORMAT aFormat) {
-	HRESULT result;
+	
+	DXGI_FORMAT stencilViewFormat = DXGI_FORMAT_UNKNOWN;
+	DXGI_FORMAT shaderResourceViewFormat = DXGI_FORMAT_UNKNOWN;
 
-	D3D11_TEXTURE2D_DESC textureDesc = { 0 };
-	textureDesc.Width = static_cast<unsigned int>(aSize.x);
-	textureDesc.Height = static_cast<unsigned int>(aSize.y);
-	textureDesc.MipLevels = 1;
-	textureDesc.ArraySize = 1;
-	textureDesc.Format = aFormat;
-	textureDesc.SampleDesc.Count = 1;
-	textureDesc.SampleDesc.Quality = 0;
-	textureDesc.Usage = D3D11_USAGE_DEFAULT;
-	textureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	textureDesc.CPUAccessFlags = 0;
-	textureDesc.MiscFlags = 0;
-
-	ID3D11Texture2D* texture;
-	result = myFramework->GetDevice()->CreateTexture2D(&textureDesc, nullptr, &texture);
-	if (FAILED(result)) {
-		//return;
+	switch (aFormat)
+	{
+	case DXGI_FORMAT_R24G8_TYPELESS:
+		stencilViewFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		shaderResourceViewFormat = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+		break;
+	case DXGI_FORMAT_R32_TYPELESS:
+		stencilViewFormat = DXGI_FORMAT_D32_FLOAT;
+		shaderResourceViewFormat = DXGI_FORMAT_R32_FLOAT;
+		break;
+	default:
+		break;
 	}
 
+	D3D11_TEXTURE2D_DESC depthStencilDesc = { 0 };
+	depthStencilDesc.Width = static_cast<unsigned int>(aSize.x);
+	depthStencilDesc.Height = static_cast<unsigned int>(aSize.y);
+	depthStencilDesc.MipLevels = 1;
+	depthStencilDesc.ArraySize = 1;
+	depthStencilDesc.Format = aFormat;
+	depthStencilDesc.SampleDesc.Count = 1;
+	depthStencilDesc.SampleDesc.Quality = 0;
+	depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
+	depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+	depthStencilDesc.CPUAccessFlags = 0;
+	depthStencilDesc.MiscFlags = 0;
+
 	D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
-	depthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	depthStencilViewDesc.Format = stencilViewFormat;
 	depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	depthStencilViewDesc.Texture2D.MipSlice = 0;
 	depthStencilViewDesc.Flags = 0;
 
-	ID3D11DepthStencilView* depth;
-	result = myFramework->GetDevice()->CreateDepthStencilView(texture, /*nullptr*/&depthStencilViewDesc, &depth);
-	if (FAILED(result)) {
-		//return;
-	}
+	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
+	shaderResourceViewDesc.Format = shaderResourceViewFormat;
+	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
+	shaderResourceViewDesc.Texture2D.MipLevels = 1;
+
+	ID3D11Texture2D* depthStencilBuffer;
+	ENGINE_HR_MESSAGE(myFramework->GetDevice()->CreateTexture2D(&depthStencilDesc, nullptr, &depthStencilBuffer), "Texture could not be created.");
+	ID3D11DepthStencilView* depthStencilView;
+	ENGINE_HR_MESSAGE(myFramework->GetDevice()->CreateDepthStencilView(depthStencilBuffer, &depthStencilViewDesc, &depthStencilView), "Depth could not be created.");
+	ID3D11ShaderResourceView* shaderResource;
+	ENGINE_HR_MESSAGE(myFramework->GetDevice()->CreateShaderResourceView(depthStencilBuffer, &shaderResourceViewDesc, &shaderResource), "Depth Shader Resource could not be created.");
 
 	D3D11_VIEWPORT* viewport = new D3D11_VIEWPORT({ 0.0f, 0.0f, aSize.x, aSize.y, 0.0f, 1.0f });
 
 	CFullscreenTexture returnDepth;
 	returnDepth.myContext = myFramework->GetContext();
-	returnDepth.myTexture = texture;
-	returnDepth.myDepth = depth;
+	returnDepth.myTexture = depthStencilBuffer;
+	returnDepth.myDepth = depthStencilView;
+	returnDepth.myShaderResource = shaderResource;
 	returnDepth.myViewport = viewport;
 	return returnDepth;
 }
@@ -122,14 +140,10 @@ CGBuffer CFullscreenTextureFactory::CreateGBuffer(DirectX::SimpleMath::Vector2 a
 {
 	std::array<DXGI_FORMAT, static_cast<size_t>(CGBuffer::EGBufferTextures::COUNT)> textureFormats =
 	{
-		DXGI_FORMAT_R32G32B32A32_FLOAT,
 		DXGI_FORMAT_R8G8B8A8_UNORM,
 		DXGI_FORMAT_R16G16B16A16_SNORM,
 		DXGI_FORMAT_R16G16B16A16_SNORM,
-		//DXGI_FORMAT_R8_UNORM,
-		//DXGI_FORMAT_R8_UNORM,
-		//DXGI_FORMAT_R8_UNORM,
-		//DXGI_FORMAT_R8_UNORM,
+		DXGI_FORMAT_R8G8B8A8_UNORM,
 	};
 
 	//Creating textures, rendertargets, shaderresources and a viewport

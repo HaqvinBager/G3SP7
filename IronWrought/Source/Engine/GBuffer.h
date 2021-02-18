@@ -8,14 +8,10 @@ public:
 public:
 	enum class EGBufferTextures
 	{
-		POSITION,
 		ALBEDO,
 		NORMAL,
 		VERTEXNORMAL,
-		//METALNESS,
-		//ROUGHNESS,
-		//AMBIENTOCCLUSION,
-		//EMISSIVE,
+		MATERIAL,
 		COUNT
 	};
 

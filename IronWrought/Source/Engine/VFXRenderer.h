@@ -34,8 +34,8 @@ private:
 
 private:
 	struct SFrameBufferData {
-		DirectX::SimpleMath::Matrix myToCamera;
-		DirectX::SimpleMath::Matrix myToProjection;
+		DirectX::SimpleMath::Matrix myToCameraSpace;
+		DirectX::SimpleMath::Matrix myToProjectionSpace;
 	} myFrameBufferData;
 
 	struct SObjectBufferData {

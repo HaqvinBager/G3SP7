@@ -1,32 +1,40 @@
 #include "stdafx.h"
 #include "NodeTypeSetGameObjectPosition.h"
 #include "NodeInstance.h"
-#include "Scene.h"
+#include "GameObject.h"
+#include "TransformComponent.h"
 
 CNodeTypeSetGameObjectPosition::CNodeTypeSetGameObjectPosition()
 {
-	myPins.push_back(SPin("IN", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Flow));
-	myPins.push_back(SPin("OUT", SPin::EPinTypeInOut::PinTypeInOut_OUT));
-    myPins.push_back(SPin("ID", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Int));
-    myPins.push_back(SPin("X", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Float));
-    myPins.push_back(SPin("Y", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Float));
+	myPins.push_back(SPin("IN", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Flow));	//0
+	myPins.push_back(SPin("OUT", SPin::EPinTypeInOut::PinTypeInOut_OUT));						//1
+    myPins.push_back(SPin("X", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Float));	//2
+    myPins.push_back(SPin("Y", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Float));	//3
+    myPins.push_back(SPin("Z", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Float));	//4
 }
 
-int CNodeTypeSetGameObjectPosition::OnEnter(CNodeInstance* /*aTriggeringNodeInstance*/)
+int CNodeTypeSetGameObjectPosition::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 {
-	//SPin::EPinType outType;
-	//NodeDataPtr someData = nullptr;
-	//size_t outSize = 0;
+	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject();
 
-	//GetDataOnPin(aTriggeringNodeInstance, 2, outType, someData, outSize);
-	//int id = NodeData::Get<int>(someData);
 
-	//GetDataOnPin(aTriggeringNodeInstance, 3, outType, someData, outSize);
-	//float x = NodeData::Get<float>(someData);
+	//TODO
+	//Figure out något sätt att accessa myIDGameObjectMap från CGraphManager!
 
-	//GetDataOnPin(aTriggeringNodeInstance, 4, outType, someData, outSize);
-	//float y = NodeData::Get<float>(someData);
+	SPin::EPinType outType;
+	NodeDataPtr someData = nullptr;
+	size_t outSize = 0;
 
-	//CScene::GetActiveScene()->SetPositionForID(id, { x, y });
+	GetDataOnPin(aTriggeringNodeInstance, 2, outType, someData, outSize);
+	float x = NodeData::Get<float>(someData);
+
+	GetDataOnPin(aTriggeringNodeInstance, 3, outType, someData, outSize);
+	float y = NodeData::Get<float>(someData);
+	
+	GetDataOnPin(aTriggeringNodeInstance, 4, outType, someData, outSize);
+	float z = NodeData::Get<float>(someData);
+
+	gameObject->GetComponent<CTransformComponent>()->Position({ x, y, z });
+
 	return 1;
 }

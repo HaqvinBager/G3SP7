@@ -21,3 +21,8 @@ float gain(float value, float g)
 {
     return 0.5 * ((value < 0.5) ? bias(2.0 * value, 1.0 - g) : (2.0 - bias(2.0 - 2.0 * value, 1.0 - g)));
 }
+
+float invLerp(float a, float b, float c)
+{
+    return (c - a) / (b - a);
+}

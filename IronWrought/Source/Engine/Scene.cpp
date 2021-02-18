@@ -352,6 +352,13 @@ std::vector<CSpriteInstance*> CScene::CullSprites()
 
 	return spritesToRender;
 }
+CGameObject* CScene::FindObjectWithID(const int aGameObjectInstanceID)
+{
+	if (myIDGameObjectMap.find(aGameObjectInstanceID) == myIDGameObjectMap.end())
+		return nullptr;
+
+	return myIDGameObjectMap[aGameObjectInstanceID];
+}
 //CULLING END
 //POPULATE SCENE START
 bool CScene::AddInstance(CPointLight* aPointLight)
@@ -395,6 +402,7 @@ bool CScene::AddInstance(CTextInstance* aText)
 bool CScene::AddInstance(CGameObject* aGameObject)
 {
 	myGameObjects.emplace_back(aGameObject);
+	myIDGameObjectMap[aGameObject->InstanceID()] = aGameObject;
 	return true;
 }
 
@@ -405,7 +413,8 @@ bool CScene::AddInstances(std::vector<CGameObject*>& someGameObjects)
 
 	for (unsigned int i = 0; i < someGameObjects.size(); ++i)
 	{
-		myGameObjects.emplace_back(someGameObjects[i]);
+		AddInstance(someGameObjects[i]);
+		//myGameObjects.emplace_back(someGameObjects[i]);
 	}
 
 
