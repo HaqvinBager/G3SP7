@@ -39,7 +39,7 @@ static ImFont* ImGui_LoadFont(ImFontAtlas& atlas, const char* name, float size, 
 }
 ImFontAtlas myFontAtlas;
 
-CImguiManager::CImguiManager() : myGraphManagerIsFullscreen(false), myIsEnabled(false)
+CImguiManager::CImguiManager() : myGraphManagerIsFullscreen(false), myIsEnabled(false), myScriptsStatus("Scripts Off")
 {
 	ImGui::DebugCheckVersionAndDataLayout("1.80 WIP", sizeof(ImGuiIO), sizeof(ImGuiStyle), sizeof(ImVec2), sizeof(ImVec4), sizeof(ImDrawVert), sizeof(unsigned int));
 	ImGui::CreateContext();
@@ -65,8 +65,15 @@ void CImguiManager::Update()
 	if (myIsEnabled)
 	{
 		ImGui::BeginMainMenuBar();
-		if (ImGui::Button("Display Nodescripts"))
+		if (ImGui::Button("Display Scripts"))
 			myGraphManager->ToggleShouldRenderGraph();
+		if (ImGui::Button(myScriptsStatus.c_str()))
+		{
+			if (myGraphManager->ToggleShouldRunScripts())
+				myScriptsStatus = "Scripts On ";
+			else 
+				myScriptsStatus = "Scripts Off";
+		}
 		ImGui::EndMainMenuBar();
 		LevelSelect();
 		DebugWindow();

@@ -34,7 +34,9 @@ int CNodeTypeSetGameObjectPosition::OnEnter(CNodeInstance* aTriggeringNodeInstan
 	GetDataOnPin(aTriggeringNodeInstance, 4, outType, someData, outSize);
 	float z = NodeData::Get<float>(someData);
 
-	gameObject->GetComponent<CTransformComponent>()->Position({ x, y, z });
+	DirectX::SimpleMath::Vector3 position = gameObject->GetComponent<CTransformComponent>()->Position();
+
+	gameObject->GetComponent<CTransformComponent>()->Position({ position.x + x, position.y + y, position.z + z });
 
 	return 1;
 }

@@ -21,4 +21,5 @@ private:
 	std::vector<std::string> myLevelsToSelectFrom;
 	bool myGraphManagerIsFullscreen;
 	bool myIsEnabled;
+	std::string myScriptsStatus;
 };
