@@ -6,11 +6,11 @@ PixelOutput main(VertexToPixel input)
 {
     PixelOutput output;
     
-    //float3 exists = PixelShader_Exists(input).myColor.rgb;
-    //if (length(exists) == 0)
-    //{
-    //    discard;
-    //}
+    float3 exists = PixelShader_Exists(input).myColor.rgb;
+    if (length(exists) == 0)
+    {
+        discard;
+    }
     
     float3 worldPosition = PixelShader_WorldPosition(input).myColor.rgb;
     float3 toEye = normalize(cameraPosition.xyz - worldPosition.xyz);
