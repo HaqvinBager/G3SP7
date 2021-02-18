@@ -20,6 +20,9 @@
 #include <imgui_impl_dx11.h>
 #include "Input.h"
 #include <filesystem>
+#include "Scene.h"
+#include "Engine.h"
+#include "GameObject.h"
 
 using namespace rapidjson;
 namespace ed = ax::NodeEditor;
@@ -114,35 +117,42 @@ void CGraphManager::Load()
 	myScriptShouldRun = false;
 }
 
-void CGraphManager::ReTriggerUpdateringTrees()
+void CGraphManager::ReTriggerUpdatingTrees()
 {
 	//Locate start nodes, we support N start nodes, we might want to remove this, as we dont "support" different trees with different starrtnodes to be connected. It might work, might not
 	if (myScriptShouldRun)
 	{
-		for (auto& currentNodeGraph : myGraphs)
+		for (const auto& key : myKeys)
 		{
-			for (auto& nodeInstance : currentNodeGraph.second)
+			const auto& currentGraph = myGraphs[key];
+			const auto& gameObjectIDs = myGameObjectIDsMap[key];
+
+			for (unsigned int i = 0; i < gameObjectIDs.size(); ++i)
 			{
-				if (nodeInstance->myNodeType->IsStartNode())
+				myCurrentGameObjectID = gameObjectIDs[i];
+				for (auto& nodeInstance : currentGraph)
 				{
-					for (auto& pin : nodeInstance->GetPins())
+					if (nodeInstance->myNodeType->IsStartNode())
 					{
-						if (pin.myPinType == SPin::EPinTypeInOut::PinTypeInOut_IN && pin.myVariableType == SPin::EPinType::Bool)
+						for (const auto& pin : nodeInstance->GetPins())
 						{
-							bool data;
-							data = NodeData::Get<bool>(pin.myData);
-							if (data == true)
+							if (pin.myPinType == SPin::EPinTypeInOut::PinTypeInOut_IN && pin.myVariableType == SPin::EPinType::Bool)
 							{
-								nodeInstance->myShouldTriggerAgain = true;
-								break;
+								bool data;
+								data = NodeData::Get<bool>(pin.myData);
+								if (data == true)
+								{
+									nodeInstance->myShouldTriggerAgain = true;
+									break;
+								}
 							}
 						}
 					}
-				}
 
-				if (nodeInstance->myNodeType->IsStartNode() && nodeInstance->myShouldTriggerAgain)
-				{
-					nodeInstance->Enter();
+					if (nodeInstance->myNodeType->IsStartNode() && nodeInstance->myShouldTriggerAgain)
+					{
+						nodeInstance->Enter();
+					}
 				}
 			}
 		}
@@ -288,7 +298,7 @@ void CGraphManager::LoadTreeFromFile()
 					for (unsigned int i = 0; i < nodeInstances.Size(); ++i)
 					{
 						auto nodeInstance = nodeInstances[i].GetObjectW();
-						CNodeInstance* object = new CNodeInstance(false);
+						CNodeInstance* object = new CNodeInstance(this, myCurrentKey, false);
 						int nodeType = nodeInstance["NodeType"].GetInt();
 						int UID = nodeInstance["UID"].GetInt();
 						object->myUID = UID;
@@ -423,7 +433,7 @@ void CGraphManager::LoadNodesFromClipboard()
 		rapidjson::Value& nodeInstance = results[i];
 
 
-		CNodeInstance* object = new CNodeInstance(true);
+		CNodeInstance* object = new CNodeInstance(this, myCurrentKey, true);
 		int nodeType = nodeInstance["NodeType"].GetInt();
 		object->myNodeType = CNodeTypeCollector::GetNodeTypeFromID(nodeType);
 
@@ -457,7 +467,6 @@ void CGraphManager::LoadNodesFromClipboard()
 	}
 }
 
-std::vector<int> myFlowsToBeShown;
 void CGraphManager::ShowFlow(int aLinkID)
 {
 	if (aLinkID == 0)
@@ -479,6 +488,11 @@ void CGraphManager::Update()
 void CGraphManager::ToggleShouldRenderGraph()
 {
 	myShouldRenderGraph = !myShouldRenderGraph;
+}
+
+CGameObject* CGraphManager::GetCurrentGameObject()
+{
+	return CEngine::GetInstance()->GetActiveScene().FindObjectWithID(myCurrentGameObjectID);
 }
 
 ImColor GetIconColor(SPin::EPinType type)
@@ -888,7 +902,7 @@ void CGraphManager::PreFrame(float aDeltaTime)
 	//ImGui::End();
 
 	if (myScriptShouldRun)
-		ReTriggerUpdateringTrees();
+		ReTriggerUpdatingTrees();
 
 	//static bool showFlow = false;
 	//if (ImGui::Checkbox("Show Flow", &showFlow))
@@ -913,7 +927,7 @@ void CGraphManager::PreFrame(float aDeltaTime)
 	//ImGui::SliderInt("Max framerate", &outRate, 0, 100);
 	if (timer > (1.0f / outRate))
 	{
-		ReTriggerUpdateringTrees();
+		ReTriggerUpdatingTrees();
 		timer = 0;
 	}
 
@@ -1333,9 +1347,8 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 					CNodeInstance* node = nullptr;
 					if (ImGui::MenuItem(distanceResults[i].ourInstance->GetNodeName().c_str()))
 					{
-						node = new CNodeInstance();
+						node = new CNodeInstance(this, myCurrentKey);
 
-						//int nodeType = i;
 						node->myNodeType = distanceResults[i].ourInstance;
 						node->ConstructUniquePins();
 						ed::SetNodePosition(node->myUID.AsInt(), newNodePostion);
@@ -1376,7 +1389,7 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 							CNodeType* type = category.second[i];
 							if (ImGui::MenuItem(type->GetNodeName().c_str()))
 							{
-								node = new CNodeInstance();
+								node = new CNodeInstance(this, myCurrentKey);
 
 								//int nodeType = i;
 								node->myNodeType = type;

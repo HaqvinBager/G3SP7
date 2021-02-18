@@ -5,11 +5,11 @@
 #include "GraphManager.h"
 #include "BaseDecisionNode.h"
 
-CNodeInstance::CNodeInstance(bool aCreateNewUID)
-	:myUID(aCreateNewUID), myNodeType(nullptr)
-{
+CNodeInstance::CNodeInstance(CGraphManager* aGraphManager, std::string aGraphKey, bool aCreateNewUID)
+	:myGraphManager(aGraphManager), myGraphKey(aGraphKey), myUID(aCreateNewUID), myNodeType(nullptr), myEditorPosition{0.0f,0.0f}
+{/*
 	myEditorPosition[0] = 0.0f;
-	myEditorPosition[1] = 0.0f;	
+	myEditorPosition[1] = 0.0f;	*/
 }
 
 
@@ -39,7 +39,7 @@ void CNodeInstance::Enter()
 			}
 			else if (!IsOutput(myPins, link.myFromPinID) )
 			{
-				CGraphManager::ShowFlow(link.myLinkID);
+				myGraphManager->ShowFlow(link.myLinkID);
 			}
 		}
 	}
@@ -158,7 +158,7 @@ void CNodeInstance::ChangePinTypes(SPin::EPinType aType)
 	}
 }
 
-std::vector< SNodeInstanceLink*> CNodeInstance::GetLinkFromPin(unsigned int aPinToFetchFrom)
+std::vector<SNodeInstanceLink*> CNodeInstance::GetLinkFromPin(unsigned int aPinToFetchFrom)
 {
 	std::vector< SNodeInstanceLink*> links;
 	for (int i = 0; i < myLinks.size(); i++)
@@ -218,6 +218,11 @@ void CNodeInstance::VisualUpdate(float aDeltaTime)
 	}
 }
 
+CGameObject* CNodeInstance::GetCurrentGameObject()
+{
+	return myGraphManager->GetCurrentGameObject();
+}
+
 void CNodeInstance::FetchData(SPin::EPinType& anOutType, NodeDataPtr& someData, size_t& anOutSize, unsigned int aPinToFetchFrom)
 {
 	// If we dont have any data, but or link might have it, the link pin might have data written to it as well, then return that
@@ -235,7 +240,7 @@ void CNodeInstance::FetchData(SPin::EPinType& anOutType, NodeDataPtr& someData, 
 					assert(0);
 				}
 				
-				CGraphManager::ShowFlow(links[0]->myLinkID);
+				myGraphManager->ShowFlow(links[0]->myLinkID);
 				links[0]->myLink->FetchData(anOutType, someData, anOutSize, pinIndex);
 				//we have a link in a node that is supposed only to store data, apparently this is connected aswell
 				return;
@@ -294,4 +299,3 @@ void CNodeInstance::FetchData(SPin::EPinType& anOutType, NodeDataPtr& someData, 
 	someData = dataPin.myData;
 	anOutType = dataPin.myVariableType;
 }
-
