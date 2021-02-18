@@ -41,8 +41,8 @@ unsigned int UID::myGlobalUID = 0;
 
 void CNodeTypeCollector::PopulateTypes()
 {
-	RegisterType<CNodeTypePrint>();
 	RegisterType<CNodeTypeStart>();
+	RegisterType<CNodeTypePrint>();
 	RegisterType<CNodeTypeMathAdd>();
 	RegisterType<CNodeTypeMathSub>();
 	RegisterType<CNodeTypeMathMul>();

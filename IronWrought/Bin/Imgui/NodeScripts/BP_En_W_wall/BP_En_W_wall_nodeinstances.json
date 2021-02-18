@@ -1,0 +1,69 @@
+{
+    "UID_MAX": {
+        "Num": 16
+    },
+    "NodeInstances": [
+        {
+            "NodeType": 0,
+            "UID": 1,
+            "Position": {
+                "X": 594,
+                "Y": 126
+            },
+            "Pins": [
+                {
+                    "Index": 0,
+                    "UID": 2,
+                    "DATA": true,
+                    "DATA_TYPE": "BOOL"
+                },
+                {
+                    "Index": 1,
+                    "UID": 3,
+                    "DATA": "",
+                    "DATA_TYPE": ""
+                }
+            ]
+        },
+        {
+            "NodeType": 6,
+            "UID": 11,
+            "Position": {
+                "X": 971,
+                "Y": 228
+            },
+            "Pins": [
+                {
+                    "Index": 0,
+                    "UID": 12,
+                    "DATA": "",
+                    "DATA_TYPE": ""
+                },
+                {
+                    "Index": 1,
+                    "UID": 13,
+                    "DATA": "",
+                    "DATA_TYPE": ""
+                },
+                {
+                    "Index": 2,
+                    "UID": 14,
+                    "DATA": 1.0,
+                    "DATA_TYPE": "FLOAT"
+                },
+                {
+                    "Index": 3,
+                    "UID": 15,
+                    "DATA": 1.0,
+                    "DATA_TYPE": "FLOAT"
+                },
+                {
+                    "Index": 4,
+                    "UID": 16,
+                    "DATA": 1.0,
+                    "DATA_TYPE": "FLOAT"
+                }
+            ]
+        }
+    ]
+}
