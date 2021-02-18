@@ -115,7 +115,6 @@ public class Exporter
 
             GameObject prefabParent = PrefabUtility.GetOutermostPrefabInstanceRoot(allrenderers[i]);
 
-
             transform.instanceID = prefabParent.transform.GetInstanceID();
             //allrenderers[i].transform.GetInstanceID();
             transform.position = allrenderers[i].transform.position;

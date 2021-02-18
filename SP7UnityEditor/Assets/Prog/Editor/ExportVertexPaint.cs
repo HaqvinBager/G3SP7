@@ -103,9 +103,11 @@ public class ExportVertexPaint : Editor
             {
                 if (vertexLink.colorsPath == targetPath + "PolybrushColors_" + polyMeshID + "_Bin.bin")
                 {
-                    if (!vertexLink.myTransformIDs.Contains(polyBrushObject.transform.GetInstanceID()))
+                    GameObject prefabRoot = PrefabUtility.GetOutermostPrefabInstanceRoot(polyBrushObject);
+                    if (!vertexLink.myTransformIDs.Contains(prefabRoot.transform.GetInstanceID()))
                     {
-                        vertexLink.myTransformIDs.Add(polyBrushObject.transform.GetInstanceID());
+                        vertexLink.myTransformIDs.Add(prefabRoot.transform.GetInstanceID());
+
                         exportedVertexPaintObjects.Add(polyBrushObject.gameObject);
                         hasFoundLink = true;
                         break;
@@ -116,9 +118,10 @@ public class ExportVertexPaint : Editor
             if (!hasFoundLink)
             {
                 VertexLink newLink = new VertexLink();
+                GameObject prefabRoot = PrefabUtility.GetOutermostPrefabInstanceRoot(polyBrushObject);
                 newLink.colorsPath = targetPath + "PolybrushColors_" + polyMeshID + "_Bin.bin";
                 newLink.myTransformIDs = new List<int>();
-                newLink.myTransformIDs.Add(polyBrushObject.transform.GetInstanceID());
+                newLink.myTransformIDs.Add(prefabRoot.transform.GetInstanceID());
                 exportedVertexPaintObjects.Add(polyBrushObject.gameObject);
                 newLink.myMaterialNames = ExtractTexturePathsFromMaterials(polyBrushObject.GetComponent<MeshRenderer>().sharedMaterials);
                 vertexLinks.Add(newLink);
