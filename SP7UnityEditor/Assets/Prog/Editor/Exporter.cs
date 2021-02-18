@@ -44,10 +44,6 @@ public struct SScene
 
 public class Exporter
 {
-
-
-
-
     [MenuItem("Export/Export Scene")]
     static void ExportScene()
     {
@@ -97,6 +93,7 @@ public class Exporter
     {
         List<GameObject> alreadyExportedRenderers = ExportVertexPaint.ExportVertexPainting(aScene);
         ExportBlueprints.ExportBluePrint(aScene);
+        ExportPointlights.ExportPointlight(aScene);
 
         Renderer[] allrenderers = GameObject.FindObjectsOfType<Renderer>();
         Dictionary<string, List<STransform>> fbxPathGameObjectMap = new Dictionary<string, List<STransform>>();
