@@ -25,11 +25,6 @@ void CFullscreenTexture::SetAsActiveTarget(CFullscreenTexture* aDepth) {
 	myContext->RSSetViewports(1, myViewport);
 }
 
-void CFullscreenTexture::SetAsDepthTarget()
-{
-	myContext->OMSetRenderTargets(0, NULL, myDepth);
-}
-
 void CFullscreenTexture::SetAsResourceOnSlot(unsigned int aSlot) {
 	myContext->PSSetShaderResources(aSlot, 1, &myShaderResource);
 }

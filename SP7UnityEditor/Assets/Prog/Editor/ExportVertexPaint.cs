@@ -103,11 +103,9 @@ public class ExportVertexPaint : Editor
             {
                 if (vertexLink.colorsPath == targetPath + "PolybrushColors_" + polyMeshID + "_Bin.bin")
                 {
-                    GameObject prefabRoot = PrefabUtility.GetOutermostPrefabInstanceRoot(polyBrushObject);
-                    if (!vertexLink.myTransformIDs.Contains(prefabRoot.transform.GetInstanceID()))
+                    if (!vertexLink.myTransformIDs.Contains(polyBrushObject.transform.GetInstanceID()))
                     {
-                        vertexLink.myTransformIDs.Add(prefabRoot.transform.GetInstanceID());
-
+                        vertexLink.myTransformIDs.Add(polyBrushObject.transform.GetInstanceID());
                         exportedVertexPaintObjects.Add(polyBrushObject.gameObject);
                         hasFoundLink = true;
                         break;
@@ -118,11 +116,9 @@ public class ExportVertexPaint : Editor
             if (!hasFoundLink)
             {
                 VertexLink newLink = new VertexLink();
-                GameObject prefabRoot = PrefabUtility.GetOutermostPrefabInstanceRoot(polyBrushObject);
-              //  prefabRoot.Ping();
                 newLink.colorsPath = targetPath + "PolybrushColors_" + polyMeshID + "_Bin.bin";
                 newLink.myTransformIDs = new List<int>();
-                newLink.myTransformIDs.Add(prefabRoot.transform.GetInstanceID());
+                newLink.myTransformIDs.Add(polyBrushObject.transform.GetInstanceID());
                 exportedVertexPaintObjects.Add(polyBrushObject.gameObject);
                 newLink.myMaterialNames = ExtractTexturePathsFromMaterials(polyBrushObject.GetComponent<MeshRenderer>().sharedMaterials);
                 vertexLinks.Add(newLink);
@@ -231,11 +227,11 @@ public class ExportVertexPaint : Editor
 
                     if (fileInfo.Name.ToLower().Contains("_c")) 
                     {
-                        if (!texturePaths.Contains(fileInfo.Directory.Name))
-                        {
+                        //if (!texturePaths.Contains(fileInfo.Directory.Name))
+                        //{
                             texturePaths.Add(fileInfo.Directory.Name);
                             continue;
-                        }
+                        //}
                     } 
                 }
             }

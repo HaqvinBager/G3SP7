@@ -20,9 +20,6 @@
 #include <imgui_impl_dx11.h>
 #include "Input.h"
 #include <filesystem>
-#include "Scene.h"
-#include "Engine.h"
-#include "GameObject.h"
 
 using namespace rapidjson;
 namespace ed = ax::NodeEditor;
@@ -39,68 +36,22 @@ CGraphManager::~CGraphManager()
 
 void CGraphManager::Load()
 {
-	for (const auto& blueprintLinksJsonPath : CJsonReader::GetFilePathsInFolder(ASSETPATH + "Assets/Generated", "BluePrintLinks")) {
-		const auto doc = CJsonReader::Get()->LoadDocument(ASSETPATH + "Assets/Generated/" + blueprintLinksJsonPath);
-		if (doc.HasParseError())
-			continue;
-
-		auto jsonObject = doc.GetObjectW();
-		if (jsonObject.HasMember("links")) {
-			for (const auto& jsonLink : jsonObject["links"].GetArray()) {
-
-				if (!jsonLink.HasMember("type"))
-					continue;
-				if (!jsonLink.HasMember("instances"))
-					continue;
-				if (!(jsonLink["instances"].GetArray().Size() > 0))
-					continue;
-
-				std::string key = jsonLink["type"].GetString();
-				myKeys.push_back(key);
-
-				for (const auto& jsonGameObjectID : jsonLink["instances"].GetArray()) {
-					if (jsonGameObjectID.IsInt()) {
-						myGameObjectIDsMap[key].emplace_back(jsonGameObjectID.GetInt());
-					}
-				}
-
-				std::string folder = "Imgui/NodeScripts/" + key;
-				//Om denna Blueprint redan finns ska vi bara spara undan den som nyckel
-				if (std::filesystem::exists(folder))
-					continue;
-
-				if (!std::filesystem::create_directory(folder.c_str()))
+	for (const auto& folder : std::filesystem::directory_iterator("Imgui/NodeScripts"))
+	{
+		if (!folder.path().has_extension()) {
+			for (const auto& file : std::filesystem::directory_iterator(folder.path()))
+			{
+				if (file.path().extension() == ".json")
 				{
-					ENGINE_BOOL_POPUP("Failed to create Directory: %s", folder.c_str());
-					continue;
-				}
-				else
-				{
-					myCurrentKey = myKeys.back();
-					myCurrentPath = folder + "/" + myCurrentKey;
-					SaveTreeToFile();
+					std::string fullPath = file.path().filename().string();
+					std::string key = fullPath.substr(0, fullPath.find("_"));
+					std::string isNodeInstance = fullPath.substr(fullPath.find("_") + 1);
+					myKeys.emplace_back(key);
+					break;
 				}
 			}
 		}
 	}
-
-
-	//for (const auto& folder : std::filesystem::directory_iterator("Imgui/NodeScripts"))
-	//{
-	//	if (!folder.path().has_extension()) {
-	//		for (const auto& file : std::filesystem::directory_iterator(folder.path()))
-	//		{
-	//			if (file.path().extension() == ".json")
-	//			{
-	//				std::string fullPath = file.path().filename().string();
-	//				std::string key = fullPath.substr(0, fullPath.find("_"));
-	//				std::string isNodeInstance = fullPath.substr(fullPath.find("_") + 1);
-	//				myKeys.emplace_back(key);
-	//				break;
-	//			}
-	//		}
-	//	}
-	//}
 
 	myHeaderTextureID = nullptr;
 	ed::Config config;
@@ -117,42 +68,35 @@ void CGraphManager::Load()
 	myScriptShouldRun = false;
 }
 
-void CGraphManager::ReTriggerUpdatingTrees()
+void CGraphManager::ReTriggerUpdateringTrees()
 {
 	//Locate start nodes, we support N start nodes, we might want to remove this, as we dont "support" different trees with different starrtnodes to be connected. It might work, might not
 	if (myScriptShouldRun)
 	{
-		for (const auto& key : myKeys)
+		for (auto& currentNodeGraph : myGraphs)
 		{
-			const auto& currentGraph = myGraphs[key];
-			const auto& gameObjectIDs = myGameObjectIDsMap[key];
-
-			for (unsigned int i = 0; i < gameObjectIDs.size(); ++i)
+			for (auto& nodeInstance : currentNodeGraph.second)
 			{
-				myCurrentGameObjectID = gameObjectIDs[i];
-				for (auto& nodeInstance : currentGraph)
+				if (nodeInstance->myNodeType->IsStartNode())
 				{
-					if (nodeInstance->myNodeType->IsStartNode())
+					for (auto& pin : nodeInstance->GetPins())
 					{
-						for (const auto& pin : nodeInstance->GetPins())
+						if (pin.myPinType == SPin::EPinTypeInOut::PinTypeInOut_IN && pin.myVariableType == SPin::EPinType::Bool)
 						{
-							if (pin.myPinType == SPin::EPinTypeInOut::PinTypeInOut_IN && pin.myVariableType == SPin::EPinType::Bool)
+							bool data;
+							data = NodeData::Get<bool>(pin.myData);
+							if (data == true)
 							{
-								bool data;
-								data = NodeData::Get<bool>(pin.myData);
-								if (data == true)
-								{
-									nodeInstance->myShouldTriggerAgain = true;
-									break;
-								}
+								nodeInstance->myShouldTriggerAgain = true;
+								break;
 							}
 						}
 					}
+				}
 
-					if (nodeInstance->myNodeType->IsStartNode() && nodeInstance->myShouldTriggerAgain)
-					{
-						nodeInstance->Enter();
-					}
+				if (nodeInstance->myNodeType->IsStartNode() && nodeInstance->myShouldTriggerAgain)
+				{
+					nodeInstance->Enter();
 				}
 			}
 		}
@@ -298,7 +242,7 @@ void CGraphManager::LoadTreeFromFile()
 					for (unsigned int i = 0; i < nodeInstances.Size(); ++i)
 					{
 						auto nodeInstance = nodeInstances[i].GetObjectW();
-						CNodeInstance* object = new CNodeInstance(this, myCurrentKey, false);
+						CNodeInstance* object = new CNodeInstance(false);
 						int nodeType = nodeInstance["NodeType"].GetInt();
 						int UID = nodeInstance["UID"].GetInt();
 						object->myUID = UID;
@@ -433,7 +377,7 @@ void CGraphManager::LoadNodesFromClipboard()
 		rapidjson::Value& nodeInstance = results[i];
 
 
-		CNodeInstance* object = new CNodeInstance(this, myCurrentKey, true);
+		CNodeInstance* object = new CNodeInstance(true);
 		int nodeType = nodeInstance["NodeType"].GetInt();
 		object->myNodeType = CNodeTypeCollector::GetNodeTypeFromID(nodeType);
 
@@ -467,6 +411,7 @@ void CGraphManager::LoadNodesFromClipboard()
 	}
 }
 
+std::vector<int> myFlowsToBeShown;
 void CGraphManager::ShowFlow(int aLinkID)
 {
 	if (aLinkID == 0)
@@ -488,11 +433,6 @@ void CGraphManager::Update()
 void CGraphManager::ToggleShouldRenderGraph()
 {
 	myShouldRenderGraph = !myShouldRenderGraph;
-}
-
-CGameObject* CGraphManager::GetCurrentGameObject()
-{
-	return CEngine::GetInstance()->GetActiveScene().FindObjectWithID(myCurrentGameObjectID);
 }
 
 ImColor GetIconColor(SPin::EPinType type)
@@ -578,134 +518,134 @@ void CGraphManager::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInstance
 	switch (aPin.myVariableType)
 	{
 	case SPin::EPinType::String:
+	{
+		if (!aPin.myData)
 		{
-			if (!aPin.myData)
-			{
-				aPin.myData = new char[128];
-				static_cast<char*>(aPin.myData)[0] = '\0';
-			}
-
-			ImGui::PushID(aPin.myUID.AsInt());
-			ImGui::PushItemWidth(100.0f);
-			if (aNodeInstance->IsPinConnected(aPin))
-			{
-				DrawPinIcon(aPin, true, 255);
-			}
-			else
-			{
-				ImGui::InputText("##edit", (char*)aPin.myData, 127);
-			}
-			ImGui::PopItemWidth();
-
-			ImGui::PopID();
-			break;
+			aPin.myData = new char[128];
+			static_cast<char*>(aPin.myData)[0] = '\0';
 		}
+
+		ImGui::PushID(aPin.myUID.AsInt());
+		ImGui::PushItemWidth(100.0f);
+		if (aNodeInstance->IsPinConnected(aPin))
+		{
+			DrawPinIcon(aPin, true, 255);
+		}
+		else
+		{
+			ImGui::InputText("##edit", (char*)aPin.myData, 127);
+		}
+		ImGui::PopItemWidth();
+
+		ImGui::PopID();
+		break;
+	}
 	case SPin::EPinType::Int:
+	{
+		if (!aPin.myData)
 		{
-			if (!aPin.myData)
-			{
-				aPin.myData = new int;
-				int* c = ((int*)aPin.myData);
-				*c = 0;
-			}
+			aPin.myData = new int;
 			int* c = ((int*)aPin.myData);
-			ImGui::PushID(aPin.myUID.AsInt());
-			ImGui::PushItemWidth(100.0f);
-			if (aNodeInstance->IsPinConnected(aPin))
-			{
-				DrawPinIcon(aPin, true, 255);
-			}
-			else
-			{
-				ImGui::InputInt("##edit", c);
-			}
-			ImGui::PopItemWidth();
-
-			ImGui::PopID();
-			break;
+			*c = 0;
 		}
+		int* c = ((int*)aPin.myData);
+		ImGui::PushID(aPin.myUID.AsInt());
+		ImGui::PushItemWidth(100.0f);
+		if (aNodeInstance->IsPinConnected(aPin))
+		{
+			DrawPinIcon(aPin, true, 255);
+		}
+		else
+		{
+			ImGui::InputInt("##edit", c);
+		}
+		ImGui::PopItemWidth();
+
+		ImGui::PopID();
+		break;
+	}
 	case SPin::EPinType::Bool:
+	{
+		if (!aPin.myData)
 		{
-			if (!aPin.myData)
-			{
-				aPin.myData = new bool;
-				bool* c = ((bool*)aPin.myData);
-				*c = false;
-			}
+			aPin.myData = new bool;
 			bool* c = ((bool*)aPin.myData);
-			ImGui::PushID(aPin.myUID.AsInt());
-			ImGui::PushItemWidth(100.0f);
-			if (aNodeInstance->IsPinConnected(aPin))
-			{
-				DrawPinIcon(aPin, true, 255);
-			}
-			else
-			{
-				ImGui::Checkbox("##edit", c);
-			}
-			ImGui::PopItemWidth();
-
-			ImGui::PopID();
-			break;
+			*c = false;
 		}
+		bool* c = ((bool*)aPin.myData);
+		ImGui::PushID(aPin.myUID.AsInt());
+		ImGui::PushItemWidth(100.0f);
+		if (aNodeInstance->IsPinConnected(aPin))
+		{
+			DrawPinIcon(aPin, true, 255);
+		}
+		else
+		{
+			ImGui::Checkbox("##edit", c);
+		}
+		ImGui::PopItemWidth();
+
+		ImGui::PopID();
+		break;
+	}
 	case SPin::EPinType::Float:
+	{
+		if (!aPin.myData)
 		{
-			if (!aPin.myData)
-			{
-				aPin.myData = new float;
-				float* c = ((float*)aPin.myData);
-				*c = 1.0f;
-			}
+			aPin.myData = new float;
 			float* c = ((float*)aPin.myData);
-			ImGui::PushID(aPin.myUID.AsInt());
-			ImGui::PushItemWidth(70.0f);
-			if (aNodeInstance->IsPinConnected(aPin))
-			{
-				DrawPinIcon(aPin, true, 255);
-			}
-			else
-			{
-				ImGui::InputFloat("##edit", c);
-			}
-			ImGui::PopItemWidth();
-
-			ImGui::PopID();
-			break;
+			*c = 1.0f;
 		}
-	case SPin::EPinType::Unknown:
+		float* c = ((float*)aPin.myData);
+		ImGui::PushID(aPin.myUID.AsInt());
+		ImGui::PushItemWidth(70.0f);
+		if (aNodeInstance->IsPinConnected(aPin))
 		{
-			ImGui::PushID(aPin.myUID.AsInt());
-			ImGui::PushItemWidth(100.0f);
-
-			int selectedIndex = -1;
-			if (ImGui::RadioButton("Bool", false))
-			{
-				selectedIndex = (int)SPin::EPinType::Bool;
-			}
-			if (ImGui::RadioButton("Int", false))
-			{
-				selectedIndex = (int)SPin::EPinType::Int;
-			}
-			if (ImGui::RadioButton("Float", false))
-			{
-				selectedIndex = (int)SPin::EPinType::Float;
-			}
-			if (ImGui::RadioButton("String", false))
-			{
-				selectedIndex = (int)SPin::EPinType::String;
-			}
-
-			if (selectedIndex != -1)
-			{
-				CNodeInstance* instance = GetNodeFromPinID(aPin.myUID.AsInt());
-				instance->ChangePinTypes((SPin::EPinType)selectedIndex);
-			}
-
-
-			ImGui::PopItemWidth();
-			ImGui::PopID();
-			break;
+			DrawPinIcon(aPin, true, 255);
 		}
+		else
+		{
+			ImGui::InputFloat("##edit", c);
+		}
+		ImGui::PopItemWidth();
+
+		ImGui::PopID();
+		break;
+	}
+	case SPin::EPinType::Unknown:
+	{
+		ImGui::PushID(aPin.myUID.AsInt());
+		ImGui::PushItemWidth(100.0f);
+
+		int selectedIndex = -1;
+		if (ImGui::RadioButton("Bool", false))
+		{
+			selectedIndex = (int)SPin::EPinType::Bool;
+		}
+		if (ImGui::RadioButton("Int", false))
+		{
+			selectedIndex = (int)SPin::EPinType::Int;
+		}
+		if (ImGui::RadioButton("Float", false))
+		{
+			selectedIndex = (int)SPin::EPinType::Float;
+		}
+		if (ImGui::RadioButton("String", false))
+		{
+			selectedIndex = (int)SPin::EPinType::String;
+		}
+
+		if (selectedIndex != -1)
+		{
+			CNodeInstance* instance = GetNodeFromPinID(aPin.myUID.AsInt());
+			instance->ChangePinTypes((SPin::EPinType)selectedIndex);
+		}
+
+
+		ImGui::PopItemWidth();
+		ImGui::PopID();
+		break;
+	}
 	default:
 		assert(0);
 	}
@@ -769,7 +709,7 @@ void CGraphManager::PreFrame(float aDeltaTime)
 		auto& io = ImGui::GetIO();
 		ImGui::SetNextWindowPos(ImVec2(0, 18));
 		ImGui::SetNextWindowSize({ io.DisplaySize.x,  io.DisplaySize.y });
-
+		
 		ImGui::Begin(currentScript.c_str(), nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBringToFrontOnFocus);
 		ImGui::SameLine();
 		if (ImGui::Button("Run"))
@@ -814,7 +754,7 @@ void CGraphManager::PreFrame(float aDeltaTime)
 			{
 				selected = i;
 
-				if (ImGui::IsMouseClicked(0))
+				if (ImGui::IsMouseDoubleClicked(0))
 				{
 					myCurrentKey = myKeys[i];
 					myCurrentPath = "Imgui/NodeScripts/" + myKeys[i] + "/" + myKeys[i];
@@ -902,7 +842,7 @@ void CGraphManager::PreFrame(float aDeltaTime)
 	//ImGui::End();
 
 	if (myScriptShouldRun)
-		ReTriggerUpdatingTrees();
+		ReTriggerUpdateringTrees();
 
 	//static bool showFlow = false;
 	//if (ImGui::Checkbox("Show Flow", &showFlow))
@@ -927,7 +867,7 @@ void CGraphManager::PreFrame(float aDeltaTime)
 	//ImGui::SliderInt("Max framerate", &outRate, 0, 100);
 	if (timer > (1.0f / outRate))
 	{
-		ReTriggerUpdatingTrees();
+		ReTriggerUpdateringTrees();
 		timer = 0;
 	}
 
@@ -1347,8 +1287,9 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 					CNodeInstance* node = nullptr;
 					if (ImGui::MenuItem(distanceResults[i].ourInstance->GetNodeName().c_str()))
 					{
-						node = new CNodeInstance(this, myCurrentKey);
+						node = new CNodeInstance();
 
+						//int nodeType = i;
 						node->myNodeType = distanceResults[i].ourInstance;
 						node->ConstructUniquePins();
 						ed::SetNodePosition(node->myUID.AsInt(), newNodePostion);
@@ -1389,7 +1330,7 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 							CNodeType* type = category.second[i];
 							if (ImGui::MenuItem(type->GetNodeName().c_str()))
 							{
-								node = new CNodeInstance(this, myCurrentKey);
+								node = new CNodeInstance();
 
 								//int nodeType = i;
 								node->myNodeType = type;

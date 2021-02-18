@@ -13,7 +13,7 @@ public:
 
 	/*static*/ rapidjson::Document LoadDocument(const std::string& json_path);
 
-	static std::vector<std::string> GetFilePathsInFolder(const std::string& aFolder, const std::string& aContains = "");
+	static std::vector<std::string> GetFilePathsInFolder(const std::string& aFolder, const std::string& aPrefix = "");
 
 private:
 	CJsonReader() {}

@@ -5,20 +5,8 @@
 PixelOutput PixelShader_WorldPosition(VertexToPixel input)
 {
     PixelOutput output;
-    
-    // World Pos texture // Deprecated
-    //float4 worldPos = worldPositionTexture.Sample(defaultSampler, input.myUV.xy).rgba;
-    
-    // Depth sampling
-    float z = depthTexture.Sample(defaultSampler, input.myUV.xy).r;
-    float x = input.myUV.x * 2.0f - 1;
-    float y = (1 - input.myUV.y) * 2.0f - 1;
-    float4 projectedPos = float4(x, y, z, 1.0f);
-    float4 viewSpacePos = mul(toCameraFromProjection, projectedPos);
-    viewSpacePos /= viewSpacePos.w;
-    float4 worldPos = mul(toWorldFromCamera, viewSpacePos);
-
-    output.myColor.rgb = worldPos.rgb;
+    float3 worldPos = worldPositionTexture.Sample(defaultSampler, input.myUV.xy).rgb;
+    output.myColor.rgb = worldPos;
     output.myColor.a = 1.0f;
     return output;
 }
@@ -213,15 +201,7 @@ PixelOutput PixelShader_Emissive(Texture2D aMaterialTexture, VertexToPixel input
     return output;
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
-// GBUFFER  GBUFFER GBUFFER GBUFFER GBUFFER GBUFFER GBUFFER GBUFFER GBUFFER GBUFFER GBUFFER
-///////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
+// GBUFFER
 
 PixelOutput GBuffer_Albedo(VertexToPixel input)
 {
@@ -230,25 +210,19 @@ PixelOutput GBuffer_Albedo(VertexToPixel input)
     output.myColor.rgb = albedo;
     output.myColor.a = 1.0f;
     return output;
+    
+    // Original
+    //PixelOutput output;
+    //float4 albedo = albedoTextureGBuffer.Sample(defaultSampler, input.myUV.xy).rgba;
+    //output.myColor.rgba = albedo;
+    //output.myColor.a = 1.0f;
+    //return output;
 }
 
 PixelOutput GBuffer_Normal(VertexToPixel input)
 {
     PixelOutput output;
     float3 normal = normalTextureGBuffer.Sample(defaultSampler, input.myUV.xy).rgb;
-
-// Recreate z
-    // Fråga björn 18/2 :)
-    //float3 normal;
-    //normal.xy = normalTextureGBuffer.Sample(defaultSampler, input.myUV.xy).wy;
-    //normal.z = 0.0f;
-    //normal.z = sqrt(1.f - saturate((normal.x * normal.x) + (normal.y * normal.y)));   
-    //normal.z = sqrt(1.f - (normal.x * normal.x) - (normal.y * normal.y));// Unity
-    // random tests to see what works
-        //normal = normalize(normal);
-        //normal.z *= -1.0f;
-        //normal = normal * 0.5 + 0.5;// dont do this
-    
     output.myColor.rgb = normal;
     output.myColor.a = 1.0f;
     return output;
@@ -257,7 +231,7 @@ PixelOutput GBuffer_Normal(VertexToPixel input)
 PixelOutput GBuffer_VertexNormal(VertexToPixel input)
 {
     PixelOutput output;
-    float3 vertexNormal = vertexNormalTextureGBuffer.Sample(defaultSampler, input.myUV.xy).rgb;
+    float3 vertexNormal = vertexNormalTexture.Sample(defaultSampler, input.myUV.xy).rgb;
     output.myColor.rgb = vertexNormal;
     output.myColor.a = 1.0f;
     return output;
@@ -266,98 +240,63 @@ PixelOutput GBuffer_VertexNormal(VertexToPixel input)
 PixelOutput GBuffer_AmbientOcclusion(VertexToPixel input)
 {
     PixelOutput output;
-    float ao = materialTextureGBuffer.Sample(defaultSampler, input.myUV.xy).b;
+    float ao = normalTextureGBuffer.Sample(defaultSampler, input.myUV.xy).a;
     output.myColor.rgb = ao.xxx;
     output.myColor.a = 1.0f;
     return output;
+    
+    // Original
+    //PixelOutput output;
+    //float ao = ambientOcclusionTexture.Sample(defaultSampler, input.myUV.xy).r;
+    //output.myColor.rgb = ao.xxx;
+    //output.myColor.a = 1.0f;
+    //return output;
 }
 
 PixelOutput GBuffer_Metalness(VertexToPixel input)
 {
     PixelOutput output;
-    float metalness = materialTextureGBuffer.Sample(defaultSampler, input.myUV.xy).r;
+    float metalness =  worldPositionTexture.Sample(defaultSampler, input.myUV.xy).a;
     output.myColor.rgb = metalness.xxx;
     output.myColor.a = 1.0f;
     return output;
+    
+    // Original
+    //PixelOutput output;
+    //float metalness = metalnessTexture.Sample(defaultSampler, input.myUV.xy).r;
+    //output.myColor.rgb = metalness.xxx;
+    //output.myColor.a = 1.0f;
+    //return output;
 }
 
 PixelOutput GBuffer_PerceptualRoughness(VertexToPixel input)
 {
     PixelOutput output;
-    float roughness = materialTextureGBuffer.Sample(defaultSampler, input.myUV.xy).g;
+    float roughness = albedoTextureGBuffer.Sample(defaultSampler, input.myUV.xy).a;
     output.myColor.rgb = roughness;
     output.myColor.a = 1.0f;
     return output;
+
+    // Original
+    //PixelOutput output;
+    //float roughness = roughnessTexture.Sample(defaultSampler, input.myUV.xy).r;
+    //output.myColor.rgb = roughness;
+    //output.myColor.a = 1.0f;
+    //return output;
 }
 
 PixelOutput GBuffer_Emissive(VertexToPixel input)
 {   
     PixelOutput output;
-    float emissive = materialTextureGBuffer.Sample(defaultSampler, input.myUV.xy).a;
+    float emissive = vertexNormalTexture.Sample(defaultSampler, input.myUV.xy).a;
     output.myColor.rgb = emissive.xxx;
     output.myColor.a = 1.0f;
     return output;
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
-// SHADOWS SHADOWS SHADOWS SHADOWS SHADOWS SHADOWS SHADOWS SHADOWS SHADOWS SHADOWS SHADOWS
-///////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
-
-float SampleShadowPos(float3 projectionPos)
-{
-    float2 uvCoords = projectionPos.xy;
-    uvCoords *= float2(0.5f, -0.5f);
-    uvCoords += float2(0.5f, 0.5f);
-
-    float nonLinearDepth = shadowDepthTexture.Sample(shadowSampler, uvCoords).r;
-    float oob = 1.0f;
-    if (projectionPos.x > 1.0f || projectionPos.x < -1.0f || projectionPos.y > 1.0f || projectionPos.y < -1.0f)
-    {
-        oob = 0.0f;
-    }
-
-    float a = nonLinearDepth * oob;
-    float b = projectionPos.z;
-    b = invLerp(-0.5f, 0.5f, b) * oob;
-
-    b *= oob;
-
-    if (b - a < 0.001f)
-    {
-        return 0.0f;
-    }
-    else
-    {
-        return 1.0f;
-    }
-}
-
-float3 ShadowFactor(float3 worldPosition)
-{
-    worldPosition -= directionalLightPosition.xyz;
-    float4 viewPos = mul(worldPosition, toDirectionalLightTransform);
-    float4 projectionPos = mul(viewPos, toDirectionalLightView);
-    float3 viewCoords = projectionPos.xyz;
-
-    float total = 0.0f;
-    for (float x = -1.0; x < 1.5f; x += 1.0f)
-    {
-        for (float y = -1.0; y < 1.5f; y += 1.0f)
-        {
-            //2048.0f * 4.0f,
-            float3 off;
-            off.x = x / (2048.0f * 4.0f);
-            off.y = y / (2048.0f * 4.0f);
-            off.z = 0.0f;
-            total += SampleShadowPos(viewCoords + off);
-        }
-    }
-    total /= 9.0f;
-    return total;
+    
+    // Original
+    //PixelOutput output;
+    //float emissive = emissiveTexture.Sample(defaultSampler, input.myUV.xy).r;
+    //output.myColor.rgb = emissive.xxx;
+    //output.myColor.a = 1.0f;
+    //return output;
 }

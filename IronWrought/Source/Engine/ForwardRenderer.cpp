@@ -120,8 +120,8 @@ bool CForwardRenderer::Init(CDirectXFramework* aFramework) {
 void CForwardRenderer::Render(CEnvironmentLight* anEnvironmentLight, std::vector<std::pair<unsigned int, std::array<CPointLight*, LIGHTCOUNT>>> aModelPointLightList, CCameraComponent* aCamera, std::vector<CGameObject*>& aGameObjectList)
 {
 	DirectX::SimpleMath::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
-	myFrameBufferData.myToCameraSpace = cameraMatrix.Invert();
-	myFrameBufferData.myToProjectionSpace = aCamera->GetProjection();
+	myFrameBufferData.myToCamera = cameraMatrix.Invert();
+	myFrameBufferData.myToProjection = aCamera->GetProjection();
 	myFrameBufferData.myCameraPosition = DirectX::SimpleMath::Vector4{cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f};
 	myFrameBufferData.myDirectionalLightDirection = anEnvironmentLight->GetDirection();
 	myFrameBufferData.myDirectionalLightColor = anEnvironmentLight->GetColor();
@@ -223,8 +223,8 @@ void CForwardRenderer::Render(CEnvironmentLight* anEnvironmentLight, std::vector
 void CForwardRenderer::InstancedRender(CEnvironmentLight* anEnvironmentLight, std::vector<std::pair<unsigned int, std::array<CPointLight*, LIGHTCOUNT>>> aModelPointLightList, CCameraComponent* aCamera, std::vector<CGameObject*>& aGameObjectList)
 {
 	DirectX::SimpleMath::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
-	myFrameBufferData.myToCameraSpace = cameraMatrix.Invert();;
-	myFrameBufferData.myToProjectionSpace = aCamera->GetProjection();
+	myFrameBufferData.myToCamera = cameraMatrix.Invert();;
+	myFrameBufferData.myToProjection = aCamera->GetProjection();
 	myFrameBufferData.myCameraPosition = DirectX::SimpleMath::Vector4{cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f};
 	myFrameBufferData.myDirectionalLightDirection = anEnvironmentLight->GetDirection();
 	myFrameBufferData.myDirectionalLightColor = anEnvironmentLight->GetColor();
@@ -315,8 +315,8 @@ void CForwardRenderer::InstancedRender(CEnvironmentLight* anEnvironmentLight, st
 void CForwardRenderer::RenderLines(CCameraComponent* aCamera, const std::vector<SLineTime>& aLineList) {
 
 	namespace SM = DirectX::SimpleMath;
-	myFrameBufferData.myToCameraSpace = aCamera->GameObject().myTransform->Transform().Invert();
-	myFrameBufferData.myToProjectionSpace = aCamera->GetProjection();
+	myFrameBufferData.myToCamera = aCamera->GameObject().myTransform->Transform().Invert();
+	myFrameBufferData.myToProjection = aCamera->GetProjection();
 
 	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
 
@@ -354,8 +354,8 @@ void CForwardRenderer::RenderOutline(CCameraComponent* aCamera, CGameObject* aMo
 	}
 	DirectX::SimpleMath::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
 	myFrameBufferData.myCameraPosition = DirectX::SimpleMath::Vector4(cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f);
-	myFrameBufferData.myToCameraSpace = cameraMatrix.Invert();
-	myFrameBufferData.myToProjectionSpace = aCamera->GetProjection();
+	myFrameBufferData.myToCamera = cameraMatrix.Invert();
+	myFrameBufferData.myToProjection = aCamera->GetProjection();
 
 	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
 
@@ -404,8 +404,8 @@ void CForwardRenderer::RenderOutline(CCameraComponent* aCamera, CGameObject* aMo
 void CForwardRenderer::RenderLineInstances(CCameraComponent* aCamera, const std::vector<CLineInstance*>& aLineList) {
 
 	namespace SM = DirectX::SimpleMath;
-	myFrameBufferData.myToCameraSpace = aCamera->GameObject().myTransform->Transform().Invert();
-	myFrameBufferData.myToProjectionSpace = aCamera->GetProjection();
+	myFrameBufferData.myToCamera = aCamera->GameObject().myTransform->Transform().Invert();
+	myFrameBufferData.myToProjection = aCamera->GetProjection();
 
 	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
 

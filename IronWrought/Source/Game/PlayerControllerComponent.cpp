@@ -45,10 +45,10 @@ void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
 			myMovement.z = -1.0f;
 			break;
 		case EInputEvent::MoveLeft:
-			myMovement.x = -1.0f;
+			myMovement.x = 1.0f;
 			break;
 		case EInputEvent::MoveRight:
-			myMovement.x = 1.0f;
+			myMovement.x = -1.0f;
 			break;
 
 		default:break;

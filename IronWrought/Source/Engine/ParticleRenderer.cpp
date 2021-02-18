@@ -55,8 +55,8 @@ void CParticleRenderer::Render(CCameraComponent* aCamera, std::vector<CGameObjec
 {
     D3D11_MAPPED_SUBRESOURCE bufferData;
 
-    myFrameBufferData.myToCameraSpace = aCamera->GameObject().myTransform->Transform().Invert();
-    myFrameBufferData.myToProjectionSpace = aCamera->GetProjection();
+    myFrameBufferData.myToCamera = aCamera->GameObject().myTransform->Transform().Invert();
+    myFrameBufferData.myToProjection = aCamera->GetProjection();
 
     BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
 

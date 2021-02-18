@@ -46,10 +46,14 @@ CDeferredRenderer::~CDeferredRenderer()
 bool CDeferredRenderer::Init(CDirectXFramework* aFramework)
 {
 	myContext = aFramework->GetContext();
-	ENGINE_ERROR_BOOL_MESSAGE(myContext, "Context could not be acquired from Framework.");
+	if (!myContext){
+		return false; // Maybe we should fix proper error handling?? :S
+	}
 
 	ID3D11Device* device = aFramework->GetDevice();
-	ENGINE_ERROR_BOOL_MESSAGE(device, "Device could not be acquired from Framework.");
+	if (!device) {
+		return false;
+	}
 
 	D3D11_BUFFER_DESC bufferDescription = { 0 };
 	bufferDescription.Usage = D3D11_USAGE_DYNAMIC;
@@ -113,7 +117,11 @@ bool CDeferredRenderer::Init(CDirectXFramework* aFramework)
 	LoadRenderPassPixelShaders(aFramework->GetDevice());
 
 	CreatePixelShader("Shaders/DeferredVertexPaintPixelShader.cso", aFramework, &myVertexPaintPixelShader);
-	CreateVertexShader("Shaders/DeferredVertexPaintVertexShader.cso", aFramework, &myVertexPaintModelVertexShader, vsData);
+	//CreateVertexShader("Shaders/DeferredVertexPaintVertexShader.cso", aFramework, &myVertexPaintModelVertexShader);
+	vsFile.open("Shaders/DeferredVertexPaintVertexShader.cso", std::ios::binary);
+	vsData = { std::istreambuf_iterator<char>(vsFile), std::istreambuf_iterator<char>() };
+	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateVertexShader(vsData.data(), vsData.size(), nullptr, &myVertexPaintModelVertexShader), "Vertex Paint Vertex Shader could not be created.");
+	vsFile.close();
 
 	// Vertex Paint input layout
 	D3D11_INPUT_ELEMENT_DESC layout[] =
@@ -136,13 +144,6 @@ bool CDeferredRenderer::Init(CDirectXFramework* aFramework)
 	samplerDesc.MaxLOD = 10;
 	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateSamplerState(&samplerDesc, &mySamplerState), "Sampler could not be created.");
 
-	samplerDesc = CD3D11_SAMPLER_DESC{ CD3D11_DEFAULT{} };
-	samplerDesc.BorderColor[0] = 1.0f;
-	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
-	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
-
-	ENGINE_HR_BOOL_MESSAGE(device->CreateSamplerState(&samplerDesc, &myShadowSampler), "Shadow Sampler could not be created.");
-
 	return true;
 }
 
@@ -150,10 +151,8 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 {
 	SM::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
 	myFrameBufferData.myCameraPosition = SM::Vector4{ cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f };
-	myFrameBufferData.myToCameraSpace = cameraMatrix.Invert();
-	myFrameBufferData.myToWorldFromCamera = cameraMatrix;
-	myFrameBufferData.myToProjectionSpace = aCamera->GetProjection();
-	myFrameBufferData.myToCameraFromProjection = aCamera->GetProjection().Invert();
+	myFrameBufferData.myToCamera = cameraMatrix.Invert();
+	myFrameBufferData.myToProjection = aCamera->GetProjection();
 
 	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
 
@@ -323,12 +322,10 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 
 void CDeferredRenderer::Render(CCameraComponent* aCamera, CEnvironmentLight* anEnvironmentLight)
 {
+
 	SM::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
 	myFrameBufferData.myCameraPosition = SM::Vector4{ cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f };
-	myFrameBufferData.myToCameraSpace = cameraMatrix.Invert();
-	myFrameBufferData.myToWorldFromCamera = cameraMatrix;
-	myFrameBufferData.myToProjectionSpace = aCamera->GetProjection();
-	myFrameBufferData.myToCameraFromProjection = aCamera->GetProjection().Invert();
+	myFrameBufferData.myToProjection = aCamera->GetProjection();
 	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
 
 	myContext->PSSetConstantBuffers(0, 1, &myFrameBuffer);
@@ -338,9 +335,6 @@ void CDeferredRenderer::Render(CCameraComponent* aCamera, CEnvironmentLight* anE
 	// Update lightbufferdata and fill lightbuffer
 	myLightBufferData.myDirectionalLightDirection = anEnvironmentLight->GetDirection();
 	myLightBufferData.myDirectionalLightColor = anEnvironmentLight->GetColor();
-	myLightBufferData.myDirectionalLightPosition = anEnvironmentLight->GetShadowPosition();
-	myLightBufferData.myDirectionalLightTransform = anEnvironmentLight->GetShadowTransform();
-	myLightBufferData.myDirectionalLightView = anEnvironmentLight->GetShadowView();
 	BindBuffer(myLightBuffer, myLightBufferData, "Light Buffer");
 	myContext->PSSetConstantBuffers(2, 1, &myLightBuffer);
 
@@ -359,7 +353,6 @@ void CDeferredRenderer::Render(CCameraComponent* aCamera, CEnvironmentLight* anE
 		myContext->PSSetShader(myEnvironmentLightShader, nullptr, 0);
 
 	myContext->PSSetSamplers(0, 1, &mySamplerState);
-	myContext->PSSetSamplers(1, 1, &myShadowSampler);
 
 	myContext->Draw(3, 0);
 	CRenderManager::myNumberOfDrawCallsThisFrame++;
@@ -372,10 +365,7 @@ void CDeferredRenderer::Render(CCameraComponent* aCamera, std::vector<CPointLigh
 
 	SM::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
 	myFrameBufferData.myCameraPosition = SM::Vector4{ cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f };
-	myFrameBufferData.myToCameraSpace = cameraMatrix.Invert();
-	myFrameBufferData.myToWorldFromCamera = cameraMatrix;
-	myFrameBufferData.myToProjectionSpace = aCamera->GetProjection();
-	myFrameBufferData.myToCameraFromProjection = aCamera->GetProjection().Invert();
+	myFrameBufferData.myToProjection = aCamera->GetProjection();
 	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
 	myContext->PSSetConstantBuffers(0, 1, &myFrameBuffer);
 
@@ -406,12 +396,11 @@ void CDeferredRenderer::Render(CCameraComponent* aCamera, std::vector<CPointLigh
 
 }
 
-bool CDeferredRenderer::CreateVertexShader(std::string aFilepath, CDirectXFramework* aFramework, ID3D11VertexShader** outVertexShader, std::string& outShaderData)
+bool CDeferredRenderer::CreateVertexShader(std::string aFilepath, CDirectXFramework* aFramework, ID3D11VertexShader** outVertexShader)
 {
 	std::ifstream vsFile;
 	vsFile.open(aFilepath, std::ios::binary);
 	std::string vsData = { std::istreambuf_iterator<char>(vsFile), std::istreambuf_iterator<char>() };
-	outShaderData = vsData;
 	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateVertexShader(vsData.data(), vsData.size(), nullptr, outVertexShader), "Vertex Shader could not be created.");
 	vsFile.close();
 	return true;

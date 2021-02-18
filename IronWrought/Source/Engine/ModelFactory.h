@@ -11,7 +11,7 @@ class CModelFactory {
 	friend class CEngine;
 public:
 	static CModelFactory* GetInstance();
-	bool Init(CDirectXFramework* aFramework);
+	bool Init(CEngine& engine);
 	void ClearFactory();
 	
 	CModel* GetModel(std::string aFilePath);
@@ -56,8 +56,7 @@ private:
 	std::map<std::string, int> myModelMapReferences;
 	std::map<std::string, int> myInstancedModelMapReferences;
 	std::map<std::string, std::vector<DirectX::SimpleMath::Vector3>> myFBXVertexMap;
-	//CEngine* myEngine;
-	CDirectXFramework* myFramework;
+	CEngine* myEngine;
 	CModel* myOutlineModelSubset;
 	static CModelFactory* ourInstance;
 };

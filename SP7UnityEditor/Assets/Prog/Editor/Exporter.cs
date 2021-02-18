@@ -44,6 +44,10 @@ public struct SScene
 
 public class Exporter
 {
+
+
+
+
     [MenuItem("Export/Export Scene")]
     static void ExportScene()
     {
@@ -93,7 +97,6 @@ public class Exporter
     {
         List<GameObject> alreadyExportedRenderers = ExportVertexPaint.ExportVertexPainting(aScene);
         ExportBlueprints.ExportBluePrint(aScene);
-        ExportPointlights.ExportPointlight(aScene);
 
         Renderer[] allrenderers = GameObject.FindObjectsOfType<Renderer>();
         Dictionary<string, List<STransform>> fbxPathGameObjectMap = new Dictionary<string, List<STransform>>();
@@ -111,7 +114,6 @@ public class Exporter
             STransform transform = new STransform();
 
             GameObject prefabParent = PrefabUtility.GetOutermostPrefabInstanceRoot(allrenderers[i]);
-            prefabParent.Ping();
 
 
             transform.instanceID = prefabParent.transform.GetInstanceID();
@@ -150,10 +152,7 @@ public class Exporter
                 SGameObject gameObject = new SGameObject();
                 string fbxPath = AssetDatabase.GUIDToAssetPath(polyBrushFBX.originalFBXGUID);
                 gameObject.model.fbxPath = fbxPath;
-
-                GameObject prefabParent = PrefabUtility.GetOutermostPrefabInstanceRoot(vertexPaintedObject);
-
-                gameObject.transform.instanceID = prefabParent.transform.GetInstanceID();
+                gameObject.transform.instanceID = vertexPaintedObject.transform.GetInstanceID();
                 gameObject.transform.position = vertexPaintedObject.transform.ConvertToIronWroughtPosition();
                 gameObject.transform.rotation = vertexPaintedObject.transform.ConvertToIronWroughtRotation();
                 gameObject.transform.scale = vertexPaintedObject.transform.ConvertToIronWroughtScale();

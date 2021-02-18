@@ -146,7 +146,7 @@ protected:
 			aPin.myData = new T;
 		}
 	}
-	virtual int OnEnter(class CNodeInstance* aTriggeringNodeInstance) = 0;
+	virtual int OnEnter(class CNodeInstance* /*aTriggeringNodeInstance*/) { return -1; };
 	void GetDataOnPin(CNodeInstance* aTriggeringNodeInstance, unsigned int aPinIndex, SPin::EPinType& outType, void*& someData, size_t& outSize);
 	std::vector<SPin> myPins;
 };

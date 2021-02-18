@@ -49,8 +49,8 @@ private:
 private:
 	struct SFrameBufferData
 	{
-		DirectX::SimpleMath::Matrix myToCameraSpace;
-		DirectX::SimpleMath::Matrix myToProjectionSpace;
+		DirectX::SimpleMath::Matrix myToCamera;
+		DirectX::SimpleMath::Matrix myToProjection;
 		DirectX::SimpleMath::Vector4 myCameraPosition;
 		DirectX::SimpleMath::Vector4 myDirectionalLightDirection;
 		DirectX::SimpleMath::Vector4 myDirectionalLightColor;

@@ -202,10 +202,6 @@
     <ClInclude Include="CapsuleColliderComponent.h" />
     <ClInclude Include="BaseDecisionNode.h" />
     <ClInclude Include="CStateMachineComponent.h" />
-    <ClInclude Include="Decal.h" />
-    <ClInclude Include="DecalComponent.h" />
-    <ClInclude Include="DecalFactory.h" />
-    <ClInclude Include="DecalRenderer.h" />
     <ClInclude Include="GraphManager.h" />
     <ClInclude Include="ActionNode.h" />
     <ClInclude Include="DecisionNode.h" />
@@ -283,7 +279,6 @@
     <ClInclude Include="RigidBodyComponent.h" />
     <ClInclude Include="RigidDynamicBody.h" />
     <ClInclude Include="SceneManager.h" />
-    <ClInclude Include="ShadowRenderer.h" />
     <ClInclude Include="StackWalker.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="DebugTimerUtility.h" />
@@ -373,11 +368,6 @@
     <ClCompile Include="CapsuleColliderComponent.cpp" />
     <ClCompile Include="DecisionNode.cpp" />
     <ClCompile Include="CStateMachineComponent.cpp" />
-    <ClCompile Include="ShadowRenderer.cpp" />
-    <ClCompile Include="Decal.cpp" />
-    <ClCompile Include="DecalComponent.cpp" />
-    <ClCompile Include="DecalFactory.cpp" />
-    <ClCompile Include="DecalRenderer.cpp" />
     <ClCompile Include="GraphManager.cpp" />
     <ClCompile Include="GraphNodeCollisionManager.cpp" />
     <ClCompile Include="GraphNodeTimerManager.cpp" />
@@ -506,16 +496,6 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">4.0</ShaderModel>
-    </FxCompile>
-    <FxCompile Include="DecalPixelShader.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
-    </FxCompile>
-    <FxCompile Include="DecalVertexShader.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Vertex</ShaderType>
     </FxCompile>
     <FxCompile Include="DeferredAnimationVertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
@@ -820,7 +800,6 @@
     <None Include="..\Includes\ImGui\NodeEditor\imgui_extra_math.inl" />
     <None Include="..\Includes\ImGui\NodeEditor\imgui_node_editor_internal.inl" />
     <None Include="cpp.hint" />
-    <None Include="DecalShaderStructs.hlsli" />
     <None Include="DeferredPBRFunctions.hlsli" />
     <None Include="DeferredSamplingFunctions.hlsli" />
     <None Include="DeferredShaderStructs.hlsli" />

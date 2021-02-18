@@ -79,7 +79,6 @@ public:
 	LightPair CullLightInstanced(CInstancedModelComponent* aModelType);
 	std::vector<CGameObject*> CullGameObjects(CCameraComponent* aMainCamera);
 	std::vector<CSpriteInstance*> CullSprites();
-	CGameObject* FindObjectWithID(const int aGameObjectInstanceID);
 //CULLING END
 public:
 	//POPULATE SCENE START
@@ -142,8 +141,6 @@ private:
 	std::vector<CGameObject*> myGameObjects;
 	std::vector<CGameObject*> myModelsToOutline;
 	
-	std::unordered_map<int, CGameObject*> myIDGameObjectMap;
-
 	std::unordered_map<ERenderOrder, std::vector<CSpriteInstance*>> mySpriteInstances;
 //CONTAINERS END
 private:

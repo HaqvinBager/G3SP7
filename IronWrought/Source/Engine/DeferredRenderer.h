@@ -39,16 +39,14 @@ private:
 		myContext->Unmap(aBuffer, 0);
 	}
 
-	bool CreateVertexShader(std::string aFilepath, CDirectXFramework* aFramework, ID3D11VertexShader** outVertexShader, std::string& outShaderData);
+	bool CreateVertexShader(std::string aFilepath, CDirectXFramework* aFramework, ID3D11VertexShader** outVertexShader);
 	bool CreatePixelShader(std::string aFilepath, CDirectXFramework* aFramework, ID3D11PixelShader** outPixelShader);
 
 private:
 	struct SFrameBufferData
 	{
-		DirectX::SimpleMath::Matrix myToCameraSpace;
-		DirectX::SimpleMath::Matrix myToWorldFromCamera;
-		DirectX::SimpleMath::Matrix myToProjectionSpace;
-		DirectX::SimpleMath::Matrix myToCameraFromProjection;
+		DirectX::SimpleMath::Matrix myToCamera;
+		DirectX::SimpleMath::Matrix myToProjection;
 		DirectX::SimpleMath::Vector4 myCameraPosition;
 	} myFrameBufferData;
 	
@@ -62,9 +60,6 @@ private:
 
 	struct SLightBufferData 
 	{
-		DirectX::SimpleMath::Matrix myDirectionalLightTransform;
-		DirectX::SimpleMath::Matrix myDirectionalLightView;
-		DirectX::SimpleMath::Vector4 myDirectionalLightPosition;
 		DirectX::SimpleMath::Vector4 myDirectionalLightDirection;
 		DirectX::SimpleMath::Vector4 myDirectionalLightColor;
 	} myLightBufferData;
@@ -104,9 +99,8 @@ private:
 	ID3D11PixelShader* myVertexPaintPixelShader;
 	ID3D11PixelShader* myEnvironmentLightShader;
 	ID3D11PixelShader* myPointLightShader;
-// Samplers.
+// Sampler.
 	ID3D11SamplerState* mySamplerState;
-	ID3D11SamplerState* myShadowSampler;
 
 	std::vector<ID3D11PixelShader*> myRenderPassShaders;
 	ID3D11PixelShader* myCurrentRenderPassShader;

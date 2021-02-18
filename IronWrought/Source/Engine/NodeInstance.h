@@ -26,13 +26,10 @@ struct SNodeInstanceLink
 	unsigned int myLinkID = 0;
 };
 
-class CGraphManager;
-class CGameObject;
-
 class CNodeInstance
 {
 public:
-	CNodeInstance(CGraphManager* aGraphManager, std::string aGraphKey, bool aCreateNewUID = true);
+	CNodeInstance(bool aCreateNewUID = true);
 	UID myUID;
 	class CNodeType* myNodeType;
 	void Enter();
@@ -188,11 +185,5 @@ public:
 		return COL32(75, 75, 75, 255);
 	}
 	float myEnteredTimer = 0.0f;
-
-	std::string GetGraphKey() { return myGraphKey; }
-	CGameObject* GetCurrentGameObject();
-	private:
-		std::string myGraphKey;
-		CGraphManager* myGraphManager;
 };
 
