@@ -23,6 +23,7 @@
 #include "Scene.h"
 #include "Engine.h"
 #include "GameObject.h"
+#include "GraphNodeTimerManager.h"
 
 using namespace rapidjson;
 namespace ed = ax::NodeEditor;
@@ -39,6 +40,7 @@ CGraphManager::~CGraphManager()
 
 void CGraphManager::Load()
 {
+	CGraphNodeTimerManager::Create();
 	for (const auto& blueprintLinksJsonPath : CJsonReader::GetFilePathsInFolder(ASSETPATH + "Assets/Generated", "BluePrintLinks")) {
 		const auto doc = CJsonReader::Get()->LoadDocument(ASSETPATH + "Assets/Generated/" + blueprintLinksJsonPath);
 		if (doc.HasParseError())
@@ -481,6 +483,8 @@ void CGraphManager::ShowFlow(int aLinkID)
 
 void CGraphManager::Update()
 {
+	CGraphNodeTimerManager::Get()->Update();
+
 	PreFrame(CTimer::Dt());
 	if (myShouldRenderGraph)
 	{
@@ -493,6 +497,12 @@ void CGraphManager::Update()
 void CGraphManager::ToggleShouldRenderGraph()
 {
 	myShouldRenderGraph = !myShouldRenderGraph;
+}
+
+bool CGraphManager::ToggleShouldRunScripts()
+{
+	myScriptShouldRun = !myScriptShouldRun;
+	return myScriptShouldRun;
 }
 
 CGameObject* CGraphManager::GetCurrentGameObject()
@@ -774,11 +784,12 @@ void CGraphManager::PreFrame(float aDeltaTime)
 		auto& io = ImGui::GetIO();
 		ImGui::SetNextWindowPos(ImVec2(0, 18));
 		ImGui::SetNextWindowSize({ io.DisplaySize.x,  io.DisplaySize.y });
+		ImGui::SetNextWindowBgAlpha(0.5f);
 
 		ImGui::Begin(currentScript.c_str(), nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBringToFrontOnFocus);
-		ImGui::SameLine();
-		if (ImGui::Button("Run"))
-			myScriptShouldRun = !myScriptShouldRun;
+		//ImGui::SameLine();
+		//if (ImGui::Button("Run"))
+		//	myScriptShouldRun = !myScriptShouldRun;
 		ImGui::SameLine();
 		if (ImGui::Button("Save"))
 			myLikeToSave = true;
