@@ -17,10 +17,6 @@ int CNodeTypeSetGameObjectPosition::OnEnter(CNodeInstance* aTriggeringNodeInstan
 {
 	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject();
 
-
-	//TODO
-	//Figure out något sätt att accessa myIDGameObjectMap från CGraphManager!
-
 	SPin::EPinType outType;
 	NodeDataPtr someData = nullptr;
 	size_t outSize = 0;
@@ -34,7 +30,8 @@ int CNodeTypeSetGameObjectPosition::OnEnter(CNodeInstance* aTriggeringNodeInstan
 	GetDataOnPin(aTriggeringNodeInstance, 4, outType, someData, outSize);
 	float z = NodeData::Get<float>(someData);
 
-	gameObject->GetComponent<CTransformComponent>()->Position({ x, y, z });
+	Vector3 newPosition = { x, y, z };
+	gameObject->myTransform->Position(newPosition);
 
 	return 1;
 }

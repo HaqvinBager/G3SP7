@@ -213,6 +213,7 @@
     <ClInclude Include="GraphNodeTimerManager.h" />
     <ClInclude Include="NodeInstance.h" />
     <ClInclude Include="NodeType.h" />
+    <ClInclude Include="NodeTypeDeltaTime.h" />
     <ClInclude Include="NodeTypeForEachGameObject.h" />
     <ClInclude Include="NodeTypeGetGameObjectPosition.h" />
     <ClInclude Include="NodeTypeRunDecisionTree.h" />
@@ -373,6 +374,7 @@
     <ClCompile Include="CapsuleColliderComponent.cpp" />
     <ClCompile Include="DecisionNode.cpp" />
     <ClCompile Include="CStateMachineComponent.cpp" />
+    <ClCompile Include="NodeTypeDeltaTime.cpp" />
     <ClCompile Include="ShadowRenderer.cpp" />
     <ClCompile Include="Decal.cpp" />
     <ClCompile Include="DecalComponent.cpp" />

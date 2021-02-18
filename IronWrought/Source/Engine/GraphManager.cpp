@@ -164,11 +164,16 @@ void CGraphManager::ReTriggerTree()
 	//Locate start nodes, we support N start nodes, we might want to remove this, as we dont "support" different trees with different starrtnodes to be connected. It might work, might not
 	for (auto& currentNodeGraph : myGraphs)
 	{
-		for (auto& nodeInstance : currentNodeGraph.second)
+		const auto& gameObjectIDs = myGameObjectIDsMap[currentNodeGraph.first];
+		for (unsigned int i = 0; i < gameObjectIDs.size(); ++i)
 		{
-			if (nodeInstance->myNodeType->IsStartNode() && !nodeInstance->myShouldTriggerAgain)
+			myCurrentGameObjectID = gameObjectIDs[i];
+			for (auto& nodeInstance : currentNodeGraph.second)
 			{
-				nodeInstance->Enter();
+				if (nodeInstance->myNodeType->IsStartNode() && !nodeInstance->myShouldTriggerAgain)
+				{
+					nodeInstance->Enter();
+				}
 			}
 		}
 	}
