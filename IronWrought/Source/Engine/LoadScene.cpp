@@ -5,6 +5,7 @@
 #include "Scene.h"
 #include "Engine.h"
 #include "SceneManager.h"
+#include "CameraComponent.h"
 
 ImGuiWindow::CLoadScene::CLoadScene(const char* aMenuName, const bool aIsMenuChild)
 	: CWindow(aMenuName, aIsMenuChild)
@@ -31,6 +32,8 @@ void ImGuiWindow::CLoadScene::OnEnable()
 		}
 	}
 
+	myScenes.push_back("Empty");
+
 	myState = EState::DropDownMenu;
 }
 
@@ -47,9 +50,21 @@ bool ImGuiWindow::CLoadScene::OnMainMenuGUI()
 		int index = 0;
 		for (const auto& scene : myScenes) {
 			if (ImGui::Selectable(scene.c_str(), mySceneIndex == index)) {
-				CScene* myUnityScene = CSceneManager::CreateScene(scene);
-				CEngine::GetInstance()->AddScene(CStateStack::EState::InGame, myUnityScene);
+
+				CCameraComponent* camera = CEngine::GetInstance()->GetActiveScene().FindFirstObjectWithComponent<CCameraComponent>();
+				Vector3 camPos = camera->GameObject().myTransform->Position();
+
+				CScene* newScene;
+				if (scene == "Empty")
+					newScene = CSceneManager::CreateEmpty();
+				else 
+					newScene = CSceneManager::CreateScene(scene);
+				
+				CEngine::GetInstance()->AddScene(CStateStack::EState::InGame, newScene);
 				CEngine::GetInstance()->SetActiveScene(CStateStack::EState::InGame);
+
+				CCameraComponent* newCamera = CEngine::GetInstance()->GetActiveScene().FindFirstObjectWithComponent<CCameraComponent>();
+				newCamera->GameObject().myTransform->Position(camPos);
 			}
 			index++;
 		}
