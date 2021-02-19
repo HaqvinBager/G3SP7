@@ -7,6 +7,7 @@
 #include "GraphManager.h"
 #include "RenderManager.h"
 #include <psapi.h>
+#include "JsonReader.h"
 
 //#pragma comment(lib, "psapi.lib")
 
@@ -123,6 +124,8 @@ void CImguiManager::LevelSelect()
 				if (ImGui::IsMouseDoubleClicked(0))
 				{
 					std::cout << "Load Level: " << buf << std::endl;
+				
+
 					CScene* myUnityScene = CSceneManager::CreateScene(buf);
 					CEngine::GetInstance()->AddScene(CStateStack::EState::InGame, myUnityScene);
 					CEngine::GetInstance()->SetActiveScene(CStateStack::EState::InGame);
@@ -171,5 +174,13 @@ const std::string CImguiManager::GetDrawCalls()
 
 void CImguiManager::LevelsToSelectFrom(std::vector<std::string> someLevelsToSelectFrom)
 {
-	myLevelsToSelectFrom = someLevelsToSelectFrom;
+	for (unsigned int i = 0; i < someLevelsToSelectFrom.size(); ++i) {
+		const auto& doc = CJsonReader::Get()->LoadDocument(ASSETPATH + "Assets/Generated/" + someLevelsToSelectFrom[i]);
+		if (!doc.HasParseError()) {
+			if (doc.HasMember("instancedGameobjects") && 
+				doc.HasMember("modelGameObjects")) {
+				myLevelsToSelectFrom.push_back(someLevelsToSelectFrom[i]);
+			}
+		}
+	}	
 }
