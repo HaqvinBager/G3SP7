@@ -8,6 +8,7 @@
 #include "RenderManager.h"
 #include <psapi.h>
 #include "JsonReader.h"
+#include "ImGuiWindows.h"
 
 //#pragma comment(lib, "psapi.lib")
 
@@ -52,6 +53,8 @@ CImguiManager::CImguiManager() : myGraphManagerIsFullscreen(false), myIsEnabled(
 
 	myGraphManager = new CGraphManager();
 	myGraphManager->Load();
+
+	myWindows.emplace_back(std::make_unique<ImGuiWindow::CLoadScene>("Load Scene", true));
 }
 
 CImguiManager::~CImguiManager()
@@ -72,22 +75,32 @@ void CImguiManager::Update()
 		{
 			if (myGraphManager->ToggleShouldRunScripts())
 				myScriptsStatus = "Scripts On ";
-			else 
+			else
 				myScriptsStatus = "Scripts Off";
 		}
-		ImGui::EndMainMenuBar();
-		LevelSelect();
-		DebugWindow();
-	}
-	myGraphManager->Update();
 
+		for (const auto& window : myWindows)
+			window->OnMainMenuGUI();
+							
+		ImGui::EndMainMenuBar();
+	}
+
+	for (const auto& window : myWindows) {
+		if (window->Enable() && !window->MainMenuBarChild()) {
+			window->OnInspectorGUI();
+		}
+	}
+	
+	DebugWindow();
+	myGraphManager->Update();
 
 	if (Input::GetInstance()->IsKeyPressed(VK_F1))
 	{
 		myIsEnabled = !myIsEnabled;
-		if(myGraphManager->ShouldRenderGraph())
+		if (myGraphManager->ShouldRenderGraph())
 			myGraphManager->ToggleShouldRenderGraph();
 	}
+
 }
 
 void CImguiManager::DebugWindow()
@@ -98,45 +111,6 @@ void CImguiManager::DebugWindow()
 		ImGui::Text(GetSystemMemory().c_str());
 		ImGui::Text(GetDrawCalls().c_str());
 	}
-	ImGui::End();
-}
-
-void CImguiManager::LevelSelect()
-{
-	//std::vector<std::string> files = CJsonReader::GetFilePathsInFolder(ASSETPATH + "Assets/Generated");
-	ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x - 200, 18));
-	float x = 10.f + ((ImGui::GetFontSize() + 5.5f) * static_cast<float>(myLevelsToSelectFrom.size()));
-	ImGui::SetNextWindowSize({200.f,  x});
-
-	ImGui::Begin("LevelSelect", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
-	/*if (ImGui::TreeNodeEx("Selection State: Single Selection", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Leaf))
-	{*/
-		static int selected = -1;
-		for (int n = 0; n < myLevelsToSelectFrom.size(); n++)
-		{
-			char buf[512];
-			sprintf_s(buf, "%s", myLevelsToSelectFrom[n].c_str());
-
-			if (ImGui::Selectable(buf, selected == n, ImGuiSelectableFlags_AllowDoubleClick))
-			{
-				selected = n;
-
-				if (ImGui::IsMouseDoubleClicked(0))
-				{
-					std::cout << "Load Level: " << buf << std::endl;
-				
-
-					CScene* myUnityScene = CSceneManager::CreateScene(buf);
-					CEngine::GetInstance()->AddScene(CStateStack::EState::InGame, myUnityScene);
-					CEngine::GetInstance()->SetActiveScene(CStateStack::EState::InGame);
-					myIsEnabled = !myIsEnabled;
-				}
-			}
-		}
-	/*	ImGui::TreePop();
-	}*/
-
-
 	ImGui::End();
 }
 
@@ -170,17 +144,4 @@ const std::string CImguiManager::GetDrawCalls()
 	std::string drawCalls = "Draw Calls: ";
 	drawCalls.append(std::to_string(CRenderManager::myNumberOfDrawCallsThisFrame));
 	return drawCalls;
-}
-
-void CImguiManager::LevelsToSelectFrom(std::vector<std::string> someLevelsToSelectFrom)
-{
-	for (unsigned int i = 0; i < someLevelsToSelectFrom.size(); ++i) {
-		const auto& doc = CJsonReader::Get()->LoadDocument(ASSETPATH + "Assets/Generated/" + someLevelsToSelectFrom[i]);
-		if (!doc.HasParseError()) {
-			if (doc.HasMember("instancedGameobjects") && 
-				doc.HasMember("modelGameObjects")) {
-				myLevelsToSelectFrom.push_back(someLevelsToSelectFrom[i]);
-			}
-		}
-	}	
 }

@@ -211,6 +211,8 @@
     <ClInclude Include="DecisionNode.h" />
     <ClInclude Include="GraphNodeCollisionManager.h" />
     <ClInclude Include="GraphNodeTimerManager.h" />
+    <ClInclude Include="ImGuiWindows.h" />
+    <ClInclude Include="LoadScene.h" />
     <ClInclude Include="NodeInstance.h" />
     <ClInclude Include="NodeType.h" />
     <ClInclude Include="NodeTypeDeltaTime.h" />
@@ -340,6 +342,7 @@
     <ClInclude Include="VFXInstance.h" />
     <ClInclude Include="VFXRenderer.h" />
     <ClInclude Include="Widgets.h" />
+    <ClInclude Include="Window.h" />
     <ClInclude Include="WindowHandler.h" />
     <ClInclude Include="WinInclude.h" />
   </ItemGroup>
@@ -374,6 +377,7 @@
     <ClCompile Include="CapsuleColliderComponent.cpp" />
     <ClCompile Include="DecisionNode.cpp" />
     <ClCompile Include="CStateMachineComponent.cpp" />
+    <ClCompile Include="LoadScene.cpp" />
     <ClCompile Include="NodeTypeDeltaTime.cpp" />
     <ClCompile Include="ShadowRenderer.cpp" />
     <ClCompile Include="Decal.cpp" />
@@ -498,6 +502,7 @@
     <ClCompile Include="VFXInstance.cpp" />
     <ClCompile Include="VFXRenderer.cpp" />
     <ClCompile Include="Widgets.cpp" />
+    <ClCompile Include="Window.cpp" />
     <ClCompile Include="WindowHandler.cpp" />
   </ItemGroup>
   <ItemGroup>

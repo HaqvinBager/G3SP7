@@ -620,6 +620,12 @@
       <Filter>Renderers</Filter>
     </ClCompile>
     <ClCompile Include="NodeTypeDeltaTime.cpp" />
+    <ClCompile Include="LoadScene.cpp">
+      <Filter>Imgui\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="Window.cpp">
+      <Filter>Imgui\Windows</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1146,6 +1152,15 @@
       <Filter>Renderers</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeDeltaTime.h" />
+    <ClInclude Include="LoadScene.h">
+      <Filter>Imgui\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="Window.h">
+      <Filter>Imgui\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGuiWindows.h">
+      <Filter>Imgui\Windows</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">
@@ -1396,6 +1411,9 @@
     </Filter>
     <Filter Include="Shaders\Decal">
       <UniqueIdentifier>{fbb72eea-2e5f-4249-b6ca-925d6233bdde}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Windows">
+      <UniqueIdentifier>{4ca55a53-75be-4929-b51e-694576e6c8a6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
