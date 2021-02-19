@@ -626,6 +626,18 @@
     <ClCompile Include="Window.cpp">
       <Filter>Imgui\Windows</Filter>
     </ClCompile>
+    <ClCompile Include="NodeTypeBool.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Base Library\Variables</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeFloat.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Base Library\Variables</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeInt.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Base Library\Variables</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeString.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Base Library\Variables</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1161,6 +1173,18 @@
     <ClInclude Include="ImGuiWindows.h">
       <Filter>Imgui\Windows</Filter>
     </ClInclude>
+    <ClInclude Include="NodeTypeBool.h">
+      <Filter>Imgui\Node Editor\Nodes\Base Library\Variables</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeFloat.h">
+      <Filter>Imgui\Node Editor\Nodes\Base Library\Variables</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeInt.h">
+      <Filter>Imgui\Node Editor\Nodes\Base Library\Variables</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeString.h">
+      <Filter>Imgui\Node Editor\Nodes\Base Library\Variables</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">
@@ -1414,6 +1438,9 @@
     </Filter>
     <Filter Include="Imgui\Windows">
       <UniqueIdentifier>{4ca55a53-75be-4929-b51e-694576e6c8a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Nodes\Base Library\Variables">
+      <UniqueIdentifier>{94d2d326-5412-46b6-b23a-c2eedacb6ab6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -40,7 +40,9 @@ CGraphManager::~CGraphManager()
 
 void CGraphManager::Load()
 {
-	CGraphNodeTimerManager::Create();
+	if(CGraphNodeTimerManager::Get() == nullptr)
+		CGraphNodeTimerManager::Create();
+
 	for (const auto& blueprintLinksJsonPath : CJsonReader::GetFilePathsInFolder(ASSETPATH + "Assets/Generated", "BluePrintLinks")) {
 		const auto doc = CJsonReader::Get()->LoadDocument(ASSETPATH + "Assets/Generated/" + blueprintLinksJsonPath);
 		if (doc.HasParseError())
