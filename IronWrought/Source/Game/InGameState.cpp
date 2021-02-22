@@ -46,12 +46,7 @@ void CInGameState::Awake(){}
 #include "PlayerControllerComponent.h"
 void CInGameState::Start()
 {
-	//CScene* scene = /*new CScene()*/CSceneManager::CreateEmpty();
-	CScene* scene = new CScene();
-	std::vector<std::string> scenePaths = CFolderUtility::GetFileNamesInFolder(ASSETPATH("Assets\\Generated\\"), ".json");
-	CMainSingleton::ImguiManager().LevelsToSelectFrom(scenePaths);
-	scene = CSceneManager::CreateScene(scenePaths[0].c_str());
-
+	 CScene* scene = CSceneManager::CreateEmpty();
 	//scene->AddPXScene(CEngine::GetInstance()->GetPhysx().CreatePXScene());
 	
 	CEngine::GetInstance()->AddScene(myState, scene);
