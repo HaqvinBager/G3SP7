@@ -1,16 +1,16 @@
 #include "stdafx.h"
-#include "NodeTypePrint.h"
+#include "NodeTypePrintMessage.h"
 #include "NodeInstance.h"
 #include <iostream>
 
-CNodeTypePrint::CNodeTypePrint()
+CNodeTypePrintMessage::CNodeTypePrintMessage()
 {
 	myPins.push_back(SPin("IN", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Flow));	// Pin Index 0, this is an input
-	myPins.push_back(SPin("Text", SPin::EPinTypeInOut::PinTypeInOut_IN,SPin::EPinType::String)); // Pin Index 1, this is an input
+	myPins.push_back(SPin("Message", SPin::EPinTypeInOut::PinTypeInOut_IN,SPin::EPinType::String)); // Pin Index 1, this is an input
 	myPins.push_back(SPin("OUT", SPin::EPinTypeInOut::PinTypeInOut_OUT)); // Pin Index 2, this is an output
 }
 
-int CNodeTypePrint::OnEnter(class CNodeInstance* aTriggeringNodeInstance)
+int CNodeTypePrintMessage::OnEnter(class CNodeInstance* aTriggeringNodeInstance)
 {
 	SPin::EPinType outType;
 	NodeDataPtr someData = nullptr;

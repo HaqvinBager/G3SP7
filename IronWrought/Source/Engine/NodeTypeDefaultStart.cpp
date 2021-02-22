@@ -1,17 +1,17 @@
 #include "stdafx.h"
-#include "NodeTypeStart.h"
+#include "NodeTypeDefaultStart.h"
 #include <iostream>
 #include "NodeType.h"
 #include "NodeInstance.h"
 
 
-CNodeTypeStart::CNodeTypeStart()
+CNodeTypeDefaultStart::CNodeTypeDefaultStart()
 {
 	myPins.push_back(SPin("Updating", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Bool));
 	myPins.push_back(SPin("", SPin::EPinTypeInOut::PinTypeInOut_OUT));
 }
 
-int CNodeTypeStart::OnEnter(class CNodeInstance* aTriggeringNodeInstance)
+int CNodeTypeDefaultStart::OnEnter(class CNodeInstance* aTriggeringNodeInstance)
 {
 	SPin::EPinType outType;
 	NodeDataPtr someData = nullptr;

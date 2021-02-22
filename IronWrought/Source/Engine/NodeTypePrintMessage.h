@@ -1,12 +1,13 @@
 #pragma once
 #include "NodeType.h"
 #include "NodeTypes.h"
-class CNodeTypePrint : public CNodeType
+
+class CNodeTypePrintMessage : public CNodeType
 {
 public:
-	CNodeTypePrint();
+	CNodeTypePrintMessage();
 	int OnEnter(class CNodeInstance* aTriggeringNodeInstance) override;
-	virtual std::string GetNodeName() { return "Print"; }
+	virtual std::string GetNodeName() { return "Print Message"; }
 	std::string GetNodeTypeCategory() override { return "Debugging"; }
 };
 

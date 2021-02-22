@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "NodeType.h"
-#include "NodeTypePrint.h"
-#include "NodeTypeStart.h"
+#include "NodeTypeDefaultStart.h"
+#include "NodeTypePrintMessage.h"
 #include "NodeInstance.h"
 #include "NodeTypeMathAdd.h"
 #include "NodeTypeMathSub.h"
@@ -46,8 +46,8 @@ unsigned int UID::myGlobalUID = 0;
 
 void CNodeTypeCollector::PopulateTypes()
 {
-	RegisterType<CNodeTypeStart>();
-	RegisterType<CNodeTypePrint>();
+	RegisterType<CNodeTypeDefaultStart>();
+	RegisterType<CNodeTypePrintMessage>();
 	RegisterType<CNodeTypeMathAdd>();
 	RegisterType<CNodeTypeMathSub>();
 	RegisterType<CNodeTypeMathMul>();

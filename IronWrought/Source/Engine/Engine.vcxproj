@@ -244,9 +244,9 @@
     <ClInclude Include="NodeTypeMathSub.h" />
     <ClInclude Include="NodeTypeMathToDegrees.h" />
     <ClInclude Include="NodeTypeMathToRadians.h" />
-    <ClInclude Include="NodeTypePrint.h" />
+    <ClInclude Include="NodeTypePrintMessage.h" />
     <ClInclude Include="NodeTypeSetGameObjectPosition.h" />
-    <ClInclude Include="NodeTypeStart.h" />
+    <ClInclude Include="NodeTypeDefaultStart.h" />
     <ClInclude Include="ImGuiLevelSelect.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="ContactReportCallback.h" />
@@ -423,9 +423,9 @@
     <ClCompile Include="NodeTypeMathSub.cpp" />
     <ClCompile Include="NodeTypeMathToDegrees.cpp" />
     <ClCompile Include="NodeTypeMathToRadians.cpp" />
-    <ClCompile Include="NodeTypePrint.cpp" />
+    <ClCompile Include="NodeTypePrintMessage.cpp" />
     <ClCompile Include="NodeTypeSetGameObjectPosition.cpp" />
-    <ClCompile Include="NodeTypeStart.cpp" />
+    <ClCompile Include="NodeTypeDefaultStart.cpp" />
     <ClCompile Include="ImGuiLevelSelect.cpp" />
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="ContactReportCallback.cpp" />
