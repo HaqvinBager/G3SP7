@@ -1,0 +1,231 @@
+{
+    "UID_MAX": {
+        "Num": 63
+    },
+    "NodeInstances": [
+        {
+            "NodeType": 4,
+            "UID": 5,
+            "Position": {
+                "X": 871,
+                "Y": 503
+            },
+            "Pins": [
+                {
+                    "Index": 0,
+                    "UID": 9,
+                    "DATA": 1.0,
+                    "DATA_TYPE": "FLOAT"
+                },
+                {
+                    "Index": 1,
+                    "UID": 10,
+                    "DATA": 5.0,
+                    "DATA_TYPE": "FLOAT"
+                },
+                {
+                    "Index": 2,
+                    "UID": 11,
+                    "DATA": "",
+                    "DATA_TYPE": "FLOAT"
+                }
+            ]
+        },
+        {
+            "NodeType": 30,
+            "UID": 12,
+            "Position": {
+                "X": 403,
+                "Y": 592
+            },
+            "Pins": [
+                {
+                    "Index": 0,
+                    "UID": 13,
+                    "DATA": "",
+                    "DATA_TYPE": "FLOAT"
+                },
+                {
+                    "Index": 1,
+                    "UID": 14,
+                    "DATA": "",
+                    "DATA_TYPE": "FLOAT"
+                }
+            ]
+        },
+        {
+            "NodeType": 4,
+            "UID": 15,
+            "Position": {
+                "X": 871,
+                "Y": 391
+            },
+            "Pins": [
+                {
+                    "Index": 0,
+                    "UID": 16,
+                    "DATA": 1.0,
+                    "DATA_TYPE": "FLOAT"
+                },
+                {
+                    "Index": 1,
+                    "UID": 17,
+                    "DATA": 5.0,
+                    "DATA_TYPE": "FLOAT"
+                },
+                {
+                    "Index": 2,
+                    "UID": 18,
+                    "DATA": "",
+                    "DATA_TYPE": "FLOAT"
+                }
+            ]
+        },
+        {
+            "NodeType": 2,
+            "UID": 19,
+            "Position": {
+                "X": 1233,
+                "Y": 536
+            },
+            "Pins": [
+                {
+                    "Index": 0,
+                    "UID": 20,
+                    "DATA": 1.0,
+                    "DATA_TYPE": "FLOAT"
+                },
+                {
+                    "Index": 1,
+                    "UID": 21,
+                    "DATA": 1.0,
+                    "DATA_TYPE": "FLOAT"
+                },
+                {
+                    "Index": 2,
+                    "UID": 22,
+                    "DATA": "",
+                    "DATA_TYPE": "FLOAT"
+                }
+            ]
+        },
+        {
+            "NodeType": 2,
+            "UID": 23,
+            "Position": {
+                "X": 1230,
+                "Y": 412
+            },
+            "Pins": [
+                {
+                    "Index": 0,
+                    "UID": 24,
+                    "DATA": 1.0,
+                    "DATA_TYPE": "FLOAT"
+                },
+                {
+                    "Index": 1,
+                    "UID": 25,
+                    "DATA": 1.0,
+                    "DATA_TYPE": "FLOAT"
+                },
+                {
+                    "Index": 2,
+                    "UID": 26,
+                    "DATA": "",
+                    "DATA_TYPE": "FLOAT"
+                }
+            ]
+        },
+        {
+            "NodeType": 5,
+            "UID": 27,
+            "Position": {
+                "X": 866,
+                "Y": 180
+            },
+            "Pins": [
+                {
+                    "Index": 0,
+                    "UID": 28,
+                    "DATA": "",
+                    "DATA_TYPE": "FLOAT"
+                },
+                {
+                    "Index": 1,
+                    "UID": 29,
+                    "DATA": "",
+                    "DATA_TYPE": "FLOAT"
+                },
+                {
+                    "Index": 2,
+                    "UID": 30,
+                    "DATA": "",
+                    "DATA_TYPE": "FLOAT"
+                }
+            ]
+        },
+        {
+            "NodeType": 6,
+            "UID": 31,
+            "Position": {
+                "X": 1601,
+                "Y": 320
+            },
+            "Pins": [
+                {
+                    "Index": 0,
+                    "UID": 32,
+                    "DATA": "",
+                    "DATA_TYPE": ""
+                },
+                {
+                    "Index": 1,
+                    "UID": 33,
+                    "DATA": "",
+                    "DATA_TYPE": ""
+                },
+                {
+                    "Index": 2,
+                    "UID": 34,
+                    "DATA": 1.0,
+                    "DATA_TYPE": "FLOAT"
+                },
+                {
+                    "Index": 3,
+                    "UID": 35,
+                    "DATA": 1.0,
+                    "DATA_TYPE": "FLOAT"
+                },
+                {
+                    "Index": 4,
+                    "UID": 36,
+                    "DATA": 1.0,
+                    "DATA_TYPE": "FLOAT"
+                }
+            ]
+        },
+        {
+            "NodeType": 0,
+            "UID": 37,
+            "Position": {
+                "X": 1318,
+                "Y": 126
+            },
+            "Pins": [
+                {
+                    "Index": 0,
+                    "UID": 38,
+                    "DATA": true,
+                    "DATA_TYPE": "BOOL"
+                },
+                {
+                    "Index": 1,
+                    "UID": 39,
+                    "DATA": "",
+                    "DATA_TYPE": ""
+                }
+            ]
+        }
+    ]
+}

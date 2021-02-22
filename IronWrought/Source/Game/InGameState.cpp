@@ -47,41 +47,14 @@ void CInGameState::Awake(){}
 void CInGameState::Start()
 {
 	//CScene* scene = /*new CScene()*/CSceneManager::CreateEmpty();
-	CScene* scene = new CScene();
-	std::vector<std::string> scenePaths = CFolderUtility::GetFilePathsInFolder(ASSETPATH + "Assets\\Generated\\", ".json");
-	CMainSingleton::ImguiManager().LevelsToSelectFrom(scenePaths);
-	scene = CSceneManager::CreateScene(scenePaths[0].c_str());
+	
+	CScene* scene = CSceneManager::CreateEmpty();
 
-	scene->AddPXScene(CEngine::GetInstance()->GetPhysx().CreatePXScene());
+	//scene->AddPXScene(CEngine::GetInstance()->GetPhysx().CreatePXScene());
 	
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);
-	//CGameObject* physxmaterialtestobject = new CGameObject(60);
-	//
-	//physxmaterialtestobject->AddComponent<CModelComponent>(*physxmaterialtestobject, std::string(ASSETPATH + "Assets/Graphics/Exempel_Modeller/Wall/Wall.fbx"));
-	//physxmaterialtestobject->AddComponent<CRigidBodyComponent>(*physxmaterialtestobject);
-	//physxmaterialtestobject->GetComponent<CTransformComponent>()->Position({ 10.0f, 190.0f, 5.0f });
-	//
-	//scene->AddInstance(physxmaterialtestobject);
 
-// Parent Player to Camera test 2021 02 16
-	//CGameObject* player = new CGameObject(999);
-	//player->AddComponent<CModelComponent>(*player, ASSETPATH + "Assets/Graphics/Character/Main Character/CH_PL_SK.fbx");
-	//player->AddComponent<CPlayerControllerComponent>(*player);
-	//player->myTransform->Rotation({ 0.0f, 180.0f, 0.0f });
-	//scene->AddInstance(player);
-	//CGameObject* camera = CCameraControllerComponent::CreatePlayerFirstPersonCamera(player);
-	//scene->AddInstance(camera);
-	//scene->MainCamera(camera->GetComponent<CCameraComponent>());
-	//
-	//CGameObject* envLight = new CGameObject(1);
-	//envLight->AddComponent<CEnviromentLightComponent>(*envLight);
-	//envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetIntensity(1.f);
-	//envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetDirection({ 0.0f,0.0f,-1.0f });
-	//
-	//scene ->EnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight());
-	//scene ->AddInstance(envLight);
-// ! Parent Player to Camera test 2021 02 16
 	myExitLevel = false;
 
 	std::vector<CGameObject*>& gameObjects = CEngine::GetInstance()->GetActiveScene().myGameObjects;

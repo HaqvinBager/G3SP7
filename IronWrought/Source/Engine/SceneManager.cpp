@@ -157,7 +157,7 @@ CScene* CSceneManager::CreateScene(std::string aJsonFile)//TEMP
 	CGameObject* envLight = new CGameObject(1);
 	envLight->AddComponent<CEnviromentLightComponent>(*envLight);
 	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetIntensity(1.f);
-	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetDirection({ 0.0f,1.0f,1.0f });
+	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetDirection({ 0.0f,-1.0f,1.0f });
 	scene->EnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight());
 	scene->AddInstance(envLight);
 

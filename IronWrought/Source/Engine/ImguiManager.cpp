@@ -8,6 +8,7 @@
 #include "RenderManager.h"
 #include <psapi.h>
 #include "JsonReader.h"
+#include "ImGuiWindows.h"
 
 //#pragma comment(lib, "psapi.lib")
 
@@ -52,6 +53,8 @@ CImguiManager::CImguiManager() : myGraphManagerIsFullscreen(false), myIsEnabled(
 
 	myGraphManager = new CGraphManager();
 	myGraphManager->Load();
+
+	myWindows.emplace_back(std::make_unique<ImGuiWindow::CLoadScene>("Load Scene", true));
 }
 
 CImguiManager::~CImguiManager()
@@ -72,22 +75,32 @@ void CImguiManager::Update()
 		{
 			if (myGraphManager->ToggleShouldRunScripts())
 				myScriptsStatus = "Scripts On ";
-			else 
+			else
 				myScriptsStatus = "Scripts Off";
 		}
-		ImGui::EndMainMenuBar();
-		LevelSelect();
-		DebugWindow();
-	}
-	myGraphManager->Update();
 
+		for (const auto& window : myWindows)
+			window->OnMainMenuGUI();
+							
+		ImGui::EndMainMenuBar();
+	}
+
+	for (const auto& window : myWindows) {
+		if (window->Enable() && !window->MainMenuBarChild()) {
+			window->OnInspectorGUI();
+		}
+	}
+	
+	DebugWindow();
+	myGraphManager->Update();
 
 	if (Input::GetInstance()->IsKeyPressed(VK_F1))
 	{
 		myIsEnabled = !myIsEnabled;
-		if(myGraphManager->ShouldRenderGraph())
+		if (myGraphManager->ShouldRenderGraph())
 			myGraphManager->ToggleShouldRenderGraph();
 	}
+
 }
 
 void CImguiManager::DebugWindow()
