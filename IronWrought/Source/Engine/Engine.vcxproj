@@ -215,9 +215,12 @@
     <ClInclude Include="LoadScene.h" />
     <ClInclude Include="NodeInstance.h" />
     <ClInclude Include="NodeType.h" />
+    <ClInclude Include="NodeTypeBool.h" />
     <ClInclude Include="NodeTypeDeltaTime.h" />
+    <ClInclude Include="NodeTypeFloat.h" />
     <ClInclude Include="NodeTypeForEachGameObject.h" />
     <ClInclude Include="NodeTypeGetGameObjectPosition.h" />
+    <ClInclude Include="NodeTypeInt.h" />
     <ClInclude Include="NodeTypeRunDecisionTree.h" />
     <ClInclude Include="NodeTypePrintAction.h" />
     <ClInclude Include="NodeTypeFloatDecision.h" />
@@ -268,6 +271,7 @@
     <ClInclude Include="Message.h" />
     <ClInclude Include="MessageType.h" />
     <ClInclude Include="NodeTypes.h" />
+    <ClInclude Include="NodeTypeString.h" />
     <ClInclude Include="NodeTypeTimer.h" />
     <ClInclude Include="NodeTypeVolumeTrigger.h" />
     <ClInclude Include="Observer.h" />
@@ -378,7 +382,11 @@
     <ClCompile Include="DecisionNode.cpp" />
     <ClCompile Include="CStateMachineComponent.cpp" />
     <ClCompile Include="LoadScene.cpp" />
+    <ClCompile Include="NodeTypeBool.cpp" />
     <ClCompile Include="NodeTypeDeltaTime.cpp" />
+    <ClCompile Include="NodeTypeFloat.cpp" />
+    <ClCompile Include="NodeTypeInt.cpp" />
+    <ClCompile Include="NodeTypeString.cpp" />
     <ClCompile Include="ShadowRenderer.cpp" />
     <ClCompile Include="Decal.cpp" />
     <ClCompile Include="DecalComponent.cpp" />
