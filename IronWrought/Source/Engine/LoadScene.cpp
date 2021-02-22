@@ -22,9 +22,10 @@ ImGuiWindow::CLoadScene::~CLoadScene()
 
 void ImGuiWindow::CLoadScene::OnEnable()
 {
-	std::vector<std::string> generatedJsonFiles = CFolderUtility::GetFileNamesInFolder(ASSETPATH("Assets/Generated"), ".json");
+
+	std::vector<std::string> generatedJsonFiles = CFolderUtility::GetFileNamesInFolder(ASSETPATH ("Assets/Generated"), ".json");
 	for (unsigned int i = 0; i < generatedJsonFiles.size(); ++i) {
-		const auto& doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + generatedJsonFiles[i]));
+		const auto& doc = CJsonReader::Get()->LoadDocument(ASSETPATH  ("Assets/Generated/" + generatedJsonFiles[i]));
 		if (!doc.HasParseError()) {
 			if (doc.HasMember("instancedGameobjects") &&
 				doc.HasMember("modelGameObjects")) {

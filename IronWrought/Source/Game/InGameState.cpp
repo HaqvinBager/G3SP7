@@ -46,9 +46,8 @@ void CInGameState::Awake(){}
 #include "PlayerControllerComponent.h"
 void CInGameState::Start()
 {
-	//CScene* scene = /*new CScene()*/CSceneManager::CreateEmpty();
-	CScene* scene = CSceneManager::CreateEmpty();
 
+	 CScene* scene = CSceneManager::CreateEmpty();
 	//scene->AddPXScene(CEngine::GetInstance()->GetPhysx().CreatePXScene());
 	
 	CEngine::GetInstance()->AddScene(myState, scene);
