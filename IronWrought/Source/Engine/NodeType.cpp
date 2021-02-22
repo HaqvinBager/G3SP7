@@ -32,6 +32,10 @@
 #include "NodeTypeFloatDecision.h"
 #include "NodeTypeRunDecisionTree.h"
 #include "NodeTypeDeltaTime.h"
+#include "NodeTypeFloat.h"
+#include "NodeTypeInt.h"
+#include "NodeTypeBool.h"
+#include "NodeTypeString.h"
 
 CNodeType* CNodeTypeCollector::myTypes[128];
 unsigned short CNodeTypeCollector::myTypeCounter = 0;
@@ -73,6 +77,9 @@ void CNodeTypeCollector::PopulateTypes()
 	RegisterType<CNodeTypeFloatDecision>();
 	RegisterType<CNodeTypeRunDecisionTree>();
 	RegisterType<CNodeTypeDeltaTime>();
+	RegisterType<CNodeTypeFloat>();
+	RegisterType<CNodeTypeInt>();
+	RegisterType<CNodeTypeBool>();
 }
 
 void CNodeType::ClearNodeInstanceFromMap(CNodeInstance* /*aTriggeringNodeInstance*/)
