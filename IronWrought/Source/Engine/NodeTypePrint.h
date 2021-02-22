@@ -7,6 +7,6 @@ public:
 	CNodeTypePrint();
 	int OnEnter(class CNodeInstance* aTriggeringNodeInstance) override;
 	virtual std::string GetNodeName() { return "Print"; }
-
+	std::string GetNodeTypeCategory() override { return "Debugging"; }
 };
 

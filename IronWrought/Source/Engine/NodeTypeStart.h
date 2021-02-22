@@ -13,6 +13,7 @@ public:
 	CNodeTypeStart();
 	int OnEnter(class CNodeInstance* aTriggeringNodeInstance) override;
 	bool IsStartNode() override { return true; }
-	virtual std::string GetNodeName() { return "Start"; }
+	virtual std::string GetNodeName() { return "Default Start"; }
+	std::string GetNodeTypeCategory() override { return "Start"; }
 };
 
