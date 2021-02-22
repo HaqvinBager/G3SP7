@@ -26,45 +26,53 @@ public class ExportVertexPaint : Editor
     [MenuItem("Tools/Enable VertexPaint on Selected", true)]
     public static bool IsValid()
     {
-        GameObject selectedObject = Selection.activeGameObject;
-        if (selectedObject != null)
+        int correctItems = 0;
+        GameObject[] selectedObjects = Selection.gameObjects;
+        foreach(GameObject selectedObject in selectedObjects)
         {
-            if(selectedObject.GetComponent<PolybrushFBX>() != null)
+            if (selectedObject != null)
             {
-                return false;
-            }
-
-
-            if (selectedObject.TryGetComponent(out MeshRenderer renderer))
-            {
-                if (renderer.sharedMaterials.Length == 1)
+                if (selectedObject.GetComponent<PolybrushFBX>() != null)
                 {
-                    if (selectedObject.TryGetComponent(out MeshFilter filter))
-                    {
-                        if (!filter.sharedMesh.name.Contains("PolybrushMesh"))
-                        {
-                            return true;
-                        }
-                    }
+                    return false;
+                }
 
+
+                if (selectedObject.TryGetComponent(out MeshRenderer renderer))
+                {
+                    if (renderer.sharedMaterials.Length == 1)
+                    {
+                        if (selectedObject.TryGetComponent(out MeshFilter filter))
+                        {
+                            if (!filter.sharedMesh.name.Contains("PolybrushMesh"))
+                            {
+                                correctItems++;
+                            }
+                        }
+
+                    }
                 }
             }
         }
-        return false;
+        return correctItems == selectedObjects.Length;
+        //return true;
     }
 
     [MenuItem("Tools/Enable VertexPaint on Selected")]
     static void EnableVertexPaint()
     {
-        GameObject selectedObject = Selection.activeGameObject;
-        if (selectedObject.TryGetComponent(out MeshFilter filter))
+        GameObject[] selectedObjects = Selection.gameObjects;
+        foreach(GameObject selectedObject in selectedObjects)
         {
-            PolybrushFBX fbxSaver = Undo.AddComponent<PolybrushFBX>(selectedObject);
-            string fbxPath = AssetDatabase.GetAssetPath(PrefabUtility.GetCorrespondingObjectFromOriginalSource(selectedObject.GetComponent<MeshFilter>().sharedMesh));
-            string guid = AssetDatabase.AssetPathToGUID(fbxPath);
-            fbxSaver.originalFBXGUID = guid;
+            if (selectedObject.TryGetComponent(out MeshFilter filter))
+            {
+                PolybrushFBX fbxSaver = Undo.AddComponent<PolybrushFBX>(selectedObject);
+                string fbxPath = AssetDatabase.GetAssetPath(PrefabUtility.GetCorrespondingObjectFromOriginalSource(selectedObject.GetComponent<MeshFilter>().sharedMesh));
+                string guid = AssetDatabase.AssetPathToGUID(fbxPath);
+                fbxSaver.originalFBXGUID = guid;
 
-            selectedObject.GetComponent<MeshRenderer>().sharedMaterial = AssetDatabase.LoadAssetAtPath<Material>("Assets/VertexPaintMaterials/VP_Material_Base.mat");   
+                selectedObject.GetComponent<MeshRenderer>().sharedMaterial = AssetDatabase.LoadAssetAtPath<Material>("Assets/VertexPaintMaterials/VP_Material_Base.mat");
+            }
         }
     }
 
@@ -81,8 +89,9 @@ public class ExportVertexPaint : Editor
 
             if (!meshName.Contains(polybrushMesh))
             {
-                Debug.LogError("This Object has not yet been Painted on.", polyBrushObject.gameObject);
-                return new List<GameObject>();
+                Debug.LogError("This Object has not yet been Painted on. Skipping it!", polyBrushObject.gameObject);
+                continue;
+                //return new List<GameObject>();
             }
 
             int startIndex = meshName.LastIndexOf(polybrushMesh) + polybrushMesh.Length;
@@ -94,9 +103,11 @@ public class ExportVertexPaint : Editor
             {
                 if (vertexLink.colorsPath == targetPath + "PolybrushColors_" + polyMeshID + "_Bin.bin")
                 {
-                    if (!vertexLink.myTransformIDs.Contains(polyBrushObject.transform.GetInstanceID()))
+                    GameObject prefabRoot = PrefabUtility.GetOutermostPrefabInstanceRoot(polyBrushObject);
+                    if (!vertexLink.myTransformIDs.Contains(prefabRoot.transform.GetInstanceID()))
                     {
-                        vertexLink.myTransformIDs.Add(polyBrushObject.transform.GetInstanceID());
+                        vertexLink.myTransformIDs.Add(prefabRoot.transform.GetInstanceID());
+
                         exportedVertexPaintObjects.Add(polyBrushObject.gameObject);
                         hasFoundLink = true;
                         break;
@@ -107,9 +118,11 @@ public class ExportVertexPaint : Editor
             if (!hasFoundLink)
             {
                 VertexLink newLink = new VertexLink();
+                GameObject prefabRoot = PrefabUtility.GetOutermostPrefabInstanceRoot(polyBrushObject);
+              //  prefabRoot.Ping();
                 newLink.colorsPath = targetPath + "PolybrushColors_" + polyMeshID + "_Bin.bin";
                 newLink.myTransformIDs = new List<int>();
-                newLink.myTransformIDs.Add(polyBrushObject.transform.GetInstanceID());
+                newLink.myTransformIDs.Add(prefabRoot.transform.GetInstanceID());
                 exportedVertexPaintObjects.Add(polyBrushObject.gameObject);
                 newLink.myMaterialNames = ExtractTexturePathsFromMaterials(polyBrushObject.GetComponent<MeshRenderer>().sharedMaterials);
                 vertexLinks.Add(newLink);
@@ -159,7 +172,14 @@ public class ExportVertexPaint : Editor
         VertexLinkCollection collection = new VertexLinkCollection();
         collection.links = vertexLinks.ToArray();
         string jsonString = JsonUtility.ToJson(collection);
+
+        if (!File.Exists("Assets\\Generated"))
+            Directory.CreateDirectory(Directory.GetCurrentDirectory() +  "\\" + targetPath);
+            //File.Create(targetPath);
+
         string savePath = targetPath + "PolybrushLinks_" + aScene.name + ".json";
+
+
         File.WriteAllText(savePath, jsonString);
 
         return exportedVertexPaintObjects;

@@ -26,10 +26,13 @@ struct SNodeInstanceLink
 	unsigned int myLinkID = 0;
 };
 
+class CGraphManager;
+class CGameObject;
+
 class CNodeInstance
 {
 public:
-	CNodeInstance(bool aCreateNewUID = true);
+	CNodeInstance(CGraphManager* aGraphManager, std::string aGraphKey, bool aCreateNewUID = true);
 	UID myUID;
 	class CNodeType* myNodeType;
 	void Enter();
@@ -45,9 +48,9 @@ public:
 	std::string GetNodeName();
 
 	std::vector<SPin>& GetPins() {return myPins;}
-	void ChangePinTypes(SPin::PinType aType);
+	void ChangePinTypes(SPin::EPinType aType);
 
-	void FetchData(SPin::PinType& anOutType, NodeDataPtr& someData, size_t& anOutSize, unsigned int aPinToFetchFrom);
+	void FetchData(SPin::EPinType& anOutType, NodeDataPtr& someData, size_t& anOutSize, unsigned int aPinToFetchFrom);
 	std::vector<SNodeInstanceLink>& GetLinks() { return myLinks; }
 	std::vector< SNodeInstanceLink*> GetLinkFromPin(unsigned int aPinToFetchFrom);
 	SPin* GetPinFromID(unsigned int aUID);
@@ -55,19 +58,19 @@ public:
 
 	inline std::string WriteVariableType(const SPin& aPin) const
 	{
-		if (aPin.myVariableType == SPin::PinType::Bool)
+		if (aPin.myVariableType == SPin::EPinType::Bool)
 		{
 			return "BOOL";
 		}
-		else if (aPin.myVariableType == SPin::PinType::Int)
+		else if (aPin.myVariableType == SPin::EPinType::Int)
 		{
 			return "INT";
 		}
-		else if (aPin.myVariableType == SPin::PinType::Float)
+		else if (aPin.myVariableType == SPin::EPinType::Float)
 		{
 			return "FLOAT";
 		}
-		else if (aPin.myVariableType == SPin::PinType::String)
+		else if (aPin.myVariableType == SPin::EPinType::String)
 		{
 			return "STRING";
 		}
@@ -79,7 +82,7 @@ public:
 	inline void WritePinValue(Writer& aWriter, const SPin& aPin) const
 	{
 		
-		if (aPin.myPinType == SPin::PinTypeInOut::PinTypeInOut_OUT)
+		if (aPin.myPinType == SPin::EPinTypeInOut::PinTypeInOut_OUT)
 		{
 			aWriter.String("");
 		}
@@ -89,20 +92,20 @@ public:
 			{
 				aWriter.String("");
 			}
-			else if (aPin.myVariableType == SPin::PinType::Bool)
+			else if (aPin.myVariableType == SPin::EPinType::Bool)
 			{
 				aWriter.Bool(NodeData::Get<bool>(aPin.myData));
 			}
-			else if (aPin.myVariableType == SPin::PinType::Int)
+			else if (aPin.myVariableType == SPin::EPinType::Int)
 			{
 				aWriter.Int(NodeData::Get<int>(aPin.myData));
 			}
-			else if (aPin.myVariableType == SPin::PinType::Float)
+			else if (aPin.myVariableType == SPin::EPinType::Float)
 			{
 				aWriter.Double((double)NodeData::Get<float>(aPin.myData));
 
 			}
-			else if (aPin.myVariableType == SPin::PinType::String)
+			else if (aPin.myVariableType == SPin::EPinType::String)
 			{
 				aWriter.String((char*)aPin.myData);
 			}
@@ -185,5 +188,11 @@ public:
 		return COL32(75, 75, 75, 255);
 	}
 	float myEnteredTimer = 0.0f;
+
+	std::string GetGraphKey() { return myGraphKey; }
+	CGameObject* GetCurrentGameObject();
+	private:
+		std::string myGraphKey;
+		CGraphManager* myGraphManager;
 };
 

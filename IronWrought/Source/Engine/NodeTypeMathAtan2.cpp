@@ -4,14 +4,14 @@
 
 CNodeTypeMathAtan2::CNodeTypeMathAtan2()
 {
-    myPins.push_back(SPin("X", SPin::PinTypeInOut::PinTypeInOut_IN, SPin::PinType::Float));
-    myPins.push_back(SPin("Y", SPin::PinTypeInOut::PinTypeInOut_IN, SPin::PinType::Float));
-    myPins.push_back(SPin("OUT", SPin::PinTypeInOut::PinTypeInOut_OUT, SPin::PinType::Float));
+    myPins.push_back(SPin("X", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Float));
+    myPins.push_back(SPin("Y", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Float));
+    myPins.push_back(SPin("OUT", SPin::EPinTypeInOut::PinTypeInOut_OUT, SPin::EPinType::Float));
 }
 
 int CNodeTypeMathAtan2::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 {
-	SPin::PinType outType;
+	SPin::EPinType outType;
 	NodeDataPtr someData = nullptr;
 	size_t outSize = 0;
 

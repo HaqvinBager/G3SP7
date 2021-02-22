@@ -2,19 +2,13 @@
 #include "rapidjson/document.h"
 #include "rapidjson/istreamwrapper.h"
 #include <fstream>
-
-#include <string>
-#include <filesystem>
+//#include <string>
 
 class CJsonReader
 {
 public:
 	static CJsonReader* Get();
-
-	/*static*/ rapidjson::Document LoadDocument(const std::string& json_path);
-
-	static std::vector<std::string> GetFilePathsInFolder(const std::string& aFolder, const std::string& aPrefix = "");
-
+	rapidjson::Document LoadDocument(const std::string& json_path);
 private:
 	CJsonReader() {}
 	~CJsonReader() {}

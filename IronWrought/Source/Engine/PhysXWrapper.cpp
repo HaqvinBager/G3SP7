@@ -4,6 +4,7 @@
 #include "Scene.h"
 #include "Engine.h"
 #include "RigidDynamicBody.h"
+#include <iostream>
 
 PxFilterFlags contactReportFilterShader(PxFilterObjectAttributes attributes0, PxFilterData filterData0,
 	PxFilterObjectAttributes attributes1, PxFilterData filterData1,
@@ -100,7 +101,7 @@ PxScene* CPhysXWrapper::CreatePXScene()
 	}
 
 	// Create a basic setup for a scene - contain the rodents in a invisible cage
-	PxMaterial* myMaterial = myPhysics->createMaterial(1.0f, 0.0f, -0.5f);
+	PxMaterial* myMaterial = CreateMaterial(CPhysXWrapper::materialfriction::basic);
 
 	PxRigidStatic* groundPlane = PxCreatePlane(*myPhysics, PxPlane(0, 1, 0, 3.3f), *myMaterial);
 	//groundPlane->setGlobalPose( {15.0f,0.0f,0.0f} );
@@ -108,6 +109,46 @@ PxScene* CPhysXWrapper::CreatePXScene()
 
 	return pXScene;
 }
+
+PxRaycastBuffer CPhysXWrapper::Raycast(Vector3 aOrigin, Vector3 aDirection, float aDistance)
+{
+	PxScene* scene = CEngine::GetInstance()->GetActiveScene().PXScene();
+	PxVec3 origin;
+	origin.x = aOrigin.x;
+	origin.y = aOrigin.y;
+	origin.z = aOrigin.z;
+
+
+	PxVec3 unitDir;
+
+	unitDir.x = aDirection.x;
+	unitDir.y = aDirection.y;
+	unitDir.z = aDirection.z;
+
+	PxReal maxDistance = aDistance;
+	PxRaycastBuffer hit;
+
+	scene->raycast(origin, unitDir, maxDistance, hit);
+	
+		RaycastHit(hit.block.position, hit.block.normal);
+		
+	
+
+	return hit;
+}
+
+void CPhysXWrapper::RaycastHit(PxVec3 position, PxVec3 normal)
+{
+	std::cout << "x: " << position.x << std::endl;
+	std::cout << "y: " << position.y << std::endl;
+	std::cout << "z: " << position.z << std::endl << std::endl;
+
+
+	std::cout << normal.x << std::endl;
+
+}
+
+
 
 
 
@@ -125,10 +166,14 @@ PxMaterial* CPhysXWrapper::CreateMaterial(materialfriction amaterial)
 	case materialfriction::bounce:
 		return myPhysics->createMaterial(0.0f, 0.0f, 1.0f);
 		break;
+	case materialfriction::basic:
+		return myPhysics->createMaterial(0.5f, 0.5f, 0.5f);
+		break;
 	case materialfriction::none:
-		return myPXMaterial;
+		return myPhysics->createMaterial(0.0f, 0.0f, 0.0f);
 		break;
 	default:
+
 		break;
 	}
 	return nullptr;

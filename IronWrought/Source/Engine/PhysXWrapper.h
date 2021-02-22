@@ -6,18 +6,25 @@ using namespace physx;
 class ContactReportCallback;
 class RigidDynamicBody;
 
-enum class materialfriction 
-{
-	metal,
-	wood,
-	bounce,
-	none
 
-};
 
 class CPhysXWrapper
 {
 public:
+
+	enum class materialfriction
+	{
+		metal,
+		wood,
+		bounce,
+		basic,
+		none
+		
+
+	};
+
+public:
+
 	CPhysXWrapper();
 	~CPhysXWrapper();
 
@@ -26,12 +33,18 @@ public:
 	PxScene* CreatePXScene();
 
 
+	PxRaycastBuffer Raycast(Vector3 origin, Vector3 direction, float distance);
+	void RaycastHit(PxVec3 position, PxVec3 normal);
+	
+
 	PxMaterial* CreateMaterial(materialfriction amaterial);
 
 	void Simulate();
 
 	RigidDynamicBody* CreateDynamicRigidbody(Vector3 aPos);
 private:
+	
+	
 	PxFoundation* myFoundation;
 	PxPhysics* myPhysics;
 	PxDefaultCpuDispatcher* myDispatcher;

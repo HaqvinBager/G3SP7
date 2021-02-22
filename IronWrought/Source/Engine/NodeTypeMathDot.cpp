@@ -4,18 +4,18 @@
 
 CNodeTypeMathDot::CNodeTypeMathDot()
 {
-    myPins.push_back(SPin("X1", SPin::PinTypeInOut::PinTypeInOut_IN, SPin::PinType::Float));
-    myPins.push_back(SPin("Y1", SPin::PinTypeInOut::PinTypeInOut_IN, SPin::PinType::Float));
-    myPins.push_back(SPin("Z1", SPin::PinTypeInOut::PinTypeInOut_IN, SPin::PinType::Float));
-    myPins.push_back(SPin("X2", SPin::PinTypeInOut::PinTypeInOut_IN, SPin::PinType::Float));
-    myPins.push_back(SPin("Y2", SPin::PinTypeInOut::PinTypeInOut_IN, SPin::PinType::Float));
-    myPins.push_back(SPin("Z2", SPin::PinTypeInOut::PinTypeInOut_IN, SPin::PinType::Float));
-    myPins.push_back(SPin("OUT", SPin::PinTypeInOut::PinTypeInOut_OUT, SPin::PinType::Float));
+    myPins.push_back(SPin("X1", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Float));
+    myPins.push_back(SPin("Y1", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Float));
+    myPins.push_back(SPin("Z1", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Float));
+    myPins.push_back(SPin("X2", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Float));
+    myPins.push_back(SPin("Y2", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Float));
+    myPins.push_back(SPin("Z2", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Float));
+    myPins.push_back(SPin("OUT", SPin::EPinTypeInOut::PinTypeInOut_OUT, SPin::EPinType::Float));
 }
 
 int CNodeTypeMathDot::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 {
-	SPin::PinType outType;
+	SPin::EPinType outType;
 	NodeDataPtr someData = nullptr;
 	size_t outSize = 0;
 

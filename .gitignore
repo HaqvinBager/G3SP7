@@ -267,7 +267,7 @@ IronWrought/Bin/DebugLogs/
 TGA_Modelviewer/
 DeferredRenderer/
 
-*.cso 
+#.cso 
 
 IronWrought/Lib/DirectXTK_Debug.lib
 IronWrought/Lib/DirectXTK_Release.lib
@@ -278,8 +278,7 @@ IronWrought/Lib/Game_Release.lib
 IronWrought/Lib/ModelLoader_Debug.lib
 IronWrought/Lib/ModelLoader_Release.lib
 
-IronWrought/Bin/Launcher_Debug.exe
-IronWrought/Bin/Launcher_Release.exe
+Ironwrought/Bin/Launcher_Release.exe
 
 # This .gitignore file should be placed at the root of your Unity project directory
 #
@@ -354,3 +353,5 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
 
+*.cso
+*.exe

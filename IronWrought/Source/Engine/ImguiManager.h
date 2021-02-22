@@ -11,7 +11,6 @@ public:
 	CImguiManager();
 	~CImguiManager();
 	void Update();
-	void PostRender();
 	void DebugWindow();
 	void LevelSelect();
 	void LevelsToSelectFrom(std::vector<std::string> someLevelsToSelectFrom);
@@ -22,4 +21,5 @@ private:
 	std::vector<std::string> myLevelsToSelectFrom;
 	bool myGraphManagerIsFullscreen;
 	bool myIsEnabled;
+	std::string myScriptsStatus;
 };

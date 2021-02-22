@@ -19,6 +19,7 @@ class CRenderManager;
 class CParticleFactory;
 class CSpriteFactory;
 class CTextFactory;
+class CDecalFactory;
 class CInputMapper;
 class CDebug;
 class CMainSingleton;
@@ -36,6 +37,7 @@ class CEngine
 	friend class CLightFactory;
 	friend class CRenderManager;
 	friend class CLineFactory;
+	friend class CDecalFactory;
 	friend class CMaterialHandler;
 
 public:
@@ -93,6 +95,7 @@ private:
 	CLineFactory* myLineFactory;
 	CSpriteFactory* mySpriteFactory;
 	CTextFactory* myTextFactory;
+	CDecalFactory* myDecalFactory;
 	CInputMapper* myInputMapper;
 	CMainSingleton* myMainSingleton;
 	CAudioManager* myAudioManager;

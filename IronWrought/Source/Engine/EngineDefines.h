@@ -3,8 +3,8 @@
 #define SAFE_DELETE(aPointer) delete aPointer; aPointer = nullptr;
 
 #ifdef EXCELSIOR
-#define ASSETPATH std::string ("") // EXCELSIOR
+#define ASSETPATH(path) std::string (path) // EXCELSIOR
 #else
-#define ASSETPATH std::string ("../../SP7UnityEditor/") //UNITY
+#define ASSETPATH(path) std::string("../../SP7UnityEditor/").append(path)//UNITY
 #endif 
 

@@ -20,6 +20,8 @@
 
 #define USING_FBX_MATERIALS
 
+//#define ALLOW_ANIMATIONS
+
 CModelFactory* CModelFactory::ourInstance = nullptr;
 CModelFactory* CModelFactory::GetInstance()
 {
@@ -27,17 +29,17 @@ CModelFactory* CModelFactory::GetInstance()
 }
 
 CModelFactory::CModelFactory() 
-	: myEngine(nullptr)
+	//: myEngine(nullptr)
+	: myFramework(nullptr)
 	, myOutlineModelSubset(nullptr)
 {
 	ourInstance = this;
-	myEngine = nullptr;
 }
 
 CModelFactory::~CModelFactory()
 {
 	ourInstance = nullptr;
-	myEngine = nullptr;
+	myFramework = nullptr;
 
 	auto itPBR = myModelMap.begin();
 	while (itPBR != myModelMap.end())
@@ -57,9 +59,9 @@ CModelFactory::~CModelFactory()
 }
 
 
-bool CModelFactory::Init(CEngine& engine)
+bool CModelFactory::Init(CDirectXFramework* aFramework)
 {
-	myEngine = &engine;
+	myFramework = aFramework;
 	return true;
 }
 
@@ -94,7 +96,6 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 
 	CLoaderMesh* mesh = loaderModel->myMeshes[0];
 
-
 	unsigned int vertexSize = mesh->myVertexBufferSize;
 	unsigned int vertexCount = mesh->myVertexCount;
 
@@ -125,7 +126,7 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 			return nullptr;
 		}
 		ID3D11Buffer* vertexBuffer;
-		ENGINE_HR_MESSAGE(myEngine->myFramework->GetDevice()->CreateBuffer(&vertexBufferDesc, &subVertexResourceData, &vertexBuffer), "Vertex Buffer could not be created.");
+		ENGINE_HR_MESSAGE(myFramework->GetDevice()->CreateBuffer(&vertexBufferDesc, &subVertexResourceData, &vertexBuffer), "Vertex Buffer could not be created.");
 
 		// Index Buffer
 		D3D11_BUFFER_DESC indexBufferDesc = { 0 };
@@ -137,7 +138,7 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 		subIndexResourceData.pSysMem = mesh->myIndexes.data();
 
 		ID3D11Buffer* indexBuffer;
-		ENGINE_HR_MESSAGE(myEngine->myFramework->GetDevice()->CreateBuffer(&indexBufferDesc, &subIndexResourceData, &indexBuffer), "Index Buffer could not be created.");
+		ENGINE_HR_MESSAGE(myFramework->GetDevice()->CreateBuffer(&indexBufferDesc, &subIndexResourceData, &indexBuffer), "Index Buffer could not be created.");
 
 		meshData[i].myNumberOfVertices = mesh->myVertexCount;
 		meshData[i].myNumberOfIndices = static_cast<UINT>(mesh->myIndexes.size());
@@ -150,14 +151,18 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 
 	//VertexShader
 	std::ifstream vsFile;
+#ifdef ALLOW_ANIMATIONS
 	if (mesh->myModel->myNumBones > 0)
 		vsFile.open("Shaders/AnimatedVertexShader.cso", std::ios::binary);
 	else 
 		vsFile.open("Shaders/VertexShader.cso", std::ios::binary);
+#else
+	vsFile.open("Shaders/VertexShader.cso", std::ios::binary);
+#endif
 	
 	std::string vsData = { std::istreambuf_iterator<char>(vsFile), std::istreambuf_iterator<char>() };
 	ID3D11VertexShader* vertexShader;
-	ENGINE_HR_MESSAGE(myEngine->myFramework->GetDevice()->CreateVertexShader(vsData.data(), vsData.size(), nullptr, &vertexShader), "Vertex Shader could not be created.");
+	ENGINE_HR_MESSAGE(myFramework->GetDevice()->CreateVertexShader(vsData.data(), vsData.size(), nullptr, &vertexShader), "Vertex Shader could not be created.");
 
 	vsFile.close();
 
@@ -167,7 +172,7 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 	std::string psData = { std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>() };
 
 	ID3D11PixelShader* pixelShader;
-	ENGINE_HR_MESSAGE(myEngine->myFramework->GetDevice()->CreatePixelShader(psData.data(), psData.size(), nullptr, &pixelShader), "Pixel Shader could not be created.");
+	ENGINE_HR_MESSAGE(myFramework->GetDevice()->CreatePixelShader(psData.data(), psData.size(), nullptr, &pixelShader), "Pixel Shader could not be created.");
 
 	psFile.close();
 
@@ -181,7 +186,7 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 	samplerDesc.MinLOD = 0;
 	samplerDesc.MaxLOD = 10;
 
-	ENGINE_HR_MESSAGE(myEngine->myFramework->GetDevice()->CreateSamplerState(&samplerDesc, &sampler), "Sampler State could not be created.");
+	ENGINE_HR_MESSAGE(myFramework->GetDevice()->CreateSamplerState(&samplerDesc, &sampler), "Sampler State could not be created.");
 
 	//Layout
 	D3D11_INPUT_ELEMENT_DESC layout[] =
@@ -201,9 +206,9 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 	};
 
 	ID3D11InputLayout* inputLayout;
-	ENGINE_HR_MESSAGE(myEngine->myFramework->GetDevice()->CreateInputLayout(layout, sizeof(layout) / sizeof(D3D11_INPUT_ELEMENT_DESC), vsData.data(), vsData.size(), &inputLayout), "Input Layout could not be created.");
+	ENGINE_HR_MESSAGE(myFramework->GetDevice()->CreateInputLayout(layout, sizeof(layout) / sizeof(D3D11_INPUT_ELEMENT_DESC), vsData.data(), vsData.size(), &inputLayout), "Input Layout could not be created.");
 
-	ID3D11Device* device = myEngine->myFramework->GetDevice();
+	ID3D11Device* device = myFramework->GetDevice();
 	std::string modelDirectoryAndName = modelDirectory + modelName;
 
 	// Check for detail normal
@@ -262,7 +267,9 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 	modelData.myDetailNormals[3] = detailNormal4;
 
 	model->Init(modelData);
+#ifdef ALLOW_ANIMATIONS
 	model->HasBones(mesh->myModel->myNumBones > 0);
+#endif
 
 	myModelMap.emplace(aFilePath, model);
 	return model;
@@ -279,14 +286,14 @@ CModel* CModelFactory::GetOutlineModelSubset()
 	vsFile.open("Shaders/AnimatedVertexShader.cso", std::ios::binary);
 	std::string vsData = { std::istreambuf_iterator<char>(vsFile), std::istreambuf_iterator<char>() };
 	ID3D11VertexShader* vertexShader;
-	ENGINE_HR_MESSAGE(myEngine->myFramework->GetDevice()->CreateVertexShader(vsData.data(), vsData.size(), nullptr, &vertexShader), "Vertex Shader could not be created.");
+	ENGINE_HR_MESSAGE(myFramework->GetDevice()->CreateVertexShader(vsData.data(), vsData.size(), nullptr, &vertexShader), "Vertex Shader could not be created.");
 	vsFile.close();
 
 	std::ifstream psFile;
 	psFile.open("Shaders/OutlinePixelShader.cso", std::ios::binary);
 	std::string psData = { std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>() };
 	ID3D11PixelShader* pixelShader;
-	ENGINE_HR_MESSAGE(myEngine->myFramework->GetDevice()->CreatePixelShader(psData.data(), psData.size(), nullptr, &pixelShader), "Pixel Shader could not be created.");
+	ENGINE_HR_MESSAGE(myFramework->GetDevice()->CreatePixelShader(psData.data(), psData.size(), nullptr, &pixelShader), "Pixel Shader could not be created.");
 	psFile.close();
 	//End Shader
 
@@ -403,7 +410,7 @@ CModel* CModelFactory::CreateInstancedModels(std::string aFilePath, int aNumberO
 			return nullptr;
 		}
 		ID3D11Buffer* vertexBuffer;
-		ENGINE_HR_MESSAGE(myEngine->myFramework->GetDevice()->CreateBuffer(&vertexBufferDesc, &subVertexResourceData, &vertexBuffer), "Vertex Buffer could not be created.");
+		ENGINE_HR_MESSAGE(myFramework->GetDevice()->CreateBuffer(&vertexBufferDesc, &subVertexResourceData, &vertexBuffer), "Vertex Buffer could not be created.");
 
 		// Index Buffer
 		D3D11_BUFFER_DESC indexBufferDesc = { 0 };
@@ -415,7 +422,7 @@ CModel* CModelFactory::CreateInstancedModels(std::string aFilePath, int aNumberO
 		subIndexResourceData.pSysMem = mesh->myIndexes.data();
 
 		ID3D11Buffer* indexBuffer;
-		ENGINE_HR_MESSAGE(myEngine->myFramework->GetDevice()->CreateBuffer(&indexBufferDesc, &subIndexResourceData, &indexBuffer), "Index Buffer could not be created.");
+		ENGINE_HR_MESSAGE(myFramework->GetDevice()->CreateBuffer(&indexBufferDesc, &subIndexResourceData, &indexBuffer), "Index Buffer could not be created.");
 
 		meshData[i].myNumberOfVertices = mesh->myVertexCount;
 		meshData[i].myNumberOfIndices = static_cast<UINT>(mesh->myIndexes.size());
@@ -443,11 +450,11 @@ CModel* CModelFactory::CreateInstancedModels(std::string aFilePath, int aNumberO
 	instanceBufferDesc.StructureByteStride = 0;
 
 	ID3D11Buffer* instanceBuffer;
-	ENGINE_HR_MESSAGE(myEngine->myFramework->GetDevice()->CreateBuffer(&instanceBufferDesc, nullptr, &instanceBuffer), "Instance Buffer could not be created.");
-
+	ENGINE_HR_MESSAGE(myFramework->GetDevice()->CreateBuffer(&instanceBufferDesc, nullptr, &instanceBuffer), "Instance Buffer could not be created.");
 
 	//VertexShader
 	std::ifstream vsFile;
+#ifdef ALLOW_ANIMATIONS
 	if (mesh->myModel->myNumBones > 0)
 	{
 		vsFile.open("Shaders/AnimatedVertexShader.cso", std::ios::binary);
@@ -455,10 +462,13 @@ CModel* CModelFactory::CreateInstancedModels(std::string aFilePath, int aNumberO
 	else {
 		vsFile.open("Shaders/InstancedVertexShader.cso", std::ios::binary);
 	}
+#else
+	vsFile.open("Shaders/InstancedVertexShader.cso", std::ios::binary);
+#endif
 
 	std::string vsData = { std::istreambuf_iterator<char>(vsFile), std::istreambuf_iterator<char>() };
 	ID3D11VertexShader* vertexShader;
-	ENGINE_HR_MESSAGE(myEngine->myFramework->GetDevice()->CreateVertexShader(vsData.data(), vsData.size(), nullptr, &vertexShader), "Vertex Shader could not be created.");
+	ENGINE_HR_MESSAGE(myFramework->GetDevice()->CreateVertexShader(vsData.data(), vsData.size(), nullptr, &vertexShader), "Vertex Shader could not be created.");
 
 	vsFile.close();
 
@@ -469,7 +479,7 @@ CModel* CModelFactory::CreateInstancedModels(std::string aFilePath, int aNumberO
 	std::string psData = { std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>() };
 
 	ID3D11PixelShader* pixelShader;
-	ENGINE_HR_MESSAGE(myEngine->myFramework->GetDevice()->CreatePixelShader(psData.data(), psData.size(), nullptr, &pixelShader), "Pixel Shader could not be created.");
+	ENGINE_HR_MESSAGE(myFramework->GetDevice()->CreatePixelShader(psData.data(), psData.size(), nullptr, &pixelShader), "Pixel Shader could not be created.");
 
 	psFile.close();
 
@@ -483,8 +493,7 @@ CModel* CModelFactory::CreateInstancedModels(std::string aFilePath, int aNumberO
 	samplerDesc.MinLOD = 0;
 	samplerDesc.MaxLOD = 10;
 
-
-	ENGINE_HR_MESSAGE(myEngine->myFramework->GetDevice()->CreateSamplerState(&samplerDesc, &sampler), "Sampler State could not be created.");
+	ENGINE_HR_MESSAGE(myFramework->GetDevice()->CreateSamplerState(&samplerDesc, &sampler), "Sampler State could not be created.");
 
 	//Layout
 	D3D11_INPUT_ELEMENT_DESC layout[] =
@@ -503,9 +512,9 @@ CModel* CModelFactory::CreateInstancedModels(std::string aFilePath, int aNumberO
 	};
 
 	ID3D11InputLayout* inputLayout;
-	ENGINE_HR_MESSAGE(myEngine->myFramework->GetDevice()->CreateInputLayout(layout, sizeof(layout) / sizeof(D3D11_INPUT_ELEMENT_DESC), vsData.data(), vsData.size(), &inputLayout), "Input Layout could not be created.");
+	ENGINE_HR_MESSAGE(myFramework->GetDevice()->CreateInputLayout(layout, sizeof(layout) / sizeof(D3D11_INPUT_ELEMENT_DESC), vsData.data(), vsData.size(), &inputLayout), "Input Layout could not be created.");
 
-	ID3D11Device* device = myEngine->myFramework->GetDevice();
+	ID3D11Device* device = myFramework->GetDevice();
 	std::string modelDirectoryAndName = modelDirectory + modelName;
 
 #ifdef USING_FBX_MATERIALS

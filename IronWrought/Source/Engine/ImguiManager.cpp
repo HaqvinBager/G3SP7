@@ -4,12 +4,12 @@
 #include "Engine.h"
 #include "Scene.h"
 #include "SceneManager.h"
-#pragma comment(lib, "imgui.lib")
 #include "GraphManager.h"
 #include "RenderManager.h"
 #include <psapi.h>
+#include "JsonReader.h"
 
-#pragma comment(lib, "psapi.lib")
+//#pragma comment(lib, "psapi.lib")
 
 static ImFont* ImGui_LoadFont(ImFontAtlas& atlas, const char* name, float size, const ImVec2& displayOffset = ImVec2(0, 0))
 {
@@ -40,7 +40,7 @@ static ImFont* ImGui_LoadFont(ImFontAtlas& atlas, const char* name, float size, 
 }
 ImFontAtlas myFontAtlas;
 
-CImguiManager::CImguiManager() : myGraphManagerIsFullscreen(false), myIsEnabled(false)
+CImguiManager::CImguiManager() : myGraphManagerIsFullscreen(false), myIsEnabled(false), myScriptsStatus("Scripts Off")
 {
 	ImGui::DebugCheckVersionAndDataLayout("1.80 WIP", sizeof(ImGuiIO), sizeof(ImGuiStyle), sizeof(ImVec2), sizeof(ImVec4), sizeof(ImDrawVert), sizeof(unsigned int));
 	ImGui::CreateContext();
@@ -66,8 +66,15 @@ void CImguiManager::Update()
 	if (myIsEnabled)
 	{
 		ImGui::BeginMainMenuBar();
-		if (ImGui::Button("Display Nodescripts"))
+		if (ImGui::Button("Display Scripts"))
 			myGraphManager->ToggleShouldRenderGraph();
+		if (ImGui::Button(myScriptsStatus.c_str()))
+		{
+			if (myGraphManager->ToggleShouldRunScripts())
+				myScriptsStatus = "Scripts On ";
+			else 
+				myScriptsStatus = "Scripts Off";
+		}
 		ImGui::EndMainMenuBar();
 		LevelSelect();
 		DebugWindow();
@@ -83,11 +90,6 @@ void CImguiManager::Update()
 	}
 }
 
-void CImguiManager::PostRender()
-{
-	myGraphManager->PostRender();
-}
-
 void CImguiManager::DebugWindow()
 {
 	if (ImGui::Begin("Debug info", nullptr))
@@ -101,7 +103,7 @@ void CImguiManager::DebugWindow()
 
 void CImguiManager::LevelSelect()
 {
-	//std::vector<std::string> files = CJsonReader::GetFilePathsInFolder(ASSETPATH + "Assets/Generated");
+	//std::vector<std::string> files = CJsonReader::GetFileNamesInFolder(ASSETPATH + "Assets/Generated");
 	ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x - 200, 18));
 	float x = 10.f + ((ImGui::GetFontSize() + 5.5f) * static_cast<float>(myLevelsToSelectFrom.size()));
 	ImGui::SetNextWindowSize({200.f,  x});
@@ -122,6 +124,8 @@ void CImguiManager::LevelSelect()
 				if (ImGui::IsMouseDoubleClicked(0))
 				{
 					std::cout << "Load Level: " << buf << std::endl;
+				
+
 					CScene* myUnityScene = CSceneManager::CreateScene(buf);
 					CEngine::GetInstance()->AddScene(CStateStack::EState::InGame, myUnityScene);
 					CEngine::GetInstance()->SetActiveScene(CStateStack::EState::InGame);
@@ -170,5 +174,13 @@ const std::string CImguiManager::GetDrawCalls()
 
 void CImguiManager::LevelsToSelectFrom(std::vector<std::string> someLevelsToSelectFrom)
 {
-	myLevelsToSelectFrom = someLevelsToSelectFrom;
+	for (unsigned int i = 0; i < someLevelsToSelectFrom.size(); ++i) {
+		const auto& doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + someLevelsToSelectFrom[i]));
+		if (!doc.HasParseError()) {
+			if (doc.HasMember("instancedGameobjects") && 
+				doc.HasMember("modelGameObjects")) {
+				myLevelsToSelectFrom.push_back(someLevelsToSelectFrom[i]);
+			}
+		}
+	}	
 }

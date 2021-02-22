@@ -7,9 +7,9 @@
 
 CNodeTypeGetMousePosition::CNodeTypeGetMousePosition()
 {
-	myPins.push_back(SPin("X", SPin::PinTypeInOut::PinTypeInOut_OUT, SPin::PinType::Float));
-	myPins.push_back(SPin("Y", SPin::PinTypeInOut::PinTypeInOut_OUT, SPin::PinType::Float));
-	myPins.push_back(SPin("Left Down", SPin::PinTypeInOut::PinTypeInOut_OUT, SPin::PinType::Bool));
+	myPins.push_back(SPin("X", SPin::EPinTypeInOut::PinTypeInOut_OUT, SPin::EPinType::Float));
+	myPins.push_back(SPin("Y", SPin::EPinTypeInOut::PinTypeInOut_OUT, SPin::EPinType::Float));
+	myPins.push_back(SPin("Left Down", SPin::EPinTypeInOut::PinTypeInOut_OUT, SPin::EPinType::Bool));
 }
 
 int CNodeTypeGetMousePosition::OnEnter(CNodeInstance* aTriggeringNodeInstance)

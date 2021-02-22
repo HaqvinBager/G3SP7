@@ -26,12 +26,10 @@ bool CInputMapper::Init()
 	MapEvent(IInputObserver::EInputAction::MouseMiddle, IInputObserver::EInputEvent::MiddleMouseMove);
 	MapEvent(IInputObserver::EInputAction::KeyShiftDown, IInputObserver::EInputEvent::StandStill);
 	MapEvent(IInputObserver::EInputAction::KeyShiftRelease, IInputObserver::EInputEvent::Moving);
-	MapEvent(IInputObserver::EInputAction::Key1, IInputObserver::EInputEvent::Ability1);
-	MapEvent(IInputObserver::EInputAction::Key2, IInputObserver::EInputEvent::Ability2);
-	MapEvent(IInputObserver::EInputAction::Key3, IInputObserver::EInputEvent::Ability3);
-	MapEvent(IInputObserver::EInputAction::KeyA, IInputObserver::EInputEvent::Ability1);
-	MapEvent(IInputObserver::EInputAction::KeyS, IInputObserver::EInputEvent::Ability2);
-	MapEvent(IInputObserver::EInputAction::KeyD, IInputObserver::EInputEvent::Ability3);
+	MapEvent(IInputObserver::EInputAction::KeyW, IInputObserver::EInputEvent::MoveForward);
+	MapEvent(IInputObserver::EInputAction::KeyA, IInputObserver::EInputEvent::MoveLeft);
+	MapEvent(IInputObserver::EInputAction::KeyS, IInputObserver::EInputEvent::MoveBackward);
+	MapEvent(IInputObserver::EInputAction::KeyD, IInputObserver::EInputEvent::MoveRight);
 	MapEvent(IInputObserver::EInputAction::KeyEscape, IInputObserver::EInputEvent::PauseGame);
 
 	if (this == nullptr)
@@ -74,28 +72,19 @@ void CInputMapper::UpdateKeyboardInput()
 		TranslateActionToEvent(IInputObserver::EInputAction::KeyShiftRelease);
 	}
 
-	if (myInput->IsKeyPressed('1'))
+	if (myInput->IsKeyDown('W'))
 	{
-		TranslateActionToEvent(IInputObserver::EInputAction::Key1);
+		TranslateActionToEvent(IInputObserver::EInputAction::KeyW);
 	}
-	if (myInput->IsKeyPressed('2'))
-	{
-		TranslateActionToEvent(IInputObserver::EInputAction::Key2);
-	}
-	if (myInput->IsKeyPressed('3'))
-	{
-		TranslateActionToEvent(IInputObserver::EInputAction::Key3);
-	}
-
-	if (myInput->IsKeyPressed('A'))
+	if (myInput->IsKeyDown('A'))
 	{
 		TranslateActionToEvent(IInputObserver::EInputAction::KeyA);
 	}
-	if (myInput->IsKeyPressed('S'))
+	if (myInput->IsKeyDown('S'))
 	{
 		TranslateActionToEvent(IInputObserver::EInputAction::KeyS);
 	}
-	if (myInput->IsKeyPressed('D'))
+	if (myInput->IsKeyDown('D'))
 	{
 		TranslateActionToEvent(IInputObserver::EInputAction::KeyD);
 	}

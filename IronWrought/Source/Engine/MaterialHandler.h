@@ -41,8 +41,8 @@ private:
 	std::map<unsigned int, int> myVertexColorReferences;
 
 	ID3D11Device* myDevice;
-	const std::string myMaterialPath = ASSETPATH + "Assets/Graphics/Textures/Materials/";
-	const std::string myVertexLinksPath = ASSETPATH + "Assets/Generated/";
+	const std::string myMaterialPath;
+	const std::string myVertexLinksPath;
 
 private:
 	CMaterialHandler();

@@ -18,7 +18,7 @@ namespace NodeData
 		{
 			return Type(0);
 		}
-		return *((Type*)someData);
+		return *(static_cast<Type*>(someData));
 	}
 }
 
