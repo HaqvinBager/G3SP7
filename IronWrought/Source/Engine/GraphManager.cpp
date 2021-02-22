@@ -24,6 +24,7 @@
 #include "Engine.h"
 #include "GameObject.h"
 #include "GraphNodeTimerManager.h"
+#include "FolderUtility.h"
 
 using namespace rapidjson;
 namespace ed = ax::NodeEditor;
@@ -40,11 +41,9 @@ CGraphManager::~CGraphManager()
 
 void CGraphManager::Load()
 {
-	if(CGraphNodeTimerManager::Get() == nullptr)
-		CGraphNodeTimerManager::Create();
-
-	for (const auto& blueprintLinksJsonPath : CJsonReader::GetFilePathsInFolder(ASSETPATH + "Assets/Generated", "BluePrintLinks")) {
-		const auto doc = CJsonReader::Get()->LoadDocument(ASSETPATH + "Assets/Generated/" + blueprintLinksJsonPath);
+	CGraphNodeTimerManager::Create();
+	for (const auto& blueprintLinksJsonPath : CFolderUtility::GetFileNamesInFolder(ASSETPATH("Assets/Generated"), "BluePrintLinks")) {
+		const auto doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + blueprintLinksJsonPath));
 		if (doc.HasParseError())
 			continue;
 
