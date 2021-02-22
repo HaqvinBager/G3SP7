@@ -94,6 +94,7 @@ public class Exporter
         List<GameObject> alreadyExportedRenderers = ExportVertexPaint.ExportVertexPainting(aScene);
         ExportBlueprints.ExportBluePrint(aScene);
         ExportPointlights.ExportPointlight(aScene);
+        ExportInstanceID.Export(aScene);
 
         Renderer[] allrenderers = GameObject.FindObjectsOfType<Renderer>();
         Dictionary<string, List<STransform>> fbxPathGameObjectMap = new Dictionary<string, List<STransform>>();
