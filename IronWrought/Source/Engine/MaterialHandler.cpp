@@ -6,6 +6,7 @@
 #include "JsonReader.h"
 #include "ModelFactory.h"
 #include <unordered_map>
+#include "FolderUtility.h"
 
 std::array<ID3D11ShaderResourceView*, 3> CMaterialHandler::RequestMaterial(const std::string& aMaterialName)
 {
@@ -70,7 +71,7 @@ void CMaterialHandler::ReleaseMaterial(const std::string& aMaterialName)
 
 SVertexPaintData CMaterialHandler::RequestVertexColorID(int aGameObjectID, const std::string& aFbxModelPath)
 {
-	std::vector<std::string> jsonPaths = CJsonReader::GetFilePathsInFolder(myVertexLinksPath, "PolybrushLinks_");
+	std::vector<std::string> jsonPaths = CFolderUtility::GetFileNamesInFolder(myVertexLinksPath, "PolybrushLinks_");
 	SVertexPaintColorData colorData{ {}, {}, 0 };
 	std::vector<std::string> materialNames;
 	for (auto& jsonPath : jsonPaths)
@@ -88,7 +89,7 @@ SVertexPaintData CMaterialHandler::RequestVertexColorID(int aGameObjectID, const
 					{
 						if (gameObjectID.GetInt() == aGameObjectID)
 						{
-							colorData = CBinReader::LoadVertexColorData(ASSETPATH + linksArray[i]["colorsPath"].GetString());
+							colorData = CBinReader::LoadVertexColorData(ASSETPATH(linksArray[i]["colorsPath"].GetString()));
 
 							std::vector<Vector3>& fbxVertexPositions = CModelFactory::GetInstance()->GetVertexPositions(aFbxModelPath);					
 							std::unordered_map<Vector3, Vector3, CMaterialHandler::VectorHasher, VertexPositionComparer> vertexPositionToColorMap;
@@ -206,7 +207,7 @@ ID3D11ShaderResourceView* CMaterialHandler::GetShaderResourceView(ID3D11Device* 
 	if (FAILED(result))
 	{
 		std::string errorTexturePath = aTexturePath.substr(aTexturePath.length() - 6);
-		errorTexturePath = ASSETPATH + "Assets/ErrorTextures/Checkboard_128x128" + errorTexturePath;
+		errorTexturePath = ASSETPATH("Assets/ErrorTextures/Checkboard_128x128" + errorTexturePath);
 
 		wchar_t* wideErrorPath = new wchar_t[errorTexturePath.length() + 1];
 		std::copy(errorTexturePath.begin(), errorTexturePath.end(), wideErrorPath);
@@ -222,6 +223,8 @@ ID3D11ShaderResourceView* CMaterialHandler::GetShaderResourceView(ID3D11Device* 
 
 CMaterialHandler::CMaterialHandler()
 	: myDevice(nullptr)
+	, myMaterialPath(ASSETPATH("Assets/Graphics/Textures/Materials/"))
+	, myVertexLinksPath(ASSETPATH("Assets/Generated/"))
 {
 }
 

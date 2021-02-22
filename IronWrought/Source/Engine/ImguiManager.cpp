@@ -103,7 +103,7 @@ void CImguiManager::DebugWindow()
 
 void CImguiManager::LevelSelect()
 {
-	//std::vector<std::string> files = CJsonReader::GetFilePathsInFolder(ASSETPATH + "Assets/Generated");
+	//std::vector<std::string> files = CJsonReader::GetFileNamesInFolder(ASSETPATH + "Assets/Generated");
 	ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x - 200, 18));
 	float x = 10.f + ((ImGui::GetFontSize() + 5.5f) * static_cast<float>(myLevelsToSelectFrom.size()));
 	ImGui::SetNextWindowSize({200.f,  x});
@@ -175,7 +175,7 @@ const std::string CImguiManager::GetDrawCalls()
 void CImguiManager::LevelsToSelectFrom(std::vector<std::string> someLevelsToSelectFrom)
 {
 	for (unsigned int i = 0; i < someLevelsToSelectFrom.size(); ++i) {
-		const auto& doc = CJsonReader::Get()->LoadDocument(ASSETPATH + "Assets/Generated/" + someLevelsToSelectFrom[i]);
+		const auto& doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + someLevelsToSelectFrom[i]));
 		if (!doc.HasParseError()) {
 			if (doc.HasMember("instancedGameobjects") && 
 				doc.HasMember("modelGameObjects")) {
