@@ -8,6 +8,8 @@ using UnityEngine.Polybrush;
 
 
 
+
+
 [System.Serializable]
 public struct SModel
 {
@@ -33,6 +35,19 @@ public struct SScene
 {
     public SInstancedGameObject[] instancedGameobjects;
     public SGameObject[] modelGameObjects;
+}
+
+[System.Serializable]
+public struct ModelAsset
+{
+    public int id;
+    public string path;
+}
+
+[System.Serializable]
+public struct Assets
+{
+    public List<ModelAsset> models;
 }
 
 public class Exporter
@@ -85,8 +100,10 @@ public class Exporter
     private static void ExportAScene(Scene aScene)
     {
         //List<GameObject> alreadyExportedRenderers =
+        ExportModelAssets(aScene);
         ExportInstanceID.Export(aScene);
         ExportTransform.Export(aScene);
+        ExportModel.Export(aScene);
         ExportVertexPaint.ExportVertexPainting(aScene);
 
         AssetDatabase.Refresh();
@@ -170,5 +187,32 @@ public class Exporter
         //savePath += aScene.name + ".json";
         //System.IO.File.WriteAllText(savePath, jsonGameObject);
         //AssetDatabase.Refresh();
+    }
+
+
+    public static void ExportModelAssets(Scene aScene)
+    {
+        string[] allAssetPaths = AssetDatabase.GetAllAssetPaths();
+        Assets assets = new Assets();
+        assets.models = new List<ModelAsset>();
+        foreach (string assetPath in allAssetPaths)
+        {
+            if (assetPath.Contains("Graphics"))
+            {
+                GameObject asset = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
+                if(asset != null)
+                {
+                    if(PrefabUtility.GetPrefabAssetType(asset) == PrefabAssetType.Model)
+                    {
+                        ModelAsset modelAsset = new ModelAsset();
+                        modelAsset.id = asset.transform.GetInstanceID();
+                        modelAsset.path = assetPath;
+                        assets.models.Add(modelAsset);
+                    }
+                }
+            }
+        }
+
+        Json.ExportToJson(assets, "Resource");
     }
 }
