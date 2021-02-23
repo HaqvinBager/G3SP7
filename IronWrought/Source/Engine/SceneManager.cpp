@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "SceneManager.h"
-#include "JsonReader.h"
 #include "EnvironmentLight.h"
 #include "CameraComponent.h"
 #include "InstancedModelComponent.h"
@@ -35,12 +34,85 @@ CScene* CSceneManager::CreateEmpty()
 	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetDirection({ 0.0f,1.0f,1.0f });
 
 	CScene* emptyScene = new CScene(2);
-	emptyScene ->AddInstance(camera);
-	emptyScene ->MainCamera(camera->GetComponent<CCameraComponent>());
-	emptyScene ->EnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight());
-	emptyScene ->AddInstance(envLight);
+	emptyScene->AddInstance(camera);
+	emptyScene->MainCamera(camera->GetComponent<CCameraComponent>());
+	emptyScene->EnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight());
+	emptyScene->AddInstance(envLight);
 
 	return emptyScene;
+}
+
+
+CScene* CSceneManager::CreateScene(const std::vector<std::string>& someJsonFiles)
+{
+	//for (const auto& json : someJsonFiles) {
+	//	
+
+
+	//}
+	CScene* scene = new CScene();
+
+	{
+		const auto& doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + someJsonFiles[0]));
+		if (!IsValid(doc))
+			return nullptr;
+
+		const auto& idArray = doc.GetObjectW()["Ids"].GetArray();
+
+		CScene* scene = new CScene(idArray.Size());
+		for (const auto& id : idArray) {
+			int instanceID = id.GetInt();
+			scene->AddInstance(new CGameObject(instanceID));
+		}
+	}
+
+	{
+		const auto& doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + someJsonFiles[1]));
+		const auto& transformArray = doc.GetObjectW()["transforms"].GetArray();
+		for (const auto& t : transformArray) {
+
+
+			int id = t["instanceID"].GetInt();
+			CTransformComponent* transform = scene->FindObjectWithID(id)->myTransform;
+			transform->Scale({	 t["scale"]["x"].GetFloat(),
+								 t["scale"]["y"].GetFloat(),
+								 t["scale"]["z"].GetFloat() });
+
+			transform->Position({t["position"]["x"].GetFloat(),
+								 t["position"]["y"].GetFloat(),
+								 t["position"]["z"].GetFloat()});
+
+			transform->Rotation({t["rotation"]["x"].GetFloat(),
+								 t["rotation"]["y"].GetFloat(),
+								 t["rotation"]["z"].GetFloat() });
+		}
+	}
+
+
+
+
+
+
+
+
+
+
+	return scene;
+}
+
+
+bool CSceneManager::IsValid(const rapidjson::Document& aDoc)
+{
+	if (aDoc.HasParseError() ||
+		!aDoc.GetObjectW().HasMember("sceneName") ||
+		!aDoc.GetObjectW().HasMember("sceneName") ||
+		!aDoc.GetObjectW().HasMember("Ids") ||
+		!aDoc.GetObjectW()["Ids"].IsArray())
+	{
+		return false;
+	}
+
+	return true;
 }
 
 CScene* CSceneManager::CreateScene(std::string aJsonFile)//TEMP
@@ -164,7 +236,10 @@ CScene* CSceneManager::CreateScene(std::string aJsonFile)//TEMP
 	return scene;
 }
 
-CScene* CSceneManager::CreateScene(std::vector<std::string> aJsonFile)
+
+
+
+/*CScene* CSceneManager::CreateScene(std::vector<std::string> aJsonFile)
 {
 	CScene* scene = new CScene();
 	for (int i = 0; i < aJsonFile.size(); ++i) {
@@ -244,3 +319,4 @@ CScene* CSceneManager::CreateScene(std::vector<std::string> aJsonFile)
 	}
 	return scene;
 }
+*/

@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 [System.Serializable]
 struct InstanceIDCollection
 {
+    public string sceneName;
     public List<int> Ids; 
 }
 
@@ -26,6 +27,8 @@ public class ExportInstanceID
                 sceneIDCollection.Ids.Add(prefabParent.transform.GetInstanceID());
             }    
         }
+
+        sceneIDCollection.sceneName = aScene.name;
         Json.ExportToJson(sceneIDCollection, aScene.name);
     }
 }
