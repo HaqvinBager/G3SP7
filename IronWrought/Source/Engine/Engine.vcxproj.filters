@@ -154,6 +154,9 @@
     <FxCompile Include="DecalVertexShader.hlsl">
       <Filter>Shaders\Decal</Filter>
     </FxCompile>
+    <FxCompile Include="FullscreenPixelShader_CopyDepth.hlsl">
+      <Filter>Shaders\Fullscreen</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimationComponent.cpp">
@@ -1142,6 +1145,9 @@
       <Filter>Decal</Filter>
     </ClInclude>
     <ClInclude Include="ShadowRenderer.h">
+      <Filter>Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsHelpers.h">
       <Filter>Renderers</Filter>
     </ClInclude>
   </ItemGroup>

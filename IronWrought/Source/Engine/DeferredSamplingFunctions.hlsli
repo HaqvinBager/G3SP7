@@ -25,9 +25,16 @@ PixelOutput PixelShader_WorldPosition(VertexToPixel input)
 
 PixelOutput PixelShader_Exists(VertexToPixel input)
 {
+    //PixelOutput output;
+    //float4 worldPos = PixelShader_WorldPosition(input).myColor.rgba;
+    //output.myColor.rgba = worldPos;
+    //return output;
     PixelOutput output;
-    float4 worldPos = PixelShader_WorldPosition(input).myColor.rgba;
-    output.myColor.rgba = worldPos;
+    float depth = depthTexture.Sample(defaultSampler, input.myUV.xy).r;
+    output.myColor.r = depth;
+    output.myColor.g = 0.0f;
+    output.myColor.b = 0.0f;
+    output.myColor.a = 0.0f;
     return output;
 }
 

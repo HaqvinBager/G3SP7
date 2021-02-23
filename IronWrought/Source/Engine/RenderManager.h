@@ -10,6 +10,7 @@
 #include "SpriteRenderer.h"
 #include "TextRenderer.h"
 #include "ShadowRenderer.h"
+#include "DecalRenderer.h"
 #include "GBuffer.h"
 
 class CDirectXFramework;
@@ -46,12 +47,14 @@ private:
 	CSpriteRenderer mySpriteRenderer;
 	CTextRenderer myTextRenderer;
 	CShadowRenderer myShadowRenderer;
+	CDecalRenderer myDecalRenderer;
 
 	CFullscreenTextureFactory myFullscreenTextureFactory;
 	CFullscreenTexture myBackbuffer;
 	CFullscreenTexture myIntermediateTexture;
 	CFullscreenTexture myIntermediateDepth;
 	CFullscreenTexture myEnvironmentShadowDepth;
+	CFullscreenTexture myDepthCopy;
 	CFullscreenTexture myLuminanceTexture;
 	CFullscreenTexture myHalfSizeTexture;
 	CFullscreenTexture myQuaterSizeTexture;

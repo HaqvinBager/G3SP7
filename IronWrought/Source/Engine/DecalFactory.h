@@ -19,8 +19,6 @@ public:
 
 private:
 	CDecal* LoadDecal(std::string aFilePath);
-	bool CreateVertexShader(std::string aFilepath, CDirectXFramework* aFramework, ID3D11VertexShader** outVertexShader, std::string& outShaderData);
-	bool CreatePixelShader(std::string aFilepath, CDirectXFramework* aFramework, ID3D11PixelShader** outPixelShader);
 
 private:
 	CDecalFactory();
@@ -29,7 +27,6 @@ private:
 private:
 	std::map<std::string, CDecal*> myDecalMap;
 	std::map<std::string, int> myDecalMapReferences;
-	CDirectXFramework* myFramework;
 	static CDecalFactory* ourInstance;
 };
 
