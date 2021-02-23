@@ -27,8 +27,6 @@ private:
 		myContext->Unmap(aBuffer, 0);
 	}
 
-	bool CreateVertexShader(std::string aFilepath, CDirectXFramework* aFramework, ID3D11VertexShader** outVertexShader, std::string& outShaderData);
-
 private:
 	struct SFrameBufferData
 	{

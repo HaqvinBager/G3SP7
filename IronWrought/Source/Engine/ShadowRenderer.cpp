@@ -9,8 +9,7 @@
 #include "AnimationComponent.h"
 #include "InstancedModelComponent.h"
 #include "RenderManager.h"
-
-#include <fstream>
+#include "GraphicsHelpers.h"
 
 CShadowRenderer::CShadowRenderer()
 	: myContext(nullptr)
@@ -44,9 +43,9 @@ bool CShadowRenderer::Init(CDirectXFramework* aFramework)
 	ENGINE_HR_BOOL_MESSAGE(device->CreateBuffer(&bufferDescription, nullptr, &myObjectBuffer), "Object Buffer could not be created.");
 
 	std::string vsData = "";
-	CreateVertexShader("Shaders/DeferredModelVertexShader.cso", aFramework, &myModelVertexShader, vsData);
-	CreateVertexShader("Shaders/DeferredAnimationVertexShader.cso", aFramework, &myAnimationVertexShader, vsData);
-	CreateVertexShader("Shaders/DeferredInstancedModelVertexShader.cso", aFramework, &myInstancedModelVertexShader, vsData);
+	Graphics::CreateVertexShader("Shaders/DeferredModelVertexShader.cso", aFramework, &myModelVertexShader, vsData);
+	Graphics::CreateVertexShader("Shaders/DeferredAnimationVertexShader.cso", aFramework, &myAnimationVertexShader, vsData);
+	Graphics::CreateVertexShader("Shaders/DeferredInstancedModelVertexShader.cso", aFramework, &myInstancedModelVertexShader, vsData);
 
 	return true;
 }
@@ -145,15 +144,4 @@ void CShadowRenderer::Render(CEnvironmentLight* anEnvironmentLight, std::vector<
 			CRenderManager::myNumberOfDrawCallsThisFrame++;
 		}
 	}
-}
-
-bool CShadowRenderer::CreateVertexShader(std::string aFilepath, CDirectXFramework* aFramework, ID3D11VertexShader** outVertexShader, std::string& outShaderData)
-{
-	std::ifstream vsFile;
-	vsFile.open(aFilepath, std::ios::binary);
-	std::string vsData = { std::istreambuf_iterator<char>(vsFile), std::istreambuf_iterator<char>() };
-	outShaderData = vsData;
-	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateVertexShader(vsData.data(), vsData.size(), nullptr, outVertexShader), "Vertex Shader could not be created.");
-	vsFile.close();
-	return true;
 }

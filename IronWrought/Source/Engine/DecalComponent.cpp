@@ -10,6 +10,7 @@ CDecalComponent::CDecalComponent(CGameObject& aParent, const std::string& aFBXPa
 {
     myDecal = CDecalFactory::GetInstance()->GetDecal(aFBXPath);
     myDecalPath = aFBXPath;
+    SetAlphaThreshold(0.3f);
 }
 
 CDecalComponent::~CDecalComponent()
@@ -32,6 +33,12 @@ void CDecalComponent::Update()
 CDecal* CDecalComponent::GetMyDecal() const
 {
     return myDecal;
+}
+
+
+void CDecalComponent::SetAlphaThreshold(float aThreshold)
+{
+    myDecal->GetDecalData().myAlphaClipThreshold = aThreshold;
 }
 
 void CDecalComponent::OnEnable()

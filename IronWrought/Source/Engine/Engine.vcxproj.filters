@@ -154,6 +154,9 @@
     <FxCompile Include="DecalVertexShader.hlsl">
       <Filter>Shaders\Decal</Filter>
     </FxCompile>
+    <FxCompile Include="FullscreenPixelShader_CopyDepth.hlsl">
+      <Filter>Shaders\Fullscreen</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimationComponent.cpp">
@@ -1184,6 +1187,9 @@
     </ClInclude>
     <ClInclude Include="NodeTypePrintMessage.h">
       <Filter>Imgui\Node Editor\Nodes\Debugging</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsHelpers.h">
+      <Filter>Renderers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

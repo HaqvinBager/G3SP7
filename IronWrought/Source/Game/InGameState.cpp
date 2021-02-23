@@ -11,6 +11,7 @@
 #include "InstancedModelComponent.h"
 #include "RigidBodyComponent.h"
 #include "ModelComponent.h"
+#include "DecalComponent.h"
 
 #include "EnvironmentLight.h"
 #include "Timer.h"
@@ -105,8 +106,6 @@ void CInGameState::Update()
 	{
 		myStateStack.PopTopAndPush(CStateStack::EState::InGame);
 	}
-
-	
 }
 
 void CInGameState::ReceiveEvent(const EInputEvent aEvent)
@@ -229,4 +228,25 @@ void TEMP_DeferredRenderingTests(CScene* scene)
 	scene->AddInstance(pointLights[2]->GetComponent<CPointLightComponent>()->GetPointLight());
 	scene->AddInstance(pointLights[3]->GetComponent<CPointLightComponent>()->GetPointLight());
 	scene->AddInstance(pointLights[4]->GetComponent<CPointLightComponent>()->GetPointLight());
+}
+
+void CInGameState::TEMP_DecalTests(CScene* aScene)
+{
+	CGameObject* decal = new CGameObject(20000);
+	decal->AddComponent<CDecalComponent>(*decal, "Alpha");
+	decal->GetComponent<CTransformComponent>()->Position({ 29.0f,2.0f, 0.0f });
+	//decal->myTransform->Rotation({ 90.0f, 0.0f, 0.0f });
+	//decal->GetComponent<CTransformComponent>()->Position({ 33.0f,2.0f, 25.5f });
+	//decal->GetComponent<CTransformComponent>()->Position({ 14.0f, 1.0f, 20.0f });
+	//decal->myTransform->Rotation({ 0.0f, 0.0f, 0.0f });
+	//decal->myTransform->Scale({ 2.0f, 2.0f, 1.0f });
+	myDecal = decal;
+	aScene->AddInstance(decal);
+
+	//CGameObject* decal2 = new CGameObject(20001);
+	//decal2->AddComponent<CDecalComponent>(*decal2, "Alpha");
+	//decal2->GetComponent<CTransformComponent>()->Position({ 12.0f, 1.5f, 20.0f });
+	//decal2->myTransform->Rotation({ 0.0f, 45.0f, 0.0f });
+	//decal2->myTransform->Scale({ 1.0f, 1.0f, 1.0f });
+	//aScene->AddInstance(decal2);
 }
