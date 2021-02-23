@@ -274,18 +274,39 @@ void TEMP_SetUpAnimationTest(CScene* aScene)
 	CGameObject* go3 = new CGameObject(123123125);
 	//std::string bugTestModel = "Assets/Temp/Block/blockSK.fbx"; 
 	//std::string bugTestModel = "Assets/Temp/Robot/CH_E_Robot_SK_OrinetJointTest.fbx";
-	std::string bugTestModel = "Assets/Whacky/WhackySK.fbx";
+	//std::string bugTestModel = "Assets/Whacky/WhackySK.fbx";
 	//std::string bugTestModel = "Assets/Temp/Robot_Block/robot_block_SK.fbx"; 
-	//std::string bugTestModel = "Assets/Temp/Robot/CH_E_Robot_SK.fbx"; 
+	
+	std::string bugTestModel = "Assets/Temp/Robot/CH_E_Robot_SK.fbx"; 
+	//std::string bugTestModel = "Assets/Temp/RobotFBXVerTest/CH_E_Robot_SK.fbx"; 
+	
+	//std::string bugTestModel = "Assets/Temp/Obot/2019/Obot_2019.fbx"; 
+	//std::string bugTestModel = "Assets/Temp/Obot/2018/Obot_2018.fbx"; 
+	//std::string bugTestModel = "Assets/Temp/Obot/201617/Obot_201617.fbx"; 
+	//std::string bugTestModel = "Assets/Temp/Obot/201415/Obot_201415.fbx"; 
+	
+	//std::string bugTestModel = "Assets/Temp/JointOrientTail/ResampleAsEuler_Default/SK.fbx"; 
+	//std::string bugTestModel = "Assets/Temp/JointOrientTail/RetainQuaternion/SK.fbx"; 
+	//std::string bugTestModel = "Assets/Temp/JointOrientTail/SetAsEuler/SK.fbx"; 
+	
+	//std::string bugTestModel = "Assets/Temp/JointOrient/SK.fbx"; 
+	
 	//std::string bugTestModel = "Assets/Temp/Robot/CH_E_Robot_SKMOD.fbx"; 
 	//std::string bugTestModel = "Assets/Temp/RobotSK3/robot_SK3.fbx"; 
 	//std::string bugTestModel = "Assets/Temp/EasterEggRobot/EasterEgg_robot_SK.fbx"; 
 	go3->AddComponent<CModelComponent>(*go3, bugTestModel);
 	go3->myTransform->Position({ 0.0f,0.f,0.f });
 	CAnimationComponent* animComp2 = AnimationLoader::AddAnimationsToGameObject(go3, bugTestModel);
-	animComp2->BlendToAnimation(0/*Index för animation att blenda till*/, 1.0f/*Hur långsam blendingen ska vara*/);
+	animComp2->BlendToAnimation(1, 1.0f);
 	aScene->AddInstance(go3);
 	g_TempAnimObject = go3;
+
+	CGameObject* wall = new CGameObject(1341);
+	wall->AddComponent<CModelComponent>(*wall, ASSETPATH + "Assets/Graphics/Exempel_Modeller/Wall/Wall.fbx");
+	wall->GetComponent<CTransformComponent>()->Position({3.0f,0.0f,0.0f});
+	aScene->AddInstance(wall);
+
+
 }
 #define GetAnimComp g_TempAnimObject->GetComponent<CAnimationComponent>()
 void TEMP_AnimObjectControl()
