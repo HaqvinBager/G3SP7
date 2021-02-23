@@ -213,6 +213,7 @@ bool CMaterialHandler::Init(CDirectXFramework* aFramwork)
 CMaterialHandler::CMaterialHandler()
 	: myDevice(nullptr)
 	, myMaterialPath(ASSETPATH("Assets/Graphics/Textures/Materials/"))
+	, myDecalPath(ASSETPATH("Assets/Graphics/Textures/Decals/"))
 	, myVertexLinksPath(ASSETPATH("Assets/Generated/"))
 {
 }
