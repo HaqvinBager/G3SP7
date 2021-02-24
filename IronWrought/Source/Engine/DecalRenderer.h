@@ -28,25 +28,39 @@ private:
 		myContext->Unmap(aBuffer, 0);
 	}
 
-	bool CreatePixelShader(std::string aFilepath, CDirectXFramework* aFramework, ID3D11PixelShader** outPixelShader);
-
 private:
 	struct SFrameBufferData
 	{
 		DirectX::SimpleMath::Matrix myToCameraSpace;
 		DirectX::SimpleMath::Matrix myToProjectionSpace;
-		DirectX::SimpleMath::Vector4 myCameraPosition;
+		DirectX::SimpleMath::Matrix myToWorldFromCamera;
+		DirectX::SimpleMath::Matrix myToCameraFromProjection;
 	} myFrameBufferData;
 
 	struct SObjectBufferData
 	{
 		DirectX::SimpleMath::Matrix myToWorld;
+		DirectX::SimpleMath::Matrix myToObjectSpace;
+		float myAlphaClipThreshold;
+		DirectX::SimpleMath::Vector3 myPadding;
 	} myObjectBufferData;
 
 private:
 	ID3D11DeviceContext* myContext;
+
 	ID3D11Buffer* myFrameBuffer;
 	ID3D11Buffer* myObjectBuffer;
+
+	ID3D11Buffer* myVertexBuffer;
+	ID3D11Buffer* myIndexBuffer;
+	ID3D11VertexShader* myVertexShader;
 	ID3D11PixelShader* myPixelShader;
+	ID3D11SamplerState* mySamplerState;
+	ID3D11InputLayout* myInputLayout;
+	D3D11_PRIMITIVE_TOPOLOGY myPrimitiveTopology;
+	UINT myNumberOfVertices;
+	UINT myNumberOfIndices;
+	UINT myStride;
+	UINT myOffset;
 };
 

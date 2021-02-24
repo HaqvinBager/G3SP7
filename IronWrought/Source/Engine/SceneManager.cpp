@@ -60,7 +60,7 @@ bool CSceneManager::AddGameObjects(CScene& aScene, const std::vector<std::string
 
 	const std::string& jsonPath = *jsonFileIterator;
 
-	const auto& idDoc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + jsonPath));
+	const auto& idDoc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + someJsonFiles[0]));
 	if (!IsValid(idDoc))
 		return false;
 
@@ -131,7 +131,7 @@ void CSceneManager::AddInstancedModelComponents(CScene& aScene, const std::vecto
 		std::vector<Matrix> instancedModelTransforms;
 		instancedModelTransforms.reserve(i["transforms"].GetArray().Size());
 
-		for (const auto& t : i["transforms"].GetArray()) {	
+		for (const auto& t : i["transforms"].GetArray()) {
 			CGameObject temp(0);
 			CTransformComponent transform(temp);
 			transform.Scale({ t["scale"]["x"].GetFloat(),
@@ -267,7 +267,7 @@ CScene* CSceneManager::CreateScene(std::string aJsonFile)//TEMP
 	CGameObject* envLight = new CGameObject(1);
 	envLight->AddComponent<CEnviromentLightComponent>(*envLight);
 	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetIntensity(1.f);
-	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetDirection({ 0.0f,1.0f,1.0f });
+	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetDirection({ 0.0f,-1.0f,1.0f });
 	scene->EnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight());
 	scene->AddInstance(envLight);
 
@@ -365,7 +365,7 @@ bool CSceneManager::IsValid(const rapidjson::Document& aDoc)
 		CGameObject* envLight = new CGameObject(1);
 		envLight->AddComponent<CEnviromentLightComponent>(*envLight);
 		envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetIntensity(1.f);
-		envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetDirection({ 0.0f,0.0f,-1.0f });
+		envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetDirection({ 0.0f,1.0f,1.0f });
 		scene->AddInstance(envLight);
 		scene->EnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight());
 
