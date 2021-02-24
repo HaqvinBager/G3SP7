@@ -103,6 +103,7 @@ public class Exporter
         ExportInstanceID.Export(aScene);
         ExportTransform.Export(aScene);
         ExportModel.Export(aScene);
+        ExportInstancedModel.Export(aScene);
         ExportVertexPaint.ExportVertexPainting(aScene);
         AssetDatabase.Refresh();      
     }

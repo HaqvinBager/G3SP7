@@ -5,14 +5,14 @@ using UnityEditor;
 using UnityEngine.SceneManagement;
 
 [System.Serializable]
-struct InstancedModel
+class InstancedModel
 {
-    public int modelIndex;
+    public int assetID;
     public List<int> instanceIDs;
 }
 
 [System.Serializable]
-struct InstanceModelCollection
+class InstanceModelCollection
 {
     public List<InstancedModel> instancedModels;
 }
@@ -22,17 +22,33 @@ public class ExportInstancedModel
 {
     public static void Export(Scene aScene)
     {
-        MeshRenderer[] renderers = GameObject.FindObjectsOfType<MeshRenderer>();
-        foreach(var renderer in renderers)
+        InstanceModelCollection collection = new InstanceModelCollection();
+        collection.instancedModels = new List<InstancedModel>();
+
+        MeshFilter[] meshFilters = GameObject.FindObjectsOfType<MeshFilter>();
+        foreach(var meshFilter in meshFilters)
         {
-            if(Json.TryIsValidExport(renderer, out GameObject prefabParent))
+            if(Json.TryIsValidExport(meshFilter, out GameObject prefabParent))
             {
                 if (prefabParent.isStatic)
                 {
+                    GameObject asset = PrefabUtility.GetCorrespondingObjectFromOriginalSource(meshFilter).gameObject;
+                    if (asset == null)
+                        continue;
 
+                    int assetID = asset.transform.GetInstanceID();
+                    InstancedModel instancedModel = collection.instancedModels.Find(e => e.assetID == assetID);
+                    if(instancedModel == null)
+                    {
+                        instancedModel = new InstancedModel();
+                        instancedModel.assetID = assetID;
+                        instancedModel.instanceIDs = new List<int>();
+                    }
+
+                    instancedModel.instanceIDs.Add(prefabParent.transform.GetInstanceID());
                 }
             }
         }
+        Json.ExportToJson(collection, aScene.name);
     }
-
 }

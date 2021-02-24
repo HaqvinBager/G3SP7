@@ -3,6 +3,14 @@
 #include "rapidjson/istreamwrapper.h"
 #include <fstream>
 //#include <string>
+#include <unordered_map>
+#include <vector>
+
+struct SDirectory {
+	std::string myFileName;
+	std::vector<std::string> myFiles;
+};
+
 
 class CJsonReader
 {
@@ -13,4 +21,15 @@ private:
 	CJsonReader() {}
 	~CJsonReader() {}
 	static CJsonReader* ourInstance;
+
+public:
+	void Init();
+	const std::string& GetAssetPath(const int anAssetID) const;
+
+
+private:
+	std::vector<SDirectory> myDirectories;
+	std::unordered_map<int, std::string> myModelAssetMap;
+
+
 };
