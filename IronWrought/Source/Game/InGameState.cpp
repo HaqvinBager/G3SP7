@@ -58,7 +58,7 @@ void CInGameState::Start()
 	CScene* scene = new CScene();
 
 	CGameObject* camera = new CGameObject(0);
-	camera->AddComponent<CCameraComponent>(*camera, 70.0f);
+	camera->AddComponent<CCameraComponent>(*camera, 65.0f);
 	camera->AddComponent<CCameraControllerComponent>(*camera, 1.5f);
 	camera->myTransform->Position({0.0f, 1.0f, 0.0f});
 	camera->myTransform->Rotation({0.0f, 0.0f, 0.0f});
@@ -117,6 +117,8 @@ void CInGameState::Stop()
 
 void CInGameState::Update()
 {
+	TEMP_AnimObjectControl();
+
 	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
 	{
 		gameObject->Update();
@@ -222,22 +224,22 @@ void TEMP_DeferredRenderingTests(CScene* scene)
 	scene->AddInstance(pointLights[4]->GetComponent<CPointLightComponent>()->GetPointLight());
 
 	CGameObject* dn = new CGameObject(1338);
-	dn->AddComponent<CModelComponent>(*dn, ASSETPATH + "Assets/Graphics/Exempel_Modeller/DetailNormals/Tufted_Leather/tufted_leather_dn.fbx");
+	dn->AddComponent<CModelComponent>(*dn, ASSETPATH("Assets/Graphics/Exempel_Modeller/DetailNormals/Tufted_Leather/tufted_leather_dn.fbx"));
 	dn->GetComponent<CTransformComponent>()->Position({7.0f,0.0f,0.0f});
 	dn->GetComponent<CTransformComponent>()->Scale({100.0f,100.0f,100.0f});
 
 	CGameObject* dn4 = new CGameObject(1339);
-	dn4->AddComponent<CModelComponent>(*dn4, ASSETPATH + "Assets/Graphics/Exempel_Modeller/DetailNormals/4DN/4DNs_dn.fbx");
+	dn4->AddComponent<CModelComponent>(*dn4, ASSETPATH("Assets/Graphics/Exempel_Modeller/DetailNormals/4DN/4DNs_dn.fbx"));
 	dn4->GetComponent<CTransformComponent>()->Position({8.0f,0.0f,0.0f});
 	dn4->GetComponent<CTransformComponent>()->Scale({100.0f,100.0f,100.0f});
 
 	CGameObject* dn_2 = new CGameObject(1340);
-	dn_2->AddComponent<CModelComponent>(*dn_2, ASSETPATH + "Assets/Graphics/Exempel_Modeller/DetailNormals/Tufted_Leather/tufted_leather_dn.fbx");
+	dn_2->AddComponent<CModelComponent>(*dn_2, ASSETPATH("Assets/Graphics/Exempel_Modeller/DetailNormals/Tufted_Leather/tufted_leather_dn.fbx"));
 	dn_2->GetComponent<CTransformComponent>()->Position({5.0f,0.0f,0.0f});
 	dn_2->GetComponent<CTransformComponent>()->Scale({100.0f,100.0f,100.0f});
 
 	CGameObject* dn4_2 = new CGameObject(1341);
-	dn4_2->AddComponent<CModelComponent>(*dn4_2, ASSETPATH + "Assets/Graphics/Exempel_Modeller/DetailNormals/4DN/4DNs_dn.fbx");
+	dn4_2->AddComponent<CModelComponent>(*dn4_2, ASSETPATH("Assets/Graphics/Exempel_Modeller/DetailNormals/4DN/4DNs_dn.fbx"));
 	dn4_2->GetComponent<CTransformComponent>()->Position({3.0f,0.0f,0.0f});
 	dn4_2->GetComponent<CTransformComponent>()->Scale({100.0f,100.0f,100.0f});
 
@@ -312,7 +314,7 @@ void TEMP_SetUpAnimationTest(CScene* aScene)
 	g_TempAnimObject = go3;
 
 	CGameObject* wall = new CGameObject(1341);
-	wall->AddComponent<CModelComponent>(*wall, ASSETPATH + "Assets/Graphics/Exempel_Modeller/Wall/Wall.fbx");
+	wall->AddComponent<CModelComponent>(*wall, ASSETPATH("Assets/Graphics/Exempel_Modeller/Wall/Wall.fbx"));
 	wall->GetComponent<CTransformComponent>()->Position({3.0f,0.0f,0.0f});
 	aScene->AddInstance(wall);
 }

@@ -20,7 +20,7 @@
 
 #define USING_FBX_MATERIALS
 
-//#define ALLOW_ANIMATIONS
+#define ALLOW_ANIMATIONS
 
 CModelFactory* CModelFactory::ourInstance = nullptr;
 CModelFactory* CModelFactory::GetInstance()
