@@ -2,28 +2,14 @@
 #include "AnimationController.h"
 #include "Timer.h"
 
-constexpr float f_milliseconds = 1000.0f;
-
-//#define ALLOW_PRINT
-void TEMP_PrintMatrix4x4(const aiMatrix4x4& aMatrix, const std::string& aMsg = "" )
-{
+//constexpr float f_milliseconds = 1000.0f;
 #ifdef _DEBUG
-#ifdef ALLOW_PRINT
-	std::cout << aMsg << std::endl;
-	std::cout << aMatrix.a1 << "\t | " << aMatrix.a2 << "\t | " << aMatrix.a3 << "\t | " << aMatrix.a4 << std::endl;
-	std::cout << aMatrix.b1 << "\t | " << aMatrix.b2 << "\t | " << aMatrix.b3 << "\t | " << aMatrix.b4 << std::endl;
-	std::cout << aMatrix.c1 << "\t | " << aMatrix.c2 << "\t | " << aMatrix.c3 << "\t | " << aMatrix.c4 << std::endl;
-	std::cout << aMatrix.d1 << "\t | " << aMatrix.d2 << "\t | " << aMatrix.d3 << "\t | " << aMatrix.d4 << std::endl;
-	std::cout << "------" << std::endl;
+//#define ALLOW_PRINT
 #endif
-	aMatrix; aMsg;
-#endif
-}
-
 #include <iomanip>
 void TEMP_PrintMatrix4x4_2decimals(const aiMatrix4x4& aMatrix, const std::string& aMsg = "" )
 {
-#ifdef _DEBUG
+	aMatrix; aMsg;
 #ifdef ALLOW_PRINT
 	// https://stackoverflow.com/questions/5907031/printing-the-correct-number-of-decimal-points-with-cout
 	std::cout << std::fixed;
@@ -35,8 +21,6 @@ void TEMP_PrintMatrix4x4_2decimals(const aiMatrix4x4& aMatrix, const std::string
 	std::cout << aMatrix.c1 << " | " << aMatrix.c2 << " | " << aMatrix.c3 << " | " << aMatrix.c4 << std::endl;
 	std::cout << aMatrix.d1 << " | " << aMatrix.d2 << " | " << aMatrix.d3 << " | " << aMatrix.d4 << std::endl;
 	std::cout << "------" << std::endl;
-#endif
-	aMatrix; aMsg;
 #endif
 }
 
@@ -56,14 +40,6 @@ CAnimationController::CAnimationController()
 
 CAnimationController::~CAnimationController()
 {
-// No longer used 2021 02 01
-	//for (uint i = 0; i < myImporters.size(); ++i)
-	//{
-	//	delete myImporters[i];
-	//	myImporters[i] = nullptr;
-	//}
-	//myImporters.clear();
-
 	for (size_t i = 0; i < myAnimations.size(); ++i)
 	{
 		delete myAnimations[i];
@@ -103,9 +79,7 @@ bool CAnimationController::ImportRig(const std::string& anFBXFilePath)
 	if (myAnimations[myAnim0Index])
 	{
 		myGlobalInverseTransform = myAnimations[myAnim0Index]->mRootNode->mTransformation;
-TEMP_PrintMatrix4x4_2decimals(myGlobalInverseTransform, "Root Transform");
 		myGlobalInverseTransform.Inverse();
-TEMP_PrintMatrix4x4_2decimals(myGlobalInverseTransform, "Global Inverse (Inverse of Root Transform)");
 		ret = InitFromScene(myAnimations[myAnim0Index]);
 		// Now we can access the file's contents.
 		logInfo("Import of _curScene " + anFBXFilePath + " succeeded.");
@@ -432,11 +406,7 @@ void CAnimationController::UpdateAnimationTimeConstant(const float aStep)
 #endif
 void CAnimationController::UpdateAnimationTimes()
 {
-#ifdef ANIMATION_DURATION_IN_MILLISECONDS
-	UpdateAnimationTimeMilliseconds();
-#else
 	UpdateAnimationTimeFrames();
-#endif
 }
 
 void CAnimationController::BlendToAnimation(uint anAnimationIndex, bool anUpdateBoth, float aBlendDuration, bool aTemporary, float aTime)
@@ -492,6 +462,43 @@ bool CAnimationController::AnimationIndexWithinRange(uint anIndex)
 	return anIndex == myAnim0Index || anIndex >= static_cast<uint>(myAnimations.size());
 }
 
+void CAnimationController::UpdateAnimationTimeFrames()
+{
+	float dt = CTimer::Dt();
+
+	myAnimationTime0 += dt;
+	if (myBlendingTime > 0.f)
+	{
+		myBlendingTime -= dt * myBlendingTimeMul;
+		if (myBlendingTime <= 0.f)
+		{
+			myAnimationTime0 = myAnimationTime1;
+		}
+		if (myUpdateBoth)
+		{
+			myAnimationTime1 += dt;
+		}
+	}
+	else
+	{
+		myAnimationTime1 += dt;
+	}
+
+	if (myTemporary)// If the animation was temporary, return to the previous animation after the playtime is over
+	{
+		myPlayTime -= dt;
+		if (myPlayTime <= 0.f)
+		{
+			myTemporary = false;
+			BlendToAnimation(myAnim1Index);
+		}
+	}
+}
+
+
+/*
+	FIX FOR previous assimp mDuration issues :D :O :( 
+
 void CAnimationController::UpdateAnimationTimeMilliseconds()
 {
 	myAnimationTime0 = CTimer::Time() * f_milliseconds;
@@ -523,161 +530,26 @@ void CAnimationController::UpdateAnimationTimeMilliseconds()
 	}
 }
 
-void CAnimationController::UpdateAnimationTimeFrames()
+void CAnimationController::ConvertAnimationTimesToFrames(aiScene* aScene)
 {
-	float dt = CTimer::Dt();
-	//float dt = CTimer::Dt() * ((float)myAnimations[myAnim0Index]->mAnimations[0]->mDuration / ANIMATED_AT_FRAMES_PER_SECOND);
-	//float dt = CTimer::Dt() * ANIMATED_AT_FRAMES_PER_SECOND;
-	//float dt = CTimer::Dt() * 12.0f;// Close to good (right)
-	//float dt = 1.0f / ANIMATED_AT_FRAMES_PER_SECOND;
-
-	//std::cout << "dt: " << dt << std::endl;
-
-	//static float totalTime = 0.0f;
-	//const float time = CTimer::Time();
-	//std::cout << "t " << time - totalTime << std::endl;
-	//if (time >= totalTime + 1.0f)
-	//{
-	//	totalTime = time;
-	//}
-	//std::cout << "----" << std::endl;
-
-	myAnimationTime0 += dt;
-	//std::cout << myAnimationTime0 << std::endl;
-	if (myBlendingTime > 0.f)
+	const float convertToFrame = (ANIMATED_AT_FRAMES_PER_SECOND / f_milliseconds);
+	aiAnimation* animation = aScene->mAnimations[0];
+	
+	animation->mDuration *= convertToFrame;
+	for (uint i = 0; i < animation->mNumChannels; ++i)
 	{
-		myBlendingTime -= dt * myBlendingTimeMul;
-		if (myBlendingTime <= 0.f)
+		for (uint s = 0; s < animation->mChannels[i]->mNumScalingKeys; ++s)
 		{
-			myAnimationTime0 = myAnimationTime1;
+			animation->mChannels[i]->mScalingKeys[s].mTime *= convertToFrame;
 		}
-		if (myUpdateBoth)
+		for (uint r = 0; r < animation->mChannels[i]->mNumRotationKeys; ++r)
 		{
-			myAnimationTime1 += dt;
+			animation->mChannels[i]->mRotationKeys[r].mTime *= convertToFrame;
+		}
+		for (uint p = 0; p < animation->mChannels[i]->mNumPositionKeys; ++p)
+		{
+			animation->mChannels[i]->mPositionKeys[p].mTime *= convertToFrame;
 		}
 	}
-	else
-	{
-		myAnimationTime1 += dt;
-	}
-
-	if (myTemporary)// If the animation was temporary, return to the previous animation after the playtime is over
-	{
-		myPlayTime -= dt;
-		if (myPlayTime <= 0.f)
-		{
-			myTemporary = false;
-			BlendToAnimation(myAnim1Index);
-		}
-	}
-}
-
-
-/*
-	FIX FOR previous assimp issues :D :O :( 
-
-
-void CAnimationController::ConvertAnimationTimesToFrames(aiScene* /*aScene*/)
-{
-	//const float convertToFrame = (ANIMATED_AT_FRAMES_PER_SECOND / f_milliseconds);
-	//aiAnimation* animation = aScene->mAnimations[0];
-	//
-	//animation->mDuration *= convertToFrame;
-	//for (uint i = 0; i < animation->mNumChannels; ++i)
-	//{
-	//	for (uint s = 0; s < animation->mChannels[i]->mNumScalingKeys; ++s)
-	//	{
-	//		animation->mChannels[i]->mScalingKeys[s].mTime *= convertToFrame;
-	//	}
-	//	for (uint r = 0; r < animation->mChannels[i]->mNumRotationKeys; ++r)
-	//	{
-	//		animation->mChannels[i]->mRotationKeys[r].mTime *= convertToFrame;
-	//	}
-	//	for (uint p = 0; p < animation->mChannels[i]->mNumPositionKeys; ++p)
-	//	{
-	//		animation->mChannels[i]->mPositionKeys[p].mTime *= convertToFrame;
-	//	}
-	//}
-}
-*/
-
-
-/*
-/////////////////////////////////////////////////////////////////////////////////////////
-// BACKUP OF OLD IMPORTING FUNCTIONS (using std::vector<Assimp::Importer*> myImportes //
-///////////////////////////////////////////////////////////////////////////////////////
-
-bool CAnimationController::ImportRig(const std::string& anFBXFilePath)
-{
-if (anFBXFilePath.length() <= 0)
-return false;
-
-// Check if file exists
-std::ifstream fIn(anFBXFilePath.c_str());
-if (!fIn.fail())
-{
-fIn.close();
-}
-else
-{
-MessageBoxA(NULL, ("Couldn't open file: " + anFBXFilePath).c_str(), "ERROR", MB_OK | MB_ICONEXCLAMATION);
-return false;
-}
-
-myAnim0Index = static_cast<int>(myImporters.size());
-myImporters.emplace_back(new Assimp::Importer);
-
-if (ModelExceptionTools::IsDestructibleModel(anFBXFilePath))
-{
-int qualityFlags = aiProcessPreset_TargetRealtime_Quality;
-myAnimations.push_back(myImporters[myAnim0Index]->ReadFile(anFBXFilePath, (qualityFlags ^= (int)aiProcess_JoinIdenticalVertices) | aiProcess_ConvertToLeftHanded));
-}
-else
-{
-myAnimations.push_back(myImporters[myAnim0Index]->ReadFile(anFBXFilePath, aiProcessPreset_TargetRealtime_Quality | aiProcess_ConvertToLeftHanded));
-}
-
-bool ret = false;
-// If the import failed, report it
-if (myAnimations[myAnim0Index])
-{
-myGlobalInverseTransform = myAnimations[myAnim0Index]->mRootNode->mTransformation;
-myGlobalInverseTransform.Inverse();
-ret = InitFromScene(myAnimations[myAnim0Index]);
-// Now we can access the file's contents.
-logInfo("Import of _curScene " + anFBXFilePath + " succeeded.");
-}
-else
-{
-logInfo(myImporters[myAnim0Index]->GetErrorString());
-}
-
-// We're done. Everything will be cleaned up by the importer destructor
-return ret;
-}
-
-bool CAnimationController::ImportAnimation(const std::string& fileName)
-{
-// Check if file exists
-std::ifstream fin(fileName.c_str());
-if (!fin.fail())
-fin.close();
-else
-{
-MessageBoxA(NULL, ("Couldn't open file: " + fileName).c_str(), "ERROR", MB_OK | MB_ICONEXCLAMATION);
-return false;
-}
-
-myAnim0Index = static_cast<int>(myImporters.size());
-myImporters.emplace_back(new Assimp::Importer);
-myAnimations.emplace_back(myImporters[myAnim0Index]->ReadFile(fileName, aiProcessPreset_TargetRealtime_Quality | aiProcess_ConvertToLeftHanded));
-
-// If the import failed, report it
-if (!myAnimations[myAnim0Index])
-{
-logInfo(myImporters[myAnim0Index]->GetErrorString());
-return false;
-}
-return true;
 }
 */

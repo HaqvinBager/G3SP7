@@ -656,6 +656,21 @@ enum aiPostProcessSteps
     aiProcess_GlobalScale                   |  \
     0 )
 
+#define aiProcessPreset_TargetRealtime_Quality_DontJoinIdenticalVertices ( \
+    aiProcess_CalcTangentSpace              |  \
+    aiProcess_GenSmoothNormals              |  \
+    aiProcess_ImproveCacheLocality          |  \
+    aiProcess_LimitBoneWeights              |  \
+    aiProcess_RemoveRedundantMaterials      |  \
+    aiProcess_SplitLargeMeshes              |  \
+    aiProcess_Triangulate                   |  \
+    aiProcess_GenUVCoords                   |  \
+    aiProcess_SortByPType                   |  \
+    aiProcess_FindDegenerates               |  \
+    aiProcess_FindInvalidData               |  \
+    aiProcess_GlobalScale                   |  \
+    0 )
+
  // ---------------------------------------------------------------------------------------
  /** @def aiProcessPreset_TargetRealtime_MaxQuality
   *  @brief Default postprocess configuration optimizing the data for real-time rendering.
@@ -673,6 +688,13 @@ enum aiPostProcessSteps
   */
 #define aiProcessPreset_TargetRealtime_MaxQuality ( \
     aiProcessPreset_TargetRealtime_Quality   |  \
+    aiProcess_FindInstances                  |  \
+    aiProcess_ValidateDataStructure          |  \
+    aiProcess_OptimizeMeshes                 |  \
+    0 )
+
+#define aiProcessPreset_TargetRealtime_MaxQuality_DontJoinIdenticalVertices ( \
+    aiProcessPreset_TargetRealtime_Quality_DontJoinIdenticalVertices   |  \
     aiProcess_FindInstances                  |  \
     aiProcess_ValidateDataStructure          |  \
     aiProcess_OptimizeMeshes                 |  \

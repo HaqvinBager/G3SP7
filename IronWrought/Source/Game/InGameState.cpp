@@ -277,7 +277,7 @@ void TEMP_SetUpAnimationTest(CScene* aScene)
 	//std::string bugTestModel = "Assets/Whacky/WhackySK.fbx";
 	//std::string bugTestModel = "Assets/Temp/Robot_Block/robot_block_SK.fbx"; 
 	
-	std::string bugTestModel = "Assets/Temp/Robot/CH_E_Robot_SK.fbx"; 
+	//std::string bugTestModel = "Assets/Temp/Robot/CH_E_Robot_SK.fbx"; 
 	//std::string bugTestModel = "Assets/Temp/RobotFBXVerTest/CH_E_Robot_SK.fbx"; 
 	
 	//std::string bugTestModel = "Assets/Temp/Obot/2019/Obot_2019.fbx"; 
@@ -290,6 +290,7 @@ void TEMP_SetUpAnimationTest(CScene* aScene)
 	//std::string bugTestModel = "Assets/Temp/JointOrientTail/SetAsEuler/SK.fbx"; 
 	
 	//std::string bugTestModel = "Assets/Temp/JointOrient/SK.fbx"; 
+	std::string bugTestModel = "Assets/Temp/Main Character/CH_PL_SK.fbx"; 
 	
 	//std::string bugTestModel = "Assets/Temp/Robot/CH_E_Robot_SKMOD.fbx"; 
 	//std::string bugTestModel = "Assets/Temp/RobotSK3/robot_SK3.fbx"; 
@@ -305,8 +306,6 @@ void TEMP_SetUpAnimationTest(CScene* aScene)
 	wall->AddComponent<CModelComponent>(*wall, ASSETPATH + "Assets/Graphics/Exempel_Modeller/Wall/Wall.fbx");
 	wall->GetComponent<CTransformComponent>()->Position({3.0f,0.0f,0.0f});
 	aScene->AddInstance(wall);
-
-
 }
 #define GetAnimComp g_TempAnimObject->GetComponent<CAnimationComponent>()
 void TEMP_AnimObjectControl()
