@@ -15,6 +15,7 @@ public:
 	void Update() override;
 
 	CDecal* GetMyDecal() const;
+	void SetAlphaThreshold(float aThreshold);
 
 	void OnEnable() override;
 	void OnDisable() override;
