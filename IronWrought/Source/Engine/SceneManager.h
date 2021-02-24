@@ -18,6 +18,7 @@ private:
 	static bool AddGameObjects(CScene& aScene, const std::vector<std::string>& someJsonFiles);
 	static void SetTransforms(CScene& aScene, const std::vector<std::string>& someJsonFiles);
 	static void AddModelComponents(CScene& aScene, const std::vector<std::string>& someJsonFiles);
+	static void AddInstancedModelComponents(CScene& aScene, const std::vector<std::string>& someJsonFiles);
 
 	//static CScene* CreateScene(std::vector<std::string> ajsonFile);
 };

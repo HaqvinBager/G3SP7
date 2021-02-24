@@ -69,7 +69,6 @@ bool CSceneManager::AddGameObjects(CScene& aScene, const std::vector<std::string
 		int instanceID = id.GetInt();
 		aScene.AddInstance(new CGameObject(instanceID));
 	}
-
 	return true;
 }
 
@@ -86,13 +85,13 @@ void CSceneManager::SetTransforms(CScene& aScene, const std::vector<std::string>
 	for (const auto& t : transformArray) {
 		int id = t["instanceID"].GetInt();
 		CTransformComponent* transform = aScene.FindObjectWithID(id)->myTransform;
-		transform->Scale({	 t["scale"]["x"].GetFloat(),
+		transform->Scale	({	 t["scale"]["x"].GetFloat(),
 							 t["scale"]["y"].GetFloat(),
 							 t["scale"]["z"].GetFloat() });
-		transform->Position({t["position"]["x"].GetFloat(),
+		transform->Position	({t["position"]["x"].GetFloat(),
 							 t["position"]["y"].GetFloat(),
 							 t["position"]["z"].GetFloat() });
-		transform->Rotation({t["rotation"]["x"].GetFloat(),
+		transform->Rotation	({t["rotation"]["x"].GetFloat(),
 							 t["rotation"]["y"].GetFloat(),
 							 t["rotation"]["z"].GetFloat() });
 	}
@@ -106,12 +105,50 @@ void CSceneManager::AddModelComponents(CScene& aScene, const std::vector<std::st
 
 	const std::string& jsonPath = *jsonFileIterator;
 
-	const auto& modelDoc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + jsonPath));
-	const auto& modelArray = modelDoc.GetObjectW()["modelLinks"].GetArray();
+	const auto& doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + jsonPath));
+	const auto& modelArray = doc.GetObjectW()["modelLinks"].GetArray();
 	for (const auto& m : modelArray) {
 		int id = m["instanceID"].GetInt();
 		CGameObject* gameObject = aScene.FindObjectWithID(id);
 		gameObject->AddComponent<CModelComponent>(*gameObject, ASSETPATH(CJsonReader::Get()->GetAssetPath(m["assetID"].GetInt())));
+	}
+}
+
+void CSceneManager::AddInstancedModelComponents(CScene& aScene, const std::vector<std::string>& someJsonFiles)
+{
+	auto jsonFileIterator = std::find(someJsonFiles.begin(), someJsonFiles.end(), "InstanceModelCollection");
+	if (jsonFileIterator == someJsonFiles.end())
+		return;
+
+	const std::string& jsonPath = *jsonFileIterator;
+
+	const auto& doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + jsonPath));
+	const auto& instancedModelArray = doc.GetObjectW()["instancedModels"].GetArray();
+	for (const auto& i : instancedModelArray) {
+		int assetID = i["assetID"].GetInt();
+		CGameObject* gameObject = new CGameObject(assetID);
+
+		std::vector<Matrix> instancedModelTransforms;
+		instancedModelTransforms.reserve(i["transforms"].GetArray().Size());
+
+		for (const auto& t : i["transforms"].GetArray()) {	
+			CGameObject temp(0);
+			CTransformComponent transform(temp);
+			transform.Scale({ t["scale"]["x"].GetFloat(),
+								 t["scale"]["y"].GetFloat(),
+								 t["scale"]["z"].GetFloat() });
+			transform.Position({ t["position"]["x"].GetFloat(),
+								 t["position"]["y"].GetFloat(),
+								 t["position"]["z"].GetFloat() });
+			transform.Rotation({ t["rotation"]["x"].GetFloat(),
+								 t["rotation"]["y"].GetFloat(),
+								 t["rotation"]["z"].GetFloat() });
+			instancedModelTransforms.emplace_back(transform.GetLocalMatrix());
+		}
+
+
+		gameObject->AddComponent<CInstancedModelComponent>(*gameObject, instancedModelTransforms);
+
 	}
 }
 

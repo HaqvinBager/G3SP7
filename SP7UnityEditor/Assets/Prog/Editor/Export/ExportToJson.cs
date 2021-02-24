@@ -24,11 +24,14 @@ public static class Json
         System.IO.File.WriteAllText(savePath, jsonString.ToString());
     }
 
-    public static bool TryIsValidExport<T>(T obj, out GameObject prefabParent) where T : Object
+    public static bool TryIsValidExport<T>(T obj, out GameObject prefabParent, bool aIsStatic = false) where T : Object
     {
         prefabParent = PrefabUtility.GetOutermostPrefabInstanceRoot(obj);
         
         if (prefabParent == null)
+            return false;
+
+        if (prefabParent.isStatic != aIsStatic)
             return false;
 
         if (PrefabUtility.GetPrefabAssetType(prefabParent) != PrefabAssetType.Regular)

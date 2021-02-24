@@ -32,19 +32,20 @@ public class ExportModel
             if (renderer.GetComponent<PolybrushFBX>() != null)
                 continue;
 
-            GameObject prefabParent = PrefabUtility.GetOutermostPrefabInstanceRoot(renderer);
-
-            if(renderer.TryGetComponent(out MeshFilter meshFilter))
+            if(Json.TryIsValidExport(renderer, out GameObject prefabParent))
             {
-                GameObject asset = PrefabUtility.GetCorrespondingObjectFromOriginalSource(meshFilter).gameObject;
-                if (asset == null)
-                    continue;
+                if (renderer.TryGetComponent(out MeshFilter meshFilter))
+                {
+                    GameObject asset = PrefabUtility.GetCorrespondingObjectFromOriginalSource(meshFilter).gameObject;
+                    if (asset == null)
+                        continue;
 
-                ModelLink link = new ModelLink();
-                link.assetID = asset.transform.GetInstanceID();
-                link.instanceID = prefabParent.transform.GetInstanceID();
-                fbxLinks.modelLinks.Add(link);       
-            }
+                    ModelLink link = new ModelLink();
+                    link.assetID = asset.transform.GetInstanceID();
+                    link.instanceID = prefabParent.transform.GetInstanceID();
+                    fbxLinks.modelLinks.Add(link);
+                }
+            }           
         }
         Json.ExportToJson(fbxLinks, aScene.name);
     }
