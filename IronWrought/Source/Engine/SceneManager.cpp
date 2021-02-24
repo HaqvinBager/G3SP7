@@ -10,7 +10,7 @@
 #include <PlayerControllerComponent.h>
 
 
-
+std::string CSceneManager::npos = "";
 CSceneManager::CSceneManager()
 {
 }
@@ -21,7 +21,6 @@ CSceneManager::~CSceneManager()
 
 CScene* CSceneManager::CreateEmpty()
 {
-
 	CGameObject* camera = new CGameObject(0);
 	camera->AddComponent<CCameraComponent>(*camera, 70.0f);
 	camera->AddComponent<CCameraControllerComponent>(*camera, 5.0f);
@@ -49,18 +48,17 @@ CScene* CSceneManager::CreateScene(const std::vector<std::string>& someJsonFiles
 	AddGameObjects(*scene, someJsonFiles);
 	SetTransforms(*scene, someJsonFiles);
 	AddModelComponents(*scene, someJsonFiles);
+	AddInstancedModelComponents(*scene, someJsonFiles);
 	return scene;
 }
 
 bool CSceneManager::AddGameObjects(CScene& aScene, const std::vector<std::string>& someJsonFiles)
 {
-	auto jsonFileIterator = std::find(someJsonFiles.begin(), someJsonFiles.end(), "InstanceIDCollection");
-	if (jsonFileIterator == someJsonFiles.end())
+	const std::string& jsonPath = Find(someJsonFiles, "InstanceIDCollection");//*jsonPathIterator;
+	if (jsonPath.size() == 0)
 		return false;
 
-	const std::string& jsonPath = *jsonFileIterator;
-
-	const auto& idDoc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + someJsonFiles[0]));
+	const auto& idDoc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + jsonPath));
 	if (!IsValid(idDoc))
 		return false;
 
@@ -74,11 +72,10 @@ bool CSceneManager::AddGameObjects(CScene& aScene, const std::vector<std::string
 
 void CSceneManager::SetTransforms(CScene& aScene, const std::vector<std::string>& someJsonFiles)
 {
-	auto jsonFileIterator = std::find(someJsonFiles.begin(), someJsonFiles.end(), "TransformCollection");
-	if (jsonFileIterator == someJsonFiles.end())
-		return;
 
-	const std::string& jsonPath = *jsonFileIterator;
+	const std::string& jsonPath = Find(someJsonFiles, "TransformCollection");//*jsonPathIterator;
+	if (jsonPath.size() == 0)
+		return;
 
 	const auto& transformDoc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + jsonPath));
 	const auto& transformArray = transformDoc.GetObjectW()["transforms"].GetArray();
@@ -99,11 +96,9 @@ void CSceneManager::SetTransforms(CScene& aScene, const std::vector<std::string>
 
 void CSceneManager::AddModelComponents(CScene& aScene, const std::vector<std::string>& someJsonFiles)
 {
-	auto jsonFileIterator = std::find(someJsonFiles.begin(), someJsonFiles.end(), "ModelCollection");
-	if (jsonFileIterator == someJsonFiles.end())
+	const std::string& jsonPath = Find(someJsonFiles, "ModelCollection");//*jsonPathIterator;
+	if (jsonPath.size() == 0)
 		return;
-
-	const std::string& jsonPath = *jsonFileIterator;
 
 	const auto& doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + jsonPath));
 	const auto& modelArray = doc.GetObjectW()["modelLinks"].GetArray();
@@ -116,11 +111,9 @@ void CSceneManager::AddModelComponents(CScene& aScene, const std::vector<std::st
 
 void CSceneManager::AddInstancedModelComponents(CScene& aScene, const std::vector<std::string>& someJsonFiles)
 {
-	auto jsonFileIterator = std::find(someJsonFiles.begin(), someJsonFiles.end(), "InstanceModelCollection");
-	if (jsonFileIterator == someJsonFiles.end())
+	const std::string& jsonPath = Find(someJsonFiles, "InstanceModelCollection");//*jsonPathIterator;
+	if (jsonPath.size() == 0)
 		return;
-
-	const std::string& jsonPath = *jsonFileIterator;
 
 	const auto& doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + jsonPath));
 	const auto& instancedModelArray = doc.GetObjectW()["instancedModels"].GetArray();
@@ -146,10 +139,19 @@ void CSceneManager::AddInstancedModelComponents(CScene& aScene, const std::vecto
 			instancedModelTransforms.emplace_back(transform.GetLocalMatrix());
 		}
 
-
-		gameObject->AddComponent<CInstancedModelComponent>(*gameObject, instancedModelTransforms);
-
+		gameObject->AddComponent<CInstancedModelComponent>(*gameObject, ASSETPATH(CJsonReader::Get()->GetAssetPath(assetID)), instancedModelTransforms);
+		aScene.AddInstance(gameObject);
 	}
+}
+
+const std::string& CSceneManager::Find(const std::vector<std::string>& someStrings, const std::string& aContains)
+{
+	auto jsonPathIterator = std::find_if(someStrings.begin(), someStrings.end(), [&](std::string e) { return e.find(aContains) != std::string::npos; });
+
+	if (jsonPathIterator == someStrings.end())
+		return npos;
+
+	return *jsonPathIterator;
 }
 
 

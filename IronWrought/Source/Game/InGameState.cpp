@@ -48,9 +48,9 @@ void CInGameState::Awake(){}
 void CInGameState::Start()
 {
 	CJsonReader::Get()->Init();
-	CScene* scene = CSceneManager::CreateEmpty();
+	CScene* scene = CSceneManager::CreateScene(CFolderUtility::GetFileNamesInFolder(ASSETPATH("Assets/Generated/"), ".json", "Level_1-1_Layout"));
 
-	scene->AddPXScene(CEngine::GetInstance()->GetPhysx().CreatePXScene());
+//	scene->AddPXScene(CEngine::GetInstance()->GetPhysx().CreatePXScene());
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);
 
