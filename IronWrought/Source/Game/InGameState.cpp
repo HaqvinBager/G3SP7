@@ -2,6 +2,7 @@
 #include "InGameState.h"
 
 #include "Scene.h"
+#include "SceneManager.h"
 
 #include "GameObject.h"
 #include "CameraComponent.h"
@@ -55,30 +56,13 @@ void CInGameState::Awake()
 
 void CInGameState::Start()
 {
-	CScene* scene = new CScene();
-
-	CGameObject* camera = new CGameObject(0);
-	camera->AddComponent<CCameraComponent>(*camera, 65.0f);
-	camera->AddComponent<CCameraControllerComponent>(*camera, 1.5f);
-	camera->myTransform->Position({0.0f, 1.0f, 0.0f});
-	camera->myTransform->Rotation({0.0f, 0.0f, 0.0f});
-	scene->AddInstance(camera);
-	scene->MainCamera(camera->GetComponent<CCameraComponent>());
-
-	CGameObject* envLight = new CGameObject(1);
-	envLight->AddComponent<CEnviromentLightComponent>(*envLight);
-	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetColor({0.0f,0.0f,1.0f});
-	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetIntensity(1.f);
-	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetDirection({1.0f,0.5f,-1.0f});
-	scene->AddInstance(envLight);
-	scene->EnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight());
+	CScene* scene = CSceneManager::CreateEmpty();
 
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);
 
-	
-	TEMP_DeferredRenderingTests(scene);
-	TEMP_SetUpAnimationTest(scene);
+	//TEMP_DeferredRenderingTests(scene);
+	//TEMP_SetUpAnimationTest(scene);
 
 	myExitLevel = false;
 
@@ -117,7 +101,7 @@ void CInGameState::Stop()
 
 void CInGameState::Update()
 {
-	TEMP_AnimObjectControl();
+	//TEMP_AnimObjectControl();
 
 	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
 	{
@@ -252,60 +236,11 @@ void TEMP_DeferredRenderingTests(CScene* scene)
 #include "animationLoader.h"// <-- include f�r AnimationLoader funktioner: AddAnimationsToGameObject() osv
 void TEMP_SetUpAnimationTest(CScene* aScene)
 {
-	//CGameObject* go = new CGameObject(123123123);
-	////std::string skinnedModelPath = "Assets/Temp/Mixamo/SK.fbx";// <-- Skinnad mesh fbx. 
-	//std::string skinnedModelPath = "Assets/Temp/Robot/CH_E_Robot_SK.fbx";// <-- Skinnad mesh fbx. 
-	////std::string skinnedModelPath = "Assets/Temp/fbx2019v2020_0_1/CH_E_Robot_SK_.fbx";
-	////std::string skinnedModelPath = "Assets/Temp/Maya2019_2/CH_E_Robot_SK.fbx";
-	////std::string skinnedModelPath = "Assets/Temp/Main Character/CH_PL_SK.fbx";// <-- Skinnad mesh fbx. 
-	//
-	//go->AddComponent<CModelComponent>(*go, skinnedModelPath);// <-- M�ste ha vanlig CModelComp f�r rendering
-	//
-	//// Fixar allt. Beh�ver ett CGameObject med en CModelComponent p� och path:en f�r modellen.
-	//CAnimationComponent* animComp = AnimationLoader::AddAnimationsToGameObject(go, skinnedModelPath);
-	//animComp->BlendToAnimation(1/*Index f�r animation att blenda till*/, 1.0f/*Hur l�ngsam blendingen ska vara*/);
-	//
-	////animComp->BlendLerpBetween(5/*Index f�r f�rsta animation, ligger p� blend 0.0f*/
-	////						   , 0/*Index f�r andra animation, ligger p� blend 1.0f*/
-	////						   , 0.0f/*Blend/Lerp v�rde. 0.0f => spela 100% av f�rsta animationen.
-	////								 * 1.0f => spela 100% av andra animationen.
-	////								 * 0.5f => spela 50/50% av f�rsta/andra.
-	////								 */
-	////						   );
-	//g_TempAnimObject = go;
-	//aScene->AddInstance(go);
-	//
-	//CGameObject* go2 = new CGameObject(123123124);
-	//go2->AddComponent<CModelComponent>(*go2, skinnedModelPath);
-	//go2->myTransform->Position({ -2.0f,0.f,0.f });
-	////CAnimationComponent* animComp2 = AnimationLoader::AddAnimationsToGameObject(go2, skinnedModelPath);
-	////animComp2->BlendToAnimation(2/*Index f�r animation att blenda till*/, 1.0f/*Hur l�ngsam blendingen ska vara*/);
-	//aScene->AddInstance(go2);
-
-	CGameObject* go3 = new CGameObject(123123125);
-	//std::string bugTestModel = "Assets/Temp/Block/blockSK.fbx"; 
-	//std::string bugTestModel = "Assets/Temp/Robot/CH_E_Robot_SK_OrinetJointTest.fbx";
-	//std::string bugTestModel = "Assets/Whacky/WhackySK.fbx";
-	//std::string bugTestModel = "Assets/Temp/Robot_Block/robot_block_SK.fbx"; 
-	
+	CGameObject* go3 = new CGameObject(123123125);	
 	//std::string bugTestModel = "Assets/Temp/Robot/CH_E_Robot_SK.fbx"; 
-	//std::string bugTestModel = "Assets/Temp/RobotFBXVerTest/CH_E_Robot_SK.fbx"; 
-	
-	//std::string bugTestModel = "Assets/Temp/Obot/2019/Obot_2019.fbx"; 
-	//std::string bugTestModel = "Assets/Temp/Obot/2018/Obot_2018.fbx"; 
-	//std::string bugTestModel = "Assets/Temp/Obot/201617/Obot_201617.fbx"; 
-	//std::string bugTestModel = "Assets/Temp/Obot/201415/Obot_201415.fbx"; 
-	
-	//std::string bugTestModel = "Assets/Temp/JointOrientTail/ResampleAsEuler_Default/SK.fbx"; 
-	//std::string bugTestModel = "Assets/Temp/JointOrientTail/RetainQuaternion/SK.fbx"; 
-	//std::string bugTestModel = "Assets/Temp/JointOrientTail/SetAsEuler/SK.fbx"; 
-	
 	//std::string bugTestModel = "Assets/Temp/JointOrient/SK.fbx"; 
 	std::string bugTestModel = "Assets/Temp/Main Character/CH_PL_SK.fbx"; 
 	
-	//std::string bugTestModel = "Assets/Temp/Robot/CH_E_Robot_SKMOD.fbx"; 
-	//std::string bugTestModel = "Assets/Temp/RobotSK3/robot_SK3.fbx"; 
-	//std::string bugTestModel = "Assets/Temp/EasterEggRobot/EasterEgg_robot_SK.fbx"; 
 	go3->AddComponent<CModelComponent>(*go3, bugTestModel);
 	go3->myTransform->Position({ 0.0f,0.f,0.f });
 	CAnimationComponent* animComp2 = AnimationLoader::AddAnimationsToGameObject(go3, bugTestModel);
