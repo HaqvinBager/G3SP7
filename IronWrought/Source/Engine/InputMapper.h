@@ -3,7 +3,7 @@
 #include <unordered_map>
 
 class Input;
-
+#define INPUT_MAPPER CInputMapper::GetInstance()
 class CInputMapper
 {
 	friend class CEngine;

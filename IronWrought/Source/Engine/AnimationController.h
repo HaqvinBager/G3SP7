@@ -13,6 +13,7 @@
 //#define ANIMATION_DURATION_IN_MILLISECONDS// AS of 2021 02 23 is not used
 
 #define NUM_BONES_PER_VERTEX 4
+#define TEMP_FRAMES_PER_SECOND 24.0f//30.0f // Original was 25.0f
 
 #define ANIMATED_AT_FRAMES_PER_SECOND 24.0f//30.0f // Original was 25.0f
 

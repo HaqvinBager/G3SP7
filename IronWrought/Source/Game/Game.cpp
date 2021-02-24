@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "Game.h"
 #include "InGameState.h"
-//#include "PhysXWrapper.h"
 
 //#include "MainSingleton.h"
 //#include "PostMaster.h"
@@ -23,7 +22,6 @@ CGame::~CGame()
 
 void CGame::Init()
 {
-	//CMainSingleton::PhysXWrapper().Init();
 	InitDev();
 	//InitRealGame();
 }

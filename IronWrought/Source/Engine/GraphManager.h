@@ -2,6 +2,7 @@
 
 #include <imgui_node_editor.h>
 #include <stack>
+#include <unordered_map>
 
 class CNodeInstance;
 
@@ -27,7 +28,6 @@ public:
 	static void ShowFlow(int aLinkID);
 
 	void Update();
-	void PostRender();
 
 	void ToggleShouldRenderGraph();
 	bool ShouldRenderGraph() { return myShouldRenderGraph; }
@@ -38,7 +38,9 @@ private:
 	CNodeInstance* GetNodeFromPinID(unsigned int anID);
 	CNodeInstance* GetNodeFromNodeID(unsigned int anID);
 	void DrawTypeSpecificPin(struct SPin& aPin, CNodeInstance* aNodeInstance);
-	std::vector<CNodeInstance*> myNodeInstancesInGraph;
+	std::unordered_map<std::string, std::vector<CNodeInstance*>> myGraphs;
+	std::unordered_map<std::string, std::vector<int>> myGameObjectIDsMap;
+	std::vector<std::string> myKeys;
 
 	struct SEditorLinkInfo
 	{
@@ -72,7 +74,6 @@ private:
 
 	std::stack<EditorCommand> myUndoCommands;
 	std::stack<EditorCommand> myRedoCommands;
-	//ImTextureID myHeaderTextureID;
 	ImVector<SEditorLinkInfo> myLinks;
 	int myNextLinkIdCounter = 100;
 	bool myLikeToSave = false;
@@ -83,4 +84,6 @@ private:
 	ImTextureID myHeaderTextureID;
 	bool myShouldRenderGraph;
 	bool myScriptShouldRun;
+	std::string myCurrentPath;
+	std::string myCurrentKey;
 };

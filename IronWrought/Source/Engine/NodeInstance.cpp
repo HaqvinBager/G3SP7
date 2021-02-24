@@ -3,7 +3,7 @@
 #include "NodeType.h"
 #include <assert.h>
 #include "GraphManager.h"
-
+#include "BaseDecisionNode.h"
 
 CNodeInstance::CNodeInstance(bool aCreateNewUID)
 	:myUID(aCreateNewUID), myNodeType(nullptr)
@@ -12,11 +12,12 @@ CNodeInstance::CNodeInstance(bool aCreateNewUID)
 	myEditorPosition[1] = 0.0f;	
 }
 
+
 bool IsOutput(std::vector<SPin>& somePins, unsigned int anID)
 {
 	for (auto& pin : somePins)
 	{
-		if (pin.myPinType == SPin::PinTypeInOut::PinTypeInOut_OUT && pin.myUID.AsInt() == anID)
+		if (pin.myPinType == SPin::EPinTypeInOut::PinTypeInOut_OUT && pin.myUID.AsInt() == anID)
 		{
 			return true;
 		}
@@ -64,7 +65,7 @@ bool CNodeInstance::CanAddLink(unsigned int aPinIDFromMe)
 {
 	SPin* pin = GetPinFromID(aPinIDFromMe);
 
-	if (pin->myPinType == SPin::PinTypeInOut::PinTypeInOut_IN &&  pin->myVariableType != SPin::PinType::Flow)
+	if (pin->myPinType == SPin::EPinTypeInOut::PinTypeInOut_IN &&  pin->myVariableType != SPin::EPinType::Flow)
 	{
 		if (GetLinkFromPin(aPinIDFromMe).size() != 0)
 		{
@@ -105,7 +106,7 @@ bool CNodeInstance::AddLinkVia(CNodeInstance* aLink, unsigned int aPinIDFromMe, 
 
 	SPin* pin = GetPinFromID(aPinIDFromMe);
 
-	if (pin->myPinType == SPin::PinTypeInOut::PinTypeInOut_IN &&  pin->myVariableType != SPin::PinType::Flow)
+	if (pin->myPinType == SPin::EPinTypeInOut::PinTypeInOut_IN &&  pin->myVariableType != SPin::EPinType::Flow)
 	{
 		if (GetLinkFromPin(aPinIDFromMe).size() != 0)
 		{
@@ -149,7 +150,7 @@ std::string CNodeInstance::GetNodeName()
 	return myNodeType->GetNodeName();
 }
 
-void CNodeInstance::ChangePinTypes(SPin::PinType aType)
+void CNodeInstance::ChangePinTypes(SPin::EPinType aType)
 {
 	for (auto& pin : myPins)
 	{
@@ -217,12 +218,12 @@ void CNodeInstance::VisualUpdate(float aDeltaTime)
 	}
 }
 
-void CNodeInstance::FetchData(SPin::PinType& anOutType, NodeDataPtr& someData, size_t& anOutSize, unsigned int aPinToFetchFrom)
+void CNodeInstance::FetchData(SPin::EPinType& anOutType, NodeDataPtr& someData, size_t& anOutSize, unsigned int aPinToFetchFrom)
 {
 	// If we dont have any data, but or link might have it, the link pin might have data written to it as well, then return that
 	if (!myNodeType->IsFlowNode())
 	{
-		if (myPins[aPinToFetchFrom].myPinType == SPin::PinTypeInOut::PinTypeInOut_IN)
+		if (myPins[aPinToFetchFrom].myPinType == SPin::EPinTypeInOut::PinTypeInOut_IN)
 		{
 			std::vector< SNodeInstanceLink*> links = GetLinkFromPin(myPins[aPinToFetchFrom].myUID.AsInt());
 			if (links.size() > 0)
@@ -249,7 +250,7 @@ void CNodeInstance::FetchData(SPin::PinType& anOutType, NodeDataPtr& someData, s
 	}
 	else
 	{
-		if (myPins[aPinToFetchFrom].myPinType == SPin::PinTypeInOut::PinTypeInOut_IN)
+		if (myPins[aPinToFetchFrom].myPinType == SPin::EPinTypeInOut::PinTypeInOut_IN)
 		{
 			std::vector< SNodeInstanceLink*> links = GetLinkFromPin(myPins[aPinToFetchFrom].myUID.AsInt());
 			if (links.size() > 0)
@@ -273,19 +274,19 @@ void CNodeInstance::FetchData(SPin::PinType& anOutType, NodeDataPtr& someData, s
 
 	SPin& dataPin = myPins[aPinToFetchFrom];
 	// We have the data, set ut to the return values
-	if (dataPin.myVariableType == SPin::PinType::Float)
+	if (dataPin.myVariableType == SPin::EPinType::Float)
 	{
 		anOutSize = dataPin.myData != nullptr ? sizeof(float) : 0;
 	}
-	else if (dataPin.myVariableType == SPin::PinType::Int)
+	else if (dataPin.myVariableType == SPin::EPinType::Int)
 	{
 		anOutSize = dataPin.myData != nullptr ? sizeof(int) : 0;
 	}
-	else if (dataPin.myVariableType == SPin::PinType::Bool)
+	else if (dataPin.myVariableType == SPin::EPinType::Bool)
 	{
 		anOutSize = dataPin.myData != nullptr ? sizeof(bool) : 0;
 	}
-	else if (dataPin.myVariableType == SPin::PinType::String)
+	else if (dataPin.myVariableType == SPin::EPinType::String)
 	{
 		anOutSize = dataPin.myData != nullptr ? strlen(static_cast<char*>(dataPin.myData)) : 0;
 	}

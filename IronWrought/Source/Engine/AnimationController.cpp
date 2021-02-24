@@ -68,7 +68,6 @@ bool CAnimationController::ImportRig(const std::string& anFBXFilePath)
 	myAnim0Index = static_cast<int>(myAnimations.size());
 
 	Assimp::Importer importer;
-
 	if (importer.ReadFile(anFBXFilePath, aiProcessPreset_TargetRealtime_Quality | aiProcess_ConvertToLeftHanded))
 		myAnimations.emplace_back(importer.GetOrphanedScene());
 	else
@@ -353,7 +352,6 @@ void CAnimationController::SetBoneTransforms(std::vector<aiMatrix4x4>& aTransfor
 	{
 		float ticksPerSecond = static_cast<float>(myAnimations[myAnim0Index]->mAnimations[0]->mTicksPerSecond);
 		ticksPerSecond = (ticksPerSecond != 0) ? ticksPerSecond : ANIMATED_AT_FRAMES_PER_SECOND;
-
 
 		float timeInTicks = myAnimationTime0 * ticksPerSecond;
 

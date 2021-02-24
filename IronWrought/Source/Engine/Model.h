@@ -2,7 +2,9 @@
 #include <array>
 #include <d3d11.h>
 
-class CAnimation;
+/* REMINDER (2021 02 09)
+* Move SModelInstancedData to its own class: CInstancedModel!
+*/
 
 struct SMeshData {
 	ID3D11Buffer* myVertexBuffer = nullptr;

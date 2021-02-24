@@ -4,7 +4,7 @@
 #include "Component.h"
 #include "SpriteInstance.h"
 #include "EngineDefines.h"
-//#include "PhysXWrapper.h"
+#include "PhysXWrapper.h"
 
 class CModelComponent;
 class CCamera;
@@ -59,7 +59,7 @@ public:
 	CCameraComponent* MainCamera();
 	CEnvironmentLight* EnvironmentLight();
 	SNavMesh* NavMesh();
-	//PxScene* PXScene();
+	PxScene* PXScene();
 	std::vector<CGameObject*> ModelsToOutline() const;
 	std::vector<CPointLight*>& PointLights();
 	std::vector<CTextInstance*> Texts();
@@ -79,6 +79,7 @@ public:
 	LightPair CullLightInstanced(CInstancedModelComponent* aModelType);
 	std::vector<CGameObject*> CullGameObjects(CCameraComponent* aMainCamera);
 	std::vector<CSpriteInstance*> CullSprites();
+	CGameObject* FindObjectWithID(const int aGameObjectInstanceID);
 //CULLING END
 public:
 	//POPULATE SCENE START
@@ -91,7 +92,7 @@ public:
 	bool AddInstances(std::vector<CGameObject*>& someGameObjects);
 	bool AddInstance(CSpriteInstance* aSprite);
 	//PhysX
-	//bool AddPXScene(PxScene* aPXScene);
+	bool AddPXScene(PxScene* aPXScene);
 	//POPULATE SCENE END
 public:
 //REMOVE SPECIFIC INSTANCE START
@@ -141,6 +142,8 @@ private:
 	std::vector<CGameObject*> myGameObjects;
 	std::vector<CGameObject*> myModelsToOutline;
 	
+	std::unordered_map<int, CGameObject*> myIDGameObjectMap;
+
 	std::unordered_map<ERenderOrder, std::vector<CSpriteInstance*>> mySpriteInstances;
 //CONTAINERS END
 private:
@@ -150,7 +153,7 @@ private:
 	CLineInstance* myNavMeshGrid;
 	CCameraComponent* myMainCamera;
 	//PhysX scene
-	//PxScene* myPXScene;
+	PxScene* myPXScene;
 //POINTERS END
 
 	bool myIsReadyToRender;

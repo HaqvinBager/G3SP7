@@ -7,13 +7,13 @@
 
 CNodeTypeStart::CNodeTypeStart()
 {
-	myPins.push_back(SPin("Updating", SPin::PinTypeInOut::PinTypeInOut_IN, SPin::PinType::Bool));
-	myPins.push_back(SPin("", SPin::PinTypeInOut::PinTypeInOut_OUT));
+	myPins.push_back(SPin("Updating", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Bool));
+	myPins.push_back(SPin("", SPin::EPinTypeInOut::PinTypeInOut_OUT));
 }
 
 int CNodeTypeStart::OnEnter(class CNodeInstance* aTriggeringNodeInstance)
 {
-	SPin::PinType outType;
+	SPin::EPinType outType;
 	NodeDataPtr someData = nullptr;
 	size_t outSize = 0;
 

@@ -19,6 +19,7 @@ class CRenderManager;
 class CParticleFactory;
 class CSpriteFactory;
 class CTextFactory;
+class CDecalFactory;
 class CInputMapper;
 class CDebug;
 class CMainSingleton;
@@ -26,6 +27,7 @@ class CForwardRenderer;
 class CVFXFactory;
 class CLineFactory;
 class CAudioManager;
+class CPhysXWrapper;
 
 class CEngine
 {
@@ -35,6 +37,7 @@ class CEngine
 	friend class CLightFactory;
 	friend class CRenderManager;
 	friend class CLineFactory;
+	friend class CDecalFactory;
 	friend class CMaterialHandler;
 
 public:
@@ -55,6 +58,8 @@ public:
 	const CStateStack::EState AddScene(const CStateStack::EState aState, CScene* aScene);
 	void SetActiveScene(const CStateStack::EState aState);
 	CScene& GetActiveScene();
+	
+	CPhysXWrapper& GetPhysx() { return *myPhysxWrapper; }
 
 	void ModelViewerSetScene(CScene* aScene);
 	//void PopBackScene();
@@ -75,6 +80,7 @@ private:
 	CRenderManager* myRenderManager;
 	CTimer* myTimer;
 	CDebug* myDebug;
+	CPhysXWrapper* myPhysxWrapper;
 
 	//unsigned int myActiveScene;
 	CStateStack::EState myActiveState;
@@ -89,6 +95,7 @@ private:
 	CLineFactory* myLineFactory;
 	CSpriteFactory* mySpriteFactory;
 	CTextFactory* myTextFactory;
+	CDecalFactory* myDecalFactory;
 	CInputMapper* myInputMapper;
 	CMainSingleton* myMainSingleton;
 	CAudioManager* myAudioManager;

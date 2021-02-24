@@ -95,6 +95,7 @@
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>
       </AdditionalUsingDirectories>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -105,10 +106,8 @@
       <ShaderModel>4.0</ShaderModel>
     </FxCompile>
     <Lib>
-      <AdditionalLibraryDirectories>
-      </AdditionalLibraryDirectories>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\Lib\physxlib\debug\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>LowLevel_static_64.lib;LowLevelAABB_static_64.lib;LowLevelDynamics_static_64.lib;PhysX_64.lib;PhysXCharacterKinematic_static_64.lib;PhysXCommon_64.lib;PhysXCooking_64.lib;PhysXExtensions_static_64.lib;PhysXFoundation_64.lib;PhysXPvdSDK_static_64.lib;PhysXTask_static_64.lib;PhysXVehicle_static_64.lib;SampleBase_static_64.lib;SampleFramework_static_64.lib;SamplesToolkit_static_64.lib;SceneQuery_static_64.lib;SimulationController_static_64.lib;SnippetRender_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -125,6 +124,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <ForcedIncludeFiles>StdAfx.h;%(ForcedINcludeFiles)</ForcedIncludeFiles>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -136,6 +136,10 @@
       <ObjectFileOutput>$(ProjectDir)..\..\Bin\Shaders\%(Filename).cso</ObjectFileOutput>
       <ShaderModel>4.0</ShaderModel>
     </FxCompile>
+    <Lib>
+      <AdditionalDependencies>LowLevel_static_64.lib;LowLevelAABB_static_64.lib;LowLevelDynamics_static_64.lib;PhysX_64.lib;PhysXCharacterKinematic_static_64.lib;PhysXCommon_64.lib;PhysXCooking_64.lib;PhysXExtensions_static_64.lib;PhysXFoundation_64.lib;PhysXPvdSDK_static_64.lib;PhysXTask_static_64.lib;PhysXVehicle_static_64.lib;SampleBase_static_64.lib;SampleFramework_static_64.lib;SamplesToolkit_static_64.lib;SceneQuery_static_64.lib;SimulationController_static_64.lib;SnippetRender_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\Lib\physxlib\release\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">
     <ClCompile>
@@ -187,6 +191,8 @@
     <ClInclude Include="AudioChannel.h" />
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Behaviour.h" />
+    <ClInclude Include="DecisionTreeManager.h" />
+    <ClInclude Include="FloatDecisionNode.h" />
     <ClInclude Include="Builders.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="Camera.h" />
@@ -194,9 +200,24 @@
     <ClInclude Include="CameraFactory.h" />
     <ClInclude Include="Canvas.h" />
     <ClInclude Include="CapsuleColliderComponent.h" />
+    <ClInclude Include="BaseDecisionNode.h" />
+    <ClInclude Include="CStateMachineComponent.h" />
+    <ClInclude Include="Decal.h" />
+    <ClInclude Include="DecalComponent.h" />
+    <ClInclude Include="DecalFactory.h" />
+    <ClInclude Include="DecalRenderer.h" />
     <ClInclude Include="GraphManager.h" />
+    <ClInclude Include="ActionNode.h" />
+    <ClInclude Include="DecisionNode.h" />
+    <ClInclude Include="GraphNodeCollisionManager.h" />
+    <ClInclude Include="GraphNodeTimerManager.h" />
     <ClInclude Include="NodeInstance.h" />
     <ClInclude Include="NodeType.h" />
+    <ClInclude Include="NodeTypeForEachGameObject.h" />
+    <ClInclude Include="NodeTypeGetGameObjectPosition.h" />
+    <ClInclude Include="NodeTypeRunDecisionTree.h" />
+    <ClInclude Include="NodeTypePrintAction.h" />
+    <ClInclude Include="NodeTypeFloatDecision.h" />
     <ClInclude Include="NodeTypeGetMousePosition.h" />
     <ClInclude Include="NodeTypeMathAbs.h" />
     <ClInclude Include="NodeTypeMathAdd.h" />
@@ -218,6 +239,7 @@
     <ClInclude Include="NodeTypeMathToDegrees.h" />
     <ClInclude Include="NodeTypeMathToRadians.h" />
     <ClInclude Include="NodeTypePrint.h" />
+    <ClInclude Include="NodeTypeSetGameObjectPosition.h" />
     <ClInclude Include="NodeTypeStart.h" />
     <ClInclude Include="ImGuiLevelSelect.h" />
     <ClInclude Include="Collider.h" />
@@ -243,6 +265,8 @@
     <ClInclude Include="Message.h" />
     <ClInclude Include="MessageType.h" />
     <ClInclude Include="NodeTypes.h" />
+    <ClInclude Include="NodeTypeTimer.h" />
+    <ClInclude Include="NodeTypeVolumeTrigger.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="PerlinNoise.h" />
     <ClInclude Include="PhysXWrapper.h" />
@@ -254,10 +278,12 @@
     <ClInclude Include="InputMapper.h" />
     <ClInclude Include="InputObserver.h" />
     <ClInclude Include="ParticleEmitterComponent.h" />
+    <ClInclude Include="PrintActionNode.h" />
     <ClInclude Include="RectangleColliderComponent.h" />
     <ClInclude Include="RigidBodyComponent.h" />
     <ClInclude Include="RigidDynamicBody.h" />
     <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="ShadowRenderer.h" />
     <ClInclude Include="StackWalker.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="DebugTimerUtility.h" />
@@ -327,6 +353,7 @@
     <ClCompile Include="..\Includes\ImGui\NodeEditor\imgui_canvas.cpp" />
     <ClCompile Include="..\Includes\ImGui\NodeEditor\imgui_node_editor.cpp" />
     <ClCompile Include="..\Includes\ImGui\NodeEditor\imgui_node_editor_api.cpp" />
+    <ClCompile Include="ActionNode.cpp" />
     <ClCompile Include="AnimatedUIElement.cpp" />
     <ClCompile Include="AnimationComponent.cpp" />
     <ClCompile Include="AnimationController.cpp" />
@@ -335,6 +362,8 @@
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="AudioChannel.cpp" />
     <ClCompile Include="AudioManager.cpp" />
+    <ClCompile Include="DecisionTreeManager.cpp" />
+    <ClCompile Include="FloatDecisionNode.cpp" />
     <ClCompile Include="Builders.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -342,10 +371,24 @@
     <ClCompile Include="CameraFactory.cpp" />
     <ClCompile Include="Canvas.cpp" />
     <ClCompile Include="CapsuleColliderComponent.cpp" />
+    <ClCompile Include="DecisionNode.cpp" />
+    <ClCompile Include="CStateMachineComponent.cpp" />
+    <ClCompile Include="ShadowRenderer.cpp" />
+    <ClCompile Include="Decal.cpp" />
+    <ClCompile Include="DecalComponent.cpp" />
+    <ClCompile Include="DecalFactory.cpp" />
+    <ClCompile Include="DecalRenderer.cpp" />
     <ClCompile Include="GraphManager.cpp" />
+    <ClCompile Include="GraphNodeCollisionManager.cpp" />
+    <ClCompile Include="GraphNodeTimerManager.cpp" />
     <ClCompile Include="JsonReader.cpp" />
     <ClCompile Include="NodeInstance.cpp" />
     <ClCompile Include="NodeType.cpp" />
+    <ClCompile Include="NodeTypeForEachGameObject.cpp" />
+    <ClCompile Include="NodeTypeGetGameObjectPosition.cpp" />
+    <ClCompile Include="NodeTypeRunDecisionTree.cpp" />
+    <ClCompile Include="NodeTypePrintAction.cpp" />
+    <ClCompile Include="NodeTypeFloatDecision.cpp" />
     <ClCompile Include="NodeTypeGetMousePosition.cpp" />
     <ClCompile Include="NodeTypeMathAbs.cpp" />
     <ClCompile Include="NodeTypeMathAdd.cpp" />
@@ -367,6 +410,7 @@
     <ClCompile Include="NodeTypeMathToDegrees.cpp" />
     <ClCompile Include="NodeTypeMathToRadians.cpp" />
     <ClCompile Include="NodeTypePrint.cpp" />
+    <ClCompile Include="NodeTypeSetGameObjectPosition.cpp" />
     <ClCompile Include="NodeTypeStart.cpp" />
     <ClCompile Include="ImGuiLevelSelect.cpp" />
     <ClCompile Include="Collider.cpp" />
@@ -388,11 +432,14 @@
     <ClCompile Include="InstancedModelComponent.cpp" />
     <ClCompile Include="MainSingleton.cpp" />
     <ClCompile Include="MaterialHandler.cpp" />
+    <ClCompile Include="NodeTypeTimer.cpp" />
+    <ClCompile Include="NodeTypeVolumeTrigger.cpp" />
     <ClCompile Include="ParticleEmitterComponent.cpp" />
     <ClCompile Include="PerlinNoise.cpp" />
     <ClCompile Include="PhysXWrapper.cpp" />
     <ClCompile Include="PointLightComponent.cpp" />
     <ClCompile Include="PostMaster.cpp" />
+    <ClCompile Include="PrintActionNode.cpp" />
     <ClCompile Include="RectangleColliderComponent.cpp" />
     <ClCompile Include="RigidBodyComponent.cpp" />
     <ClCompile Include="RigidDynamicBody.cpp" />
@@ -459,6 +506,16 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">4.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="DecalPixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="DecalVertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Vertex</ShaderType>
     </FxCompile>
     <FxCompile Include="DeferredAnimationVertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
@@ -763,6 +820,7 @@
     <None Include="..\Includes\ImGui\NodeEditor\imgui_extra_math.inl" />
     <None Include="..\Includes\ImGui\NodeEditor\imgui_node_editor_internal.inl" />
     <None Include="cpp.hint" />
+    <None Include="DecalShaderStructs.hlsli" />
     <None Include="DeferredPBRFunctions.hlsli" />
     <None Include="DeferredSamplingFunctions.hlsli" />
     <None Include="DeferredShaderStructs.hlsli" />
