@@ -46,7 +46,7 @@ CScene* CSceneManager::CreateEmpty()
 CScene* CSceneManager::CreateScene(std::string aJsonFile)//TEMP
 {
 	CScene* scene = new CScene(1);
-	rapidjson::Document document = CJsonReader::Get()->LoadDocument(ASSETPATH + "Assets/Generated/" + aJsonFile);
+	rapidjson::Document document = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + aJsonFile));
 	if (document.HasMember("instancedGameobjects")) {
 
 
@@ -91,7 +91,7 @@ CScene* CSceneManager::CreateScene(std::string aJsonFile)//TEMP
 				transform.Rotation(rotation);
 				instancedTransforms.emplace_back(transform.GetLocalMatrix());
 			}
-			instancedGameObject->AddComponent<CInstancedModelComponent>(*instancedGameObject, ASSETPATH + model_path, instancedTransforms);
+			instancedGameObject->AddComponent<CInstancedModelComponent>(*instancedGameObject, ASSETPATH(model_path), instancedTransforms);
 			scene->AddInstance(instancedGameObject);
 		}
 	}
@@ -127,7 +127,7 @@ CScene* CSceneManager::CreateScene(std::string aJsonFile)//TEMP
 					const auto& jsonModel = jsonModelGameObject["model"].GetObjectW();
 					std::string modelPath = jsonModel["fbxPath"].GetString();
 					CGameObject* modelGameObject = new CGameObject(instanceID);
-					modelGameObject->AddComponent<CModelComponent>(*modelGameObject, ASSETPATH + modelPath);
+					modelGameObject->AddComponent<CModelComponent>(*modelGameObject, ASSETPATH(modelPath));
 					modelGameObject->myTransform->Scale(scale);
 					modelGameObject->myTransform->Rotation(rotation);
 					modelGameObject->myTransform->Position(position);
@@ -157,7 +157,7 @@ CScene* CSceneManager::CreateScene(std::string aJsonFile)//TEMP
 	CGameObject* envLight = new CGameObject(1);
 	envLight->AddComponent<CEnviromentLightComponent>(*envLight);
 	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetIntensity(1.f);
-	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetDirection({ 0.0f,1.0f,1.0f });
+	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetDirection({ 0.0f,-1.0f,1.0f });
 	scene->EnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight());
 	scene->AddInstance(envLight);
 
@@ -173,7 +173,7 @@ CScene* CSceneManager::CreateScene(std::vector<std::string> aJsonFile)
 			continue;
 		}
 
-		rapidjson::Document document = CJsonReader::Get()->LoadDocument(ASSETPATH + "Assets/Generated/" + aJsonFile[i]);
+		rapidjson::Document document = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + aJsonFile[i]));
 		auto jsonarray = document["instancedGameobjects"].GetArray();
 		for (auto& jsongameobject : jsonarray) {
 
@@ -221,7 +221,7 @@ CScene* CSceneManager::CreateScene(std::vector<std::string> aJsonFile)
 
 			}
 
-			instancedGameObject->AddComponent<CInstancedModelComponent>(*instancedGameObject, std::string(ASSETPATH + model_path), instancedTransforms);
+			instancedGameObject->AddComponent<CInstancedModelComponent>(*instancedGameObject, ASSETPATH(model_path), instancedTransforms);
 			scene->AddInstance(instancedGameObject);
 		}
 		//scene->AddPXScene(CMainSingleton::PhysXWrapper().CreatePXScene());
@@ -237,7 +237,7 @@ CScene* CSceneManager::CreateScene(std::vector<std::string> aJsonFile)
 		CGameObject* envLight = new CGameObject(1);
 		envLight->AddComponent<CEnviromentLightComponent>(*envLight);
 		envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetIntensity(1.f);
-		envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetDirection({ 0.0f,0.0f,-1.0f });
+		envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetDirection({ 0.0f,1.0f,1.0f });
 		scene->AddInstance(envLight);
 		scene->EnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight());
 

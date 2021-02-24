@@ -206,15 +206,22 @@
     <ClInclude Include="DecalComponent.h" />
     <ClInclude Include="DecalFactory.h" />
     <ClInclude Include="DecalRenderer.h" />
+    <ClInclude Include="GraphicsHelpers.h" />
     <ClInclude Include="GraphManager.h" />
     <ClInclude Include="ActionNode.h" />
     <ClInclude Include="DecisionNode.h" />
     <ClInclude Include="GraphNodeCollisionManager.h" />
     <ClInclude Include="GraphNodeTimerManager.h" />
+    <ClInclude Include="ImGuiWindows.h" />
+    <ClInclude Include="LoadScene.h" />
     <ClInclude Include="NodeInstance.h" />
     <ClInclude Include="NodeType.h" />
+    <ClInclude Include="NodeTypeBool.h" />
+    <ClInclude Include="NodeTypeDeltaTime.h" />
+    <ClInclude Include="NodeTypeFloat.h" />
     <ClInclude Include="NodeTypeForEachGameObject.h" />
     <ClInclude Include="NodeTypeGetGameObjectPosition.h" />
+    <ClInclude Include="NodeTypeInt.h" />
     <ClInclude Include="NodeTypeRunDecisionTree.h" />
     <ClInclude Include="NodeTypePrintAction.h" />
     <ClInclude Include="NodeTypeFloatDecision.h" />
@@ -238,9 +245,9 @@
     <ClInclude Include="NodeTypeMathSub.h" />
     <ClInclude Include="NodeTypeMathToDegrees.h" />
     <ClInclude Include="NodeTypeMathToRadians.h" />
-    <ClInclude Include="NodeTypePrint.h" />
+    <ClInclude Include="NodeTypePrintMessage.h" />
     <ClInclude Include="NodeTypeSetGameObjectPosition.h" />
-    <ClInclude Include="NodeTypeStart.h" />
+    <ClInclude Include="NodeTypeDefaultStart.h" />
     <ClInclude Include="ImGuiLevelSelect.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="ContactReportCallback.h" />
@@ -265,6 +272,7 @@
     <ClInclude Include="Message.h" />
     <ClInclude Include="MessageType.h" />
     <ClInclude Include="NodeTypes.h" />
+    <ClInclude Include="NodeTypeString.h" />
     <ClInclude Include="NodeTypeTimer.h" />
     <ClInclude Include="NodeTypeVolumeTrigger.h" />
     <ClInclude Include="Observer.h" />
@@ -339,6 +347,7 @@
     <ClInclude Include="VFXInstance.h" />
     <ClInclude Include="VFXRenderer.h" />
     <ClInclude Include="Widgets.h" />
+    <ClInclude Include="Window.h" />
     <ClInclude Include="WindowHandler.h" />
     <ClInclude Include="WinInclude.h" />
   </ItemGroup>
@@ -373,6 +382,12 @@
     <ClCompile Include="CapsuleColliderComponent.cpp" />
     <ClCompile Include="DecisionNode.cpp" />
     <ClCompile Include="CStateMachineComponent.cpp" />
+    <ClCompile Include="LoadScene.cpp" />
+    <ClCompile Include="NodeTypeBool.cpp" />
+    <ClCompile Include="NodeTypeDeltaTime.cpp" />
+    <ClCompile Include="NodeTypeFloat.cpp" />
+    <ClCompile Include="NodeTypeInt.cpp" />
+    <ClCompile Include="NodeTypeString.cpp" />
     <ClCompile Include="ShadowRenderer.cpp" />
     <ClCompile Include="Decal.cpp" />
     <ClCompile Include="DecalComponent.cpp" />
@@ -409,9 +424,9 @@
     <ClCompile Include="NodeTypeMathSub.cpp" />
     <ClCompile Include="NodeTypeMathToDegrees.cpp" />
     <ClCompile Include="NodeTypeMathToRadians.cpp" />
-    <ClCompile Include="NodeTypePrint.cpp" />
+    <ClCompile Include="NodeTypePrintMessage.cpp" />
     <ClCompile Include="NodeTypeSetGameObjectPosition.cpp" />
-    <ClCompile Include="NodeTypeStart.cpp" />
+    <ClCompile Include="NodeTypeDefaultStart.cpp" />
     <ClCompile Include="ImGuiLevelSelect.cpp" />
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="ContactReportCallback.cpp" />
@@ -496,6 +511,7 @@
     <ClCompile Include="VFXInstance.cpp" />
     <ClCompile Include="VFXRenderer.cpp" />
     <ClCompile Include="Widgets.cpp" />
+    <ClCompile Include="Window.cpp" />
     <ClCompile Include="WindowHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -511,6 +527,9 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">4.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="DecalVertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
@@ -612,6 +631,11 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="FullscreenPixelShader_CopyDepth.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>

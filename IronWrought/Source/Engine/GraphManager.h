@@ -5,6 +5,7 @@
 #include <unordered_map>
 
 class CNodeInstance;
+class CGameObject;
 
 namespace ed = ax::NodeEditor;
 class CGraphManager
@@ -13,7 +14,7 @@ public:
 	~CGraphManager();
 	void Load();
 
-	void ReTriggerUpdateringTrees();
+	void ReTriggerUpdatingTrees();
 	
 	void PreFrame(float aDeltaTime);
 	void ConstructEditorTreeAndConnectLinks();
@@ -25,12 +26,17 @@ public:
 	void SaveNodesToClipboard();
 	void LoadNodesFromClipboard();
 
-	static void ShowFlow(int aLinkID);
+	void ShowFlow(int aLinkID);
+
 
 	void Update();
 
 	void ToggleShouldRenderGraph();
+	bool ToggleShouldRunScripts();
 	bool ShouldRenderGraph() { return myShouldRenderGraph; }
+
+	CGameObject* GetCurrentGameObject();
+
 private:
 	ImTextureID HeaderTextureID();
 	void WillBeCyclic(CNodeInstance* aFirst, CNodeInstance* aSecond, bool& aIsCyclic, CNodeInstance* aBase);
@@ -41,6 +47,7 @@ private:
 	std::unordered_map<std::string, std::vector<CNodeInstance*>> myGraphs;
 	std::unordered_map<std::string, std::vector<int>> myGameObjectIDsMap;
 	std::vector<std::string> myKeys;
+	std::vector<int> myFlowsToBeShown;
 
 	struct SEditorLinkInfo
 	{
@@ -86,4 +93,5 @@ private:
 	bool myScriptShouldRun;
 	std::string myCurrentPath;
 	std::string myCurrentKey;
+	int myCurrentGameObjectID;
 };

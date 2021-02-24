@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "NodeType.h"
-#include "NodeTypePrint.h"
-#include "NodeTypeStart.h"
+#include "NodeTypeDefaultStart.h"
+#include "NodeTypePrintMessage.h"
 #include "NodeInstance.h"
 #include "NodeTypeMathAdd.h"
 #include "NodeTypeMathSub.h"
@@ -31,6 +31,11 @@
 #include "NodeTypePrintAction.h"
 #include "NodeTypeFloatDecision.h"
 #include "NodeTypeRunDecisionTree.h"
+#include "NodeTypeDeltaTime.h"
+#include "NodeTypeFloat.h"
+#include "NodeTypeInt.h"
+#include "NodeTypeBool.h"
+#include "NodeTypeString.h"
 
 CNodeType* CNodeTypeCollector::myTypes[128];
 unsigned short CNodeTypeCollector::myTypeCounter = 0;
@@ -41,8 +46,8 @@ unsigned int UID::myGlobalUID = 0;
 
 void CNodeTypeCollector::PopulateTypes()
 {
-	RegisterType<CNodeTypePrint>();
-	RegisterType<CNodeTypeStart>();
+	RegisterType<CNodeTypeDefaultStart>();
+	RegisterType<CNodeTypePrintMessage>();
 	RegisterType<CNodeTypeMathAdd>();
 	RegisterType<CNodeTypeMathSub>();
 	RegisterType<CNodeTypeMathMul>();
@@ -71,6 +76,10 @@ void CNodeTypeCollector::PopulateTypes()
 	RegisterType<CNodeTypePrintAction>();
 	RegisterType<CNodeTypeFloatDecision>();
 	RegisterType<CNodeTypeRunDecisionTree>();
+	RegisterType<CNodeTypeDeltaTime>();
+	RegisterType<CNodeTypeFloat>();
+	RegisterType<CNodeTypeInt>();
+	RegisterType<CNodeTypeBool>();
 }
 
 void CNodeType::ClearNodeInstanceFromMap(CNodeInstance* /*aTriggeringNodeInstance*/)

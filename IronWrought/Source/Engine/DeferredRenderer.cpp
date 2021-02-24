@@ -2,6 +2,8 @@
 #include "DeferredRenderer.h"
 #include "DirectXFramework.h"
 #include "RenderManager.h"
+#include "GraphicsHelpers.h"
+
 #include "Model.h"
 #include "Camera.h"
 #include "EnvironmentLight.h"
@@ -112,8 +114,8 @@ bool CDeferredRenderer::Init(CDirectXFramework* aFramework)
 
 	LoadRenderPassPixelShaders(aFramework->GetDevice());
 
-	CreatePixelShader("Shaders/DeferredVertexPaintPixelShader.cso", aFramework, &myVertexPaintPixelShader);
-	CreateVertexShader("Shaders/DeferredVertexPaintVertexShader.cso", aFramework, &myVertexPaintModelVertexShader, vsData);
+	Graphics::CreatePixelShader("Shaders/DeferredVertexPaintPixelShader.cso", aFramework, &myVertexPaintPixelShader);
+	Graphics::CreateVertexShader("Shaders/DeferredVertexPaintVertexShader.cso", aFramework, &myVertexPaintModelVertexShader, vsData);
 
 	// Vertex Paint input layout
 	D3D11_INPUT_ELEMENT_DESC layout[] =
@@ -406,26 +408,26 @@ void CDeferredRenderer::Render(CCameraComponent* aCamera, std::vector<CPointLigh
 
 }
 
-bool CDeferredRenderer::CreateVertexShader(std::string aFilepath, CDirectXFramework* aFramework, ID3D11VertexShader** outVertexShader, std::string& outShaderData)
-{
-	std::ifstream vsFile;
-	vsFile.open(aFilepath, std::ios::binary);
-	std::string vsData = { std::istreambuf_iterator<char>(vsFile), std::istreambuf_iterator<char>() };
-	outShaderData = vsData;
-	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateVertexShader(vsData.data(), vsData.size(), nullptr, outVertexShader), "Vertex Shader could not be created.");
-	vsFile.close();
-	return true;
-}
-
-bool CDeferredRenderer::CreatePixelShader(std::string aFilepath, CDirectXFramework* aFramework, ID3D11PixelShader** outPixelShader)
-{
-	std::ifstream psFile;
-	psFile.open(aFilepath, std::ios::binary);
-	std::string psData = { std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>() };
-	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreatePixelShader(psData.data(), psData.size(), nullptr, outPixelShader), "Pixel Shader could not be created.");
-	psFile.close();
-	return true;
-}
+//bool CDeferredRenderer::CreateVertexShader(std::string aFilepath, CDirectXFramework* aFramework, ID3D11VertexShader** outVertexShader, std::string& outShaderData)
+//{
+//	std::ifstream vsFile;
+//	vsFile.open(aFilepath, std::ios::binary);
+//	std::string vsData = { std::istreambuf_iterator<char>(vsFile), std::istreambuf_iterator<char>() };
+//	outShaderData = vsData;
+//	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateVertexShader(vsData.data(), vsData.size(), nullptr, outVertexShader), "Vertex Shader could not be created.");
+//	vsFile.close();
+//	return true;
+//}
+//
+//bool CDeferredRenderer::CreatePixelShader(std::string aFilepath, CDirectXFramework* aFramework, ID3D11PixelShader** outPixelShader)
+//{
+//	std::ifstream psFile;
+//	psFile.open(aFilepath, std::ios::binary);
+//	std::string psData = { std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>() };
+//	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreatePixelShader(psData.data(), psData.size(), nullptr, outPixelShader), "Pixel Shader could not be created.");
+//	psFile.close();
+//	return true;
+//}
 
 bool CDeferredRenderer::LoadRenderPassPixelShaders(ID3D11Device* aDevice)
 {

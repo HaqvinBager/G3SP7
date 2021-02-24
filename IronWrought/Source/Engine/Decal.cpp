@@ -9,13 +9,10 @@ CDecal::CDecal()
 
 CDecal::~CDecal()
 {
-	for (unsigned int i = 0; i < myDecalData.myMaterialNames.size(); ++i)
-	{
-		CMainSingleton::MaterialHandler().ReleaseMaterial(myDecalData.myMaterialNames[i]);
-		myDecalData.myMaterials[i][0] = nullptr;
-		myDecalData.myMaterials[i][1] = nullptr;
-		myDecalData.myMaterials[i][2] = nullptr;
-	}
+	CMainSingleton::MaterialHandler().ReleaseMaterial(myDecalData.myMaterialName);
+	myDecalData.myMaterial[0] = nullptr;
+	myDecalData.myMaterial[1] = nullptr;
+	myDecalData.myMaterial[2] = nullptr;
 }
 
 void CDecal::Init(SDecalData data)

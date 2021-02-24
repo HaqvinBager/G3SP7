@@ -8,7 +8,7 @@ void CGraphNodeTimerManager::AddTimer(callback_function_timer anInstance, float 
     STimer timer = {};
     timer.myCallback = anInstance;
     timer.myDuration = aDuration;
-    timer.myFinishedTime = /*myTimer.GetTotalSeconds()*/ + aDuration;
+    timer.myFinishedTime = CTimer::Time() + aDuration;
     timer.myUID = aUID;
     timer.myShouldLoop = aShouldLoop;
     myTimers.emplace_back(timer);
@@ -17,25 +17,24 @@ void CGraphNodeTimerManager::AddTimer(callback_function_timer anInstance, float 
 void CGraphNodeTimerManager::Update()
 {
     std::vector<int> indicesOfTimersToRemove;
-    //myTimer.Tick([]() {});
     
     for (unsigned int i = 0; i < myTimers.size(); ++i)
     {
-        //STimer& timer = myTimers[i];
+        STimer& timer = myTimers[i];
 
-        //if (timer.myFinishedTime < myTimer.GetTotalSeconds())
-        //{
-        //    timer.myCallback();
-        //    
-        //    if (timer.myShouldLoop)
-        //    {
-        //        timer.myFinishedTime = myTimer.GetTotalSeconds() + timer.myDuration;
-        //    } 
-        //    else 
-        //    {
-        //        indicesOfTimersToRemove.emplace_back(i);
-        //    }
-        //}
+        if (timer.myFinishedTime < CTimer::Time())
+        {
+            timer.myCallback();
+            
+            if (timer.myShouldLoop)
+            {
+                timer.myFinishedTime = CTimer::Time() + timer.myDuration;
+            } 
+            else 
+            {
+                indicesOfTimersToRemove.emplace_back(i);
+            }
+        }
     }
 
     std::sort(indicesOfTimersToRemove.begin(), indicesOfTimersToRemove.end(), std::greater());

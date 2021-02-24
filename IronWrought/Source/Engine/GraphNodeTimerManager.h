@@ -1,6 +1,5 @@
 #pragma once
 #include <functional>
-//#include <tga2d\StepTimer.h>
 #include "Heap.h"
 
 using callback_function_timer = std::function<void()>;
@@ -32,7 +31,6 @@ private:
         bool myShouldLoop = false;
     };
 
-    //DX::StepTimer myTimer;
     std::vector<STimer> myTimers;
     int myUIDCounter;
 };

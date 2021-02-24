@@ -325,7 +325,7 @@ void* CFBXLoaderCustom::LoadModelInternal(CLoaderModel* someInput)
 	
 	//aiSetImportPropertyFloat(aiprops, AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, GlobalScale);
 
-	OutputDebugStringA(model->myModelPath.c_str());
+	//OutputDebugStringA(model->myModelPath.c_str());
 
 	if (!scene)
 	{

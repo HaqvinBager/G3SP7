@@ -23,6 +23,8 @@ public:
 	void Receive(const SStringMessage& aMessage) override;
 	void Receive(const SMessage& aMessage) override;
 
+	void TEMP_DecalTests(class CScene* aScene);
+
 private:
 	bool myExitLevel;
 
@@ -30,4 +32,5 @@ private:
 	CGameObject* myChest;
 	CGameObject* myTestCameraOne;
 	CGameObject* myCamera;
+	CGameObject* myDecal;
 };

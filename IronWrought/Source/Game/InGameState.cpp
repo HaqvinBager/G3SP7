@@ -11,6 +11,7 @@
 #include "InstancedModelComponent.h"
 #include "RigidBodyComponent.h"
 #include "ModelComponent.h"
+#include "DecalComponent.h"
 
 #include "EnvironmentLight.h"
 #include "Timer.h"
@@ -121,7 +122,15 @@ void CInGameState::Update()
 		gameObject->Update();
 	}
 
-	TEMP_AnimObjectControl();
+	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
+	{
+		gameObject->LateUpdate();
+	}
+
+	if (Input::GetInstance()->IsKeyPressed(VK_ESCAPE))
+	{
+		myStateStack.PopTopAndPush(CStateStack::EState::InGame);
+	}
 }
 
 void CInGameState::ReceiveEvent(const EInputEvent aEvent)
@@ -238,7 +247,7 @@ void TEMP_DeferredRenderingTests(CScene* scene)
 	scene->AddInstance(dn4_2);	
 }
 
-#include "animationLoader.h"// <-- include för AnimationLoader funktioner: AddAnimationsToGameObject() osv
+#include "animationLoader.h"// <-- include fï¿½r AnimationLoader funktioner: AddAnimationsToGameObject() osv
 void TEMP_SetUpAnimationTest(CScene* aScene)
 {
 	//CGameObject* go = new CGameObject(123123123);
@@ -248,17 +257,17 @@ void TEMP_SetUpAnimationTest(CScene* aScene)
 	////std::string skinnedModelPath = "Assets/Temp/Maya2019_2/CH_E_Robot_SK.fbx";
 	////std::string skinnedModelPath = "Assets/Temp/Main Character/CH_PL_SK.fbx";// <-- Skinnad mesh fbx. 
 	//
-	//go->AddComponent<CModelComponent>(*go, skinnedModelPath);// <-- Måste ha vanlig CModelComp för rendering
+	//go->AddComponent<CModelComponent>(*go, skinnedModelPath);// <-- Mï¿½ste ha vanlig CModelComp fï¿½r rendering
 	//
-	//// Fixar allt. Behöver ett CGameObject med en CModelComponent på och path:en för modellen.
+	//// Fixar allt. Behï¿½ver ett CGameObject med en CModelComponent pï¿½ och path:en fï¿½r modellen.
 	//CAnimationComponent* animComp = AnimationLoader::AddAnimationsToGameObject(go, skinnedModelPath);
-	//animComp->BlendToAnimation(1/*Index för animation att blenda till*/, 1.0f/*Hur långsam blendingen ska vara*/);
+	//animComp->BlendToAnimation(1/*Index fï¿½r animation att blenda till*/, 1.0f/*Hur lï¿½ngsam blendingen ska vara*/);
 	//
-	////animComp->BlendLerpBetween(5/*Index för första animation, ligger på blend 0.0f*/
-	////						   , 0/*Index för andra animation, ligger på blend 1.0f*/
-	////						   , 0.0f/*Blend/Lerp värde. 0.0f => spela 100% av första animationen.
+	////animComp->BlendLerpBetween(5/*Index fï¿½r fï¿½rsta animation, ligger pï¿½ blend 0.0f*/
+	////						   , 0/*Index fï¿½r andra animation, ligger pï¿½ blend 1.0f*/
+	////						   , 0.0f/*Blend/Lerp vï¿½rde. 0.0f => spela 100% av fï¿½rsta animationen.
 	////								 * 1.0f => spela 100% av andra animationen.
-	////								 * 0.5f => spela 50/50% av första/andra.
+	////								 * 0.5f => spela 50/50% av fï¿½rsta/andra.
 	////								 */
 	////						   );
 	//g_TempAnimObject = go;
@@ -268,7 +277,7 @@ void TEMP_SetUpAnimationTest(CScene* aScene)
 	//go2->AddComponent<CModelComponent>(*go2, skinnedModelPath);
 	//go2->myTransform->Position({ -2.0f,0.f,0.f });
 	////CAnimationComponent* animComp2 = AnimationLoader::AddAnimationsToGameObject(go2, skinnedModelPath);
-	////animComp2->BlendToAnimation(2/*Index för animation att blenda till*/, 1.0f/*Hur långsam blendingen ska vara*/);
+	////animComp2->BlendToAnimation(2/*Index fï¿½r animation att blenda till*/, 1.0f/*Hur lï¿½ngsam blendingen ska vara*/);
 	//aScene->AddInstance(go2);
 
 	CGameObject* go3 = new CGameObject(123123125);
@@ -377,4 +386,25 @@ void TEMP_AnimObjectControl()
 		GetAnimComp->BlendLerp(blendLerp -= 0.1f);
 		std::cout << __FUNCTION__ << " blendLerp @ " << blendLerp << std::endl;
 	}
+}
+
+void CInGameState::TEMP_DecalTests(CScene* aScene)
+{
+	CGameObject* decal = new CGameObject(20000);
+	decal->AddComponent<CDecalComponent>(*decal, "Alpha");
+	decal->GetComponent<CTransformComponent>()->Position({ 29.0f,2.0f, 0.0f });
+	//decal->myTransform->Rotation({ 90.0f, 0.0f, 0.0f });
+	//decal->GetComponent<CTransformComponent>()->Position({ 33.0f,2.0f, 25.5f });
+	//decal->GetComponent<CTransformComponent>()->Position({ 14.0f, 1.0f, 20.0f });
+	//decal->myTransform->Rotation({ 0.0f, 0.0f, 0.0f });
+	//decal->myTransform->Scale({ 2.0f, 2.0f, 1.0f });
+	myDecal = decal;
+	aScene->AddInstance(decal);
+
+	//CGameObject* decal2 = new CGameObject(20001);
+	//decal2->AddComponent<CDecalComponent>(*decal2, "Alpha");
+	//decal2->GetComponent<CTransformComponent>()->Position({ 12.0f, 1.5f, 20.0f });
+	//decal2->myTransform->Rotation({ 0.0f, 45.0f, 0.0f });
+	//decal2->myTransform->Scale({ 1.0f, 1.0f, 1.0f });
+	//aScene->AddInstance(decal2);
 }
