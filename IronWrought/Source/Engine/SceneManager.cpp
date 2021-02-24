@@ -60,7 +60,7 @@ bool CSceneManager::AddGameObjects(CScene& aScene, const std::vector<std::string
 
 	const std::string& jsonPath = *jsonFileIterator;
 
-	const auto& idDoc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + jsonPath));
+	const auto& idDoc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + someJsonFiles[0]));
 	if (!IsValid(idDoc))
 		return false;
 
@@ -69,8 +69,6 @@ bool CSceneManager::AddGameObjects(CScene& aScene, const std::vector<std::string
 		int instanceID = id.GetInt();
 		aScene.AddInstance(new CGameObject(instanceID));
 	}
-
-	return true;
 }
 
 void CSceneManager::SetTransforms(CScene& aScene, const std::vector<std::string>& someJsonFiles)
