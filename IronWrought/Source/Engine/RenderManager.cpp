@@ -63,7 +63,8 @@ bool CRenderManager::Init(CDirectXFramework* aFramework, CWindowHandler* aWindow
 	myVignetteTexture		= myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R8G8B8A8_UNORM);
 	myDeferredTexture		= myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R32G32B32A32_FLOAT);
 	myGBuffer				= myFullscreenTextureFactory.CreateGBuffer(aWindowHandler->GetResolution());
-
+	myGBufferCopy			= myFullscreenTextureFactory.CreateGBuffer(aWindowHandler->GetResolution());
+	
 	return true;
 }
 
@@ -88,7 +89,8 @@ bool CRenderManager::ReInit(CDirectXFramework* aFramework, CWindowHandler* aWind
 	myVignetteTexture		= myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R8G8B8A8_UNORM);
 	myDeferredTexture		= myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R32G32B32A32_FLOAT);
 	myGBuffer				= myFullscreenTextureFactory.CreateGBuffer(aWindowHandler->GetResolution());
-	
+	myGBufferCopy = myFullscreenTextureFactory.CreateGBuffer(aWindowHandler->GetResolution());
+
 	return true;
 }
 
@@ -119,36 +121,55 @@ void CRenderManager::Render(CScene& aScene)
 	std::vector<CGameObject*> gameObjects = aScene.CullGameObjects(maincamera);
 	std::vector<CGameObject*> instancedGameObjects;
 	std::vector<CGameObject*> instancedGameObjectsWithAlpha;
+	std::vector<CGameObject*> gameObjectsWithAlpha;
 	std::vector<int> indicesOfOutlineModels;
+	std::vector<int> indicesOfAlphaGameObjects;
 
 #ifdef USING_DEFERRED // Define found under #includes
 #pragma region Deferred
 	for (unsigned int i = 0; i < gameObjects.size(); ++i)
 	{
 		auto instance = gameObjects[i];
-		for (auto gameObjectToOutline : aScene.ModelsToOutline()) {
-			if (instance == gameObjectToOutline) {
-				indicesOfOutlineModels.emplace_back(i);
-			}
-		}
+		//for (auto gameObjectToOutline : aScene.ModelsToOutline()) {
+		//	if (instance == gameObjectToOutline) {
+		//		indicesOfOutlineModels.emplace_back(i);
+		//	}
+		//}
 
-		if (instance->GetComponent<CInstancedModelComponent>()) {
+		if (instance->GetComponent<CInstancedModelComponent>()) 
+		{
 			if (instance->GetComponent<CInstancedModelComponent>()->RenderWithAlpha())
 			{
 				instancedGameObjectsWithAlpha.emplace_back(instance);
+				indicesOfAlphaGameObjects.emplace_back(i);
 				continue;
 			}
 			instancedGameObjects.emplace_back(instance);
 		}
+		else if (instance->GetComponent<CModelComponent>()) 
+		{
+			if (instance->GetComponent<CModelComponent>()->RenderWithAlpha())
+			{
+				gameObjectsWithAlpha.emplace_back(instance);
+				indicesOfAlphaGameObjects.emplace_back(i);
+				continue;
+			}
+		}
 	}
 
-	std::sort(indicesOfOutlineModels.begin(), indicesOfOutlineModels.end(), [](UINT a, UINT b) { return a > b; });
-
-	for (auto index : indicesOfOutlineModels)
+	std::sort(indicesOfAlphaGameObjects.begin(), indicesOfAlphaGameObjects.end(), [](UINT a, UINT b) { return a > b; });
+	for (auto index : indicesOfAlphaGameObjects)
 	{
 		std::swap(gameObjects[index], gameObjects.back());
 		gameObjects.pop_back();
 	}
+
+	//std::sort(indicesOfOutlineModels.begin(), indicesOfOutlineModels.end(), [](UINT a, UINT b) { return a > b; });
+	//for (auto index : indicesOfOutlineModels)
+	//{
+	//	std::swap(gameObjects[index], gameObjects.back());
+	//	gameObjects.pop_back();
+	//}
 
 	// GBuffer
 	myGBuffer.SetAsActiveTarget(&myIntermediateDepth);
@@ -162,9 +183,13 @@ void CRenderManager::Render(CScene& aScene)
 	myDepthCopy.SetAsActiveTarget();
 	myIntermediateDepth.SetAsResourceOnSlot(0);
 	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_COPYDEPTH);
+	myGBufferCopy.SetAsActiveTarget();
+	myGBuffer.SetAllAsResources();
+	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_COPYGBUFFER);
 
 	myRenderStateManager.SetDepthStencilState(CRenderStateManager::DepthStencilStates::DEPTHSTENCILSTATE_ONLYREAD);
 	myGBuffer.SetAsActiveTarget(&myIntermediateDepth);
+	myGBufferCopy.SetAllAsResources();
 	myDepthCopy.SetAsResourceOnSlot(21);
 	myDecalRenderer.Render(maincamera, gameObjects);
 
@@ -272,8 +297,22 @@ void CRenderManager::Render(CScene& aScene)
 	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_ALPHABLEND);
 	myRenderStateManager.SetDepthStencilState(CRenderStateManager::DepthStencilStates::DEPTHSTENCILSTATE_ONLYREAD);
 
-	//myForwardRenderer.InstancedRender(environmentlight, pointlights, maincamera, instancedGameObjectsWithAlpha);
-	//myForwardRenderer.Render(environmentlight, pointlights, maincamera, gameObjects);
+	std::vector<LightPair> pointlights;
+	std::vector<LightPair> pointLightsInstanced;
+
+	myIntermediateTexture.SetAsActiveTarget(&myIntermediateDepth);
+
+	for (unsigned int i = 0; i < instancedGameObjectsWithAlpha.size(); ++i)
+	{
+		pointLightsInstanced.emplace_back(aScene.CullLightInstanced(instancedGameObjectsWithAlpha[i]->GetComponent<CInstancedModelComponent>()));
+	}
+	for (unsigned int i = 0; i < gameObjectsWithAlpha.size(); ++i)
+	{
+		pointlights.emplace_back(aScene.CullLights(gameObjectsWithAlpha[i]));
+	}
+
+	myForwardRenderer.InstancedRender(environmentlight, pointLightsInstanced, maincamera, instancedGameObjectsWithAlpha);
+	myForwardRenderer.Render(environmentlight, pointlights, maincamera, gameObjectsWithAlpha);
 
 	myVFXRenderer.Render(maincamera, gameObjects);
 

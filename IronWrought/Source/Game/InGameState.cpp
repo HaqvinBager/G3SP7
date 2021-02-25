@@ -50,7 +50,7 @@ void CInGameState::Start()
 
 	 CScene* scene = CSceneManager::CreateEmpty();
 	//scene->AddPXScene(CEngine::GetInstance()->GetPhysx().CreatePXScene());
-	
+	TEMP_DecalTests(scene);
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);
 
@@ -232,16 +232,31 @@ void TEMP_DeferredRenderingTests(CScene* scene)
 
 void CInGameState::TEMP_DecalTests(CScene* aScene)
 {
+	CGameObject* chest = new CGameObject(1337);
+	chest->AddComponent<CModelComponent>(*chest, std::string(ASSETPATH("Assets/Graphics/Exempel_Modeller/Wall/Wall.fbx")));
+	chest->GetComponent<CTransformComponent>()->Position({ 0.0f,0.0f,0.0f });
+	chest->myTransform->Rotation({ 0.0f,0,0.0f });
+	aScene->AddInstance(chest);
+
+	CGameObject* foliage = new CGameObject(13330);
+	foliage->AddComponent<CModelComponent>(*foliage, std::string(ASSETPATH("Assets/Graphics/Environmentprops/Static props/Foliage_test.fbx")));
+	foliage->GetComponent<CTransformComponent>()->Position({ 0.0f,0.0f,-1.0f });
+	foliage->myTransform->Rotation({ 0.0f,0,0.0f });
+	aScene->AddInstance(foliage);
+
 	CGameObject* decal = new CGameObject(20000);
 	decal->AddComponent<CDecalComponent>(*decal, "Alpha");
-	decal->GetComponent<CTransformComponent>()->Position({ 29.0f,2.0f, 0.0f });
+	decal->GetComponent<CDecalComponent>()->SetAlphaThreshold(0.3f);
+	decal->myTransform->Position({ 0.0f, 1.0f, 0.0f });
+	decal->myTransform->Scale({ 2.0f, 2.0f, 1.0f });
+	myDecal = decal;
+	aScene->AddInstance(decal);
+
+	//decal->GetComponent<CTransformComponent>()->Position({ 29.0f,2.0f, 0.0f });
 	//decal->myTransform->Rotation({ 90.0f, 0.0f, 0.0f });
 	//decal->GetComponent<CTransformComponent>()->Position({ 33.0f,2.0f, 25.5f });
 	//decal->GetComponent<CTransformComponent>()->Position({ 14.0f, 1.0f, 20.0f });
 	//decal->myTransform->Rotation({ 0.0f, 0.0f, 0.0f });
-	//decal->myTransform->Scale({ 2.0f, 2.0f, 1.0f });
-	myDecal = decal;
-	aScene->AddInstance(decal);
 
 	//CGameObject* decal2 = new CGameObject(20001);
 	//decal2->AddComponent<CDecalComponent>(*decal2, "Alpha");

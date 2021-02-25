@@ -157,6 +157,9 @@
     <FxCompile Include="FullscreenPixelShader_CopyDepth.hlsl">
       <Filter>Shaders\Fullscreen</Filter>
     </FxCompile>
+    <FxCompile Include="FullscreenPixelShader_CopyGBuffer.hlsl">
+      <Filter>Shaders\Fullscreen</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimationComponent.cpp">

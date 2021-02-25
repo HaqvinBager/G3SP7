@@ -105,6 +105,13 @@ SVertexPaintData CMaterialHandler::RequestVertexColorID(int aGameObjectID, const
 			if (vertexLinks["links"].IsArray())
 			{
 				auto linksArray = vertexLinks["links"].GetArray();
+				
+				if (linksArray.Empty())
+					continue;
+
+				if (!linksArray[0].HasMember("myTransformIDs"))
+					continue;
+				
 				for (unsigned int i = 0; i < linksArray.Size(); ++i)
 				{
 					for (const auto& gameObjectID : linksArray[i]["myTransformIDs"].GetArray())

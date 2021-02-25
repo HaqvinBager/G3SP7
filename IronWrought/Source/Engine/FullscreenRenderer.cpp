@@ -42,6 +42,7 @@ bool CFullscreenRenderer::Init(CDirectXFramework* aFramework) {
 	std::array<std::string, static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_COUNT)> filepaths;
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_COPY)] = "Shaders/FullscreenPixelShader_Copy.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_COPYDEPTH)] = "Shaders/FullscreenPixelShader_CopyDepth.cso";
+	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_COPYGBUFFER)] = "Shaders/FullscreenPixelShader_CopyGBuffer.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_LUMINANCE)] = "Shaders/FullscreenPixelShader_Luminance.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_GAUSSIANHORIZONTAL)] = "Shaders/FullscreenPixelShader_GaussianBlurHorizontal.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_GAUSSIANVERTICAL)] = "Shaders/FullscreenPixelShader_GaussianBlurVertical.cso";

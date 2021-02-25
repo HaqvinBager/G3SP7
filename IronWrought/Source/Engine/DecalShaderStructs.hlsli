@@ -17,11 +17,15 @@ struct VertexToPixel
     float2 myUV                 : UV;
 };
 
-Texture2D colorTexture      : register(t0);
-Texture2D materialTexture   : register(t1);
-Texture2D normalTexture     : register(t2);
-Texture2D depthTexture      : register(t21);
-SamplerState defaultSampler : register(s0);
+Texture2D gBufferAlbedoTexture          : register(t1);
+Texture2D gBufferNormalTexture          : register(t2);
+Texture2D gBufferVertexNormalTexture    : register(t3);
+Texture2D gBufferMaterialTexture        : register(t4);
+Texture2D colorTexture                  : register(t5);
+Texture2D materialTexture               : register(t6);
+Texture2D normalTexture                 : register(t7);
+Texture2D depthTexture                  : register(t21);
+SamplerState defaultSampler             : register(s0);
 
 cbuffer FrameBuffer : register(b0)
 {
