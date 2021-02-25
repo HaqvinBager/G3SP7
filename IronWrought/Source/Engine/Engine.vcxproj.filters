@@ -148,6 +148,15 @@
     <FxCompile Include="DeferredAnimationVertexShader.hlsl">
       <Filter>Shaders\Deferred</Filter>
     </FxCompile>
+    <FxCompile Include="DecalPixelShader.hlsl">
+      <Filter>Shaders\Decal</Filter>
+    </FxCompile>
+    <FxCompile Include="DecalVertexShader.hlsl">
+      <Filter>Shaders\Decal</Filter>
+    </FxCompile>
+    <FxCompile Include="FullscreenPixelShader_CopyDepth.hlsl">
+      <Filter>Shaders\Fullscreen</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimationComponent.cpp">
@@ -429,10 +438,10 @@
       <Filter>Model</Filter>
     </ClCompile>
     <ClCompile Include="NodeType.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Base Type</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Base Type</Filter>
     </ClCompile>
     <ClCompile Include="NodeTypeGetMousePosition.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Input</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Input</Filter>
     </ClCompile>
     <ClCompile Include="NodeInstance.cpp">
       <Filter>Imgui\Node Editor\Nodes</Filter>
@@ -440,41 +449,35 @@
     <ClCompile Include="GraphManager.cpp">
       <Filter>Imgui\Node Editor\Node Editor Managers</Filter>
     </ClCompile>
-    <ClCompile Include="NodeTypeStart.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library</Filter>
-    </ClCompile>
-    <ClCompile Include="NodeTypePrint.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library</Filter>
-    </ClCompile>
     <ClCompile Include="NodeTypeMathAbs.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClCompile>
     <ClCompile Include="NodeTypeMathAdd.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClCompile>
     <ClCompile Include="NodeTypeMathAtan2.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClCompile>
     <ClCompile Include="NodeTypeMathCeil.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClCompile>
     <ClCompile Include="NodeTypeMathCos.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClCompile>
     <ClCompile Include="NodeTypeMathDistance.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClCompile>
     <ClCompile Include="NodeTypeMathDot.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClCompile>
     <ClCompile Include="NodeTypeMathFloor.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClCompile>
     <ClCompile Include="NodeTypeMathLerp.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClCompile>
     <ClCompile Include="NodeTypeMathMax.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClCompile>
     <ClCompile Include="ImguiManager.cpp">
       <Filter>Imgui\Manager</Filter>
@@ -486,31 +489,31 @@
       <Filter>Engine Core</Filter>
     </ClCompile>
     <ClCompile Include="NodeTypeMathMin.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClCompile>
     <ClCompile Include="NodeTypeMathMul.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClCompile>
     <ClCompile Include="NodeTypeMathSaturate.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClCompile>
     <ClCompile Include="NodeTypeMathSin.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClCompile>
     <ClCompile Include="NodeTypeMathSmoothstep.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClCompile>
     <ClCompile Include="NodeTypeMathStorage.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClCompile>
     <ClCompile Include="NodeTypeMathSub.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClCompile>
     <ClCompile Include="NodeTypeMathToDegrees.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClCompile>
     <ClCompile Include="NodeTypeMathToRadians.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClCompile>
     <ClCompile Include="JsonReader.cpp">
       <Filter>Utility</Filter>
@@ -561,28 +564,28 @@
       <Filter>Decision Tree</Filter>
     </ClCompile>
     <ClCompile Include="NodeTypeFloatDecision.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Decision Tree\Decision</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Decision Tree\Decision</Filter>
     </ClCompile>
     <ClCompile Include="NodeTypePrintAction.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Decision Tree\Action</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Decision Tree\Action</Filter>
     </ClCompile>
     <ClCompile Include="NodeTypeRunDecisionTree.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Decision Tree</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Decision Tree</Filter>
     </ClCompile>
     <ClCompile Include="NodeTypeTimer.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Timer</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Timer</Filter>
     </ClCompile>
     <ClCompile Include="NodeTypeVolumeTrigger.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Trigger</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Trigger</Filter>
     </ClCompile>
     <ClCompile Include="NodeTypeForEachGameObject.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Game Object</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClCompile>
     <ClCompile Include="NodeTypeGetGameObjectPosition.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Game Object</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClCompile>
     <ClCompile Include="NodeTypeSetGameObjectPosition.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Game Object</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClCompile>
     <ClCompile Include="GraphNodeCollisionManager.cpp">
       <Filter>Imgui\Node Editor\Node Editor Managers\NodeType Managers</Filter>
@@ -597,6 +600,40 @@
     </ClCompile>
     <ClCompile Include="CStateMachineComponent.cpp">
       <Filter>GameObject and Component\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Decal.cpp">
+      <Filter>Decal</Filter>
+    </ClCompile>
+    <ClCompile Include="DecalFactory.cpp">
+      <Filter>Decal</Filter>
+    </ClCompile>
+    <ClCompile Include="ShadowRenderer.cpp">
+      <Filter>Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeDeltaTime.cpp" />
+    <ClCompile Include="LoadScene.cpp">
+      <Filter>Imgui\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="Window.cpp">
+      <Filter>Imgui\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeBool.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Variables</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeFloat.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Variables</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeInt.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Variables</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeString.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Variables</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeDefaultStart.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Start</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypePrintMessage.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Debugging</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -931,7 +968,7 @@
       <Filter>Engine Core</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypes.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Base Type</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Base Type</Filter>
     </ClInclude>
     <ClInclude Include="State.h" />
     <ClInclude Include="StateStack.h" />
@@ -939,10 +976,10 @@
       <Filter>Model</Filter>
     </ClInclude>
     <ClInclude Include="NodeType.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Base Type</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Base Type</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeGetMousePosition.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Input</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Input</Filter>
     </ClInclude>
     <ClInclude Include="NodeInstance.h">
       <Filter>Imgui\Node Editor\Nodes</Filter>
@@ -950,68 +987,62 @@
     <ClInclude Include="GraphManager.h">
       <Filter>Imgui\Node Editor\Node Editor Managers</Filter>
     </ClInclude>
-    <ClInclude Include="NodeTypeStart.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library</Filter>
-    </ClInclude>
-    <ClInclude Include="NodeTypePrint.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library</Filter>
-    </ClInclude>
     <ClInclude Include="NodeTypeMathAbs.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeMathAdd.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeMathAtan2.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeMathCeil.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeMathCos.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeMathDistance.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeMathDot.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeMathFloor.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeMathLerp.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeMathMax.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeMathMin.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeMathMul.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeMathSaturate.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeMathSin.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeMathSmoothstep.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeMathStorage.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeMathSub.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeMathToDegrees.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeMathToRadians.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Math</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClInclude>
     <ClInclude Include="..\Includes\ImGui\Core\imgui_impl_dx11.h">
       <Filter>Imgui\Imgui Implementations</Filter>
@@ -1074,28 +1105,28 @@
       <Filter>Decision Tree</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeFloatDecision.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Decision Tree\Decision</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Decision Tree\Decision</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypePrintAction.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Decision Tree\Action</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Decision Tree\Action</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeRunDecisionTree.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Decision Tree</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Decision Tree</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeTimer.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Timer</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Timer</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeVolumeTrigger.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Trigger</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Trigger</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeForEachGameObject.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Game Object</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeGetGameObjectPosition.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Game Object</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeSetGameObjectPosition.h">
-      <Filter>Imgui\Node Editor\Nodes\Base Library\Game Object</Filter>
+      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClInclude>
     <ClInclude Include="GraphNodeCollisionManager.h">
       <Filter>Imgui\Node Editor\Node Editor Managers\NodeType Managers</Filter>
@@ -1107,6 +1138,52 @@
     <ClInclude Include="StateStack.h" />
     <ClInclude Include="CStateMachineComponent.h">
       <Filter>GameObject and Component\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="DecalRenderer.h">
+      <Filter>Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="DecalComponent.h">
+      <Filter>GameObject and Component\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Decal.h">
+      <Filter>Decal</Filter>
+    </ClInclude>
+    <ClInclude Include="DecalFactory.h">
+      <Filter>Decal</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowRenderer.h">
+      <Filter>Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeDeltaTime.h" />
+    <ClInclude Include="LoadScene.h">
+      <Filter>Imgui\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="Window.h">
+      <Filter>Imgui\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGuiWindows.h">
+      <Filter>Imgui\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeBool.h">
+      <Filter>Imgui\Node Editor\Nodes\Variables</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeFloat.h">
+      <Filter>Imgui\Node Editor\Nodes\Variables</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeInt.h">
+      <Filter>Imgui\Node Editor\Nodes\Variables</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeString.h">
+      <Filter>Imgui\Node Editor\Nodes\Variables</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeDefaultStart.h">
+      <Filter>Imgui\Node Editor\Nodes\Start</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypePrintMessage.h">
+      <Filter>Imgui\Node Editor\Nodes\Debugging</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsHelpers.h">
+      <Filter>Renderers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1296,24 +1373,6 @@
     <Filter Include="Imgui\Node Editor\Nodes">
       <UniqueIdentifier>{bbbcd0c0-46e2-4f03-b955-0181c1622d4a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Imgui\Node Editor\Nodes\Base Library">
-      <UniqueIdentifier>{948ea354-fca3-40a7-81d8-2ad5d3247554}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Imgui\Node Editor\Nodes\Base Library\Base Type">
-      <UniqueIdentifier>{b7cdf648-4b6e-4eaa-b986-8766bdbc5020}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Imgui\Node Editor\Nodes\Base Library\Input">
-      <UniqueIdentifier>{7642cd3e-92c8-418d-a31f-1cfe24e1a16e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Imgui\Node Editor\Nodes\Base Library\Math">
-      <UniqueIdentifier>{615e6ff6-4a3a-4b26-8b02-d27da0b082b2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Imgui\Node Editor\Nodes\Base Library\Timer">
-      <UniqueIdentifier>{2e592059-39e1-49a6-a023-a4d3ba392358}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Imgui\Node Editor\Nodes\Base Library\Trigger">
-      <UniqueIdentifier>{91609e06-4217-4759-beb5-82276c4b60bc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Shaders\Deferred Render Passes">
       <UniqueIdentifier>{4e1a5e39-8e5c-4cda-9552-2d86c85c158e}</UniqueIdentifier>
     </Filter>
@@ -1338,17 +1397,50 @@
     <Filter Include="Decision Tree">
       <UniqueIdentifier>{b8340d6e-3231-47ae-bf03-265453331bc3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Imgui\Node Editor\Nodes\Base Library\Decision Tree">
+    <Filter Include="Decal">
+      <UniqueIdentifier>{4e7bf04d-b17d-4c9d-92ad-e4b07cbbe120}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Decal">
+      <UniqueIdentifier>{fbb72eea-2e5f-4249-b6ca-925d6233bdde}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Windows">
+      <UniqueIdentifier>{4ca55a53-75be-4929-b51e-694576e6c8a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Nodes\Base Type">
+      <UniqueIdentifier>{b7cdf648-4b6e-4eaa-b986-8766bdbc5020}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Nodes\Variables">
+      <UniqueIdentifier>{94d2d326-5412-46b6-b23a-c2eedacb6ab6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Nodes\Trigger">
+      <UniqueIdentifier>{91609e06-4217-4759-beb5-82276c4b60bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Nodes\Timer">
+      <UniqueIdentifier>{2e592059-39e1-49a6-a023-a4d3ba392358}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Nodes\Math">
+      <UniqueIdentifier>{615e6ff6-4a3a-4b26-8b02-d27da0b082b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Nodes\Input">
+      <UniqueIdentifier>{7642cd3e-92c8-418d-a31f-1cfe24e1a16e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Nodes\Game Object">
+      <UniqueIdentifier>{8bbe5362-d12e-4d25-9a8f-5cd174138235}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Nodes\Decision Tree">
       <UniqueIdentifier>{ca9bd566-2c6c-4fa1-8c61-915990d8a05d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Imgui\Node Editor\Nodes\Base Library\Decision Tree\Decision">
+    <Filter Include="Imgui\Node Editor\Nodes\Decision Tree\Decision">
       <UniqueIdentifier>{51c6e420-e832-4070-bd70-9d8819a8d136}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Imgui\Node Editor\Nodes\Base Library\Decision Tree\Action">
+    <Filter Include="Imgui\Node Editor\Nodes\Decision Tree\Action">
       <UniqueIdentifier>{b6faa346-a15d-4302-a326-2f5d9d4ee004}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Imgui\Node Editor\Nodes\Base Library\Game Object">
-      <UniqueIdentifier>{8bbe5362-d12e-4d25-9a8f-5cd174138235}</UniqueIdentifier>
+    <Filter Include="Imgui\Node Editor\Nodes\Start">
+      <UniqueIdentifier>{a78b3e1e-7127-4471-8739-1b5baf7958e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Nodes\Debugging">
+      <UniqueIdentifier>{d29438b5-09ae-4a7d-a36f-ae3ad966a5ad}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

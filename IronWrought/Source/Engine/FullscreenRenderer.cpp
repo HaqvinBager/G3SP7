@@ -41,6 +41,7 @@ bool CFullscreenRenderer::Init(CDirectXFramework* aFramework) {
 
 	std::array<std::string, static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_COUNT)> filepaths;
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_COPY)] = "Shaders/FullscreenPixelShader_Copy.cso";
+	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_COPYDEPTH)] = "Shaders/FullscreenPixelShader_CopyDepth.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_LUMINANCE)] = "Shaders/FullscreenPixelShader_Luminance.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_GAUSSIANHORIZONTAL)] = "Shaders/FullscreenPixelShader_GaussianBlurHorizontal.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_GAUSSIANVERTICAL)] = "Shaders/FullscreenPixelShader_GaussianBlurVertical.cso";
@@ -69,8 +70,8 @@ bool CFullscreenRenderer::Init(CDirectXFramework* aFramework) {
 	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.MinLOD = 0;// Added 21/1 2021
-	samplerDesc.MaxLOD = 10;// Added 21/1 2021
+	samplerDesc.MinLOD = 0;
+	samplerDesc.MaxLOD = 10;
 	ENGINE_HR_MESSAGE(device->CreateSamplerState(&samplerDesc, &sampler), "Sampler could not be created.");
 	mySampler = sampler;
 	//End Sampler

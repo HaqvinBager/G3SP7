@@ -20,6 +20,11 @@
 #include <imgui_impl_dx11.h>
 #include "Input.h"
 #include <filesystem>
+#include "Scene.h"
+#include "Engine.h"
+#include "GameObject.h"
+#include "GraphNodeTimerManager.h"
+#include "FolderUtility.h"
 
 using namespace rapidjson;
 namespace ed = ax::NodeEditor;
@@ -36,12 +41,43 @@ CGraphManager::~CGraphManager()
 
 void CGraphManager::Load()
 {
-	for (const auto& folder : std::filesystem::directory_iterator("Imgui/NodeScripts"))
-	{
-		if (!folder.path().has_extension()) {
-			for (const auto& file : std::filesystem::directory_iterator(folder.path()))
-			{
-				if (file.path().extension() == ".json")
+	CGraphNodeTimerManager::Create();
+	for (const auto& blueprintLinksJsonPath : CFolderUtility::GetFileNamesInFolder(ASSETPATH("Assets/Generated"), "BluePrintLinks")) {
+		const auto doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + blueprintLinksJsonPath));
+		if (doc.HasParseError())
+			continue;
+
+		auto jsonObject = doc.GetObjectW();
+		if (jsonObject.HasMember("links")) {
+			for (const auto& jsonLink : jsonObject["links"].GetArray()) {
+
+				if (!jsonLink.HasMember("type"))
+					continue;
+				if (!jsonLink.HasMember("instances"))
+					continue;
+				if (!(jsonLink["instances"].GetArray().Size() > 0))
+					continue;
+
+				std::string key = jsonLink["type"].GetString();
+				myKeys.push_back(key);
+
+				for (const auto& jsonGameObjectID : jsonLink["instances"].GetArray()) {
+					if (jsonGameObjectID.IsInt()) {
+						myGameObjectIDsMap[key].emplace_back(jsonGameObjectID.GetInt());
+					}
+				}
+
+				std::string folder = "Imgui/NodeScripts/" + key;
+				//Om denna Blueprint redan finns ska vi bara spara undan den som nyckel
+				if (std::filesystem::exists(folder))
+					continue;
+
+				if (!std::filesystem::create_directory(folder.c_str()))
+				{
+					ENGINE_BOOL_POPUP("Failed to create Directory: %s", folder.c_str());
+					continue;
+				}
+				else
 				{
 					std::string fullPath = file.path().filename().string();
 					std::string key = fullPath.substr(0, fullPath.find("_"));
@@ -108,11 +144,16 @@ void CGraphManager::ReTriggerTree()
 	//Locate start nodes, we support N start nodes, we might want to remove this, as we dont "support" different trees with different starrtnodes to be connected. It might work, might not
 	for (auto& currentNodeGraph : myGraphs)
 	{
-		for (auto& nodeInstance : currentNodeGraph.second)
+		const auto& gameObjectIDs = myGameObjectIDsMap[currentNodeGraph.first];
+		for (unsigned int i = 0; i < gameObjectIDs.size(); ++i)
 		{
-			if (nodeInstance->myNodeType->IsStartNode() && !nodeInstance->myShouldTriggerAgain)
+			myCurrentGameObjectID = gameObjectIDs[i];
+			for (auto& nodeInstance : currentNodeGraph.second)
 			{
-				nodeInstance->Enter();
+				if (nodeInstance->myNodeType->IsStartNode() && !nodeInstance->myShouldTriggerAgain)
+				{
+					nodeInstance->Enter();
+				}
 			}
 		}
 	}
@@ -421,6 +462,8 @@ void CGraphManager::ShowFlow(int aLinkID)
 
 void CGraphManager::Update()
 {
+	CGraphNodeTimerManager::Get()->Update();
+
 	PreFrame(CTimer::Dt());
 	if (myShouldRenderGraph)
 	{
@@ -433,6 +476,17 @@ void CGraphManager::Update()
 void CGraphManager::ToggleShouldRenderGraph()
 {
 	myShouldRenderGraph = !myShouldRenderGraph;
+}
+
+bool CGraphManager::ToggleShouldRunScripts()
+{
+	myScriptShouldRun = !myScriptShouldRun;
+	return myScriptShouldRun;
+}
+
+CGameObject* CGraphManager::GetCurrentGameObject()
+{
+	return CEngine::GetInstance()->GetActiveScene().FindObjectWithID(myCurrentGameObjectID);
 }
 
 ImColor GetIconColor(SPin::EPinType type)
@@ -709,11 +763,12 @@ void CGraphManager::PreFrame(float aDeltaTime)
 		auto& io = ImGui::GetIO();
 		ImGui::SetNextWindowPos(ImVec2(0, 18));
 		ImGui::SetNextWindowSize({ io.DisplaySize.x,  io.DisplaySize.y });
-		
+		ImGui::SetNextWindowBgAlpha(0.5f);
+
 		ImGui::Begin(currentScript.c_str(), nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBringToFrontOnFocus);
-		ImGui::SameLine();
-		if (ImGui::Button("Run"))
-			myScriptShouldRun = !myScriptShouldRun;
+		//ImGui::SameLine();
+		//if (ImGui::Button("Run"))
+		//	myScriptShouldRun = !myScriptShouldRun;
 		ImGui::SameLine();
 		if (ImGui::Button("Save"))
 			myLikeToSave = true;

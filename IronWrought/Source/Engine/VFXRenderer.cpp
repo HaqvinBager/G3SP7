@@ -3,6 +3,7 @@
 #include "VFXComponent.h"
 #include "DirectXFramework.h"
 #include "RenderManager.h"
+#include "GraphicsHelpers.h"
 #include "Camera.h"
 #include "VFXInstance.h"
 #include "VFXBase.h"
@@ -47,7 +48,7 @@ void CVFXRenderer::Render(CCameraComponent* aCamera, std::vector<CGameObject*>& 
 	myFrameBufferData.myToCamera = aCamera->GameObject().myTransform->Transform().Invert();
 	myFrameBufferData.myToProjection = aCamera->GetProjection();
 
-	BindBuffer<SFrameBufferData>(myFrameBuffer, myFrameBufferData, "Frame Buffer");
+	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
 
 	myContext->VSSetConstantBuffers(0, 1, &myFrameBuffer);
 	myContext->PSSetConstantBuffers(0, 1, &myFrameBuffer);
@@ -68,7 +69,7 @@ void CVFXRenderer::Render(CCameraComponent* aCamera, std::vector<CGameObject*>& 
 			if (!vfxBaseData.myIsActive) continue;
 
 			myObjectBufferData.myToWorld = component->GetTransform();
-			BindBuffer<SObjectBufferData>(myObjectBuffer, myObjectBufferData, "Object Buffer");
+			BindBuffer(myObjectBuffer, myObjectBufferData, "Object Buffer");
 
 			myTime += CTimer::Dt();
 			if (myTime > FLT_MAX - 1.0f) {
@@ -86,7 +87,7 @@ void CVFXRenderer::Render(CCameraComponent* aCamera, std::vector<CGameObject*>& 
 			myTextureScrollingData.uvScale4 = vfxBaseData.uvScale4;
 			myTextureScrollingData.scrollTimer = myTime * scrollingScale; //..is now!
 			myTextureScrollingData.opacityStrength = vfxBaseData.opacityStrength;
-			BindBuffer<STextureScrollingData>(myTextureScrollingBuffer, myTextureScrollingData, "Texture Scrolling Buffer");
+			BindBuffer(myTextureScrollingBuffer, myTextureScrollingData, "Texture Scrolling Buffer");
 
 			myContext->IASetPrimitiveTopology(vfxBaseData.myPrimitiveTopology);
 			myContext->IASetInputLayout(vfxBaseData.myInputLayout);

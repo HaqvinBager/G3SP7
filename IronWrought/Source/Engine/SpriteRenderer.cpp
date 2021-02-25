@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "SpriteRenderer.h"
 #include "RenderManager.h"
+#include "GraphicsHelpers.h"
+
 #include "Sprite.h"
 #include "SpriteInstance.h"
 #include "AnimatedUIElement.h"
@@ -146,7 +148,7 @@ void CSpriteRenderer::Render(std::vector<CAnimatedUIElement*>& someAnimatedEleme
         myTextureScrollingData.verticalDirectionOfChange = data->verticalDirectionOfChange;
         myTextureScrollingData.maskOffset = data->maskOffset;
         myTextureScrollingData.randomOffset = data->randomOffset;
-        BindBuffer<STextureScrollingData>(myTextureScrollingBuffer, myTextureScrollingData, "Texture Scrolling Buffer");
+        BindBuffer(myTextureScrollingBuffer, myTextureScrollingData, "Texture Scrolling Buffer");
 
         CSprite::SSpriteData spriteData = sprite->GetSpriteData();
 

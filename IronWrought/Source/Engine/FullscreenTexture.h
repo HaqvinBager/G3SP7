@@ -20,6 +20,7 @@ public:
 	void SetAsResourceOnSlot(unsigned int aSlot);
 	void ReleaseTexture();
 	void ReleaseDepth();
+
 	friend CFullscreenTextureFactory;
 	friend class CGBuffer;
 

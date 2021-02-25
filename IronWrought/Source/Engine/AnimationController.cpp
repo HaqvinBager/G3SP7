@@ -1,7 +1,28 @@
 #include "stdafx.h"
 #include "AnimationController.h"
+#include "Timer.h"
 
-#include "../ModelLoader/modelExceptionTools.h"
+//constexpr float f_milliseconds = 1000.0f;
+#ifdef _DEBUG
+//#define ALLOW_PRINT
+#endif
+#include <iomanip>
+void TEMP_PrintMatrix4x4_2decimals(const aiMatrix4x4& aMatrix, const std::string& aMsg = "" )
+{
+	aMatrix; aMsg;
+#ifdef ALLOW_PRINT
+	// https://stackoverflow.com/questions/5907031/printing-the-correct-number-of-decimal-points-with-cout
+	std::cout << std::fixed;
+	std::cout << std::setprecision(2);
+
+	std::cout << aMsg << std::endl;
+	std::cout << aMatrix.a1 << " | " << aMatrix.a2 << " | " << aMatrix.a3 << " | " << aMatrix.a4 << std::endl;
+	std::cout << aMatrix.b1 << " | " << aMatrix.b2 << " | " << aMatrix.b3 << " | " << aMatrix.b4 << std::endl;
+	std::cout << aMatrix.c1 << " | " << aMatrix.c2 << " | " << aMatrix.c3 << " | " << aMatrix.c4 << std::endl;
+	std::cout << aMatrix.d1 << " | " << aMatrix.d2 << " | " << aMatrix.d3 << " | " << aMatrix.d4 << std::endl;
+	std::cout << "------" << std::endl;
+#endif
+}
 
 CAnimationController::CAnimationController()
 	: myNumOfBones(0)
@@ -19,14 +40,6 @@ CAnimationController::CAnimationController()
 
 CAnimationController::~CAnimationController()
 {
-// No longer used 2021 02 01
-	//for (uint i = 0; i < myImporters.size(); ++i)
-	//{
-	//	delete myImporters[i];
-	//	myImporters[i] = nullptr;
-	//}
-	//myImporters.clear();
-
 	for (size_t i = 0; i < myAnimations.size(); ++i)
 	{
 		delete myAnimations[i];
@@ -74,13 +87,6 @@ bool CAnimationController::ImportRig(const std::string& anFBXFilePath)
 	{
 		logInfo(importer.GetErrorString());
 	}
-// Quick test that gave no noticable result 2021 02 01
-	//delete myAnimations[myAnim0Index]->mMeshes;
-	//myAnimations[myAnim0Index]->mMeshes = nullptr;
-	//delete myAnimations[myAnim0Index]->mMaterials;
-	//myAnimations[myAnim0Index]->mMaterials = nullptr;
-	//delete myAnimations[myAnim0Index]->mTextures;
-	//myAnimations[myAnim0Index]->mTextures = nullptr;
 
 	// We're done. Everything will be cleaned up by the importer destructor
 	return ret;
@@ -112,14 +118,6 @@ bool CAnimationController::ImportAnimation(const std::string& fileName)
 		logInfo(importer.GetErrorString());
 		return false;
 	}
-
-// Quick test that gave no noticable result 2021 02 01
-	//delete myAnimations[myAnim0Index]->mMeshes;
-	//myAnimations[myAnim0Index]->mMeshes = nullptr;
-	//delete myAnimations[myAnim0Index]->mMaterials;
-	//myAnimations[myAnim0Index]->mMaterials = nullptr;
-	//delete myAnimations[myAnim0Index]->mTextures;
-	//myAnimations[myAnim0Index]->mTextures = nullptr;
 
 	return true;
 }
@@ -177,7 +175,7 @@ void CAnimationController::LoadBones(uint aMeshIndex, const aiMesh* aMesh)
 		myBoneMapping[BoneName] = BoneIndex;
 		myBoneInfo[BoneIndex].myBoneOffset = aMesh->mBones[i]->mOffsetMatrix;
 
-		for (uint j = 0; j < aMesh->mBones[i]->mNumWeights; j++)
+		for (uint j = 0; j < aMesh->mBones[i]->mNumWeights; j++)// Mass for physics?
 		{
 			uint VertexID = myEntries[aMeshIndex].myBaseVertex + aMesh->mBones[i]->mWeights[j].mVertexId;
 			float Weight = aMesh->mBones[i]->mWeights[j].mWeight;
@@ -225,16 +223,19 @@ void CAnimationController::ReadNodeHeirarchy(
 		aiMatrix4x4::Translation(Translation, TranslationM);
 
 		// Combine the above transformations
-		NodeTransformation = TranslationM * RotationM * ScalingM;//Original, intended. But now blob-like
+		NodeTransformation = TranslationM * RotationM * ScalingM;
 	}
 	aStopAnimAtLevel--;
 
+
+	// GLobalTransformation is the joints animation for this fram. Multiply with the original joint orientation.
 	aiMatrix4x4 GlobalTransformation = aParentTransform * NodeTransformation;
 
 	if (myBoneMapping.find(nodeName) != myBoneMapping.end())
 	{
 		uint BoneIndex = myBoneMapping[nodeName];
 		myBoneInfo[BoneIndex].myFinalTransformation = myGlobalInverseTransform * GlobalTransformation * myBoneInfo[BoneIndex].myBoneOffset;
+																														  		
 	}
 
 	for (uint i = 0; i < aNode->mNumChildren; i++)
@@ -329,17 +330,19 @@ void CAnimationController::SetBoneTransforms(std::vector<aiMatrix4x4>& aTransfor
 	{
 		// Ticks == Frames
 		float ticksPerSecond = static_cast<float>(myAnimations[myAnim0Index]->mAnimations[0]->mTicksPerSecond);
-		ticksPerSecond = (ticksPerSecond != 0) ? ticksPerSecond : TEMP_FRAMES_PER_SECOND;
+		ticksPerSecond = (ticksPerSecond != 0) ? ticksPerSecond : ANIMATED_AT_FRAMES_PER_SECOND;
 		
 		float timeInTicks = myAnimationTime0 * ticksPerSecond;
+
 		float animationTime0 = fmodf(timeInTicks, static_cast<float>(myAnimations[myAnim0Index]->mAnimations[0]->mDuration));
 		
 		ticksPerSecond = static_cast<float>(myAnimations[myAnim1Index]->mAnimations[0]->mTicksPerSecond);
-		ticksPerSecond = (ticksPerSecond != 0) ? ticksPerSecond : TEMP_FRAMES_PER_SECOND;
+		ticksPerSecond = (ticksPerSecond != 0) ? ticksPerSecond : ANIMATED_AT_FRAMES_PER_SECOND;
 		
 		timeInTicks = myAnimationTime1 * ticksPerSecond;
+
 		float animationTime1 = fmodf(timeInTicks, static_cast<float>(myAnimations[myAnim1Index]->mAnimations[0]->mDuration));
-		
+
 		ReadNodeHeirarchy(	myAnimations[myAnim1Index], myAnimations[myAnim0Index]
 						  , animationTime0, animationTime1
 						  , myAnimations[myAnim1Index]->mRootNode, myAnimations[myAnim0Index]->mRootNode
@@ -348,20 +351,12 @@ void CAnimationController::SetBoneTransforms(std::vector<aiMatrix4x4>& aTransfor
 	else
 	{
 		float ticksPerSecond = static_cast<float>(myAnimations[myAnim0Index]->mAnimations[0]->mTicksPerSecond);
-		ticksPerSecond = (ticksPerSecond != 0) ? ticksPerSecond : TEMP_FRAMES_PER_SECOND;
+		ticksPerSecond = (ticksPerSecond != 0) ? ticksPerSecond : ANIMATED_AT_FRAMES_PER_SECOND;
 
-		float timeInTicks = myAnimationTime0 * ticksPerSecond /** 40.0f*//*ticksPerSecond*/ ;
-		//float timeInTicks = myAnimationTime0;//Suuuper slow
-		//float timeInTicks = (myAnimationTime0 / CTimer::Dt()) * ticksPerSecond;//Super speed //(Update is using dt = CTimer::Dt())
-		//float timeInTicks = myAnimationTime0 * (ticksPerSecond / CTimer::Dt());/Super speed //(Update is using dt = CTimer::Dt())
-		//float timeInTicks = myAnimationTime0 / ticksPerSecond;// Turtle speed :) //(Update is using dt = CTimer::Dt())
-		
+		float timeInTicks = myAnimationTime0 * ticksPerSecond;
+
 		float duration = static_cast<float>(myAnimations[myAnim0Index]->mAnimations[0]->mDuration);
-		//float duration = 40.0f;
-		float animationTime = fmodf(timeInTicks, duration);// In SP6 Project: mDuration is duration in frames. I.e 34frames for Undead Idle  @ 24fps
-		// 40.0f which is the actual nr of frames the animation has does not move the model, i.e the animation stands still
-		// Seems to be cause FindScaling/Rotation/Position() are returning the value of the first node they find which had 41.something mTime. if(AnimationTime < node.key[i]->mTime) return i
-		//std::cout << timeInTicks << " " << duration << "  " << animationTime << std::endl;
+		float animationTime = fmodf(timeInTicks, duration);
 
 		ReadNodeHeirarchy(myAnimations[myAnim0Index], animationTime, myAnimations[myAnim0Index]->mRootNode, Identity, 2);//stopAnimLevel=2
 	}
@@ -409,37 +404,7 @@ void CAnimationController::UpdateAnimationTimeConstant(const float aStep)
 #endif
 void CAnimationController::UpdateAnimationTimes()
 {
-	//float dt = CTimer::Dt() * ((float)myAnimations[myAnim0Index]->mAnimations[0]->mDuration / TEMP_FRAMES_PER_SECOND);
-	//float dt = CTimer::Dt() * TEMP_FRAMES_PER_SECOND);
-	//float dt = CTimer::Dt() * 12.0f;// Close to good (right)
-	float dt = 1.0f / TEMP_FRAMES_PER_SECOND;
-	myAnimationTime0 += dt;
-	if (myBlendingTime > 0.f)
-	{
-		myBlendingTime -= dt * myBlendingTimeMul;
-		if (myBlendingTime <= 0.f)
-		{
-			myAnimationTime0 = myAnimationTime1;
-		}
-		if (myUpdateBoth)
-		{
-			myAnimationTime1 += dt;
-		}
-	}
-	else
-	{
-		myAnimationTime1 += dt;
-	}
-
-	if (myTemporary)// If the animation was temporary, return to the previous animation after the playtime is over
-	{
-		myPlayTime -= dt;
-		if (myPlayTime <= 0.f)
-		{
-			myTemporary = false;
-			BlendToAnimation(myAnim1Index);
-		}
-	}
+	UpdateAnimationTimeFrames();
 }
 
 void CAnimationController::BlendToAnimation(uint anAnimationIndex, bool anUpdateBoth, float aBlendDuration, bool aTemporary, float aTime)
@@ -495,83 +460,94 @@ bool CAnimationController::AnimationIndexWithinRange(uint anIndex)
 	return anIndex == myAnim0Index || anIndex >= static_cast<uint>(myAnimations.size());
 }
 
+void CAnimationController::UpdateAnimationTimeFrames()
+{
+	float dt = CTimer::Dt();
+
+	myAnimationTime0 += dt;
+	if (myBlendingTime > 0.f)
+	{
+		myBlendingTime -= dt * myBlendingTimeMul;
+		if (myBlendingTime <= 0.f)
+		{
+			myAnimationTime0 = myAnimationTime1;
+		}
+		if (myUpdateBoth)
+		{
+			myAnimationTime1 += dt;
+		}
+	}
+	else
+	{
+		myAnimationTime1 += dt;
+	}
+
+	if (myTemporary)// If the animation was temporary, return to the previous animation after the playtime is over
+	{
+		myPlayTime -= dt;
+		if (myPlayTime <= 0.f)
+		{
+			myTemporary = false;
+			BlendToAnimation(myAnim1Index);
+		}
+	}
+}
+
 
 /*
-/////////////////////////////////////////////////////////////////////////////////////////
-// BACKUP OF OLD IMPORTING FUNCTIONS (using std::vector<Assimp::Importer*> myImportes //
-///////////////////////////////////////////////////////////////////////////////////////
+	FIX FOR previous assimp mDuration issues :D :O :( 
 
-bool CAnimationController::ImportRig(const std::string& anFBXFilePath)
+void CAnimationController::UpdateAnimationTimeMilliseconds()
 {
-if (anFBXFilePath.length() <= 0)
-return false;
+	myAnimationTime0 = CTimer::Time() * f_milliseconds;
+	if (myBlendingTime > 0.f)
+	{
+		myBlendingTime -= CTimer::Dt() * f_milliseconds * myBlendingTimeMul;
+		if (myBlendingTime <= 0.f)
+		{
+			myAnimationTime0 = myAnimationTime1;
+		}
+		if (myUpdateBoth)
+		{
+			myAnimationTime1 = CTimer::Time() * f_milliseconds;
+		}
+	}
+	else
+	{
+		myAnimationTime1 = CTimer::Time() * f_milliseconds;
+	}
 
-// Check if file exists
-std::ifstream fIn(anFBXFilePath.c_str());
-if (!fIn.fail())
-{
-fIn.close();
-}
-else
-{
-MessageBoxA(NULL, ("Couldn't open file: " + anFBXFilePath).c_str(), "ERROR", MB_OK | MB_ICONEXCLAMATION);
-return false;
-}
-
-myAnim0Index = static_cast<int>(myImporters.size());
-myImporters.emplace_back(new Assimp::Importer);
-
-if (ModelExceptionTools::IsDestructibleModel(anFBXFilePath))
-{
-int qualityFlags = aiProcessPreset_TargetRealtime_Quality;
-myAnimations.push_back(myImporters[myAnim0Index]->ReadFile(anFBXFilePath, (qualityFlags ^= (int)aiProcess_JoinIdenticalVertices) | aiProcess_ConvertToLeftHanded));
-}
-else
-{
-myAnimations.push_back(myImporters[myAnim0Index]->ReadFile(anFBXFilePath, aiProcessPreset_TargetRealtime_Quality | aiProcess_ConvertToLeftHanded));
-}
-
-bool ret = false;
-// If the import failed, report it
-if (myAnimations[myAnim0Index])
-{
-myGlobalInverseTransform = myAnimations[myAnim0Index]->mRootNode->mTransformation;
-myGlobalInverseTransform.Inverse();
-ret = InitFromScene(myAnimations[myAnim0Index]);
-// Now we can access the file's contents.
-logInfo("Import of _curScene " + anFBXFilePath + " succeeded.");
-}
-else
-{
-logInfo(myImporters[myAnim0Index]->GetErrorString());
+	if (myTemporary)// If the animation was temporary, return to the previous animation after the playtime is over
+	{
+		myPlayTime -= CTimer::Dt() * f_milliseconds;// Not verified if it works with ANIMATION_DURATION_IN_MILLISECONDS
+		if (myPlayTime <= 0.f)
+		{
+			myTemporary = false;
+			BlendToAnimation(myAnim1Index);
+		}
+	}
 }
 
-// We're done. Everything will be cleaned up by the importer destructor
-return ret;
-}
-
-bool CAnimationController::ImportAnimation(const std::string& fileName)
+void CAnimationController::ConvertAnimationTimesToFrames(aiScene* aScene)
 {
-// Check if file exists
-std::ifstream fin(fileName.c_str());
-if (!fin.fail())
-fin.close();
-else
-{
-MessageBoxA(NULL, ("Couldn't open file: " + fileName).c_str(), "ERROR", MB_OK | MB_ICONEXCLAMATION);
-return false;
-}
-
-myAnim0Index = static_cast<int>(myImporters.size());
-myImporters.emplace_back(new Assimp::Importer);
-myAnimations.emplace_back(myImporters[myAnim0Index]->ReadFile(fileName, aiProcessPreset_TargetRealtime_Quality | aiProcess_ConvertToLeftHanded));
-
-// If the import failed, report it
-if (!myAnimations[myAnim0Index])
-{
-logInfo(myImporters[myAnim0Index]->GetErrorString());
-return false;
-}
-return true;
+	const float convertToFrame = (ANIMATED_AT_FRAMES_PER_SECOND / f_milliseconds);
+	aiAnimation* animation = aScene->mAnimations[0];
+	
+	animation->mDuration *= convertToFrame;
+	for (uint i = 0; i < animation->mNumChannels; ++i)
+	{
+		for (uint s = 0; s < animation->mChannels[i]->mNumScalingKeys; ++s)
+		{
+			animation->mChannels[i]->mScalingKeys[s].mTime *= convertToFrame;
+		}
+		for (uint r = 0; r < animation->mChannels[i]->mNumRotationKeys; ++r)
+		{
+			animation->mChannels[i]->mRotationKeys[r].mTime *= convertToFrame;
+		}
+		for (uint p = 0; p < animation->mChannels[i]->mNumPositionKeys; ++p)
+		{
+			animation->mChannels[i]->mPositionKeys[p].mTime *= convertToFrame;
+		}
+	}
 }
 */

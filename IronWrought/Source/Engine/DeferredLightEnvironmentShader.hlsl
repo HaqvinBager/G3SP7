@@ -5,12 +5,13 @@ PixelOutput main(VertexToPixel input)
 {
     PixelOutput output;
 
-    float3 exists = PixelShader_Exists(input).myColor.rgb;
-    if (length(exists) == 0)
+    float depth = PixelShader_Exists(input).myColor.r;
+    if (depth == 1)
     {
-        discard;
+        output.myColor = GBuffer_Albedo(input).myColor;
+        return output;
     }
-        
+    
     float3 worldPosition = PixelShader_WorldPosition(input).myColor.rgb;
     float3 toEye = normalize( cameraPosition.xyz - worldPosition.xyz);
     float3 albedo = GBuffer_Albedo(input).myColor.rgb;
