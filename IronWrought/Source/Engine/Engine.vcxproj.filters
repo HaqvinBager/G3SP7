@@ -437,9 +437,6 @@
     <ClCompile Include="NodeType.cpp">
       <Filter>Imgui\Node Editor\Nodes\Base Type</Filter>
     </ClCompile>
-    <ClCompile Include="NodeTypeGetMousePosition.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Input</Filter>
-    </ClCompile>
     <ClCompile Include="NodeInstance.cpp">
       <Filter>Imgui\Node Editor\Nodes</Filter>
     </ClCompile>
@@ -500,9 +497,6 @@
     <ClCompile Include="NodeTypeMathSmoothstep.cpp">
       <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClCompile>
-    <ClCompile Include="NodeTypeMathStorage.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
-    </ClCompile>
     <ClCompile Include="NodeTypeMathSub.cpp">
       <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClCompile>
@@ -560,28 +554,10 @@
     <ClCompile Include="DecisionTreeManager.cpp">
       <Filter>Decision Tree</Filter>
     </ClCompile>
-    <ClCompile Include="NodeTypeFloatDecision.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Decision Tree\Decision</Filter>
-    </ClCompile>
-    <ClCompile Include="NodeTypePrintAction.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Decision Tree\Action</Filter>
-    </ClCompile>
-    <ClCompile Include="NodeTypeRunDecisionTree.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Decision Tree</Filter>
-    </ClCompile>
-    <ClCompile Include="NodeTypeTimer.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Timer</Filter>
-    </ClCompile>
     <ClCompile Include="NodeTypeVolumeTrigger.cpp">
       <Filter>Imgui\Node Editor\Nodes\Trigger</Filter>
     </ClCompile>
     <ClCompile Include="NodeTypeForEachGameObject.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
-    </ClCompile>
-    <ClCompile Include="NodeTypeGetGameObjectPosition.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
-    </ClCompile>
-    <ClCompile Include="NodeTypeSetGameObjectPosition.cpp">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClCompile>
     <ClCompile Include="GraphNodeCollisionManager.cpp">
@@ -613,30 +589,68 @@
     <ClCompile Include="ShadowRenderer.cpp">
       <Filter>Renderers</Filter>
     </ClCompile>
-    <ClCompile Include="NodeTypeDeltaTime.cpp" />
     <ClCompile Include="LoadScene.cpp">
       <Filter>Imgui\Windows</Filter>
     </ClCompile>
     <ClCompile Include="Window.cpp">
       <Filter>Imgui\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="NodeTypeBool.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Variables</Filter>
-    </ClCompile>
-    <ClCompile Include="NodeTypeFloat.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Variables</Filter>
-    </ClCompile>
-    <ClCompile Include="NodeTypeInt.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Variables</Filter>
-    </ClCompile>
-    <ClCompile Include="NodeTypeString.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Variables</Filter>
-    </ClCompile>
-    <ClCompile Include="NodeTypeDefaultStart.cpp">
+    <ClCompile Include="NodeTypeStartDefault.cpp">
       <Filter>Imgui\Node Editor\Nodes\Start</Filter>
     </ClCompile>
-    <ClCompile Include="NodeTypePrintMessage.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Debugging</Filter>
+    <ClCompile Include="NodeTypeInputGetMousePosition.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeDecisionTreeRun.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Decision Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeDecisionFloat.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Decision Tree\Decision</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeActionPrint.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Decision Tree\Action</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeGameObjectGetPosition.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeGameObjectSetPosition.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeTimeDeltaTotal.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Time</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeTimeTimer.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Time</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeDebugPrint.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeStartKeyboardInput.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Start</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeGameObjectMove.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeVariableSetBool.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Variables\Set</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeVariableSetFloat.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Variables\Set</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeVariableSetInt.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Variables\Set</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeVariableGetBool.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Variables\Get</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeVariableGetFloat.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Variables\Get</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeVariableGetInt.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Variables\Get</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeDataManager.cpp">
+      <Filter>Imgui\Node Editor\Utilities</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -981,9 +995,6 @@
     <ClInclude Include="NodeType.h">
       <Filter>Imgui\Node Editor\Nodes\Base Type</Filter>
     </ClInclude>
-    <ClInclude Include="NodeTypeGetMousePosition.h">
-      <Filter>Imgui\Node Editor\Nodes\Input</Filter>
-    </ClInclude>
     <ClInclude Include="NodeInstance.h">
       <Filter>Imgui\Node Editor\Nodes</Filter>
     </ClInclude>
@@ -1033,9 +1044,6 @@
       <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeMathSmoothstep.h">
-      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="NodeTypeMathStorage.h">
       <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeMathSub.h">
@@ -1107,28 +1115,10 @@
     <ClInclude Include="DecisionTreeManager.h">
       <Filter>Decision Tree</Filter>
     </ClInclude>
-    <ClInclude Include="NodeTypeFloatDecision.h">
-      <Filter>Imgui\Node Editor\Nodes\Decision Tree\Decision</Filter>
-    </ClInclude>
-    <ClInclude Include="NodeTypePrintAction.h">
-      <Filter>Imgui\Node Editor\Nodes\Decision Tree\Action</Filter>
-    </ClInclude>
-    <ClInclude Include="NodeTypeRunDecisionTree.h">
-      <Filter>Imgui\Node Editor\Nodes\Decision Tree</Filter>
-    </ClInclude>
-    <ClInclude Include="NodeTypeTimer.h">
-      <Filter>Imgui\Node Editor\Nodes\Timer</Filter>
-    </ClInclude>
     <ClInclude Include="NodeTypeVolumeTrigger.h">
       <Filter>Imgui\Node Editor\Nodes\Trigger</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeForEachGameObject.h">
-      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
-    </ClInclude>
-    <ClInclude Include="NodeTypeGetGameObjectPosition.h">
-      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
-    </ClInclude>
-    <ClInclude Include="NodeTypeSetGameObjectPosition.h">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClInclude>
     <ClInclude Include="GraphNodeCollisionManager.h">
@@ -1157,7 +1147,6 @@
     <ClInclude Include="ShadowRenderer.h">
       <Filter>Renderers</Filter>
     </ClInclude>
-    <ClInclude Include="NodeTypeDeltaTime.h" />
     <ClInclude Include="LoadScene.h">
       <Filter>Imgui\Windows</Filter>
     </ClInclude>
@@ -1167,23 +1156,62 @@
     <ClInclude Include="ImGuiWindows.h">
       <Filter>Imgui\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="NodeTypeBool.h">
-      <Filter>Imgui\Node Editor\Nodes\Variables</Filter>
-    </ClInclude>
-    <ClInclude Include="NodeTypeFloat.h">
-      <Filter>Imgui\Node Editor\Nodes\Variables</Filter>
-    </ClInclude>
-    <ClInclude Include="NodeTypeInt.h">
-      <Filter>Imgui\Node Editor\Nodes\Variables</Filter>
-    </ClInclude>
-    <ClInclude Include="NodeTypeString.h">
-      <Filter>Imgui\Node Editor\Nodes\Variables</Filter>
-    </ClInclude>
-    <ClInclude Include="NodeTypeDefaultStart.h">
+    <ClInclude Include="NodeTypeStartDefault.h">
       <Filter>Imgui\Node Editor\Nodes\Start</Filter>
     </ClInclude>
-    <ClInclude Include="NodeTypePrintMessage.h">
-      <Filter>Imgui\Node Editor\Nodes\Debugging</Filter>
+    <ClInclude Include="NodeTypeGameObjectMove.h">
+      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeInputGetMousePosition.h">
+      <Filter>Imgui\Node Editor\Nodes\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeDecisionTreeRun.h">
+      <Filter>Imgui\Node Editor\Nodes\Decision Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeDecisionFloat.h">
+      <Filter>Imgui\Node Editor\Nodes\Decision Tree\Decision</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeActionPrint.h">
+      <Filter>Imgui\Node Editor\Nodes\Decision Tree\Action</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeGameObjectGetPosition.h">
+      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeGameObjectSetPosition.h">
+      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeTimeDeltaTotal.h">
+      <Filter>Imgui\Node Editor\Nodes\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeTimeTimer.h">
+      <Filter>Imgui\Node Editor\Nodes\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeDebugPrint.h">
+      <Filter>Imgui\Node Editor\Nodes\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeStartKeyboardInput.h">
+      <Filter>Imgui\Node Editor\Nodes\Start</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeVariableSetBool.h">
+      <Filter>Imgui\Node Editor\Nodes\Variables\Set</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeVariableSetFloat.h">
+      <Filter>Imgui\Node Editor\Nodes\Variables\Set</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeVariableSetInt.h">
+      <Filter>Imgui\Node Editor\Nodes\Variables\Set</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeVariableGetBool.h">
+      <Filter>Imgui\Node Editor\Nodes\Variables\Get</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeVariableGetFloat.h">
+      <Filter>Imgui\Node Editor\Nodes\Variables\Get</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeVariableGetInt.h">
+      <Filter>Imgui\Node Editor\Nodes\Variables\Get</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeDataManager.h">
+      <Filter>Imgui\Node Editor\Utilities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1418,9 +1446,6 @@
     <Filter Include="Imgui\Node Editor\Nodes\Trigger">
       <UniqueIdentifier>{91609e06-4217-4759-beb5-82276c4b60bc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Imgui\Node Editor\Nodes\Timer">
-      <UniqueIdentifier>{2e592059-39e1-49a6-a023-a4d3ba392358}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Imgui\Node Editor\Nodes\Math">
       <UniqueIdentifier>{615e6ff6-4a3a-4b26-8b02-d27da0b082b2}</UniqueIdentifier>
     </Filter>
@@ -1442,8 +1467,20 @@
     <Filter Include="Imgui\Node Editor\Nodes\Start">
       <UniqueIdentifier>{a78b3e1e-7127-4471-8739-1b5baf7958e5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Imgui\Node Editor\Nodes\Debugging">
+    <Filter Include="Imgui\Node Editor\Nodes\Time">
+      <UniqueIdentifier>{2e592059-39e1-49a6-a023-a4d3ba392358}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Nodes\Debug">
       <UniqueIdentifier>{d29438b5-09ae-4a7d-a36f-ae3ad966a5ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Utilities">
+      <UniqueIdentifier>{bfd097c4-3b85-4aca-a05b-5ece8695f94b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Nodes\Variables\Set">
+      <UniqueIdentifier>{75ec4e39-ed4a-4e8d-849c-456f7e92334a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Nodes\Variables\Get">
+      <UniqueIdentifier>{c77b8dcc-917a-4872-8dfc-bb6632a1befb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

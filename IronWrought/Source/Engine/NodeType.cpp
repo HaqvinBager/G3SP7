@@ -1,13 +1,15 @@
 #include "stdafx.h"
 #include "NodeType.h"
-#include "NodeTypeDefaultStart.h"
-#include "NodeTypePrintMessage.h"
+#include "NodeTypeStartDefault.h"
+#include "NodeTypeStartKeyboardInput.h"
+#include "NodeTypeDebugPrint.h"
 #include "NodeInstance.h"
+#include "NodeTypeGameObjectGetPosition.h"
+#include "NodeTypeGameObjectSetPosition.h"
+#include "NodeTypeGameObjectMove.h"
 #include "NodeTypeMathAdd.h"
 #include "NodeTypeMathSub.h"
 #include "NodeTypeMathMul.h"
-#include "NodeTypeGetGameObjectPosition.h"
-#include "NodeTypeSetGameObjectPosition.h"
 #include "NodeTypeMathCos.h"
 #include "NodeTypeMathSin.h"
 #include "NodeTypeMathAbs.h"
@@ -19,23 +21,24 @@
 #include "NodeTypeMathDot.h"
 #include "NodeTypeMathLerp.h"
 #include "NodeTypeMathSaturate.h"
-#include "NodeTypeMathStorage.h"
 #include "NodeTypeMathSmoothstep.h"
 #include "NodeTypeMathMax.h"
 #include "NodeTypeMathMin.h"
 #include "NodeTypeMathDistance.h"
-#include "NodeTypeGetMousePosition.h"
-#include "NodeTypeForEachGameObject.h"
-#include "NodeTypeVolumeTrigger.h"
-#include "NodeTypeTimer.h"
-#include "NodeTypePrintAction.h"
-#include "NodeTypeFloatDecision.h"
-#include "NodeTypeRunDecisionTree.h"
-#include "NodeTypeDeltaTime.h"
-#include "NodeTypeFloat.h"
-#include "NodeTypeInt.h"
-#include "NodeTypeBool.h"
-#include "NodeTypeString.h"
+#include "NodeTypeInputGetMousePosition.h"
+#include "NodeTypeTimeTimer.h"
+#include "NodeTypeTimeDeltaTotal.h"
+#include "NodeTypeActionPrint.h"
+#include "NodeTypeDecisionFloat.h"
+#include "NodeTypeDecisionTreeRun.h"
+#include "NodeTypeVariableSetFloat.h"
+#include "NodeTypeVariableSetInt.h"
+#include "NodeTypeVariableSetBool.h"
+#include "NodeTypeVariableGetFloat.h"
+#include "NodeTypeVariableGetInt.h"
+#include "NodeTypeVariableGetBool.h"
+
+//#include "NodeData.h"
 
 CNodeType* CNodeTypeCollector::myTypes[128];
 unsigned short CNodeTypeCollector::myTypeCounter = 0;
@@ -46,40 +49,66 @@ unsigned int UID::myGlobalUID = 0;
 
 void CNodeTypeCollector::PopulateTypes()
 {
-	RegisterType<CNodeTypeDefaultStart>();
-	RegisterType<CNodeTypePrintMessage>();
-	RegisterType<CNodeTypeMathAdd>();
-	RegisterType<CNodeTypeMathSub>();
-	RegisterType<CNodeTypeMathMul>();
-	RegisterType<CNodeTypeGetGameObjectPosition>();
-	RegisterType<CNodeTypeSetGameObjectPosition>();
-	RegisterType<CNodeTypeMathCos>();
-	RegisterType<CNodeTypeMathSin>();
-	RegisterType<CNodeTypeMathAbs>();
-	RegisterType<CNodeTypeMathAtan2>();
-	RegisterType<CNodeTypeMathCeil>();
-	RegisterType<CNodeTypeMathFloor>();
-	RegisterType<CNodeTypeMathToRadians>();
-	RegisterType<CNodeTypeMathToDegrees>();
-	RegisterType<CNodeTypeMathDot>();
-	RegisterType<CNodeTypeMathLerp>();
-	RegisterType<CNodeTypeMathSaturate>();
-	RegisterType<CNodeTypeMathStorage>();
-	RegisterType<CNodeTypeMathSmoothstep>();
-	RegisterType<CNodeTypeMathMax>();
-	RegisterType<CNodeTypeMathMin>();
-	RegisterType<CNodeTypeMathDistance>();
-	RegisterType<CNodeTypeGetMousePosition>();
-	RegisterType<CNodeTypeForEachGameObject>();
-	RegisterType<CNodeTypeVolumeTrigger>();
-	RegisterType<CNodeTypeTimer>();
-	RegisterType<CNodeTypePrintAction>();
-	RegisterType<CNodeTypeFloatDecision>();
-	RegisterType<CNodeTypeRunDecisionTree>();
-	RegisterType<CNodeTypeDeltaTime>();
-	RegisterType<CNodeTypeFloat>();
-	RegisterType<CNodeTypeInt>();
-	RegisterType<CNodeTypeBool>();
+	RegisterType<CNodeTypeStartDefault>("Default Start");
+	RegisterType<CNodeTypeStartKeyboardInput>("Keyboard Input Start");
+	RegisterType<CNodeTypeDebugPrint>("Print Message");
+	RegisterType<CNodeTypeMathAdd>("Add");
+	RegisterType<CNodeTypeMathSub>("Sub");
+	RegisterType<CNodeTypeMathMul>("Mul");
+	RegisterType<CNodeTypeMathCos>("Cos");
+	RegisterType<CNodeTypeMathSin>("Sin");
+	RegisterType<CNodeTypeMathAbs>("Abs");
+	RegisterType<CNodeTypeMathAtan2>("Atan2");
+	RegisterType<CNodeTypeMathCeil>("Ceil");
+	RegisterType<CNodeTypeMathFloor>("Floor");
+	RegisterType<CNodeTypeMathToRadians>("To Radians");
+	RegisterType<CNodeTypeMathToDegrees>("To Degrees");
+	RegisterType<CNodeTypeMathDot>("Dot");
+	RegisterType<CNodeTypeMathLerp>("Lerp");
+	RegisterType<CNodeTypeMathSaturate>("Saturate");
+	RegisterType<CNodeTypeMathSmoothstep>("Smoothstep");
+	RegisterType<CNodeTypeMathMax>("Max");
+	RegisterType<CNodeTypeMathMin>("Min");
+	RegisterType<CNodeTypeMathDistance>("Distance");
+	RegisterType<CNodeTypeGameObjectGetPosition>("Get Object Position");
+	RegisterType<CNodeTypeGameObjectSetPosition>("Set Object Position");
+	RegisterType<CNodeTypeGameObjectMove>("Move Object");
+	RegisterType<CNodeTypeInputGetMousePosition>("Mouse Position");
+	RegisterType<CNodeTypeActionPrint>("Print Action");
+	RegisterType<CNodeTypeDecisionFloat>("Float Decision");
+	RegisterType<CNodeTypeDecisionTreeRun>("Run Tree");
+	RegisterType<CNodeTypeTimeDeltaTotal>("Delta & Total Time");
+	RegisterType<CNodeTypeTimeTimer>("Countdown Timer");
+	//RegisterType<CNodeTypeVariableFloat>("Float");
+	//RegisterType<CNodeTypeVariableInt>("Int");
+	//RegisterType<CNodeTypeVariableBool>("Bool");
+}
+
+void CNodeTypeCollector::RegisterNewDataType(std::string aNodeName, unsigned int aType)
+{
+	switch (aType)
+	{
+	case 0:
+	{
+		RegisterDataType<CNodeTypeVariableSetFloat>("Set: " + aNodeName, aNodeName);
+		RegisterDataType<CNodeTypeVariableGetFloat>("Get: " + aNodeName, aNodeName);
+	}
+		break;
+	case 1:
+	{
+		RegisterDataType<CNodeTypeVariableSetInt>("Set: " + aNodeName, aNodeName);
+		RegisterDataType<CNodeTypeVariableGetInt>("Get: " + aNodeName, aNodeName);
+	}
+		break;
+	case 2:
+	{
+		RegisterDataType<CNodeTypeVariableSetBool>("Set: " + aNodeName, aNodeName);
+		RegisterDataType<CNodeTypeVariableGetBool>("Get: " + aNodeName, aNodeName);
+	}
+		break;
+	default:
+		break;
+	}
 }
 
 void CNodeType::ClearNodeInstanceFromMap(CNodeInstance* /*aTriggeringNodeInstance*/)

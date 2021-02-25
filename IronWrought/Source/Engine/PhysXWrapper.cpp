@@ -110,9 +110,9 @@ PxScene* CPhysXWrapper::CreatePXScene()
 	return pXScene;
 }
 
-PxRaycastBuffer CPhysXWrapper::Raycast(Vector3 aOrigin, Vector3 aDirection, float aDistance)
+PxRaycastBuffer CPhysXWrapper::Raycast(Vector3 aOrigin, Vector3 aDirection, float /*aDistance*/)
 {
-	PxScene* scene = CEngine::GetInstance()->GetActiveScene().PXScene();
+	//PxScene* scene = CEngine::GetInstance()->GetActiveScene().PXScene();
 	PxVec3 origin;
 	origin.x = aOrigin.x;
 	origin.y = aOrigin.y;
@@ -125,12 +125,12 @@ PxRaycastBuffer CPhysXWrapper::Raycast(Vector3 aOrigin, Vector3 aDirection, floa
 	unitDir.y = aDirection.y;
 	unitDir.z = aDirection.z;
 
-	PxReal maxDistance = aDistance;
+	//PxReal maxDistance = aDistance;
 	PxRaycastBuffer hit;
 
-	scene->raycast(origin, unitDir, maxDistance, hit);
+	/*scene->raycast(origin, unitDir, maxDistance, hit);
 	
-		RaycastHit(hit.block.position, hit.block.normal);
+		RaycastHit(hit.block.position, hit.block.normal);*/
 		
 	
 
