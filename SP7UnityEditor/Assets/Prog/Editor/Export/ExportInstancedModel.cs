@@ -42,7 +42,6 @@ public class ExportInstancedModel
                 if (asset == null)
                     continue;
 
-                asset.Ping();
 
                 int assetID = asset.transform.GetInstanceID();
                 InstancedModel instancedModel = collection.instancedModels.Find(e => e.assetID == assetID);
