@@ -9,10 +9,13 @@
 #include <fstream>
 
 #include "AnimMathFunc.h"
-#include "Timer.h"
+
+//#define ANIMATION_DURATION_IN_MILLISECONDS// AS of 2021 02 23 is not used
 
 #define NUM_BONES_PER_VERTEX 4
 #define TEMP_FRAMES_PER_SECOND 24.0f//30.0f // Original was 25.0f
+
+#define ANIMATED_AT_FRAMES_PER_SECOND 24.0f//30.0f // Original was 25.0f
 
 struct VertexBoneDataAnim
 {
@@ -79,7 +82,7 @@ public:
 
 	//Create Init Function?
 
-	bool ImportRig(const std::string& anFBXFilePath = "");
+	bool ImportRig(const std::string& anFBXFilePath = "");// Todo: handle in factory
 	bool ImportAnimation(const std::string& fileName);
 	bool InitFromScene(const aiScene* pScene);
 	void LoadBones(uint aMeshIndex, const aiMesh* aMesh);
@@ -122,6 +125,11 @@ public:
 
 private:
 	bool AnimationIndexWithinRange(uint anIndex);
+
+	void UpdateAnimationTimeFrames();
+	/*void UpdateAnimationTimeMilliseconds();*/ // As of 2021 02 22 No longer needed
+	/*void ConvertAnimationTimesToFrames(aiScene* aScene);*/ // As of 2021 02 22 No longer needed
+
 private:
 	float myAnimationTime0;
 	float myAnimationTime1;
@@ -143,7 +151,7 @@ private:
 	aiVector3D myRotation;
 
 	// Holds the animations that we play. Each animation modifies bonetransforms depending on animation time.
-	std::vector<const aiScene*>			myAnimations;
+	std::vector<const aiScene*>			myAnimations;// was std::vector<const aiScene*>
 	aiMatrix4x4							myGlobalInverseTransform;
 	std::map<std::string, uint>			myBoneMapping;
 	std::vector<MeshEntry>				myEntries;

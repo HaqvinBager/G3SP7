@@ -20,7 +20,7 @@
 
 #define USING_FBX_MATERIALS
 
-//#define ALLOW_ANIMATIONS
+#define ALLOW_ANIMATIONS
 
 CModelFactory* CModelFactory::ourInstance = nullptr;
 CModelFactory* CModelFactory::GetInstance()
@@ -159,7 +159,6 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 #else
 	vsFile.open("Shaders/VertexShader.cso", std::ios::binary);
 #endif
-	
 	std::string vsData = { std::istreambuf_iterator<char>(vsFile), std::istreambuf_iterator<char>() };
 	ID3D11VertexShader* vertexShader;
 	ENGINE_HR_MESSAGE(myFramework->GetDevice()->CreateVertexShader(vsData.data(), vsData.size(), nullptr, &vertexShader), "Vertex Shader could not be created.");
