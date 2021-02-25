@@ -9,7 +9,6 @@ CJsonReader* CJsonReader::Get()
 {
 	if (ourInstance == nullptr)
 		ourInstance = new CJsonReader();
-
 	return ourInstance;
 }
 
@@ -28,8 +27,6 @@ void CJsonReader::Init()
 {
 	const auto& doc = LoadDocument(ASSETPATH("Assets/Generated/Resource_Assets.json"));
 	for (const auto& model : doc.GetObjectW()["models"].GetArray()) {
-		//const int id = model["id"].GetInt();
-		//const std::string path = model["path"].GetString();
 		myModelAssetMap[model["id"].GetInt()] = model["path"].GetString();
 	}
 }

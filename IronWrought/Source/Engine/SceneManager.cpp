@@ -82,15 +82,15 @@ void CSceneManager::SetTransforms(CScene& aScene, const std::vector<std::string>
 	for (const auto& t : transformArray) {
 		int id = t["instanceID"].GetInt();
 		CTransformComponent* transform = aScene.FindObjectWithID(id)->myTransform;
-		transform->Scale	({	 t["scale"]["x"].GetFloat(),
-							 t["scale"]["y"].GetFloat(),
-							 t["scale"]["z"].GetFloat() });
+		transform->Scale	({t["scale"]["x"].GetFloat(),
+							  t["scale"]["y"].GetFloat(),
+							  t["scale"]["z"].GetFloat() });
 		transform->Position	({t["position"]["x"].GetFloat(),
-							 t["position"]["y"].GetFloat(),
-							 t["position"]["z"].GetFloat() });
+							  t["position"]["y"].GetFloat(),
+							  t["position"]["z"].GetFloat() });
 		transform->Rotation	({t["rotation"]["x"].GetFloat(),
-							 t["rotation"]["y"].GetFloat(),
-							 t["rotation"]["z"].GetFloat() });
+							  t["rotation"]["y"].GetFloat(),
+							  t["rotation"]["z"].GetFloat() });
 	}
 }
 
