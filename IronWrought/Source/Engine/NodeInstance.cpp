@@ -57,8 +57,8 @@ void CNodeInstance::ExitVia(unsigned int aPinIndex)
 
 void CNodeInstance::ConstructUniquePins()
 {
-	myPins = myNodeType->GetPins();
-
+	if (myNodeType != NULL)
+		myPins = myNodeType->GetPins();
 }
 
 bool CNodeInstance::CanAddLink(unsigned int aPinIDFromMe)
@@ -147,7 +147,7 @@ bool CNodeInstance::IsPinConnected(SPin& aPin)
 
 std::string CNodeInstance::GetNodeName()
 {
-	return myNodeType->GetNodeName();
+	return myNodeType->NodeName();
 }
 
 void CNodeInstance::ChangePinTypes(SPin::EPinType aType)

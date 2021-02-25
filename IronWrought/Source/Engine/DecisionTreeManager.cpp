@@ -1,7 +1,5 @@
 #include "DecisionTreeManager.h"
 #include "BaseDecisionNode.h"
-#include "DecisionNode.h"
-#include "ActionNode.h"
 #include <iostream>
 
 CDecisionTreeManager* CDecisionTreeManager::ourInstance = nullptr;

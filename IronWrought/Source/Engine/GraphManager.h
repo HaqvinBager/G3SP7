@@ -3,6 +3,7 @@
 #include <imgui_node_editor.h>
 #include <stack>
 #include <unordered_map>
+//#include "NodeData.h"
 
 class CNodeInstance;
 class CGameObject;
@@ -20,7 +21,7 @@ public:
 	void ConstructEditorTreeAndConnectLinks();
 	void PostFrame();
 
-	void ReTriggerTree();
+	//void ReTriggerTree();
 	void SaveTreeToFile();
 	void LoadTreeFromFile();
 	void SaveNodesToClipboard();
@@ -44,6 +45,10 @@ private:
 	CNodeInstance* GetNodeFromPinID(unsigned int anID);
 	CNodeInstance* GetNodeFromNodeID(unsigned int anID);
 	void DrawTypeSpecificPin(struct SPin& aPin, CNodeInstance* aNodeInstance);
+
+	void CreateNewDataNode();
+	void LoadDataNodesFromFile();
+
 	std::unordered_map<std::string, std::vector<CNodeInstance*>> myGraphs;
 	std::unordered_map<std::string, std::vector<int>> myGameObjectIDsMap;
 	std::vector<std::string> myKeys;
@@ -82,6 +87,11 @@ private:
 	std::stack<EditorCommand> myUndoCommands;
 	std::stack<EditorCommand> myRedoCommands;
 	ImVector<SEditorLinkInfo> myLinks;
+	std::vector<std::string> myInstantiableVariables;
+	//std::unordered_map<std::string, CNodeData*> myVariableNodeDataMap;
+	bool myIsEnteringNodeName = false;
+	bool myHasSetPosition = false;
+	std::string myNewVariableType;
 	int myNextLinkIdCounter = 100;
 	bool myLikeToSave = false;
 	bool myLikeToShowFlow = false;

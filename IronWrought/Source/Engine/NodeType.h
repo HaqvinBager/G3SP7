@@ -1,6 +1,8 @@
 #pragma once
 #include "NodeTypes.h"
 
+//class CNodeData;
+
 class UID
 {
 
@@ -116,7 +118,12 @@ class CNodeType
 public:
 	virtual void ClearNodeInstanceFromMap(class CNodeInstance* aTriggeringNodeInstance);
 	int DoEnter(class CNodeInstance* aTriggeringNodeInstance);
-	virtual std::string GetNodeName() { return "N/A"; }
+	std::string NodeName() { return myNodeName; }
+	std::string NodeDataKey() { return myNodeDataKey; }
+	void NodeName(std::string aNodeName) { myNodeName = aNodeName; }
+	void NodeDataKey(std::string aNodeDataKey) { myNodeDataKey = aNodeDataKey; }
+
+	//virtual void NodeData(CNodeData& aNodeData) { aNodeData; }
 
 	std::vector<SPin> GetPins();
 	virtual bool IsStartNode() { return false; }
@@ -149,6 +156,8 @@ protected:
 	virtual int OnEnter(class CNodeInstance* aTriggeringNodeInstance) = 0;
 	void GetDataOnPin(CNodeInstance* aTriggeringNodeInstance, unsigned int aPinIndex, SPin::EPinType& outType, void*& someData, size_t& outSize);
 	std::vector<SPin> myPins;
+	std::string myNodeName = "N/A";
+	std::string myNodeDataKey = "";
 };
 
 class CNodeTypeCollector
@@ -168,12 +177,24 @@ public:
 		return 	myTypeCounter; // 1:1 to nodetype enum
 	}
 	template <class T>
-	static void RegisterType()
+	static void RegisterType(std::string aNodeName)
 	{
 		myTypes[myTypeCounter] = new T;
 		myTypes[myTypeCounter]->myID = myTypeCounter;
+		myTypes[myTypeCounter]->NodeName(aNodeName);
 		myTypeCounter++;
 	}
+	template <class T>
+	static void RegisterDataType(std::string aNodeName, std::string aNodeDataKey)
+	{
+		myTypes[myTypeCounter] = new T;
+		myTypes[myTypeCounter]->myID = myTypeCounter;
+		myTypes[myTypeCounter]->NodeName(aNodeName);
+		myTypes[myTypeCounter]->NodeDataKey(aNodeDataKey);
+		myTypeCounter++;
+	}
+
+	static void RegisterNewDataType(std::string aNodeName, unsigned int aType);
 	static CNodeType* myTypes[128];
 	static unsigned short myTypeCounter;
 	static unsigned short myTypeCount;
