@@ -23,6 +23,8 @@ private:
 	static CJsonReader* ourInstance;
 
 public:
+	static bool IsValid(const rapidjson::Document& aDoc, const std::vector<std::string>& someMembers);
+
 	void Init();
 	const std::string& GetAssetPath(const int anAssetID) const;
 

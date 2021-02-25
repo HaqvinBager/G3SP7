@@ -6,8 +6,9 @@
 #include "CameraControllerComponent.h"
 #include "EnviromentLightComponent.h"
 #include "ModelComponent.h"
-#include <iostream>
 #include <PlayerControllerComponent.h>
+#include "JsonReader.h"
+#include <iostream>
 
 
 //std::string CSceneManager::npos = "";
@@ -57,7 +58,7 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneName)
 bool CSceneManager::AddGameObjects(CScene& aScene, const std::string& aJsonFileName)
 {
 	const auto& doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + aJsonFileName));
-	if (!IsValid(doc, { "Ids" }))
+	if (!CJsonReader::IsValid(doc, { "Ids" }))
 		return false;
 
 	const auto& idArray = doc.GetObjectW()["Ids"].GetArray();
@@ -76,7 +77,7 @@ void CSceneManager::SetTransforms(CScene& aScene, const std::string& aJsonFileNa
 {
 	const auto& doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + aJsonFileName));
 
-	if (IsValid(doc, { "transforms" }))
+	if (CJsonReader::IsValid(doc, { "transforms" }))
 		return;
 
 	const auto& transformArray = doc["transforms"].GetArray();
@@ -98,7 +99,7 @@ void CSceneManager::SetTransforms(CScene& aScene, const std::string& aJsonFileNa
 void CSceneManager::AddModelComponents(CScene& aScene, const std::string& aJsonFileName)
 {
 	const auto& doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + aJsonFileName));
-	if (IsValid(doc, { "modelLinks" }))
+	if (CJsonReader::IsValid(doc, { "modelLinks" }))
 		return;
 
 	const auto& modelArray = doc.GetObjectW()["modelLinks"].GetArray();
@@ -113,7 +114,7 @@ void CSceneManager::AddInstancedModelComponents(CScene& aScene, const std::strin
 {
 	const auto& doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + aJsonFileName));
 
-	if (!IsValid(doc, { "instancedModels" }))
+	if (!CJsonReader::IsValid(doc, { "instancedModels" }))
 		return;
 
 	const auto& instancedModelArray = doc.GetObjectW()["instancedModels"].GetArray();
@@ -275,24 +276,6 @@ void CSceneManager::AddInstancedModelComponents(CScene& aScene, const std::strin
 //
 //	return scene;
 //}
-
-
-bool CSceneManager::IsValid(const rapidjson::Document& aDoc, const std::vector<std::string>& someMembers)
-{
-
-	if (aDoc.HasParseError())
-		return false;
-
-	for (const auto& member : someMembers) {
-		if (!aDoc.HasMember(member.c_str()))
-			return false;
-	}
-
-	return true;
-}
-
-
-
 
 /*CScene* CSceneManager::CreateScene(std::vector<std::string> aJsonFile)
 {

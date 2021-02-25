@@ -1,6 +1,5 @@
 #pragma once
 #include "Scene.h"
-#include "JsonReader.h"
 
 class CSceneManager
 {
@@ -14,9 +13,6 @@ public:
 	//static CScene* CreateScene(std::string ajsonFile);//Temp
 
 private:
-	static bool IsValid(const rapidjson::Document& aDoc, const std::vector<std::string>& someMembers);
-
-
 	static bool AddGameObjects(CScene& aScene, const std::string& aJsonFileName);
 	static void SetTransforms(CScene& aScene, const std::string& aJsonFileName);
 	static void AddModelComponents(CScene& aScene, const std::string& aJsonFileName);
