@@ -105,6 +105,7 @@ public class Exporter
         ExportModel.Export(aScene);
         ExportInstancedModel.Export(aScene);
         ExportVertexPaint.ExportVertexPainting(aScene);
+        ExportBlueprints.ExportBluePrint(aScene);
         AssetDatabase.Refresh();      
     }
 
