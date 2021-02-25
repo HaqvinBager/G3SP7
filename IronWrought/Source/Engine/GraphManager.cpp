@@ -733,7 +733,7 @@ void CGraphManager::LoadDataNodesFromFile()
 	{
 		std::string path = "Imgui/NodeScripts/CustomDataNodes.json";
 		document = CJsonReader::Get()->LoadDocument(path);
-		if (document.HasMember("Custom Data"))
+		if (CJsonReader::IsValid(document, {"Custom Data"}))
 		{
 			auto nodeInstances = document["Custom Data"].GetArray();
 
