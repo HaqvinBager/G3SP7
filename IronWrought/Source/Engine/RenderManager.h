@@ -63,6 +63,7 @@ private:
 	CFullscreenTexture myVignetteTexture;
 	CFullscreenTexture myDeferredTexture;
 	CGBuffer myGBuffer;
+	CGBuffer myGBufferCopy;
 
 	DirectX::SimpleMath::Vector4 myClearColor;
 
