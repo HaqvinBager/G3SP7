@@ -101,7 +101,12 @@ void CSceneManager::AddModelComponents(CScene& aScene, const std::vector<std::st
 		return;
 
 	const auto& doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + jsonPath));
+	if (!doc.HasMember("modelLinks"))
+	{
+		return;
+	}
 	const auto& modelArray = doc.GetObjectW()["modelLinks"].GetArray();
+	
 	for (const auto& m : modelArray) {
 		int id = m["instanceID"].GetInt();
 		CGameObject* gameObject = aScene.FindObjectWithID(id);
