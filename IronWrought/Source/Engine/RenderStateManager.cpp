@@ -4,10 +4,10 @@
 CRenderStateManager::CRenderStateManager()
 {
     myContext = nullptr;
-    myBlendStates = {};
-    myDepthStencilStates = {};
-    myRasterizerStates = {};
-    mySamplerStates = {};
+    myBlendStates;
+    myDepthStencilStates;
+    myRasterizerStates;
+    mySamplerStates;
 }
 
 CRenderStateManager::~CRenderStateManager()
@@ -20,13 +20,32 @@ bool CRenderStateManager::Init(CDirectXFramework* aFramework)
     myContext = aFramework->GetContext();
     ID3D11Device* device = aFramework->GetDevice();
 
-    ENGINE_ERROR_BOOL_MESSAGE(myContext, "Could not bind context.");
-    ENGINE_ERROR_BOOL_MESSAGE(device, "Device is null.");
+    if (!myContext) {
+        return false;
+    }
+
+    if (!device) {
+        return false;
+    }
+
+    if (!CreateBlendStates(device)) {
+        return false;
+    }
+
+    if (!CreateDepthStencilStates(device))
+    {
+        return false;
+    }
+
+    if (!CreateRasterizerStates(device)) 
+    {
+        return false;
+    }
     
-    ENGINE_ERROR_BOOL_MESSAGE(CreateBlendStates(device), "Could not create Blend States.");
-    ENGINE_ERROR_BOOL_MESSAGE(CreateDepthStencilStates(device), "Could not create Depth Stencil States.");
-    ENGINE_ERROR_BOOL_MESSAGE(CreateRasterizerStates(device), "Could not create Rasterizer States.");
-    ENGINE_ERROR_BOOL_MESSAGE(CreateSamplerStates(device), "Could not create Sampler States.");
+    if (!CreateSamplerStates(device))
+    {
+        return false;
+    }
 
     return true;
 }

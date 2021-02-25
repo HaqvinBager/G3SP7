@@ -30,7 +30,6 @@ public:
 	void Update();
 
 	void ToggleShouldRenderGraph();
-	bool ToggleShouldRunScripts();
 	bool ShouldRenderGraph() { return myShouldRenderGraph; }
 private:
 	ImTextureID HeaderTextureID();

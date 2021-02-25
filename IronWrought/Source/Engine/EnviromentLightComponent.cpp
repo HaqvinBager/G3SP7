@@ -17,7 +17,6 @@ CEnviromentLightComponent::CEnviromentLightComponent(CGameObject& aParent, Direc
 	//not sure if this work! We want to set the direction of this transform!
 	aParent.myTransform->Transform().Forward(aDirection);
 	myEnvironmentLight->SetDirection(aParent.myTransform->Transform().Forward());
-	myEnvironmentLight->SetPosition({ 0.0f, 2.0f, 0.0f });
 }
 
 CEnviromentLightComponent::~CEnviromentLightComponent()

@@ -22,9 +22,9 @@
 
 unsigned int CRenderManager::myNumberOfDrawCallsThisFrame = 0;
 
-CRenderManager::CRenderManager()
+CRenderManager::CRenderManager() /*: myScene(*CScene::GetInstance())*/
 	: myDoFullRender(true)
-	, myClearColor(0.5f, 0.5f, 0.5f, 1.0f)
+	, myClearColor(0.8f, 0.5f, 0.5f, 1.0f)
 {
 }
 
@@ -43,16 +43,14 @@ bool CRenderManager::Init(CDirectXFramework* aFramework, CWindowHandler* aWindow
 	ENGINE_ERROR_BOOL_MESSAGE(myVFXRenderer.Init(aFramework), "Failed to Init VFX Renderer.");
 	ENGINE_ERROR_BOOL_MESSAGE(mySpriteRenderer.Init(aFramework), "Failed to Init Sprite Renderer.");
 	ENGINE_ERROR_BOOL_MESSAGE(myTextRenderer.Init(aFramework), "Failed to Init Text Renderer.");
-	ENGINE_ERROR_BOOL_MESSAGE(myShadowRenderer.Init(aFramework), "Failed to Init Shadow Renderer.");
-	ENGINE_ERROR_BOOL_MESSAGE(myDecalRenderer.Init(aFramework), "Failed to Init Decal Renderer.");
 
 	ID3D11Texture2D* backbufferTexture = aFramework->GetBackbufferTexture();
-	ENGINE_ERROR_BOOL_MESSAGE(backbufferTexture, "Backbuffer Texture is null.");
-
-	myBackbuffer			 = myFullscreenTextureFactory.CreateTexture(backbufferTexture);
-	myIntermediateDepth		 = myFullscreenTextureFactory.CreateDepth(aWindowHandler->GetResolution(), DXGI_FORMAT_R24G8_TYPELESS);
-	myEnvironmentShadowDepth = myFullscreenTextureFactory.CreateDepth(aWindowHandler->GetResolution(), DXGI_FORMAT_R32_TYPELESS);
-	myDepthCopy				 = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R32_FLOAT);
+	if (!backbufferTexture)
+	{
+		return false;
+	}
+	myBackbuffer = myFullscreenTextureFactory.CreateTexture(backbufferTexture);
+	myIntermediateDepth = myFullscreenTextureFactory.CreateDepth(aWindowHandler->GetResolution(), DXGI_FORMAT_D24_UNORM_S8_UINT);
 
 	myIntermediateTexture	= myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R8G8B8A8_UNORM);
 	myLuminanceTexture		= myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R8G8B8A8_UNORM);
@@ -69,23 +67,27 @@ bool CRenderManager::Init(CDirectXFramework* aFramework, CWindowHandler* aWindow
 
 bool CRenderManager::ReInit(CDirectXFramework* aFramework, CWindowHandler* aWindowHandler)
 {
-	ENGINE_ERROR_BOOL_MESSAGE(myRenderStateManager.Init(aFramework), "Failed to Init Render State Manager.");
+
+	if (!myRenderStateManager.Init(aFramework))
+	{
+		return false;
+	}
 
 	ID3D11Texture2D* backbufferTexture = aFramework->GetBackbufferTexture();
-	ENGINE_ERROR_BOOL_MESSAGE(backbufferTexture, "Backbuffer Texture is null.");
+	if (!backbufferTexture)
+	{
+		return false;
+	}
+	myBackbuffer = myFullscreenTextureFactory.CreateTexture(backbufferTexture);
+	myIntermediateDepth = myFullscreenTextureFactory.CreateDepth(aWindowHandler->GetResolution(), DXGI_FORMAT_D24_UNORM_S8_UINT);
 
-	myBackbuffer			 = myFullscreenTextureFactory.CreateTexture(backbufferTexture);
-	myIntermediateDepth		 = myFullscreenTextureFactory.CreateDepth(aWindowHandler->GetResolution(), DXGI_FORMAT_R24G8_TYPELESS);
-	myEnvironmentShadowDepth = myFullscreenTextureFactory.CreateDepth(aWindowHandler->GetResolution(), DXGI_FORMAT_R32_TYPELESS);
-	myDepthCopy				 = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R32_FLOAT);
-	
-	myIntermediateTexture	= myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R8G8B8A8_UNORM);
-	myLuminanceTexture		= myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R8G8B8A8_UNORM);
-	myHalfSizeTexture		= myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution() / 2.0f, DXGI_FORMAT_R8G8B8A8_UNORM);
-	myQuaterSizeTexture		= myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution() / 4.0f, DXGI_FORMAT_R8G8B8A8_UNORM);
-	myBlurTexture1			= myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R8G8B8A8_UNORM);
-	myBlurTexture2			= myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R8G8B8A8_UNORM);
-	myVignetteTexture		= myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R8G8B8A8_UNORM);
+	myIntermediateTexture = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R8G8B8A8_UNORM);
+	myLuminanceTexture = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R8G8B8A8_UNORM);
+	myHalfSizeTexture = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution() / 2.0f, DXGI_FORMAT_R8G8B8A8_UNORM);
+	myQuaterSizeTexture = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution() / 4.0f, DXGI_FORMAT_R8G8B8A8_UNORM);
+	myBlurTexture1 = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R8G8B8A8_UNORM);
+	myBlurTexture2 = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R8G8B8A8_UNORM);
+	myVignetteTexture = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R8G8B8A8_UNORM);
 	myDeferredTexture		= myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R32G32B32A32_FLOAT);
 	myGBuffer				= myFullscreenTextureFactory.CreateGBuffer(aWindowHandler->GetResolution());
 	
@@ -109,7 +111,6 @@ void CRenderManager::Render(CScene& aScene)
 	myBackbuffer.ClearTexture(myClearColor);
 	myIntermediateTexture.ClearTexture(myClearColor);
 	myIntermediateDepth.ClearDepth();
-	myEnvironmentShadowDepth.ClearDepth();
 	myGBuffer.ClearTextures(myClearColor);
 	myDeferredTexture.ClearTexture();
 
@@ -150,39 +151,21 @@ void CRenderManager::Render(CScene& aScene)
 		gameObjects.pop_back();
 	}
 
-	// GBuffer
 	myGBuffer.SetAsActiveTarget(&myIntermediateDepth);
 	myDeferredRenderer.GenerateGBuffer(maincamera, gameObjects, instancedGameObjects);
-	
-	// Shadows
-	myEnvironmentShadowDepth.SetAsDepthTarget();
-	myShadowRenderer.Render(environmentlight, gameObjects, instancedGameObjects);
-
-	// Decals
-	myDepthCopy.SetAsActiveTarget();
-	myIntermediateDepth.SetAsResourceOnSlot(0);
-	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_COPYDEPTH);
-
-	myRenderStateManager.SetDepthStencilState(CRenderStateManager::DepthStencilStates::DEPTHSTENCILSTATE_ONLYREAD);
-	myGBuffer.SetAsActiveTarget(&myIntermediateDepth);
-	myDepthCopy.SetAsResourceOnSlot(21);
-	myDecalRenderer.Render(maincamera, gameObjects);
-
-	// Lighting
 	myDeferredTexture.SetAsActiveTarget();
 	myGBuffer.SetAllAsResources();
 	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_ADDITIVEBLEND);
-	myEnvironmentShadowDepth.SetAsResourceOnSlot(22);
+
 	std::vector<CPointLight*> onlyPointLights;
 	onlyPointLights = aScene.CullPointLights(&maincamera->GameObject());
-
+	
 	myDeferredRenderer.Render(maincamera, environmentlight);
 	myDeferredRenderer.Render(maincamera, onlyPointLights);
 
 	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_DISABLE);
 	myIntermediateTexture.SetAsActiveTarget();
 	myDeferredTexture.SetAsResourceOnSlot(0);
-	//myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCRENSHADER_GAMMACORRECTION);// When testing gbuffer stuff with no bloom
 	if(myDoFullRender)
 		myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCRENSHADER_GAMMACORRECTION);
 	else
@@ -289,7 +272,7 @@ void CRenderManager::Render(CScene& aScene)
 	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_DISABLE);
 	myRenderStateManager.SetDepthStencilState(CRenderStateManager::DepthStencilStates::DEPTHSTENCILSTATE_DEFAULT);
 
-	// Hope this works! IT DOES :D
+	// Hope this works!
 	myDoFullRender ? RenderBloom() : RenderWithoutBloom();
 
 	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_ALPHABLEND);

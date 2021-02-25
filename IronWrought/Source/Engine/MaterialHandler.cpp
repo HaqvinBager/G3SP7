@@ -5,18 +5,16 @@
 #include "BinReader.h"
 #include "JsonReader.h"
 #include "ModelFactory.h"
-#include "GraphicsHelpers.h"
 #include <unordered_map>
-#include "FolderUtility.h"
 
 std::array<ID3D11ShaderResourceView*, 3> CMaterialHandler::RequestMaterial(const std::string& aMaterialName)
 {
 	if (myMaterials.find(aMaterialName) == myMaterials.end())
 	{
 		std::array<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>, 3> newTextures;
-		newTextures[0] = Graphics::GetShaderResourceView(myDevice, myMaterialPath + aMaterialName + "/" + aMaterialName + "_c.dds");
-		newTextures[1] = Graphics::GetShaderResourceView(myDevice, myMaterialPath + aMaterialName + "/" + aMaterialName + "_m.dds");
-		newTextures[2] = Graphics::GetShaderResourceView(myDevice, myMaterialPath + aMaterialName + "/" + aMaterialName + "_n.dds");
+		newTextures[0] = GetShaderResourceView(myDevice, myMaterialPath + aMaterialName + "/" + aMaterialName + "_c.dds");
+		newTextures[1] = GetShaderResourceView(myDevice, myMaterialPath + aMaterialName + "/" + aMaterialName + "_m.dds");
+		newTextures[2] = GetShaderResourceView(myDevice, myMaterialPath + aMaterialName + "/" + aMaterialName + "_n.dds");
 
 		myMaterials.emplace(aMaterialName, std::move(newTextures));
 		myMaterialReferences.emplace(aMaterialName, 0);
@@ -27,27 +25,6 @@ std::array<ID3D11ShaderResourceView*, 3> CMaterialHandler::RequestMaterial(const
 	textures[0] = myMaterials[aMaterialName][0].Get();
 	textures[1] = myMaterials[aMaterialName][1].Get();
 	textures[2] = myMaterials[aMaterialName][2].Get();
-	return textures;
-}
-
-std::array<ID3D11ShaderResourceView*, 3> CMaterialHandler::RequestDecal(const std::string& aDecalName)
-{
-	if (myMaterials.find(aDecalName) == myMaterials.end())
-	{
-		std::array<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>, 3> newTextures;
-		newTextures[0] = Graphics::TryGetShaderResourceView(myDevice, myDecalPath + aDecalName + "/" + aDecalName + "_c.dds");
-		newTextures[1] = Graphics::TryGetShaderResourceView(myDevice, myDecalPath + aDecalName + "/" + aDecalName + "_m.dds");
-		newTextures[2] = Graphics::TryGetShaderResourceView(myDevice, myDecalPath + aDecalName + "/" + aDecalName + "_n.dds");
-
-		myMaterials.emplace(aDecalName, std::move(newTextures));
-		myMaterialReferences.emplace(aDecalName, 0);
-	}
-
-	myMaterialReferences[aDecalName] += 1;
-	std::array<ID3D11ShaderResourceView*, 3> textures;
-	textures[0] = myMaterials[aDecalName][0].Get();
-	textures[1] = myMaterials[aDecalName][1].Get();
-	textures[2] = myMaterials[aDecalName][2].Get();
 	return textures;
 }
 
@@ -93,7 +70,7 @@ void CMaterialHandler::ReleaseMaterial(const std::string& aMaterialName)
 
 SVertexPaintData CMaterialHandler::RequestVertexColorID(int aGameObjectID, const std::string& aFbxModelPath)
 {
-	std::vector<std::string> jsonPaths = CFolderUtility::GetFileNamesInFolder(myVertexLinksPath, "PolybrushLinks_");
+	std::vector<std::string> jsonPaths = CJsonReader::GetFilePathsInFolder(myVertexLinksPath, "PolybrushLinks_");
 	SVertexPaintColorData colorData{ {}, {}, 0 };
 	std::vector<std::string> materialNames;
 	for (auto& jsonPath : jsonPaths)
@@ -111,7 +88,7 @@ SVertexPaintData CMaterialHandler::RequestVertexColorID(int aGameObjectID, const
 					{
 						if (gameObjectID.GetInt() == aGameObjectID)
 						{
-							colorData = CBinReader::LoadVertexColorData(ASSETPATH(linksArray[i]["colorsPath"].GetString()));
+							colorData = CBinReader::LoadVertexColorData(ASSETPATH + linksArray[i]["colorsPath"].GetString());
 
 							std::vector<Vector3>& fbxVertexPositions = CModelFactory::GetInstance()->GetVertexPositions(aFbxModelPath);					
 							std::unordered_map<Vector3, Vector3, CMaterialHandler::VectorHasher, VertexPositionComparer> vertexPositionToColorMap;
@@ -198,6 +175,7 @@ void CMaterialHandler::ReleaseVertexColors(unsigned int aVertexColorID)
 	}
 }
 
+
 bool CMaterialHandler::Init(CDirectXFramework* aFramwork)
 {
 	myDevice = aFramwork->GetDevice();
@@ -210,11 +188,40 @@ bool CMaterialHandler::Init(CDirectXFramework* aFramwork)
 	return true;
 }
 
+ID3D11ShaderResourceView* CMaterialHandler::GetShaderResourceView(ID3D11Device* aDevice, const std::string& aTexturePath)
+{
+	ID3D11ShaderResourceView* shaderResourceView;
+
+	wchar_t* widePath = new wchar_t[aTexturePath.length() + 1];
+	std::copy(aTexturePath.begin(), aTexturePath.end(), widePath);
+	widePath[aTexturePath.length()] = 0;
+
+	////==ENABLE FOR TEXTURE CHECKING==
+	//ENGINE_HR_MESSAGE(DirectX::CreateDDSTextureFromFile(aDevice, widePath, nullptr, &shaderResourceView), aTexturePath.append(" could not be found.").c_str());
+	////===============================
+
+	//==DISABLE FOR TEXTURE CHECKING==
+	HRESULT result;
+	result = DirectX::CreateDDSTextureFromFile(aDevice, widePath, nullptr, &shaderResourceView);
+	if (FAILED(result))
+	{
+		std::string errorTexturePath = aTexturePath.substr(aTexturePath.length() - 6);
+		errorTexturePath = ASSETPATH + "Assets/ErrorTextures/Checkboard_128x128" + errorTexturePath;
+
+		wchar_t* wideErrorPath = new wchar_t[errorTexturePath.length() + 1];
+		std::copy(errorTexturePath.begin(), errorTexturePath.end(), wideErrorPath);
+		wideErrorPath[errorTexturePath.length()] = 0;
+
+		DirectX::CreateDDSTextureFromFile(aDevice, wideErrorPath, nullptr, &shaderResourceView);
+		delete[] wideErrorPath;
+	}
+
+	delete[] widePath;
+	return shaderResourceView;
+}
+
 CMaterialHandler::CMaterialHandler()
 	: myDevice(nullptr)
-	, myMaterialPath(ASSETPATH("Assets/Graphics/Textures/Materials/"))
-	, myDecalPath(ASSETPATH("Assets/Graphics/Textures/Decals/"))
-	, myVertexLinksPath(ASSETPATH("Assets/Generated/"))
 {
 }
 

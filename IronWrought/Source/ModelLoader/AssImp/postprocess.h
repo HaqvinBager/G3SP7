@@ -2,7 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2019, assimp team
+Copyright (c) 2006-2020, assimp team
 
 
 All rights reserved.
@@ -47,7 +47,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef AI_POSTPROCESS_H_INC
 #define AI_POSTPROCESS_H_INC
 
-#include "types.h"
+#include <assimp/types.h>
+
+#ifdef __GNUC__
+#   pragma GCC system_header
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -316,6 +320,19 @@ enum aiPostProcessSteps
     */
     aiProcess_FixInfacingNormals = 0x2000,
 
+
+
+    // -------------------------------------------------------------------------
+    /** 
+     * This step generically populates aiBone->mArmature and aiBone->mNode generically
+     * The point of these is it saves you later having to calculate these elements
+     * This is useful when handling rest information or skin information
+     * If you have multiple armatures on your models we strongly recommend enabling this 
+     * Instead of writing your own multi-root, multi-armature lookups we have done the 
+     * hard work for you :)
+   */
+    aiProcess_PopulateArmatureData = 0x4000,
+
     // -------------------------------------------------------------------------
     /** <hr>This step splits meshes with more than one primitive type in
      *  homogeneous sub-meshes.
@@ -533,6 +550,8 @@ enum aiPostProcessSteps
     */
     aiProcess_Debone  = 0x4000000,
 
+
+
     // -------------------------------------------------------------------------
     /** <hr>This step will perform a global scale of the model.
     *
@@ -542,10 +561,9 @@ enum aiPostProcessSteps
     *  AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY from the global property table to configure this.
     *
     *  Use <tt>#AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY</tt> to setup the global scaling factor.
-    */
+    */ 
     aiProcess_GlobalScale = 0x8000000,
-//#define AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY 0.01f
-
+    #define AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY 0.01f
     // -------------------------------------------------------------------------
     /** <hr>A postprocessing step to embed of textures.
      *
@@ -598,6 +616,7 @@ enum aiPostProcessSteps
     aiProcess_MakeLeftHanded     | \
     aiProcess_FlipUVs            | \
     aiProcess_FlipWindingOrder   | \
+    aiProcess_GlobalScale        |  \
     0 )
 
 
@@ -622,6 +641,7 @@ enum aiPostProcessSteps
     aiProcess_Triangulate           |  \
     aiProcess_GenUVCoords           |  \
     aiProcess_SortByPType           |  \
+    aiProcess_GlobalScale           |  \
     0 )
 
  // ---------------------------------------------------------------------------------------
@@ -653,22 +673,6 @@ enum aiPostProcessSteps
     aiProcess_SortByPType                   |  \
     aiProcess_FindDegenerates               |  \
     aiProcess_FindInvalidData               |  \
-    aiProcess_GlobalScale                   |  \
-    0 )
-
-#define aiProcessPreset_TargetRealtime_Quality_DontJoinIdenticalVertices ( \
-    aiProcess_CalcTangentSpace              |  \
-    aiProcess_GenSmoothNormals              |  \
-    aiProcess_ImproveCacheLocality          |  \
-    aiProcess_LimitBoneWeights              |  \
-    aiProcess_RemoveRedundantMaterials      |  \
-    aiProcess_SplitLargeMeshes              |  \
-    aiProcess_Triangulate                   |  \
-    aiProcess_GenUVCoords                   |  \
-    aiProcess_SortByPType                   |  \
-    aiProcess_FindDegenerates               |  \
-    aiProcess_FindInvalidData               |  \
-    aiProcess_GlobalScale                   |  \
     0 )
 
  // ---------------------------------------------------------------------------------------
@@ -693,13 +697,23 @@ enum aiPostProcessSteps
     aiProcess_OptimizeMeshes                 |  \
     0 )
 
-#define aiProcessPreset_TargetRealtime_MaxQuality_DontJoinIdenticalVertices ( \
-    aiProcessPreset_TargetRealtime_Quality_DontJoinIdenticalVertices   |  \
+// VI HAR GJORT DEN HÄR
+#define aiProcessPreset_TargetRealtime_MaxQuality_DontJoinIdentical ( \
+    aiProcess_CalcTangentSpace               |  \
+    aiProcess_GenSmoothNormals               |  \
+    aiProcess_ImproveCacheLocality           |  \
+    aiProcess_LimitBoneWeights               |  \
+    aiProcess_RemoveRedundantMaterials       |  \
+    aiProcess_SplitLargeMeshes               |  \
+    aiProcess_Triangulate                    |  \
+    aiProcess_GenUVCoords                    |  \
+    aiProcess_SortByPType                    |  \
+    aiProcess_FindDegenerates                |  \
+    aiProcess_FindInvalidData                |  \
     aiProcess_FindInstances                  |  \
     aiProcess_ValidateDataStructure          |  \
     aiProcess_OptimizeMeshes                 |  \
     0 )
-
 
 #ifdef __cplusplus
 } // end of extern "C"

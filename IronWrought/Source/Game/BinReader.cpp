@@ -15,13 +15,7 @@ SVertexPaintColorData CBinReader::LoadVertexColorData(const std::string& aBinFil
 {
 	std::ifstream stream;
 	stream.open(aBinFilePath, std::ios::binary);
-	if (!stream.is_open()) {
-		ENGINE_BOOL_POPUP(stream.is_open(), "Failed to open Binary File: %s", aBinFilePath.c_str());
-		return SVertexPaintColorData{ };
-	}
-	
-
-
+	ENGINE_BOOL_POPUP(stream.is_open(), "Failed to open Binary File: %s", aBinFilePath.c_str());
 
 	std::string binaryData((std::istreambuf_iterator<char>(stream)), std::istreambuf_iterator<char>());
 	char* ptr = &binaryData[0];

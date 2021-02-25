@@ -226,6 +226,12 @@ std::string getBasePath(const std::string& path)
 	return (std::string::npos == pos) ? "" : path.substr(0, pos + 1);
 }
 
+GLboolean abortGLInit(const char* abortMessage)
+{
+	MessageBoxA(NULL, abortMessage, "ERROR", MB_OK | MB_ICONEXCLAMATION);
+	exit(-61);									// quit and return False
+}
+
 void logInfo(const std::string& /*logString*/)
 {
 	// Will add message to File with "info" Tag

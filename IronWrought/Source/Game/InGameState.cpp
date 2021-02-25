@@ -11,7 +11,6 @@
 #include "InstancedModelComponent.h"
 #include "RigidBodyComponent.h"
 #include "ModelComponent.h"
-#include "DecalComponent.h"
 
 #include "EnvironmentLight.h"
 #include "Timer.h"
@@ -47,11 +46,17 @@ void CInGameState::Awake(){}
 #include "PlayerControllerComponent.h"
 void CInGameState::Start()
 {
-	CJsonReader::Get()->Init();
-	CScene* scene = CSceneManager::CreateEmpty();
+	CScene* scene = new CScene();
+	std::vector<std::string> scenePaths = CFolderUtility::GetFilePathsInFolder(ASSETPATH + "Assets\\Generated\\", ".json");
+	CMainSingleton::ImguiManager().LevelsToSelectFrom(scenePaths);
+	scene = CSceneManager::CreateScene(scenePaths[0].c_str());
+
 	scene->AddPXScene(CEngine::GetInstance()->GetPhysx().CreatePXScene());
+	
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);
+
+	
 
 	myExitLevel = false;
 
@@ -105,6 +110,8 @@ void CInGameState::Update()
 	{
 		myStateStack.PopTopAndPush(CStateStack::EState::InGame);
 	}
+
+	
 }
 
 void CInGameState::ReceiveEvent(const EInputEvent aEvent)
@@ -135,117 +142,122 @@ void CInGameState::Receive(const SMessage& /*aMessage*/)
 }
 
 
-
-void TEMP_DeferredRenderingTests(CScene* scene)
-{
-	CGameObject* chest = new CGameObject(1337);
-	chest->AddComponent<CModelComponent>(*chest, std::string(ASSETPATH("Assets/Graphics/Exempel_Modeller/Wall/Wall.fbx")));
-	chest->GetComponent<CTransformComponent>()->Position({5.0f,0.0f,5.0f});
-	chest->myTransform->Rotation({ 0.0f,180.0f,0.0f });
-
-	CGameObject* chest55 = new CGameObject(123123123);
-	chest55->AddComponent<CModelComponent>(*chest55, std::string(ASSETPATH("Assets/Graphics/Exempel_Modeller/Wall/Wall.fbx")));
-	chest55->GetComponent<CTransformComponent>()->Position({8.0f,0.0f,5.0f});
-	chest55->myTransform->Rotation({ 0.0f,0.0f,0.0f });
-
-	CGameObject* chest4 = new CGameObject(132342347);
-	chest4->AddComponent<CModelComponent>(*chest4, std::string(ASSETPATH("Assets/Graphics/Exempel_Modeller/Wall/Wall.fbx")));
-	chest4->GetComponent<CTransformComponent>()->Position({-1.0f,0.0f,5.0f});
-	//chest4->myTransform->Scale({ 100.0f,100.0f,100.0f });
-	chest4->myTransform->Rotation({ 0.0f,90.0f,0.0f });
-
-	CGameObject* chest44 = new CGameObject(132342347);
-	chest44->AddComponent<CModelComponent>(*chest44, std::string(ASSETPATH("Assets/Graphics/Exempel_Modeller/Wall/Wall.fbx")));
-	chest44->GetComponent<CTransformComponent>()->Position({2.0f,-1.0f,-20.0f});
-	chest44->myTransform->Rotation({ 90.0f,0.0f,0.0f });
-	chest44->myTransform->Scale({ 50.0f,50.0f,50.0f });
-
-	scene->AddInstance(chest);
-	scene->AddInstance(chest4);
-	scene->AddInstance(chest44);
-	scene->AddInstance(chest55);
-	//scene->AddInstance(chest2);
-	//scene->AddInstance(chest3);
-
-	constexpr int numPointLights = 2;
-	std::vector<CGameObject*> pointLights;
-	float x = -2.0f;
-	float y = 1.0f;
-	for (int i = 0; i < numPointLights; ++i)
-	{
-		if ((i + 1) % 10 == 0)
-		{
-			x = -2.0f;
-			y += 1.0f;
-		}
-		x -= 1.0f;
-
-		CGameObject* pl = new CGameObject(1789 + i);
-		pl->AddComponent<CPointLightComponent>(*pl, 15.f, SM::Vector3{ 1,1,1 }, 10.f);
-		pl->myTransform->Position({ x, y, -3.0f });
-
-		int thirdRange = numPointLights / 3;
-		float r = (i < thirdRange ? 1.0f : 0.0f);
-		float g = (i > thirdRange && i < thirdRange * 2 ? 1.0f : 0.0f);
-		float b = (i > thirdRange * 2 && i < thirdRange * 3 ? 1.0f : 0.0f);
-		pl->GetComponent<CPointLightComponent>()->GetPointLight()->SetColor({ r,g,b });
-		pl->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ x, y, -3.0f });
-
-		scene->AddInstance(pl->GetComponent<CPointLightComponent>()->GetPointLight());
-		scene->AddInstance(pl);
-	}
-	for (int i = 0; i < 5; ++i)
-	{
-		CGameObject* pl = new CGameObject(9999 + i);
-		pl->AddComponent<CPointLightComponent>(*pl, 10.f, SM::Vector3{ 1,1,1 }, 10.f);
-		pointLights.emplace_back(pl);
-		pl->myTransform->Position({ 0xDEAD, 0xDEAD, 0xDEAD });
-
-	}
-	pointLights[0]->myTransform->Position({ 6.0f, 0.0f, -10.0f });
-	pointLights[0]->GetComponent<CPointLightComponent>()->GetPointLight()->SetColor({ 0.0f,1.0f,0.0f });
-	pointLights[0]->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ 4.0f,0.0f,-3.0f });
-
-	pointLights[1]->myTransform->Position({ 4.0f, 1.0f, -10.0f });
-	pointLights[1]->GetComponent<CPointLightComponent>()->GetPointLight()->SetColor({ 1.0f,0.0f,0.0f });
-	pointLights[1]->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ 5.0f,2.0f,-1.0f });
-
-	pointLights[2]->myTransform->Position({ 7.0f, 2.0f, -10.0f });
-	pointLights[2]->GetComponent<CPointLightComponent>()->GetPointLight()->SetColor({ 0.0f,0.0f,1.0f });
-	pointLights[2]->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ 4.0f,-1.0f,-2.0f });
-
-	pointLights[3]->myTransform->Position({ 6.0f, 0.0f, -10.0f });
-	pointLights[3]->GetComponent<CPointLightComponent>()->GetPointLight()->SetColor({ 0.0f,0.5f,1.0f });
-	pointLights[3]->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ 4.0f,0.0f,-2.0f });
-
-	pointLights[4]->myTransform->Position({ 10.0f, 2.0f, -10.0f });
-	pointLights[4]->GetComponent<CPointLightComponent>()->GetPointLight()->SetColor({ 0.5f,0.0f,1.0f });
-	pointLights[4]->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ 5.0f,-2.0f,-2.0f });
-
-	scene->AddInstance(pointLights[0]->GetComponent<CPointLightComponent>()->GetPointLight());
-	scene->AddInstance(pointLights[1]->GetComponent<CPointLightComponent>()->GetPointLight());
-	scene->AddInstance(pointLights[2]->GetComponent<CPointLightComponent>()->GetPointLight());
-	scene->AddInstance(pointLights[3]->GetComponent<CPointLightComponent>()->GetPointLight());
-	scene->AddInstance(pointLights[4]->GetComponent<CPointLightComponent>()->GetPointLight());
-}
-
-void CInGameState::TEMP_DecalTests(CScene* aScene)
-{
-	CGameObject* decal = new CGameObject(20000);
-	decal->AddComponent<CDecalComponent>(*decal, "Alpha");
-	decal->GetComponent<CTransformComponent>()->Position({ 29.0f,2.0f, 0.0f });
-	//decal->myTransform->Rotation({ 90.0f, 0.0f, 0.0f });
-	//decal->GetComponent<CTransformComponent>()->Position({ 33.0f,2.0f, 25.5f });
-	//decal->GetComponent<CTransformComponent>()->Position({ 14.0f, 1.0f, 20.0f });
-	//decal->myTransform->Rotation({ 0.0f, 0.0f, 0.0f });
-	//decal->myTransform->Scale({ 2.0f, 2.0f, 1.0f });
-	myDecal = decal;
-	aScene->AddInstance(decal);
-
-	//CGameObject* decal2 = new CGameObject(20001);
-	//decal2->AddComponent<CDecalComponent>(*decal2, "Alpha");
-	//decal2->GetComponent<CTransformComponent>()->Position({ 12.0f, 1.5f, 20.0f });
-	//decal2->myTransform->Rotation({ 0.0f, 45.0f, 0.0f });
-	//decal2->myTransform->Scale({ 1.0f, 1.0f, 1.0f });
-	//aScene->AddInstance(decal2);
-}
+//
+//void TEMP_DeferredRenderingTests(CScene* scene)
+//{
+//	CGameObject* chest = new CGameObject(1337);
+//	chest->AddComponent<CModelComponent>(*chest, std::string(ASSETPATH + "Assets/Graphics/Exempel_Modeller/Wall/Wall.fbx"));
+//	chest->GetComponent<CTransformComponent>()->Position({4.0f,0.0f,0.0f});
+//
+//	CGameObject* chest2 = new CGameObject(1338);
+//	chest2->AddComponent<CModelComponent>(*chest2, std::string(ASSETPATH + "Assets/Graphics/Exempel_Modeller/Wall/Wall.fbx"));
+//	chest2->GetComponent<CTransformComponent>()->Position({5.0f,-2.0f,0.0f});
+//
+//	//CGameObject* chest3 = new CGameObject(1339);
+//	//chest3->AddComponent<CModelComponent>(*chest3, std::string(ASSETPATH + "Assets/Graphics/Exempel_Modeller/Chest/Particle_Chest.fbx"));
+//	//chest3->GetComponent<CTransformComponent>()->Position({6.0f,2.0f,0.0f});
+//
+//	scene->AddInstance(chest);
+//	scene->AddInstance(chest2);
+//	//scene->AddInstance(chest3);
+//
+//	constexpr int numPointLights = 1;
+//	std::vector<CGameObject*> pointLights;
+//	float x = -2.0f;
+//	float y = 1.0f;
+//	for (int i = 0; i < numPointLights; ++i)
+//	{
+//		if ((i + 1) % 10 == 0)
+//		{
+//			x = -2.0f;
+//			y += 1.0f;
+//		}
+//		x -= 1.0f;
+//
+//		CGameObject* pl = new CGameObject(1789 + i);
+//		pl->AddComponent<CPointLightComponent>(*pl, 15.f, SM::Vector3{ 1,1,1 }, 10.f);
+//		pl->myTransform->Position({ x, y, -3.0f });
+//
+//		int thirdRange = numPointLights / 3;
+//		float r = (i < thirdRange ? 1.0f : 0.0f);
+//		float g = (i > thirdRange && i < thirdRange * 2 ? 1.0f : 0.0f);
+//		float b = (i > thirdRange * 2 && i < thirdRange * 3 ? 1.0f : 0.0f);
+//		pl->GetComponent<CPointLightComponent>()->GetPointLight()->SetColor({ r,g,b });
+//		pl->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ x, y, -3.0f });
+//
+//		scene->AddInstance(pl->GetComponent<CPointLightComponent>()->GetPointLight());
+//		scene->AddInstance(pl);
+//	}
+//	for (int i = 0; i < 5; ++i)
+//	{
+//		CGameObject* pl = new CGameObject(9999 + i);
+//		pl->AddComponent<CPointLightComponent>(*pl, 10.f, SM::Vector3{ 1,1,1 }, 10.f);
+//		pointLights.emplace_back(pl);
+//		pl->myTransform->Position({ 0xDEAD, 0xDEAD, 0xDEAD });
+//
+//	}
+//	pointLights[0]->myTransform->Position({ 6.0f, 0.0f, 0.0f });
+//	pointLights[0]->GetComponent<CPointLightComponent>()->GetPointLight()->SetColor({ 0.0f,1.0f,0.0f });
+//	pointLights[0]->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ 4.0f,0.0f,-3.0f });
+//
+//	pointLights[1]->myTransform->Position({ 4.0f, 1.0f, 0.0f });
+//	pointLights[1]->GetComponent<CPointLightComponent>()->GetPointLight()->SetColor({ 1.0f,0.0f,0.0f });
+//	pointLights[1]->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ 5.0f,2.0f,-1.0f });
+//
+//	pointLights[2]->myTransform->Position({ 7.0f, 2.0f, 0.0f });
+//	pointLights[2]->GetComponent<CPointLightComponent>()->GetPointLight()->SetColor({ 0.0f,0.0f,1.0f });
+//	pointLights[2]->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ 4.0f,-1.0f,-2.0f });
+//
+//	pointLights[3]->myTransform->Position({ 6.0f, 0.0f, 0.0f });
+//	pointLights[3]->GetComponent<CPointLightComponent>()->GetPointLight()->SetColor({ 0.0f,0.5f,1.0f });
+//	pointLights[3]->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ 4.0f,0.0f,-2.0f });
+//
+//	pointLights[4]->myTransform->Position({ 10.0f, 2.0f, 0.0f });
+//	pointLights[4]->GetComponent<CPointLightComponent>()->GetPointLight()->SetColor({ 0.5f,0.0f,1.0f });
+//	pointLights[4]->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ 5.0f,-2.0f,-2.0f });
+//
+//	scene->AddInstance(pointLights[0]->GetComponent<CPointLightComponent>()->GetPointLight());
+//	scene->AddInstance(pointLights[1]->GetComponent<CPointLightComponent>()->GetPointLight());
+//	scene->AddInstance(pointLights[2]->GetComponent<CPointLightComponent>()->GetPointLight());
+//	scene->AddInstance(pointLights[3]->GetComponent<CPointLightComponent>()->GetPointLight());
+//	scene->AddInstance(pointLights[4]->GetComponent<CPointLightComponent>()->GetPointLight());
+//
+//	//CGameObject* dn = new CGameObject(1338);
+//	//dn->AddComponent<CModelComponent>(*dn, ASSETPATH + "Assets/Graphics/Exempel_Modeller/DetailNormals/Tufted_Leather/tufted_leather_dn.fbx");
+//	//dn->GetComponent<CTransformComponent>()->Position({7.0f,0.0f,0.0f});
+//	//dn->GetComponent<CTransformComponent>()->Scale(100.0f);
+//
+//	//CGameObject* dn4 = new CGameObject(1339);
+//	//dn4->AddComponent<CModelComponent>(*dn4, ASSETPATH + "Assets/Graphics/Exempel_Modeller/DetailNormals/4DN/4DNs_dn.fbx");
+//	//dn4->GetComponent<CTransformComponent>()->Position({8.0f,0.0f,0.0f});
+//	//dn4->GetComponent<CTransformComponent>()->Scale(100.0f);
+//
+//	//scene->AddInstance(dn);
+//	//scene->AddInstance(dn4);
+//
+//	constexpr int instancedCount = 100;
+//	std::vector<SM::Matrix> transforms(instancedCount);
+//	x = 0.0f;
+//	y = -10.0f;
+//	for (int i = 0; i < instancedCount; ++i)
+//	{
+//		x -= 3.0f;
+//		if ((i + 1) % 10 == 0)
+//		{
+//			x = -3.0f;
+//			y += 3.0f;
+//		}
+//
+//		SM::Matrix transform;
+//		transforms[i] = transform;
+//		transforms[i] *= SM::Matrix::CreateScale(0.01f);
+//		transforms[i].Translation({ x, y, 0.0f });
+//	}
+//	CGameObject* instancedGameObject = new CGameObject(999);
+//	instancedGameObject->AddComponent<CInstancedModelComponent>(*instancedGameObject
+//																, std::string(ASSETPATH + "Assets/Graphics/Exempel_Modeller/Wall/Wall.fbx")
+//																//, "Assets/Graphics/Exempel_Modeller/DetailNormals/4DN/4DNs_dn.fbx"
+//																, transforms
+//																, false);
+//	scene->AddInstance(instancedGameObject);
+//}

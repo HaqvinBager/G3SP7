@@ -1,14 +1,13 @@
 #include "stdafx.h"
 #include "JsonReader.h"
-#include <filesystem>
-
-namespace fs = std::filesystem;
 
 CJsonReader* CJsonReader::ourInstance = nullptr;
+
 CJsonReader* CJsonReader::Get()
 {
 	if (ourInstance == nullptr)
 		ourInstance = new CJsonReader();
+
 	return ourInstance;
 }
 
@@ -23,31 +22,24 @@ rapidjson::Document CJsonReader::LoadDocument(const std::string& json_path)
 	return document;
 }
 
-bool CJsonReader::IsValid(const rapidjson::Document& aDoc, const std::vector<std::string>& someMembers)
+std::vector<std::string> CJsonReader::GetFilePathsInFolder(const std::string& aFolder, const std::string& aPrefix)
 {
-	if (aDoc.HasParseError())
-		return false;
+	std::vector<std::string> filePaths;
+	for (const auto& file : std::filesystem::directory_iterator(aFolder))
+	{
+		if (file.path().extension().string() == ".meta")
+			continue;
 
-	for (const auto& member : someMembers) {
-		if (!aDoc.HasMember(member.c_str()))
-			return false;
+		if (aPrefix.size() > 0) {
+			if (file.path().filename().string().find(aPrefix) != std::string::npos) {
+				filePaths.emplace_back(file.path().filename().string());
+			}
+		} else {
+			filePaths.emplace_back(file.path().filename().string());
+
+		}
+
 	}
 
-	return true;
-}
-
-void CJsonReader::Init()
-{
-	const auto& doc = LoadDocument(ASSETPATH("Assets/Generated/Resource_Assets.json"));
-	if (!IsValid(doc, { "models" }))
-		return;
-
-	for (const auto& model : doc.GetObjectW()["models"].GetArray()) {
-		myModelAssetMap[model["id"].GetInt()] = model["path"].GetString();
-	}
-}
-
-const std::string& CJsonReader::GetAssetPath(const int anAssetID) const
-{
-	return myModelAssetMap.at(anAssetID);
+	return filePaths;
 }

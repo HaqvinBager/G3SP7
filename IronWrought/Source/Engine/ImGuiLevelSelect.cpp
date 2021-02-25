@@ -4,7 +4,6 @@
 #include "JsonReader.h"
 #include "SceneManager.h"
 #include "Engine.h"
-#include "FolderUtility.h"
 
 CImGuiLevelSelect::CImGuiLevelSelect()
 {
@@ -16,7 +15,7 @@ CImGuiLevelSelect::~CImGuiLevelSelect()
 
 void CImGuiLevelSelect::RenderWindow()
 {
-    std::vector<std::string> files = CFolderUtility::GetFileNamesInFolder(ASSETPATH("Assets/Generated/"), ".json");
+    std::vector<std::string> files = CJsonReader::GetFilePathsInFolder(ASSETPATH + "Assets/Generated");
 	ImGui::Begin("LevelSelect");
     if (ImGui::TreeNode("Selection State: Single Selection"))
     {

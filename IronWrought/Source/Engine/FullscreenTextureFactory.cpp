@@ -4,20 +4,20 @@
 #include "DirectXFramework.h"
 #include "GBuffer.h"
 
-CFullscreenTextureFactory::CFullscreenTextureFactory() : myFramework(nullptr) 
-{}
+CFullscreenTextureFactory::CFullscreenTextureFactory() : myFramework(nullptr) {
+}
 
-CFullscreenTextureFactory::~CFullscreenTextureFactory() 
-{}
+CFullscreenTextureFactory::~CFullscreenTextureFactory() {
+}
 
-bool CFullscreenTextureFactory::Init(CDirectXFramework* aFramework) 
-{
+bool CFullscreenTextureFactory::Init(CDirectXFramework* aFramework) {
 	myFramework = aFramework;
 	return true;
 }
 
-CFullscreenTexture CFullscreenTextureFactory::CreateTexture(SM::Vector2 aSize, DXGI_FORMAT aFormat) 
-{
+CFullscreenTexture CFullscreenTextureFactory::CreateTexture(SM::Vector2 aSize, DXGI_FORMAT aFormat) {
+	HRESULT result;
+
 	D3D11_TEXTURE2D_DESC textureDesc = { 0 };
 	textureDesc.Width = static_cast<unsigned int>(aSize.x);
 	textureDesc.Height = static_cast<unsigned int>(aSize.y);
@@ -32,22 +32,32 @@ CFullscreenTexture CFullscreenTextureFactory::CreateTexture(SM::Vector2 aSize, D
 	textureDesc.MiscFlags = 0;
 
 	ID3D11Texture2D* texture;
-	ENGINE_HR_MESSAGE(myFramework->GetDevice()->CreateTexture2D(&textureDesc, nullptr, &texture), "Could not create Fullscreen Texture2D");
+	result = myFramework->GetDevice()->CreateTexture2D(&textureDesc, nullptr, &texture);
+	if (FAILED(result)) {
+		//return;
+	}
 
 	CFullscreenTexture returnTexture;
 	returnTexture = CreateTexture(texture);
 
 	ID3D11ShaderResourceView* shaderResource;
-	ENGINE_HR_MESSAGE(myFramework->GetDevice()->CreateShaderResourceView(texture, nullptr, &shaderResource), "Could not create Fullscreen Shader Resource View.");
+	result = myFramework->GetDevice()->CreateShaderResourceView(texture, nullptr, &shaderResource);
+	if (FAILED(result)) {
+		//return;
+	}
 
 	returnTexture.myShaderResource = shaderResource;
 	return returnTexture;
 }
 
-CFullscreenTexture CFullscreenTextureFactory::CreateTexture(ID3D11Texture2D* aTexture) 
-{
+CFullscreenTexture CFullscreenTextureFactory::CreateTexture(ID3D11Texture2D* aTexture) {
+	HRESULT result;
+
 	ID3D11RenderTargetView* renderTarget;
-	ENGINE_HR_MESSAGE(myFramework->GetDevice()->CreateRenderTargetView(aTexture, nullptr, &renderTarget), "Could not create Fullcreen Render Target View.");
+	result = myFramework->GetDevice()->CreateRenderTargetView(aTexture, nullptr, &renderTarget);
+	if (FAILED(result)) {
+		//return;
+	}
 
 	D3D11_VIEWPORT* viewport = nullptr;
 	if (aTexture) {
@@ -64,10 +74,8 @@ CFullscreenTexture CFullscreenTextureFactory::CreateTexture(ID3D11Texture2D* aTe
 	return returnTexture;
 }
 
-CFullscreenTexture CFullscreenTextureFactory::CreateDepth(SM::Vector2 aSize, DXGI_FORMAT aFormat) 
-{	
-	DXGI_FORMAT stencilViewFormat = DXGI_FORMAT_UNKNOWN;
-	DXGI_FORMAT shaderResourceViewFormat = DXGI_FORMAT_UNKNOWN;
+CFullscreenTexture CFullscreenTextureFactory::CreateDepth(SM::Vector2 aSize, DXGI_FORMAT aFormat) {
+	HRESULT result;
 
 	D3D11_TEXTURE2D_DESC textureDesc = { 0 };
 	textureDesc.Width = static_cast<unsigned int>(aSize.x);
@@ -114,14 +122,14 @@ CGBuffer CFullscreenTextureFactory::CreateGBuffer(DirectX::SimpleMath::Vector2 a
 {
 	std::array<DXGI_FORMAT, static_cast<size_t>(CGBuffer::EGBufferTextures::COUNT)> textureFormats =
 	{
+		DXGI_FORMAT_R32G32B32A32_FLOAT,
 		DXGI_FORMAT_R8G8B8A8_UNORM,
-		//DXGI_FORMAT_R16G16B16A16_SNORM,
-		//DXGI_FORMAT_R16G16B16A16_SNORM,
 		DXGI_FORMAT_R16G16B16A16_SNORM,
-		DXGI_FORMAT_R10G10B10A2_UNORM,
-		//DXGI_FORMAT_R10G10B10A2_SNORM,
-		//DXGI_FORMAT_R10G10B10A2_SNORM,
-		DXGI_FORMAT_R8G8B8A8_UNORM,
+		DXGI_FORMAT_R16G16B16A16_SNORM,
+		//DXGI_FORMAT_R8_UNORM,
+		//DXGI_FORMAT_R8_UNORM,
+		//DXGI_FORMAT_R8_UNORM,
+		//DXGI_FORMAT_R8_UNORM,
 	};
 
 	//Creating textures, rendertargets, shaderresources and a viewport

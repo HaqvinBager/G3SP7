@@ -19,9 +19,9 @@
 
 // Change to your path
 #ifdef _DEBUG
-#pragma comment(lib, "assimp501-vc143-mtd.lib")
+#pragma comment(lib, "assimp-vc142-mtd.lib")
 #else
-#pragma comment (lib, "assimp501-vc143-mt.lib")
+#pragma comment (lib, "assimp-vc142-mt.lib")
 #endif
 
 #define TEXTURE_SET_0 0
@@ -316,7 +316,7 @@ void* CFBXLoaderCustom::LoadModelInternal(CLoaderModel* someInput)
 	using namespace ModelExceptionTools;
 	if (IsDestructibleModel(model->myModelPath))
 	{
-		//scene = aiImportFile(model->myModelPath.c_str(), aiProcessPreset_TargetRealtime_MaxQuality_DontJoinIdentical | aiProcess_ConvertToLeftHanded);
+		scene = aiImportFile(model->myModelPath.c_str(), aiProcessPreset_TargetRealtime_MaxQuality_DontJoinIdentical | aiProcess_ConvertToLeftHanded);
 	}
 	else
 	{
@@ -325,7 +325,7 @@ void* CFBXLoaderCustom::LoadModelInternal(CLoaderModel* someInput)
 	
 	//aiSetImportPropertyFloat(aiprops, AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, GlobalScale);
 
-	//OutputDebugStringA(model->myModelPath.c_str());
+	OutputDebugStringA(model->myModelPath.c_str());
 
 	if (!scene)
 	{

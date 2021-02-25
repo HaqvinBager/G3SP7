@@ -1,6 +1,7 @@
 #include "assimp/scene.h"
 #include "assimp/DefaultLogger.hpp"
 #include "WinInclude.h"
+#include <GL/gl.h>
 
 typedef unsigned int uint;
 
@@ -32,6 +33,7 @@ void ShortMulM4(aiVector3D& out, const aiMatrix4x4& m, const aiVector3D& in);
 
 long long GetCurrentTimeMillis();
 std::string getBasePath(const std::string& path);
+GLboolean abortGLInit(const char* abortMessage);
 
 void createAILogger();
 void destroyAILogger();
