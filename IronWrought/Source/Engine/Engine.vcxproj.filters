@@ -676,6 +676,7 @@
     <ClCompile Include="NodeTypeStartSetCustom.cpp">
       <Filter>Imgui\Node Editor\Nodes\Start</Filter>
     </ClCompile>
+    <ClCompile Include="VFXSystemComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1246,6 +1247,7 @@
     <ClInclude Include="NodeTypeStartSetCustom.h">
       <Filter>Imgui\Node Editor\Nodes\Start</Filter>
     </ClInclude>
+    <ClInclude Include="VFXSystemComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">

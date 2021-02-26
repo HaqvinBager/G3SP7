@@ -352,6 +352,7 @@
     <ClInclude Include="VFXFactory.h" />
     <ClInclude Include="VFXInstance.h" />
     <ClInclude Include="VFXRenderer.h" />
+    <ClInclude Include="VFXSystemComponent.h" />
     <ClInclude Include="Widgets.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="WindowHandler.h" />
@@ -522,6 +523,7 @@
     <ClCompile Include="VFXFactory.cpp" />
     <ClCompile Include="VFXInstance.cpp" />
     <ClCompile Include="VFXRenderer.cpp" />
+    <ClCompile Include="VFXSystemComponent.cpp" />
     <ClCompile Include="Widgets.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="WindowHandler.cpp" />

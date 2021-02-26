@@ -311,18 +311,18 @@ void TEMP_VFX(CScene* aScene)
 	abilityObject->GetComponent<CVFXComponent>()->Init(CVFXFactory::GetInstance()->GetVFXBaseSet(paths));
 	//!VFX
 
-	CGameObject* particleObject = new CGameObject(id++);
-	particleObject->myTransform->SetParent(abilityObject->myTransform);
+	//CGameObject* particleObject = new CGameObject(id++);
+	//particleObject->myTransform->SetParent(abilityObject->myTransform);
 	
 	//PARTICLESYSTEM
 	paths.clear();
 	for (unsigned int i = 0; i < doc["ParticleSystems"].Size(); ++i) {
 		paths.emplace_back(doc["ParticleSystems"][i]["Path"].GetString());
 	}
-	particleObject->AddComponent<CParticleEmitterComponent>(*particleObject);
-	particleObject->GetComponent<CParticleEmitterComponent>()->Init(CParticleFactory::GetInstance()->GetParticleSet(paths));
+	abilityObject->AddComponent<CParticleEmitterComponent>(*abilityObject);
+	abilityObject->GetComponent<CParticleEmitterComponent>()->Init(CParticleFactory::GetInstance()->GetParticleSet(paths));
 	//!PARTICLESYSTEM
 	myVFX = abilityObject;
 	aScene->AddInstance(abilityObject);
-	aScene->AddInstance(particleObject);
+	//aScene->AddInstance(particleObject);
 }
