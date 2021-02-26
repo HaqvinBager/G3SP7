@@ -6,7 +6,7 @@ class CVFXBase;
 class CVFXSystemComponent : public CBehaviour
 {
 public:
-	CVFXSystemComponent(CGameObject& aParent, const std::vector<std::string>& someVFXPaths);
+	CVFXSystemComponent(CGameObject& aParent, const std::vector<std::string>& someVFXPaths, const std::vector<Matrix>& const someTransforms);
 	~CVFXSystemComponent() override;
 
 	void Awake() override;
@@ -19,13 +19,13 @@ public:
 
 public:
 	std::vector<CVFXBase*>& GetVFXBases() { return myVFXBases; }
-	std::vector<Matrix>& GetVFXMatrices() { return myVFXMatrices; }
+	std::vector<Matrix>& GetVFXMatrices() { return myVFXTransforms; }
 
 private:
 	std::vector<float> myVFXDelays;
 	std::vector<float> myVFXDurations;
 	std::vector<CVFXBase*> myVFXBases;
-	std::vector<Matrix> myVFXMatrices;
+	std::vector<Matrix> myVFXTransforms;
 
 };
 
