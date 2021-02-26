@@ -7,79 +7,89 @@ using System.Text;
 using UnityEngine.SceneManagement;
 
 [System.Serializable]
+public struct BluePrintInstance
+{
+    public int instanceID;
+    public List<int> childrenInstanceIDs;
+}
+
+[System.Serializable]
+public struct BluePrintLinker
+{
+    public int id;
+    public string type;
+    public List<BluePrintInstance> instances;
+}
+
+[System.Serializable]
 public struct BluePrintCollection
 {
     public List<BluePrintLinker> links;
 }
 
 [System.Serializable]
-public struct BluePrintLinker
+public struct BluePrintPrefabs
 {
-    public string type;
-    public List<int> instances;
+    public List<BluePrintAsset> blueprintPrefabs;
 }
 
-
-public class ExportBlueprints
+[System.Serializable]
+public struct BluePrintAsset
 {
-    private static string SavePath
-    {
-        get => System.IO.Directory.GetCurrentDirectory() + "\\Assets\\Generated\\";
-    }
+    public int id;
+    public string type;
+    public int childCount;
+}
 
-    private static string PrefabPath
-    {
-        get => System.IO.Directory.GetCurrentDirectory() + "/Assets/Prefabs/";
-    }
-
-    //[MenuItem("Export/Blueprint")]
-    public static void ExportBluePrint(Scene aScene)
+public class ExportBluePrint
+{
+    public static void Export(Scene aScene)
     {
         List<GameObject> bluePrintPrefabs = LoadBluePrintPrefabGameObjects();
         GameObject[] allGameObjects = GameObject.FindObjectsOfType<GameObject>();
 
-        BluePrintCollection bluePrintCollection = new BluePrintCollection();
-        bluePrintCollection.links = new List<BluePrintLinker>();
+        BluePrintCollection collection = new BluePrintCollection();
+        collection.links = new List<BluePrintLinker>();
 
         foreach (GameObject prefab in bluePrintPrefabs)
         {
-            BluePrintLinker collection = new BluePrintLinker();
-            collection.instances = new List<int>();
-            collection.type = prefab.name;
+            BluePrintLinker link = new BluePrintLinker();
+            link.instances = new List<BluePrintInstance>();
+            link.type = prefab.name;
+            link.id = prefab.transform.GetInstanceID();
 
             foreach (GameObject gameObject in allGameObjects)
             {
-                if (gameObject.name.Contains(collection.type))
+                if (gameObject.name.Contains(link.type))
                 {
                     GameObject source = PrefabUtility.GetCorrespondingObjectFromSource(gameObject);
                     if (source != null)
                     {
                         if (source.Equals(prefab))
                         {
-                            collection.instances.Add(gameObject.transform.GetInstanceID());
+                            BluePrintInstance instance = new BluePrintInstance();
+                            instance.instanceID = gameObject.transform.GetInstanceID();
+
+                            instance.childrenInstanceIDs = new List<int>();
+                            foreach(Transform childTransform in gameObject.transform)
+                            {
+                                instance.childrenInstanceIDs.Add(childTransform.GetInstanceID());
+                            }
+                            link.instances.Add(instance);
                         }
                     }
                 }
             }
-            if (collection.instances.Count > 0)
-            {
-                bluePrintCollection.links.Add(collection);
-            }
+            //if (link.instances.Count > 0)
+            //{
+                collection.links.Add(link);
+            //}
         }
 
-        if (!System.IO.Directory.Exists(SavePath))
-            System.IO.Directory.CreateDirectory(SavePath);
-
-
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.Append(JsonUtility.ToJson(bluePrintCollection));
-
-        string savePath = SavePath + "BluePrintLinks_" + aScene.name + ".json";
-        System.IO.File.WriteAllText(savePath, stringBuilder.ToString());
-        AssetDatabase.Refresh();
+        Json.ExportToJson(collection, aScene.name);
     }
 
-    private static List<GameObject> LoadBluePrintPrefabGameObjects()
+    public static List<GameObject> LoadBluePrintPrefabGameObjects()
     {
         List<GameObject> bluePrintPrefabs = new List<GameObject>();
         List<string> bluePrintPrefabPaths = GetBlueprintPrefabPaths();

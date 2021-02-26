@@ -36,12 +36,18 @@ public class ExportModel
             {
                 if (renderer.TryGetComponent(out MeshFilter meshFilter))
                 {
-                    GameObject asset = PrefabUtility.GetCorrespondingObjectFromOriginalSource(meshFilter).gameObject;
-                    if (asset == null)
+                    GameObject modelAsset = PrefabUtility.GetCorrespondingObjectFromOriginalSource(meshFilter).gameObject;
+                    if(modelAsset.transform.parent != null)
+                    {
+                        modelAsset = modelAsset.transform.parent.gameObject;
+                    }
+                    
+
+                    if (modelAsset == null)
                         continue;
 
                     ModelLink link = new ModelLink();
-                    link.assetID = asset.transform.GetInstanceID();
+                    link.assetID = modelAsset.transform.GetInstanceID();
                     link.instanceID = prefabParent.transform.GetInstanceID();
                     fbxLinks.modelLinks.Add(link);
                 }

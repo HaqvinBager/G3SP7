@@ -24,19 +24,45 @@ public static class Json
         System.IO.File.WriteAllText(savePath, jsonString.ToString());
     }
 
-    public static bool TryIsValidExport<T>(T obj, out GameObject prefabParent, bool aIsStatic = false) where T : Object
+    public static bool TryIsValidExport<T>(T obj, out GameObject objectWithInstanceID, bool aIsStatic = false) where T : Component
     {
-        prefabParent = PrefabUtility.GetOutermostPrefabInstanceRoot(obj);
-        
-        if (prefabParent == null)
+        objectWithInstanceID = PrefabUtility.GetOutermostPrefabInstanceRoot(obj);
+
+        if (objectWithInstanceID == null)
             return false;
 
-        if (prefabParent.isStatic != aIsStatic)
+        if (objectWithInstanceID.isStatic != aIsStatic)
             return false;
 
-        if (PrefabUtility.GetPrefabAssetType(prefabParent) != PrefabAssetType.Regular)
+        var prefabAssetType = PrefabUtility.GetPrefabAssetType(objectWithInstanceID);
+        if (PrefabUtility.GetPrefabAssetType(objectWithInstanceID) != PrefabAssetType.Regular &&
+            PrefabUtility.GetPrefabAssetType(objectWithInstanceID) != PrefabAssetType.Variant)
             return false;
 
+        //switch (prefabAssetType)
+        //{
+        //    case PrefabAssetType.Regular:
+        //        if (objectWithInstanceID.name.Contains("BP_"))
+        //        {
+
+        //        }
+        //        break;
+        //    case PrefabAssetType.Variant:
+        //        if (objectWithInstanceID.name.Contains("BP_"))
+        //        {
+
+        //        }
+        //        break;
+        //    case PrefabAssetType.Model:
+
+        //        break;
+        //    case PrefabAssetType.NotAPrefab:
+
+        //        break;
+        //    case PrefabAssetType.MissingAsset:
+
+        //        break;
+        //}
         return true;
     }
 

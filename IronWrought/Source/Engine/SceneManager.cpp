@@ -42,7 +42,6 @@ CScene* CSceneManager::CreateEmpty()
 	return emptyScene;
 }
 
-
 CScene* CSceneManager::CreateScene(const std::string& aSceneName)
 {
 	CScene* scene = CreateEmpty();
@@ -77,7 +76,7 @@ void CSceneManager::SetTransforms(CScene& aScene, const std::string& aJsonFileNa
 {
 	const auto& doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + aJsonFileName));
 
-	if (CJsonReader::IsValid(doc, { "transforms" }))
+	if (!CJsonReader::IsValid(doc, { "transforms" }))
 		return;
 
 	const auto& transformArray = doc["transforms"].GetArray();
@@ -99,7 +98,7 @@ void CSceneManager::SetTransforms(CScene& aScene, const std::string& aJsonFileNa
 void CSceneManager::AddModelComponents(CScene& aScene, const std::string& aJsonFileName)
 {
 	const auto& doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + aJsonFileName));
-	if (CJsonReader::IsValid(doc, { "modelLinks" }))
+	if (!CJsonReader::IsValid(doc, { "modelLinks" }))
 		return;
 
 	const auto& modelArray = doc.GetObjectW()["modelLinks"].GetArray();

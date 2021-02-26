@@ -31,6 +31,14 @@ public class ExportInstanceID
                     continue;
 
                 sceneIDCollection.Ids.Add(prefabParent.transform.GetInstanceID());
+
+                if (prefabParent.name.Contains("BP_"))
+                {
+                    foreach(Transform childTransform in prefabParent.transform)
+                    {
+                        sceneIDCollection.Ids.Add(childTransform.GetInstanceID());
+                    }
+                }
             }    
         }
 

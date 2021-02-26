@@ -34,9 +34,9 @@ public class ExportTransform
                     continue;
 
                 TransformLink link = new TransformLink();
-                link.instanceID = prefabParent.transform.GetInstanceID();
-                link.position = prefabParent.transform.ConvertToIronWroughtPosition();
-                link.rotation = prefabParent.transform.ConvertToIronWroughtRotation();
+                link.instanceID = prefabParent.transform.GetInstanceID();               
+                link.position = transform.ConvertToIronWroughtPosition();
+                link.rotation = transform.ConvertToIronWroughtRotation();
                 link.scale = prefabParent.transform.ConvertToIronWroughtScale();
                 transformCollection.transforms.Add(link);
             }
