@@ -39,6 +39,7 @@
 #include "NodeTypeVariableGetBool.h"
 #include "NodeTypeStartGetCustom.h"
 #include "NodeTypeStartSetCustom.h"
+#include "NodeTypeDecisionCoinFlip.h"
 
 //#include "NodeData.h"
 
@@ -78,6 +79,7 @@ void CNodeTypeCollector::PopulateTypes()
 	RegisterType<CNodeTypeInputGetMousePosition>("Mouse Position");
 	RegisterType<CNodeTypeActionPrint>("Print Action");
 	RegisterType<CNodeTypeDecisionFloat>("Float Decision");
+	RegisterType<CNodeTypeDecisionCoinFlip>("Coin Flip Decision");
 	RegisterType<CNodeTypeDecisionTreeRun>("Run Tree");
 	RegisterType<CNodeTypeTimeDeltaTotal>("Delta & Total Time");
 	RegisterType<CNodeTypeTimeTimer>("Countdown Timer");

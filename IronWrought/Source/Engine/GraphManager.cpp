@@ -720,7 +720,7 @@ void CGraphManager::CreateNewDataNode()
 						}
 						else if (myNewVariableType == "Start")
 						{
-							bool nullValue = true;
+							bool nullValue = false;
 							CNodeTypeCollector::RegisterNewDataType(buffer, static_cast<int>(CNodeDataManager::EDataType::EStart));
 							CNodeDataManager::Get()->SetData(buffer, CNodeDataManager::EDataType::EStart, &nullValue);
 						}
@@ -770,7 +770,7 @@ void CGraphManager::LoadDataNodesFromFile()
 					}
 					else if (myNewVariableType == "Start")
 					{
-						bool value = true;
+						bool value = false;
 						CNodeTypeCollector::RegisterNewDataType(nodeInstances[i]["Data key"].GetString(), static_cast<int>(CNodeDataManager::EDataType::EStart));
 						CNodeDataManager::Get()->SetData(nodeInstances[i]["Data key"].GetString(), CNodeDataManager::EDataType::EStart, &value);
 					}

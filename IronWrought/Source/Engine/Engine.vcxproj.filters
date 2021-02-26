@@ -676,6 +676,12 @@
     <ClCompile Include="NodeTypeStartSetCustom.cpp">
       <Filter>Imgui\Node Editor\Nodes\Start</Filter>
     </ClCompile>
+    <ClCompile Include="NodeTypeDecisionCoinFlip.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Decision Tree\Decision</Filter>
+    </ClCompile>
+    <ClCompile Include="FlipACoinDecision.cpp">
+      <Filter>Decision Tree</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1245,6 +1251,12 @@
     </ClInclude>
     <ClInclude Include="NodeTypeStartSetCustom.h">
       <Filter>Imgui\Node Editor\Nodes\Start</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeDecisionCoinFlip.h">
+      <Filter>Imgui\Node Editor\Nodes\Decision Tree\Decision</Filter>
+    </ClInclude>
+    <ClInclude Include="FlipACoinDecision.h">
+      <Filter>Decision Tree</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

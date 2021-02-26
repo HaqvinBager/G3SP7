@@ -191,7 +191,9 @@
     <ClInclude Include="AudioChannel.h" />
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Behaviour.h" />
+    <ClInclude Include="FlipACoinDecision.h" />
     <ClInclude Include="NodeDataManager.h" />
+    <ClInclude Include="NodeTypeDecisionCoinFlip.h" />
     <ClInclude Include="NodeTypeGameObjectMove.h" />
     <ClInclude Include="NodeTypeStartGetCustom.h" />
     <ClInclude Include="NodeTypeStartKeyboardInput.h" />
@@ -377,7 +379,9 @@
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="AudioChannel.cpp" />
     <ClCompile Include="AudioManager.cpp" />
+    <ClCompile Include="FlipACoinDecision.cpp" />
     <ClCompile Include="NodeDataManager.cpp" />
+    <ClCompile Include="NodeTypeDecisionCoinFlip.cpp" />
     <ClCompile Include="NodeTypeGameObjectMove.cpp" />
     <ClCompile Include="NodeTypeStartGetCustom.cpp" />
     <ClCompile Include="NodeTypeStartKeyboardInput.cpp" />
