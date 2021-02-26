@@ -314,9 +314,13 @@ void CRenderManager::Render(CScene& aScene)
 	myForwardRenderer.InstancedRender(environmentlight, pointLightsInstanced, maincamera, instancedGameObjectsWithAlpha);
 	myForwardRenderer.Render(environmentlight, pointlights, maincamera, gameObjectsWithAlpha);
 
+	//VFX
+	myRenderStateManager.SetRasterizerState(CRenderStateManager::RasterizerStates::RASTERIZERSTATE_NOFACECULLING);
 	myVFXRenderer.Render(maincamera, gameObjects);
+	myRenderStateManager.SetRasterizerState(CRenderStateManager::RasterizerStates::RASTERIZERSTATE_DEFAULT);
 
 	myParticleRenderer.Render(maincamera, gameObjects);
+	// ! VFX
 	// ! Alpha stage for objects in World 3D space
 
 	//std::vector<CSpriteInstance*> sprites = myScene.CullSprites();

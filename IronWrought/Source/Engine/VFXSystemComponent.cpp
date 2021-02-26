@@ -5,7 +5,7 @@
 #include "VFXBase.h"
 #include "VFXFactory.h"
 
-CVFXSystemComponent::CVFXSystemComponent(CGameObject& aParent, const std::vector<std::string>& someVFXPaths, const std::vector<Matrix>& const someTransforms)
+CVFXSystemComponent::CVFXSystemComponent(CGameObject& aParent, const std::vector<std::string>& someVFXPaths, const std::vector<Matrix>& someTransforms)
 	: CBehaviour(aParent) 
 {
 	myEnabled = true;
@@ -21,6 +21,7 @@ CVFXSystemComponent::CVFXSystemComponent(CGameObject& aParent, const std::vector
 	}
 	
 	myVFXTransforms = someTransforms;
+	myVFXTransformsOriginal = someTransforms;
 }
 
 CVFXSystemComponent::~CVFXSystemComponent()
@@ -60,11 +61,29 @@ void CVFXSystemComponent::LateUpdate()
 	DirectX::SimpleMath::Vector3 translation;
 	GameObject().myTransform->GetWorldMatrix().Decompose(scale, quat, translation);
 
+	auto t = myVFXTransformsOriginal[0].Translation();
+	myVFXTransformsOriginal[0] = myVFXTransformsOriginal[0] * Matrix::CreateFromYawPitchRoll(fabs(sinf(CTimer::Time()))* CTimer::Dt() * 2.0f, 0.0f, 0.f);
+	myVFXTransformsOriginal[0].Translation(t);
+
+	t = myVFXTransformsOriginal[1].Translation();
+	myVFXTransformsOriginal[1] = myVFXTransformsOriginal[1] * Matrix::CreateFromYawPitchRoll(0.0f, fabs(sinf(CTimer::Time()))* CTimer::Dt() * 2.0f, 0.f);
+	myVFXTransformsOriginal[1].Translation(t);
+
+	t = myVFXTransformsOriginal[2].Translation();
+	myVFXTransformsOriginal[2] = myVFXTransformsOriginal[2] * Matrix::CreateFromYawPitchRoll(0.0f, 0.0f, fabs(sinf(CTimer::Time()))* CTimer::Dt() * 2.0f);
+	myVFXTransformsOriginal[2].Translation(t);
+
 	Matrix goTransform = GameObject().myTransform->Transform();
-	for (auto& matrix : myVFXTransforms)
+	auto goPos = GameObject().myTransform->Position();
+	for (unsigned int i = 0; i < myVFXTransforms.size(); ++i)
 	{
-		matrix = Matrix::CreateFromQuaternion(quat);
-		matrix.Translation(GameObject().myTransform->Position());
+		myVFXTransforms[i] = myVFXTransformsOriginal[i] * Matrix::CreateFromQuaternion(quat);
+		//myVFXTransforms[i].Translation(GameObject().myTransform->Position() + (myVFXTransformsOriginal[i].Translation() ));
+
+		myVFXTransforms[i].Translation(goPos + goTransform.Right()	 * myVFXTransformsOriginal[i].Translation().x);
+		myVFXTransforms[i].Translation(myVFXTransforms[i].Translation() + goTransform.Up()		 * myVFXTransformsOriginal[i].Translation().y);
+		myVFXTransforms[i].Translation(myVFXTransforms[i].Translation() - goTransform.Forward() * myVFXTransformsOriginal[i].Translation().z);
+
 	}
 }
 

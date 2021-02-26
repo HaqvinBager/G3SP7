@@ -121,6 +121,8 @@ void CInGameState::Update()
 		myVFX->myTransform->Move({ CTimer::Dt() * speed, 0.0f, 0.0f });
 	}
 
+	myVFX->myTransform->Rotate({ CTimer::Dt(), CTimer::Dt(), 0.0f });
+
 	CEngine::GetInstance()->GetPhysx().Simulate();
 	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
 	{
@@ -303,12 +305,24 @@ void TEMP_VFX(CScene* aScene)
 	std::string colliderType;
 
 	//VFX
-	abilityObject->myTransform->Position({0.5f, 0.0f, 0.5f});
+	abilityObject->myTransform->Position({0.0f, 0.0f, 0.0f});
 	std::vector<std::string> paths;
 	for (unsigned int i = 0; i < doc["VFX"].Size(); ++i) {
 		paths.emplace_back(doc["VFX"][i]["Path"].GetString());
 	}
-	abilityObject->AddComponent<CVFXSystemComponent>(*abilityObject, paths);
+
+	// TODO: get this from JSON :)
+	Matrix t;
+	t = t.CreateFromYawPitchRoll( DirectX::XMConvertToRadians(0.0f), DirectX::XMConvertToRadians(0.0f), DirectX::XMConvertToRadians(90.0f));
+	t.Translation({ 0.f,2.0f,0.f });
+	Matrix t2;
+	t2 = t2.CreateFromYawPitchRoll( DirectX::XMConvertToRadians(45.0f), DirectX::XMConvertToRadians(0.0f), DirectX::XMConvertToRadians(0.0f));
+	t2.Translation({ 2.5f,0.0f,-2.5f });
+	Matrix t3;
+	t3 = t3.CreateFromYawPitchRoll( DirectX::XMConvertToRadians(0.0f), DirectX::XMConvertToRadians(90.0f), DirectX::XMConvertToRadians(0.0f));
+	t3.Translation({ -2.5f,0.0f,2.5f });
+
+	abilityObject->AddComponent<CVFXSystemComponent>(*abilityObject, paths, std::vector<Matrix>({t, t2, t3}));
 	//abilityObject->GetComponent<CVFXSystemComponent>()->Init(CVFXFactory::GetInstance()->GetVFXBaseSet(paths));
 	//!VFX
 
