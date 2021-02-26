@@ -37,6 +37,8 @@
 #include "NodeTypeVariableGetFloat.h"
 #include "NodeTypeVariableGetInt.h"
 #include "NodeTypeVariableGetBool.h"
+#include "NodeTypeStartGetCustom.h"
+#include "NodeTypeStartSetCustom.h"
 
 //#include "NodeData.h"
 
@@ -79,9 +81,6 @@ void CNodeTypeCollector::PopulateTypes()
 	RegisterType<CNodeTypeDecisionTreeRun>("Run Tree");
 	RegisterType<CNodeTypeTimeDeltaTotal>("Delta & Total Time");
 	RegisterType<CNodeTypeTimeTimer>("Countdown Timer");
-	//RegisterType<CNodeTypeVariableFloat>("Float");
-	//RegisterType<CNodeTypeVariableInt>("Int");
-	//RegisterType<CNodeTypeVariableBool>("Bool");
 }
 
 void CNodeTypeCollector::RegisterNewDataType(std::string aNodeName, unsigned int aType)
@@ -104,6 +103,12 @@ void CNodeTypeCollector::RegisterNewDataType(std::string aNodeName, unsigned int
 	{
 		RegisterDataType<CNodeTypeVariableSetBool>("Set: " + aNodeName, aNodeName);
 		RegisterDataType<CNodeTypeVariableGetBool>("Get: " + aNodeName, aNodeName);
+	}
+		break;
+	case 3:
+	{
+		RegisterDataType<CNodeTypeStartSetCustom>("Set: " + aNodeName, aNodeName);
+		RegisterDataType<CNodeTypeStartGetCustom>("Get: " + aNodeName, aNodeName);
 	}
 		break;
 	default:

@@ -1,0 +1,17 @@
+#include "stdafx.h"
+#include "NodeTypeStartSetCustom.h"
+#include "NodeInstance.h"
+#include "NodeDataManager.h"
+
+CNodeTypeStartSetCustom::CNodeTypeStartSetCustom()
+{
+	myPins.push_back(SPin("", SPin::EPinTypeInOut::PinTypeInOut_IN));
+}
+
+int CNodeTypeStartSetCustom::OnEnter(CNodeInstance* /*aTriggeringNodeInstance*/)
+{
+	bool input = true;
+	CNodeDataManager::Get()->SetData(myNodeDataKey, CNodeDataManager::EDataType::EStart, &input);
+
+	return -1;
+}

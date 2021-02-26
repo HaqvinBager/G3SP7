@@ -46,6 +46,12 @@ void CNodeDataManager::SetData(const std::string aNodeDataKey, EDataType aDataTy
 		myNodeBoolDataMap[aNodeDataKey] = inputValue;
 	}
 	break;
+	case CNodeDataManager::EDataType::EStart:
+	{
+		bool inputValue = *(static_cast<bool*>(aValue));
+		myNodeStartDataMap[aNodeDataKey] = inputValue;
+	}
+	break;
 	}
 }
 
@@ -64,6 +70,10 @@ void* CNodeDataManager::GetData(const std::string aNodeDataKey, EDataType aDataT
 	case CNodeDataManager::EDataType::EBool:
 	{
 		return &myNodeBoolDataMap[aNodeDataKey];
+	}
+	case CNodeDataManager::EDataType::EStart:
+	{
+		return &myNodeStartDataMap[aNodeDataKey];
 	}
 	default:
 		return NULL;
@@ -108,6 +118,17 @@ void CNodeDataManager::SaveDataTypesToJson()
 
 		writer1.Key("Type");
 		writer1.String("Bool");
+		writer1.EndObject();
+	}
+
+	for (auto& boolData : myNodeStartDataMap)
+	{
+		writer1.StartObject();
+		writer1.Key("Data key");
+		writer1.String(boolData.first.c_str());
+
+		writer1.Key("Type");
+		writer1.String("Start");
 		writer1.EndObject();
 	}
 	writer1.EndArray();
