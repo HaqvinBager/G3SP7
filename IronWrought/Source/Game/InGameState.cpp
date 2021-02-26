@@ -51,6 +51,7 @@ void CInGameState::Awake(){}
 #include "VFXFactory.h"
 #include "ParticleFactory.h"
 
+CGameObject* myVFX = nullptr;
 void TEMP_VFX(CScene* aScene);
 
 void CInGameState::Start()
@@ -101,6 +102,24 @@ void CInGameState::Stop()
 
 void CInGameState::Update()
 {
+	float speed = 10.0f;
+	if (Input::GetInstance()->IsKeyDown(VK_UP))
+	{
+		myVFX->myTransform->Move({0.0f, 0.0f, CTimer::Dt() * speed });
+	}
+	if (Input::GetInstance()->IsKeyDown(VK_DOWN))
+	{
+		myVFX->myTransform->Move({ 0.0f, 0.0f, -CTimer::Dt() * speed });
+	}
+	if (Input::GetInstance()->IsKeyDown(VK_LEFT))
+	{
+		myVFX->myTransform->Move({ -CTimer::Dt() * speed, 0.0f, 0.0f });
+	}
+	if (Input::GetInstance()->IsKeyDown(VK_RIGHT))
+	{
+		myVFX->myTransform->Move({ CTimer::Dt() * speed, 0.0f, 0.0f });
+	}
+
 	CEngine::GetInstance()->GetPhysx().Simulate();
 	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
 	{
@@ -292,14 +311,18 @@ void TEMP_VFX(CScene* aScene)
 	abilityObject->GetComponent<CVFXComponent>()->Init(CVFXFactory::GetInstance()->GetVFXBaseSet(paths));
 	//!VFX
 
+	CGameObject* particleObject = new CGameObject(id++);
+	particleObject->myTransform->SetParent(abilityObject->myTransform);
+	
 	//PARTICLESYSTEM
 	paths.clear();
 	for (unsigned int i = 0; i < doc["ParticleSystems"].Size(); ++i) {
 		paths.emplace_back(doc["ParticleSystems"][i]["Path"].GetString());
 	}
-	abilityObject->AddComponent<CParticleEmitterComponent>(*abilityObject);
-	abilityObject->GetComponent<CParticleEmitterComponent>()->Init(CParticleFactory::GetInstance()->GetParticleSet(paths));
+	particleObject->AddComponent<CParticleEmitterComponent>(*particleObject);
+	particleObject->GetComponent<CParticleEmitterComponent>()->Init(CParticleFactory::GetInstance()->GetParticleSet(paths));
 	//!PARTICLESYSTEM
-	
+	myVFX = abilityObject;
 	aScene->AddInstance(abilityObject);
+	aScene->AddInstance(particleObject);
 }
