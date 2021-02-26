@@ -47,6 +47,7 @@ void CInGameState::Awake(){}
 #include "PlayerControllerComponent.h"
 
 #include "VFXComponent.h"
+#include "VFXSystemComponent.h"
 #include "ParticleEmitterComponent.h"
 #include "VFXFactory.h"
 #include "ParticleFactory.h"
@@ -307,8 +308,8 @@ void TEMP_VFX(CScene* aScene)
 	for (unsigned int i = 0; i < doc["VFX"].Size(); ++i) {
 		paths.emplace_back(doc["VFX"][i]["Path"].GetString());
 	}
-	abilityObject->AddComponent<CVFXComponent>(*abilityObject);
-	abilityObject->GetComponent<CVFXComponent>()->Init(CVFXFactory::GetInstance()->GetVFXBaseSet(paths));
+	abilityObject->AddComponent<CVFXSystemComponent>(*abilityObject, paths);
+	//abilityObject->GetComponent<CVFXSystemComponent>()->Init(CVFXFactory::GetInstance()->GetVFXBaseSet(paths));
 	//!VFX
 
 	//CGameObject* particleObject = new CGameObject(id++);

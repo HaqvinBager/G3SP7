@@ -12,12 +12,14 @@ public:
 	void Awake() override;
 	void Start() override;
 	void Update() override;
+	void LateUpdate() override;
 
 	void OnEnable() override;
 	void OnDisable() override;
 
 public:
-	bool Init();
+	std::vector<CVFXBase*>& GetVFXBases() { return myVFXBases; }
+	std::vector<Matrix>& GetVFXMatrices() { return myVFXMatrices; }
 
 private:
 	std::vector<float> myVFXDelays;

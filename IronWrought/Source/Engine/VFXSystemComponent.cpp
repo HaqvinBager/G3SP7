@@ -5,7 +5,7 @@
 #include "VFXBase.h"
 #include "VFXFactory.h"
 
-CVFXSystemComponent::CVFXSystemComponent(CGameObject& aParent, const std::vector<std::string>& someVFXPaths)
+CVFXSystemComponent::CVFXSystemComponent(CGameObject& aParent, const std::vector<std::string>& someVFXPaths, const std::vector<Matrix>& const someTransforms)
 	: CBehaviour(aParent) 
 {
 	myEnabled = true;
@@ -19,6 +19,8 @@ CVFXSystemComponent::CVFXSystemComponent(CGameObject& aParent, const std::vector
 		myVFXDelays.emplace_back(myVFXBases[i]->GetVFXBaseData().myDelay);
 		myVFXDurations.emplace_back(myVFXBases[i]->GetVFXBaseData().myDuration);
 	}
+	
+	myVFXTransforms = someTransforms;
 }
 
 CVFXSystemComponent::~CVFXSystemComponent()
@@ -49,6 +51,23 @@ void CVFXSystemComponent::Update()
 	}
 }
 
+void CVFXSystemComponent::LateUpdate()
+{
+	if (!Enabled()) return;
+
+	DirectX::SimpleMath::Vector3 scale;
+	DirectX::SimpleMath::Quaternion quat;
+	DirectX::SimpleMath::Vector3 translation;
+	GameObject().myTransform->GetWorldMatrix().Decompose(scale, quat, translation);
+
+	Matrix goTransform = GameObject().myTransform->Transform();
+	for (auto& matrix : myVFXTransforms)
+	{
+		matrix = Matrix::CreateFromQuaternion(quat);
+		matrix.Translation(GameObject().myTransform->Position());
+	}
+}
+
 void CVFXSystemComponent::OnEnable()
 {
 	Enabled(true);
@@ -64,12 +83,4 @@ void CVFXSystemComponent::OnDisable()
 	for (unsigned int i = 0; i < myVFXBases.size(); ++i) {
 		myVFXBases[i]->GetVFXBaseData().myIsActive = false;
 	}
-}
-
-bool CVFXSystemComponent::Init()
-{
-
-
-
-	return true;
 }

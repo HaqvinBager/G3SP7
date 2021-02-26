@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "VFXRenderer.h"
 #include "VFXComponent.h"
+#include "VFXSystemComponent.h"
 #include "DirectXFramework.h"
 #include "RenderManager.h"
 #include "GraphicsHelpers.h"
@@ -55,7 +56,7 @@ void CVFXRenderer::Render(CCameraComponent* aCamera, std::vector<CGameObject*>& 
 
 	for (CGameObject* gameobject : aGameObjectList) {
 		
-		CVFXComponent* component = gameobject->GetComponent<CVFXComponent>();
+		CVFXSystemComponent* component = gameobject->GetComponent<CVFXSystemComponent>();
 		if (component == nullptr)
 			continue;
 
@@ -63,12 +64,15 @@ void CVFXRenderer::Render(CCameraComponent* aCamera, std::vector<CGameObject*>& 
 		if (vfxBases.empty())
 			continue;
 		
-		for (auto& vfxBase : vfxBases) {
-			CVFXBase::SVFXBaseData vfxBaseData = vfxBase->GetVFXBaseData();
+		std::vector<Matrix>& vfxMatrices = component->GetVFXMatrices();
+		for (unsigned int i = 0; i < vfxBases.size(); ++i) 
+		{
+			CVFXBase::SVFXBaseData vfxBaseData = vfxBases[i]->GetVFXBaseData();
+			Matrix transform = vfxMatrices[i];
 
 			if (!vfxBaseData.myIsActive) continue;
 
-			myObjectBufferData.myToWorld = component->GetTransform();
+			myObjectBufferData.myToWorld = transform;
 			BindBuffer(myObjectBuffer, myObjectBufferData, "Object Buffer");
 
 			myTime += CTimer::Dt();
