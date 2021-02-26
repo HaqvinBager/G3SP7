@@ -160,6 +160,18 @@
     <FxCompile Include="FullscreenPixelShader_CopyGBuffer.hlsl">
       <Filter>Shaders\Fullscreen</Filter>
     </FxCompile>
+    <FxCompile Include="Decal_AlbedoPixelShader.hlsl">
+      <Filter>Shaders\Decal</Filter>
+    </FxCompile>
+    <FxCompile Include="Decal_NormalPixelShader.hlsl">
+      <Filter>Shaders\Decal</Filter>
+    </FxCompile>
+    <FxCompile Include="Decal_VertexNormalPixelShader.hlsl">
+      <Filter>Shaders\Decal</Filter>
+    </FxCompile>
+    <FxCompile Include="Decal_MaterialPixelShader.hlsl">
+      <Filter>Shaders\Decal</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimationComponent.cpp">
