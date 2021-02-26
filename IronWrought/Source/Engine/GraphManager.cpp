@@ -47,6 +47,7 @@ void CGraphManager::Load()
 	myInstantiableVariables.push_back("Float");
 	myInstantiableVariables.push_back("Int");
 	myInstantiableVariables.push_back("Bool");
+	myInstantiableVariables.push_back("Start");
 
 	CGraphNodeTimerManager::Create();
 	for (const auto& blueprintLinksJsonPath : CFolderUtility::GetFileNamesInFolder(ASSETPATH("Assets/Generated"), "BluePrintLinks")) {
@@ -717,6 +718,12 @@ void CGraphManager::CreateNewDataNode()
 							CNodeTypeCollector::RegisterNewDataType(buffer, static_cast<int>(CNodeDataManager::EDataType::EBool));
 							CNodeDataManager::Get()->SetData(buffer, CNodeDataManager::EDataType::EBool, &nullValue);
 						}
+						else if (myNewVariableType == "Start")
+						{
+							bool nullValue = true;
+							CNodeTypeCollector::RegisterNewDataType(buffer, static_cast<int>(CNodeDataManager::EDataType::EStart));
+							CNodeDataManager::Get()->SetData(buffer, CNodeDataManager::EDataType::EStart, &nullValue);
+						}
 						CNodeDataManager::Get()->SaveDataTypesToJson();
 						hasCreatedNewVariable = true;
 					}
@@ -760,6 +767,12 @@ void CGraphManager::LoadDataNodesFromFile()
 						bool value = true;
 						CNodeTypeCollector::RegisterNewDataType(nodeInstances[i]["Data key"].GetString(), static_cast<int>(CNodeDataManager::EDataType::EBool));
 						CNodeDataManager::Get()->SetData(nodeInstances[i]["Data key"].GetString(), CNodeDataManager::EDataType::EBool, &value);
+					}
+					else if (myNewVariableType == "Start")
+					{
+						bool value = true;
+						CNodeTypeCollector::RegisterNewDataType(nodeInstances[i]["Data key"].GetString(), static_cast<int>(CNodeDataManager::EDataType::EStart));
+						CNodeDataManager::Get()->SetData(nodeInstances[i]["Data key"].GetString(), CNodeDataManager::EDataType::EStart, &value);
 					}
 				}
 			}
@@ -1261,13 +1274,13 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 			for (int i = 0; i < noOfTypes; i++)
 			{
 				cats[types[i]->GetNodeTypeCategory()].push_back(types[i]);
-				if (types[i]->GetNodeTypeCategory() == "New Data")
+				if (types[i]->GetNodeTypeCategory() == "New Node Type")
 					noVariablesCreated = false;
 			}
 
 			if (noVariablesCreated)
 			{
-				cats["New Data"].push_back(nullptr);
+				cats["New Node Type"].push_back(nullptr);
 			}
 
 			ImGui::PushItemWidth(100.0f);
@@ -1338,7 +1351,7 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 						CNodeInstance* node = nullptr;
 
 
-						if (theCatName == "New Data")
+						if (theCatName == "New Node Type")
 						{
 							for (const auto& instantiableVariable : myInstantiableVariables)
 							{

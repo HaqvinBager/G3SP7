@@ -193,6 +193,7 @@
     <ClInclude Include="Behaviour.h" />
     <ClInclude Include="NodeDataManager.h" />
     <ClInclude Include="NodeTypeGameObjectMove.h" />
+    <ClInclude Include="NodeTypeStartGetCustom.h" />
     <ClInclude Include="NodeTypeStartKeyboardInput.h" />
     <ClInclude Include="DecisionTreeManager.h" />
     <ClInclude Include="FloatDecisionNode.h" />
@@ -219,6 +220,7 @@
     <ClInclude Include="LoadScene.h" />
     <ClInclude Include="NodeInstance.h" />
     <ClInclude Include="NodeType.h" />
+    <ClInclude Include="NodeTypeStartSetCustom.h" />
     <ClInclude Include="NodeTypeVariableGetBool.h" />
     <ClInclude Include="NodeTypeVariableGetFloat.h" />
     <ClInclude Include="NodeTypeVariableGetInt.h" />
@@ -377,6 +379,7 @@
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="NodeDataManager.cpp" />
     <ClCompile Include="NodeTypeGameObjectMove.cpp" />
+    <ClCompile Include="NodeTypeStartGetCustom.cpp" />
     <ClCompile Include="NodeTypeStartKeyboardInput.cpp" />
     <ClCompile Include="DecisionTreeManager.cpp" />
     <ClCompile Include="FloatDecisionNode.cpp" />
@@ -390,6 +393,7 @@
     <ClCompile Include="DecisionNode.cpp" />
     <ClCompile Include="CStateMachineComponent.cpp" />
     <ClCompile Include="LoadScene.cpp" />
+    <ClCompile Include="NodeTypeStartSetCustom.cpp" />
     <ClCompile Include="NodeTypeVariableGetBool.cpp" />
     <ClCompile Include="NodeTypeVariableGetFloat.cpp" />
     <ClCompile Include="NodeTypeVariableGetInt.cpp" />

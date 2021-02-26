@@ -2,10 +2,10 @@
 #include "NodeType.h"
 #include "NodeTypes.h"
 
-class CNodeTypeStartDefault : public CNodeType
+class CNodeTypeStartGetCustom : public CNodeType
 {
 public:
-	CNodeTypeStartDefault();
+	CNodeTypeStartGetCustom();
 	int OnEnter(class CNodeInstance* aTriggeringNodeInstance) override;
 	bool IsStartNode() override { return true; }
 	std::string GetNodeTypeCategory() override { return "Start"; }

@@ -658,6 +658,12 @@
     <ClCompile Include="NodeDataManager.cpp">
       <Filter>Imgui\Node Editor\Utilities</Filter>
     </ClCompile>
+    <ClCompile Include="NodeTypeStartGetCustom.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Start</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeStartSetCustom.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Start</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1221,6 +1227,12 @@
     </ClInclude>
     <ClInclude Include="GraphicsHelpers.h">
       <Filter>Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeStartGetCustom.h">
+      <Filter>Imgui\Node Editor\Nodes\Start</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeStartSetCustom.h">
+      <Filter>Imgui\Node Editor\Nodes\Start</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
