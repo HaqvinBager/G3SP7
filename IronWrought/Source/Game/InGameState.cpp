@@ -45,6 +45,14 @@ void CInGameState::Awake(){}
 #include "PointLight.h"
 #include "PointLightComponent.h"
 #include "PlayerControllerComponent.h"
+
+#include "VFXComponent.h"
+#include "ParticleEmitterComponent.h"
+#include "VFXFactory.h"
+#include "ParticleFactory.h"
+
+void TEMP_VFX(CScene* aScene);
+
 void CInGameState::Start()
 {
 	CJsonReader::Get()->Init();
@@ -52,6 +60,9 @@ void CInGameState::Start()
 	scene->AddPXScene(CEngine::GetInstance()->GetPhysx().CreatePXScene());
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);
+
+	
+	TEMP_VFX(scene);
 
 	myExitLevel = false;
 
@@ -133,8 +144,6 @@ void CInGameState::Receive(const SMessage& /*aMessage*/)
 	//	default:break;
 	//}
 }
-
-
 
 void TEMP_DeferredRenderingTests(CScene* scene)
 {
@@ -263,4 +272,34 @@ void CInGameState::TEMP_DecalTests(CScene* aScene)
 	//decal2->myTransform->Rotation({ 0.0f, 45.0f, 0.0f });
 	//decal2->myTransform->Scale({ 1.0f, 1.0f, 1.0f });
 	//aScene->AddInstance(decal2);
+}
+
+void TEMP_VFX(CScene* aScene)
+{
+	rapidjson::Document doc = CJsonReader::Get()->LoadDocument("Assets/VFXTEMP/JSON/Data.json");
+
+	static int id = 500;
+	CGameObject* abilityObject = new CGameObject(id++);
+	std::string colliderType;
+
+	//VFX
+	abilityObject->myTransform->Position({0.5f, 0.0f, 0.5f});
+	std::vector<std::string> paths;
+	for (unsigned int i = 0; i < doc["VFX"].Size(); ++i) {
+		paths.emplace_back(doc["VFX"][i]["Path"].GetString());
+	}
+	abilityObject->AddComponent<CVFXComponent>(*abilityObject);
+	abilityObject->GetComponent<CVFXComponent>()->Init(CVFXFactory::GetInstance()->GetVFXBaseSet(paths));
+	//!VFX
+
+	//PARTICLESYSTEM
+	paths.clear();
+	for (unsigned int i = 0; i < doc["ParticleSystems"].Size(); ++i) {
+		paths.emplace_back(doc["ParticleSystems"][i]["Path"].GetString());
+	}
+	abilityObject->AddComponent<CParticleEmitterComponent>(*abilityObject);
+	abilityObject->GetComponent<CParticleEmitterComponent>()->Init(CParticleFactory::GetInstance()->GetParticleSet(paths));
+	//!PARTICLESYSTEM
+	
+	aScene->AddInstance(abilityObject);
 }

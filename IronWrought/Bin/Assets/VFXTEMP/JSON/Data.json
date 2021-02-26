@@ -1,0 +1,40 @@
+{
+	"Collider": {
+		"Type": "Circle",
+		"Width": 0.2,
+		"Height": 0.2,
+		"Collision Layer": 16,
+		"Collides With": 4
+	},
+
+	"VFX": [
+		{ "Path": "Assets/VFXTEMP/JSON/VFXData.json" }
+	],
+
+	"ParticleSystems": [
+		{ "Path": "Assets/VFXTEMP/JSON/ParticleData.json" }
+	],
+
+	"Audio": {
+
+	},
+
+	"Behavior": {
+		"Type": "Aura",
+		"Rotational Speed": 2.0,
+		"Regeneration Percentage":  0.15
+	},
+
+	"AnimationState": {
+
+	},
+
+	"Damage": 0.0,
+
+	"Duration": 0.2,
+
+	"Range": 0.2,
+
+	"Cooldown": 2.0
+
+}

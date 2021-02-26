@@ -49,6 +49,6 @@ private:
 	std::vector<float> myEmitterDelays;
 	std::vector<float> myEmitterDurations;
 	std::vector<DirectX::SimpleMath::Vector3> myOffsets;
-	float myScale = 10.0f;
+	float myScale = 1.0f;
 };
 
