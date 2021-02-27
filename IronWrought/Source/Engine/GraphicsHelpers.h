@@ -23,6 +23,16 @@ namespace Graphics {
 		return true;
 	}
 
+	static bool CreateGeometryShader(std::string aFilepath, CDirectXFramework* aFramework, ID3D11GeometryShader** outGeometryShader)
+	{
+		std::ifstream gsFile;
+		gsFile.open(aFilepath, std::ios::binary);
+		std::string gsData = { std::istreambuf_iterator<char>(gsFile), std::istreambuf_iterator<char>() };
+		ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateGeometryShader(gsData.data(), gsData.size(), nullptr, outGeometryShader), "Geometry Shader could not be created.");
+		gsFile.close();
+		return true;
+	}
+
 	static ID3D11ShaderResourceView* TryGetShaderResourceView(ID3D11Device* aDevice, const std::string& aTexturePath)
 	{
 		ID3D11ShaderResourceView* shaderResourceView;

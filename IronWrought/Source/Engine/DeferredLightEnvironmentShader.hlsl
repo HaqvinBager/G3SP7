@@ -5,23 +5,23 @@ PixelOutput main(VertexToPixel input)
 {
     PixelOutput output;
 
-    float depth = PixelShader_Exists(input).myColor.r;
+    float depth = PixelShader_Exists(input.myUV).r;
     if (depth == 1)
     {
-        output.myColor = GBuffer_Albedo(input).myColor;
+        output.myColor = GBuffer_Albedo(input.myUV);
         return output;
     }
     
-    float3 worldPosition = PixelShader_WorldPosition(input).myColor.rgb;
+    float3 worldPosition = PixelShader_WorldPosition(input.myUV).rgb;
     float3 toEye = normalize( cameraPosition.xyz - worldPosition.xyz);
-    float3 albedo = GBuffer_Albedo(input).myColor.rgb;
+    float3 albedo = GBuffer_Albedo(input.myUV).rgb;
     albedo = GammaToLinear(albedo);
-    float3 normal = GBuffer_Normal(input).myColor.xyz;
-    float3 vertexNormal = GBuffer_VertexNormal(input).myColor.xyz;
-    float ambientOcclusion = GBuffer_AmbientOcclusion(input).myColor.r;
-    float metalness = GBuffer_Metalness(input).myColor.r;
-    float perceptualRoughness = GBuffer_PerceptualRoughness(input).myColor.r;
-    float emissiveData = GBuffer_Emissive(input).myColor.r;
+    float3 normal = GBuffer_Normal(input.myUV).xyz;
+    float3 vertexNormal = GBuffer_VertexNormal(input.myUV).xyz;
+    float ambientOcclusion = GBuffer_AmbientOcclusion(input.myUV);
+    float metalness = GBuffer_Metalness(input.myUV);
+    float perceptualRoughness = GBuffer_PerceptualRoughness(input.myUV);
+    float emissiveData = GBuffer_Emissive(input.myUV);
     
     float3 specularColor = lerp((float3) 0.04, albedo, metalness);
     float3 diffuseColor = lerp((float3) 0.00, albedo, 1 - metalness);

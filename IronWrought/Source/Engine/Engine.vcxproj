@@ -791,6 +791,19 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
     </FxCompile>
+    <FxCompile Include="PointLightGeometryShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">4.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="PointLightVertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Vertex</ShaderType>
+    </FxCompile>
     <FxCompile Include="RenderPassAmbientOcclusionPixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
@@ -897,6 +910,7 @@
     <None Include="ParticleShaderStructs.hlsli" />
     <None Include="PBRAmbience.hlsli" />
     <None Include="PBRDirectionalLight.hlsli" />
+    <None Include="PointLightShaderStructs.hlsli" />
     <None Include="SamplingFunctions.hlsli" />
     <None Include="ShaderStructs.hlsli" />
     <None Include="SpriteShaderStructs.hlsli" />

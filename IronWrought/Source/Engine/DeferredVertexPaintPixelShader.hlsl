@@ -16,43 +16,43 @@ GBufferOutput main(VertexPaintModelToPixel input)
     
     float3 vertexColors = input.myColor;
     
-    float3 albedo               = PixelShader_Albedo(vertToPixel).myColor.rgb;
-    float3 normal               = PixelShader_Normal(vertToPixel).myColor.xyz;
+    float3 albedo               = PixelShader_Albedo(vertToPixel.myUV).rgb;
+    float3 normal               = PixelShader_Normal(vertToPixel.myUV).xyz;
     float3x3 tangentSpaceMatrix = float3x3(normalize(input.myTangent.xyz), normalize(input.myBinormal.xyz), normalize(input.myNormal.xyz));
     normal = mul(normal.xyz, tangentSpaceMatrix);
     normal = normalize(normal);
-    float ambientOcclusion      = PixelShader_AmbientOcclusion(vertToPixel).myColor.r;
-    float metalness             = PixelShader_Metalness(vertToPixel).myColor.r;
-    float perceptualRoughness   = PixelShader_PerceptualRoughness(vertToPixel).myColor.r;
-    float emissive              = PixelShader_Emissive(vertToPixel).myColor.r;
+    float ambientOcclusion      = PixelShader_AmbientOcclusion(vertToPixel.myUV);
+    float metalness             = PixelShader_Metalness(vertToPixel.myUV);
+    float perceptualRoughness   = PixelShader_PerceptualRoughness(vertToPixel.myUV);
+    float emissive              = PixelShader_Emissive(vertToPixel.myUV);
    
     // Extra materials
-    float3 albedo2              = PixelShader_Albedo(vertexPaintTextures[RED_ALBEDO], vertToPixel).myColor.rgb;
-    float3 normal2              = PixelShader_Normal(vertexPaintTextures[RED_NORMAL], vertToPixel).myColor.xyz;
+    float3 albedo2              = PixelShader_Albedo(vertexPaintTextures[RED_ALBEDO], vertToPixel.myUV).rgb;
+    float3 normal2              = PixelShader_Normal(vertexPaintTextures[RED_NORMAL], vertToPixel.myUV).xyz;
     normal2 = mul(normal2.xyz, tangentSpaceMatrix);
     normal2 = normalize(normal2);
-    float ambientOcclusion2     = PixelShader_AmbientOcclusion(vertexPaintTextures[RED_NORMAL], vertToPixel).myColor.r;
-    float metalness2            = PixelShader_Metalness(vertexPaintTextures[RED_MATERIAL], vertToPixel).myColor.r;
-    float perceptualRoughness2  = PixelShader_PerceptualRoughness(vertexPaintTextures[RED_MATERIAL], vertToPixel).myColor.r;
-    float emissive2             = PixelShader_Emissive(vertexPaintTextures[RED_MATERIAL], vertToPixel).myColor.r;
+    float ambientOcclusion2     = PixelShader_AmbientOcclusion(vertexPaintTextures[RED_NORMAL], vertToPixel.myUV);
+    float metalness2            = PixelShader_Metalness(vertexPaintTextures[RED_MATERIAL], vertToPixel.myUV);
+    float perceptualRoughness2  = PixelShader_PerceptualRoughness(vertexPaintTextures[RED_MATERIAL], vertToPixel.myUV);
+    float emissive2             = PixelShader_Emissive(vertexPaintTextures[RED_MATERIAL], vertToPixel.myUV);
     
-    float3 albedo3              = PixelShader_Albedo(vertexPaintTextures[GREEN_ALBEDO], vertToPixel).myColor.rgb;
-    float3 normal3              = PixelShader_Normal(vertexPaintTextures[GREEN_NORMAL], vertToPixel).myColor.xyz;
+    float3 albedo3              = PixelShader_Albedo(vertexPaintTextures[GREEN_ALBEDO], vertToPixel.myUV).rgb;
+    float3 normal3              = PixelShader_Normal(vertexPaintTextures[GREEN_NORMAL], vertToPixel.myUV).xyz;
     normal3 = mul(normal3.xyz, tangentSpaceMatrix);
     normal3 = normalize(normal3);
-    float ambientOcclusion3     = PixelShader_AmbientOcclusion(vertexPaintTextures[GREEN_NORMAL], vertToPixel).myColor.r;
-    float metalness3            = PixelShader_Metalness(vertexPaintTextures[GREEN_MATERIAL], vertToPixel).myColor.r;
-    float perceptualRoughness3  = PixelShader_PerceptualRoughness(vertexPaintTextures[GREEN_MATERIAL], vertToPixel).myColor.r;
-    float emissive3             = PixelShader_Emissive(vertexPaintTextures[GREEN_MATERIAL], vertToPixel).myColor.r;
+    float ambientOcclusion3     = PixelShader_AmbientOcclusion(vertexPaintTextures[GREEN_NORMAL], vertToPixel.myUV);
+    float metalness3            = PixelShader_Metalness(vertexPaintTextures[GREEN_MATERIAL], vertToPixel.myUV);
+    float perceptualRoughness3  = PixelShader_PerceptualRoughness(vertexPaintTextures[GREEN_MATERIAL], vertToPixel.myUV);
+    float emissive3             = PixelShader_Emissive(vertexPaintTextures[GREEN_MATERIAL], vertToPixel.myUV);
     
-    float3 albedo4              = PixelShader_Albedo(vertexPaintTextures[BLUE_ALBEDO], vertToPixel).myColor.rgb;
-    float3 normal4              = PixelShader_Normal(vertexPaintTextures[BLUE_NORMAL], vertToPixel).myColor.xyz;
+    float3 albedo4              = PixelShader_Albedo(vertexPaintTextures[BLUE_ALBEDO], vertToPixel.myUV).rgb;
+    float3 normal4              = PixelShader_Normal(vertexPaintTextures[BLUE_NORMAL], vertToPixel.myUV).xyz;
     normal4 = mul(normal4.xyz, tangentSpaceMatrix);
     normal4 = normalize(normal4);
-    float ambientOcclusion4     = PixelShader_AmbientOcclusion(vertexPaintTextures[BLUE_NORMAL], vertToPixel).myColor.r;
-    float metalness4            = PixelShader_Metalness(vertexPaintTextures[BLUE_MATERIAL], vertToPixel).myColor.r;
-    float perceptualRoughness4  = PixelShader_PerceptualRoughness(vertexPaintTextures[BLUE_MATERIAL], vertToPixel).myColor.r;
-    float emissive4             = PixelShader_Emissive(vertexPaintTextures[BLUE_MATERIAL], vertToPixel).myColor.r;
+    float ambientOcclusion4     = PixelShader_AmbientOcclusion(vertexPaintTextures[BLUE_NORMAL], vertToPixel.myUV);
+    float metalness4            = PixelShader_Metalness(vertexPaintTextures[BLUE_MATERIAL], vertToPixel.myUV);
+    float perceptualRoughness4  = PixelShader_PerceptualRoughness(vertexPaintTextures[BLUE_MATERIAL], vertToPixel.myUV);
+    float emissive4             = PixelShader_Emissive(vertexPaintTextures[BLUE_MATERIAL], vertToPixel.myUV);
     
     // Using 4 textures
     GBufferOutput output;

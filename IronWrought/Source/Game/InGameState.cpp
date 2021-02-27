@@ -50,6 +50,7 @@ void CInGameState::Start()
 	CJsonReader::Get()->Init();
 	CScene* scene = CSceneManager::CreateEmpty();
 	scene->AddPXScene(CEngine::GetInstance()->GetPhysx().CreatePXScene());
+	TEMP_DecalTests(scene);
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);
 
@@ -251,6 +252,11 @@ void CInGameState::TEMP_DecalTests(CScene* aScene)
 	myDecal = decal;
 	aScene->AddInstance(decal);
 
+	CGameObject* pointLight = new CGameObject(3000);
+	pointLight->AddComponent<CPointLightComponent>(*pointLight, 15.f, SM::Vector3{ 1,0,0 }, 15.f);
+	pointLight->myTransform->Position({ 0.0f, 1.0f, -2.0f });
+	aScene->AddInstance(pointLight);
+	aScene->AddInstance(pointLight->GetComponent<CPointLightComponent>()->GetPointLight());
 	//decal->GetComponent<CTransformComponent>()->Position({ 29.0f,2.0f, 0.0f });
 	//decal->myTransform->Rotation({ 90.0f, 0.0f, 0.0f });
 	//decal->GetComponent<CTransformComponent>()->Position({ 33.0f,2.0f, 25.5f });

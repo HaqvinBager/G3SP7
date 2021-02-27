@@ -172,6 +172,12 @@
     <FxCompile Include="Decal_MaterialPixelShader.hlsl">
       <Filter>Shaders\Decal</Filter>
     </FxCompile>
+    <FxCompile Include="PointLightGeometryShader.hlsl">
+      <Filter>Shaders\PointLight</Filter>
+    </FxCompile>
+    <FxCompile Include="PointLightVertexShader.hlsl">
+      <Filter>Shaders\PointLight</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimationComponent.cpp">
@@ -1321,6 +1327,9 @@
     <None Include="DecalShaderStructs.hlsli">
       <Filter>Shaders\Decal</Filter>
     </None>
+    <None Include="PointLightShaderStructs.hlsli">
+      <Filter>Shaders\PointLight</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">
@@ -1526,6 +1535,9 @@
     </Filter>
     <Filter Include="Imgui\Node Editor\Nodes\Variables\Get">
       <UniqueIdentifier>{c77b8dcc-917a-4872-8dfc-bb6632a1befb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\PointLight">
+      <UniqueIdentifier>{0a32e14a-5f16-48ca-8f3b-7efb77afe66c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

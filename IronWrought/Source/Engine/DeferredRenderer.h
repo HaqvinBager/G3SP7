@@ -88,14 +88,19 @@ private:
 	ID3D11Buffer* myLightBuffer;
 	ID3D11Buffer* myPointLightBuffer;
 	ID3D11Buffer* myBoneBuffer;
+	ID3D11Buffer* myPointLightVertexBuffer;
 
 	ID3D11InputLayout* myVertexPaintInputLayout;
+	ID3D11InputLayout* myPointLightInputLayout;
 // Vertex shaders.
 	ID3D11VertexShader* myFullscreenShader;
 	ID3D11VertexShader* myModelVertexShader;
 	ID3D11VertexShader* myAnimationVertexShader;
 	ID3D11VertexShader* myVertexPaintModelVertexShader;
 	ID3D11VertexShader* myInstancedModelVertexShader;
+	ID3D11VertexShader* myPointLightVertexShader;
+// Geometry shaders.
+	ID3D11GeometryShader* myPointLightGeometryShader;
 // Pixel shaders.
 	ID3D11PixelShader* myGBufferPixelShader;
 	ID3D11PixelShader* myVertexPaintPixelShader;

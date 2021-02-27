@@ -2,81 +2,66 @@
 #include "MathHelpers.hlsli"
 #include "DetailNormalHelpers.hlsli"
 
-PixelOutput PixelShader_WorldPosition(VertexToPixel input)
-{
-    PixelOutput output;
-    
+float4 PixelShader_WorldPosition(float2 uv)
+{   
     // World Pos texture // Deprecated
     //float4 worldPos = worldPositionTexture.Sample(defaultSampler, input.myUV.xy).rgba;
     
     // Depth sampling
-    float z = depthTexture.Sample(defaultSampler, input.myUV.xy).r;
-    float x = input.myUV.x * 2.0f - 1;
-    float y = (1 - input.myUV.y) * 2.0f - 1;
+    float z = depthTexture.Sample(defaultSampler, uv).r;
+    float x = uv.x * 2.0f - 1;
+    float y = (1 - uv.y) * 2.0f - 1;
     float4 projectedPos = float4(x, y, z, 1.0f);
     float4 viewSpacePos = mul(toCameraFromProjection, projectedPos);
     viewSpacePos /= viewSpacePos.w;
     float4 worldPos = mul(toWorldFromCamera, viewSpacePos);
 
-    output.myColor.rgb = worldPos.rgb;
-    output.myColor.a = 1.0f;
-    return output;
+    worldPos.a = 1.0f;
+    return worldPos;
 }
 
-PixelOutput PixelShader_Exists(VertexToPixel input)
+float4 PixelShader_Exists(float2 uv)
 {
     //PixelOutput output;
     //float4 worldPos = PixelShader_WorldPosition(input).myColor.rgba;
     //output.myColor.rgba = worldPos;
     //return output;
     PixelOutput output;
-    float depth = depthTexture.Sample(defaultSampler, input.myUV.xy).r;
-    output.myColor.r = depth;
-    output.myColor.g = 0.0f;
-    output.myColor.b = 0.0f;
-    output.myColor.a = 0.0f;
-    return output;
+    float depth = depthTexture.Sample(defaultSampler, uv).r;
+
+    return float4(depth, 0.0f, 0.0f, 0.0f);
 }
 
-PixelOutput PixelShader_Albedo(VertexToPixel input)
+float4 PixelShader_Albedo(float2 uv)
 {
-    PixelOutput output;
-    float4 color = albedoTexture.Sample(defaultSampler, input.myUV.xy).rgba;
+    float4 color = albedoTexture.Sample(defaultSampler, uv).rgba;
     //color.rgb = GammaToLinear(color.rgb);// Used for when testing Detail normals, tufted leather model had incorrect compression format (sLinear instead of sRGB) or something lika that i don't remember
-    output.myColor.rgb = color.rgb;
-    output.myColor.a = color.a;
-    return output;
+    return color;
 }
 
-PixelOutput PixelShader_Albedo(Texture2D anAlbedoTexture, VertexToPixel input)
+float4 PixelShader_Albedo(Texture2D anAlbedoTexture, float2 uv)
 {
-    PixelOutput output;
-    float4 color = anAlbedoTexture.Sample(defaultSampler, input.myUV.xy).rgba;
-    output.myColor.rgb = color.rgb;
-    output.myColor.a = color.a;
-    return output;
+    float4 color = anAlbedoTexture.Sample(defaultSampler, uv).rgba;
+    return color;
 }
 
 // This function is used for renderpasses to isolate the normal texture.
-PixelOutput PixelShader_NormalForIsolatedRendering(VertexToPixel input)
+float4 PixelShader_NormalForIsolatedRendering(float2 uv)
 {
     float3 normal;
-    normal.xy = normalTexture.Sample(defaultSampler, input.myUV.xy).ag;
+    normal.xy = normalTexture.Sample(defaultSampler, uv).ag;
     // Recreate z
     normal.z = 0.0f;
     normal.z = sqrt(1 - saturate((normal.x * normal.x) + (normal.y * normal.y)));
     normal = normalize(normal);
     
-    PixelOutput output;
-    output.myColor.xyz = normal.xyz;
-    output.myColor.a = 1.0f;
-    return output;
+    return float4(normal.x, normal.y, normal.z, 1.0f);
 }
 
-PixelOutput PixelShader_Normal(VertexToPixel input)
+float4 PixelShader_Normal(float2 uv)
 {
     float3 normal;
-    normal.xy = normalTexture.Sample(defaultSampler, input.myUV.xy).ag;
+    normal.xy = normalTexture.Sample(defaultSampler, uv).ag;
     // Recreate z
     normal.z = 0.0f;
     normal = (normal * 2.0f) - 1.0f;// Comment this for Normal shader render pass
@@ -84,16 +69,13 @@ PixelOutput PixelShader_Normal(VertexToPixel input)
     //normal = (normal * 0.5f) + 0.5f;// Found in TGA modelviewer shader code, but seems to cause issues here.
     normal = normalize(normal);
     
-    PixelOutput output;
-    output.myColor.xyz = normal.xyz;
-    output.myColor.a = 1.0f;
-    return output;
+    return float4(normal.x, normal.y, normal.z, 1.0f);
 }
 
-PixelOutput PixelShader_Normal(Texture2D aNormalTexture, VertexToPixel input)
+float4 PixelShader_Normal(Texture2D aNormalTexture, float2 uv)
 {
     float3 normal;
-    normal.xy = aNormalTexture.Sample(defaultSampler, input.myUV.xy).ag;
+    normal.xy = aNormalTexture.Sample(defaultSampler, uv).ag;
     // Recreate z
     normal.z = 0.0f;
     normal = (normal * 2.0f) - 1.0f; // Comment this for Normal shader render pass
@@ -101,123 +83,87 @@ PixelOutput PixelShader_Normal(Texture2D aNormalTexture, VertexToPixel input)
     //normal = (normal * 0.5f) + 0.5f;// Found in TGA modelviewer shader code, but seems to cause issues here.
     normal = normalize(normal);
     
-    PixelOutput output;
-    output.myColor.xyz = normal.xyz;
-    output.myColor.a = 1.0f;
-    return output;
+    return float4(normal.x, normal.y, normal.z, 1.0f);
 }
 
-float PixelShader_DetailNormalStrength(VertexToPixel input)
+float PixelShader_DetailNormalStrength(float2 uv)
 {
-    float output = materialTexture.Sample(defaultSampler, input.myUV.xy).a;
+    float output = materialTexture.Sample(defaultSampler, uv).a;
     return output;
 }
-PixelOutput PixelShader_DetailNormal(VertexToPixel input, int index)
+float4 PixelShader_DetailNormal(float2 uv, int index)
 {
     float tilingModifier = DETAILNORMAL_TILING; // eq to scale
    
     float3 normal;
     
-    normal.xy = detailNormals[index].Sample(defaultSampler, input.myUV.xy * tilingModifier).ag;
+    normal.xy = detailNormals[index].Sample(defaultSampler, uv * tilingModifier).ag;
     normal.z = 0.0f;
     normal = (normal * 2.0f) - 1.0f;
     normal.z = sqrt(1 - saturate((normal.x * normal.x) + (normal.y * normal.y)));
     normal = normalize(normal);
     
-    PixelOutput output;
-    output.myColor.xyz = normal.xyz;
-    output.myColor.a = 1.0f;
-    return output;
+    return float4(normal.x, normal.y, normal.z, 1.0f);
 }
 
-PixelOutput PixelShader_Material(VertexToPixel input)
+float4 PixelShader_Material(float2 uv)
 {
-    PixelOutput output;
-    float4 material = materialTexture.Sample(defaultSampler, input.myUV.xy).rgba;
-    output.myColor.rgb = material.rgb;
-    output.myColor.a = material.a;
-    return output;
+    float4 material = materialTexture.Sample(defaultSampler, uv).rgba;
+    return material;
 }
 
-PixelOutput PixelShader_Material(Texture2D aMaterialTexture, VertexToPixel input)
+float4 PixelShader_Material(Texture2D aMaterialTexture, float2 uv)
 {
-    PixelOutput output;
-    float4 material = aMaterialTexture.Sample(defaultSampler, input.myUV.xy).rgba;
-    output.myColor.rgb = material.rgb;
-    output.myColor.a = material.a;
-    return output;
+    float4 material = aMaterialTexture.Sample(defaultSampler, uv).rgba;
+    return material;
 }
 
-PixelOutput PixelShader_AmbientOcclusion(VertexToPixel input)
+float PixelShader_AmbientOcclusion(float2 uv)
 {
-    PixelOutput output;
-    float ao = normalTexture.Sample(defaultSampler, input.myUV.xy).b;
-    output.myColor.rgb = ao.xxx;
-    output.myColor.a = 1.0f;
-    return output;
+    float ao = normalTexture.Sample(defaultSampler, uv).b;
+    return ao;
 }
 
-PixelOutput PixelShader_AmbientOcclusion(Texture2D aNormalTexture, VertexToPixel input)
+float PixelShader_AmbientOcclusion(Texture2D aNormalTexture, float2 uv)
 {
-    PixelOutput output;
-    float ao = aNormalTexture.Sample(defaultSampler, input.myUV.xy).b;
-    output.myColor.rgb = ao.xxx;
-    output.myColor.a = 1.0f;
-    return output;
+    float ao = aNormalTexture.Sample(defaultSampler, uv).b;
+    return ao;
 }
 
-PixelOutput PixelShader_Metalness(VertexToPixel input)
+float PixelShader_Metalness(float2 uv)
 {
-    PixelOutput output;
-    PixelOutput material = PixelShader_Material(input);
-    output.myColor.rgb = material.myColor.rrr;
-    output.myColor.a = 1.0f;
-    return output;
+    float metalness = PixelShader_Material(uv).r;
+    return metalness;
 }
 
-PixelOutput PixelShader_Metalness(Texture2D aMaterialTexture, VertexToPixel input)
+float PixelShader_Metalness(Texture2D aMaterialTexture, float2 uv)
 {
-    PixelOutput output;
-    PixelOutput material = PixelShader_Material(aMaterialTexture, input);
-    output.myColor.rgb = material.myColor.rrr;
-    output.myColor.a = 1.0f;
-    return output;
+    float metalness = PixelShader_Material(aMaterialTexture, uv).r;
+    return metalness;
 }
 
-PixelOutput PixelShader_PerceptualRoughness(VertexToPixel input)
+float PixelShader_PerceptualRoughness(float2 uv)
 {
-    PixelOutput output;
-    PixelOutput material = PixelShader_Material(input);
-    output.myColor.rgb = material.myColor.ggg;
-    output.myColor.a = 1.0f;
-    return output;
+    float roughness = PixelShader_Material(uv).g;
+    return roughness;
 }
 
-PixelOutput PixelShader_PerceptualRoughness(Texture2D aMaterialTexture, VertexToPixel input)
+float PixelShader_PerceptualRoughness(Texture2D aMaterialTexture, float2 uv)
 {
-    PixelOutput output;
-    PixelOutput material = PixelShader_Material(aMaterialTexture, input);
-    output.myColor.rgb = material.myColor.ggg;
-    output.myColor.a = 1.0f;
-    return output;
+    float roughness = PixelShader_Material(aMaterialTexture, uv).g;
+    return roughness;
 }
 
-PixelOutput PixelShader_Emissive(VertexToPixel input)
+float PixelShader_Emissive(float2 uv)
 {
-    PixelOutput output;
-    PixelOutput material = PixelShader_Material(input);
-    output.myColor.rgb = material.myColor.bbb;
-    output.myColor.a = 1.0f;
-    return output;
+    float emissive = PixelShader_Material(uv).b;
+    return emissive;
 }
 
-PixelOutput PixelShader_Emissive(Texture2D aMaterialTexture, VertexToPixel input)
+float PixelShader_Emissive(Texture2D aMaterialTexture, float2 uv)
 {
-    PixelOutput output;
-    PixelOutput material = PixelShader_Material(aMaterialTexture, input);
-    output.myColor.rgb = material.myColor.bbb;
-    output.myColor.a = 1.0f;
-    return output;
+    float emissive = PixelShader_Material(aMaterialTexture, uv).b;
+    return emissive;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -230,19 +176,15 @@ PixelOutput PixelShader_Emissive(Texture2D aMaterialTexture, VertexToPixel input
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-PixelOutput GBuffer_Albedo(VertexToPixel input)
+float4 GBuffer_Albedo(float2 uv)
 {
-    PixelOutput output;
-    float3 albedo = albedoTextureGBuffer.Sample(defaultSampler, input.myUV.xy).rgb;
-    output.myColor.rgb = albedo;
-    output.myColor.a = 1.0f;
-    return output;
+    float3 albedo = albedoTextureGBuffer.Sample(defaultSampler, uv).rgb;
+    return float4(albedo.r, albedo.g, albedo.b, 1.0f);
 }
 
-PixelOutput GBuffer_Normal(VertexToPixel input)
+float4 GBuffer_Normal(float2 uv)
 {
-    PixelOutput output;
-    float3 normal = normalTextureGBuffer.Sample(defaultSampler, input.myUV.xy).rgb;
+    float3 normal = normalTextureGBuffer.Sample(defaultSampler, uv).rgb;
 
 // Recreate z
     // Fråga björn 18/2 :)
@@ -256,54 +198,37 @@ PixelOutput GBuffer_Normal(VertexToPixel input)
         //normal.z *= -1.0f;
         //normal = normal * 0.5 + 0.5;// dont do this
     
-    output.myColor.rgb = normal;
-    output.myColor.a = 1.0f;
-    return output;
+    return float4(normal.x, normal.y, normal.z, 1.0f);
 }
 
-PixelOutput GBuffer_VertexNormal(VertexToPixel input)
+float4 GBuffer_VertexNormal(float2 uv)
 {
-    PixelOutput output;
-    float3 vertexNormal = vertexNormalTextureGBuffer.Sample(defaultSampler, input.myUV.xy).rgb;
-    output.myColor.rgb = vertexNormal;
-    output.myColor.a = 1.0f;
-    return output;
+    float3 vertexNormal = vertexNormalTextureGBuffer.Sample(defaultSampler, uv).rgb;
+    return float4(vertexNormal.r, vertexNormal.g, vertexNormal.b, 1.0f);
 }
 
-PixelOutput GBuffer_AmbientOcclusion(VertexToPixel input)
+float GBuffer_AmbientOcclusion(float2 uv)
 {
-    PixelOutput output;
-    float ao = materialTextureGBuffer.Sample(defaultSampler, input.myUV.xy).b;
-    output.myColor.rgb = ao.xxx;
-    output.myColor.a = 1.0f;
-    return output;
+    float ao = materialTextureGBuffer.Sample(defaultSampler, uv).b;
+    return ao;
 }
 
-PixelOutput GBuffer_Metalness(VertexToPixel input)
+float GBuffer_Metalness(float2 uv)
 {
-    PixelOutput output;
-    float metalness = materialTextureGBuffer.Sample(defaultSampler, input.myUV.xy).r;
-    output.myColor.rgb = metalness.xxx;
-    output.myColor.a = 1.0f;
-    return output;
+    float metalness = materialTextureGBuffer.Sample(defaultSampler, uv).r;
+    return metalness;
 }
 
-PixelOutput GBuffer_PerceptualRoughness(VertexToPixel input)
+float GBuffer_PerceptualRoughness(float2 uv)
 {
-    PixelOutput output;
-    float roughness = materialTextureGBuffer.Sample(defaultSampler, input.myUV.xy).g;
-    output.myColor.rgb = roughness;
-    output.myColor.a = 1.0f;
-    return output;
+    float roughness = materialTextureGBuffer.Sample(defaultSampler, uv).g;
+    return roughness;
 }
 
-PixelOutput GBuffer_Emissive(VertexToPixel input)
+float GBuffer_Emissive(float2 uv)
 {   
-    PixelOutput output;
-    float emissive = materialTextureGBuffer.Sample(defaultSampler, input.myUV.xy).a;
-    output.myColor.rgb = emissive.xxx;
-    output.myColor.a = 1.0f;
-    return output;
+    float emissive = materialTextureGBuffer.Sample(defaultSampler, uv).a;
+    return emissive;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
