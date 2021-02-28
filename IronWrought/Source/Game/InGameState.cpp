@@ -253,8 +253,8 @@ void CInGameState::TEMP_DecalTests(CScene* aScene)
 	aScene->AddInstance(decal);
 
 	CGameObject* pointLight = new CGameObject(3000);
-	pointLight->AddComponent<CPointLightComponent>(*pointLight, 15.f, SM::Vector3{ 1,0,0 }, 15.f);
-	pointLight->myTransform->Position({ 0.0f, 1.0f, -2.0f });
+	pointLight->AddComponent<CPointLightComponent>(*pointLight, 0.2f, SM::Vector3{ 1,0,0 }, 15.f);
+	pointLight->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ 0.0f, 1.0f, -0.1f });
 	aScene->AddInstance(pointLight);
 	aScene->AddInstance(pointLight->GetComponent<CPointLightComponent>()->GetPointLight());
 	//decal->GetComponent<CTransformComponent>()->Position({ 29.0f,2.0f, 0.0f });

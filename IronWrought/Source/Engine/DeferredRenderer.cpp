@@ -448,7 +448,7 @@ void CDeferredRenderer::Render(CCameraComponent* aCamera, std::vector<CPointLigh
 		myContext->PSSetConstantBuffers(3, 1, &myPointLightBuffer);
 		myContext->GSSetConstantBuffers(3, 1, &myPointLightBuffer);
 
-		myContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		myContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 		myContext->IASetInputLayout(myPointLightInputLayout);
 		myContext->IASetVertexBuffers(0, 1, &myPointLightVertexBuffer, &stride, &offset);
 		//myContext->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
