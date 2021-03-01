@@ -10,38 +10,104 @@
 #include "Camera.h"
 #include "VFXBase.h"
 #include "VFXFactory.h"
+#include "ParticleFactory.h"
 
-
+#include "JsonReader.h"
 #include "RandomNumberGenerator.h"
 
-CVFXSystemComponent::CVFXSystemComponent(
-	  CGameObject& aParent
-	, const std::vector<std::string>& someVFXPaths
-	, const std::vector<Matrix>& someTransforms
-	, const std::vector<CParticleEmitter*>& someParticles
-	, const std::vector<Matrix>& someEmitterTransforms
-)
+CVFXSystemComponent::CVFXSystemComponent(CGameObject& aParent, const std::string& aVFXDataPath)
 	: CBehaviour(aParent) 
 {
 	myEnabled = true;
 
-	myVFXBases = CVFXFactory::GetInstance()->GetVFXBaseSet(someVFXPaths);
-	ENGINE_BOOL_POPUP(!myVFXBases.empty(), "No VFX data found.");
+	rapidjson::Document doc = CJsonReader::Get()->LoadDocument(aVFXDataPath);
 
-	myVFXDelays.reserve(myVFXBases.size());
-	myVFXDurations.reserve(myVFXBases.size());
-	for (unsigned int i = 0; i < myVFXBases.size(); ++i) {
-		myVFXDelays.emplace_back(myVFXBases[i]->GetVFXBaseData().myDelay);
-		myVFXDurations.emplace_back(myVFXBases[i]->GetVFXBaseData().myDuration);
+	std::vector<std::string> vfxPaths;
+	int size = static_cast<int>(doc["VFXMeshes"].Size());
+	myVFXAngularSpeeds.resize(size);
+	myVFXTransforms.resize(size);
+	myVFXTransformsOriginal.resize(size);
+	myVFXShouldOrbit.resize(size);
+	for (unsigned int i = 0; i < doc["VFXMeshes"].Size(); ++i) {
+		vfxPaths.emplace_back(doc["VFXMeshes"][i]["Path"].GetString());
+
+		Matrix t;
+		t = Matrix::CreateFromYawPitchRoll
+		( DirectX::XMConvertToRadians(doc["VFXMeshes"][i]["Rotation Y"].GetFloat())
+		 , DirectX::XMConvertToRadians(doc["VFXMeshes"][i]["Rotation X"].GetFloat())
+		 , DirectX::XMConvertToRadians(doc["VFXMeshes"][i]["Rotation Z"].GetFloat())
+		);
+
+		t *= Matrix::CreateScale
+		 ( doc["VFXMeshes"][i]["Scale X"].GetFloat()
+		 , doc["VFXMeshes"][i]["Scale Y"].GetFloat()
+		 , doc["VFXMeshes"][i]["Scale Z"].GetFloat()
+		);
+
+		t.Translation
+		({ doc["VFXMeshes"][i]["Offset X"].GetFloat()
+		 , doc["VFXMeshes"][i]["Offset Y"].GetFloat()
+		 , doc["VFXMeshes"][i]["Offset Z"].GetFloat() }
+		);
+		myVFXTransforms[i] = t;
+		myVFXTransformsOriginal[i] = t;
+
+		Vector3 r;
+		r.x = DirectX::XMConvertToRadians(doc["VFXMeshes"][i]["Rotate X per second"].GetFloat());
+		r.y = DirectX::XMConvertToRadians(doc["VFXMeshes"][i]["Rotate Y per second"].GetFloat());
+		r.z = DirectX::XMConvertToRadians(doc["VFXMeshes"][i]["Rotate Z per second"].GetFloat());
+		myVFXAngularSpeeds[i] = r;
+
+		myVFXShouldOrbit[i] = doc["VFXMeshes"][i]["Orbit"].GetBool();
 	}
-	
-	myVFXTransforms = someTransforms;
-	myVFXTransformsOriginal = someTransforms;
 
-	myParticleEmitters = someParticles;
-	myEmitterTransforms = someEmitterTransforms;
-	myEmitterTransformsOriginal = someEmitterTransforms;
+	myVFXBases = CVFXFactory::GetInstance()->GetVFXBaseSet(vfxPaths);
+	ENGINE_BOOL_POPUP(!myVFXBases.empty(), "No VFX data found.");
+	myVFXDelays.resize(myVFXBases.size());
+	myVFXDurations.resize(myVFXBases.size());
+	for (unsigned int i = 0; i < myVFXBases.size(); ++i) {
+		myVFXDelays[i] = (myVFXBases[i]->GetVFXBaseData().myDelay);
+		myVFXDurations[i] = (myVFXBases[i]->GetVFXBaseData().myDuration);
+	}
 
+	std::vector<std::string> particlePaths;
+	size = static_cast<int>(doc["ParticleSystems"].Size());
+	myEmitterTransforms.resize(size);
+	myEmitterTransformsOriginal.resize(size);
+	myEmitterAngularSpeeds.resize(size);
+	myEmitterShouldOrbit.resize(size);
+	for (unsigned int i = 0; i < doc["ParticleSystems"].Size(); ++i) {
+		particlePaths.emplace_back(doc["ParticleSystems"][i]["Path"].GetString());
+
+		Matrix t;
+		t = Matrix::CreateFromYawPitchRoll
+		 ( DirectX::XMConvertToRadians(doc["ParticleSystems"][i]["Rotation Y"].GetFloat())
+		 , DirectX::XMConvertToRadians(doc["ParticleSystems"][i]["Rotation X"].GetFloat())
+		 , DirectX::XMConvertToRadians(doc["ParticleSystems"][i]["Rotation Z"].GetFloat())
+		);
+
+		t *= Matrix::CreateScale(doc["ParticleSystems"][i]["Scale"].GetFloat());
+
+		t.Translation
+		({ doc["ParticleSystems"][i]["Offset X"].GetFloat()
+		 , doc["ParticleSystems"][i]["Offset Y"].GetFloat()
+		 , doc["ParticleSystems"][i]["Offset Z"].GetFloat() }
+		);
+
+		myEmitterTransforms[i] = t;
+		myEmitterTransformsOriginal[i] = t;
+
+		Vector3 r;
+		r.x = DirectX::XMConvertToRadians(doc["ParticleSystems"][i]["Rotate X per second"].GetFloat());
+		r.y = DirectX::XMConvertToRadians(doc["ParticleSystems"][i]["Rotate Y per second"].GetFloat());
+		r.z = DirectX::XMConvertToRadians(doc["ParticleSystems"][i]["Rotate Z per second"].GetFloat());
+		myEmitterAngularSpeeds[i] = r;
+
+		myEmitterShouldOrbit[i] = doc["ParticleSystems"][i]["Orbit"].GetBool();
+	}
+
+	myParticleEmitters = CParticleFactory::GetInstance()->GetParticleSet(particlePaths);
+	ENGINE_BOOL_POPUP(!myParticleEmitters.empty(), "No Particle data found.");
 	for (unsigned int i = 0; i < myParticleEmitters.size(); ++i) {
 
 		myParticleVertices.emplace_back(std::vector<CParticleEmitter::SParticleVertex>());
@@ -120,6 +186,14 @@ void CVFXSystemComponent::LateUpdate()
 
 	for (unsigned int i = 0; i < myVFXTransforms.size(); ++i)
 	{
+		if(myVFXShouldOrbit[i])
+			myVFXTransformsOriginal[i] *=  Matrix::CreateFromYawPitchRoll(CTimer::Dt() * myVFXAngularSpeeds[i].y, CTimer::Dt() * myVFXAngularSpeeds[i].x, CTimer::Dt() * myVFXAngularSpeeds[i].z);
+		else
+		{
+			Vector3 t = myVFXTransformsOriginal[i].Translation();
+			myVFXTransformsOriginal[i] *=  Matrix::CreateFromYawPitchRoll(CTimer::Dt() * myVFXAngularSpeeds[i].y, CTimer::Dt() * myVFXAngularSpeeds[i].x, CTimer::Dt() * myVFXAngularSpeeds[i].z);
+			myVFXTransformsOriginal[i].Translation(t);
+		}
 		myVFXTransforms[i] = myVFXTransformsOriginal[i] * Matrix::CreateFromQuaternion(quat);
 
 		myVFXTransforms[i].Translation(goPos + goTransform.Right()	 * myVFXTransformsOriginal[i].Translation().x);
@@ -129,6 +203,15 @@ void CVFXSystemComponent::LateUpdate()
 
 	for (unsigned int i = 0; i < myEmitterTransforms.size(); ++i)
 	{
+		if(myEmitterShouldOrbit[i])
+			myEmitterTransformsOriginal[i] *=  Matrix::CreateFromYawPitchRoll(CTimer::Dt() * myEmitterAngularSpeeds[i].y, CTimer::Dt() * myEmitterAngularSpeeds[i].x, CTimer::Dt() * myEmitterAngularSpeeds[i].z);
+		else
+		{
+			Vector3 t = myEmitterTransformsOriginal[i].Translation();
+			myEmitterTransformsOriginal[i] *=  Matrix::CreateFromYawPitchRoll(CTimer::Dt() * myEmitterAngularSpeeds[i].y, CTimer::Dt() * myEmitterAngularSpeeds[i].x, CTimer::Dt() * myEmitterAngularSpeeds[i].z);
+			myEmitterTransformsOriginal[i].Translation(t);
+		}
+
 		myEmitterTransforms[i] = myEmitterTransformsOriginal[i] * Matrix::CreateFromQuaternion(quat);
 
 		myEmitterTransforms[i].Translation(goPos + goTransform.Right() * myEmitterTransformsOriginal[i].Translation().x);

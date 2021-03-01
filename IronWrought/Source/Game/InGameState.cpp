@@ -298,64 +298,9 @@ void CInGameState::TEMP_DecalTests(CScene* aScene)
 
 void TEMP_VFX(CScene* aScene)
 {
-	rapidjson::Document doc = CJsonReader::Get()->LoadDocument("Assets/VFXTEMP/JSON/Data.json");
-
 	static int id = 500;
 	CGameObject* abilityObject = new CGameObject(id++);
-
-	abilityObject->myTransform->Position({0.0f, 0.0f, 0.0f});
-	//VFX
-	std::vector<std::string> vfxPaths;
-	std::vector<Matrix> vfxTransforms;
-	for (unsigned int i = 0; i < doc["VFXMeshes"].Size(); ++i) {
-		vfxPaths.emplace_back(doc["VFXMeshes"][i]["Path"].GetString());
-
-		Matrix t;
-		t = Matrix::CreateFromYawPitchRoll
-			( DirectX::XMConvertToRadians(doc["VFXMeshes"][i]["Rotation Y"].GetFloat())
-			, DirectX::XMConvertToRadians(doc["VFXMeshes"][i]["Rotation X"].GetFloat())
-			, DirectX::XMConvertToRadians(doc["VFXMeshes"][i]["Rotation Z"].GetFloat())
-			);
-
-		t *= Matrix::CreateScale
-			( doc["VFXMeshes"][i]["Scale X"].GetFloat()
-			, doc["VFXMeshes"][i]["Scale Y"].GetFloat()
-			, doc["VFXMeshes"][i]["Scale Z"].GetFloat()
-			);
-
-		t.Translation
-			({ doc["VFXMeshes"][i]["Offset X"].GetFloat()
-			, doc["VFXMeshes"][i]["Offset Y"].GetFloat()
-			, doc["VFXMeshes"][i]["Offset Z"].GetFloat() }
-			);
-
-		vfxTransforms.emplace_back(t);
-	}
-
-	std::vector<std::string> particlePaths;
-	std::vector<Matrix> particleTransforms;
-	for (unsigned int i = 0; i < doc["ParticleSystems"].Size(); ++i) {
-		particlePaths.emplace_back(doc["ParticleSystems"][i]["Path"].GetString());
-
-		Matrix t;
-		t = Matrix::CreateFromYawPitchRoll
-			( DirectX::XMConvertToRadians(doc["ParticleSystems"][i]["Rotation Y"].GetFloat())
-			, DirectX::XMConvertToRadians(doc["ParticleSystems"][i]["Rotation X"].GetFloat())
-			, DirectX::XMConvertToRadians(doc["ParticleSystems"][i]["Rotation Z"].GetFloat())
-		);
-
-		t *= Matrix::CreateScale(doc["ParticleSystems"][i]["Scale"].GetFloat());
-
-		t.Translation
-		({ doc["ParticleSystems"][i]["Offset X"].GetFloat()
-		, doc["ParticleSystems"][i]["Offset Y"].GetFloat()
-		, doc["ParticleSystems"][i]["Offset Z"].GetFloat() }
-		);
-
-		particleTransforms.emplace_back(t);
-	}
-
-	abilityObject->AddComponent<CVFXSystemComponent>(*abilityObject, vfxPaths, vfxTransforms, CParticleFactory::GetInstance()->GetParticleSet(particlePaths), particleTransforms);
+	abilityObject->AddComponent<CVFXSystemComponent>(*abilityObject, "Assets/VFXTEMP/JSON/Data.json");
 
 	myVFX = abilityObject;
 	aScene->AddInstance(abilityObject);

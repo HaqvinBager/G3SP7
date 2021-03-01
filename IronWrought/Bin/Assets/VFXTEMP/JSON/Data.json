@@ -10,7 +10,11 @@
 			"Rotation Z": 90.0,
 			"Scale X": 1.0,
 			"Scale Y": 2.0,
-			"Scale Z": 1.0
+			"Scale Z": 1.0,
+			"Rotate X per second": 90.0,
+			"Rotate Y per second": 33.0,
+			"Rotate Z per second": 720.0,
+			"Orbit": true
 		},
 		{
 			"Path": "Assets/VFXTEMP/JSON/VFXData2.json",
@@ -22,7 +26,11 @@
 			"Rotation Z": 0.0,
 			"Scale X": 1.0,
 			"Scale Y": 1.0,
-			"Scale Z": 1.0
+			"Scale Z": 1.0,
+			"Rotate X per second": 90.0,
+			"Rotate Y per second": 0.0,
+			"Rotate Z per second": 0.0,
+			"Orbit": true
 		},
 		{
 			"Path": "Assets/VFXTEMP/JSON/VFXData.json",
@@ -34,7 +42,11 @@
 			"Rotation Z": 0.0,
 			"Scale X": 2.0,
 			"Scale Y": 2.0,
-			"Scale Z": 2.0
+			"Scale Z": 2.0,
+			"Rotate X per second": 90.0,
+			"Rotate Y per second": 180.0,
+			"Rotate Z per second": 0.0,
+			"Orbit": false
 		}
 	],
 
@@ -47,7 +59,11 @@
 			"Rotation X": 0.0,
 			"Rotation Y": 0.0,
 			"Rotation Z": 90.0,
-			"Scale": 0.1
+			"Scale": 0.1,
+			"Rotate X per second": 90.0,
+			"Rotate Y per second": 33.0,
+			"Rotate Z per second": 720.0,
+			"Orbit": false
 		},
 		{
 			"Path": "Assets/VFXTEMP/JSON/ParticleData2.json",
@@ -57,7 +73,11 @@
 			"Rotation X": 0.0,
 			"Rotation Y": 45.0,
 			"Rotation Z": 0.0,
-			"Scale": 1.0
+			"Scale": 1.0,
+			"Rotate X per second": 90.0,
+			"Rotate Y per second": 0.0,
+			"Rotate Z per second": 0.0,
+			"Orbit": true
 		},
 		{
 			"Path": "Assets/VFXTEMP/JSON/ParticleData2.json",
@@ -67,7 +87,11 @@
 			"Rotation X": 90.0,
 			"Rotation Y": 0.0,
 			"Rotation Z": 0.0,
-			"Scale": 10.0
+			"Scale": 10.0,
+			"Rotate X per second": 90.0,
+			"Rotate Y per second": 10000.0,
+			"Rotate Z per second": 0.0,
+			"Orbit": false
 		}
 	]
 }

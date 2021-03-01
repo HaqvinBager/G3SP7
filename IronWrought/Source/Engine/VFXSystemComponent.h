@@ -10,7 +10,7 @@ class CParticleEmitter;
 class CVFXSystemComponent : public CBehaviour
 {
 public:
-	CVFXSystemComponent(CGameObject& aParent, const std::vector<std::string>& someVFXPaths, const std::vector<Matrix>& someTransforms, const std::vector<CParticleEmitter*>& someParticles, const std::vector<Matrix>& someEmitterTransforms);
+	CVFXSystemComponent(CGameObject& aParent, const std::string& aVFXDataPath);
 	~CVFXSystemComponent() override;
 
 	void Awake() override;
@@ -39,16 +39,20 @@ private:
 	std::vector<CVFXBase*>	myVFXBases;
 	std::vector<Matrix>		myVFXTransforms;
 	std::vector<Matrix>		myVFXTransformsOriginal;
+	std::vector<Vector3>	myVFXAngularSpeeds;
 	std::vector<float>		myVFXDelays;
 	std::vector<float>		myVFXDurations;
+	std::vector<bool>		myVFXShouldOrbit;
 
 	std::vector<CParticleEmitter*> myParticleEmitters;
-	std::vector<Matrix>	myEmitterTransforms;
-	std::vector<Matrix>	myEmitterTransformsOriginal;
+	std::vector<Matrix>	 myEmitterTransforms;
+	std::vector<Matrix>	 myEmitterTransformsOriginal;
+	std::vector<Vector3> myEmitterAngularSpeeds;
 	std::vector<std::vector<CParticleEmitter::SParticleVertex>> myParticleVertices;
 	std::vector<std::queue<CParticleEmitter::SParticleVertex>>	myParticlePools;
 	std::vector<float> myEmitterDelays;
 	std::vector<float> myEmitterDurations;
 	std::vector<float> myEmitterTimers;
+	std::vector<bool>  myEmitterShouldOrbit;
 };
 
