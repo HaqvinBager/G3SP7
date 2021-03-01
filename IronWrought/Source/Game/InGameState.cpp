@@ -306,42 +306,57 @@ void TEMP_VFX(CScene* aScene)
 	abilityObject->myTransform->Position({0.0f, 0.0f, 0.0f});
 	//VFX
 	std::vector<std::string> vfxPaths;
-	for (unsigned int i = 0; i < doc["VFX"].Size(); ++i) {
-		vfxPaths.emplace_back(doc["VFX"][i]["Path"].GetString());
-	}
+	std::vector<Matrix> vfxTransforms;
+	for (unsigned int i = 0; i < doc["VFXMeshes"].Size(); ++i) {
+		vfxPaths.emplace_back(doc["VFXMeshes"][i]["Path"].GetString());
 
-	// TODO: get this from JSON :)
-	Matrix t;
-	t = t.CreateFromYawPitchRoll( DirectX::XMConvertToRadians(0.0f), DirectX::XMConvertToRadians(0.0f), DirectX::XMConvertToRadians(90.0f));
-	t.Translation({ 0.f,2.0f,0.f });
-	Matrix t2;
-	t2 = t2.CreateFromYawPitchRoll( DirectX::XMConvertToRadians(45.0f), DirectX::XMConvertToRadians(0.0f), DirectX::XMConvertToRadians(0.0f));
-	t2.Translation({ 2.5f,0.0f,-2.5f });
-	Matrix t3;
-	t3 = t3.CreateFromYawPitchRoll( DirectX::XMConvertToRadians(0.0f), DirectX::XMConvertToRadians(90.0f), DirectX::XMConvertToRadians(0.0f));
-	t3.Translation({ -2.5f,0.0f,2.5f });
-	//!VFX
+		Matrix t;
+		t = Matrix::CreateFromYawPitchRoll
+			( DirectX::XMConvertToRadians(doc["VFXMeshes"][i]["Rotation Y"].GetFloat())
+			, DirectX::XMConvertToRadians(doc["VFXMeshes"][i]["Rotation X"].GetFloat())
+			, DirectX::XMConvertToRadians(doc["VFXMeshes"][i]["Rotation Z"].GetFloat())
+			);
+
+		t *= Matrix::CreateScale
+			( doc["VFXMeshes"][i]["Scale X"].GetFloat()
+			, doc["VFXMeshes"][i]["Scale Y"].GetFloat()
+			, doc["VFXMeshes"][i]["Scale Z"].GetFloat()
+			);
+
+		t.Translation
+			({ doc["VFXMeshes"][i]["Offset X"].GetFloat()
+			, doc["VFXMeshes"][i]["Offset Y"].GetFloat()
+			, doc["VFXMeshes"][i]["Offset Z"].GetFloat() }
+			);
+
+		vfxTransforms.emplace_back(t);
+	}
 
 	std::vector<std::string> particlePaths;
+	std::vector<Matrix> particleTransforms;
 	for (unsigned int i = 0; i < doc["ParticleSystems"].Size(); ++i) {
 		particlePaths.emplace_back(doc["ParticleSystems"][i]["Path"].GetString());
+
+		Matrix t;
+		t = Matrix::CreateFromYawPitchRoll
+			( DirectX::XMConvertToRadians(doc["ParticleSystems"][i]["Rotation Y"].GetFloat())
+			, DirectX::XMConvertToRadians(doc["ParticleSystems"][i]["Rotation X"].GetFloat())
+			, DirectX::XMConvertToRadians(doc["ParticleSystems"][i]["Rotation Z"].GetFloat())
+		);
+
+		t *= Matrix::CreateScale(doc["ParticleSystems"][i]["Scale"].GetFloat());
+
+		t.Translation
+		({ doc["ParticleSystems"][i]["Offset X"].GetFloat()
+		, doc["ParticleSystems"][i]["Offset Y"].GetFloat()
+		, doc["ParticleSystems"][i]["Offset Z"].GetFloat() }
+		);
+
+		particleTransforms.emplace_back(t);
 	}
 
-	abilityObject->AddComponent<CVFXSystemComponent>(*abilityObject, vfxPaths, std::vector<Matrix>({t, t2, t3}), CParticleFactory::GetInstance()->GetParticleSet(particlePaths));
-	//abilityObject->GetComponent<CVFXSystemComponent>()->Init(CVFXFactory::GetInstance()->GetVFXBaseSet(paths));
+	abilityObject->AddComponent<CVFXSystemComponent>(*abilityObject, vfxPaths, vfxTransforms, CParticleFactory::GetInstance()->GetParticleSet(particlePaths), particleTransforms);
 
-	//CGameObject* particleObject = new CGameObject(id++);
-	//particleObject->myTransform->SetParent(abilityObject->myTransform);
-	
-	//PARTICLESYSTEM
-	//std::vector<std::string> particlePaths;
-	//for (unsigned int i = 0; i < doc["ParticleSystems"].Size(); ++i) {
-	//	particlePaths.emplace_back(doc["ParticleSystems"][i]["Path"].GetString());
-	//}
-	//abilityObject->AddComponent<CParticleEmitterComponent>(*abilityObject);
-	//abilityObject->GetComponent<CParticleEmitterComponent>()->Init(CParticleFactory::GetInstance()->GetParticleSet(paths));
-	//!PARTICLESYSTEM
 	myVFX = abilityObject;
 	aScene->AddInstance(abilityObject);
-	//aScene->AddInstance(particleObject);
 }

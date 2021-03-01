@@ -10,7 +10,7 @@ class CParticleEmitter;
 class CVFXSystemComponent : public CBehaviour
 {
 public:
-	CVFXSystemComponent(CGameObject& aParent, const std::vector<std::string>& someVFXPaths, const std::vector<Matrix>& someTransforms, const std::vector<CParticleEmitter*>& someParticles);
+	CVFXSystemComponent(CGameObject& aParent, const std::vector<std::string>& someVFXPaths, const std::vector<Matrix>& someTransforms, const std::vector<CParticleEmitter*>& someParticles, const std::vector<Matrix>& someEmitterTransforms);
 	~CVFXSystemComponent() override;
 
 	void Awake() override;
@@ -27,26 +27,28 @@ public:
 	std::vector<CVFXBase*>& GetVFXBases() { return myVFXBases; }
 	std::vector<Matrix>& GetVFXTransforms() { return myVFXTransforms; }
 
-	std::vector<Matrix>& GetParticleTransforms() { return myParticleTransforms; }
+	std::vector<Matrix>& GetParticleTransforms() { return myEmitterTransforms; }
 	std::vector<CParticleEmitter*>& GetParticleSet() { return myParticleEmitters; }
 	std::vector<std::vector<CParticleEmitter::SParticleVertex>>& GetParticleVertices() { return myParticleVertices; }
 
 private:
-	std::vector<float>		myVFXDelays;
-	std::vector<float>		myVFXDurations;
+	void SpawnParticles(unsigned int anIndex, DirectX::SimpleMath::Vector3& aCameraPosition, CParticleEmitter::SParticleData& someParticleData, const Vector3& aTranslation, const float aScale);
+	void UpdateParticles(unsigned int anIndex, DirectX::SimpleMath::Vector3& aCameraPosition, CParticleEmitter::SParticleData& particleData, const float aScale);
+
+private:
 	std::vector<CVFXBase*>	myVFXBases;
 	std::vector<Matrix>		myVFXTransforms;
 	std::vector<Matrix>		myVFXTransformsOriginal;
+	std::vector<float>		myVFXDelays;
+	std::vector<float>		myVFXDurations;
 
-	void SpawnParticles(unsigned int anIndex, DirectX::SimpleMath::Vector3& aCameraPosition, CParticleEmitter::SParticleData& someParticleData);
-	void UpdateParticles(unsigned int anIndex, DirectX::SimpleMath::Vector3& aCameraPosition, CParticleEmitter::SParticleData& particleData);
 	std::vector<CParticleEmitter*> myParticleEmitters;
-	std::vector<Matrix>	myParticleTransforms;
-	std::vector<Matrix>	myParticleTransformsOriginal;
+	std::vector<Matrix>	myEmitterTransforms;
+	std::vector<Matrix>	myEmitterTransformsOriginal;
 	std::vector<std::vector<CParticleEmitter::SParticleVertex>> myParticleVertices;
 	std::vector<std::queue<CParticleEmitter::SParticleVertex>>	myParticlePools;
-	std::vector<float> myEmitterTimers;
 	std::vector<float> myEmitterDelays;
 	std::vector<float> myEmitterDurations;
+	std::vector<float> myEmitterTimers;
 };
 

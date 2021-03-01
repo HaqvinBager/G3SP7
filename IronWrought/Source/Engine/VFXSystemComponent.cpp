@@ -14,7 +14,13 @@
 
 #include "RandomNumberGenerator.h"
 
-CVFXSystemComponent::CVFXSystemComponent(CGameObject& aParent, const std::vector<std::string>& someVFXPaths, const std::vector<Matrix>& someTransforms, const std::vector<CParticleEmitter*>& someParticles)
+CVFXSystemComponent::CVFXSystemComponent(
+	  CGameObject& aParent
+	, const std::vector<std::string>& someVFXPaths
+	, const std::vector<Matrix>& someTransforms
+	, const std::vector<CParticleEmitter*>& someParticles
+	, const std::vector<Matrix>& someEmitterTransforms
+)
 	: CBehaviour(aParent) 
 {
 	myEnabled = true;
@@ -33,6 +39,9 @@ CVFXSystemComponent::CVFXSystemComponent(CGameObject& aParent, const std::vector
 	myVFXTransformsOriginal = someTransforms;
 
 	myParticleEmitters = someParticles;
+	myEmitterTransforms = someEmitterTransforms;
+	myEmitterTransformsOriginal = someEmitterTransforms;
+
 	for (unsigned int i = 0; i < myParticleEmitters.size(); ++i) {
 
 		myParticleVertices.emplace_back(std::vector<CParticleEmitter::SParticleVertex>());
@@ -46,8 +55,6 @@ CVFXSystemComponent::CVFXSystemComponent(CGameObject& aParent, const std::vector
 		myEmitterDelays.emplace_back(myParticleEmitters[i]->GetParticleData().myDelay);
 		myEmitterDurations.emplace_back(myParticleEmitters[i]->GetParticleData().myDuration);
 		myEmitterTimers.emplace_back(0.0f);
-
-		myParticleTransforms.push_back(Matrix());
 	}
 }
 
@@ -86,11 +93,16 @@ void CVFXSystemComponent::Update()
 
 		if ((myEmitterDelays[i] -= CTimer::Dt()) > 0.0f) { continue; }
 
+		Vector3		scale;
+		Quaternion	quat;
+		Vector3		translation;
+		myEmitterTransformsOriginal[i].Decompose(scale, quat, translation);
+
 		if ((myEmitterDurations[i] -= CTimer::Dt()) > 0.0f) {
-			SpawnParticles(i, cameraPos, particleData);
+			SpawnParticles(i, cameraPos, particleData, translation, scale.x);
 		}
 
-		UpdateParticles(i, cameraPos, particleData);
+		UpdateParticles(i, cameraPos, particleData, scale.x);
 	}
 }
 
@@ -103,34 +115,25 @@ void CVFXSystemComponent::LateUpdate()
 	Vector3		translation;
 	GameObject().myTransform->GetWorldMatrix().Decompose(scale, quat, translation);
 
-	auto t = myVFXTransformsOriginal[0].Translation();
-	myVFXTransformsOriginal[0] = myVFXTransformsOriginal[0] * Matrix::CreateFromYawPitchRoll(fabs(sinf(CTimer::Time()))* CTimer::Dt() * 2.0f, 0.0f, 0.f);
-	myVFXTransformsOriginal[0].Translation(t);
-
-	t = myVFXTransformsOriginal[1].Translation();
-	myVFXTransformsOriginal[1] = myVFXTransformsOriginal[1] * Matrix::CreateFromYawPitchRoll(0.0f, fabs(sinf(CTimer::Time()))* CTimer::Dt() * 2.0f, 0.f);
-	myVFXTransformsOriginal[1].Translation(t);
-
-	t = myVFXTransformsOriginal[2].Translation();
-	myVFXTransformsOriginal[2] = myVFXTransformsOriginal[2] * Matrix::CreateFromYawPitchRoll(0.0f, 0.0f, fabs(sinf(CTimer::Time()))* CTimer::Dt() * 2.0f);
-	myVFXTransformsOriginal[2].Translation(t);
-
 	Matrix goTransform = GameObject().myTransform->Transform();
-	auto goPos = GameObject().myTransform->Position();
+	Vector3 goPos = GameObject().myTransform->Position();
+
 	for (unsigned int i = 0; i < myVFXTransforms.size(); ++i)
 	{
 		myVFXTransforms[i] = myVFXTransformsOriginal[i] * Matrix::CreateFromQuaternion(quat);
-		//myVFXTransforms[i].Translation(GameObject().myTransform->Position() + (myVFXTransformsOriginal[i].Translation() ));
 
 		myVFXTransforms[i].Translation(goPos + goTransform.Right()	 * myVFXTransformsOriginal[i].Translation().x);
-		myVFXTransforms[i].Translation(myVFXTransforms[i].Translation() + goTransform.Up()		 * myVFXTransformsOriginal[i].Translation().y);
+		myVFXTransforms[i].Translation(myVFXTransforms[i].Translation() + goTransform.Up()		* myVFXTransformsOriginal[i].Translation().y);
 		myVFXTransforms[i].Translation(myVFXTransforms[i].Translation() - goTransform.Forward() * myVFXTransformsOriginal[i].Translation().z);
-
 	}
 
-	for (auto& transform : myParticleTransforms)
+	for (unsigned int i = 0; i < myEmitterTransforms.size(); ++i)
 	{
-		transform = goTransform;
+		myEmitterTransforms[i] = myEmitterTransformsOriginal[i] * Matrix::CreateFromQuaternion(quat);
+
+		myEmitterTransforms[i].Translation(goPos + goTransform.Right() * myEmitterTransformsOriginal[i].Translation().x);
+		myEmitterTransforms[i].Translation(myEmitterTransforms[i].Translation() + goTransform.Up()		* myEmitterTransformsOriginal[i].Translation().y);
+		myEmitterTransforms[i].Translation(myEmitterTransforms[i].Translation() - goTransform.Forward() * myEmitterTransformsOriginal[i].Translation().z);
 	}
 }
 
@@ -179,7 +182,7 @@ void CVFXSystemComponent::ResetParticles()
 	}
 }
 
-void CVFXSystemComponent::SpawnParticles(unsigned int anIndex, DirectX::SimpleMath::Vector3& aCameraPosition, CParticleEmitter::SParticleData& someParticleData)
+void CVFXSystemComponent::SpawnParticles(unsigned int anIndex, DirectX::SimpleMath::Vector3& aCameraPosition, CParticleEmitter::SParticleData& someParticleData, const Vector3& aTranslation, const float aScale)
 {
 	myEmitterTimers[anIndex] += CTimer::Dt();
 	if (myEmitterTimers[anIndex] > (1.0f / someParticleData.mySpawnRate) && (myParticleVertices[anIndex].size() < someParticleData.myNumberOfParticles)) {
@@ -196,14 +199,15 @@ void CVFXSystemComponent::SpawnParticles(unsigned int anIndex, DirectX::SimpleMa
 		myParticleVertices[anIndex].back().myStartMovement = someParticleData.myParticleStartDirection + Random(someParticleData.myDirectionLowerBound, someParticleData.myDirectionUpperBound, 0.0f);
 		myParticleVertices[anIndex].back().myEndMovement = someParticleData.myParticleEndDirection + Random(someParticleData.myDirectionLowerBound, someParticleData.myDirectionUpperBound, 0.0f);
 		myParticleVertices[anIndex].back().myColor = someParticleData.myParticleStartColor;
-		myParticleVertices[anIndex].back().mySize = { someParticleData.myParticleStartSize, someParticleData.myParticleStartSize };
-		Vector3 position = myParticleTransforms[anIndex].Translation() + GameObject().myTransform->Position();
-		myParticleVertices[anIndex].back().mySquaredDistanceToCamera = Vector3::DistanceSquared({ position.x, position.y, position.z }, aCameraPosition);
+
+
+		myParticleVertices[anIndex].back().mySize = { someParticleData.myParticleStartSize * aScale, someParticleData.myParticleStartSize * aScale };
+		myParticleVertices[anIndex].back().mySquaredDistanceToCamera = Vector3::DistanceSquared({ aTranslation.x, aTranslation.y, aTranslation.z }, aCameraPosition);
 		myEmitterTimers[anIndex] -= (1.0f / someParticleData.mySpawnRate);
 	}
 }
 
-void CVFXSystemComponent::UpdateParticles(unsigned int anIndex, DirectX::SimpleMath::Vector3& aCameraPosition, CParticleEmitter::SParticleData& particleData)
+void CVFXSystemComponent::UpdateParticles(unsigned int anIndex, DirectX::SimpleMath::Vector3& aCameraPosition, CParticleEmitter::SParticleData& particleData, const float aScale)
 {
 	std::vector<unsigned int> indicesOfParticlesToRemove;
 	for (UINT i = 0; i < myParticleVertices[anIndex].size(); ++i)
@@ -219,8 +223,8 @@ void CVFXSystemComponent::UpdateParticles(unsigned int anIndex, DirectX::SimpleM
 
 		myParticleVertices[anIndex][i].mySize = Vector2::Lerp
 		(
-			{ particleData.myParticleEndSize, particleData.myParticleEndSize },
-			{ particleData.myParticleStartSize, particleData.myParticleStartSize },
+			{ particleData.myParticleEndSize * aScale, particleData.myParticleEndSize * aScale },
+			{ particleData.myParticleStartSize * aScale, particleData.myParticleStartSize * aScale },
 			quotient
 		);
 
