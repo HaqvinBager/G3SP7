@@ -1,6 +1,6 @@
 #pragma once
 #include "Behaviour.h"
-#include "Particle.h"
+#include "ParticleEmitter.h"
 #include <SimpleMath.h>
 #include <queue>
 
@@ -16,7 +16,7 @@ public:
 	void Start() override;
 	void Update() override;
 
-	void Init(std::vector<CParticle*> someParticles);
+	void Init(std::vector<CParticleEmitter*> someParticles);
 	void SetTransform(DirectX::SimpleMath::Vector3 aPosition, DirectX::SimpleMath::Vector3 aRotation);
 	void SetRotation(DirectX::SimpleMath::Vector3 aRotation);
 	void SetRotation(DirectX::SimpleMath::Quaternion aQuaternion);
@@ -32,23 +32,23 @@ public:
 	void OnDisable() override;
 	void Reset();
 public:
-	std::vector<CParticle*>& GetParticleSet() { return myParticles; }
-	std::vector<std::vector<CParticle::SParticleVertex>>& GetParticleVertices() { return myParticleVertices; }
+	std::vector<CParticleEmitter*>& GetParticleSet() { return myParticleEmitters; }
+	std::vector<std::vector<CParticleEmitter::SParticleVertex>>& GetParticleVertices() { return myParticleVertices; }
 	DirectX::SimpleMath::Matrix GetTransform() { return myTransform; }
 	const std::vector<float> EmitterDurations() const { return myEmitterDurations; }
 private:
-	void SpawnParticles(unsigned int anIndex, DirectX::SimpleMath::Vector3& aCameraPosition, CParticle::SParticleData& particleData);
-	void UpdateParticles(unsigned int anIndex, DirectX::SimpleMath::Vector3& aCameraPosition, CParticle::SParticleData& particleData);
+	void SpawnParticles(unsigned int anIndex, DirectX::SimpleMath::Vector3& aCameraPosition, CParticleEmitter::SParticleData& particleData);
+	void UpdateParticles(unsigned int anIndex, DirectX::SimpleMath::Vector3& aCameraPosition, CParticleEmitter::SParticleData& particleData);
 
 private:
-	std::vector<CParticle*> myParticles;
 	DirectX::SimpleMath::Matrix myTransform;
-	std::vector<std::vector<CParticle::SParticleVertex>> myParticleVertices;
-	std::vector<std::queue<CParticle::SParticleVertex>> myParticlePools;
+	std::vector<CParticleEmitter*> myParticleEmitters;
+	std::vector<std::vector<CParticleEmitter::SParticleVertex>> myParticleVertices;
+	std::vector<std::queue<CParticleEmitter::SParticleVertex>> myParticlePools;
 	std::vector<float> myEmitterTimers;
 	std::vector<float> myEmitterDelays;
 	std::vector<float> myEmitterDurations;
-	std::vector<DirectX::SimpleMath::Vector3> myOffsets;
-	float myScale = 1.0f;
+	
+	float myScale = 1.0f;// Obsolete
 };
 

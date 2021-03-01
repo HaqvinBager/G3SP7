@@ -8,6 +8,9 @@
 #include <vector>
 #include <unordered_map>
 
+#define IRONWROUGHT CEngine::GetInstance()
+#define IRONWROUGHT_ACTIVE_SCENE CEngine::GetInstance()->GetActiveScene()
+
 class CWindowHandler;
 class CDirextXFramework;
 class CTimer;

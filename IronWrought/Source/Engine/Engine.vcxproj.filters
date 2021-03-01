@@ -258,9 +258,6 @@
     <ClCompile Include="Model.cpp">
       <Filter>Model</Filter>
     </ClCompile>
-    <ClCompile Include="Particle.cpp">
-      <Filter>Particles</Filter>
-    </ClCompile>
     <ClCompile Include="ParticleFactory.cpp">
       <Filter>Particles</Filter>
     </ClCompile>
@@ -679,6 +676,9 @@
     <ClCompile Include="VFXSystemComponent.cpp">
       <Filter>GameObject and Component\Component</Filter>
     </ClCompile>
+    <ClCompile Include="ParticleEmitter.cpp">
+      <Filter>Particles</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -776,9 +776,6 @@
     </ClInclude>
     <ClInclude Include="Model.h">
       <Filter>Model</Filter>
-    </ClInclude>
-    <ClInclude Include="Particle.h">
-      <Filter>Particles</Filter>
     </ClInclude>
     <ClInclude Include="ParticleFactory.h">
       <Filter>Particles</Filter>
@@ -1251,6 +1248,9 @@
     </ClInclude>
     <ClInclude Include="VFXSystemComponent.h">
       <Filter>GameObject and Component\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleEmitter.h">
+      <Filter>Particles</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

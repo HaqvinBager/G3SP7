@@ -302,13 +302,12 @@ void TEMP_VFX(CScene* aScene)
 
 	static int id = 500;
 	CGameObject* abilityObject = new CGameObject(id++);
-	std::string colliderType;
 
-	//VFX
 	abilityObject->myTransform->Position({0.0f, 0.0f, 0.0f});
-	std::vector<std::string> paths;
+	//VFX
+	std::vector<std::string> vfxPaths;
 	for (unsigned int i = 0; i < doc["VFX"].Size(); ++i) {
-		paths.emplace_back(doc["VFX"][i]["Path"].GetString());
+		vfxPaths.emplace_back(doc["VFX"][i]["Path"].GetString());
 	}
 
 	// TODO: get this from JSON :)
@@ -321,21 +320,26 @@ void TEMP_VFX(CScene* aScene)
 	Matrix t3;
 	t3 = t3.CreateFromYawPitchRoll( DirectX::XMConvertToRadians(0.0f), DirectX::XMConvertToRadians(90.0f), DirectX::XMConvertToRadians(0.0f));
 	t3.Translation({ -2.5f,0.0f,2.5f });
-
-	abilityObject->AddComponent<CVFXSystemComponent>(*abilityObject, paths, std::vector<Matrix>({t, t2, t3}));
-	//abilityObject->GetComponent<CVFXSystemComponent>()->Init(CVFXFactory::GetInstance()->GetVFXBaseSet(paths));
 	//!VFX
+
+	std::vector<std::string> particlePaths;
+	for (unsigned int i = 0; i < doc["ParticleSystems"].Size(); ++i) {
+		particlePaths.emplace_back(doc["ParticleSystems"][i]["Path"].GetString());
+	}
+
+	abilityObject->AddComponent<CVFXSystemComponent>(*abilityObject, vfxPaths, std::vector<Matrix>({t, t2, t3}), CParticleFactory::GetInstance()->GetParticleSet(particlePaths));
+	//abilityObject->GetComponent<CVFXSystemComponent>()->Init(CVFXFactory::GetInstance()->GetVFXBaseSet(paths));
 
 	//CGameObject* particleObject = new CGameObject(id++);
 	//particleObject->myTransform->SetParent(abilityObject->myTransform);
 	
 	//PARTICLESYSTEM
-	paths.clear();
-	for (unsigned int i = 0; i < doc["ParticleSystems"].Size(); ++i) {
-		paths.emplace_back(doc["ParticleSystems"][i]["Path"].GetString());
-	}
-	abilityObject->AddComponent<CParticleEmitterComponent>(*abilityObject);
-	abilityObject->GetComponent<CParticleEmitterComponent>()->Init(CParticleFactory::GetInstance()->GetParticleSet(paths));
+	//std::vector<std::string> particlePaths;
+	//for (unsigned int i = 0; i < doc["ParticleSystems"].Size(); ++i) {
+	//	particlePaths.emplace_back(doc["ParticleSystems"][i]["Path"].GetString());
+	//}
+	//abilityObject->AddComponent<CParticleEmitterComponent>(*abilityObject);
+	//abilityObject->GetComponent<CParticleEmitterComponent>()->Init(CParticleFactory::GetInstance()->GetParticleSet(paths));
 	//!PARTICLESYSTEM
 	myVFX = abilityObject;
 	aScene->AddInstance(abilityObject);

@@ -323,7 +323,7 @@
     <ClInclude Include="ModelMath.h" />
     <ClInclude Include="MouseTracker.h" />
     <ClInclude Include="NavmeshLoader.h" />
-    <ClInclude Include="Particle.h" />
+    <ClInclude Include="ParticleEmitter.h" />
     <ClInclude Include="ParticleFactory.h" />
     <ClInclude Include="ParticleRenderer.h" />
     <ClInclude Include="PointLight.h" />
@@ -492,7 +492,7 @@
     <ClCompile Include="ModelComponent.cpp" />
     <ClCompile Include="ModelFactory.cpp" />
     <ClCompile Include="NavmeshLoader.cpp" />
-    <ClCompile Include="Particle.cpp" />
+    <ClCompile Include="ParticleEmitter.cpp" />
     <ClCompile Include="ParticleFactory.cpp" />
     <ClCompile Include="ParticleRenderer.cpp" />
     <ClCompile Include="PointLight.cpp" />

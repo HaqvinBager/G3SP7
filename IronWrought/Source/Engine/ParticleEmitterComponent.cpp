@@ -20,7 +20,7 @@ CParticleEmitterComponent::CParticleEmitterComponent(CGameObject& aParent) : CBe
 
 CParticleEmitterComponent::~CParticleEmitterComponent()
 {
-	myParticles.clear();
+	myParticleEmitters.clear();
 }
 
 void CParticleEmitterComponent::Awake()
@@ -48,21 +48,21 @@ void CParticleEmitterComponent::Update()
 	Update(CEngine::GetInstance()->GetActiveScene().MainCamera()->GameObject().myTransform->Position());
 }
 
-void CParticleEmitterComponent::Init(std::vector<CParticle*> someParticles)
+void CParticleEmitterComponent::Init(std::vector<CParticleEmitter*> someParticles)
 {
-	myParticles = someParticles;
-	for (unsigned int i = 0; i < myParticles.size(); ++i) {
+	myParticleEmitters = someParticles;
+	for (unsigned int i = 0; i < myParticleEmitters.size(); ++i) {
 	
-		myParticleVertices.emplace_back(std::vector<CParticle::SParticleVertex>());
-		myParticlePools.emplace_back(std::queue<CParticle::SParticleVertex>());
+		myParticleVertices.emplace_back(std::vector<CParticleEmitter::SParticleVertex>());
+		myParticlePools.emplace_back(std::queue<CParticleEmitter::SParticleVertex>());
 
-		myParticleVertices[i].reserve(myParticles[i]->GetParticleData().myNumberOfParticles);
-		for (unsigned int j = 0; j < myParticles[i]->GetParticleData().myNumberOfParticles; ++j) {
-			myParticlePools[i].push(CParticle::SParticleVertex());
+		myParticleVertices[i].reserve(myParticleEmitters[i]->GetParticleData().myNumberOfParticles);
+		for (unsigned int j = 0; j < myParticleEmitters[i]->GetParticleData().myNumberOfParticles; ++j) {
+			myParticlePools[i].push(CParticleEmitter::SParticleVertex());
 		}
 		
-		myEmitterDelays.emplace_back(myParticles[i]->GetParticleData().myDelay);
-		myEmitterDurations.emplace_back(myParticles[i]->GetParticleData().myDuration);
+		myEmitterDelays.emplace_back(myParticleEmitters[i]->GetParticleData().myDelay);
+		myEmitterDurations.emplace_back(myParticleEmitters[i]->GetParticleData().myDuration);
 		myEmitterTimers.emplace_back(0.0f);
 	}
 }
@@ -135,9 +135,9 @@ void CParticleEmitterComponent::Rotate(DirectX::SimpleMath::Quaternion aQuaterni
 
 void CParticleEmitterComponent::Update(DirectX::SimpleMath::Vector3 aCameraPosition)
 {
-	for (unsigned int i = 0; i < myParticles.size(); ++i) 
+	for (unsigned int i = 0; i < myParticleEmitters.size(); ++i) 
 	{
-		CParticle::SParticleData particleData = myParticles[i]->GetParticleData();
+		CParticleEmitter::SParticleData particleData = myParticleEmitters[i]->GetParticleData();
 
 		if ((myEmitterDelays[i] -= CTimer::Dt()) > 0.0f) { continue; }
 
@@ -148,7 +148,7 @@ void CParticleEmitterComponent::Update(DirectX::SimpleMath::Vector3 aCameraPosit
 		UpdateParticles(i, aCameraPosition, particleData);
 
 		//std::sort(myParticleVertices[i].begin(), myParticleVertices[i].end(),
-		//	[](const CParticle::SParticleVertex& aFirstParticle, const CParticle::SParticleVertex& aSecondParticle)
+		//	[](const CParticleEmitter::SParticleVertex& aFirstParticle, const CParticleEmitter::SParticleVertex& aSecondParticle)
 		//	{
 		//		return aFirstParticle.mySquaredDistanceToCamera > aSecondParticle.mySquaredDistanceToCamera;
 		//	}
@@ -160,16 +160,16 @@ void CParticleEmitterComponent::Update(DirectX::SimpleMath::Vector3 aCameraPosit
 void CParticleEmitterComponent::OnEnable()
 {
 	Enabled(true);
-	for (unsigned int i = 0; i < myParticles.size(); ++i) {
-		myEmitterDelays[i] = myParticles[i]->GetParticleData().myDelay;
-		myEmitterDurations[i] = myParticles[i]->GetParticleData().myDuration;
+	for (unsigned int i = 0; i < myParticleEmitters.size(); ++i) {
+		myEmitterDelays[i] = myParticleEmitters[i]->GetParticleData().myDelay;
+		myEmitterDurations[i] = myParticleEmitters[i]->GetParticleData().myDuration;
 	}
 }
 
 void CParticleEmitterComponent::OnDisable()
 {
 	Enabled(false);
-	for (unsigned int i = 0; i < myParticles.size(); ++i) {
+	for (unsigned int i = 0; i < myParticleEmitters.size(); ++i) {
 		size_t currentSize = myParticleVertices[i].size();
 		for (unsigned int j = 0; j < currentSize; ++j) {
 			myParticlePools[i].push(myParticleVertices[i].back());
@@ -180,11 +180,11 @@ void CParticleEmitterComponent::OnDisable()
 
 void CParticleEmitterComponent::Reset()
 {
-	for (unsigned int i = 0; i < myParticles.size(); ++i) {
-		myEmitterDelays[i] = myParticles[i]->GetParticleData().myDelay;
-		myEmitterDurations[i] = myParticles[i]->GetParticleData().myDuration;
+	for (unsigned int i = 0; i < myParticleEmitters.size(); ++i) {
+		myEmitterDelays[i] = myParticleEmitters[i]->GetParticleData().myDelay;
+		myEmitterDurations[i] = myParticleEmitters[i]->GetParticleData().myDuration;
 	}
-	for (unsigned int i = 0; i < myParticles.size(); ++i) {
+	for (unsigned int i = 0; i < myParticleEmitters.size(); ++i) {
 		size_t currentSize = myParticleVertices[i].size();
 		for (unsigned int j = 0; j < currentSize; ++j) {
 			myParticlePools[i].push(myParticleVertices[i].back());
@@ -193,7 +193,7 @@ void CParticleEmitterComponent::Reset()
 	}
 }
 
-void CParticleEmitterComponent::SpawnParticles(unsigned int anIndex, DirectX::SimpleMath::Vector3& aCameraPosition, CParticle::SParticleData& someParticleData)
+void CParticleEmitterComponent::SpawnParticles(unsigned int anIndex, DirectX::SimpleMath::Vector3& aCameraPosition, CParticleEmitter::SParticleData& someParticleData)
 {
 	myEmitterTimers[anIndex] += CTimer::Dt();
 	if (myEmitterTimers[anIndex] > (1.0f / someParticleData.mySpawnRate) && (myParticleVertices[anIndex].size() < someParticleData.myNumberOfParticles)) {
@@ -216,7 +216,7 @@ void CParticleEmitterComponent::SpawnParticles(unsigned int anIndex, DirectX::Si
 	}
 }
 
-void CParticleEmitterComponent::UpdateParticles(unsigned int anIndex, DirectX::SimpleMath::Vector3& aCameraPosition, CParticle::SParticleData& particleData)
+void CParticleEmitterComponent::UpdateParticles(unsigned int anIndex, DirectX::SimpleMath::Vector3& aCameraPosition, CParticleEmitter::SParticleData& particleData)
 {
 	std::vector<unsigned int> indicesOfParticlesToRemove;
 	for (UINT i = 0; i < myParticleVertices[anIndex].size(); ++i)

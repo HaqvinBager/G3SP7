@@ -1,7 +1,7 @@
 #pragma once
 #include "SimpleMath.h"
 
-class CParticle
+class CParticleEmitter
 {
 public:
 	struct SParticleVertex
@@ -56,8 +56,8 @@ public:
 	};
 
 public:
-	CParticle();
-	~CParticle();
+	CParticleEmitter();
+	~CParticleEmitter();
 
 	void Init(SParticleData someParticleData);
 

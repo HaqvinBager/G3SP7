@@ -1,5 +1,5 @@
 #pragma once
-#include "Particle.h"
+#include "ParticleEmitter.h"
 #include <map>
 
 class CDirectXFramework;
@@ -12,21 +12,21 @@ public:
 
 	bool Init(CDirectXFramework* aFramework);
 
-	CParticle* LoadParticle(std::string aFilePath);
-	CParticle* GetParticle(std::string aFilePath);
+	CParticleEmitter* LoadParticle(std::string aFilePath);
+	CParticleEmitter* GetParticle(std::string aFilePath);
 
-	std::vector<CParticle*> GetParticleSet(std::vector<std::string> someFilePaths);
+	std::vector<CParticleEmitter*> GetParticleSet(std::vector<std::string> someFilePaths);
 
 public:
 	static CParticleFactory* GetInstance();
 	ID3D11ShaderResourceView* GetShaderResourceView(ID3D11Device* aDevice, std::string aTexturePath);
-	void ReadJsonValues(std::string aFilePath, CParticle::SParticleData& someParticleData);
+	void ReadJsonValues(std::string aFilePath, CParticleEmitter::SParticleData& someParticleData);
 
 private:
 	static CParticleFactory* ourInstance;
 
 private:
 	ID3D11Device* myDevice;
-	std::map<std::string, CParticle*> myParticles;
+	std::map<std::string, CParticleEmitter*> myParticleEmitters;
 };
 

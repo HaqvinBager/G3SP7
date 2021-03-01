@@ -2,7 +2,7 @@
 #include "ParticleFactory.h"
 #include "DirectXFramework.h"
 #include "DDSTextureLoader.h"
-#include "Particle.h"
+#include "ParticleEmitter.h"
 
 #include "JsonReader.h"
 //#include "rapidjson/document.h"
@@ -21,8 +21,8 @@ CParticleFactory::~CParticleFactory()
     ourInstance = nullptr;
     myDevice = nullptr;
 
-    auto it = myParticles.begin();
-    while (it != myParticles.end())
+    auto it = myParticleEmitters.begin();
+    while (it != myParticleEmitters.end())
     {
         delete it->second;
         it->second = nullptr;
@@ -39,24 +39,24 @@ bool CParticleFactory::Init(CDirectXFramework* aFramework)
     return true;
 }
 
-CParticle* CParticleFactory::GetParticle(std::string aFilePath)
+CParticleEmitter* CParticleFactory::GetParticle(std::string aFilePath)
 {
     
-    if (myParticles.find(aFilePath) == myParticles.end()) {
+    if (myParticleEmitters.find(aFilePath) == myParticleEmitters.end()) {
         return LoadParticle(aFilePath);
     }
-    return myParticles.at(aFilePath);
+    return myParticleEmitters.at(aFilePath);
 }
 
-CParticle* CParticleFactory::LoadParticle(std::string aFilePath)
+CParticleEmitter* CParticleFactory::LoadParticle(std::string aFilePath)
 {
-    CParticle::SParticleData particleData;
+    CParticleEmitter::SParticleData particleData;
 
     ReadJsonValues(aFilePath, particleData);
 
     //Start Vertex Buffer
     D3D11_BUFFER_DESC bufferDesc = { 0 };
-    bufferDesc.ByteWidth = sizeof(CParticle::SParticleVertex) * /*UINT(ceil(particleLifeTime * particleSpawnRate))*//*particleData.myNumberOfParticles*/particleData.myNumberOfParticles;
+    bufferDesc.ByteWidth = sizeof(CParticleEmitter::SParticleVertex) * /*UINT(ceil(particleLifeTime * particleSpawnRate))*//*particleData.myNumberOfParticles*/particleData.myNumberOfParticles;
     bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
     bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
     bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
@@ -117,12 +117,12 @@ CParticle* CParticleFactory::LoadParticle(std::string aFilePath)
 
     ID3D11ShaderResourceView* shaderResourceView = GetShaderResourceView(myDevice, particleData.myTexturePath);
 
-    CParticle* particleEmitter = new CParticle();
+    CParticleEmitter* particleEmitter = new CParticleEmitter();
     if (!particleEmitter) {
         return nullptr;
     }
 
-    particleData.myStride =                 sizeof(CParticle::SParticleVertex);
+    particleData.myStride =                 sizeof(CParticleEmitter::SParticleVertex);
     particleData.myOffset =                 0;
     particleData.myParticleVertexBuffer =   vertexBuffer;
     particleData.myVertexShader =           vertexShader;
@@ -135,7 +135,7 @@ CParticle* CParticleFactory::LoadParticle(std::string aFilePath)
 
     particleEmitter->Init(particleData);
 
-    myParticles.emplace(aFilePath, particleEmitter);
+    myParticleEmitters.emplace(aFilePath, particleEmitter);
     return particleEmitter;
 }
 
@@ -166,9 +166,9 @@ CParticleFactory* CParticleFactory::GetInstance()
     return ourInstance;
 }
 
-std::vector<CParticle*> CParticleFactory::GetParticleSet(std::vector<std::string> someFilePaths) 
+std::vector<CParticleEmitter*> CParticleFactory::GetParticleSet(std::vector<std::string> someFilePaths) 
 {
-    std::vector<CParticle*> bases;
+    std::vector<CParticleEmitter*> bases;
     for (unsigned int i = 0; i < someFilePaths.size(); ++i)
     {
         bases.emplace_back(GetParticle(someFilePaths[i]));
@@ -176,7 +176,7 @@ std::vector<CParticle*> CParticleFactory::GetParticleSet(std::vector<std::string
     return std::move(bases);
 }
 
-void CParticleFactory::ReadJsonValues(std::string aFilePath, CParticle::SParticleData& someParticleData)
+void CParticleFactory::ReadJsonValues(std::string aFilePath, CParticleEmitter::SParticleData& someParticleData)
 {
     using namespace rapidjson;
 
