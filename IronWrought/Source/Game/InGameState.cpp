@@ -119,8 +119,6 @@ void CInGameState::Update()
 		myVFX->myTransform->Move({ CTimer::Dt() * speed, 0.0f, 0.0f });
 	}
 
-	//myVFX->myTransform->Rotate({ CTimer::Dt(), CTimer::Dt(), 0.0f });
-
 	if (INPUT->IsKeyPressed('P'))
 	{
 		myVFX->GetComponent<CVFXSystemComponent>()->OnDisable();
@@ -304,7 +302,7 @@ void TEMP_VFX(CScene* aScene)
 {
 	static int id = 500;
 	CGameObject* abilityObject = new CGameObject(id++);
-	abilityObject->AddComponent<CVFXSystemComponent>(*abilityObject, "Assets/VFXTEMP/JSON/VFXSystem_Template.json");
+	abilityObject->AddComponent<CVFXSystemComponent>(*abilityObject, "Assets/VFXTEMP/JSON/VFXSystem_ToLoad.json");
 
 	myVFX = abilityObject;
 	aScene->AddInstance(abilityObject);
