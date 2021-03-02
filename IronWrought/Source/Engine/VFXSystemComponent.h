@@ -42,6 +42,8 @@ private:
 	std::vector<Vector3>	myVFXAngularSpeeds;
 	std::vector<float>		myVFXDelays;
 	std::vector<float>		myVFXDurations;
+	std::vector<float>		myVFXBaseDelays;
+	std::vector<float>		myVFXBaseDurations;
 	std::vector<bool>		myVFXShouldOrbit;
 
 	std::vector<CParticleEmitter*> myParticleEmitters;

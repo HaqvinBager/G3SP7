@@ -26,8 +26,6 @@ public:
 		float uvScale4;
 		float opacityStrength;
 
-		float myDelay = 0.0f;
-		float myDuration = 0.0f;
 		bool myIsActive = false;
 
 		std::string texturePathOne = "";

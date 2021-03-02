@@ -21,7 +21,6 @@ private:
 	CVFXFactory();
 	~CVFXFactory();
 
-	ID3D11ShaderResourceView* GetShaderResourceView(ID3D11Device* aDevice, std::string aTexturePath);
 	void ReadJsonValues(std::string aFilePath, CVFXBase::SVFXBaseData& someVFXBaseData);
 
 private:

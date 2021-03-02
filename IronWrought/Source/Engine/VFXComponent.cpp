@@ -55,8 +55,8 @@ bool CVFXComponent::Init(std::vector<CVFXBase*> someVFXBases) {
 	}
 
 	for (unsigned int i = 0; i < myVFXBases.size(); ++i) {
-		myVFXDelays.emplace_back(myVFXBases[i]->GetVFXBaseData().myDelay);
-		myVFXDurations.emplace_back(myVFXBases[i]->GetVFXBaseData().myDuration);
+		//myVFXDelays.emplace_back(myVFXBases[i]->GetVFXBaseData().myDelay);
+		//myVFXDurations.emplace_back(myVFXBases[i]->GetVFXBaseData().myDuration);
 	}
 
 	return true;
@@ -126,8 +126,8 @@ void CVFXComponent::OnEnable()
 {
 	Enabled(true);
 	for (unsigned int i = 0; i < myVFXBases.size(); ++i) {
-		myVFXDelays[i] = myVFXBases[i]->GetVFXBaseData().myDelay;
-		myVFXDurations[i] = myVFXBases[i]->GetVFXBaseData().myDuration;
+		//myVFXDelays[i] = myVFXBases[i]->GetVFXBaseData().myDelay;
+		//myVFXDurations[i] = myVFXBases[i]->GetVFXBaseData().myDuration;
 	}
 }
 

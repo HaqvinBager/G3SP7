@@ -4,6 +4,7 @@
 #include "Engine.h"
 #include "DDSTextureLoader.h"
 #include "FBXLoaderCustom.h"
+#include "GraphicsHelpers.h"
 
 #include "JsonReader.h"
 //
@@ -107,10 +108,10 @@ CVFXBase* CVFXFactory::LoadVFXBase(std::string aFilePath)
     ENGINE_HR_MESSAGE(myFramework->GetDevice()->CreateInputLayout(layout, sizeof(layout) / sizeof(D3D11_INPUT_ELEMENT_DESC), vsData.data(), vsData.size(), &inputLayout), "Input Layout could not be created.");
     //End Layout
 
-    ID3D11ShaderResourceView* textureOneShaderResourceView = GetShaderResourceView(myFramework->GetDevice(), vfxBaseData.texturePathOne);
-    ID3D11ShaderResourceView* textureTwoShaderResourceView = GetShaderResourceView(myFramework->GetDevice(), vfxBaseData.texturePathTwo);
-    ID3D11ShaderResourceView* textureThreeShaderResourceView = GetShaderResourceView(myFramework->GetDevice(), vfxBaseData.texturePathThree);
-    ID3D11ShaderResourceView* textureFourShaderResourceView = GetShaderResourceView(myFramework->GetDevice(), vfxBaseData.texturePathMask);
+    ID3D11ShaderResourceView* textureOneShaderResourceView = Graphics::GetShaderResourceView(myFramework->GetDevice(), vfxBaseData.texturePathOne);
+    ID3D11ShaderResourceView* textureTwoShaderResourceView = Graphics::GetShaderResourceView(myFramework->GetDevice(), vfxBaseData.texturePathTwo);
+    ID3D11ShaderResourceView* textureThreeShaderResourceView = Graphics::GetShaderResourceView(myFramework->GetDevice(), vfxBaseData.texturePathThree);
+    ID3D11ShaderResourceView* textureFourShaderResourceView = Graphics::GetShaderResourceView(myFramework->GetDevice(), vfxBaseData.texturePathMask);
 
     CVFXBase* vfxBase = new CVFXBase();
     if (!vfxBase) {
@@ -179,40 +180,13 @@ CVFXFactory::~CVFXFactory() {
     }
 }
 
-ID3D11ShaderResourceView* CVFXFactory::GetShaderResourceView(ID3D11Device* aDevice, std::string aTexturePath) {
-    ID3D11ShaderResourceView* shaderResourceView;
-
-    wchar_t* widePath = new wchar_t[aTexturePath.length() + 1];
-    std::copy(aTexturePath.begin(), aTexturePath.end(), widePath);
-    widePath[aTexturePath.length()] = 0;
-
-    ////==ENABLE FOR TEXTURE CHECKING==
-    ENGINE_HR_MESSAGE(DirectX::CreateDDSTextureFromFile(aDevice, widePath, nullptr, &shaderResourceView), aTexturePath.append(" could not be found.").c_str());
-    ////===============================
-
-    //==DISABLE FOR TEXTURE CHECKING==
-    HRESULT result;
-    result = DirectX::CreateDDSTextureFromFile(aDevice, widePath, nullptr, &shaderResourceView);
-    if (FAILED(result))
-        DirectX::CreateDDSTextureFromFile(aDevice, L"ErrorTexture.dds", nullptr, &shaderResourceView);
-    //================================
-
-    delete[] widePath;
-    return shaderResourceView;
-}
-
 void CVFXFactory::ReadJsonValues(std::string aFilePath, CVFXBase::SVFXBaseData& someVFXBaseData)
 {
     using namespace rapidjson;
 
-    //std::ifstream input_stream(aFilePath);
-    //IStreamWrapper input_wrapper(input_stream);
     Document document = CJsonReader::Get()->LoadDocument(aFilePath);
-    //document.ParseStream(input_wrapper);
 
     someVFXBaseData.myIsActive = false;
-    someVFXBaseData.myDelay = { document["Delay"].GetFloat() };
-    someVFXBaseData.myDuration = { document["Duration"].GetFloat() };
     someVFXBaseData.scrollSpeed1 = { document["Scroll Speed 1 X"].GetFloat(), document["Scroll Speed 1 Y"].GetFloat() };
     someVFXBaseData.scrollSpeed2 = { document["Scroll Speed 2 X"].GetFloat(), document["Scroll Speed 2 Y"].GetFloat() };
     someVFXBaseData.scrollSpeed3 = { document["Scroll Speed 3 X"].GetFloat(), document["Scroll Speed 3 Y"].GetFloat() };

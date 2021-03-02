@@ -28,6 +28,10 @@ CVFXSystemComponent::CVFXSystemComponent(CGameObject& aParent, const std::string
 	myVFXTransforms.resize(size);
 	myVFXTransformsOriginal.resize(size);
 	myVFXShouldOrbit.resize(size);
+	myVFXDelays.resize(size, 0.0f);
+	myVFXDurations.resize(size, 0.0f);
+	myVFXBaseDelays.resize(size, 0.0f);
+	myVFXBaseDurations.resize(size, 0.0f);
 	for (unsigned int i = 0; i < doc["VFXMeshes"].Size(); ++i) {
 		vfxPaths.emplace_back(doc["VFXMeshes"][i]["Path"].GetString());
 
@@ -59,16 +63,13 @@ CVFXSystemComponent::CVFXSystemComponent(CGameObject& aParent, const std::string
 		myVFXAngularSpeeds[i] = r;
 
 		myVFXShouldOrbit[i] = doc["VFXMeshes"][i]["Orbit"].GetBool();
+
+		myVFXBaseDelays[i] = doc["VFXMeshes"][i]["Delay"].GetFloat();
+		myVFXBaseDurations[i] = doc["VFXMeshes"][i]["Duration"].GetFloat();
 	}
 
 	myVFXBases = CVFXFactory::GetInstance()->GetVFXBaseSet(vfxPaths);
 	ENGINE_BOOL_POPUP(!myVFXBases.empty(), "No VFX data found.");
-	myVFXDelays.resize(myVFXBases.size());
-	myVFXDurations.resize(myVFXBases.size());
-	for (unsigned int i = 0; i < myVFXBases.size(); ++i) {
-		myVFXDelays[i] = (myVFXBases[i]->GetVFXBaseData().myDelay);
-		myVFXDurations[i] = (myVFXBases[i]->GetVFXBaseData().myDuration);
-	}
 
 	std::vector<std::string> particlePaths;
 	size = static_cast<int>(doc["ParticleSystems"].Size());
@@ -76,6 +77,9 @@ CVFXSystemComponent::CVFXSystemComponent(CGameObject& aParent, const std::string
 	myEmitterTransformsOriginal.resize(size);
 	myEmitterAngularSpeeds.resize(size);
 	myEmitterShouldOrbit.resize(size);
+	myEmitterDelays.resize(size);
+	myEmitterDurations.resize(size);
+	myEmitterTimers.resize(size, 0.0f);
 	for (unsigned int i = 0; i < doc["ParticleSystems"].Size(); ++i) {
 		particlePaths.emplace_back(doc["ParticleSystems"][i]["Path"].GetString());
 
@@ -104,10 +108,14 @@ CVFXSystemComponent::CVFXSystemComponent(CGameObject& aParent, const std::string
 		myEmitterAngularSpeeds[i] = r;
 
 		myEmitterShouldOrbit[i] = doc["ParticleSystems"][i]["Orbit"].GetBool();
+
+		myEmitterDelays[i] = doc["ParticleSystems"][i]["Delay"].GetFloat();
+		myEmitterDurations[i] = doc["ParticleSystems"][i]["Duration"].GetFloat();
 	}
 
 	myParticleEmitters = CParticleFactory::GetInstance()->GetParticleSet(particlePaths);
 	ENGINE_BOOL_POPUP(!myParticleEmitters.empty(), "No Particle data found.");
+	
 	for (unsigned int i = 0; i < myParticleEmitters.size(); ++i) {
 
 		myParticleVertices.emplace_back(std::vector<CParticleEmitter::SParticleVertex>());
@@ -117,10 +125,6 @@ CVFXSystemComponent::CVFXSystemComponent(CGameObject& aParent, const std::string
 		for (unsigned int j = 0; j < myParticleEmitters[i]->GetParticleData().myNumberOfParticles; ++j) {
 			myParticlePools[i].push(CParticleEmitter::SParticleVertex());
 		}
-
-		myEmitterDelays.emplace_back(myParticleEmitters[i]->GetParticleData().myDelay);
-		myEmitterDurations.emplace_back(myParticleEmitters[i]->GetParticleData().myDuration);
-		myEmitterTimers.emplace_back(0.0f);
 	}
 }
 
@@ -224,8 +228,8 @@ void CVFXSystemComponent::OnEnable()
 {
 	Enabled(true);
 	for (unsigned int i = 0; i < myVFXBases.size(); ++i) {
-		myVFXDelays[i] = myVFXBases[i]->GetVFXBaseData().myDelay;
-		myVFXDurations[i] = myVFXBases[i]->GetVFXBaseData().myDuration;
+		myVFXDelays[i] = myVFXBaseDelays[i];
+		myVFXDurations[i] = myVFXBaseDurations[i];
 	}
 
 	for (unsigned int i = 0; i < myParticleEmitters.size(); ++i) {
