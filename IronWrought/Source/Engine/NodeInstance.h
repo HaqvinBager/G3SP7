@@ -190,7 +190,7 @@ public:
 	float myEnteredTimer = 0.0f;
 
 	std::string GetGraphKey() { return myGraphKey; }
-	CGameObject* GetCurrentGameObject();
+	std::vector<CGameObject*> GetCurrentGameObject();
 	private:
 		std::string myGraphKey;
 		CGraphManager* myGraphManager;

@@ -16,7 +16,7 @@ CNodeTypeGameObjectMove::CNodeTypeGameObjectMove()
 
 int CNodeTypeGameObjectMove::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 {
-	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject();
+	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject()[0];
 
 	SPin::EPinType outType;
 	NodeDataPtr someData = nullptr;
