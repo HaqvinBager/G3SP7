@@ -8,6 +8,7 @@
 #include "ModelComponent.h"
 //#include <PlayerControllerComponent.h>
 #include "JsonReader.h"
+#include "PointLightComponent.h"
 //#include <iostream>
 
 CSceneManager::CSceneManager()
@@ -48,6 +49,7 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneName)
 	if (AddGameObjects(*scene, aSceneName + "_InstanceIDCollection.json")) {
 		SetTransforms(*scene, aSceneName + "_TransformCollection.json");
 		AddModelComponents(*scene, aSceneName + "_ModelCollection.json");
+		AddPointLights(*scene, aSceneName + "_PointLightCollection.json");
 	}
 	return scene;
 }
@@ -139,5 +141,29 @@ void CSceneManager::AddInstancedModelComponents(CScene& aScene, const std::strin
 
 		gameObject->AddComponent<CInstancedModelComponent>(*gameObject, ASSETPATH(CJsonReader::Get()->GetAssetPath(assetID)), instancedModelTransforms);
 		aScene.AddInstance(gameObject);
+	}
+}
+
+void CSceneManager::AddPointLights(CScene& aScene, const std::string& aJsonFileName)
+{
+	const auto& doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + aJsonFileName));
+
+	if (!CJsonReader::IsValid(doc, { "lights" }))
+		return;
+
+	const auto& pointLightArray = doc["lights"].GetArray();
+	for (const auto& pointLight : pointLightArray) {
+		const auto& id = pointLight["instanceID"].GetInt();
+
+		CGameObject* gameObject = aScene.FindObjectWithID(id);
+		CPointLightComponent* pointLightComponent = gameObject->AddComponent<CPointLightComponent>(
+			*gameObject,
+			pointLight["range"].GetFloat(),
+			Vector3(pointLight["r"].GetFloat(),
+					pointLight["g"].GetFloat(),
+					pointLight["b"].GetFloat()),
+			pointLight["intensity"].GetFloat());
+
+		aScene.AddInstance(pointLightComponent->GetPointLight());
 	}
 }

@@ -14,5 +14,6 @@ private:
 	static void SetTransforms(CScene& aScene, const std::string& aJsonFileName);
 	static void AddModelComponents(CScene& aScene, const std::string& aJsonFileName);
 	static void AddInstancedModelComponents(CScene& aScene, const std::string& aJsonFileName);
+	static void AddPointLights(CScene& aScene, const std::string& aJsonFileName);
 };
 
