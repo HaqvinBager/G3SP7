@@ -37,7 +37,6 @@ public:
 		float myParticleSpeed = 0.0f;
 		DirectX::SimpleMath::Vector4 myParticleStartColor = DirectX::SimpleMath::Vector4(0.0f, 0.0f, 0.0f, 0.0f);
 		DirectX::SimpleMath::Vector4 myParticleEndColor = DirectX::SimpleMath::Vector4(0.0f, 0.0f, 0.0f, 0.0f);
-		DirectX::SimpleMath::Vector4 myOffsetPosition = DirectX::SimpleMath::Vector4(0.0f, 0.0f, 0.0f, 0.0f);
 		DirectX::SimpleMath::Vector4 myParticleStartDirection = DirectX::SimpleMath::Vector4(0.0f, 0.0f, 0.0f, 0.0f);
 		DirectX::SimpleMath::Vector4 myParticleEndDirection = DirectX::SimpleMath::Vector4(0.0f, 0.0f, 0.0f, 0.0f);
 		float myParticleStartSize = 0.0f;

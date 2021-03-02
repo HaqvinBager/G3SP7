@@ -16,7 +16,7 @@
 			"Rotate Z per second": 0.0,
 			"Orbit": true,
 			"Delay": 0.0,
-			"Duration": 2.0
+			"Duration": 50.0
 		},
 		{
 			"Path": "Assets/VFXTEMP/JSON/VFXData2.json",
@@ -33,8 +33,8 @@
 			"Rotate Y per second": 0.0,
 			"Rotate Z per second": 0.0,
 			"Orbit": true,
-			"Delay": 2.0,
-			"Duration": 2.0
+			"Delay": 0.0,
+			"Duration": 50.0
 		},
 		{
 			"Path": "Assets/VFXTEMP/JSON/VFXData.json",
@@ -48,11 +48,11 @@
 			"Scale Y": 2.0,
 			"Scale Z": 2.0,
 			"Rotate X per second": 0.0,
-			"Rotate Y per second": 0.0,
+			"Rotate Y per second": 90.0,
 			"Rotate Z per second": 0.0,
 			"Orbit": false,
-			"Delay": 4.0,
-			"Duration": 2.0
+			"Delay": 0.0,
+			"Duration": 50.0
 		}
 	],
 
@@ -71,7 +71,7 @@
 			"Rotate Z per second": 0.0,
 			"Orbit": false,
 			"Delay": 0.0,
-			"Duration": 2.0
+			"Duration": 50.0
 		},
 		{
 			"Path": "Assets/VFXTEMP/JSON/ParticleData2.json",
@@ -86,14 +86,14 @@
 			"Rotate Y per second": 0.0,
 			"Rotate Z per second": 0.0,
 			"Orbit": true,
-			"Delay": 2.0,
-			"Duration": 2.0
+			"Delay": 0.0,
+			"Duration": 50.0
 		},
 		{
 			"Path": "Assets/VFXTEMP/JSON/ParticleData2.json",
 			"Offset X": -2.5,
 			"Offset Y": 0.0,
-			"Offset Z": 2.5,
+			"Offset Z": 5.5,
 			"Rotation X": 90.0,
 			"Rotation Y": 0.0,
 			"Rotation Z": 0.0,
@@ -102,8 +102,8 @@
 			"Rotate Y per second": 0.0,
 			"Rotate Z per second": 0.0,
 			"Orbit": false,
-			"Delay": 4.0,
-			"Duration": 2.0
+			"Delay": 0.0,
+			"Duration": 50.0
 		}
 	]
 }

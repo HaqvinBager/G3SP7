@@ -194,22 +194,21 @@ void CParticleFactory::ReadJsonValues(std::string aFilePath, CParticleEmitter::S
     someParticleData.myParticleEndColor =         { document["End Color R"].GetFloat(), document["End Color G"].GetFloat(), document["End Color B"].GetFloat(), document["End Color A"].GetFloat() };
     someParticleData.myParticleStartSize =          document["Start Size"].GetFloat();
     someParticleData.myParticleEndSize =            document["End Size"].GetFloat();
-    someParticleData.myOffsetPosition =           { document["Offset Position X"].GetFloat(), document["Offset Position Y"].GetFloat(), document["Offset Position Z"].GetFloat(), 1.0f };
     someParticleData.myParticleStartDirection =   { document["Start Direction X"].GetFloat(), document["Start Direction Y"].GetFloat(), document["Start Direction Z"].GetFloat(), 0.0f };
     someParticleData.myParticleEndDirection =     { document["End Direction X"].GetFloat(), document["End Direction Y"].GetFloat(), document["End Direction Z"].GetFloat(), 0.0f };
     
-    someParticleData.myLifetimeLowerBound =         document["Lifetime Lower Bound"].GetFloat();
-    someParticleData.myLifetimeUpperBound =         document["Lifetime Upper Bound"].GetFloat();
-    someParticleData.mySpeedLowerBound =            document["Speed Lower Bound"].GetFloat();
-    someParticleData.mySpeedUpperBound =            document["Speed Upper Bound"].GetFloat();
+    someParticleData.myLifetimeLowerBound =         document["Lifetime Minimum Offset"].GetFloat();
+    someParticleData.myLifetimeUpperBound =         document["Lifetime Maximum Offset"].GetFloat();
+    someParticleData.mySpeedLowerBound =            document["Speed Minimum Offset"].GetFloat();
+    someParticleData.mySpeedUpperBound =            document["Speed Maximum Offset"].GetFloat();
 
-    if (document.HasMember("Offset Lower Bound X")) 
+    if (document.HasMember("Offset Spawn Position X Randomize From"))
     {
-        someParticleData.myOffsetLowerBound =         { document["Offset Lower Bound X"].GetFloat(), document["Offset Lower Bound Y"].GetFloat(), document["Offset Lower Bound Z"].GetFloat() };
-        someParticleData.myOffsetUpperBound =         { document["Offset Upper Bound X"].GetFloat(), document["Offset Upper Bound Y"].GetFloat(), document["Offset Upper Bound Z"].GetFloat() };
+        someParticleData.myOffsetLowerBound =         { document["Offset Spawn Position X Randomize From"].GetFloat(), document["Offset Spawn Position Y Randomize From"].GetFloat(), document["Offset Spawn Position Z Randomize From"].GetFloat() };
+        someParticleData.myOffsetUpperBound =         { document["Offset Spawn Position X Randomize To"].GetFloat(), document["Offset Spawn Position Y Randomize To"].GetFloat(), document["Offset Spawn Position Z Randomize To"].GetFloat() };
     }
 
-    someParticleData.myDirectionLowerBound =      { document["Direction Lower Bound X"].GetFloat(), document["Direction Lower Bound Y"].GetFloat(), document["Direction Lower Bound Z"].GetFloat() };
-    someParticleData.myDirectionUpperBound =      { document["Direction Upper Bound X"].GetFloat(), document["Direction Upper Bound Y"].GetFloat(), document["Direction Upper Bound Z"].GetFloat() };
+    someParticleData.myDirectionLowerBound =      { document["Spawn Direction X Randomize From"].GetFloat(), document["Spawn Direction Y Randomize From"].GetFloat(), document["Spawn Direction Z Randomize From"].GetFloat() };
+    someParticleData.myDirectionUpperBound =      { document["Spawn Direction X Randomize To"].GetFloat(), document["Spawn Direction Y Randomize To"].GetFloat(), document["Spawn Direction Z Randomize To"].GetFloat() };
     someParticleData.myTexturePath =                document["Texture Path"].GetString();
 }
