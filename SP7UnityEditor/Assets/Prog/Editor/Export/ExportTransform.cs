@@ -21,25 +21,49 @@ public struct TransformCollection
 
 public class ExportTransform
 {
-    public static void Export(Scene aScene)
+    public static void Export(Scene aScene, List<int> validInstanceIDs)
     {
         TransformCollection transformCollection = new TransformCollection();
         transformCollection.transforms = new List<TransformLink>();
         Transform[] transforms = GameObject.FindObjectsOfType<Transform>();
         foreach (Transform transform in transforms)
         {
-            if(Json.TryIsValidExport(transform, out GameObject prefabParent))
+            if (validInstanceIDs.Contains(transform.GetInstanceID()))
             {
-                if (transformCollection.transforms.Exists(e => e.instanceID == prefabParent.transform.GetInstanceID()))
-                    continue;
-
                 TransformLink link = new TransformLink();
-                link.instanceID = prefabParent.transform.GetInstanceID();               
+                link.instanceID = transform.GetInstanceID();
                 link.position = transform.ConvertToIronWroughtPosition();
                 link.rotation = transform.ConvertToIronWroughtRotation();
-                link.scale = prefabParent.transform.ConvertToIronWroughtScale();
+                link.scale = transform.ConvertToIronWroughtScale();
                 transformCollection.transforms.Add(link);
             }
+
+
+            //if (Json.TryIsValidExport(transform, out GameObject prefabParent))
+            //{
+            //    if (prefabParent.name.Contains("BP_"))
+            //    {
+            //        Transform[] children = prefabParent.GetComponentsInChildren<Transform>();
+
+            //        foreach (Transform child in children)
+            //        {
+            //            GameObject nearestPrefabParent = PrefabUtility.GetNearestPrefabInstanceRoot(child.gameObject);
+
+            //        }
+            //    }
+
+            //    if (transformCollection.transforms.Exists(e => e.instanceID == transform.GetInstanceID()))
+            //        continue;
+
+            //    TransformLink link = new TransformLink();
+            //    link.instanceID = prefabParent.transform.GetInstanceID();
+            //    link.position = transform.ConvertToIronWroughtPosition();
+            //    link.rotation = transform.ConvertToIronWroughtRotation();
+            //    link.scale = prefabParent.transform.ConvertToIronWroughtScale();
+            //    transformCollection.transforms.Add(link);
+
+            //    //Debug.Log("Export Transform: " + transform.name, transform.gameObject);
+            //}
         }
         Json.ExportToJson(transformCollection, aScene.name);
     }
