@@ -5,6 +5,8 @@
 #include <memory>
 #include <stack>
 
+#define INPUT Input::GetInstance()
+
 class Input {
 public:
 

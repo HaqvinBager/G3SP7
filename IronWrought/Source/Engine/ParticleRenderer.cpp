@@ -4,9 +4,10 @@
 #include "RenderManager.h"
 #include "Camera.h"
 #include "GameObject.h"
-#include "ParticleEmitterComponent.h"
 #include "CameraComponent.h"
 #include <iostream>
+
+#include "VFXSystemComponent.h"
 
 CParticleRenderer::CParticleRenderer() : myContext(nullptr), myFrameBuffer(), myObjectBuffer()
 {
@@ -65,30 +66,32 @@ void CParticleRenderer::Render(CCameraComponent* aCamera, std::vector<CGameObjec
 
     for (CGameObject* gameObject : aGameObjectList)
     {
-        CParticleEmitterComponent* component = gameObject->GetComponent<CParticleEmitterComponent>();
+        CVFXSystemComponent* component = gameObject->GetComponent<CVFXSystemComponent>();
         if (component == nullptr)
             continue;
 
-        std::vector<CParticle*> particles = component->GetParticleSet();
+        std::vector<CParticleEmitter*> particles = component->GetParticleSet();
         if (particles.empty())
             continue;
+
+        std::vector<Matrix> transforms = component->GetParticleTransforms();
 
         for (unsigned int i = 0; i < particles.size(); ++i) {
             if (component->GetParticleVertices()[i].size() < 1) {
                 continue;
             }
 
-            myObjectBufferData.myToWorld = component->GetTransform();
+            myObjectBufferData.myToWorld = transforms[i];
             BindBuffer(myObjectBuffer, myObjectBufferData, "Object Buffer");
 
-            CParticle::SParticleData particleData = particles[i]->GetParticleData();
+            CParticleEmitter::SParticleData particleData = particles[i]->GetParticleData();
 
             ZeroMemory(&bufferData, sizeof(D3D11_MAPPED_SUBRESOURCE));
             ENGINE_HR_MESSAGE(myContext->Map(particleData.myParticleVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &bufferData), "Vertex Buffer could not be mapped.");
 
             UINT numberOfVertices = (UINT)component->GetParticleVertices()[i].size();
 
-            memcpy(bufferData.pData, &(component->GetParticleVertices()[i][0]), sizeof(CParticle::SParticleVertex) * numberOfVertices);
+            memcpy(bufferData.pData, &(component->GetParticleVertices()[i][0]), sizeof(CParticleEmitter::SParticleVertex) * numberOfVertices);
             myContext->Unmap(particleData.myParticleVertexBuffer, 0);
 
             myContext->IASetPrimitiveTopology(particleData.myPrimitiveTopology);

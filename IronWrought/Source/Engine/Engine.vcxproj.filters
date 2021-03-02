@@ -258,19 +258,10 @@
     <ClCompile Include="Model.cpp">
       <Filter>Model</Filter>
     </ClCompile>
-    <ClCompile Include="Particle.cpp">
-      <Filter>Particles</Filter>
-    </ClCompile>
-    <ClCompile Include="ParticleFactory.cpp">
-      <Filter>Particles</Filter>
-    </ClCompile>
     <ClCompile Include="ParticleRenderer.cpp">
       <Filter>Renderers</Filter>
     </ClCompile>
     <ClCompile Include="ModelComponent.cpp">
-      <Filter>GameObject and Component\Component</Filter>
-    </ClCompile>
-    <ClCompile Include="ParticleEmitterComponent.cpp">
       <Filter>GameObject and Component\Component</Filter>
     </ClCompile>
     <ClCompile Include="PointLightComponent.cpp">
@@ -307,15 +298,6 @@
       <Filter>Text</Filter>
     </ClCompile>
     <ClCompile Include="VFXBase.cpp">
-      <Filter>VFX</Filter>
-    </ClCompile>
-    <ClCompile Include="VFXComponent.cpp">
-      <Filter>VFX</Filter>
-    </ClCompile>
-    <ClCompile Include="VFXFactory.cpp">
-      <Filter>VFX</Filter>
-    </ClCompile>
-    <ClCompile Include="VFXInstance.cpp">
       <Filter>VFX</Filter>
     </ClCompile>
     <ClCompile Include="TransformComponent.cpp">
@@ -676,6 +658,18 @@
     <ClCompile Include="NodeTypeStartSetCustom.cpp">
       <Filter>Imgui\Node Editor\Nodes\Start</Filter>
     </ClCompile>
+    <ClCompile Include="VFXSystemComponent.cpp">
+      <Filter>GameObject and Component\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleEmitter.cpp">
+      <Filter>VFX\Particles</Filter>
+    </ClCompile>
+    <ClCompile Include="VFXMeshFactory.cpp">
+      <Filter>VFX</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleEmitterFactory.cpp">
+      <Filter>VFX\Particles</Filter>
+    </ClCompile>
     <ClCompile Include="NodeTypeDecisionCoinFlip.cpp">
       <Filter>Imgui\Node Editor\Nodes\Decision Tree\Decision</Filter>
     </ClCompile>
@@ -783,19 +777,10 @@
     <ClInclude Include="Model.h">
       <Filter>Model</Filter>
     </ClInclude>
-    <ClInclude Include="Particle.h">
-      <Filter>Particles</Filter>
-    </ClInclude>
-    <ClInclude Include="ParticleFactory.h">
-      <Filter>Particles</Filter>
-    </ClInclude>
     <ClInclude Include="ParticleRenderer.h">
       <Filter>Renderers</Filter>
     </ClInclude>
     <ClInclude Include="ModelComponent.h">
-      <Filter>GameObject and Component\Component</Filter>
-    </ClInclude>
-    <ClInclude Include="ParticleEmitterComponent.h">
       <Filter>GameObject and Component\Component</Filter>
     </ClInclude>
     <ClInclude Include="PointLightComponent.h">
@@ -832,15 +817,6 @@
       <Filter>Text</Filter>
     </ClInclude>
     <ClInclude Include="VFXBase.h">
-      <Filter>VFX</Filter>
-    </ClInclude>
-    <ClInclude Include="VFXComponent.h">
-      <Filter>VFX</Filter>
-    </ClInclude>
-    <ClInclude Include="VFXFactory.h">
-      <Filter>VFX</Filter>
-    </ClInclude>
-    <ClInclude Include="VFXInstance.h">
       <Filter>VFX</Filter>
     </ClInclude>
     <ClInclude Include="TransformComponent.h">
@@ -1255,6 +1231,18 @@
     <ClInclude Include="NodeTypeStartSetCustom.h">
       <Filter>Imgui\Node Editor\Nodes\Start</Filter>
     </ClInclude>
+    <ClInclude Include="VFXSystemComponent.h">
+      <Filter>GameObject and Component\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleEmitter.h">
+      <Filter>VFX\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="VFXMeshFactory.h">
+      <Filter>VFX</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleEmitterFactory.h">
+      <Filter>VFX\Particles</Filter>
+    </ClInclude>
     <ClInclude Include="NodeTypeDecisionCoinFlip.h">
       <Filter>Imgui\Node Editor\Nodes\Decision Tree\Decision</Filter>
     </ClInclude>
@@ -1364,9 +1352,6 @@
     </Filter>
     <Filter Include="Model">
       <UniqueIdentifier>{12ecd6ab-d23c-4df9-9e11-b2d59f34eb4b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Particles">
-      <UniqueIdentifier>{cb6066cf-24a2-4f78-b1eb-a8c7aae1a535}</UniqueIdentifier>
     </Filter>
     <Filter Include="Sprite">
       <UniqueIdentifier>{aaaccb51-9afb-425c-9df1-e1bea8537179}</UniqueIdentifier>
@@ -1532,6 +1517,9 @@
     </Filter>
     <Filter Include="Imgui\Node Editor\Nodes\Variables\Get">
       <UniqueIdentifier>{c77b8dcc-917a-4872-8dfc-bb6632a1befb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="VFX\Particles">
+      <UniqueIdentifier>{cb6066cf-24a2-4f78-b1eb-a8c7aae1a535}</UniqueIdentifier>
     </Filter>
     <Filter Include="Imgui\Node Editor\Nodes\Utilities">
       <UniqueIdentifier>{833d2d1f-1cc9-4040-ae9a-0765b5b0130a}</UniqueIdentifier>

@@ -24,6 +24,7 @@ private:
 
 public:
 	static bool IsValid(const rapidjson::Document& aDoc, const std::vector<std::string>& someMembers);
+	static bool HasParseError(const rapidjson::Document& aDoc);
 
 	void Init();
 	const std::string& GetAssetPath(const int anAssetID) const;

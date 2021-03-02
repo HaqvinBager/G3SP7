@@ -74,7 +74,6 @@ public:
 	std::pair<unsigned int, std::array<CPointLight*, LIGHTCOUNT>> CullLights(CGameObject* aGameObject);
 	const std::vector<CLineInstance*>& CullLineInstances() const;
 	const std::vector<SLineTime>& CullLines() const;
-	std::vector<CVFXInstance*> CullVFX(CCameraComponent* aMainCamera);
 	std::vector<CAnimatedUIElement*> CullAnimatedUI(std::vector<CSpriteInstance*>& someFramesToReturn);
 	LightPair CullLightInstanced(CInstancedModelComponent* aModelType);
 	std::vector<CGameObject*> CullGameObjects(CCameraComponent* aMainCamera);
@@ -103,7 +102,6 @@ public:
 //CLEAR SCENE OF INSTANCES START
 	bool ClearPointLights();
 	bool ClearLineInstances();
-	bool ClearVFXInstances();
 	bool ClearAnimatedUIElement();
 	bool ClearTextInstances();
 	bool ClearGameObjects();

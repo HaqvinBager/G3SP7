@@ -45,6 +45,14 @@ void CInGameState::Awake(){}
 #include "PointLight.h"
 #include "PointLightComponent.h"
 #include "PlayerControllerComponent.h"
+
+#include "VFXSystemComponent.h"
+#include "VFXMeshFactory.h"
+#include "ParticleEmitterFactory.h"
+
+CGameObject* myVFX = nullptr;
+void TEMP_VFX(CScene* aScene);
+
 void CInGameState::Start()
 {
 	CJsonReader::Get()->Init();
@@ -52,6 +60,9 @@ void CInGameState::Start()
 	scene->AddPXScene(CEngine::GetInstance()->GetPhysx().CreatePXScene());
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);
+
+	
+	TEMP_VFX(scene);
 
 	myExitLevel = false;
 
@@ -90,6 +101,30 @@ void CInGameState::Stop()
 
 void CInGameState::Update()
 {
+	float speed = 10.0f;
+	if (Input::GetInstance()->IsKeyDown(VK_UP))
+	{
+		myVFX->myTransform->Move({0.0f, 0.0f, CTimer::Dt() * speed });
+	}
+	if (Input::GetInstance()->IsKeyDown(VK_DOWN))
+	{
+		myVFX->myTransform->Move({ 0.0f, 0.0f, -CTimer::Dt() * speed });
+	}
+	if (Input::GetInstance()->IsKeyDown(VK_LEFT))
+	{
+		myVFX->myTransform->Move({ -CTimer::Dt() * speed, 0.0f, 0.0f });
+	}
+	if (Input::GetInstance()->IsKeyDown(VK_RIGHT))
+	{
+		myVFX->myTransform->Move({ CTimer::Dt() * speed, 0.0f, 0.0f });
+	}
+
+	if (INPUT->IsKeyPressed('P'))
+	{
+		myVFX->GetComponent<CVFXSystemComponent>()->OnDisable();
+		myVFX->GetComponent<CVFXSystemComponent>()->OnEnable();
+	}
+
 	CEngine::GetInstance()->GetPhysx().Simulate();
 	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
 	{
@@ -133,8 +168,6 @@ void CInGameState::Receive(const SMessage& /*aMessage*/)
 	//	default:break;
 	//}
 }
-
-
 
 void TEMP_DeferredRenderingTests(CScene* scene)
 {
@@ -263,4 +296,14 @@ void CInGameState::TEMP_DecalTests(CScene* aScene)
 	//decal2->myTransform->Rotation({ 0.0f, 45.0f, 0.0f });
 	//decal2->myTransform->Scale({ 1.0f, 1.0f, 1.0f });
 	//aScene->AddInstance(decal2);
+}
+
+void TEMP_VFX(CScene* aScene)
+{
+	static int id = 500;
+	CGameObject* abilityObject = new CGameObject(id++);
+	abilityObject->AddComponent<CVFXSystemComponent>(*abilityObject, "Assets/VFXTEMP/JSON/VFXSystem_ToLoad.json");
+
+	myVFX = abilityObject;
+	aScene->AddInstance(abilityObject);
 }

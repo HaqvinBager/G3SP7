@@ -294,7 +294,6 @@
     <ClInclude Include="DL_StackWalker.h" />
     <ClInclude Include="InputMapper.h" />
     <ClInclude Include="InputObserver.h" />
-    <ClInclude Include="ParticleEmitterComponent.h" />
     <ClInclude Include="PrintActionNode.h" />
     <ClInclude Include="RectangleColliderComponent.h" />
     <ClInclude Include="RigidBodyComponent.h" />
@@ -326,8 +325,8 @@
     <ClInclude Include="ModelMath.h" />
     <ClInclude Include="MouseTracker.h" />
     <ClInclude Include="NavmeshLoader.h" />
-    <ClInclude Include="Particle.h" />
-    <ClInclude Include="ParticleFactory.h" />
+    <ClInclude Include="ParticleEmitter.h" />
+    <ClInclude Include="ParticleEmitterFactory.h" />
     <ClInclude Include="ParticleRenderer.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="RandomNumberGenerator.h" />
@@ -351,10 +350,9 @@
     <ClInclude Include="TriangleColliderComponent.h" />
     <ClInclude Include="Utility.h" />
     <ClInclude Include="VFXBase.h" />
-    <ClInclude Include="VFXComponent.h" />
-    <ClInclude Include="VFXFactory.h" />
-    <ClInclude Include="VFXInstance.h" />
+    <ClInclude Include="VFXMeshFactory.h" />
     <ClInclude Include="VFXRenderer.h" />
+    <ClInclude Include="VFXSystemComponent.h" />
     <ClInclude Include="Widgets.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="WindowHandler.h" />
@@ -467,7 +465,6 @@
     <ClCompile Include="MaterialHandler.cpp" />
     <ClCompile Include="NodeTypeTimeTimer.cpp" />
     <ClCompile Include="NodeTypeVolumeTrigger.cpp" />
-    <ClCompile Include="ParticleEmitterComponent.cpp" />
     <ClCompile Include="PerlinNoise.cpp" />
     <ClCompile Include="PhysXWrapper.cpp" />
     <ClCompile Include="PointLightComponent.cpp" />
@@ -497,8 +494,8 @@
     <ClCompile Include="ModelComponent.cpp" />
     <ClCompile Include="ModelFactory.cpp" />
     <ClCompile Include="NavmeshLoader.cpp" />
-    <ClCompile Include="Particle.cpp" />
-    <ClCompile Include="ParticleFactory.cpp" />
+    <ClCompile Include="ParticleEmitter.cpp" />
+    <ClCompile Include="ParticleEmitterFactory.cpp" />
     <ClCompile Include="ParticleRenderer.cpp" />
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="RenderManager.cpp" />
@@ -524,10 +521,9 @@
     <ClCompile Include="TransformComponent.cpp" />
     <ClCompile Include="TriangleColliderComponent.cpp" />
     <ClCompile Include="VFXBase.cpp" />
-    <ClCompile Include="VFXComponent.cpp" />
-    <ClCompile Include="VFXFactory.cpp" />
-    <ClCompile Include="VFXInstance.cpp" />
+    <ClCompile Include="VFXMeshFactory.cpp" />
     <ClCompile Include="VFXRenderer.cpp" />
+    <ClCompile Include="VFXSystemComponent.cpp" />
     <ClCompile Include="Widgets.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="WindowHandler.cpp" />
