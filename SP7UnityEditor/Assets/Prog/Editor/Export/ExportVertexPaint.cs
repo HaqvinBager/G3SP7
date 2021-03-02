@@ -77,7 +77,7 @@ public class ExportVertexPaint : Editor
     }
 
     //[MenuItem("Export/Export Vertex Painting")]
-    public static List<GameObject> ExportVertexPainting(Scene aScene)
+    public static List<GameObject> ExportVertexPainting(Scene aScene, List<int> validExportIds)
     {
         List<GameObject> exportedVertexPaintObjects = new List<GameObject>();
         List<VertexLink> vertexLinks = new List<VertexLink>();
@@ -86,7 +86,6 @@ public class ExportVertexPaint : Editor
         foreach (PolybrushFBX polyBrushObject in vertexPaintedObjects)
         {
             string meshName = polyBrushObject.GetComponent<MeshFilter>().sharedMesh.name;
-
             if (!meshName.Contains(polybrushMesh))
             {
                 Debug.LogError("This Object has not yet been Painted on. Skipping it!", polyBrushObject.gameObject);
@@ -97,24 +96,42 @@ public class ExportVertexPaint : Editor
             int endIndex = meshName.Length;
             string polyMeshID = meshName.Substring(startIndex, endIndex - startIndex);
             string colorPath = targetPath + "PolybrushColors_" + polyMeshID + "_Bin.bin";
-
-            if (Json.TryIsValidExport(polyBrushObject.transform.parent, out GameObject prefabParent))
+           
+            if (polyBrushObject.transform.parent != null)
             {
-                VertexLink link = vertexLinks.Find(e => e.colorsPath.Equals(colorPath));
-                if (link == null)
+                if (validExportIds.Contains(polyBrushObject.transform.parent.GetInstanceID()))
                 {
-                    link = new VertexLink();
-                    link.myTransformIDs = new List<int>();
-                    link.myTransformIDs.Add(prefabParent.transform.GetInstanceID());
-                    link.colorsPath = targetPath + "PolybrushColors_" + polyMeshID + "_Bin.bin";
-                    link.myMaterialNames = ExtractTexturePathsFromMaterials(polyBrushObject.GetComponent<MeshRenderer>().sharedMaterials);
-                    vertexLinks.Add(link);
-                }
-                else
-                {
-                    link.myTransformIDs.Add(prefabParent.transform.GetInstanceID());
+                    VertexLink link = vertexLinks.Find(e => e.colorsPath.Equals(colorPath));
+                    if(link == null)
+                    {
+                        link = new VertexLink();
+                        link.myTransformIDs = new List<int>();
+                        link.colorsPath = targetPath + "PolybrushColors_" + polyMeshID + "_Bin.bin";
+                        link.myMaterialNames = ExtractTexturePathsFromMaterials(polyBrushObject.GetComponent<MeshRenderer>().sharedMaterials);
+                        vertexLinks.Add(link);
+                    }
+                    link.myTransformIDs.Add(polyBrushObject.transform.parent.GetInstanceID());                  
                 }
             }
+
+
+            //if (Json.TryIsValidExport(polyBrushObject.transform.parent, out GameObject prefabParent))
+            //{
+            //    VertexLink link = vertexLinks.Find(e => e.colorsPath.Equals(colorPath));
+            //    if (link == null)
+            //    {
+            //        link = new VertexLink();
+            //        link.myTransformIDs = new List<int>();
+            //        link.myTransformIDs.Add(prefabParent.transform.GetInstanceID());
+            //        link.colorsPath = targetPath + "PolybrushColors_" + polyMeshID + "_Bin.bin";
+            //        link.myMaterialNames = ExtractTexturePathsFromMaterials(polyBrushObject.GetComponent<MeshRenderer>().sharedMaterials);
+            //        vertexLinks.Add(link);
+            //    }
+            //    else
+            //    {
+            //        link.myTransformIDs.Add(prefabParent.transform.GetInstanceID());
+            //    }
+            //}
 
             if (polyBrushObject.TryGetComponent(out MeshFilter meshFilter))
             {

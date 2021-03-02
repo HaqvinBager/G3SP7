@@ -54,11 +54,11 @@ public class Exporter
     private static void ExportAScene(Scene aScene)
     {
         ExportResource.Export(aScene);
-        ExportInstanceID.Export(aScene);
-        ExportTransform.Export(aScene);
-        ExportModel.Export(aScene);
+        List<int> validExportIds = ExportInstanceID.Export(aScene);
+        ExportTransform.Export(aScene, validExportIds);
+        ExportModel.Export(aScene, validExportIds);
         ExportInstancedModel.Export(aScene);
-        ExportVertexPaint.ExportVertexPainting(aScene);
+        ExportVertexPaint.ExportVertexPainting(aScene, validExportIds);
         ExportBluePrint.Export(aScene);
         AssetDatabase.Refresh();
     }

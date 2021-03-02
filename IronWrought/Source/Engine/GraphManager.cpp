@@ -70,9 +70,15 @@ void CGraphManager::Load()
 				myKeys.push_back(key);
 
 				for (const auto& jsonGameObjectID : jsonLink["instances"].GetArray()) {
-					if (jsonGameObjectID.IsInt()) {
-						myGameObjectIDsMap[key].emplace_back(jsonGameObjectID.GetInt());
+					if (!jsonGameObjectID.HasMember("instanceID") && jsonGameObjectID.HasMember("childrenInstanceIDs")) {
+						continue;
 					}
+					BluePrintInstance bpInstance;
+					bpInstance.rootID = jsonGameObjectID["instanceID"].GetInt();
+					for (const auto& childID : jsonGameObjectID["childrenInstanceIDs"].GetArray()) {
+						bpInstance.childrenIDs.emplace_back(childID.GetInt());
+					}
+					myGameObjectIDsMap[key].emplace_back(bpInstance);
 				}
 
 				std::string folder = "Imgui/NodeScripts/" + key;
@@ -123,7 +129,7 @@ void CGraphManager::ReTriggerUpdatingTrees()
 
 			for (unsigned int i = 0; i < gameObjectIDs.size(); ++i)
 			{
-				myCurrentGameObjectID = gameObjectIDs[i];
+				myCurrentBluePrintInstance = gameObjectIDs[i];
 				for (auto& nodeInstance : currentGraph)
 				{
 					if (nodeInstance->myNodeType->IsStartNode())
@@ -453,9 +459,15 @@ bool CGraphManager::ToggleShouldRunScripts()
 	return myScriptShouldRun;
 }
 
-CGameObject* CGraphManager::GetCurrentGameObject()
+std::vector<CGameObject*> CGraphManager::GetCurrentGameObject()
 {
-	return CEngine::GetInstance()->GetActiveScene().FindObjectWithID(myCurrentGameObjectID);
+	CScene& scene = CEngine::GetInstance()->GetActiveScene();
+	std::vector<CGameObject*> gameObjects = {};
+	gameObjects.push_back(scene.FindObjectWithID(myCurrentBluePrintInstance.rootID));
+	for (const auto& id : myCurrentBluePrintInstance.childrenIDs)
+		gameObjects.push_back(scene.FindObjectWithID(id));
+
+	return gameObjects;
 }
 
 ImColor GetIconColor(SPin::EPinType type)
@@ -669,23 +681,23 @@ void CGraphManager::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInstance
 		int selectedIndex = -1;
 		if (ImGui::RadioButton("Bool", false))
 		{
-			selectedIndex = static_cast<int>(SPin::EPinType::EBool);
+			selectedIndex = (int)SPin::EPinType::EBool;
 		}
 		if (ImGui::RadioButton("Int", false))
 		{
-			selectedIndex = static_cast<int>(SPin::EPinType::EInt);
+			selectedIndex = (int)SPin::EPinType::EInt;
 		}
 		if (ImGui::RadioButton("Float", false))
 		{
-			selectedIndex = static_cast<int>(SPin::EPinType::EFloat);
+			selectedIndex = (int)SPin::EPinType::EFloat;
+		}
+		if (ImGui::RadioButton("Vector3", false))
+		{
+			selectedIndex = (int)SPin::EPinType::EVector3;
 		}
 		if (ImGui::RadioButton("String", false))
 		{
-			selectedIndex = static_cast<int>(SPin::EPinType::EString);
-		}
-		if (ImGui::RadioButton("Vector 3", false))
-		{
-			selectedIndex = static_cast<int>(SPin::EPinType::EVector3);
+			selectedIndex = (int)SPin::EPinType::EString;
 		}
 
 		if (selectedIndex != -1)
@@ -777,7 +789,7 @@ void CGraphManager::LoadDataNodesFromFile()
 	{
 		std::string path = "Imgui/NodeScripts/CustomDataNodes.json";
 		document = CJsonReader::Get()->LoadDocument(path);
-		if (CJsonReader::IsValid(document, {"Custom Data"}))
+		if (CJsonReader::IsValid(document, { "Custom Data" }))
 		{
 			auto nodeInstances = document["Custom Data"].GetArray();
 

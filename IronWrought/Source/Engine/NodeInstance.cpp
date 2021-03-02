@@ -218,7 +218,7 @@ void CNodeInstance::VisualUpdate(float aDeltaTime)
 	}
 }
 
-CGameObject* CNodeInstance::GetCurrentGameObject()
+std::vector<CGameObject*> CNodeInstance::GetCurrentGameObject()
 {
 	return myGraphManager->GetCurrentGameObject();
 }
