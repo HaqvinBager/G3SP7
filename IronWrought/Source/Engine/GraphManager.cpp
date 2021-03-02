@@ -153,7 +153,7 @@ void CGraphManager::SaveTreeToFile()
 
 		writer1.StartObject();
 		writer1.Key("Num");
-		writer1.Int(UID::myGlobalUID);
+		writer1.Int(CUID::myGlobalUID);
 		writer1.EndObject();
 
 		writer1.Key("NodeInstances");
@@ -206,14 +206,14 @@ SPin::EPinType LoadPinData(NodeDataPtr& someDataToCopy, rapidjson::Value& someDa
 		someDataToCopy = new bool;
 		bool test = someData.GetBool();
 		memcpy(someDataToCopy, &test, sizeof(bool));
-		return SPin::EPinType::Bool;
+		return SPin::EPinType::EBool;
 	}
 	else if (someData.IsDouble())
 	{
 		someDataToCopy = new float;
 		float test = static_cast<float>(someData.GetDouble());
 		memcpy(someDataToCopy, &test, sizeof(float));
-		return SPin::EPinType::Float;
+		return SPin::EPinType::EFloat;
 	}
 	else if (someData.IsString())
 	{
@@ -224,7 +224,7 @@ SPin::EPinType LoadPinData(NodeDataPtr& someDataToCopy, rapidjson::Value& someDa
 			const char* data = someData.GetString();
 			memcpy(someDataToCopy, data, sizeof(char) * length);
 			((char*)someDataToCopy)[length] = '\0';
-			return SPin::EPinType::String;
+			return SPin::EPinType::EString;
 		}
 
 	}
@@ -233,9 +233,16 @@ SPin::EPinType LoadPinData(NodeDataPtr& someDataToCopy, rapidjson::Value& someDa
 		someDataToCopy = new int;
 		int test = someData.GetInt();
 		memcpy(someDataToCopy, &test, sizeof(int));
-		return SPin::EPinType::Int;
+		return SPin::EPinType::EInt;
 	}
-	return SPin::EPinType::Unknown;
+	else if (someData.IsArray())
+	{
+		someDataToCopy = new int;
+		int test = someData.GetInt();
+		memcpy(someDataToCopy, &test, sizeof(int));
+		return SPin::EPinType::EInt;
+	}
+	return SPin::EPinType::EUnknown;
 }
 
 void CGraphManager::LoadTreeFromFile()
@@ -247,8 +254,8 @@ void CGraphManager::LoadTreeFromFile()
 			myCurrentKey = key;
 			myCurrentPath = "Imgui/NodeScripts/" + key + "/" + key;
 
-			UID::myAllUIDs.clear();
-			UID::myGlobalUID = 0;
+			CUID::myAllUIDs.clear();
+			CUID::myGlobalUID = 0;
 			Document document;
 			{
 				std::string path = myCurrentPath + "_nodeinstances.json";
@@ -256,7 +263,7 @@ void CGraphManager::LoadTreeFromFile()
 				if (document.HasMember("UID_MAX"))
 				{
 					auto uIDMax = document["UID_MAX"]["Num"].GetInt();
-					UID::myGlobalUID = uIDMax;
+					CUID::myGlobalUID = uIDMax;
 				}
 				if (document.HasMember("NodeInstances"))
 				{
@@ -282,7 +289,7 @@ void CGraphManager::LoadTreeFromFile()
 							int index = nodeInstance["Pins"][j]["Index"].GetInt();
 							object->myPins[index].myUID.SetUID(nodeInstance["Pins"][j]["UID"].GetInt());
 							SPin::EPinType newType = LoadPinData(object->myPins[index].myData, nodeInstance["Pins"][j]["DATA"], nodeInstance["Pins"][j]["DATA"].GetType());
-							if (object->myPins[index].myVariableType == SPin::EPinType::Unknown)
+							if (object->myPins[index].myVariableType == SPin::EPinType::EUnknown)
 							{
 								object->ChangePinTypes(newType);
 							}
@@ -342,7 +349,7 @@ void CGraphManager::SaveNodesToClipboard()
 
 		writer1.StartObject();
 		writer1.Key("Num");
-		writer1.Int(UID::myGlobalUID);
+		writer1.Int(CUID::myGlobalUID);
 		writer1.EndObject();
 
 		writer1.Key("NodeInstances");
@@ -376,7 +383,7 @@ void CGraphManager::LoadNodesFromClipboard()
 
 	rapidjson::Value& uidmax = document["UID_MAX"];
 	int test = uidmax["Num"].GetInt();
-	UID::myGlobalUID = test;
+	CUID::myGlobalUID = test;
 
 	rapidjson::Value& results = document["NodeInstances"];
 
@@ -406,9 +413,9 @@ void CGraphManager::LoadNodesFromClipboard()
 		for (unsigned int j = 0; j < nodeInstance["Pins"].Size(); j++)
 		{
 			int index = nodeInstance["Pins"][j]["Index"].GetInt();
-			object->myPins[index].myUID.SetUID(UID().AsInt());
+			object->myPins[index].myUID.SetUID(CUID().AsInt());
 			SPin::EPinType newType = LoadPinData(object->myPins[index].myData, nodeInstance["Pins"][j]["DATA"], nodeInstance["Pins"][j]["DATA"].GetType());
-			if (object->myPins[index].myVariableType == SPin::EPinType::Unknown)
+			if (object->myPins[index].myVariableType == SPin::EPinType::EUnknown)
 			{
 				object->ChangePinTypes(newType);
 			}
@@ -468,12 +475,13 @@ ImColor GetIconColor(SPin::EPinType type)
 	switch (type)
 	{
 	default:
-	case SPin::EPinType::Flow:     return ImColor(255, 255, 255);
-	case SPin::EPinType::Bool:     return ImColor(220, 48, 48);
-	case SPin::EPinType::Int:      return ImColor(68, 201, 156);
-	case SPin::EPinType::Float:    return ImColor(147, 226, 74);
-	case SPin::EPinType::String:   return ImColor(124, 21, 153);
-	case SPin::EPinType::Unknown:   return ImColor(255, 0, 0);
+	case SPin::EPinType::EFlow:     return ImColor(255, 255, 255);
+	case SPin::EPinType::EBool:     return ImColor(220, 48, 48);
+	case SPin::EPinType::EInt:      return ImColor(68, 201, 156);
+	case SPin::EPinType::EFloat:    return ImColor(147, 226, 74);
+	case SPin::EPinType::EString:   return ImColor(124, 21, 153);
+	case SPin::EPinType::EVector3:   return ImColor(124, 21, 153);
+	case SPin::EPinType::EUnknown:   return ImColor(255, 0, 0);
 	}
 };
 
@@ -484,12 +492,13 @@ void DrawPinIcon(const SPin& pin, bool connected, int alpha)
 	color.Value.w = alpha / 255.0f;
 	switch (pin.myVariableType)
 	{
-	case SPin::EPinType::Flow:     iconType = IconType::Flow;   break;
-	case SPin::EPinType::Bool:     iconType = IconType::Circle; break;
-	case SPin::EPinType::Int:      iconType = IconType::Circle; break;
-	case SPin::EPinType::Float:    iconType = IconType::Circle; break;
-	case SPin::EPinType::String:   iconType = IconType::Circle; break;
-	case SPin::EPinType::Unknown:  iconType = IconType::Circle; break;
+	case SPin::EPinType::EFlow:     iconType = IconType::Flow;   break;
+	case SPin::EPinType::EBool:     iconType = IconType::Circle; break;
+	case SPin::EPinType::EInt:      iconType = IconType::Circle; break;
+	case SPin::EPinType::EFloat:    iconType = IconType::Circle; break;
+	case SPin::EPinType::EString:   iconType = IconType::Circle; break;
+	case SPin::EPinType::EVector3:   iconType = IconType::Circle; break;
+	case SPin::EPinType::EUnknown:  iconType = IconType::Circle; break;
 	default:
 		return;
 	}
@@ -545,135 +554,163 @@ void CGraphManager::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInstance
 {
 	switch (aPin.myVariableType)
 	{
-	case SPin::EPinType::String:
+	case SPin::EPinType::EString:
+	{
+		if (!aPin.myData)
 		{
-			if (!aPin.myData)
-			{
-				aPin.myData = new char[128];
-				static_cast<char*>(aPin.myData)[0] = '\0';
-			}
-
-			ImGui::PushID(aPin.myUID.AsInt());
-			ImGui::PushItemWidth(100.0f);
-			if (aNodeInstance->IsPinConnected(aPin))
-			{
-				DrawPinIcon(aPin, true, 255);
-			}
-			else
-			{
-				ImGui::InputText("##edit", (char*)aPin.myData, 127);
-			}
-			ImGui::PopItemWidth();
-
-			ImGui::PopID();
-			break;
+			aPin.myData = new char[128];
+			static_cast<char*>(aPin.myData)[0] = '\0';
 		}
-	case SPin::EPinType::Int:
+
+		ImGui::PushID(aPin.myUID.AsInt());
+		ImGui::PushItemWidth(100.0f);
+		if (aNodeInstance->IsPinConnected(aPin))
 		{
-			if (!aPin.myData)
-			{
-				aPin.myData = new int;
-				int* c = ((int*)aPin.myData);
-				*c = 0;
-			}
+			DrawPinIcon(aPin, true, 255);
+		}
+		else
+		{
+			ImGui::InputText("##edit", (char*)aPin.myData, 127);
+		}
+		ImGui::PopItemWidth();
+
+		ImGui::PopID();
+		break;
+	}
+	case SPin::EPinType::EInt:
+	{
+		if (!aPin.myData)
+		{
+			aPin.myData = new int;
 			int* c = ((int*)aPin.myData);
-			ImGui::PushID(aPin.myUID.AsInt());
-			ImGui::PushItemWidth(100.0f);
-			if (aNodeInstance->IsPinConnected(aPin))
-			{
-				DrawPinIcon(aPin, true, 255);
-			}
-			else
-			{
-				ImGui::InputInt("##edit", c);
-			}
-			ImGui::PopItemWidth();
-
-			ImGui::PopID();
-			break;
+			*c = 0;
 		}
-	case SPin::EPinType::Bool:
+		int* c = ((int*)aPin.myData);
+		ImGui::PushID(aPin.myUID.AsInt());
+		ImGui::PushItemWidth(100.0f);
+		if (aNodeInstance->IsPinConnected(aPin))
 		{
-			if (!aPin.myData)
-			{
-				aPin.myData = new bool;
-				bool* c = ((bool*)aPin.myData);
-				*c = false;
-			}
+			DrawPinIcon(aPin, true, 255);
+		}
+		else
+		{
+			ImGui::InputInt("##edit", c);
+		}
+		ImGui::PopItemWidth();
+
+		ImGui::PopID();
+		break;
+	}
+	case SPin::EPinType::EBool:
+	{
+		if (!aPin.myData)
+		{
+			aPin.myData = new bool;
 			bool* c = ((bool*)aPin.myData);
-			ImGui::PushID(aPin.myUID.AsInt());
-			ImGui::PushItemWidth(100.0f);
-			if (aNodeInstance->IsPinConnected(aPin))
-			{
-				DrawPinIcon(aPin, true, 255);
-			}
-			else
-			{
-				ImGui::Checkbox("##edit", c);
-			}
-			ImGui::PopItemWidth();
-
-			ImGui::PopID();
-			break;
+			*c = false;
 		}
-	case SPin::EPinType::Float:
+		bool* c = ((bool*)aPin.myData);
+		ImGui::PushID(aPin.myUID.AsInt());
+		ImGui::PushItemWidth(100.0f);
+		if (aNodeInstance->IsPinConnected(aPin))
 		{
-			if (!aPin.myData)
-			{
-				aPin.myData = new float;
-				float* c = ((float*)aPin.myData);
-				*c = 1.0f;
-			}
+			DrawPinIcon(aPin, true, 255);
+		}
+		else
+		{
+			ImGui::Checkbox("##edit", c);
+		}
+		ImGui::PopItemWidth();
+
+		ImGui::PopID();
+		break;
+	}
+	case SPin::EPinType::EFloat:
+	{
+		if (!aPin.myData)
+		{
+			aPin.myData = new float;
 			float* c = ((float*)aPin.myData);
-			ImGui::PushID(aPin.myUID.AsInt());
-			ImGui::PushItemWidth(70.0f);
-			if (aNodeInstance->IsPinConnected(aPin))
-			{
-				DrawPinIcon(aPin, true, 255);
-			}
-			else
-			{
-				ImGui::InputFloat("##edit", c);
-			}
-			ImGui::PopItemWidth();
-
-			ImGui::PopID();
-			break;
+			*c = 1.0f;
 		}
-	case SPin::EPinType::Unknown:
+		float* c = ((float*)aPin.myData);
+		ImGui::PushID(aPin.myUID.AsInt());
+		ImGui::PushItemWidth(70.0f);
+		if (aNodeInstance->IsPinConnected(aPin))
 		{
-			ImGui::PushID(aPin.myUID.AsInt());
-			ImGui::PushItemWidth(100.0f);
-
-			int selectedIndex = -1;
-			if (ImGui::RadioButton("Bool", false))
-			{
-				selectedIndex = (int)SPin::EPinType::Bool;
-			}
-			if (ImGui::RadioButton("Int", false))
-			{
-				selectedIndex = (int)SPin::EPinType::Int;
-			}
-			if (ImGui::RadioButton("Float", false))
-			{
-				selectedIndex = (int)SPin::EPinType::Float;
-			}
-			if (ImGui::RadioButton("String", false))
-			{
-				selectedIndex = (int)SPin::EPinType::String;
-			}
-
-			if (selectedIndex != -1)
-			{
-				CNodeInstance* instance = GetNodeFromPinID(aPin.myUID.AsInt());
-				instance->ChangePinTypes((SPin::EPinType)selectedIndex);
-			}
-
-
-			ImGui::PopItemWidth();
-			ImGui::PopID();
-			break;
+			DrawPinIcon(aPin, true, 255);
 		}
+		else
+		{
+			ImGui::InputFloat("##edit", c);
+		}
+		ImGui::PopItemWidth();
+
+		ImGui::PopID();
+		break;
+	}
+	case SPin::EPinType::EVector3:
+	{
+		if (!aPin.myData)
+		{
+			aPin.myData = new float;
+			float* c = ((float*)aPin.myData);
+			*c = 1.0f;
+		}
+		float* c = ((float*)aPin.myData);
+		ImGui::PushID(aPin.myUID.AsInt());
+		ImGui::PushItemWidth(70.0f);
+		if (aNodeInstance->IsPinConnected(aPin))
+		{
+			DrawPinIcon(aPin, true, 255);
+		}
+		else
+		{
+			ImGui::InputFloat("##edit", c);
+		}
+		ImGui::PopItemWidth();
+
+		ImGui::PopID();
+		break;
+	}
+	case SPin::EPinType::EUnknown:
+	{
+		ImGui::PushID(aPin.myUID.AsInt());
+		ImGui::PushItemWidth(100.0f);
+
+		int selectedIndex = -1;
+		if (ImGui::RadioButton("Bool", false))
+		{
+			selectedIndex = (int)SPin::EPinType::EBool;
+		}
+		if (ImGui::RadioButton("Int", false))
+		{
+			selectedIndex = (int)SPin::EPinType::EInt;
+		}
+		if (ImGui::RadioButton("Float", false))
+		{
+			selectedIndex = (int)SPin::EPinType::EFloat;
+		}
+		if (ImGui::RadioButton("Vector3", false))
+		{
+			selectedIndex = (int)SPin::EPinType::EVector3;
+		}
+		if (ImGui::RadioButton("String", false))
+		{
+			selectedIndex = (int)SPin::EPinType::EString;
+		}
+
+		if (selectedIndex != -1)
+		{
+			CNodeInstance* instance = GetNodeFromPinID(aPin.myUID.AsInt());
+			instance->ChangePinTypes((SPin::EPinType)selectedIndex);
+		}
+
+
+		ImGui::PopItemWidth();
+		ImGui::PopID();
+		break;
+	}
 	default:
 		assert(0);
 	}
@@ -815,7 +852,7 @@ void CGraphManager::WillBeCyclic(CNodeInstance* aFirst, CNodeInstance* /*aSecond
 	std::vector<SPin>& pins = aFirst->GetPins();
 	for (auto& pin : pins)
 	{
-		if (pin.myPinType == SPin::EPinTypeInOut::PinTypeInOut_OUT)
+		if (pin.myPinType == SPin::EPinTypeInOut::EPinTypeInOut_OUT)
 		{
 			std::vector< SNodeInstanceLink*> links = aFirst->GetLinkFromPin(pin.myUID.AsInt());
 			if (links.size() == 0)
@@ -910,11 +947,11 @@ void CGraphManager::PreFrame(float aDeltaTime)
 
 bool ArePinTypesCompatible(SPin& aFirst, SPin& aSecond)
 {
-	if ((aFirst.myVariableType == SPin::EPinType::Flow && aSecond.myVariableType != SPin::EPinType::Flow))
+	if ((aFirst.myVariableType == SPin::EPinType::EFlow && aSecond.myVariableType != SPin::EPinType::EFlow))
 	{
 		return false;
 	}
-	if ((aSecond.myVariableType == SPin::EPinType::Flow && aFirst.myVariableType != SPin::EPinType::Flow))
+	if ((aSecond.myVariableType == SPin::EPinType::EFlow && aFirst.myVariableType != SPin::EPinType::EFlow))
 	{
 		return false;
 	}
@@ -1008,20 +1045,20 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 			{
 				if (isFirstIteration)
 				{
-					if (pin.myPinType == SPin::EPinTypeInOut::PinTypeInOut_OUT)
+					if (pin.myPinType == SPin::EPinTypeInOut::EPinTypeInOut_OUT)
 					{
 						isFirstInput = false;
 					}
 					isFirstIteration = false;
 				}
 
-				if (pin.myPinType == SPin::EPinTypeInOut::PinTypeInOut_IN)
+				if (pin.myPinType == SPin::EPinTypeInOut::EPinTypeInOut_IN)
 				{
 					ed::BeginPin(pin.myUID.AsInt(), ed::PinKind::Input);
 
 					ImGui::Text(pin.myText.c_str());
 					ImGui::SameLine(0, 0);
-					if (pin.myVariableType == SPin::EPinType::Flow)
+					if (pin.myVariableType == SPin::EPinType::EFlow)
 					{
 						DrawPinIcon(pin, nodeInstance->IsPinConnected(pin), 255);
 					}
@@ -1122,7 +1159,7 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 								bool canAddlink = true;
 								if (firstPin && secondPin)
 								{
-									if (firstPin->myPinType == SPin::EPinTypeInOut::PinTypeInOut_IN && secondPin->myPinType == SPin::EPinTypeInOut::PinTypeInOut_IN)
+									if (firstPin->myPinType == SPin::EPinTypeInOut::EPinTypeInOut_IN && secondPin->myPinType == SPin::EPinTypeInOut::EPinTypeInOut_IN)
 									{
 										canAddlink = false;
 									}
@@ -1150,7 +1187,7 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 
 								if (canAddlink)
 								{
-									if (secondPin->myVariableType == SPin::EPinType::Unknown)
+									if (secondPin->myVariableType == SPin::EPinType::EUnknown)
 									{
 										secondNode->ChangePinTypes(firstPin->myVariableType);
 									}
@@ -1168,7 +1205,7 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 									else
 									{
 										// Depending on if you drew the new link from the output to the input we need to create the link as the flow FROM->TO to visualize the correct flow
-										if (firstPin->myPinType == SPin::EPinTypeInOut::PinTypeInOut_IN)
+										if (firstPin->myPinType == SPin::EPinTypeInOut::EPinTypeInOut_IN)
 										{
 											myLinks.push_back({ ed::LinkId(linkId), outputPinId, inputPinId });
 										}
@@ -1464,7 +1501,7 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 						firstPin = command.myNodeInstance->GetPinFromID(static_cast<unsigned int>(command.myEditorLinkInfo.myInputID.Get()));
 						secondPin = command.mySecondNodeInstance->GetPinFromID(static_cast<unsigned int>(command.myEditorLinkInfo.myOutputID.Get()));
 
-						if (firstPin->myPinType == SPin::EPinTypeInOut::PinTypeInOut_IN)
+						if (firstPin->myPinType == SPin::EPinTypeInOut::EPinTypeInOut_IN)
 							myLinks.push_back({ command.myEditorLinkInfo.myID, command.myEditorLinkInfo.myInputID, command.myEditorLinkInfo.myOutputID });
 						else
 							myLinks.push_back({ command.myEditorLinkInfo.myID, command.myEditorLinkInfo.myOutputID, command.myEditorLinkInfo.myInputID });
@@ -1514,7 +1551,7 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 						firstPin = command.myNodeInstance->GetPinFromID(static_cast<unsigned int>(command.myEditorLinkInfo.myInputID.Get()));
 						secondPin = command.mySecondNodeInstance->GetPinFromID(static_cast<unsigned int>(command.myEditorLinkInfo.myOutputID.Get()));
 
-						if (firstPin->myPinType == SPin::EPinTypeInOut::PinTypeInOut_IN)
+						if (firstPin->myPinType == SPin::EPinTypeInOut::EPinTypeInOut_IN)
 							myLinks.push_back({ command.myEditorLinkInfo.myID, command.myEditorLinkInfo.myInputID, command.myEditorLinkInfo.myOutputID });
 						else
 							myLinks.push_back({ command.myEditorLinkInfo.myID, command.myEditorLinkInfo.myOutputID, command.myEditorLinkInfo.myInputID });

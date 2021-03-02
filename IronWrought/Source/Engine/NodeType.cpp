@@ -40,15 +40,14 @@
 #include "NodeTypeStartGetCustom.h"
 #include "NodeTypeStartSetCustom.h"
 #include "NodeTypeDecisionCoinFlip.h"
-
-//#include "NodeData.h"
+#include "NodeTypeUtilitiesBranching.h"
 
 CNodeType* CNodeTypeCollector::myTypes[128];
 unsigned short CNodeTypeCollector::myTypeCounter = 0;
 unsigned short CNodeTypeCollector::myTypeCount = 0;
 
-std::vector<unsigned int> UID::myAllUIDs;
-unsigned int UID::myGlobalUID = 0;
+std::vector<unsigned int> CUID::myAllUIDs;
+unsigned int CUID::myGlobalUID = 0;
 
 void CNodeTypeCollector::PopulateTypes()
 {
@@ -83,6 +82,7 @@ void CNodeTypeCollector::PopulateTypes()
 	RegisterType<CNodeTypeDecisionTreeRun>("Run Tree");
 	RegisterType<CNodeTypeTimeDeltaTotal>("Delta & Total Time");
 	RegisterType<CNodeTypeTimeTimer>("Countdown Timer");
+	RegisterType<CNodeTypeUtilitiesBranching>("Branching");
 }
 
 void CNodeTypeCollector::RegisterNewDataType(std::string aNodeName, unsigned int aType)

@@ -4,9 +4,9 @@
 
 CNodeTypeMathMul::CNodeTypeMathMul()
 {
-	myPins.push_back(SPin("Val1", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Float));
-	myPins.push_back(SPin("Val2", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Float));
-	myPins.push_back(SPin("OUT", SPin::EPinTypeInOut::PinTypeInOut_OUT, SPin::EPinType::Float));
+	myPins.push_back(SPin("Val1", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));
+	myPins.push_back(SPin("Val2", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));
+	myPins.push_back(SPin("OUT", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EFloat));
 }
 
 int CNodeTypeMathMul::OnEnter(CNodeInstance* aTriggeringNodeInstance)

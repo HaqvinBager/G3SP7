@@ -17,7 +17,7 @@ bool IsOutput(std::vector<SPin>& somePins, unsigned int anID)
 {
 	for (auto& pin : somePins)
 	{
-		if (pin.myPinType == SPin::EPinTypeInOut::PinTypeInOut_OUT && pin.myUID.AsInt() == anID)
+		if (pin.myPinType == SPin::EPinTypeInOut::EPinTypeInOut_OUT && pin.myUID.AsInt() == anID)
 		{
 			return true;
 		}
@@ -65,7 +65,7 @@ bool CNodeInstance::CanAddLink(unsigned int aPinIDFromMe)
 {
 	SPin* pin = GetPinFromID(aPinIDFromMe);
 
-	if (pin->myPinType == SPin::EPinTypeInOut::PinTypeInOut_IN &&  pin->myVariableType != SPin::EPinType::Flow)
+	if (pin->myPinType == SPin::EPinTypeInOut::EPinTypeInOut_IN &&  pin->myVariableType != SPin::EPinType::EFlow)
 	{
 		if (GetLinkFromPin(aPinIDFromMe).size() != 0)
 		{
@@ -106,7 +106,7 @@ bool CNodeInstance::AddLinkVia(CNodeInstance* aLink, unsigned int aPinIDFromMe, 
 
 	SPin* pin = GetPinFromID(aPinIDFromMe);
 
-	if (pin->myPinType == SPin::EPinTypeInOut::PinTypeInOut_IN &&  pin->myVariableType != SPin::EPinType::Flow)
+	if (pin->myPinType == SPin::EPinTypeInOut::EPinTypeInOut_IN &&  pin->myVariableType != SPin::EPinType::EFlow)
 	{
 		if (GetLinkFromPin(aPinIDFromMe).size() != 0)
 		{
@@ -228,7 +228,7 @@ void CNodeInstance::FetchData(SPin::EPinType& anOutType, NodeDataPtr& someData, 
 	// If we dont have any data, but or link might have it, the link pin might have data written to it as well, then return that
 	if (!myNodeType->IsFlowNode())
 	{
-		if (myPins[aPinToFetchFrom].myPinType == SPin::EPinTypeInOut::PinTypeInOut_IN)
+		if (myPins[aPinToFetchFrom].myPinType == SPin::EPinTypeInOut::EPinTypeInOut_IN)
 		{
 			std::vector< SNodeInstanceLink*> links = GetLinkFromPin(myPins[aPinToFetchFrom].myUID.AsInt());
 			if (links.size() > 0)
@@ -255,7 +255,7 @@ void CNodeInstance::FetchData(SPin::EPinType& anOutType, NodeDataPtr& someData, 
 	}
 	else
 	{
-		if (myPins[aPinToFetchFrom].myPinType == SPin::EPinTypeInOut::PinTypeInOut_IN)
+		if (myPins[aPinToFetchFrom].myPinType == SPin::EPinTypeInOut::EPinTypeInOut_IN)
 		{
 			std::vector< SNodeInstanceLink*> links = GetLinkFromPin(myPins[aPinToFetchFrom].myUID.AsInt());
 			if (links.size() > 0)
@@ -279,19 +279,19 @@ void CNodeInstance::FetchData(SPin::EPinType& anOutType, NodeDataPtr& someData, 
 
 	SPin& dataPin = myPins[aPinToFetchFrom];
 	// We have the data, set ut to the return values
-	if (dataPin.myVariableType == SPin::EPinType::Float)
+	if (dataPin.myVariableType == SPin::EPinType::EFloat)
 	{
 		anOutSize = dataPin.myData != nullptr ? sizeof(float) : 0;
 	}
-	else if (dataPin.myVariableType == SPin::EPinType::Int)
+	else if (dataPin.myVariableType == SPin::EPinType::EInt)
 	{
 		anOutSize = dataPin.myData != nullptr ? sizeof(int) : 0;
 	}
-	else if (dataPin.myVariableType == SPin::EPinType::Bool)
+	else if (dataPin.myVariableType == SPin::EPinType::EBool)
 	{
 		anOutSize = dataPin.myData != nullptr ? sizeof(bool) : 0;
 	}
-	else if (dataPin.myVariableType == SPin::EPinType::String)
+	else if (dataPin.myVariableType == SPin::EPinType::EString)
 	{
 		anOutSize = dataPin.myData != nullptr ? strlen(static_cast<char*>(dataPin.myData)) : 0;
 	}

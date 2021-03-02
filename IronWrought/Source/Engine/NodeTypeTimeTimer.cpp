@@ -8,11 +8,11 @@
 CNodeTypeTimeTimer::CNodeTypeTimeTimer()
 {
 
-	myPins.push_back(SPin("IN", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Flow)); //0
-	myPins.push_back(SPin("OUT", SPin::EPinTypeInOut::PinTypeInOut_OUT)); //1
-	myPins.push_back(SPin("Sec ", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Float)); //2
-	myPins.push_back(SPin("Looping", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Bool)); //3
-	myPins.push_back(SPin("OnRing", SPin::EPinTypeInOut::PinTypeInOut_OUT)); //4
+	myPins.push_back(SPin("IN", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFlow)); //0
+	myPins.push_back(SPin("OUT", SPin::EPinTypeInOut::EPinTypeInOut_OUT)); //1
+	myPins.push_back(SPin("Sec ", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat)); //2
+	myPins.push_back(SPin("Looping", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EBool)); //3
+	myPins.push_back(SPin("OnRing", SPin::EPinTypeInOut::EPinTypeInOut_OUT)); //4
 
 	myState.myDuration = 0.0f;
 	myState.myShouldLoop = false;

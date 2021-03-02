@@ -6,8 +6,8 @@
 
 CNodeTypeStartKeyboardInput::CNodeTypeStartKeyboardInput()
 {
-	myPins.push_back(SPin("Key", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::String));
-	myPins.push_back(SPin("", SPin::EPinTypeInOut::PinTypeInOut_OUT));
+	myPins.push_back(SPin("Key", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EString));
+	myPins.push_back(SPin("", SPin::EPinTypeInOut::EPinTypeInOut_OUT));
 }
 
 int CNodeTypeStartKeyboardInput::OnEnter(class CNodeInstance* aTriggeringNodeInstance)

@@ -223,6 +223,7 @@
     <ClInclude Include="NodeInstance.h" />
     <ClInclude Include="NodeType.h" />
     <ClInclude Include="NodeTypeStartSetCustom.h" />
+    <ClInclude Include="NodeTypeUtilitiesBranching.h" />
     <ClInclude Include="NodeTypeVariableGetBool.h" />
     <ClInclude Include="NodeTypeVariableGetFloat.h" />
     <ClInclude Include="NodeTypeVariableGetInt.h" />
@@ -398,6 +399,7 @@
     <ClCompile Include="CStateMachineComponent.cpp" />
     <ClCompile Include="LoadScene.cpp" />
     <ClCompile Include="NodeTypeStartSetCustom.cpp" />
+    <ClCompile Include="NodeTypeUtilitiesBranching.cpp" />
     <ClCompile Include="NodeTypeVariableGetBool.cpp" />
     <ClCompile Include="NodeTypeVariableGetFloat.cpp" />
     <ClCompile Include="NodeTypeVariableGetInt.cpp" />
