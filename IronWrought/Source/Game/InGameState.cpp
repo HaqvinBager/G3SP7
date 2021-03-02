@@ -102,27 +102,30 @@ void CInGameState::Stop()
 void CInGameState::Update()
 {
 	float speed = 10.0f;
-	if (Input::GetInstance()->IsKeyDown(VK_UP))
+	if (myVFX)
 	{
-		myVFX->myTransform->Move({0.0f, 0.0f, CTimer::Dt() * speed });
-	}
-	if (Input::GetInstance()->IsKeyDown(VK_DOWN))
-	{
-		myVFX->myTransform->Move({ 0.0f, 0.0f, -CTimer::Dt() * speed });
-	}
-	if (Input::GetInstance()->IsKeyDown(VK_LEFT))
-	{
-		myVFX->myTransform->Move({ -CTimer::Dt() * speed, 0.0f, 0.0f });
-	}
-	if (Input::GetInstance()->IsKeyDown(VK_RIGHT))
-	{
-		myVFX->myTransform->Move({ CTimer::Dt() * speed, 0.0f, 0.0f });
-	}
+		if (Input::GetInstance()->IsKeyDown(VK_UP))
+		{
+			myVFX->myTransform->Move({0.0f, 0.0f, CTimer::Dt() * speed });
+		}
+		if (Input::GetInstance()->IsKeyDown(VK_DOWN))
+		{
+			myVFX->myTransform->Move({ 0.0f, 0.0f, -CTimer::Dt() * speed });
+		}
+		if (Input::GetInstance()->IsKeyDown(VK_LEFT))
+		{
+			myVFX->myTransform->Move({ -CTimer::Dt() * speed, 0.0f, 0.0f });
+		}
+		if (Input::GetInstance()->IsKeyDown(VK_RIGHT))
+		{
+			myVFX->myTransform->Move({ CTimer::Dt() * speed, 0.0f, 0.0f });
+		}
 
-	if (INPUT->IsKeyPressed('P'))
-	{
-		myVFX->GetComponent<CVFXSystemComponent>()->OnDisable();
-		myVFX->GetComponent<CVFXSystemComponent>()->OnEnable();
+		if (INPUT->IsKeyPressed('P'))
+		{
+			myVFX->GetComponent<CVFXSystemComponent>()->OnDisable();
+			myVFX->GetComponent<CVFXSystemComponent>()->OnEnable();
+		}
 	}
 
 	CEngine::GetInstance()->GetPhysx().Simulate();
