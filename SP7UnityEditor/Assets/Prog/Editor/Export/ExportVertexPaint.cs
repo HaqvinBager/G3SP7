@@ -95,7 +95,7 @@ public class ExportVertexPaint : Editor
             int startIndex = meshName.LastIndexOf(polybrushMesh) + polybrushMesh.Length;
             int endIndex = meshName.Length;
             string polyMeshID = meshName.Substring(startIndex, endIndex - startIndex);
-            string colorPath = targetPath + "PolybrushColors_" + polyMeshID + "_Bin.bin";
+            string colorPath = targetPath + "VertexColors_" + polyMeshID + "_Bin.bin";
            
             if (polyBrushObject.transform.parent != null)
             {
@@ -106,7 +106,7 @@ public class ExportVertexPaint : Editor
                     {
                         link = new VertexLink();
                         link.myTransformIDs = new List<int>();
-                        link.colorsPath = targetPath + "PolybrushColors_" + polyMeshID + "_Bin.bin";
+                        link.colorsPath = targetPath + "VertexColors_" + polyMeshID + "_Bin.bin";
                         link.myMaterialNames = ExtractTexturePathsFromMaterials(polyBrushObject.GetComponent<MeshRenderer>().sharedMaterials);
                         vertexLinks.Add(link);
                     }
