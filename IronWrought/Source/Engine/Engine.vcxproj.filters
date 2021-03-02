@@ -267,9 +267,6 @@
     <ClCompile Include="ModelComponent.cpp">
       <Filter>GameObject and Component\Component</Filter>
     </ClCompile>
-    <ClCompile Include="ParticleEmitterComponent.cpp">
-      <Filter>GameObject and Component\Component</Filter>
-    </ClCompile>
     <ClCompile Include="PointLightComponent.cpp">
       <Filter>GameObject and Component\Component</Filter>
     </ClCompile>
@@ -304,9 +301,6 @@
       <Filter>Text</Filter>
     </ClCompile>
     <ClCompile Include="VFXBase.cpp">
-      <Filter>VFX</Filter>
-    </ClCompile>
-    <ClCompile Include="VFXComponent.cpp">
       <Filter>VFX</Filter>
     </ClCompile>
     <ClCompile Include="VFXFactory.cpp">
@@ -786,9 +780,6 @@
     <ClInclude Include="ModelComponent.h">
       <Filter>GameObject and Component\Component</Filter>
     </ClInclude>
-    <ClInclude Include="ParticleEmitterComponent.h">
-      <Filter>GameObject and Component\Component</Filter>
-    </ClInclude>
     <ClInclude Include="PointLightComponent.h">
       <Filter>GameObject and Component\Component</Filter>
     </ClInclude>
@@ -823,9 +814,6 @@
       <Filter>Text</Filter>
     </ClInclude>
     <ClInclude Include="VFXBase.h">
-      <Filter>VFX</Filter>
-    </ClInclude>
-    <ClInclude Include="VFXComponent.h">
       <Filter>VFX</Filter>
     </ClInclude>
     <ClInclude Include="VFXFactory.h">

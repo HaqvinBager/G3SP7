@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "VFXRenderer.h"
-#include "VFXComponent.h"
 #include "VFXSystemComponent.h"
 #include "DirectXFramework.h"
 #include "RenderManager.h"
@@ -64,13 +63,14 @@ void CVFXRenderer::Render(CCameraComponent* aCamera, std::vector<CGameObject*>& 
 		if (vfxBases.empty())
 			continue;
 		
+		std::vector<bool>& isActive = component->GetVFXIsActive();
 		std::vector<Matrix>& vfxMatrices = component->GetVFXTransforms();
 		for (unsigned int i = 0; i < vfxBases.size(); ++i) 
 		{
 			CVFXBase::SVFXBaseData vfxBaseData = vfxBases[i]->GetVFXBaseData();
 			Matrix transform = vfxMatrices[i];
 
-			if (!vfxBaseData.myIsActive) continue;
+			if (!isActive[i]) continue;
 
 			myObjectBufferData.myToWorld = transform;
 			BindBuffer(myObjectBuffer, myObjectBufferData, "Object Buffer");

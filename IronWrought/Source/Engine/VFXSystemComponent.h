@@ -26,6 +26,7 @@ public:
 public:
 	std::vector<CVFXBase*>& GetVFXBases() { return myVFXBases; }
 	std::vector<Matrix>& GetVFXTransforms() { return myVFXTransforms; }
+	std::vector<bool>& GetVFXIsActive() { return myVFXIsActive; }
 
 	std::vector<Matrix>& GetParticleTransforms() { return myEmitterTransforms; }
 	std::vector<CParticleEmitter*>& GetParticleSet() { return myParticleEmitters; }
@@ -45,6 +46,7 @@ private:
 	std::vector<float>		myVFXBaseDelays;
 	std::vector<float>		myVFXBaseDurations;
 	std::vector<bool>		myVFXShouldOrbit;
+	std::vector<bool>		myVFXIsActive;
 
 	std::vector<CParticleEmitter*> myParticleEmitters;
 	std::vector<Matrix>	 myEmitterTransforms;
@@ -54,6 +56,8 @@ private:
 	std::vector<std::queue<CParticleEmitter::SParticleVertex>>	myParticlePools;
 	std::vector<float> myEmitterDelays;
 	std::vector<float> myEmitterDurations;
+	std::vector<float> myEmitterBaseDelays;
+	std::vector<float> myEmitterBaseDurations;
 	std::vector<float> myEmitterTimers;
 	std::vector<bool>  myEmitterShouldOrbit;
 };

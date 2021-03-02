@@ -46,9 +46,7 @@ void CInGameState::Awake(){}
 #include "PointLightComponent.h"
 #include "PlayerControllerComponent.h"
 
-#include "VFXComponent.h"
 #include "VFXSystemComponent.h"
-#include "ParticleEmitterComponent.h"
 #include "VFXFactory.h"
 #include "ParticleFactory.h"
 
@@ -121,7 +119,13 @@ void CInGameState::Update()
 		myVFX->myTransform->Move({ CTimer::Dt() * speed, 0.0f, 0.0f });
 	}
 
-	myVFX->myTransform->Rotate({ CTimer::Dt(), CTimer::Dt(), 0.0f });
+	//myVFX->myTransform->Rotate({ CTimer::Dt(), CTimer::Dt(), 0.0f });
+
+	if (INPUT->IsKeyPressed('P'))
+	{
+		myVFX->GetComponent<CVFXSystemComponent>()->OnDisable();
+		myVFX->GetComponent<CVFXSystemComponent>()->OnEnable();
+	}
 
 	CEngine::GetInstance()->GetPhysx().Simulate();
 	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)

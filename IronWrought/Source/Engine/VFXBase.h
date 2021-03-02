@@ -26,8 +26,6 @@ public:
 		float uvScale4;
 		float opacityStrength;
 
-		bool myIsActive = false;
-
 		std::string texturePathOne = "";
 		std::string texturePathTwo = "";
 		std::string texturePathThree = "";

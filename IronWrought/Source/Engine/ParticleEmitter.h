@@ -31,8 +31,6 @@ public:
 		ID3D11ShaderResourceView* myTexture = nullptr;
 
 		std::string myTexturePath = "";
-		float myDelay = 0.0f;
-		float myDuration = 0.0f;
 		float mySpawnRate = 0.0f;
 		float mySpawnAngle = 0.0f;
 		float myParticleLifetime = 0.0f;

@@ -32,6 +32,7 @@ CVFXSystemComponent::CVFXSystemComponent(CGameObject& aParent, const std::string
 	myVFXDurations.resize(size, 0.0f);
 	myVFXBaseDelays.resize(size, 0.0f);
 	myVFXBaseDurations.resize(size, 0.0f);
+	myVFXIsActive.resize(size, false);
 	for (unsigned int i = 0; i < doc["VFXMeshes"].Size(); ++i) {
 		vfxPaths.emplace_back(doc["VFXMeshes"][i]["Path"].GetString());
 
@@ -77,8 +78,10 @@ CVFXSystemComponent::CVFXSystemComponent(CGameObject& aParent, const std::string
 	myEmitterTransformsOriginal.resize(size);
 	myEmitterAngularSpeeds.resize(size);
 	myEmitterShouldOrbit.resize(size);
-	myEmitterDelays.resize(size);
-	myEmitterDurations.resize(size);
+	myEmitterDelays.resize(size, 0.0f);
+	myEmitterDurations.resize(size, 0.0f);
+	myEmitterBaseDelays.resize(size);
+	myEmitterBaseDurations.resize(size);
 	myEmitterTimers.resize(size, 0.0f);
 	for (unsigned int i = 0; i < doc["ParticleSystems"].Size(); ++i) {
 		particlePaths.emplace_back(doc["ParticleSystems"][i]["Path"].GetString());
@@ -109,8 +112,8 @@ CVFXSystemComponent::CVFXSystemComponent(CGameObject& aParent, const std::string
 
 		myEmitterShouldOrbit[i] = doc["ParticleSystems"][i]["Orbit"].GetBool();
 
-		myEmitterDelays[i] = doc["ParticleSystems"][i]["Delay"].GetFloat();
-		myEmitterDurations[i] = doc["ParticleSystems"][i]["Duration"].GetFloat();
+		myEmitterBaseDelays[i] = doc["ParticleSystems"][i]["Delay"].GetFloat();
+		myEmitterBaseDurations[i] = doc["ParticleSystems"][i]["Duration"].GetFloat();
 	}
 
 	myParticleEmitters = CParticleFactory::GetInstance()->GetParticleSet(particlePaths);
@@ -148,11 +151,10 @@ void CVFXSystemComponent::Update()
 		if ((myVFXDelays[i] -= CTimer::Dt()) > 0.0f) continue;
 
 		if ((myVFXDurations[i] -= CTimer::Dt()) < 0.0f) {
-			myVFXBases[i]->GetVFXBaseData().myIsActive = false;
+			myVFXIsActive[i] = false;
 			continue;
 		}
-
-		myVFXBases[i]->GetVFXBaseData().myIsActive = true;
+		myVFXIsActive[i] = true;
 	}
 
 	Vector3 cameraPos = IRONWROUGHT_ACTIVE_SCENE.MainCamera()->GameObject().myTransform->Position();
@@ -233,8 +235,8 @@ void CVFXSystemComponent::OnEnable()
 	}
 
 	for (unsigned int i = 0; i < myParticleEmitters.size(); ++i) {
-		myEmitterDelays[i] = myParticleEmitters[i]->GetParticleData().myDelay;
-		myEmitterDurations[i] = myParticleEmitters[i]->GetParticleData().myDuration;
+		myEmitterDelays[i] = myEmitterBaseDelays[i];
+		myEmitterDurations[i] = myEmitterBaseDurations[i];
 	}
 }
 
@@ -242,7 +244,7 @@ void CVFXSystemComponent::OnDisable()
 {
 	Enabled(false);
 	for (unsigned int i = 0; i < myVFXBases.size(); ++i) {
-		myVFXBases[i]->GetVFXBaseData().myIsActive = false;
+		myVFXIsActive[i] = false;
 	}
 
 	for (unsigned int i = 0; i < myParticleEmitters.size(); ++i) {
@@ -251,14 +253,16 @@ void CVFXSystemComponent::OnDisable()
 			myParticlePools[i].push(myParticleVertices[i].back());
 			myParticleVertices[i].pop_back();
 		}
+		myEmitterDelays[i] = 0.0f;
+		myEmitterDurations[i] = 0.0f;
 	}
 }
 
 void CVFXSystemComponent::ResetParticles()
 {
 	for (unsigned int i = 0; i < myParticleEmitters.size(); ++i) {
-		myEmitterDelays[i] = myParticleEmitters[i]->GetParticleData().myDelay;
-		myEmitterDurations[i] = myParticleEmitters[i]->GetParticleData().myDuration;
+		myEmitterDelays[i] = myEmitterBaseDelays[i];
+		myEmitterDurations[i] = myEmitterBaseDurations[i];
 	}
 	for (unsigned int i = 0; i < myParticleEmitters.size(); ++i) {
 		size_t currentSize = myParticleVertices[i].size();

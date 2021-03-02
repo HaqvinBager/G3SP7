@@ -187,8 +187,6 @@ void CParticleFactory::ReadJsonValues(std::string aFilePath, CParticleEmitter::S
 
     someParticleData.myNumberOfParticles =          document["Max Number Of Particles"].GetInt();
    
-    someParticleData.myDelay =                      document["Delay"].GetFloat();
-    someParticleData.myDuration =                   document["Duration"].GetFloat();
     someParticleData.mySpawnRate =                  document["Spawn Rate"].GetFloat();
     someParticleData.myParticleLifetime =           document["Lifetime"].GetFloat();
     someParticleData.myParticleSpeed =              document["Speed"].GetFloat(); 

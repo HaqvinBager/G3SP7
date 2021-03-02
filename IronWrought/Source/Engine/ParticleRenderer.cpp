@@ -4,7 +4,6 @@
 #include "RenderManager.h"
 #include "Camera.h"
 #include "GameObject.h"
-#include "ParticleEmitterComponent.h"
 #include "CameraComponent.h"
 #include <iostream>
 
@@ -67,9 +66,6 @@ void CParticleRenderer::Render(CCameraComponent* aCamera, std::vector<CGameObjec
 
     for (CGameObject* gameObject : aGameObjectList)
     {
-        //CParticleEmitterComponent* component = gameObject->GetComponent<CParticleEmitterComponent>();
-        //if (component == nullptr)
-        //    continue;
         CVFXSystemComponent* component = gameObject->GetComponent<CVFXSystemComponent>();
         if (component == nullptr)
             continue;

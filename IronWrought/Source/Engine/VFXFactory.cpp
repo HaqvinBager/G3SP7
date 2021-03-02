@@ -186,7 +186,6 @@ void CVFXFactory::ReadJsonValues(std::string aFilePath, CVFXBase::SVFXBaseData& 
 
     Document document = CJsonReader::Get()->LoadDocument(aFilePath);
 
-    someVFXBaseData.myIsActive = false;
     someVFXBaseData.scrollSpeed1 = { document["Scroll Speed 1 X"].GetFloat(), document["Scroll Speed 1 Y"].GetFloat() };
     someVFXBaseData.scrollSpeed2 = { document["Scroll Speed 2 X"].GetFloat(), document["Scroll Speed 2 Y"].GetFloat() };
     someVFXBaseData.scrollSpeed3 = { document["Scroll Speed 3 X"].GetFloat(), document["Scroll Speed 3 Y"].GetFloat() };
