@@ -7,7 +7,7 @@
 
 CNodeTypeStartGetCustom::CNodeTypeStartGetCustom()
 {
-	myPins.push_back(SPin("", SPin::EPinTypeInOut::PinTypeInOut_OUT));
+	myPins.push_back(SPin("", SPin::EPinTypeInOut::EPinTypeInOut_OUT));
 }
 
 int CNodeTypeStartGetCustom::OnEnter(class CNodeInstance* aTriggeringNodeInstance)

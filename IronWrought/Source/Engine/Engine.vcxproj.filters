@@ -670,6 +670,15 @@
     <ClCompile Include="ParticleEmitterFactory.cpp">
       <Filter>VFX\Particles</Filter>
     </ClCompile>
+    <ClCompile Include="NodeTypeDecisionCoinFlip.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Decision Tree\Decision</Filter>
+    </ClCompile>
+    <ClCompile Include="FlipACoinDecision.cpp">
+      <Filter>Decision Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeUtilitiesBranching.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Utilities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1234,6 +1243,15 @@
     <ClInclude Include="ParticleEmitterFactory.h">
       <Filter>VFX\Particles</Filter>
     </ClInclude>
+    <ClInclude Include="NodeTypeDecisionCoinFlip.h">
+      <Filter>Imgui\Node Editor\Nodes\Decision Tree\Decision</Filter>
+    </ClInclude>
+    <ClInclude Include="FlipACoinDecision.h">
+      <Filter>Decision Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeUtilitiesBranching.h">
+      <Filter>Imgui\Node Editor\Nodes\Utilities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">
@@ -1502,6 +1520,9 @@
     </Filter>
     <Filter Include="VFX\Particles">
       <UniqueIdentifier>{cb6066cf-24a2-4f78-b1eb-a8c7aae1a535}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Nodes\Utilities">
+      <UniqueIdentifier>{833d2d1f-1cc9-4040-ae9a-0765b5b0130a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

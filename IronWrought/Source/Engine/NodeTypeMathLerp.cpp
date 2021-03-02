@@ -5,10 +5,10 @@
 
 CNodeTypeMathLerp::CNodeTypeMathLerp()
 {
-    myPins.push_back(SPin("A", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Float));
-    myPins.push_back(SPin("B", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Float));
-    myPins.push_back(SPin("T", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Float));
-    myPins.push_back(SPin("OUT", SPin::EPinTypeInOut::PinTypeInOut_OUT, SPin::EPinType::Float));
+    myPins.push_back(SPin("A", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));
+    myPins.push_back(SPin("B", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));
+    myPins.push_back(SPin("T", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));
+    myPins.push_back(SPin("OUT", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EFloat));
 }
 
 int CNodeTypeMathLerp::OnEnter(CNodeInstance* aTriggeringNodeInstance)

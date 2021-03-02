@@ -1,20 +1,19 @@
 #include "stdafx.h"
-#include "NodeTypeDecisionFloat.h"
+#include "NodeTypeDecisionCoinFlip.h"
 #include "NodeInstance.h"
-#include "FloatDecisionNode.h"
+#include "FlipACoinDecision.h"
 #include "DecisionTreeManager.h"
 
-CNodeTypeDecisionFloat::CNodeTypeDecisionFloat()
+CNodeTypeDecisionCoinFlip::CNodeTypeDecisionCoinFlip()
 {
 	myPins.push_back(SPin("True", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EInt));		//0
 	myPins.push_back(SPin("ID", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EInt));		//1
 	myPins.push_back(SPin("False", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EInt));		//2
-	myPins.push_back(SPin("Max", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));		//3
-	myPins.push_back(SPin("Min", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));		//4
-	myPins.push_back(SPin("Value", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));	//5
+	myPins.push_back(SPin("Time", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));	//3
+
 }
 
-int CNodeTypeDecisionFloat::OnEnter(CNodeInstance* aTriggeringNodeInstance)
+int CNodeTypeDecisionCoinFlip::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 {
 	SPin::EPinType outType;
 	NodeDataPtr someData = nullptr;
@@ -22,24 +21,18 @@ int CNodeTypeDecisionFloat::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 
 	if (myDecisions[aTriggeringNodeInstance] == nullptr)
 	{
-		myDecisions[aTriggeringNodeInstance] = new CFloatDecisionNode();
+		myDecisions[aTriggeringNodeInstance] = new CFlipACoinDecision();
 	}
 
 	GetDataOnPin(aTriggeringNodeInstance, 0, outType, someData, outSize);
 	int trueID = NodeData::Get<int>(someData);
 
-	GetDataOnPin(aTriggeringNodeInstance, 2, outType, someData, outSize); 
+	GetDataOnPin(aTriggeringNodeInstance, 2, outType, someData, outSize);
 	int falseID = NodeData::Get<int>(someData);
 
 	GetDataOnPin(aTriggeringNodeInstance, 3, outType, someData, outSize);
-	myDecisions[aTriggeringNodeInstance]->MaxValue(NodeData::Get<float>(someData));
-
-	GetDataOnPin(aTriggeringNodeInstance, 4, outType, someData, outSize);
-	myDecisions[aTriggeringNodeInstance]->MinValue(NodeData::Get<float>(someData));
-
-	GetDataOnPin(aTriggeringNodeInstance, 5, outType, someData, outSize);
-	float value = NodeData::Get<float>(someData);
-	myDecisions[aTriggeringNodeInstance]->TestValue(&value);
+	myDecisions[aTriggeringNodeInstance]->SetMaxTime(NodeData::Get<float>(someData));
+	
 
 	if (trueID > 0)
 	{
@@ -54,7 +47,7 @@ int CNodeTypeDecisionFloat::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 					myDecisions[aTriggeringNodeInstance]->TrueNode(node);
 				}
 			}
-			else 
+			else
 			{
 				myDecisions[aTriggeringNodeInstance]->TrueNode(node);
 			}
@@ -73,7 +66,7 @@ int CNodeTypeDecisionFloat::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 					myDecisions[aTriggeringNodeInstance]->FalseNode(node);
 				}
 			}
-			else 
+			else
 			{
 				myDecisions[aTriggeringNodeInstance]->FalseNode(node);
 			}
@@ -89,7 +82,7 @@ int CNodeTypeDecisionFloat::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 	return -1;
 }
 
-void CNodeTypeDecisionFloat::ClearNodeInstanceFromMap(CNodeInstance* aTriggeringNodeInstance)
+void CNodeTypeDecisionCoinFlip::ClearNodeInstanceFromMap(CNodeInstance* aTriggeringNodeInstance)
 {
 	for (auto it : myDecisions)
 	{

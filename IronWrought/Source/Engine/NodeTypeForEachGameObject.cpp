@@ -6,12 +6,12 @@
 
 CNodeTypeForEachGameObject::CNodeTypeForEachGameObject()
 {
-	myPins.push_back(SPin("IN", SPin::EPinTypeInOut::PinTypeInOut_IN));
-	myPins.push_back(SPin("Type", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::String));
-	myPins.push_back(SPin("OUT", SPin::EPinTypeInOut::PinTypeInOut_OUT));
-	myPins.push_back(SPin("OnIter", SPin::EPinTypeInOut::PinTypeInOut_OUT));
-	myPins.push_back(SPin("Index", SPin::EPinTypeInOut::PinTypeInOut_OUT, SPin::EPinType::Int));
-	myPins.push_back(SPin("ID", SPin::EPinTypeInOut::PinTypeInOut_OUT, SPin::EPinType::Int));
+	myPins.push_back(SPin("IN", SPin::EPinTypeInOut::EPinTypeInOut_IN));
+	myPins.push_back(SPin("Type", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EString));
+	myPins.push_back(SPin("OUT", SPin::EPinTypeInOut::EPinTypeInOut_OUT));
+	myPins.push_back(SPin("OnIter", SPin::EPinTypeInOut::EPinTypeInOut_OUT));
+	myPins.push_back(SPin("Index", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EInt));
+	myPins.push_back(SPin("ID", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EInt));
 }
 
 int CNodeTypeForEachGameObject::OnEnter(CNodeInstance* aTriggeringNodeInstance)

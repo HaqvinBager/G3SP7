@@ -5,7 +5,7 @@
 
 CNodeTypeVariableGetInt::CNodeTypeVariableGetInt()
 {
-	myPins.push_back(SPin("OUT", SPin::EPinTypeInOut::PinTypeInOut_OUT, SPin::EPinType::Int));
+	myPins.push_back(SPin("OUT", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EInt));
 }
 
 int CNodeTypeVariableGetInt::OnEnter(CNodeInstance* aTriggeringNodeInstance)
