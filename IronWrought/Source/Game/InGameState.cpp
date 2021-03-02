@@ -47,8 +47,8 @@ void CInGameState::Awake(){}
 #include "PlayerControllerComponent.h"
 
 #include "VFXSystemComponent.h"
-#include "VFXFactory.h"
-#include "ParticleFactory.h"
+#include "VFXMeshFactory.h"
+#include "ParticleEmitterFactory.h"
 
 CGameObject* myVFX = nullptr;
 void TEMP_VFX(CScene* aScene);
@@ -304,7 +304,7 @@ void TEMP_VFX(CScene* aScene)
 {
 	static int id = 500;
 	CGameObject* abilityObject = new CGameObject(id++);
-	abilityObject->AddComponent<CVFXSystemComponent>(*abilityObject, "Assets/VFXTEMP/JSON/Data.json");
+	abilityObject->AddComponent<CVFXSystemComponent>(*abilityObject, "Assets/VFXTEMP/JSON/VFXSystem_Template.json");
 
 	myVFX = abilityObject;
 	aScene->AddInstance(abilityObject);

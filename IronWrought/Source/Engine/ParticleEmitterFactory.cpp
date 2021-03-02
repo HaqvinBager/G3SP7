@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "ParticleFactory.h"
+#include "ParticleEmitterFactory.h"
 #include "DirectXFramework.h"
 #include "DDSTextureLoader.h"
 #include "ParticleEmitter.h"
@@ -8,15 +8,15 @@
 //#include "rapidjson/document.h"
 //#include "rapidjson/istreamwrapper.h"
 
-CParticleFactory* CParticleFactory::ourInstance = nullptr;
+CParticleEmitterFactory* CParticleEmitterFactory::ourInstance = nullptr;
 
-CParticleFactory::CParticleFactory()
+CParticleEmitterFactory::CParticleEmitterFactory()
 {
     ourInstance = this;
     myDevice = nullptr;
 }
 
-CParticleFactory::~CParticleFactory()
+CParticleEmitterFactory::~CParticleEmitterFactory()
 {
     ourInstance = nullptr;
     myDevice = nullptr;
@@ -30,7 +30,7 @@ CParticleFactory::~CParticleFactory()
     }
 }
 
-bool CParticleFactory::Init(CDirectXFramework* aFramework)
+bool CParticleEmitterFactory::Init(CDirectXFramework* aFramework)
 {
     myDevice = aFramework->GetDevice();
     if (!myDevice) {
@@ -39,7 +39,7 @@ bool CParticleFactory::Init(CDirectXFramework* aFramework)
     return true;
 }
 
-CParticleEmitter* CParticleFactory::GetParticle(std::string aFilePath)
+CParticleEmitter* CParticleEmitterFactory::GetParticle(std::string aFilePath)
 {
     
     if (myParticleEmitters.find(aFilePath) == myParticleEmitters.end()) {
@@ -48,7 +48,7 @@ CParticleEmitter* CParticleFactory::GetParticle(std::string aFilePath)
     return myParticleEmitters.at(aFilePath);
 }
 
-CParticleEmitter* CParticleFactory::LoadParticle(std::string aFilePath)
+CParticleEmitter* CParticleEmitterFactory::LoadParticle(std::string aFilePath)
 {
     CParticleEmitter::SParticleData particleData;
 
@@ -139,7 +139,7 @@ CParticleEmitter* CParticleFactory::LoadParticle(std::string aFilePath)
     return particleEmitter;
 }
 
-ID3D11ShaderResourceView* CParticleFactory::GetShaderResourceView(ID3D11Device* aDevice, std::string aTexturePath) {
+ID3D11ShaderResourceView* CParticleEmitterFactory::GetShaderResourceView(ID3D11Device* aDevice, std::string aTexturePath) {
     ID3D11ShaderResourceView* shaderResourceView;
 
     wchar_t* widePath = new wchar_t[aTexturePath.length() + 1];
@@ -161,12 +161,12 @@ ID3D11ShaderResourceView* CParticleFactory::GetShaderResourceView(ID3D11Device* 
     return shaderResourceView;
 }
 
-CParticleFactory* CParticleFactory::GetInstance()
+CParticleEmitterFactory* CParticleEmitterFactory::GetInstance()
 {
     return ourInstance;
 }
 
-std::vector<CParticleEmitter*> CParticleFactory::GetParticleSet(std::vector<std::string> someFilePaths) 
+std::vector<CParticleEmitter*> CParticleEmitterFactory::GetParticleSet(std::vector<std::string> someFilePaths) 
 {
     std::vector<CParticleEmitter*> bases;
     for (unsigned int i = 0; i < someFilePaths.size(); ++i)
@@ -176,7 +176,7 @@ std::vector<CParticleEmitter*> CParticleFactory::GetParticleSet(std::vector<std:
     return std::move(bases);
 }
 
-void CParticleFactory::ReadJsonValues(std::string aFilePath, CParticleEmitter::SParticleData& someParticleData)
+void CParticleEmitterFactory::ReadJsonValues(std::string aFilePath, CParticleEmitter::SParticleData& someParticleData)
 {
     using namespace rapidjson;
 

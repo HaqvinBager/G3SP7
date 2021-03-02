@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "VFXFactory.h"
+#include "VFXMeshFactory.h"
 #include "VFXBase.h"
 #include "Engine.h"
 #include "DDSTextureLoader.h"
@@ -18,15 +18,15 @@
 #pragma comment (lib, "ModelLoader_Release.lib")
 #endif
 
-CVFXFactory* CVFXFactory::ourInstance = nullptr;
+CVFXMeshFactory* CVFXMeshFactory::ourInstance = nullptr;
 
 
-bool CVFXFactory::Init(CDirectXFramework* aFramework) {
+bool CVFXMeshFactory::Init(CDirectXFramework* aFramework) {
     myFramework = aFramework;
     return true;
 }
 
-CVFXBase* CVFXFactory::LoadVFXBase(std::string aFilePath)
+CVFXBase* CVFXMeshFactory::LoadVFXBase(std::string aFilePath)
 {
     CVFXBase::SVFXBaseData vfxBaseData;
     ReadJsonValues(aFilePath, vfxBaseData);
@@ -141,18 +141,18 @@ CVFXBase* CVFXFactory::LoadVFXBase(std::string aFilePath)
     return vfxBase;
 }
 
-CVFXBase* CVFXFactory::GetVFXBase(std::string aFilePath) {
+CVFXBase* CVFXMeshFactory::GetVFXBase(std::string aFilePath) {
 	if (myVFXBaseMap.find(aFilePath) == myVFXBaseMap.end()) {
 		return LoadVFXBase(aFilePath);
 	}
 	return myVFXBaseMap.at(aFilePath);
 }
 
-CVFXFactory* CVFXFactory::GetInstance() {
+CVFXMeshFactory* CVFXMeshFactory::GetInstance() {
 	return ourInstance;
 }
 
-std::vector<CVFXBase*> CVFXFactory::GetVFXBaseSet(std::vector<std::string> someFilePaths)
+std::vector<CVFXBase*> CVFXMeshFactory::GetVFXBaseSet(std::vector<std::string> someFilePaths)
 {
     std::vector<CVFXBase*> bases;
     for (unsigned int i = 0; i < someFilePaths.size(); ++i)
@@ -162,12 +162,12 @@ std::vector<CVFXBase*> CVFXFactory::GetVFXBaseSet(std::vector<std::string> someF
     return std::move(bases);
 }
 
-CVFXFactory::CVFXFactory() {
+CVFXMeshFactory::CVFXMeshFactory() {
 	ourInstance = this;
     myFramework = nullptr;
 }
 
-CVFXFactory::~CVFXFactory() {
+CVFXMeshFactory::~CVFXMeshFactory() {
 	ourInstance = nullptr;
     myFramework = nullptr;
 
@@ -180,7 +180,7 @@ CVFXFactory::~CVFXFactory() {
     }
 }
 
-void CVFXFactory::ReadJsonValues(std::string aFilePath, CVFXBase::SVFXBaseData& someVFXBaseData)
+void CVFXMeshFactory::ReadJsonValues(std::string aFilePath, CVFXBase::SVFXBaseData& someVFXBaseData)
 {
     using namespace rapidjson;
 

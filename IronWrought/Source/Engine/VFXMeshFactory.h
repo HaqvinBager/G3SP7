@@ -5,7 +5,7 @@
 class CEngine;
 class CDirectXFramework;
 
-class CVFXFactory {
+class CVFXMeshFactory {
 	friend class CEngine;
 public:
 	bool Init(CDirectXFramework* aFramework);
@@ -13,18 +13,18 @@ public:
 	CVFXBase* LoadVFXBase(std::string aFilePath);
 	CVFXBase* GetVFXBase(std::string aFilePath);
 
-	static CVFXFactory* GetInstance();
+	static CVFXMeshFactory* GetInstance();
 
 	std::vector<CVFXBase*> GetVFXBaseSet(std::vector<std::string> someFilePaths);
 
 private:
-	CVFXFactory();
-	~CVFXFactory();
+	CVFXMeshFactory();
+	~CVFXMeshFactory();
 
 	void ReadJsonValues(std::string aFilePath, CVFXBase::SVFXBaseData& someVFXBaseData);
 
 private:
-	static CVFXFactory* ourInstance;
+	static CVFXMeshFactory* ourInstance;
 	std::map<std::string, CVFXBase*> myVFXBaseMap;
 	CDirectXFramework* myFramework;
 };

@@ -21,9 +21,9 @@
 
 #include "ModelFactory.h"
 #include "CameraFactory.h"
-#include "ParticleFactory.h"
+#include "ParticleEmitterFactory.h"
 #include "TextFactory.h"
-#include "VFXFactory.h"
+#include "VFXMeshFactory.h"
 #include "LineFactory.h"
 #include "SpriteFactory.h"
 #include "DecalFactory.h"
@@ -58,8 +58,8 @@ CEngine::CEngine(): myRenderSceneActive(true)
 	myModelFactory = new CModelFactory();
 	myCameraFactory = new CCameraFactory();
 	myLightFactory = new CLightFactory();
-	myParticleFactory = new CParticleFactory();
-	myVFXFactory = new CVFXFactory();
+	myParticleFactory = new CParticleEmitterFactory();
+	myVFXFactory = new CVFXMeshFactory();
 	myLineFactory = new CLineFactory();
 	mySpriteFactory = new CSpriteFactory();
 	myTextFactory = new CTextFactory();

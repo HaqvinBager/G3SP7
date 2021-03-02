@@ -5,7 +5,6 @@
 #include "RenderManager.h"
 #include "GraphicsHelpers.h"
 #include "Camera.h"
-#include "VFXInstance.h"
 #include "VFXBase.h"
 #include "CameraComponent.h"
 

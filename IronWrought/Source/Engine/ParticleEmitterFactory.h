@@ -4,11 +4,11 @@
 
 class CDirectXFramework;
 
-class CParticleFactory
+class CParticleEmitterFactory
 {
 public:
-	CParticleFactory();
-	~CParticleFactory();
+	CParticleEmitterFactory();
+	~CParticleEmitterFactory();
 
 	bool Init(CDirectXFramework* aFramework);
 
@@ -18,12 +18,12 @@ public:
 	std::vector<CParticleEmitter*> GetParticleSet(std::vector<std::string> someFilePaths);
 
 public:
-	static CParticleFactory* GetInstance();
+	static CParticleEmitterFactory* GetInstance();
 	ID3D11ShaderResourceView* GetShaderResourceView(ID3D11Device* aDevice, std::string aTexturePath);
 	void ReadJsonValues(std::string aFilePath, CParticleEmitter::SParticleData& someParticleData);
 
 private:
-	static CParticleFactory* ourInstance;
+	static CParticleEmitterFactory* ourInstance;
 
 private:
 	ID3D11Device* myDevice;

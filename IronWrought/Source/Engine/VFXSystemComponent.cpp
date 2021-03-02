@@ -9,8 +9,8 @@
 
 #include "Camera.h"
 #include "VFXBase.h"
-#include "VFXFactory.h"
-#include "ParticleFactory.h"
+#include "VFXMeshFactory.h"
+#include "ParticleEmitterFactory.h"
 
 #include "JsonReader.h"
 #include "RandomNumberGenerator.h"
@@ -21,6 +21,8 @@ CVFXSystemComponent::CVFXSystemComponent(CGameObject& aParent, const std::string
 	myEnabled = true;
 
 	rapidjson::Document doc = CJsonReader::Get()->LoadDocument(aVFXDataPath);
+	ENGINE_BOOL_POPUP(!CJsonReader::HasParseError(doc), "Invalid Json document: %s", aVFXDataPath.c_str());
+	
 
 	std::vector<std::string> vfxPaths;
 	int size = static_cast<int>(doc["VFXMeshes"].Size());
@@ -69,7 +71,7 @@ CVFXSystemComponent::CVFXSystemComponent(CGameObject& aParent, const std::string
 		myVFXBaseDurations[i] = doc["VFXMeshes"][i]["Duration"].GetFloat();
 	}
 
-	myVFXBases = CVFXFactory::GetInstance()->GetVFXBaseSet(vfxPaths);
+	myVFXBases = CVFXMeshFactory::GetInstance()->GetVFXBaseSet(vfxPaths);
 	ENGINE_BOOL_POPUP(!myVFXBases.empty(), "No VFX data found.");
 
 	std::vector<std::string> particlePaths;
@@ -116,7 +118,7 @@ CVFXSystemComponent::CVFXSystemComponent(CGameObject& aParent, const std::string
 		myEmitterBaseDurations[i] = doc["ParticleSystems"][i]["Duration"].GetFloat();
 	}
 
-	myParticleEmitters = CParticleFactory::GetInstance()->GetParticleSet(particlePaths);
+	myParticleEmitters = CParticleEmitterFactory::GetInstance()->GetParticleSet(particlePaths);
 	ENGINE_BOOL_POPUP(!myParticleEmitters.empty(), "No Particle data found.");
 	
 	for (unsigned int i = 0; i < myParticleEmitters.size(); ++i) {
