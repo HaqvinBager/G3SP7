@@ -41,15 +41,10 @@ public class ExportModel
                 if(!fbxLinks.modelLinks.Exists( e => e.instanceID == link.instanceID))
                     fbxLinks.modelLinks.Add(link);
 
-                Debug.Log("PolyBrush Mesh", renderer);
-
                 continue;
             } 
             else if(Json.TryIsValidExport(renderer, out GameObject prefabParent))
             {
-                Debug.Log("Regular Mesh", renderer);
-
-
                 if (renderer.TryGetComponent(out MeshFilter meshFilter))
                 {
                     GameObject modelAsset = PrefabUtility.GetCorrespondingObjectFromOriginalSource(meshFilter).gameObject;
