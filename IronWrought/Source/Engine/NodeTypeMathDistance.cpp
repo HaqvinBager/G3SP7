@@ -4,11 +4,11 @@
 
 CNodeTypeMathDistance::CNodeTypeMathDistance()
 {
-	myPins.push_back(SPin("X1", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Float)); // Pin index 0
-	myPins.push_back(SPin("Y1", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Float)); // Pin index 1
-	myPins.push_back(SPin("X2", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Float)); // Pin index 0
-	myPins.push_back(SPin("Y2", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Float)); // Pin index 1
-	myPins.push_back(SPin("OUT", SPin::EPinTypeInOut::PinTypeInOut_OUT, SPin::EPinType::Float)); // Pin index 2
+	myPins.push_back(SPin("X1", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat)); // Pin index 0
+	myPins.push_back(SPin("Y1", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat)); // Pin index 1
+	myPins.push_back(SPin("X2", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat)); // Pin index 0
+	myPins.push_back(SPin("Y2", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat)); // Pin index 1
+	myPins.push_back(SPin("OUT", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EFloat)); // Pin index 2
 }
 
 int CNodeTypeMathDistance::OnEnter(class CNodeInstance* aTriggeringNodeInstance)

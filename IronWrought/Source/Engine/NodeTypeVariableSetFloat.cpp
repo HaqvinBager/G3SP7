@@ -5,9 +5,10 @@
 
 CNodeTypeVariableSetFloat::CNodeTypeVariableSetFloat()
 {
-	myPins.push_back(SPin("", SPin::EPinTypeInOut::PinTypeInOut_IN));
-	myPins.push_back(SPin("", SPin::EPinTypeInOut::PinTypeInOut_OUT));
-	myPins.push_back(SPin("Val", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Float));
+	myPins.push_back(SPin("", SPin::EPinTypeInOut::EPinTypeInOut_IN));
+	myPins.push_back(SPin("", SPin::EPinTypeInOut::EPinTypeInOut_OUT));
+	myPins.push_back(SPin("Val", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));
+	myPins.push_back(SPin("", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EFloat));
 }
 
 int CNodeTypeVariableSetFloat::OnEnter(CNodeInstance* aTriggeringNodeInstance)
@@ -19,6 +20,10 @@ int CNodeTypeVariableSetFloat::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 	GetDataOnPin(aTriggeringNodeInstance, 2, outType, someData, outSize);
 	float input = NodeData::Get<float>(someData);
 	CNodeDataManager::Get()->SetData(myNodeDataKey, CNodeDataManager::EDataType::EFloat, &input);
+
+	std::vector<SPin>& pins = aTriggeringNodeInstance->GetPins();
+	DeclareDataOnPinIfNecessary<float>(pins[3]);
+	memcpy(pins[3].myData, &input, sizeof(float));
 
 	return 1;
 }

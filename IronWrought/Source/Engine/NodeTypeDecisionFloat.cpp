@@ -6,12 +6,12 @@
 
 CNodeTypeDecisionFloat::CNodeTypeDecisionFloat()
 {
-	myPins.push_back(SPin("True", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Int));		//0
-	myPins.push_back(SPin("ID", SPin::EPinTypeInOut::PinTypeInOut_OUT, SPin::EPinType::Int));		//1
-	myPins.push_back(SPin("False", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Int));		//2
-	myPins.push_back(SPin("Max", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Float));		//3
-	myPins.push_back(SPin("Min", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Float));		//4
-	myPins.push_back(SPin("Value", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Float));	//5
+	myPins.push_back(SPin("True", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EInt));		//0
+	myPins.push_back(SPin("ID", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EInt));		//1
+	myPins.push_back(SPin("False", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EInt));		//2
+	myPins.push_back(SPin("Max", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));		//3
+	myPins.push_back(SPin("Min", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));		//4
+	myPins.push_back(SPin("Value", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));	//5
 }
 
 int CNodeTypeDecisionFloat::OnEnter(CNodeInstance* aTriggeringNodeInstance)

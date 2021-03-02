@@ -5,7 +5,7 @@
 
 CNodeTypeStartSetCustom::CNodeTypeStartSetCustom()
 {
-	myPins.push_back(SPin("", SPin::EPinTypeInOut::PinTypeInOut_IN));
+	myPins.push_back(SPin("", SPin::EPinTypeInOut::EPinTypeInOut_IN));
 }
 
 int CNodeTypeStartSetCustom::OnEnter(CNodeInstance* /*aTriggeringNodeInstance*/)

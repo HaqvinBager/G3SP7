@@ -682,6 +682,9 @@
     <ClCompile Include="FlipACoinDecision.cpp">
       <Filter>Decision Tree</Filter>
     </ClCompile>
+    <ClCompile Include="NodeTypeUtilitiesBranching.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Utilities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1258,6 +1261,9 @@
     <ClInclude Include="FlipACoinDecision.h">
       <Filter>Decision Tree</Filter>
     </ClInclude>
+    <ClInclude Include="NodeTypeUtilitiesBranching.h">
+      <Filter>Imgui\Node Editor\Nodes\Utilities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">
@@ -1526,6 +1532,9 @@
     </Filter>
     <Filter Include="Imgui\Node Editor\Nodes\Variables\Get">
       <UniqueIdentifier>{c77b8dcc-917a-4872-8dfc-bb6632a1befb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Nodes\Utilities">
+      <UniqueIdentifier>{833d2d1f-1cc9-4040-ae9a-0765b5b0130a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

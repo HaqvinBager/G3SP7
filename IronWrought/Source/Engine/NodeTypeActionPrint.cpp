@@ -7,8 +7,8 @@
 
 CNodeTypeActionPrint::CNodeTypeActionPrint()
 {
-	myPins.push_back(SPin("Value", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::String));	//0
-	myPins.push_back(SPin("ID", SPin::EPinTypeInOut::PinTypeInOut_OUT, SPin::EPinType::Int));		//1
+	myPins.push_back(SPin("Value", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EString));	//0
+	myPins.push_back(SPin("ID", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EInt));		//1
 }
 
 int CNodeTypeActionPrint::OnEnter(CNodeInstance* aTriggeringNodeInstance)

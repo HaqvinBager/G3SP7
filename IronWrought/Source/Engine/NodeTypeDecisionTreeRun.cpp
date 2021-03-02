@@ -6,9 +6,9 @@
 
 CNodeTypeDecisionTreeRun::CNodeTypeDecisionTreeRun()
 {
-	myPins.push_back(SPin("", SPin::EPinTypeInOut::PinTypeInOut_IN));							//0
-	myPins.push_back(SPin("", SPin::EPinTypeInOut::PinTypeInOut_OUT));							//1
-	myPins.push_back(SPin("ID", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Int));	//2
+	myPins.push_back(SPin("", SPin::EPinTypeInOut::EPinTypeInOut_IN));							//0
+	myPins.push_back(SPin("", SPin::EPinTypeInOut::EPinTypeInOut_OUT));							//1
+	myPins.push_back(SPin("ID", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EInt));	//2
 }
 
 int CNodeTypeDecisionTreeRun::OnEnter(CNodeInstance* aTriggeringNodeInstance)
