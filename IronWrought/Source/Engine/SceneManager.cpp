@@ -9,6 +9,7 @@
 //#include <PlayerControllerComponent.h>
 #include "JsonReader.h"
 #include "PointLightComponent.h"
+#include "DecalComponent.h"
 //#include <iostream>
 
 CSceneManager::CSceneManager()
@@ -50,6 +51,7 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneName)
 		SetTransforms(*scene, aSceneName + "_TransformCollection.json");
 		AddModelComponents(*scene, aSceneName + "_ModelCollection.json");
 		AddPointLights(*scene, aSceneName + "_PointLightCollection.json");
+		AddDecalComponents(*scene, aSceneName + "_DecalCollection.json");
 	}
 	return scene;
 }
@@ -167,3 +169,24 @@ void CSceneManager::AddPointLights(CScene& aScene, const std::string& aJsonFileN
 		aScene.AddInstance(pointLightComponent->GetPointLight());
 	}
 }
+
+void CSceneManager::AddDecalComponents(CScene& aScene, const std::string& aJsonFileName)
+{
+	const auto& doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + aJsonFileName));
+	if (!CJsonReader::IsValid(doc, { "links" }))
+		return;
+
+	const auto& idArray = doc.GetObjectW()["links"].GetArray();
+
+	if (idArray.Size() == 0)
+		return;
+
+	for (const auto& decal : idArray) {
+		CGameObject* gameObject = aScene.FindObjectWithID(decal["instanceID"].GetInt());
+		gameObject->AddComponent<CDecalComponent>(*gameObject, decal["material"].GetString());
+	}
+}
+
+
+		//CDecalComponent* component = 
+		//component->SetAlphaThreshold(decal["alphaThreshold"].GetFloat());
