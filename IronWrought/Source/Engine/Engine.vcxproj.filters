@@ -679,6 +679,9 @@
     <ClCompile Include="NodeTypeUtilitiesBranching.cpp">
       <Filter>Imgui\Node Editor\Nodes\Utilities</Filter>
     </ClCompile>
+    <ClCompile Include="CameraSpeedSlider.cpp">
+      <Filter>Imgui\Windows</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1251,6 +1254,9 @@
     </ClInclude>
     <ClInclude Include="NodeTypeUtilitiesBranching.h">
       <Filter>Imgui\Node Editor\Nodes\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraSpeedSlider.h">
+      <Filter>Imgui\Windows</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

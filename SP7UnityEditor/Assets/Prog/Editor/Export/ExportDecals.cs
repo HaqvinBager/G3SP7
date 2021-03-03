@@ -57,8 +57,7 @@ public class ExportDecals
                     decalList.decals.Add(aDecal);
                 }
             }
-        }
-        
+        }        
         Json.ExportToJson(decalList, aScene.name);
     }
 

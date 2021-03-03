@@ -15,10 +15,7 @@ namespace ImGuiWindow {
 		inline void Enable(const bool aEnable) { myIsEnabled = aEnable; }
 		inline const bool Enable() const { return myIsEnabled; }
 		inline const bool MainMenuBarChild() const { return myIsMainMenuBarChild; }
-
-		
-
-
+	
 	public:
 		virtual void OnEnable() = 0;
 		virtual void OnInspectorGUI() = 0;
