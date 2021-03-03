@@ -7,7 +7,7 @@ using System.Text;
 using UnityEngine.SceneManagement;
 
 [System.Serializable]
-public struct SLight
+public struct PointLight
 {
     public int instanceID;
     public float range;
@@ -17,27 +17,27 @@ public struct SLight
     public float intensity;
 }
 [System.Serializable]
-public struct SLightCollection
+public struct PointLightCollection
 {
-   public List<SLight> lights;
+   public List<PointLight> lights;
 }
 public class ExportPointlights 
 {
-    private static string SavePath
-    {
-        get => System.IO.Directory.GetCurrentDirectory() + "\\Assets\\Generated\\";
-    }
-
     public static void ExportPointlight(Scene aScene)
     {
-        UnityEngine.Light[] allLights = GameObject.FindObjectsOfType<UnityEngine.Light>();
-        // Debug.Log("Light" + lights.Length.ToString());
-        List<SLight> pointlights = new List<SLight>();
+        Light[] allLights = GameObject.FindObjectsOfType<Light>();
+        List<PointLight> pointlights = new List<PointLight>();
        
         for(int i = 0; i < allLights.Length; ++i)
         {
-            SLight lightValue = new SLight();
-            lightValue.instanceID = allLights[i].transform.GetInstanceID();
+            PointLight lightValue = new PointLight();
+            if (allLights[i].transform.parent == null)
+                continue;
+
+            if (allLights[i].type != LightType.Point)
+                continue;
+
+            lightValue.instanceID = allLights[i].transform.parent.GetInstanceID();
             lightValue.range = allLights[i].range;
             lightValue.r = allLights[i].color.r;
             lightValue.g = allLights[i].color.g;
@@ -46,21 +46,24 @@ public class ExportPointlights
             pointlights.Add(lightValue);
         }
 
-        SLightCollection lightCollection = new SLightCollection();
+        PointLightCollection lightCollection = new PointLightCollection();
         lightCollection.lights = pointlights;
+
+        Json.ExportToJson(lightCollection, aScene.name);
         
-        if (!System.IO.Directory.Exists(SavePath))
-            System.IO.Directory.CreateDirectory(SavePath);
-
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.Append(JsonUtility.ToJson(lightCollection));
-
-        string savePath = SavePath + "PointlightLinks_" + aScene.name + ".json";
-        System.IO.File.WriteAllText(savePath, stringBuilder.ToString());
-        AssetDatabase.Refresh();
     }
 }
 
+
+
+//if (!System.IO.Directory.Exists(SavePath))
+//    System.IO.Directory.CreateDirectory(SavePath);
+
+//StringBuilder stringBuilder = new StringBuilder();
+//stringBuilder.Append(JsonUtility.ToJson(lightCollection));
+
+//string savePath = SavePath + "PointlightLinks_" + aScene.name + ".json";
+//System.IO.File.WriteAllText(savePath, stringBuilder.ToString());
 
 //Hämta ut alla pointlights i scenen och deras Range, Color och intensity = DONE
 //Spara undan den datan i en Container som vi sedan kan spara i en JSon fil.

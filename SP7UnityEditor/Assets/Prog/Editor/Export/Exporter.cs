@@ -19,8 +19,6 @@ public struct Assets
 public class Exporter
 {
 
-
-
     [MenuItem("GameObject/BluePrint/Add Patrol Point", validate = true)]
     static bool ValidateTest()
     {
@@ -61,6 +59,8 @@ public class Exporter
         ExportInstancedModel.Export(aScene);
         ExportVertexPaint.ExportVertexPainting(aScene, validExportIds);
         ExportBluePrint.Export(aScene);
+        ExportPointlights.ExportPointlight(aScene);
+        ExportDecals.Export(aScene);
         AssetDatabase.Refresh();
     }
 
