@@ -210,5 +210,5 @@ void CParticleEmitterFactory::ReadJsonValues(std::string aFilePath, CParticleEmi
 
     someParticleData.myDirectionLowerBound =      { document["Spawn Direction X Randomize From"].GetFloat(), document["Spawn Direction Y Randomize From"].GetFloat(), document["Spawn Direction Z Randomize From"].GetFloat() };
     someParticleData.myDirectionUpperBound =      { document["Spawn Direction X Randomize To"].GetFloat(), document["Spawn Direction Y Randomize To"].GetFloat(), document["Spawn Direction Z Randomize To"].GetFloat() };
-    someParticleData.myTexturePath =                document["Texture Path"].GetString();
+    someParticleData.myTexturePath =                ASSETPATH(document["Texture Path"].GetString());
 }

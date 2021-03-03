@@ -195,9 +195,9 @@ void CVFXMeshFactory::ReadJsonValues(std::string aFilePath, CVFXBase::SVFXBaseDa
     someVFXBaseData.uvScale3 = document["UV Scale 3"].GetFloat();
     someVFXBaseData.uvScale4 = document["UV Scale 4"].GetFloat();
     someVFXBaseData.opacityStrength = document["Opacity Strength"].GetFloat();
-    someVFXBaseData.texturePathOne = document["Texture 1"].GetString();
-    someVFXBaseData.texturePathTwo = document["Texture 2"].GetString();
-    someVFXBaseData.texturePathThree = document["Texture 3"].GetString();
-    someVFXBaseData.texturePathMask = document["Texture Mask"].GetString();
-    someVFXBaseData.meshPath = document["Mesh Path"].GetString();
+    someVFXBaseData.texturePathOne = ASSETPATH(document["Texture 1"].GetString());
+    someVFXBaseData.texturePathTwo = ASSETPATH(document["Texture 2"].GetString());
+    someVFXBaseData.texturePathThree = ASSETPATH(document["Texture 3"].GetString());
+    someVFXBaseData.texturePathMask = ASSETPATH(document["Texture Mask"].GetString());
+    someVFXBaseData.meshPath = ASSETPATH(document["Mesh Path"].GetString());
 }

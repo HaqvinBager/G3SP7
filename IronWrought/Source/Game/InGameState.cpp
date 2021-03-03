@@ -102,7 +102,7 @@ void CInGameState::Stop()
 void CInGameState::Update()
 {
 	float speed = 10.0f;
-	if (myVFX)
+	if (myVFX->GetComponent<CVFXSystemComponent>())
 	{
 		if (Input::GetInstance()->IsKeyDown(VK_UP))
 		{
@@ -305,7 +305,7 @@ void TEMP_VFX(CScene* aScene)
 {
 	static int id = 500;
 	CGameObject* abilityObject = new CGameObject(id++);
-	abilityObject->AddComponent<CVFXSystemComponent>(*abilityObject, "Assets/VFXTEMP/JSON/VFXSystem_ToLoad.json");
+	abilityObject->AddComponent<CVFXSystemComponent>(*abilityObject, ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystem_ToLoad.json"));
 
 	myVFX = abilityObject;
 	aScene->AddInstance(abilityObject);
