@@ -183,7 +183,7 @@ void CSceneManager::AddDecalComponents(CScene& aScene, const std::string& aJsonF
 
 	for (const auto& decal : idArray) {
 		CGameObject* gameObject = aScene.FindObjectWithID(decal["instanceID"].GetInt());
-		gameObject->AddComponent<CDecalComponent>(*gameObject, decal["material"].GetString());
+		gameObject->AddComponent<CDecalComponent>(*gameObject, decal["materialName"].GetString());
 	}
 }
 
