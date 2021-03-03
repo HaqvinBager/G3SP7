@@ -29,6 +29,9 @@ public class ExportModel
 
         foreach(Renderer renderer in allrenderers)
         {
+            if (renderer.sharedMaterial.shader.name.Contains("Decal"))
+                continue;
+
             if (renderer.TryGetComponent(out PolybrushFBX polyBrushFbx))
             {
                 string assetPath = AssetDatabase.GUIDToAssetPath(polyBrushFbx.originalFBXGUID);

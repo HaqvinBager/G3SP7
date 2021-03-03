@@ -22,20 +22,23 @@ public class ExportResource
         {
             if (assetPath.Contains("Graphics"))
             {
-                GameObject asset = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
+                Object asset = AssetDatabase.LoadAssetAtPath<Object>(assetPath);
                 if (asset != null)
                 {
                     if (PrefabUtility.GetPrefabAssetType(asset) == PrefabAssetType.Model)
                     {
+                        GameObject gameObject = asset as GameObject;
+
                         ModelAsset modelAsset = new ModelAsset();
-                        modelAsset.id = asset.transform.GetInstanceID();
-                        if (modelAsset.id == 15956)
-                        {
-                            asset.Ping();
-                        }
+                        modelAsset.id = gameObject.transform.GetInstanceID();
                         modelAsset.path = assetPath;
                         assets.models.Add(modelAsset);
                     }
+                    else
+                    {
+                        
+                    }
+
                 }
             }
         }
