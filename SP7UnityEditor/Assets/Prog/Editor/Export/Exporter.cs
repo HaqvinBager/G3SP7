@@ -60,6 +60,7 @@ public class Exporter
         ExportVertexPaint.ExportVertexPainting(aScene, validExportIds);
         ExportBluePrint.Export(aScene);
         ExportPointlights.ExportPointlight(aScene);
+        ExportDecals.Export(aScene);
         AssetDatabase.Refresh();
     }
 
