@@ -61,7 +61,8 @@ private:
 	CFullscreenTexture myBlurTexture1;
 	CFullscreenTexture myBlurTexture2;
 	CFullscreenTexture myVignetteTexture;
-	CFullscreenTexture myDeferredTexture;
+	CFullscreenTexture myDeferredLightingTexture;
+	CFullscreenTexture myTonemappedTexture;
 	CGBuffer myGBuffer;
 	CGBuffer myGBufferCopy;
 

@@ -48,6 +48,7 @@ bool CFullscreenRenderer::Init(CDirectXFramework* aFramework) {
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_GAUSSIANVERTICAL)] = "Shaders/FullscreenPixelShader_GaussianBlurVertical.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_BLOOM)] = "Shaders/FullscreenPixelShader_Bloom.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_VIGNETTE)] = "Shaders/FullscreenPixelShader_Vignette.cso";
+	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_TONEMAP)] = "Shaders/FullscreenPixelShader_Tonemap.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCRENSHADER_GAMMACORRECTION)] = "Shaders/FullscreenPixelShader_GammaCorrection.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCRENSHADER_GAMMACORRECTION_RENDERPASS)] = "Shaders/DeferredRenderPassFullscreenPixelShader_GammaCorrection.cso";
 
@@ -68,9 +69,9 @@ bool CFullscreenRenderer::Init(CDirectXFramework* aFramework) {
 	ID3D11SamplerState* sampler;
 	D3D11_SAMPLER_DESC samplerDesc = {};
 	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
 	samplerDesc.MinLOD = 0;
 	samplerDesc.MaxLOD = 10;
 	ENGINE_HR_MESSAGE(device->CreateSamplerState(&samplerDesc, &sampler), "Sampler could not be created.");
