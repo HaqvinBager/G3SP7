@@ -181,11 +181,29 @@ bool CRenderStateManager::CreateRasterizerStates(ID3D11Device* aDevice)
     wireframeRasterizerDesc.CullMode = D3D11_CULL_BACK;
     wireframeRasterizerDesc.DepthClipEnable = true;
 
+    D3D11_RASTERIZER_DESC frontFaceDesc = {};
+    frontFaceDesc.FillMode = D3D11_FILL_SOLID;
+    frontFaceDesc.CullMode = D3D11_CULL_FRONT;
+    frontFaceDesc.DepthClipEnable = true;
+
+    D3D11_RASTERIZER_DESC noCullDesc = {};
+    noCullDesc.FillMode = D3D11_FILL_SOLID;
+    noCullDesc.CullMode = D3D11_CULL_NONE;
+    noCullDesc.DepthClipEnable = true;
+
     ID3D11RasterizerState* wireframeRasterizerState;
     ENGINE_HR_MESSAGE(aDevice->CreateRasterizerState(&wireframeRasterizerDesc, &wireframeRasterizerState), "Wireframe Rasterizer State could not be created.");
 
+    ID3D11RasterizerState* frontFaceState;
+    ENGINE_HR_MESSAGE(aDevice->CreateRasterizerState(&frontFaceDesc, &frontFaceState), "Front face Rasterizer State could not be created.");
+
+    ID3D11RasterizerState* noCullState;
+    ENGINE_HR_MESSAGE(aDevice->CreateRasterizerState(&noCullDesc, &noCullState), "No Face culling Rasterizer State could not be created.");
+
     myRasterizerStates[(size_t)RasterizerStates::RASTERIZERSTATE_DEFAULT] = nullptr;
     myRasterizerStates[(size_t)RasterizerStates::RASTERIZERSTATE_WIREFRAME] = wireframeRasterizerState;
+    myRasterizerStates[(size_t)RasterizerStates::RASTERIZERSTATE_FRONTFACECULLING] = frontFaceState;
+    myRasterizerStates[(size_t)RasterizerStates::RASTERIZERSTATE_NOFACECULLING] = noCullState;
 
     return true;
 }

@@ -15,7 +15,7 @@ public class ExportViewer : EditorWindow
 {
 
     static ExportViewer view;
-    [MenuItem("Export/View")]
+   // [MenuItem("Export/View")]
     static void OpenWindow()
     {
         view = EditorWindow.CreateWindow<ExportViewer>();

@@ -12,6 +12,17 @@ CModelComponent::CModelComponent(CGameObject& aParent, const std::string& aFBXPa
 	SVertexPaintData vertexPaintData = CMainSingleton::MaterialHandler().RequestVertexColorID(aParent.InstanceID(), aFBXPath);
 	myVertexPaintColorID = vertexPaintData.myVertexColorID;
 	myVertexPaintMaterialNames = vertexPaintData.myRGBMaterialNames;
+
+	myRenderWithAlpha = false;
+	std::vector<std::string> materialNames = myModel->GetModelData().myMaterialNames;
+	for (auto& materialName : materialNames)
+	{
+		if (materialName.substr(materialName.size() - 2, 2) == "AL")
+		{
+			myRenderWithAlpha = true;
+			break;
+		}
+	}
 }
 
 CModelComponent::~CModelComponent()

@@ -8,26 +8,6 @@ struct GBufferOutput
     float4 myMetalRoughAOEm : SV_TARGET3;
 };
 
-float4 PixelShader_WorldPosition(VertexToPixel input)
-{
-    float3 clipSpace = input.myClipSpacePosition;
-    clipSpace.y *= -1.0f;
-    float2 screenSpaceUV = (clipSpace.xy / clipSpace.z) * 0.5f + 0.5f;
-    
-    float z = depthTexture.Sample(defaultSampler, screenSpaceUV).r;
-    float x = screenSpaceUV.x * 2.0f - 1;
-    float y = (1 - screenSpaceUV.y) * 2.0f - 1;
-    float4 projectedPos = float4(x, y, z, 1.0f);
-    float4 viewSpacePos = mul(toCameraFromProjection, projectedPos);
-    viewSpacePos /= viewSpacePos.w;
-    float4 worldPosFromDepth = mul(toWorldFromCamera, viewSpacePos);
-    
-    float4 output;
-    output.rgb = worldPosFromDepth.rgb;
-    output.a = 1.0f;
-    return output;
-}
-
 float4 PixelShader_Normal(float2 uv)
 {
     float3 normal;
@@ -44,18 +24,32 @@ float4 PixelShader_Normal(float2 uv)
     return output;
 }
 
-
 GBufferOutput main(VertexToPixel input)
 {
     GBufferOutput output;
-   
-    float4 worldPosFromDepth = PixelShader_WorldPosition(input);
+
+    float3 clipSpace = input.myClipSpacePosition;
+    clipSpace.y *= -1.0f;
+    float2 screenSpaceUV = (clipSpace.xy / clipSpace.z) * 0.5f + 0.5f;
+    
+    float z = depthTexture.Sample(defaultSampler, screenSpaceUV).r;
+    float x = screenSpaceUV.x * 2.0f - 1;
+    float y = (1 - screenSpaceUV.y) * 2.0f - 1;
+    float4 projectedPos = float4(x, y, z, 1.0f);
+    float4 viewSpacePos = mul(toCameraFromProjection, projectedPos);
+    viewSpacePos /= viewSpacePos.w;
+    float4 worldPosFromDepth = mul(toWorldFromCamera, viewSpacePos);
+    
     float4 objectPosition = mul(toObjectSpace, worldPosFromDepth);
     clip(0.5f - abs(objectPosition.xyz));
     float2 decalUV = objectPosition.xy + 0.5f;
     decalUV.y *= -1.0f;
     float4 color = colorTexture.Sample(defaultSampler, decalUV).rgba;
     clip(color.a - alphaClipThreshold);
+    
+    output.myNormal = gBufferNormalTexture.Sample(defaultSampler, screenSpaceUV);
+    output.myVertexNormal = gBufferVertexNormalTexture.Sample(defaultSampler, screenSpaceUV);
+    output.myMetalRoughAOEm = gBufferMaterialTexture.Sample(defaultSampler, screenSpaceUV);
     
     float3 material = materialTexture.Sample(defaultSampler, decalUV).rgb;
     

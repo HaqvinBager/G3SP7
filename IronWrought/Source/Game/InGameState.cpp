@@ -45,6 +45,14 @@ void CInGameState::Awake(){}
 #include "PointLight.h"
 #include "PointLightComponent.h"
 #include "PlayerControllerComponent.h"
+
+#include "VFXSystemComponent.h"
+#include "VFXMeshFactory.h"
+#include "ParticleEmitterFactory.h"
+
+CGameObject* myVFX = nullptr;
+void TEMP_VFX(CScene* aScene);
+
 void CInGameState::Start()
 {
 	CJsonReader::Get()->Init();
@@ -52,6 +60,9 @@ void CInGameState::Start()
 	scene->AddPXScene(CEngine::GetInstance()->GetPhysx().CreatePXScene());
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);
+
+	
+	TEMP_VFX(scene);
 
 	myExitLevel = false;
 
@@ -90,6 +101,33 @@ void CInGameState::Stop()
 
 void CInGameState::Update()
 {
+	float speed = 10.0f;
+	if (myVFX)
+	{
+		if (Input::GetInstance()->IsKeyDown(VK_UP))
+		{
+			myVFX->myTransform->Move({0.0f, 0.0f, CTimer::Dt() * speed });
+		}
+		if (Input::GetInstance()->IsKeyDown(VK_DOWN))
+		{
+			myVFX->myTransform->Move({ 0.0f, 0.0f, -CTimer::Dt() * speed });
+		}
+		if (Input::GetInstance()->IsKeyDown(VK_LEFT))
+		{
+			myVFX->myTransform->Move({ -CTimer::Dt() * speed, 0.0f, 0.0f });
+		}
+		if (Input::GetInstance()->IsKeyDown(VK_RIGHT))
+		{
+			myVFX->myTransform->Move({ CTimer::Dt() * speed, 0.0f, 0.0f });
+		}
+
+		if (INPUT->IsKeyPressed('P'))
+		{
+			myVFX->GetComponent<CVFXSystemComponent>()->OnDisable();
+			myVFX->GetComponent<CVFXSystemComponent>()->OnEnable();
+		}
+	}
+
 	CEngine::GetInstance()->GetPhysx().Simulate();
 	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
 	{
@@ -133,8 +171,6 @@ void CInGameState::Receive(const SMessage& /*aMessage*/)
 	//	default:break;
 	//}
 }
-
-
 
 void TEMP_DeferredRenderingTests(CScene* scene)
 {
@@ -231,16 +267,31 @@ void TEMP_DeferredRenderingTests(CScene* scene)
 
 void CInGameState::TEMP_DecalTests(CScene* aScene)
 {
+	CGameObject* chest = new CGameObject(1337);
+	chest->AddComponent<CModelComponent>(*chest, std::string(ASSETPATH("Assets/Graphics/Exempel_Modeller/Wall/Wall.fbx")));
+	chest->GetComponent<CTransformComponent>()->Position({ 0.0f,0.0f,0.0f });
+	chest->myTransform->Rotation({ 0.0f,0,0.0f });
+	aScene->AddInstance(chest);
+
+	CGameObject* foliage = new CGameObject(13330);
+	foliage->AddComponent<CModelComponent>(*foliage, std::string(ASSETPATH("Assets/Graphics/Environmentprops/Static props/Foliage_test.fbx")));
+	foliage->GetComponent<CTransformComponent>()->Position({ 0.0f,0.0f,-1.0f });
+	foliage->myTransform->Rotation({ 0.0f,0,0.0f });
+	aScene->AddInstance(foliage);
+
 	CGameObject* decal = new CGameObject(20000);
 	decal->AddComponent<CDecalComponent>(*decal, "Alpha");
-	decal->GetComponent<CTransformComponent>()->Position({ 29.0f,2.0f, 0.0f });
+	decal->GetComponent<CDecalComponent>()->SetAlphaThreshold(0.3f);
+	decal->myTransform->Position({ 0.0f, 1.0f, 0.0f });
+	decal->myTransform->Scale({ 2.0f, 2.0f, 1.0f });
+	myDecal = decal;
+	aScene->AddInstance(decal);
+
+	//decal->GetComponent<CTransformComponent>()->Position({ 29.0f,2.0f, 0.0f });
 	//decal->myTransform->Rotation({ 90.0f, 0.0f, 0.0f });
 	//decal->GetComponent<CTransformComponent>()->Position({ 33.0f,2.0f, 25.5f });
 	//decal->GetComponent<CTransformComponent>()->Position({ 14.0f, 1.0f, 20.0f });
 	//decal->myTransform->Rotation({ 0.0f, 0.0f, 0.0f });
-	//decal->myTransform->Scale({ 2.0f, 2.0f, 1.0f });
-	myDecal = decal;
-	aScene->AddInstance(decal);
 
 	//CGameObject* decal2 = new CGameObject(20001);
 	//decal2->AddComponent<CDecalComponent>(*decal2, "Alpha");
@@ -248,4 +299,14 @@ void CInGameState::TEMP_DecalTests(CScene* aScene)
 	//decal2->myTransform->Rotation({ 0.0f, 45.0f, 0.0f });
 	//decal2->myTransform->Scale({ 1.0f, 1.0f, 1.0f });
 	//aScene->AddInstance(decal2);
+}
+
+void TEMP_VFX(CScene* aScene)
+{
+	static int id = 500;
+	CGameObject* abilityObject = new CGameObject(id++);
+	abilityObject->AddComponent<CVFXSystemComponent>(*abilityObject, "Assets/VFXTEMP/JSON/VFXSystem_ToLoad.json");
+
+	myVFX = abilityObject;
+	aScene->AddInstance(abilityObject);
 }

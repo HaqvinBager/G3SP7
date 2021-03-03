@@ -36,6 +36,11 @@ bool CJsonReader::IsValid(const rapidjson::Document& aDoc, const std::vector<std
 	return true;
 }
 
+bool CJsonReader::HasParseError(const rapidjson::Document& aDoc)
+{
+	return aDoc.HasParseError();
+}
+
 void CJsonReader::Init()
 {
 	const auto& doc = LoadDocument(ASSETPATH("Assets/Generated/Resource_Assets.json"));

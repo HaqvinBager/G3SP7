@@ -1,41 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEditor;
-using UnityEditor.SceneManagement;
-using UnityEngine.Polybrush;
-
-
-
-
-
-[System.Serializable]
-public struct SModel
-{
-    public string fbxPath;
-}
-
-[System.Serializable]
-public struct SGameObject
-{
-    public TransformLink transform;
-    public SModel model;
-}
-[System.Serializable]
-public struct SInstancedGameObject
-{
-    public SModel model;
-    public int count;
-    public TransformLink[] transforms;
-}
-
-[System.Serializable]
-public struct SScene
-{
-    public SInstancedGameObject[] instancedGameobjects;
-    public SGameObject[] modelGameObjects;
-}
 
 [System.Serializable]
 public struct ModelAsset
@@ -52,8 +18,73 @@ public struct Assets
 
 public class Exporter
 {
+
+    [MenuItem("GameObject/BluePrint/Add Patrol Point", validate = true)]
+    static bool ValidateTest()
+    {
+        if(Selection.gameObjects.Length == 1)
+        {
+            return Selection.gameObjects[0].name.Contains("BP_");
+        }
+        return false;
+    }
+
+    //[MenuItem("3D Create/PatrolPosition")]
+    [MenuItem("GameObject/BluePrint/Add Patrol Point", false, 0)]
+    static void Test()
+    {
+        GameObject parent = Selection.gameObjects[0];
+
+        GameObject obj = new GameObject("Patrol");
+        obj.transform.parent = parent.transform;
+    }
+
     [MenuItem("Export/Export Scene")]
     static void ExportScene()
+    {
+        List<GameObject> allScenesActiveObjects = GetAllOpenedSceneActiveObjects();
+        for (int i = 0; i < SceneManager.sceneCount; ++i)
+            DeactivateAndExportScene(i, allScenesActiveObjects);
+
+        foreach (var gameObject in allScenesActiveObjects)
+            gameObject.SetActive(true);
+    }
+
+    private static void ExportAScene(Scene aScene)
+    {
+        ExportResource.Export(aScene);
+        List<int> validExportIds = ExportInstanceID.Export(aScene);
+        ExportTransform.Export(aScene, validExportIds);
+        ExportModel.Export(aScene, validExportIds);
+        ExportInstancedModel.Export(aScene);
+        ExportVertexPaint.ExportVertexPainting(aScene, validExportIds);
+        ExportBluePrint.Export(aScene);
+        ExportPointlights.ExportPointlight(aScene);
+        AssetDatabase.Refresh();
+    }
+
+    private static void DeactivateAndExportScene(int aSceneIndex, List<GameObject> allScenesActiveObjects)
+    {
+        GameObject[] gameobjects = SceneManager.GetSceneAt(aSceneIndex).GetRootGameObjects();
+        List<GameObject> activeobjects = new List<GameObject>();
+        foreach (var gameobject in gameobjects)
+        {
+            if (allScenesActiveObjects.Contains(gameobject))
+            {
+                activeobjects.Add(gameobject);
+                gameobject.SetActive(true);
+            }
+        }
+
+        ExportAScene(SceneManager.GetSceneAt(aSceneIndex));
+
+        foreach (var gameobject in activeobjects)
+        {
+            gameobject.SetActive(false);
+        }
+    }
+
+    private static List<GameObject> GetAllOpenedSceneActiveObjects()
     {
         List<GameObject> allScenesActiveObjects = new List<GameObject>();
         for (int i = 0; i < SceneManager.sceneCount; ++i)
@@ -70,69 +101,12 @@ public class Exporter
             }
         }
 
-        for (int i = 0; i < SceneManager.sceneCount; ++i)
-        {
-            GameObject[] gameobjects = SceneManager.GetSceneAt(i).GetRootGameObjects();
-            List<GameObject> activeobjects = new List<GameObject>();
-            foreach (var gameobject in gameobjects)
-            {
-                if (allScenesActiveObjects.Contains(gameobject))
-                {
-                    activeobjects.Add(gameobject);
-                    gameobject.SetActive(true);
-                }
-            }
-
-            ExportAScene(SceneManager.GetSceneAt(i));
-
-            foreach (var gameobject in activeobjects)
-            {
-                gameobject.SetActive(false);
-            }
-        }
-
-        foreach (var gameObject in allScenesActiveObjects)
-        {
-            gameObject.SetActive(true);
-        }
-    }
-
-    private static void ExportAScene(Scene aScene)
-    {
-        ExportModelAssets(aScene);
-        ExportInstanceID.Export(aScene);
-        ExportTransform.Export(aScene);
-        ExportModel.Export(aScene);
-        ExportInstancedModel.Export(aScene);
-        ExportVertexPaint.ExportVertexPainting(aScene);
-        AssetDatabase.Refresh();      
+        return allScenesActiveObjects;
     }
 
 
-    public static void ExportModelAssets(Scene aScene)
-    {
-        string[] allAssetPaths = AssetDatabase.GetAllAssetPaths();
-        Assets assets = new Assets();
-        assets.models = new List<ModelAsset>();
-        foreach (string assetPath in allAssetPaths)
-        {
-            if (assetPath.Contains("Graphics"))
-            {
-                GameObject asset = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
-                if(asset != null)
-                {
-                    if(PrefabUtility.GetPrefabAssetType(asset) == PrefabAssetType.Model)
-                    {
-                        ModelAsset modelAsset = new ModelAsset();
-                        modelAsset.id = asset.transform.GetInstanceID();
-                        modelAsset.path = assetPath;
-                        assets.models.Add(modelAsset);
-                    }
-                }
-            }
-        }
-        Json.ExportToJson(assets, "Resource");
-    }
+
+
 }
 
 

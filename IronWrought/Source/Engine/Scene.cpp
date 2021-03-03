@@ -16,7 +16,6 @@
 #include "SpriteInstance.h"
 #include "AnimatedUIElement.h"
 #include "TextInstance.h"
-#include "VFXInstance.h"
 
 #include "LineInstance.h"
 #include "LineFactory.h"
@@ -40,9 +39,6 @@ CScene::CScene(const unsigned int aGameObjectCount)
 	, myNavMesh(nullptr)
 	, myNavMeshGrid(nullptr)
 	, myPXScene(nullptr)
-	//, myEnemyBehavior(nullptr)
-	//, myPlayer(nullptr)
-	//, myBoss(nullptr)
 {
 	myGameObjects.reserve(aGameObjectCount);
 
@@ -68,14 +64,6 @@ CScene::~CScene()
 
 	this->ClearGameObjects();
 	this->ClearPointLights();
-	this->ClearVFXInstances();
-	// This must be deleted after gameobjects have let go of their pointer to it
-
-	//if (myEnemyBehavior)
-	//{
-	//	delete myEnemyBehavior;
-	//	myEnemyBehavior = nullptr;
-	//}
 
 #ifdef _DEBUG
 	myGrid = nullptr;
@@ -251,17 +239,6 @@ const std::vector<SLineTime>& CScene::CullLines() const
 {
 	return CDebug::GetInstance()->GetLinesTime();
 	//return CDebug::GetInstance()->GetLines();
-}
-
-std::vector<CVFXInstance*> CScene::CullVFX(CCameraComponent* /*aMainCamera*/)
-{
-
-	for (unsigned int i = 0; i < myVFXInstances.size(); ++i)
-	{
-
-		myVFXInstances[i]->Scroll({0.15f * CTimer::Dt(), 0.15f * CTimer::Dt()}, {0.15f * CTimer::Dt() , 0.15f * CTimer::Dt()});
-	}
-	return myVFXInstances;
 }
 
 std::vector<CAnimatedUIElement*> CScene::CullAnimatedUI(std::vector<CSpriteInstance*>& someFramesToReturn)
@@ -506,17 +483,6 @@ bool CScene::ClearLineInstances()
 			myLineInstances[i] = nullptr;
 		}
 	}
-	return false;
-}
-
-bool CScene::ClearVFXInstances()
-{
-	for (auto& vfx : myVFXInstances)
-	{
-		delete vfx;
-		vfx = nullptr;
-	}
-	myVFXInstances.clear();
 	return false;
 }
 

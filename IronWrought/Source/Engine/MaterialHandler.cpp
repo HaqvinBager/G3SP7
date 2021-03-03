@@ -93,7 +93,7 @@ void CMaterialHandler::ReleaseMaterial(const std::string& aMaterialName)
 
 SVertexPaintData CMaterialHandler::RequestVertexColorID(int aGameObjectID, const std::string& aFbxModelPath)
 {
-	std::vector<std::string> jsonPaths = CFolderUtility::GetFileNamesInFolder(myVertexLinksPath, "PolybrushLinks_");
+	std::vector<std::string> jsonPaths = CFolderUtility::GetFileNamesInFolder(myVertexLinksPath, ".json", "ColorCollection");
 	SVertexPaintColorData colorData{ {}, {}, 0 };
 	std::vector<std::string> materialNames;
 	for (auto& jsonPath : jsonPaths)
@@ -105,6 +105,13 @@ SVertexPaintData CMaterialHandler::RequestVertexColorID(int aGameObjectID, const
 			if (vertexLinks["links"].IsArray())
 			{
 				auto linksArray = vertexLinks["links"].GetArray();
+				
+				if (linksArray.Empty())
+					continue;
+
+				if (!linksArray[0].HasMember("myTransformIDs"))
+					continue;
+				
 				for (unsigned int i = 0; i < linksArray.Size(); ++i)
 				{
 					for (const auto& gameObjectID : linksArray[i]["myTransformIDs"].GetArray())

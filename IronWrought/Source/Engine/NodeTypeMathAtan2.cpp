@@ -4,9 +4,9 @@
 
 CNodeTypeMathAtan2::CNodeTypeMathAtan2()
 {
-    myPins.push_back(SPin("X", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Float));
-    myPins.push_back(SPin("Y", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Float));
-    myPins.push_back(SPin("OUT", SPin::EPinTypeInOut::PinTypeInOut_OUT, SPin::EPinType::Float));
+    myPins.push_back(SPin("X", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));
+    myPins.push_back(SPin("Y", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));
+    myPins.push_back(SPin("OUT", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EFloat));
 }
 
 int CNodeTypeMathAtan2::OnEnter(CNodeInstance* aTriggeringNodeInstance)

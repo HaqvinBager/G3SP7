@@ -3,9 +3,15 @@
 #include <imgui_node_editor.h>
 #include <stack>
 #include <unordered_map>
+//#include "NodeData.h"
 
 class CNodeInstance;
 class CGameObject;
+
+struct BluePrintInstance {
+	int rootID;
+	std::vector<int> childrenIDs;
+};
 
 namespace ed = ax::NodeEditor;
 class CGraphManager
@@ -20,7 +26,7 @@ public:
 	void ConstructEditorTreeAndConnectLinks();
 	void PostFrame();
 
-	void ReTriggerTree();
+	//void ReTriggerTree();
 	void SaveTreeToFile();
 	void LoadTreeFromFile();
 	void SaveNodesToClipboard();
@@ -35,7 +41,7 @@ public:
 	bool ToggleShouldRunScripts();
 	bool ShouldRenderGraph() { return myShouldRenderGraph; }
 
-	CGameObject* GetCurrentGameObject();
+	std::vector<CGameObject*> GetCurrentGameObject();
 
 private:
 	ImTextureID HeaderTextureID();
@@ -44,8 +50,12 @@ private:
 	CNodeInstance* GetNodeFromPinID(unsigned int anID);
 	CNodeInstance* GetNodeFromNodeID(unsigned int anID);
 	void DrawTypeSpecificPin(struct SPin& aPin, CNodeInstance* aNodeInstance);
+
+	void CreateNewDataNode();
+	void LoadDataNodesFromFile();
+
 	std::unordered_map<std::string, std::vector<CNodeInstance*>> myGraphs;
-	std::unordered_map<std::string, std::vector<int>> myGameObjectIDsMap;
+	std::unordered_map<std::string, std::vector<BluePrintInstance>> myGameObjectIDsMap;
 	std::vector<std::string> myKeys;
 	std::vector<int> myFlowsToBeShown;
 
@@ -82,6 +92,11 @@ private:
 	std::stack<EditorCommand> myUndoCommands;
 	std::stack<EditorCommand> myRedoCommands;
 	ImVector<SEditorLinkInfo> myLinks;
+	std::vector<std::string> myInstantiableVariables;
+	//std::unordered_map<std::string, CNodeData*> myVariableNodeDataMap;
+	bool myIsEnteringNodeName = false;
+	bool myHasSetPosition = false;
+	std::string myNewVariableType;
 	int myNextLinkIdCounter = 100;
 	bool myLikeToSave = false;
 	bool myLikeToShowFlow = false;
@@ -93,5 +108,5 @@ private:
 	bool myScriptShouldRun;
 	std::string myCurrentPath;
 	std::string myCurrentKey;
-	int myCurrentGameObjectID;
+	BluePrintInstance myCurrentBluePrintInstance;
 };

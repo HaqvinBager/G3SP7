@@ -8,6 +8,9 @@
 #include <vector>
 #include <unordered_map>
 
+#define IRONWROUGHT CEngine::GetInstance()
+#define IRONWROUGHT_ACTIVE_SCENE CEngine::GetInstance()->GetActiveScene()
+
 class CWindowHandler;
 class CDirextXFramework;
 class CTimer;
@@ -16,7 +19,7 @@ class CCameraFactory;
 class CLightFactory;
 class CScene;
 class CRenderManager;
-class CParticleFactory;
+class CParticleEmitterFactory;
 class CSpriteFactory;
 class CTextFactory;
 class CDecalFactory;
@@ -24,7 +27,7 @@ class CInputMapper;
 class CDebug;
 class CMainSingleton;
 class CForwardRenderer;
-class CVFXFactory;
+class CVFXMeshFactory;
 class CLineFactory;
 class CAudioManager;
 class CPhysXWrapper;
@@ -33,7 +36,7 @@ class CEngine
 {
 	friend class CForwardRenderer;
 	friend class CModelFactory;
-	friend class CVFXFactory;
+	friend class CVFXMeshFactory;
 	friend class CLightFactory;
 	friend class CRenderManager;
 	friend class CLineFactory;
@@ -90,8 +93,8 @@ private:
 	CModelFactory* myModelFactory;
 	CCameraFactory* myCameraFactory;
 	CLightFactory* myLightFactory;
-	CParticleFactory* myParticleFactory;
-	CVFXFactory* myVFXFactory;
+	CParticleEmitterFactory* myParticleFactory;
+	CVFXMeshFactory* myVFXFactory;
 	CLineFactory* myLineFactory;
 	CSpriteFactory* mySpriteFactory;
 	CTextFactory* myTextFactory;

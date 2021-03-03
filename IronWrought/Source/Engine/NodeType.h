@@ -1,11 +1,13 @@
 #pragma once
 #include "NodeTypes.h"
 
-class UID
+//class CNodeData;
+
+class CUID
 {
 
 public:
-	UID(bool aCreateNewUID = true)
+	CUID(bool aCreateNewUID = true)
 	{
 		if (!aCreateNewUID)
 		{
@@ -24,7 +26,7 @@ public:
 
 	const unsigned int AsInt() const { return myID; }
 
-	UID& operator=(const UID& other)
+	CUID& operator=(const CUID& other)
 	{
 		myID = other.myID;
 #ifdef _DEBUG
@@ -35,7 +37,7 @@ public:
 #endif
 		return *this;
 	}
-	UID& operator=(const int other)
+	CUID& operator=(const int other)
 	{
 		myID = other;
 #ifdef _DEBUG
@@ -64,22 +66,23 @@ struct SPin
 
 	enum class EPinType
 	{
-		Flow,
-		Bool,
-		Int,
-		Float,
-		String,
-		Unknown,
+		EFlow,
+		EBool,
+		EInt,
+		EFloat,
+		EString,
+		EVector3,
+		EUnknown
 	};
 
 	enum class EPinTypeInOut
 	{
-		PinTypeInOut_IN,
-		PinTypeInOut_OUT
+		EPinTypeInOut_IN,
+		EPinTypeInOut_OUT
 	};
 
 
-	SPin(std::string aText, EPinTypeInOut aType = EPinTypeInOut::PinTypeInOut_IN, EPinType aVarType = EPinType::Flow)
+	SPin(std::string aText, EPinTypeInOut aType = EPinTypeInOut::EPinTypeInOut_IN, EPinType aVarType = EPinType::EFlow)
 		:myText(aText)
 	{
 		myVariableType = aVarType;
@@ -105,8 +108,8 @@ struct SPin
 	}
 
 	std::string myText;
-	UID myUID;
-	EPinType myVariableType = EPinType::Flow;
+	CUID myUID;
+	EPinType myVariableType = EPinType::EFlow;
 	NodeDataPtr myData = nullptr;
 	EPinTypeInOut myPinType;
 };
@@ -116,7 +119,12 @@ class CNodeType
 public:
 	virtual void ClearNodeInstanceFromMap(class CNodeInstance* aTriggeringNodeInstance);
 	int DoEnter(class CNodeInstance* aTriggeringNodeInstance);
-	virtual std::string GetNodeName() { return "N/A"; }
+	std::string NodeName() { return myNodeName; }
+	std::string NodeDataKey() { return myNodeDataKey; }
+	void NodeName(std::string aNodeName) { myNodeName = aNodeName; }
+	void NodeDataKey(std::string aNodeDataKey) { myNodeDataKey = aNodeDataKey; }
+
+	//virtual void NodeData(CNodeData& aNodeData) { aNodeData; }
 
 	std::vector<SPin> GetPins();
 	virtual bool IsStartNode() { return false; }
@@ -125,7 +133,7 @@ public:
 	{
 		for (auto& pin : myPins)
 		{
-			if (pin.myVariableType == SPin::EPinType::Flow)
+			if (pin.myVariableType == SPin::EPinType::EFlow)
 			{
 				return true;
 			}
@@ -149,6 +157,8 @@ protected:
 	virtual int OnEnter(class CNodeInstance* aTriggeringNodeInstance) = 0;
 	void GetDataOnPin(CNodeInstance* aTriggeringNodeInstance, unsigned int aPinIndex, SPin::EPinType& outType, void*& someData, size_t& outSize);
 	std::vector<SPin> myPins;
+	std::string myNodeName = "N/A";
+	std::string myNodeDataKey = "";
 };
 
 class CNodeTypeCollector
@@ -168,12 +178,24 @@ public:
 		return 	myTypeCounter; // 1:1 to nodetype enum
 	}
 	template <class T>
-	static void RegisterType()
+	static void RegisterType(std::string aNodeName)
 	{
 		myTypes[myTypeCounter] = new T;
 		myTypes[myTypeCounter]->myID = myTypeCounter;
+		myTypes[myTypeCounter]->NodeName(aNodeName);
 		myTypeCounter++;
 	}
+	template <class T>
+	static void RegisterDataType(std::string aNodeName, std::string aNodeDataKey)
+	{
+		myTypes[myTypeCounter] = new T;
+		myTypes[myTypeCounter]->myID = myTypeCounter;
+		myTypes[myTypeCounter]->NodeName(aNodeName);
+		myTypes[myTypeCounter]->NodeDataKey(aNodeDataKey);
+		myTypeCounter++;
+	}
+
+	static void RegisterNewDataType(std::string aNodeName, unsigned int aType);
 	static CNodeType* myTypes[128];
 	static unsigned short myTypeCounter;
 	static unsigned short myTypeCount;

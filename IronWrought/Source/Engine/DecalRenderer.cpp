@@ -205,7 +205,7 @@ void CDecalRenderer::Render(CCameraComponent* aCamera, std::vector<CGameObject*>
 
 		myContext->VSSetConstantBuffers(1, 1, &myObjectBuffer);
 		myContext->PSSetConstantBuffers(1, 1, &myObjectBuffer);
-		myContext->PSSetShaderResources(0, 3, &decalData.myMaterial[0]);
+		myContext->PSSetShaderResources(5, 3, &decalData.myMaterial[0]);
 		
 		myContext->DrawIndexed(myNumberOfIndices, 0, 0);
 		CRenderManager::myNumberOfDrawCallsThisFrame++;
