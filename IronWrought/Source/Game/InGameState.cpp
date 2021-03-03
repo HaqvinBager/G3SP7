@@ -53,6 +53,10 @@ void CInGameState::Awake(){}
 CGameObject* myVFX = nullptr;
 void TEMP_VFX(CScene* aScene);
 
+#include "Canvas.h"
+CCanvas* gCanvasTemp = nullptr;
+void TEMP_HUD(CScene* aScene);
+
 void CInGameState::Start()
 {
 	CJsonReader::Get()->Init();
@@ -63,6 +67,7 @@ void CInGameState::Start()
 
 	
 	TEMP_VFX(scene);
+	TEMP_HUD(scene);
 
 	myExitLevel = false;
 
@@ -101,6 +106,8 @@ void CInGameState::Stop()
 
 void CInGameState::Update()
 {
+	gCanvasTemp->Update();
+
 	float speed = 10.0f;
 	if (myVFX->GetComponent<CVFXSystemComponent>())
 	{
@@ -309,4 +316,10 @@ void TEMP_VFX(CScene* aScene)
 
 	myVFX = abilityObject;
 	aScene->AddInstance(abilityObject);
+}
+
+void TEMP_HUD(CScene* aScene)
+{
+	gCanvasTemp = new CCanvas();
+	gCanvasTemp->Init("Json/UI/UI_HUD.json", *aScene);
 }

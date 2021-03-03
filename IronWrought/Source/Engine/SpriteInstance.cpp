@@ -22,14 +22,14 @@ CSpriteInstance::~CSpriteInstance()
 {
 }
 
-bool CSpriteInstance::Init(CSprite* aSprite)
+bool CSpriteInstance::Init(CSprite* aSprite, const Vector2& aScale)
 {
 	if (!aSprite) {
 		return false;
 	}
 
 	mySprite = aSprite;
-	this->SetSize({ 1.0f, 1.0f });
+	this->SetSize(aScale);
 	myRenderOrder = ERenderOrder::ForegroundLayer;
 
 	return true;

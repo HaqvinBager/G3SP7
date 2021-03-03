@@ -126,7 +126,11 @@ void CCanvas::Init(std::string aFilePath, CScene& aScene, bool addToScene)
 			myAnimatedUIs.emplace_back(new CAnimatedUIElement(animatedDataArray[i]["Path"].GetString(), aScene, addToScene));
 			float x = animatedDataArray[i]["Position X"].GetFloat();
 			float y = animatedDataArray[i]["Position Y"].GetFloat();
+
+			float sx = animatedDataArray[i]["Scale X"].GetFloat();
+			float sy = animatedDataArray[i]["Scale Y"].GetFloat();
 			myAnimatedUIs.back()->SetPosition({ x, y });
+			myAnimatedUIs.back()->SetScale({ sx, sy });//Rename scale to size for consistency.
 			aScene.AddInstance(myAnimatedUIs.back());
 			if (animatedDataArray[i].HasMember("Level")) {
 				myAnimatedUIs.back()->Level(animatedDataArray[i]["Level"].GetFloat());
@@ -137,7 +141,7 @@ void CCanvas::Init(std::string aFilePath, CScene& aScene, bool addToScene)
 	if (document.HasMember("Background"))
 	{
 		myBackground = new CSpriteInstance(aScene, addToScene);
-		myBackground->Init(CSpriteFactory::GetInstance()->GetSprite(document["Background"]["Path"].GetString()));
+		myBackground->Init(CSpriteFactory::GetInstance()->GetSprite(ASSETPATH(document["Background"]["Path"].GetString())));
 		myBackground->SetRenderOrder(ERenderOrder::BackgroundLayer);
 	}
 
@@ -147,7 +151,14 @@ void CCanvas::Init(std::string aFilePath, CScene& aScene, bool addToScene)
 		for (unsigned int i = 0; i < spriteDataArray.Size(); ++i)
 		{
 			CSpriteInstance* spriteInstance = new CSpriteInstance(aScene, addToScene);
-			spriteInstance->Init(CSpriteFactory::GetInstance()->GetSprite(spriteDataArray[i]["Path"].GetString()));
+
+			Vector2 scale(1.0f, 1.0f);
+			if (spriteDataArray[i].HasMember("Scale X"))
+				scale.x = spriteDataArray[i]["Scale X"].GetFloat();
+			if (spriteDataArray[i].HasMember("Scale Y"))
+				scale.y = spriteDataArray[i]["Scale Y"].GetFloat();
+
+			spriteInstance->Init(CSpriteFactory::GetInstance()->GetSprite(ASSETPATH(spriteDataArray[i]["Path"].GetString())), scale);
 			mySprites.emplace_back(spriteInstance);
 			float x = spriteDataArray[i]["Position X"].GetFloat();
 			float y = spriteDataArray[i]["Position Y"].GetFloat();
@@ -171,6 +182,9 @@ void CCanvas::Init(std::string aFilePath, CScene& aScene, bool addToScene)
 
 void CCanvas::Update()
 {
+	if (myButtons.size() <= 0)
+		return;
+
 	DirectX::SimpleMath::Vector2 mousePos = { static_cast<float>(Input::GetInstance()->MouseX()), static_cast<float>(Input::GetInstance()->MouseY()) };
 	for (unsigned int i = 0; i < myButtons.size(); ++i)
 	{
