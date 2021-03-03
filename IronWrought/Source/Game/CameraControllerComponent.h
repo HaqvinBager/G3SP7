@@ -21,7 +21,8 @@ public:
 	void Awake() override;
 	void Start() override;
 	void Update() override;
-
+	float GetCameraMoveSpeed();
+	void SetCameraMoveSpeed(float aCameraMoveSpeed);
 public:
 	// Creates a camera and sets parent-child relationship with proper offsets.
 	static CGameObject* CreatePlayerFirstPersonCamera(CGameObject* aParentObject);

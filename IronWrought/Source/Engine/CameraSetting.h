@@ -1,5 +1,7 @@
 #pragma once
 #include "Window.h"
+class CCameraComponent;
+class CGameObject;
 namespace ImGuiWindow {
     class CCameraSetting : public CWindow
     {

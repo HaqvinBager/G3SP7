@@ -142,3 +142,10 @@ void CCameraControllerComponent::UpdateFreeCam()
 		Input::GetInstance()->SetMouseScreenPosition(static_cast<int>(screenDimensions.x / 2.0f), static_cast<int>(screenDimensions.y / 2.0f));
 	}
 }
+void CCameraControllerComponent::SetCameraMoveSpeed(float aCameraMoveSpeed) {
+	myCameraMoveSpeed = aCameraMoveSpeed;
+}
+
+float CCameraControllerComponent::GetCameraMoveSpeed() {
+	return myCameraMoveSpeed;
+}
