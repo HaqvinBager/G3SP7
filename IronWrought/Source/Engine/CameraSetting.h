@@ -1,12 +1,12 @@
 #pragma once
 #include "Window.h"
 namespace ImGuiWindow {
-    class CCameraSpeedSlider : public CWindow
+    class CCameraSetting : public CWindow
     {
     public:
 
-        CCameraSpeedSlider(const char* aName);
-        ~CCameraSpeedSlider() override;
+        CCameraSetting(const char* aName);
+        ~CCameraSetting() override;
         void OnEnable() override;
         void OnInspectorGUI() override;
         void OnDisable() override;

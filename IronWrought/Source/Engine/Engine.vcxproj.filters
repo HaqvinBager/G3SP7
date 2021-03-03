@@ -679,7 +679,7 @@
     <ClCompile Include="NodeTypeUtilitiesBranching.cpp">
       <Filter>Imgui\Node Editor\Nodes\Utilities</Filter>
     </ClCompile>
-    <ClCompile Include="CameraSpeedSlider.cpp">
+    <ClCompile Include="CameraSetting.cpp">
       <Filter>Imgui\Windows</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1255,7 +1255,7 @@
     <ClInclude Include="NodeTypeUtilitiesBranching.h">
       <Filter>Imgui\Node Editor\Nodes\Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="CameraSpeedSlider.h">
+    <ClInclude Include="CameraSetting.h">
       <Filter>Imgui\Windows</Filter>
     </ClInclude>
   </ItemGroup>

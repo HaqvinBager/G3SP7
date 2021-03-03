@@ -55,7 +55,7 @@ CImguiManager::CImguiManager() : myGraphManagerIsFullscreen(false), myIsEnabled(
 	myGraphManager->Load();
 
 	myWindows.emplace_back(std::make_unique<ImGuiWindow::CLoadScene>("Load Scene", true));
-	myWindows.emplace_back(std::make_unique <ImGuiWindow::CCameraSpeedSlider>("Camera Speed"));
+	myWindows.emplace_back(std::make_unique <ImGuiWindow::CCameraSetting>("Camera Speed"));
 }
 
 CImguiManager::~CImguiManager()
