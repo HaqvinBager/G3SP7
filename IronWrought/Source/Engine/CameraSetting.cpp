@@ -4,6 +4,7 @@
 #include "CameraComponent.h"
 #include "Engine.h"
 #include "Scene.h"
+#include <iostream>
 
 ImGuiWindow::CCameraSetting::CCameraSetting(const char* aName)
 	: CWindow(aName)
@@ -27,6 +28,7 @@ void ImGuiWindow::CCameraSetting::OnInspectorGUI()
 		if (ImGui::SliderFloat("Camera Speed", &myCameraSpeed, 1.0f, 20.0f)) {
 			CCameraControllerComponent* camera = CEngine::GetInstance()->GetActiveScene().FindFirstObjectWithComponent<CCameraControllerComponent>();
 			camera->SetCameraMoveSpeed(myCameraSpeed);
+			
 		}
 	/*	
 		ImGui::EndCombo();
@@ -36,6 +38,7 @@ void ImGuiWindow::CCameraSetting::OnInspectorGUI()
 	if (ImGui::SliderFloat("Camera FoV", &myCameraFov, 1.0f, 100.0f)) {
 		CCameraComponent* camera = CEngine::GetInstance()->GetActiveScene().FindFirstObjectWithComponent<CCameraComponent>();
 		camera->SetFoV(myCameraFov);
+		
 	}
 
 	ImGui::End();

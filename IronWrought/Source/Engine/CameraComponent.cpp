@@ -11,6 +11,7 @@
 #include "MainSingleton.h"
 #include "JsonReader.h"
 
+
 CCameraComponent::CCameraComponent(CGameObject& aParent, const float aFoV/*, float aNearPlane, float aFarPlane, DirectX::SimpleMath::Vector2 aResolution*/)
 	: CComponent(aParent),myFoV(aFoV)
 {
@@ -63,6 +64,7 @@ float LogEaseIn(float x) {
 
 void CCameraComponent::Update()
 {
+
 	if (myTrauma > 0.0f) {
 		myShakeTimer += CTimer::Dt();
 		myTrauma -= (1 / myDecayInSeconds) * CTimer::Dt();
@@ -121,6 +123,7 @@ void CCameraComponent::SetStartingRotation(DirectX::SimpleMath::Vector3 aRotatio
 void CCameraComponent::SetFoV(float aFoV)
 {
 	myFoV = aFoV;
+	myProjection = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(myFoV), (16.0f / 9.0f), 0.1f, 1000.0f);
 }
 
 float CCameraComponent::GetFoV()
