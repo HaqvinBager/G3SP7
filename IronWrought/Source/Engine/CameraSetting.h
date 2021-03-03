@@ -16,6 +16,7 @@ namespace ImGuiWindow {
     private:
 
         float myCameraSpeed;
+        float myCameraFov;
     };
 }
 

@@ -23,8 +23,8 @@ CSceneManager::~CSceneManager()
 CScene* CSceneManager::CreateEmpty()
 {
 	CGameObject* camera = new CGameObject(0);
-	camera->AddComponent<CCameraComponent>(*camera, 70.0f);//Fov 70
-	camera->AddComponent<CCameraControllerComponent>(*camera); //2.0 was speed
+	camera->AddComponent<CCameraComponent>(*camera, 100.0f);//Default Fov is 70.0f 
+	camera->AddComponent<CCameraControllerComponent>(*camera); //Default speed is 2.0f
 	
 	camera->myTransform->Position({ 0.0f, 1.0f, 0.0f });
 	camera->myTransform->Rotation({ 0.0f, 0.0f, 0.0f });

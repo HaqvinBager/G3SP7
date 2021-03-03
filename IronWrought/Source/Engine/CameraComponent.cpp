@@ -12,9 +12,9 @@
 #include "JsonReader.h"
 
 CCameraComponent::CCameraComponent(CGameObject& aParent, const float aFoV/*, float aNearPlane, float aFarPlane, DirectX::SimpleMath::Vector2 aResolution*/)
-	: CComponent(aParent)
+	: CComponent(aParent),myFoV(aFoV)
 {
-	myProjection = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(aFoV), (16.0f / 9.0f), 0.1f, 1000.0f);
+	myProjection = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(myFoV), (16.0f / 9.0f), 0.1f, 1000.0f);
 	myView = DirectX::XMMatrixLookAtLH(GameObject().myTransform->Position(), Vector3::Forward, Vector3::Up);
 
 	myTrauma = 0.0f;
@@ -116,6 +116,16 @@ void CCameraComponent::SetTrauma(float aValue)
 void CCameraComponent::SetStartingRotation(DirectX::SimpleMath::Vector3 aRotation)
 {
 	myStartingRotation = aRotation;
+}
+
+void CCameraComponent::SetFoV(float aFoV)
+{
+	myFoV = aFoV;
+}
+
+float CCameraComponent::GetFoV()
+{
+	return myFoV;
 }
 
 void CCameraComponent::Fade(bool aShouldFadeIn)
