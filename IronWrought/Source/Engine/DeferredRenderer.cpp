@@ -433,8 +433,6 @@ void CDeferredRenderer::Render(CCameraComponent* aCamera, std::vector<CPointLigh
 		transform.Translation(currentInstance->GetPosition());
 		myObjectBufferData.myToWorld = transform;
 
-		// OBS: CPointLight instanserna rör sig inte när man sätter komponentens position
-
 		BindBuffer(myObjectBuffer, myObjectBufferData, "Point Light Object Buffer");
 		myContext->VSSetConstantBuffers(1, 1, &myObjectBuffer);
 		
@@ -451,7 +449,6 @@ void CDeferredRenderer::Render(CCameraComponent* aCamera, std::vector<CPointLigh
 		myContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 		myContext->IASetInputLayout(myPointLightInputLayout);
 		myContext->IASetVertexBuffers(0, 1, &myPointLightVertexBuffer, &stride, &offset);
-		//myContext->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
 		myContext->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0);
 
 		myContext->VSSetShader(myPointLightVertexShader, nullptr, 0);
@@ -466,27 +463,6 @@ void CDeferredRenderer::Render(CCameraComponent* aCamera, std::vector<CPointLigh
 
 	myContext->GSSetShader(nullptr, nullptr, 0);
 }
-
-//bool CDeferredRenderer::CreateVertexShader(std::string aFilepath, CDirectXFramework* aFramework, ID3D11VertexShader** outVertexShader, std::string& outShaderData)
-//{
-//	std::ifstream vsFile;
-//	vsFile.open(aFilepath, std::ios::binary);
-//	std::string vsData = { std::istreambuf_iterator<char>(vsFile), std::istreambuf_iterator<char>() };
-//	outShaderData = vsData;
-//	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateVertexShader(vsData.data(), vsData.size(), nullptr, outVertexShader), "Vertex Shader could not be created.");
-//	vsFile.close();
-//	return true;
-//}
-//
-//bool CDeferredRenderer::CreatePixelShader(std::string aFilepath, CDirectXFramework* aFramework, ID3D11PixelShader** outPixelShader)
-//{
-//	std::ifstream psFile;
-//	psFile.open(aFilepath, std::ios::binary);
-//	std::string psData = { std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>() };
-//	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreatePixelShader(psData.data(), psData.size(), nullptr, outPixelShader), "Pixel Shader could not be created.");
-//	psFile.close();
-//	return true;
-//}
 
 bool CDeferredRenderer::LoadRenderPassPixelShaders(ID3D11Device* aDevice)
 {
