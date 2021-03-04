@@ -18,12 +18,13 @@
 #include "Camera.h"
 #include "EnvironmentLight.h"
 #include "LightFactory.h"
+#include "CameraComponent.h"
 
 #include "ModelFactory.h"
 #include "CameraFactory.h"
-#include "ParticleFactory.h"
+#include "ParticleEmitterFactory.h"
 #include "TextFactory.h"
-#include "VFXFactory.h"
+#include "VFXMeshFactory.h"
 #include "LineFactory.h"
 #include "SpriteFactory.h"
 #include "DecalFactory.h"
@@ -58,8 +59,8 @@ CEngine::CEngine(): myRenderSceneActive(true)
 	myModelFactory = new CModelFactory();
 	myCameraFactory = new CCameraFactory();
 	myLightFactory = new CLightFactory();
-	myParticleFactory = new CParticleFactory();
-	myVFXFactory = new CVFXFactory();
+	myParticleFactory = new CParticleEmitterFactory();
+	myVFXFactory = new CVFXMeshFactory();
 	myLineFactory = new CLineFactory();
 	mySpriteFactory = new CSpriteFactory();
 	myTextFactory = new CTextFactory();
@@ -272,6 +273,33 @@ const CStateStack::EState CEngine::AddScene(const CStateStack::EState aState, CS
 void CEngine::SetActiveScene(const CStateStack::EState aState)
 {
 	myActiveState = aState;
+
+	std::vector<CGameObject*>& gameObjects = CEngine::GetInstance()->GetActiveScene().myGameObjects;
+	size_t currentSize = gameObjects.size();
+	for (size_t i = 0; i < currentSize; ++i)
+	{
+		if (gameObjects[i])
+		{
+			gameObjects[i]->Awake();
+		}
+	}
+
+	////Late awake
+	size_t newSize = gameObjects.size();
+	for (size_t j = currentSize; j < newSize; ++j)
+	{
+		if (gameObjects[j])
+		{
+			gameObjects[j]->Awake();
+		}
+	}
+
+	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
+	{
+		gameObject->Start();
+	}
+
+	CEngine::GetInstance()->GetActiveScene().MainCamera()->Fade(true);
 }
 
 CScene& CEngine::GetActiveScene()

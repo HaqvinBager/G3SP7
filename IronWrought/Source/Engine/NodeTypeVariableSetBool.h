@@ -1,3 +1,4 @@
+#pragma once
 #include "NodeType.h"
 #include "NodeTypes.h"
 

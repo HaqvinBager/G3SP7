@@ -7,19 +7,19 @@
 
 CNodeTypeVolumeTrigger::CNodeTypeVolumeTrigger()
 {
-	myPins.push_back(SPin("IN", SPin::EPinTypeInOut::PinTypeInOut_IN)); //0
-	myPins.push_back(SPin("OUT", SPin::EPinTypeInOut::PinTypeInOut_OUT)); //1
-	myPins.push_back(SPin("OnEnter", SPin::EPinTypeInOut::PinTypeInOut_OUT)); //2
-	myPins.push_back(SPin("OnStay", SPin::EPinTypeInOut::PinTypeInOut_OUT)); //3
-	myPins.push_back(SPin("OnExit", SPin::EPinTypeInOut::PinTypeInOut_OUT)); //4
-	myPins.push_back(SPin("Once", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Bool)); //5
-	myPins.push_back(SPin("ListenObject", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Int)); //6
-	myPins.push_back(SPin("TriggerObject", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Int)); //7
-	myPins.push_back(SPin("AffectedObject", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Int)); //8
-	myPins.push_back(SPin("TriggerType", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::String)); //9
-	myPins.push_back(SPin("EnteringObjectID", SPin::EPinTypeInOut::PinTypeInOut_OUT, SPin::EPinType::Int)); //10
-	myPins.push_back(SPin("ExitingObjectID", SPin::EPinTypeInOut::PinTypeInOut_OUT, SPin::EPinType::Int)); //11
-	myPins.push_back(SPin("ObjectAffected", SPin::EPinTypeInOut::PinTypeInOut_OUT, SPin::EPinType::Int)); //12
+	myPins.push_back(SPin("IN", SPin::EPinTypeInOut::EPinTypeInOut_IN)); //0
+	myPins.push_back(SPin("OUT", SPin::EPinTypeInOut::EPinTypeInOut_OUT)); //1
+	myPins.push_back(SPin("OnEnter", SPin::EPinTypeInOut::EPinTypeInOut_OUT)); //2
+	myPins.push_back(SPin("OnStay", SPin::EPinTypeInOut::EPinTypeInOut_OUT)); //3
+	myPins.push_back(SPin("OnExit", SPin::EPinTypeInOut::EPinTypeInOut_OUT)); //4
+	myPins.push_back(SPin("Once", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EBool)); //5
+	myPins.push_back(SPin("ListenObject", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EInt)); //6
+	myPins.push_back(SPin("TriggerObject", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EInt)); //7
+	myPins.push_back(SPin("AffectedObject", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EInt)); //8
+	myPins.push_back(SPin("TriggerType", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EString)); //9
+	myPins.push_back(SPin("EnteringObjectID", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EInt)); //10
+	myPins.push_back(SPin("ExitingObjectID", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EInt)); //11
+	myPins.push_back(SPin("ObjectAffected", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EInt)); //12
 
 	myState.myDoOnce = false;
 	myState.myListenObjectID = 0;

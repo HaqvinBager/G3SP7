@@ -14,7 +14,7 @@ public:
 	void Start() override;
 	void Update() override;
 
-	CEnvironmentLight* GetEnviromentLight() const { return myEnvironmentLight; }
+	CEnvironmentLight* GetEnvironmentLight() const { return myEnvironmentLight; }
 
 private:
 	CEnvironmentLight* myEnvironmentLight;

@@ -22,8 +22,7 @@ ImGuiWindow::CLoadScene::~CLoadScene()
 
 void ImGuiWindow::CLoadScene::OnEnable()
 {
-
-	std::vector<std::string> generatedJsonFiles = CFolderUtility::GetFileNamesInFolder(ASSETPATH ("Assets/Generated"), ".json", "Level");
+	std::vector<std::string> generatedJsonFiles = CFolderUtility::GetFileNamesInFolder(ASSETPATH ("Assets/Generated"), ".json"/*, "Level"*/);
 	for (auto& file : generatedJsonFiles) {
 		auto endIndex = file.find_last_of('_');
 		std::string sceneName = file.substr(0, endIndex);
@@ -31,17 +30,14 @@ void ImGuiWindow::CLoadScene::OnEnable()
 			myScenes.emplace_back(sceneName);
 		}
 	}
-
-
-
 	myScenes.push_back("Empty");
-
 	myState = EState::DropDownMenu;
 }
 
 
 bool ImGuiWindow::CLoadScene::OnMainMenuGUI()
 {
+
 	std::string previewName;
 	if (mySceneIndex < 0)
 		previewName = "Empty";
@@ -67,11 +63,17 @@ bool ImGuiWindow::CLoadScene::OnMainMenuGUI()
 
 				CCameraComponent* newCamera = CEngine::GetInstance()->GetActiveScene().FindFirstObjectWithComponent<CCameraComponent>();
 				newCamera->GameObject().myTransform->Position(camPos);
+
+				myScenes.clear();
+				OnEnable();
+
 			}
 			index++;
 		}
 		ImGui::EndCombo();
 	}
+
+
 	return true;
 }
 

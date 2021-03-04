@@ -12,7 +12,7 @@ struct InstanceIDCollection
 
 public class ExportInstanceID 
 {
-    public static void Export(Scene aScene)
+    public static List<int> Export(Scene aScene)
     {
         Transform[] transforms = GameObject.FindObjectsOfType<Transform>();
         InstanceIDCollection sceneIDCollection = new InstanceIDCollection();
@@ -47,5 +47,7 @@ public class ExportInstanceID
         //Denna tar in "Collection" Structen och skapar en json med rätt namn
         //Kolla i Generated Foldern hur den ser ut när ni är färdiga!
         Json.ExportToJson(sceneIDCollection, aScene.name);
+
+        return sceneIDCollection.Ids;
     }
 }

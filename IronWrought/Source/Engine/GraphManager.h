@@ -8,6 +8,11 @@
 class CNodeInstance;
 class CGameObject;
 
+struct BluePrintInstance {
+	int rootID;
+	std::vector<int> childrenIDs;
+};
+
 namespace ed = ax::NodeEditor;
 class CGraphManager
 {
@@ -36,7 +41,7 @@ public:
 	bool ToggleShouldRunScripts();
 	bool ShouldRenderGraph() { return myShouldRenderGraph; }
 
-	CGameObject* GetCurrentGameObject();
+	std::vector<CGameObject*> GetCurrentGameObject();
 
 private:
 	ImTextureID HeaderTextureID();
@@ -50,7 +55,7 @@ private:
 	void LoadDataNodesFromFile();
 
 	std::unordered_map<std::string, std::vector<CNodeInstance*>> myGraphs;
-	std::unordered_map<std::string, std::vector<int>> myGameObjectIDsMap;
+	std::unordered_map<std::string, std::vector<BluePrintInstance>> myGameObjectIDsMap;
 	std::vector<std::string> myKeys;
 	std::vector<int> myFlowsToBeShown;
 
@@ -103,5 +108,5 @@ private:
 	bool myScriptShouldRun;
 	std::string myCurrentPath;
 	std::string myCurrentKey;
-	int myCurrentGameObjectID;
+	BluePrintInstance myCurrentBluePrintInstance;
 };

@@ -16,7 +16,6 @@
 #include "SpriteInstance.h"
 #include "AnimatedUIElement.h"
 #include "TextInstance.h"
-#include "VFXInstance.h"
 
 #include "LineInstance.h"
 #include "LineFactory.h"
@@ -30,6 +29,7 @@
 #include "CollisionManager.h"
 
 #include "NavmeshLoader.h"
+#include "Canvas.h"
 
 #include "Debug.h"
 //SETUP START
@@ -40,9 +40,6 @@ CScene::CScene(const unsigned int aGameObjectCount)
 	, myNavMesh(nullptr)
 	, myNavMeshGrid(nullptr)
 	, myPXScene(nullptr)
-	//, myEnemyBehavior(nullptr)
-	//, myPlayer(nullptr)
-	//, myBoss(nullptr)
 {
 	myGameObjects.reserve(aGameObjectCount);
 
@@ -58,6 +55,10 @@ CScene::CScene(const unsigned int aGameObjectCount)
 	myGrid->Init(CLineFactory::GetInstance()->CreateGrid({ 0.1f, 0.5f, 1.0f, 1.0f }));
 	this->AddInstance(myGrid);
 #endif
+
+	myCanvas = new CCanvas();
+	myCanvas->Init(ASSETPATH("Assets/Graphics/UI/JSON/UI_HUD.json"), *this);
+
 }
 
 CScene::~CScene()
@@ -66,16 +67,11 @@ CScene::~CScene()
 	delete myEnvironmentLight;
 	myEnvironmentLight = nullptr;
 
+	delete myCanvas;
+	myCanvas = nullptr;
+
 	this->ClearGameObjects();
 	this->ClearPointLights();
-	this->ClearVFXInstances();
-	// This must be deleted after gameobjects have let go of their pointer to it
-
-	//if (myEnemyBehavior)
-	//{
-	//	delete myEnemyBehavior;
-	//	myEnemyBehavior = nullptr;
-	//}
 
 #ifdef _DEBUG
 	myGrid = nullptr;
@@ -152,6 +148,10 @@ void CScene::ShouldRenderLineInstance(const bool aShouldRender)
 #else
 	aShouldRender;
 #endif //  _DEBUG
+}
+void CScene::UpdateCanvas()
+{
+	myCanvas->Update();
 }
 //SETTERS END
 //GETTERS START
@@ -251,17 +251,6 @@ const std::vector<SLineTime>& CScene::CullLines() const
 {
 	return CDebug::GetInstance()->GetLinesTime();
 	//return CDebug::GetInstance()->GetLines();
-}
-
-std::vector<CVFXInstance*> CScene::CullVFX(CCameraComponent* /*aMainCamera*/)
-{
-
-	for (unsigned int i = 0; i < myVFXInstances.size(); ++i)
-	{
-
-		myVFXInstances[i]->Scroll({0.15f * CTimer::Dt(), 0.15f * CTimer::Dt()}, {0.15f * CTimer::Dt() , 0.15f * CTimer::Dt()});
-	}
-	return myVFXInstances;
 }
 
 std::vector<CAnimatedUIElement*> CScene::CullAnimatedUI(std::vector<CSpriteInstance*>& someFramesToReturn)
@@ -373,12 +362,6 @@ bool CScene::AddInstance(CLineInstance* aLineInstance)
 	return true;
 }
 
-bool CScene::AddInstance(CVFXInstance* aVFXInstance)
-{
-	myVFXInstances.emplace_back(aVFXInstance);
-	return true;
-}
-
 bool CScene::AddInstance(CAnimatedUIElement* anAnimatedUIElement)
 {
 	if (!anAnimatedUIElement)
@@ -433,6 +416,7 @@ bool CScene::AddInstance(CSpriteInstance* aSprite)
 
 	return true;
 }
+
 //PhysX
 bool CScene::AddPXScene(PxScene* aPXScene)
 {
@@ -506,17 +490,6 @@ bool CScene::ClearLineInstances()
 			myLineInstances[i] = nullptr;
 		}
 	}
-	return false;
-}
-
-bool CScene::ClearVFXInstances()
-{
-	for (auto& vfx : myVFXInstances)
-	{
-		delete vfx;
-		vfx = nullptr;
-	}
-	myVFXInstances.clear();
 	return false;
 }
 

@@ -191,12 +191,18 @@
     <ClInclude Include="AudioChannel.h" />
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Behaviour.h" />
+    <ClInclude Include="CameraSetting.h" />
     <ClInclude Include="FlipACoinDecision.h" />
     <ClInclude Include="NodeDataManager.h" />
     <ClInclude Include="NodeTypeDecisionCoinFlip.h" />
+    <ClInclude Include="NodeTypeGameObjectGetRotation.h" />
     <ClInclude Include="NodeTypeGameObjectMove.h" />
+    <ClInclude Include="NodeTypeGameObjectRotate.h" />
+    <ClInclude Include="NodeTypeGameObjectSetRotation.h" />
+    <ClInclude Include="NodeTypeMathGreater.h" />
     <ClInclude Include="NodeTypeStartGetCustom.h" />
     <ClInclude Include="NodeTypeStartKeyboardInput.h" />
+    <ClInclude Include="CharacterController.h" />
     <ClInclude Include="DecisionTreeManager.h" />
     <ClInclude Include="FloatDecisionNode.h" />
     <ClInclude Include="Builders.h" />
@@ -223,6 +229,7 @@
     <ClInclude Include="NodeInstance.h" />
     <ClInclude Include="NodeType.h" />
     <ClInclude Include="NodeTypeStartSetCustom.h" />
+    <ClInclude Include="NodeTypeUtilitiesBranching.h" />
     <ClInclude Include="NodeTypeVariableGetBool.h" />
     <ClInclude Include="NodeTypeVariableGetFloat.h" />
     <ClInclude Include="NodeTypeVariableGetInt.h" />
@@ -293,7 +300,6 @@
     <ClInclude Include="DL_StackWalker.h" />
     <ClInclude Include="InputMapper.h" />
     <ClInclude Include="InputObserver.h" />
-    <ClInclude Include="ParticleEmitterComponent.h" />
     <ClInclude Include="PrintActionNode.h" />
     <ClInclude Include="RectangleColliderComponent.h" />
     <ClInclude Include="RigidBodyComponent.h" />
@@ -325,8 +331,8 @@
     <ClInclude Include="ModelMath.h" />
     <ClInclude Include="MouseTracker.h" />
     <ClInclude Include="NavmeshLoader.h" />
-    <ClInclude Include="Particle.h" />
-    <ClInclude Include="ParticleFactory.h" />
+    <ClInclude Include="ParticleEmitter.h" />
+    <ClInclude Include="ParticleEmitterFactory.h" />
     <ClInclude Include="ParticleRenderer.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="RandomNumberGenerator.h" />
@@ -350,10 +356,9 @@
     <ClInclude Include="TriangleColliderComponent.h" />
     <ClInclude Include="Utility.h" />
     <ClInclude Include="VFXBase.h" />
-    <ClInclude Include="VFXComponent.h" />
-    <ClInclude Include="VFXFactory.h" />
-    <ClInclude Include="VFXInstance.h" />
+    <ClInclude Include="VFXMeshFactory.h" />
     <ClInclude Include="VFXRenderer.h" />
+    <ClInclude Include="VFXSystemComponent.h" />
     <ClInclude Include="Widgets.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="WindowHandler.h" />
@@ -379,12 +384,18 @@
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="AudioChannel.cpp" />
     <ClCompile Include="AudioManager.cpp" />
+    <ClCompile Include="NodeTypeGameObjectGetRotation.cpp" />
+    <ClCompile Include="CameraSetting.cpp" />
     <ClCompile Include="FlipACoinDecision.cpp" />
     <ClCompile Include="NodeDataManager.cpp" />
     <ClCompile Include="NodeTypeDecisionCoinFlip.cpp" />
     <ClCompile Include="NodeTypeGameObjectMove.cpp" />
+    <ClCompile Include="NodeTypeGameObjectRotate.cpp" />
+    <ClCompile Include="NodeTypeGameObjectSetRotation.cpp" />
+    <ClCompile Include="NodeTypeMathGreater.cpp" />
     <ClCompile Include="NodeTypeStartGetCustom.cpp" />
     <ClCompile Include="NodeTypeStartKeyboardInput.cpp" />
+    <ClCompile Include="CharacterController.cpp" />
     <ClCompile Include="DecisionTreeManager.cpp" />
     <ClCompile Include="FloatDecisionNode.cpp" />
     <ClCompile Include="Builders.cpp" />
@@ -398,6 +409,7 @@
     <ClCompile Include="CStateMachineComponent.cpp" />
     <ClCompile Include="LoadScene.cpp" />
     <ClCompile Include="NodeTypeStartSetCustom.cpp" />
+    <ClCompile Include="NodeTypeUtilitiesBranching.cpp" />
     <ClCompile Include="NodeTypeVariableGetBool.cpp" />
     <ClCompile Include="NodeTypeVariableGetFloat.cpp" />
     <ClCompile Include="NodeTypeVariableGetInt.cpp" />
@@ -465,7 +477,6 @@
     <ClCompile Include="MaterialHandler.cpp" />
     <ClCompile Include="NodeTypeTimeTimer.cpp" />
     <ClCompile Include="NodeTypeVolumeTrigger.cpp" />
-    <ClCompile Include="ParticleEmitterComponent.cpp" />
     <ClCompile Include="PerlinNoise.cpp" />
     <ClCompile Include="PhysXWrapper.cpp" />
     <ClCompile Include="PointLightComponent.cpp" />
@@ -495,8 +506,8 @@
     <ClCompile Include="ModelComponent.cpp" />
     <ClCompile Include="ModelFactory.cpp" />
     <ClCompile Include="NavmeshLoader.cpp" />
-    <ClCompile Include="Particle.cpp" />
-    <ClCompile Include="ParticleFactory.cpp" />
+    <ClCompile Include="ParticleEmitter.cpp" />
+    <ClCompile Include="ParticleEmitterFactory.cpp" />
     <ClCompile Include="ParticleRenderer.cpp" />
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="RenderManager.cpp" />
@@ -522,10 +533,9 @@
     <ClCompile Include="TransformComponent.cpp" />
     <ClCompile Include="TriangleColliderComponent.cpp" />
     <ClCompile Include="VFXBase.cpp" />
-    <ClCompile Include="VFXComponent.cpp" />
-    <ClCompile Include="VFXFactory.cpp" />
-    <ClCompile Include="VFXInstance.cpp" />
+    <ClCompile Include="VFXMeshFactory.cpp" />
     <ClCompile Include="VFXRenderer.cpp" />
+    <ClCompile Include="VFXSystemComponent.cpp" />
     <ClCompile Include="Widgets.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="WindowHandler.cpp" />
@@ -706,6 +716,11 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="FullscreenPixelShader_Tonemap.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>

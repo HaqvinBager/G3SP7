@@ -17,6 +17,7 @@ public:
 	void SetModel(const std::string& aFBXPath);
 
 	CModel *GetMyModel() const;
+	const std::string& GetModelPath() const { return myModelPath; }
 
 	void OnEnable() override;
 	void OnDisable() override;

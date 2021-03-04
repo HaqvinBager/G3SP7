@@ -7,16 +7,16 @@
 
 CNodeTypeGameObjectMove::CNodeTypeGameObjectMove()
 {
-	myPins.push_back(SPin("IN", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Flow));		//0
-	myPins.push_back(SPin("OUT", SPin::EPinTypeInOut::PinTypeInOut_OUT));							//1
-	myPins.push_back(SPin("X Speed", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Float));	//2
-	myPins.push_back(SPin("Y Speed", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Float));	//3
-	myPins.push_back(SPin("Z Speed", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Float));	//4
+	myPins.push_back(SPin("IN", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFlow));		//0
+	myPins.push_back(SPin("OUT", SPin::EPinTypeInOut::EPinTypeInOut_OUT));							//1
+	myPins.push_back(SPin("X Speed", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));	//2
+	myPins.push_back(SPin("Y Speed", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));	//3
+	myPins.push_back(SPin("Z Speed", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));	//4
 }
 
 int CNodeTypeGameObjectMove::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 {
-	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject();
+	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject()[1];
 
 	SPin::EPinType outType;
 	NodeDataPtr someData = nullptr;
@@ -26,15 +26,12 @@ int CNodeTypeGameObjectMove::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 	float x = NodeData::Get<float>(someData) * CTimer::Dt();
 
 	GetDataOnPin(aTriggeringNodeInstance, 3, outType, someData, outSize);
-	float y = NodeData::Get<float>(someData) * CTimer::Dt();;
+	float y = NodeData::Get<float>(someData) * CTimer::Dt();
 
 	GetDataOnPin(aTriggeringNodeInstance, 4, outType, someData, outSize);
-	float z = NodeData::Get<float>(someData) * CTimer::Dt();;
+	float z = NodeData::Get<float>(someData) * CTimer::Dt();
 
-	Vector3 currentPosition = gameObject->myTransform->Position();
-
-	Vector3 newPosition = { currentPosition.x + x, currentPosition.y + y, currentPosition.z + z };
-	gameObject->myTransform->Position(newPosition);
+	gameObject->myTransform->MoveLocal({ x, y, z });
 
 	return 1;
 }

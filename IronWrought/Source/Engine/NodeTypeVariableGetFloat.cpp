@@ -5,12 +5,12 @@
 
 CNodeTypeVariableGetFloat::CNodeTypeVariableGetFloat()
 {
-	myPins.push_back(SPin("OUT", SPin::EPinTypeInOut::PinTypeInOut_OUT, SPin::EPinType::Float));
+	myPins.push_back(SPin("OUT", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EFloat));
 }
 
 int CNodeTypeVariableGetFloat::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 {
-	float output = *(static_cast<float*>(CNodeDataManager::Get()->GetData(myNodeDataKey, CNodeDataManager::EDataType::EFloat)));
+	float output = CNodeDataManager::Get()->GetData<float>(myNodeDataKey);
 
 	std::vector<SPin>& pins = aTriggeringNodeInstance->GetPins();
 	DeclareDataOnPinIfNecessary<float>(pins[0]);

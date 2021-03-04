@@ -1,4 +1,5 @@
 #pragma once
+
 class CNodeDataManager
 {
 public:
@@ -16,15 +17,33 @@ public:
 	static CNodeDataManager* Get() { return ourInstance; }
 	void ClearStoredData();
 
-	void SetData(const std::string aNodeDataKey, EDataType aDataType, void* aValue);
-	void* GetData(const std::string aNodeDataKey, EDataType aDataType);
+	template <typename T>
+	void SetData(const std::string aNodeDataKey, EDataType aDataType, T& aValue)
+	{
+
+		auto it = myNodeDataMap.find(aNodeDataKey);
+		if (it == myNodeDataMap.end())
+		{
+				myNodeDataMap[aNodeDataKey] = new T(aValue);
+				myNodeDataTypeMap[aNodeDataKey] = aDataType;
+		}
+		else
+		{
+			*(reinterpret_cast<T*>((*it).second)) = aValue;
+		}
+	}
+	
+	template <typename T>
+	T GetData(const std::string aNodeDataKey)
+	{
+		auto it = myNodeDataMap.find(aNodeDataKey);
+		return *(reinterpret_cast<T*>((*it).second));
+	}
 
 	void SaveDataTypesToJson();
 
 private:
-	std::unordered_map<std::string, float> myNodeFloatDataMap;
-	std::unordered_map<std::string, int> myNodeIntDataMap;
-	std::unordered_map<std::string, bool> myNodeBoolDataMap;
-	std::unordered_map<std::string, bool> myNodeStartDataMap;
+	std::unordered_map<std::string, void*> myNodeDataMap;
+	std::unordered_map<std::string, EDataType> myNodeDataTypeMap;
 	static CNodeDataManager* ourInstance;
 };

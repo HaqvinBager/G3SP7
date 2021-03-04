@@ -18,48 +18,49 @@ public struct Assets
 
 public class Exporter
 {
+
+    [MenuItem("GameObject/BluePrint/Add Patrol Point", validate = true)]
+    static bool ValidateTest()
+    {
+        if(Selection.gameObjects.Length == 1)
+        {
+            return Selection.gameObjects[0].name.Contains("BP_");
+        }
+        return false;
+    }
+
+    //[MenuItem("3D Create/PatrolPosition")]
+    [MenuItem("GameObject/BluePrint/Add Patrol Point", false, 0)]
+    static void Test()
+    {
+        GameObject parent = Selection.gameObjects[0];
+
+        GameObject obj = new GameObject("Patrol");
+        obj.transform.parent = parent.transform;
+    }
+
     [MenuItem("Export/Export Scene")]
     static void ExportScene()
     {
         List<GameObject> allScenesActiveObjects = GetAllOpenedSceneActiveObjects();
-        for(int i = 0; i < SceneManager.sceneCount; ++i)
+        for (int i = 0; i < SceneManager.sceneCount; ++i)
             DeactivateAndExportScene(i, allScenesActiveObjects);
-        
+
         foreach (var gameObject in allScenesActiveObjects)
             gameObject.SetActive(true);
-        
-
-        //for (int i = 0; i < SceneManager.sceneCount; ++i)
-        //{
-        //    GameObject[] gameobjects = SceneManager.GetSceneAt(i).GetRootGameObjects();
-        //    List<GameObject> activeobjects = new List<GameObject>();
-        //    foreach (var gameobject in gameobjects)
-        //    {
-        //        if (allScenesActiveObjects.Contains(gameobject))
-        //        {
-        //            activeobjects.Add(gameobject);
-        //            gameobject.SetActive(true);
-        //        }
-        //    }
-
-        //    ExportAScene(SceneManager.GetSceneAt(i));
-
-        //    foreach (var gameobject in activeobjects)
-        //    {
-        //        gameobject.SetActive(false);
-        //    }
-        //}
     }
 
     private static void ExportAScene(Scene aScene)
     {
         ExportResource.Export(aScene);
-        ExportInstanceID.Export(aScene);
-        ExportTransform.Export(aScene);
-        ExportModel.Export(aScene);
+        List<int> validExportIds = ExportInstanceID.Export(aScene);
+        ExportTransform.Export(aScene, validExportIds);
+        ExportModel.Export(aScene, validExportIds);
         ExportInstancedModel.Export(aScene);
-        ExportVertexPaint.ExportVertexPainting(aScene);
+        ExportVertexPaint.ExportVertexPainting(aScene, validExportIds);
         ExportBluePrint.Export(aScene);
+        ExportPointlights.ExportPointlight(aScene);
+        ExportDecals.Export(aScene);
         AssetDatabase.Refresh();
     }
 

@@ -7,8 +7,8 @@
 
 CNodeTypeStartDefault::CNodeTypeStartDefault()
 {
-	myPins.push_back(SPin("Updating", SPin::EPinTypeInOut::PinTypeInOut_IN, SPin::EPinType::Bool));
-	myPins.push_back(SPin("", SPin::EPinTypeInOut::PinTypeInOut_OUT));
+	myPins.push_back(SPin("Updating", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EBool));
+	myPins.push_back(SPin("", SPin::EPinTypeInOut::EPinTypeInOut_OUT));
 }
 
 int CNodeTypeStartDefault::OnEnter(class CNodeInstance* aTriggeringNodeInstance)

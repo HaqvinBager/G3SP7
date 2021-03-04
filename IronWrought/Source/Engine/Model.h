@@ -26,10 +26,16 @@ struct SInstancedMeshData {
 	UINT myMaterialIndex = 0;
 };
 
+struct SMeshFilter {
+	std::vector<unsigned int> myIndexes;
+	std::vector<Vector3> myVertecies;
+};
+
 class CModel {
 public:
 	struct SModelData {
 		std::vector<SMeshData> myMeshes { };
+		SMeshFilter myMeshFilter;
 		ID3D11VertexShader* myVertexShader = nullptr;
 		ID3D11PixelShader* myPixelShader = nullptr;
 		ID3D11SamplerState* mySamplerState = nullptr;
@@ -42,6 +48,7 @@ public:
 
 	struct SModelInstanceData {
 		std::vector<SInstancedMeshData> myMeshes{ };
+		SMeshFilter myMeshFilter;
 		ID3D11Buffer* myInstanceBuffer = nullptr;
 		ID3D11VertexShader* myVertexShader = nullptr;
 		ID3D11PixelShader* myPixelShader = nullptr;

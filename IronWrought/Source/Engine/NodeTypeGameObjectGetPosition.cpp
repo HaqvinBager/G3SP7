@@ -7,14 +7,14 @@
 
 CNodeTypeGameObjectGetPosition::CNodeTypeGameObjectGetPosition()
 {
-    myPins.push_back(SPin("X", SPin::EPinTypeInOut::PinTypeInOut_OUT, SPin::EPinType::Float)); //0
-    myPins.push_back(SPin("Y", SPin::EPinTypeInOut::PinTypeInOut_OUT, SPin::EPinType::Float)); //1
-	myPins.push_back(SPin("Z", SPin::EPinTypeInOut::PinTypeInOut_OUT, SPin::EPinType::Float)); //2
+    myPins.push_back(SPin("X", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EFloat)); //0
+    myPins.push_back(SPin("Y", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EFloat)); //1
+	myPins.push_back(SPin("Z", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EFloat)); //2
 }
 
 int CNodeTypeGameObjectGetPosition::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 {
-	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject();
+	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject()[1];
 	Vector3 position = gameObject->myTransform->Position();
 
 	std::vector<SPin>& pins = aTriggeringNodeInstance->GetPins();

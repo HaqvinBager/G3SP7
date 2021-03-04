@@ -5,12 +5,12 @@
 
 CNodeTypeVariableGetBool::CNodeTypeVariableGetBool()
 {
-	myPins.push_back(SPin("OUT", SPin::EPinTypeInOut::PinTypeInOut_OUT, SPin::EPinType::Bool));
+	myPins.push_back(SPin("OUT", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EBool));
 }
 
 int CNodeTypeVariableGetBool::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 {
-	bool output = *(static_cast<bool*>(CNodeDataManager::Get()->GetData(myNodeDataKey, CNodeDataManager::EDataType::EBool)));
+	bool output = CNodeDataManager::Get()->GetData<bool>(myNodeDataKey);
 
 	std::vector<SPin>& pins = aTriggeringNodeInstance->GetPins();
 	DeclareDataOnPinIfNecessary<bool>(pins[0]);

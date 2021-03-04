@@ -3,11 +3,11 @@
 
 //class CNodeData;
 
-class UID
+class CUID
 {
 
 public:
-	UID(bool aCreateNewUID = true)
+	CUID(bool aCreateNewUID = true)
 	{
 		if (!aCreateNewUID)
 		{
@@ -26,7 +26,7 @@ public:
 
 	const unsigned int AsInt() const { return myID; }
 
-	UID& operator=(const UID& other)
+	CUID& operator=(const CUID& other)
 	{
 		myID = other.myID;
 #ifdef _DEBUG
@@ -37,7 +37,7 @@ public:
 #endif
 		return *this;
 	}
-	UID& operator=(const int other)
+	CUID& operator=(const int other)
 	{
 		myID = other;
 #ifdef _DEBUG
@@ -57,7 +57,7 @@ public:
 	static std::vector<unsigned int> myAllUIDs;
 	static unsigned int myGlobalUID;
 private:
-	unsigned int myID;
+	unsigned int myID = 0;
 
 };
 
@@ -66,22 +66,23 @@ struct SPin
 
 	enum class EPinType
 	{
-		Flow,
-		Bool,
-		Int,
-		Float,
-		String,
-		Unknown,
+		EFlow,
+		EBool,
+		EInt,
+		EFloat,
+		EString,
+		EVector3,
+		EUnknown
 	};
 
 	enum class EPinTypeInOut
 	{
-		PinTypeInOut_IN,
-		PinTypeInOut_OUT
+		EPinTypeInOut_IN,
+		EPinTypeInOut_OUT
 	};
 
 
-	SPin(std::string aText, EPinTypeInOut aType = EPinTypeInOut::PinTypeInOut_IN, EPinType aVarType = EPinType::Flow)
+	SPin(std::string aText, EPinTypeInOut aType = EPinTypeInOut::EPinTypeInOut_IN, EPinType aVarType = EPinType::EFlow)
 		:myText(aText)
 	{
 		myVariableType = aVarType;
@@ -107,8 +108,8 @@ struct SPin
 	}
 
 	std::string myText;
-	UID myUID;
-	EPinType myVariableType = EPinType::Flow;
+	CUID myUID;
+	EPinType myVariableType = EPinType::EFlow;
 	NodeDataPtr myData = nullptr;
 	EPinTypeInOut myPinType;
 };
@@ -132,7 +133,7 @@ public:
 	{
 		for (auto& pin : myPins)
 		{
-			if (pin.myVariableType == SPin::EPinType::Flow)
+			if (pin.myVariableType == SPin::EPinType::EFlow)
 			{
 				return true;
 			}
