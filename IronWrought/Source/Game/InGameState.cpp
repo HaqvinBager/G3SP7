@@ -60,12 +60,30 @@ void CInGameState::Start()
 {
 	CJsonReader::Get()->Init();
 	CScene* scene = CSceneManager::CreateEmpty();
-	scene->AddPXScene(CEngine::GetInstance()->GetPhysx().CreatePXScene());
+	//scene->AddPXScene(CEngine::GetInstance()->GetPhysx().CreatePXScene());
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);
 
+
 	TEMP_DeferredRenderingTests(scene);
 	TEMP_VFX(scene);
+
+	CGameObject* test = new CGameObject(1452);
+	test->AddComponent<CModelComponent>(*test, std::string(ASSETPATH("Assets/Graphics/Exempel_Modeller/Wall/Wall.fbx")));
+	test->GetComponent<CTransformComponent>()->Position({ 0.0f,0.0f,0.0f });
+
+	CGameObject* test2 = new CGameObject(1453);
+	test2->AddComponent<CModelComponent>(*test2, std::string(ASSETPATH("Assets/Graphics/Exempel_Modeller/Wall/Wall.fbx")));
+	test2->GetComponent<CTransformComponent>()->Position({ 5.0f,0.0f,0.0f });
+
+	CGameObject* test3 = new CGameObject(1454);
+	test3->AddComponent<CModelComponent>(*test3, std::string(ASSETPATH("Assets/Graphics/Exempel_Modeller/Wall/Wall.fbx")));
+	test3->GetComponent<CTransformComponent>()->Position({ 10.0f,0.0f,0.0f });
+	test3->AddComponent<CPlayerControllerComponent>(*test3);
+
+	scene->AddInstance(test);
+	scene->AddInstance(test2);
+	scene->AddInstance(test3);
 
 	myExitLevel = false;
 
@@ -93,7 +111,6 @@ void CInGameState::Start()
 	{
 		gameObject->Start();
 	}
-
 	CEngine::GetInstance()->GetActiveScene().MainCamera()->Fade(true);
 }
 

@@ -202,6 +202,7 @@
     <ClInclude Include="NodeTypeMathGreater.h" />
     <ClInclude Include="NodeTypeStartGetCustom.h" />
     <ClInclude Include="NodeTypeStartKeyboardInput.h" />
+    <ClInclude Include="CharacterController.h" />
     <ClInclude Include="DecisionTreeManager.h" />
     <ClInclude Include="FloatDecisionNode.h" />
     <ClInclude Include="Builders.h" />
@@ -394,6 +395,7 @@
     <ClCompile Include="NodeTypeMathGreater.cpp" />
     <ClCompile Include="NodeTypeStartGetCustom.cpp" />
     <ClCompile Include="NodeTypeStartKeyboardInput.cpp" />
+    <ClCompile Include="CharacterController.cpp" />
     <ClCompile Include="DecisionTreeManager.cpp" />
     <ClCompile Include="FloatDecisionNode.cpp" />
     <ClCompile Include="Builders.cpp" />
