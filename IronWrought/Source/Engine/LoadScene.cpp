@@ -22,7 +22,7 @@ ImGuiWindow::CLoadScene::~CLoadScene()
 
 void ImGuiWindow::CLoadScene::OnEnable()
 {
-	std::vector<std::string> generatedJsonFiles = CFolderUtility::GetFileNamesInFolder(ASSETPATH ("Assets/Generated"), ".json", "Level");
+	std::vector<std::string> generatedJsonFiles = CFolderUtility::GetFileNamesInFolder(ASSETPATH ("Assets/Generated"), ".json"/*, "Level"*/);
 	for (auto& file : generatedJsonFiles) {
 		auto endIndex = file.find_last_of('_');
 		std::string sceneName = file.substr(0, endIndex);

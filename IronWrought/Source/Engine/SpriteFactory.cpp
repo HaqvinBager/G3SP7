@@ -149,11 +149,11 @@ SAnimatedSpriteData* CSpriteFactory::LoadVFXSprite(std::string aFilePath)
 	ENGINE_HR_MESSAGE(myFramework->GetDevice()->CreateSamplerState(&samplerDesc, &sampler), "Sampler could not be created.");
 	//End Sampler
 
-	ID3D11ShaderResourceView* textureOneShaderResourceView = GetShaderResourceView(myFramework->GetDevice(), document["Texture 1"].GetString());
-	ID3D11ShaderResourceView* textureTwoShaderResourceView = GetShaderResourceView(myFramework->GetDevice(), document["Texture 2"].GetString());
-	ID3D11ShaderResourceView* textureThreeShaderResourceView = GetShaderResourceView(myFramework->GetDevice(), document["Texture 3"].GetString());
-	ID3D11ShaderResourceView* textureFourShaderResourceView = GetShaderResourceView(myFramework->GetDevice(), document["Texture Mask"].GetString());
-	ID3D11ShaderResourceView* textureFiveShaderResourceView = GetShaderResourceView(myFramework->GetDevice(), document["Texture Mask 2"].GetString());
+	ID3D11ShaderResourceView* textureOneShaderResourceView = GetShaderResourceView(myFramework->GetDevice(), ASSETPATH(document["Texture 1"].GetString()));
+	ID3D11ShaderResourceView* textureTwoShaderResourceView = GetShaderResourceView(myFramework->GetDevice(), ASSETPATH(document["Texture 2"].GetString()));
+	ID3D11ShaderResourceView* textureThreeShaderResourceView = GetShaderResourceView(myFramework->GetDevice(), ASSETPATH(document["Texture 3"].GetString()));
+	ID3D11ShaderResourceView* textureFourShaderResourceView = GetShaderResourceView(myFramework->GetDevice(), ASSETPATH(document["Texture Mask"].GetString()));
+	ID3D11ShaderResourceView* textureFiveShaderResourceView = GetShaderResourceView(myFramework->GetDevice(), ASSETPATH(document["Texture Mask 2"].GetString()));
 
 	// ASSUMES A SQUARE MASK (equal width & height)
 	spriteData->maskOffset = (1.0f - (document["Mask Width"].GetFloat() / GetTextureDimensions(textureFiveShaderResourceView).x)) / 2.0f;
