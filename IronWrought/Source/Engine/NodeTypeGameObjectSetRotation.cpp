@@ -1,19 +1,19 @@
 #include "stdafx.h"
-#include "NodeTypeGameObjectSetPosition.h"
+#include "NodeTypeGameObjectSetRotation.h"
 #include "NodeInstance.h"
 #include "GameObject.h"
 #include "TransformComponent.h"
 
-CNodeTypeGameObjectSetPosition::CNodeTypeGameObjectSetPosition()
+CNodeTypeGameObjectSetRotation::CNodeTypeGameObjectSetRotation()
 {
 	myPins.push_back(SPin("IN", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFlow));	//0
 	myPins.push_back(SPin("OUT", SPin::EPinTypeInOut::EPinTypeInOut_OUT));						//1
-    myPins.push_back(SPin("X", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));	//2
-    myPins.push_back(SPin("Y", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));	//3
-    myPins.push_back(SPin("Z", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));	//4
+	myPins.push_back(SPin("Pitch", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));	//2
+	myPins.push_back(SPin("Yaw", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));	//3
+	myPins.push_back(SPin("Roll", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));	//4
 }
 
-int CNodeTypeGameObjectSetPosition::OnEnter(CNodeInstance* aTriggeringNodeInstance)
+int CNodeTypeGameObjectSetRotation::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 {
 	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject()[1];
 
@@ -26,12 +26,12 @@ int CNodeTypeGameObjectSetPosition::OnEnter(CNodeInstance* aTriggeringNodeInstan
 
 	GetDataOnPin(aTriggeringNodeInstance, 3, outType, someData, outSize);
 	float y = NodeData::Get<float>(someData);
-	
+
 	GetDataOnPin(aTriggeringNodeInstance, 4, outType, someData, outSize);
 	float z = NodeData::Get<float>(someData);
 
-	Vector3 newPosition = { x, y, z };
-	gameObject->myTransform->Position(newPosition);
+	Vector3 newRotation = { x, y, z };
+	gameObject->myTransform->Rotation(newRotation);
 
 	return 1;
 }

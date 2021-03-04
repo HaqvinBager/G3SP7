@@ -19,7 +19,7 @@ int CNodeTypeVariableSetInt::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 
 	GetDataOnPin(aTriggeringNodeInstance, 2, outType, someData, outSize);
 	int input = NodeData::Get<int>(someData);
-	CNodeDataManager::Get()->SetData(myNodeDataKey, CNodeDataManager::EDataType::EInt, &input);
+	CNodeDataManager::Get()->SetData(myNodeDataKey, CNodeDataManager::EDataType::EInt, input);
 
 	std::vector<SPin>& pins = aTriggeringNodeInstance->GetPins();
 	DeclareDataOnPinIfNecessary<int>(pins[3]);

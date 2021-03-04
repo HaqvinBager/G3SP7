@@ -57,7 +57,7 @@ public:
 	static std::vector<unsigned int> myAllUIDs;
 	static unsigned int myGlobalUID;
 private:
-	unsigned int myID;
+	unsigned int myID = 0;
 
 };
 

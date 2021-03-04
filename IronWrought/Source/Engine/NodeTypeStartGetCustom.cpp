@@ -12,12 +12,12 @@ CNodeTypeStartGetCustom::CNodeTypeStartGetCustom()
 
 int CNodeTypeStartGetCustom::OnEnter(class CNodeInstance* aTriggeringNodeInstance)
 {
-	aTriggeringNodeInstance->myShouldTriggerAgain = *(static_cast<bool*>(CNodeDataManager::Get()->GetData(myNodeDataKey, CNodeDataManager::EDataType::EStart)));
+	aTriggeringNodeInstance->myShouldTriggerAgain = CNodeDataManager::Get()->GetData<bool>(myNodeDataKey);
 	
 	if (aTriggeringNodeInstance->myShouldTriggerAgain)
 	{
-		aTriggeringNodeInstance->myShouldTriggerAgain = false;
-		CNodeDataManager::Get()->SetData(myNodeDataKey, CNodeDataManager::EDataType::EStart, &aTriggeringNodeInstance->myShouldTriggerAgain);
+		//aTriggeringNodeInstance->myShouldTriggerAgain = false;
+		CNodeDataManager::Get()->SetData(myNodeDataKey, CNodeDataManager::EDataType::EStart, aTriggeringNodeInstance->myShouldTriggerAgain);
 		return 0;
 	}
 	else

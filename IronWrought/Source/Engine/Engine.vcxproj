@@ -194,7 +194,11 @@
     <ClInclude Include="FlipACoinDecision.h" />
     <ClInclude Include="NodeDataManager.h" />
     <ClInclude Include="NodeTypeDecisionCoinFlip.h" />
+    <ClInclude Include="NodeTypeGameObjectGetRotation.h" />
     <ClInclude Include="NodeTypeGameObjectMove.h" />
+    <ClInclude Include="NodeTypeGameObjectRotate.h" />
+    <ClInclude Include="NodeTypeGameObjectSetRotation.h" />
+    <ClInclude Include="NodeTypeMathGreater.h" />
     <ClInclude Include="NodeTypeStartGetCustom.h" />
     <ClInclude Include="NodeTypeStartKeyboardInput.h" />
     <ClInclude Include="DecisionTreeManager.h" />
@@ -378,10 +382,14 @@
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="AudioChannel.cpp" />
     <ClCompile Include="AudioManager.cpp" />
+    <ClCompile Include="NodeTypeGameObjectGetRotation.cpp" />
     <ClCompile Include="FlipACoinDecision.cpp" />
     <ClCompile Include="NodeDataManager.cpp" />
     <ClCompile Include="NodeTypeDecisionCoinFlip.cpp" />
     <ClCompile Include="NodeTypeGameObjectMove.cpp" />
+    <ClCompile Include="NodeTypeGameObjectRotate.cpp" />
+    <ClCompile Include="NodeTypeGameObjectSetRotation.cpp" />
+    <ClCompile Include="NodeTypeMathGreater.cpp" />
     <ClCompile Include="NodeTypeStartGetCustom.cpp" />
     <ClCompile Include="NodeTypeStartKeyboardInput.cpp" />
     <ClCompile Include="DecisionTreeManager.cpp" />

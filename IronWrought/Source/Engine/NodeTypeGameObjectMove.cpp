@@ -16,7 +16,7 @@ CNodeTypeGameObjectMove::CNodeTypeGameObjectMove()
 
 int CNodeTypeGameObjectMove::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 {
-	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject()[0];
+	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject()[1];
 
 	SPin::EPinType outType;
 	NodeDataPtr someData = nullptr;
@@ -26,15 +26,12 @@ int CNodeTypeGameObjectMove::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 	float x = NodeData::Get<float>(someData) * CTimer::Dt();
 
 	GetDataOnPin(aTriggeringNodeInstance, 3, outType, someData, outSize);
-	float y = NodeData::Get<float>(someData) * CTimer::Dt();;
+	float y = NodeData::Get<float>(someData) * CTimer::Dt();
 
 	GetDataOnPin(aTriggeringNodeInstance, 4, outType, someData, outSize);
-	float z = NodeData::Get<float>(someData) * CTimer::Dt();;
+	float z = NodeData::Get<float>(someData) * CTimer::Dt();
 
-	Vector3 currentPosition = gameObject->myTransform->Position();
-
-	Vector3 newPosition = { currentPosition.x + x, currentPosition.y + y, currentPosition.z + z };
-	gameObject->myTransform->Position(newPosition);
+	gameObject->myTransform->MoveLocal({ x, y, z });
 
 	return 1;
 }

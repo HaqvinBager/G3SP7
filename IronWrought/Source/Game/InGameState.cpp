@@ -119,11 +119,11 @@ void CInGameState::Update()
 		myVFX->myTransform->Move({ CTimer::Dt() * speed, 0.0f, 0.0f });
 	}
 
-	if (INPUT->IsKeyPressed('P'))
-	{
-		myVFX->GetComponent<CVFXSystemComponent>()->OnDisable();
-		myVFX->GetComponent<CVFXSystemComponent>()->OnEnable();
-	}
+	//if (INPUT->IsKeyPressed('P'))
+	//{
+	//	myVFX->GetComponent<CVFXSystemComponent>()->OnDisable();
+	//	myVFX->GetComponent<CVFXSystemComponent>()->OnEnable();
+	//}
 
 	CEngine::GetInstance()->GetPhysx().Simulate();
 	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)

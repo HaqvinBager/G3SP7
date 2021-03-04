@@ -753,25 +753,25 @@ void CGraphManager::CreateNewDataNode()
 						{
 							float nullValue = 1.0f;
 							CNodeTypeCollector::RegisterNewDataType(buffer, static_cast<int>(CNodeDataManager::EDataType::EFloat));
-							CNodeDataManager::Get()->SetData(buffer, CNodeDataManager::EDataType::EFloat, &nullValue);
+							CNodeDataManager::Get()->SetData(buffer, CNodeDataManager::EDataType::EFloat, nullValue);
 						}
 						else if (myNewVariableType == "Int")
 						{
 							int nullValue = 1;
 							CNodeTypeCollector::RegisterNewDataType(buffer, static_cast<int>(CNodeDataManager::EDataType::EInt));
-							CNodeDataManager::Get()->SetData(buffer, CNodeDataManager::EDataType::EInt, &nullValue);
+							CNodeDataManager::Get()->SetData(buffer, CNodeDataManager::EDataType::EInt, nullValue);
 						}
 						else if (myNewVariableType == "Bool")
 						{
 							bool nullValue = true;
 							CNodeTypeCollector::RegisterNewDataType(buffer, static_cast<int>(CNodeDataManager::EDataType::EBool));
-							CNodeDataManager::Get()->SetData(buffer, CNodeDataManager::EDataType::EBool, &nullValue);
+							CNodeDataManager::Get()->SetData(buffer, CNodeDataManager::EDataType::EBool, nullValue);
 						}
 						else if (myNewVariableType == "Start")
 						{
 							bool nullValue = false;
 							CNodeTypeCollector::RegisterNewDataType(buffer, static_cast<int>(CNodeDataManager::EDataType::EStart));
-							CNodeDataManager::Get()->SetData(buffer, CNodeDataManager::EDataType::EStart, &nullValue);
+							CNodeDataManager::Get()->SetData(buffer, CNodeDataManager::EDataType::EStart, nullValue);
 						}
 						CNodeDataManager::Get()->SaveDataTypesToJson();
 						hasCreatedNewVariable = true;
@@ -803,25 +803,25 @@ void CGraphManager::LoadDataNodesFromFile()
 					{
 						float value = 1.0f;
 						CNodeTypeCollector::RegisterNewDataType(nodeInstances[i]["Data key"].GetString(), static_cast<int>(CNodeDataManager::EDataType::EFloat));
-						CNodeDataManager::Get()->SetData(nodeInstances[i]["Data key"].GetString(), CNodeDataManager::EDataType::EFloat, &value);
+						CNodeDataManager::Get()->SetData(nodeInstances[i]["Data key"].GetString(), CNodeDataManager::EDataType::EFloat, value);
 					}
 					else if (myNewVariableType == "Int")
 					{
 						int value = 1;
 						CNodeTypeCollector::RegisterNewDataType(nodeInstances[i]["Data key"].GetString(), static_cast<int>(CNodeDataManager::EDataType::EInt));
-						CNodeDataManager::Get()->SetData(nodeInstances[i]["Data key"].GetString(), CNodeDataManager::EDataType::EInt, &value);
+						CNodeDataManager::Get()->SetData(nodeInstances[i]["Data key"].GetString(), CNodeDataManager::EDataType::EInt, value);
 					}
 					else if (myNewVariableType == "Bool")
 					{
 						bool value = true;
 						CNodeTypeCollector::RegisterNewDataType(nodeInstances[i]["Data key"].GetString(), static_cast<int>(CNodeDataManager::EDataType::EBool));
-						CNodeDataManager::Get()->SetData(nodeInstances[i]["Data key"].GetString(), CNodeDataManager::EDataType::EBool, &value);
+						CNodeDataManager::Get()->SetData(nodeInstances[i]["Data key"].GetString(), CNodeDataManager::EDataType::EBool, value);
 					}
 					else if (myNewVariableType == "Start")
 					{
 						bool value = false;
 						CNodeTypeCollector::RegisterNewDataType(nodeInstances[i]["Data key"].GetString(), static_cast<int>(CNodeDataManager::EDataType::EStart));
-						CNodeDataManager::Get()->SetData(nodeInstances[i]["Data key"].GetString(), CNodeDataManager::EDataType::EStart, &value);
+						CNodeDataManager::Get()->SetData(nodeInstances[i]["Data key"].GetString(), CNodeDataManager::EDataType::EStart, value);
 					}
 				}
 			}

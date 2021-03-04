@@ -11,7 +11,7 @@ CNodeTypeStartSetCustom::CNodeTypeStartSetCustom()
 int CNodeTypeStartSetCustom::OnEnter(CNodeInstance* /*aTriggeringNodeInstance*/)
 {
 	bool input = true;
-	CNodeDataManager::Get()->SetData(myNodeDataKey, CNodeDataManager::EDataType::EStart, &input);
+	CNodeDataManager::Get()->SetData(myNodeDataKey, CNodeDataManager::EDataType::EStart, input);
 
 	return -1;
 }

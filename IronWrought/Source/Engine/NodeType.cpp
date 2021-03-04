@@ -7,6 +7,9 @@
 #include "NodeTypeGameObjectGetPosition.h"
 #include "NodeTypeGameObjectSetPosition.h"
 #include "NodeTypeGameObjectMove.h"
+#include "NodeTypeGameObjectGetRotation.h"
+#include "NodeTypeGameObjectSetRotation.h"
+#include "NodeTypeGameObjectRotate.h"
 #include "NodeTypeMathAdd.h"
 #include "NodeTypeMathSub.h"
 #include "NodeTypeMathMul.h"
@@ -16,6 +19,7 @@
 #include "NodeTypeMathAtan2.h"
 #include "NodeTypeMathCeil.h"
 #include "NodeTypeMathFloor.h"
+#include "NodeTypeMathGreater.h"
 #include "NodeTypeMathToRadians.h"
 #include "NodeTypeMathToDegrees.h"
 #include "NodeTypeMathDot.h"
@@ -71,10 +75,14 @@ void CNodeTypeCollector::PopulateTypes()
 	RegisterType<CNodeTypeMathSmoothstep>("Smoothstep");
 	RegisterType<CNodeTypeMathMax>("Max");
 	RegisterType<CNodeTypeMathMin>("Min");
+	RegisterType<CNodeTypeMathGreater>("Greater");
 	RegisterType<CNodeTypeMathDistance>("Distance");
 	RegisterType<CNodeTypeGameObjectGetPosition>("Get Object Position");
 	RegisterType<CNodeTypeGameObjectSetPosition>("Set Object Position");
 	RegisterType<CNodeTypeGameObjectMove>("Move Object");
+	RegisterType<CNodeTypeGameObjectGetRotation>("Get Object Rotation");
+	RegisterType<CNodeTypeGameObjectSetRotation>("Set Object Rotation");
+	RegisterType<CNodeTypeGameObjectRotate>("Rotate Object");
 	RegisterType<CNodeTypeInputGetMousePosition>("Mouse Position");
 	RegisterType<CNodeTypeActionPrint>("Print Action");
 	RegisterType<CNodeTypeDecisionFloat>("Float Decision");

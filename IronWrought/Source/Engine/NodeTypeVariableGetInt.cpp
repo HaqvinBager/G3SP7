@@ -10,7 +10,7 @@ CNodeTypeVariableGetInt::CNodeTypeVariableGetInt()
 
 int CNodeTypeVariableGetInt::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 {
-	int output = *(static_cast<int*>(CNodeDataManager::Get()->GetData(myNodeDataKey, CNodeDataManager::EDataType::EInt)));
+	int output = CNodeDataManager::Get()->GetData<int>(myNodeDataKey);
 
 	std::vector<SPin>& pins = aTriggeringNodeInstance->GetPins();
 	DeclareDataOnPinIfNecessary<int>(pins[0]);

@@ -14,7 +14,7 @@ CNodeTypeGameObjectGetPosition::CNodeTypeGameObjectGetPosition()
 
 int CNodeTypeGameObjectGetPosition::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 {
-	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject()[0];
+	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject()[1];
 	Vector3 position = gameObject->myTransform->Position();
 
 	std::vector<SPin>& pins = aTriggeringNodeInstance->GetPins();

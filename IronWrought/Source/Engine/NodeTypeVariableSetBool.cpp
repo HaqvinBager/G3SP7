@@ -19,7 +19,7 @@ int CNodeTypeVariableSetBool::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 
 	GetDataOnPin(aTriggeringNodeInstance, 2, outType, someData, outSize);
 	bool input = NodeData::Get<bool>(someData);
-	CNodeDataManager::Get()->SetData(myNodeDataKey, CNodeDataManager::EDataType::EBool, &input);
+	CNodeDataManager::Get()->SetData(myNodeDataKey, CNodeDataManager::EDataType::EBool, input);
 
 	std::vector<SPin>& pins = aTriggeringNodeInstance->GetPins();
 	DeclareDataOnPinIfNecessary<bool>(pins[3]);

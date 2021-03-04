@@ -19,7 +19,7 @@ int CNodeTypeVariableSetFloat::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 
 	GetDataOnPin(aTriggeringNodeInstance, 2, outType, someData, outSize);
 	float input = NodeData::Get<float>(someData);
-	CNodeDataManager::Get()->SetData(myNodeDataKey, CNodeDataManager::EDataType::EFloat, &input);
+	CNodeDataManager::Get()->SetData(myNodeDataKey, CNodeDataManager::EDataType::EFloat, input);
 
 	std::vector<SPin>& pins = aTriggeringNodeInstance->GetPins();
 	DeclareDataOnPinIfNecessary<float>(pins[3]);
