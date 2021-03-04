@@ -641,6 +641,9 @@
     <ClCompile Include="NodeTypePrintMessage.cpp">
       <Filter>Imgui\Node Editor\Nodes\Debugging</Filter>
     </ClCompile>
+    <ClCompile Include="CharacterController.cpp">
+      <Filter>PhysX</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1190,6 +1193,9 @@
     </ClInclude>
     <ClInclude Include="GraphicsHelpers.h">
       <Filter>Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterController.h">
+      <Filter>PhysX</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

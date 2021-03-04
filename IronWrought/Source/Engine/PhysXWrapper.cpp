@@ -5,6 +5,14 @@
 #include "Engine.h"
 #include "RigidDynamicBody.h"
 #include <iostream>
+#include "LineFactory.h"
+#include "LineInstance.h"
+#include "ModelComponent.h"
+#include "InstancedModelComponent.h"
+#include "ModelFactory.h"
+#include "Model.h"
+#include "CharacterController.h"
+#include <PlayerControllerComponent.h>
 
 PxFilterFlags contactReportFilterShader(PxFilterObjectAttributes attributes0, PxFilterData filterData0,
 	PxFilterObjectAttributes attributes1, PxFilterData filterData1,
@@ -36,6 +44,7 @@ CPhysXWrapper::CPhysXWrapper()
 	myPhysicsVisualDebugger = nullptr;
 	myAllocator = nullptr;
 	myContactReportCallback = nullptr;
+	myControllerManager = nullptr;
 }
 
 CPhysXWrapper::~CPhysXWrapper()
@@ -68,6 +77,9 @@ bool CPhysXWrapper::Init()
 	PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate("localhost", 5425, 10);
 	//PxPvdTransport* transport = PxDefaultPvdFileTransportCreate("Test.pxd2");
 	myPhysicsVisualDebugger->connect(*transport, PxPvdInstrumentationFlag::eALL);
+	PxTolerancesScale scale;
+	scale.length = 1;
+	myCooking = PxCreateCooking(PX_PHYSICS_VERSION, *myFoundation, PxCookingParams(scale));
 
 	myPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *myFoundation, PxTolerancesScale(), true, myPhysicsVisualDebugger);
 	if (!myPhysics) {
@@ -107,6 +119,13 @@ PxScene* CPhysXWrapper::CreatePXScene()
 	//groundPlane->setGlobalPose( {15.0f,0.0f,0.0f} );
 	pXScene->addActor(*groundPlane);
 
+	pXScene->setVisualizationParameter(PxVisualizationParameter::eSCALE, 1.0f);
+	pXScene->setVisualizationParameter(PxVisualizationParameter::eACTOR_AXES, 2.0f);
+
+	myPXMaterial = CreateMaterial(materialfriction::basic);
+
+	myControllerManager = PxCreateControllerManager(*pXScene);
+
 	return pXScene;
 }
 
@@ -117,7 +136,7 @@ PxRaycastBuffer CPhysXWrapper::Raycast(Vector3 aOrigin, Vector3 aDirection, floa
 	origin.x = aOrigin.x;
 	origin.y = aOrigin.y;
 	origin.z = aOrigin.z;
-
+	
 
 	PxVec3 unitDir;
 
@@ -184,6 +203,7 @@ void CPhysXWrapper::Simulate()
 	if (CEngine::GetInstance()->GetActiveScene().PXScene() != nullptr) {
 		CEngine::GetInstance()->GetActiveScene().PXScene()->simulate(CTimer::Dt());
 		CEngine::GetInstance()->GetActiveScene().PXScene()->fetchResults(true);
+		//DebugLines();
 	}
 }
 
@@ -192,4 +212,105 @@ RigidDynamicBody* CPhysXWrapper::CreateDynamicRigidbody(Vector3 aPos)
 	RigidDynamicBody* dynamicBody = new RigidDynamicBody(*myPhysics, aPos);
 	CEngine::GetInstance()->GetActiveScene().PXScene()->addActor(dynamicBody->GetBody());
 	return dynamicBody;
+}
+
+CCharacterController* CPhysXWrapper::CreateCharacterController(Vector3 aPos)
+{
+	CCharacterController* characterController = new CCharacterController(aPos);
+
+	return characterController;
+}
+
+void CPhysXWrapper::DebugLines()
+{
+	const PxRenderBuffer& rb = CEngine::GetInstance()->GetActiveScene().PXScene()->getRenderBuffer();
+	for (PxU32 i = 0; i < rb.getNbLines(); i++)
+	{
+		const PxDebugLine& line = rb.getLines()[i];
+		CLineInstance* myLine = new CLineInstance();
+		myLine->Init(CLineFactory::GetInstance()->CreateLine({ line.pos0.x, line.pos0.y, line.pos0.z }, { line.pos1.x, line.pos1.y, line.pos1.z }, { 0.1f, 255.0f, 0.1f, 1.0f }));
+		CEngine::GetInstance()->GetActiveScene().AddInstance(myLine);
+	}
+}
+
+void CPhysXWrapper::Cooking(std::vector<CGameObject*> gameObjectsToCook, CScene* aScene)
+{
+	for (int i = 0; i < gameObjectsToCook.size(); ++i) {
+		if (gameObjectsToCook[i]->GetComponent<CModelComponent>() && !gameObjectsToCook[i]->GetComponent<CPlayerControllerComponent>()) {
+			std::vector<PxVec3> verts(gameObjectsToCook[i]->GetComponent<CModelComponent>()->GetMyModel()->GetModelData().myMeshFilter.myVertecies.size());
+			for (auto y = 0; y < gameObjectsToCook[i]->GetComponent<CModelComponent>()->GetMyModel()->GetModelData().myMeshFilter.myVertecies.size(); ++y) {
+				Vector3 vec = gameObjectsToCook[i]->GetComponent<CModelComponent>()->GetMyModel()->GetModelData().myMeshFilter.myVertecies[y];
+				verts[y] = PxVec3(vec.x, vec.y, vec.z);
+			}
+
+			PxTriangleMeshDesc meshDesc;
+			meshDesc.points.count = (PxU32)verts.size();
+			meshDesc.points.stride = sizeof(PxVec3);
+			meshDesc.points.data = verts.data();
+
+			std::vector<unsigned int> myIndexes = gameObjectsToCook[i]->GetComponent<CModelComponent>()->GetMyModel()->GetModelData().myMeshFilter.myIndexes;
+			meshDesc.triangles.count = (PxU32)myIndexes.size() / (PxU32)3;
+			meshDesc.triangles.stride = 3 * sizeof(PxU32);
+			meshDesc.triangles.data = myIndexes.data();
+
+			PxDefaultMemoryOutputStream writeBuffer;
+			PxTriangleMeshCookingResult::Enum result;
+			myCooking->cookTriangleMesh(meshDesc, writeBuffer, &result);
+
+			PxDefaultMemoryInputData readBuffer(writeBuffer.getData(), writeBuffer.getSize());
+			PxTriangleMesh* pxMesh = myPhysics->createTriangleMesh(readBuffer);
+
+			PxTriangleMeshGeometry pMeshGeometry(pxMesh);
+
+			PxRigidStatic* actor = myPhysics->createRigidStatic({ 0.f, 0.f, 0.f });
+			PxShape* shape = myPhysics->createShape(pMeshGeometry, *myPXMaterial, true);
+			actor->attachShape(*shape);
+			actor->setGlobalPose({ gameObjectsToCook[i]->myTransform->Position().x,gameObjectsToCook[i]->myTransform->Position().y, gameObjectsToCook[i]->myTransform->Position().z });
+			aScene->PXScene()->addActor(*actor);
+
+		}
+		else if (gameObjectsToCook[i]->GetComponent<CInstancedModelComponent>() && !gameObjectsToCook[i]->GetComponent<CPlayerControllerComponent>()) {
+			for (auto z = 0; z < gameObjectsToCook[i]->GetComponent<CInstancedModelComponent>()->GetInstancedTransforms().size(); ++z) {
+				std::vector<PxVec3> verts(gameObjectsToCook[i]->GetComponent<CInstancedModelComponent>()->GetModel()->GetModelInstanceData().myMeshFilter.myVertecies.size());
+				for (auto y = 0; y < gameObjectsToCook[i]->GetComponent<CInstancedModelComponent>()->GetModel()->GetModelInstanceData().myMeshFilter.myVertecies.size(); ++y) {
+					Vector3 vec = gameObjectsToCook[i]->GetComponent<CInstancedModelComponent>()->GetModel()->GetModelInstanceData().myMeshFilter.myVertecies[y];
+					verts[y] = PxVec3(vec.x, vec.y, vec.z);
+				}
+
+				PxTriangleMeshDesc meshDesc;
+				meshDesc.points.count = (PxU32)verts.size();
+				meshDesc.points.stride = sizeof(PxVec3);
+				meshDesc.points.data = verts.data();
+
+				std::vector<unsigned int> myInstancedIndexes = gameObjectsToCook[i]->GetComponent<CInstancedModelComponent>()->GetModel()->GetModelInstanceData().myMeshFilter.myIndexes;
+				meshDesc.triangles.count = (PxU32)myInstancedIndexes.size() / (PxU32)3;
+				meshDesc.triangles.stride = 3 * sizeof(PxU32);
+				meshDesc.triangles.data = myInstancedIndexes.data();
+
+				PxDefaultMemoryOutputStream writeBuffer;
+				PxTriangleMeshCookingResult::Enum result;
+				myCooking->cookTriangleMesh(meshDesc, writeBuffer, &result);
+
+				PxDefaultMemoryInputData readBuffer(writeBuffer.getData(), writeBuffer.getSize());
+				PxTriangleMesh* pxMesh = myPhysics->createTriangleMesh(readBuffer);
+
+				PxTriangleMeshGeometry pMeshGeometry(pxMesh);
+
+				PxRigidStatic* actor = myPhysics->createRigidStatic({ 0.f, 0.f, 0.f });
+				PxShape* shape = myPhysics->createShape(pMeshGeometry, *myPXMaterial, true);
+				actor->attachShape(*shape);
+				aScene->PXScene()->addActor(*actor);
+
+				DirectX::SimpleMath::Vector3 translation;
+				DirectX::SimpleMath::Vector3 scale;
+				DirectX::SimpleMath::Quaternion quat;
+				DirectX::SimpleMath::Matrix transform = gameObjectsToCook[i]->GetComponent<CInstancedModelComponent>()->GetInstancedTransforms()[z];
+				transform.Decompose(scale, quat, translation);
+
+				PxVec3 pos = { translation.x, translation.y, translation.z};
+				PxQuat pxQuat = {quat.x, quat.y, quat.z, quat.w};
+				actor->setGlobalPose({pos, pxQuat});
+			}
+		}
+	}
 }

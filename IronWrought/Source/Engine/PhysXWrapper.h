@@ -5,7 +5,9 @@ using namespace physx;
 
 class ContactReportCallback;
 class RigidDynamicBody;
-
+class CGameObject;
+class CScene;
+class CCharacterController;
 
 
 class CPhysXWrapper
@@ -42,6 +44,14 @@ public:
 	void Simulate();
 
 	RigidDynamicBody* CreateDynamicRigidbody(Vector3 aPos);
+
+	CCharacterController* CreateCharacterController(Vector3 aPos = {0.f, 0.f, 0.f});
+
+	PxControllerManager& GetControllerManager() { return *myControllerManager; }
+
+	void DebugLines();
+
+	void Cooking(std::vector<CGameObject*> gameObjectsToCook, CScene* aScene);
 private:
 	
 	
@@ -51,6 +61,8 @@ private:
 	PxMaterial* myPXMaterial;
 	PxPvd* myPhysicsVisualDebugger;
 	PxDefaultAllocator* myAllocator;
+	PxCooking* myCooking;
 	ContactReportCallback* myContactReportCallback;
+	PxControllerManager* myControllerManager;
 };
 

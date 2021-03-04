@@ -8,6 +8,8 @@
 #include "ModelComponent.h"
 #include <PlayerControllerComponent.h>
 #include "JsonReader.h"
+#include "Engine.h"
+#include "Scene.h"
 #include <iostream>
 
 
@@ -38,6 +40,7 @@ CScene* CSceneManager::CreateEmpty()
 	emptyScene->MainCamera(camera->GetComponent<CCameraComponent>());
 	emptyScene->EnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight());
 	emptyScene->AddInstance(envLight);
+	emptyScene->AddPXScene(CEngine::GetInstance()->GetPhysx().CreatePXScene());
 
 	return emptyScene;
 }
@@ -46,12 +49,14 @@ CScene* CSceneManager::CreateEmpty()
 CScene* CSceneManager::CreateScene(const std::string& aSceneName)
 {
 	CScene* scene = CreateEmpty();
+
 	AddInstancedModelComponents(*scene, aSceneName + "_InstanceModelCollection.json");
 
 	if (AddGameObjects(*scene, aSceneName + "_InstanceIDCollection.json")) {
 		SetTransforms(*scene, aSceneName + "_TransformCollection.json");
 		AddModelComponents(*scene, aSceneName + "_ModelCollection.json");
 	}
+	CEngine::GetInstance()->GetPhysx().Cooking(scene->ActiveGameObjects(), scene);
 	return scene;
 }
 
