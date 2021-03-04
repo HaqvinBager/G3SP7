@@ -65,41 +65,16 @@ void CInGameState::Start()
 	CJsonReader::Get()->Init();
 	CScene* scene = CSceneManager::CreateEmpty();
 	scene->AddPXScene(CEngine::GetInstance()->GetPhysx().CreatePXScene());
-	CEngine::GetInstance()->AddScene(myState, scene);
-	CEngine::GetInstance()->SetActiveScene(myState);
 
 	TEMP_DeferredRenderingTests(scene);
 	TEMP_VFX(scene);
-	TEMP_HUD(scene);
+
+	CEngine::GetInstance()->AddScene(myState, scene);
+	CEngine::GetInstance()->SetActiveScene(myState);
+
+	//TEMP_HUD(scene);
 
 	myExitLevel = false;
-
-	std::vector<CGameObject*>& gameObjects = CEngine::GetInstance()->GetActiveScene().myGameObjects;
-	size_t currentSize = gameObjects.size();
-	for (size_t i = 0; i < currentSize; ++i)
-	{
-		if (gameObjects[i])
-		{
-			gameObjects[i]->Awake();
-		}
-	}
-
-	////Late awake
-	size_t newSize = gameObjects.size();
-	for (size_t j = currentSize; j < newSize; ++j)
-	{
-		if (gameObjects[j])
-		{
-			gameObjects[j]->Awake();
-		}
-	}
-
-	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
-	{
-		gameObject->Start();
-	}
-
-	CEngine::GetInstance()->GetActiveScene().MainCamera()->Fade(true);
 }
 
 void CInGameState::Stop()
@@ -109,7 +84,7 @@ void CInGameState::Stop()
 
 void CInGameState::Update()
 {
-	gCanvasTemp->Update();
+	IRONWROUGHT->GetActiveScene().UpdateCanvas();
 
 	float speed = 10.0f;
 	if (myVFX->GetComponent<CVFXSystemComponent>())
@@ -330,5 +305,5 @@ void TEMP_VFX(CScene* aScene)
 void TEMP_HUD(CScene* aScene)
 {
 	gCanvasTemp = new CCanvas();
-	gCanvasTemp->Init("Json/UI/UI_HUD.json", *aScene);
+	gCanvasTemp->Init(ASSETPATH("Assets/Graphics/UI/JSON/UI_HUD.json"), *aScene);
 }

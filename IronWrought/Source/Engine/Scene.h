@@ -11,8 +11,8 @@ class CCamera;
 class CEnvironmentLight;
 class CCollisionManager;
 class CPointLight;
-class CVFXInstance;
 class CLineInstance;
+class CCanvas;
 
 class CAnimatedUIElement;
 class CTextInstance;
@@ -43,6 +43,7 @@ public:
 	void MainCamera(CCameraComponent* aMainCamera);
 	bool EnvironmentLight(CEnvironmentLight* anEnvironmentLight);
 	void ShouldRenderLineInstance(const bool aShouldRender);
+	void UpdateCanvas();
 //SETTERS END
 public:
 	template <class T>
@@ -84,7 +85,6 @@ public:
 	//POPULATE SCENE START
 	bool AddInstance(CPointLight* aPointLight);
 	bool AddInstance(CLineInstance* aLineInstance);
-	bool AddInstance(CVFXInstance* aVFXInstance);
 	bool AddInstance(CAnimatedUIElement* anAnimatedUIElement);
 	bool AddInstance(CTextInstance* aText);
 	bool AddInstance(CGameObject* aGameObject);
@@ -134,7 +134,6 @@ private:
 //CONTAINERS START
 	std::vector<CPointLight*> myPointLights;
 	std::vector<CLineInstance*> myLineInstances;
-	std::vector<CVFXInstance*> myVFXInstances;
 	std::vector<CAnimatedUIElement*> myAnimatedUIElements;
 	std::vector<CTextInstance*> myTexts;
 	std::vector<CGameObject*> myGameObjects;
@@ -152,6 +151,8 @@ private:
 	CCameraComponent* myMainCamera;
 	//PhysX scene
 	PxScene* myPXScene;
+
+	CCanvas* myCanvas;
 //POINTERS END
 
 	bool myIsReadyToRender;

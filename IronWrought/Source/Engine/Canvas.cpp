@@ -123,7 +123,7 @@ void CCanvas::Init(std::string aFilePath, CScene& aScene, bool addToScene)
 		auto animatedDataArray = document["Animated UI Elements"].GetArray();
 		for (unsigned int i = 0; i < animatedDataArray.Size(); ++i)
 		{
-			myAnimatedUIs.emplace_back(new CAnimatedUIElement(animatedDataArray[i]["Path"].GetString(), aScene, addToScene));
+			myAnimatedUIs.emplace_back(new CAnimatedUIElement(ASSETPATH(animatedDataArray[i]["Path"].GetString()), aScene, addToScene));
 			float x = animatedDataArray[i]["Position X"].GetFloat();
 			float y = animatedDataArray[i]["Position Y"].GetFloat();
 
