@@ -7,6 +7,6 @@ class CNodeTypeUtilitiesBranching : public CNodeType
 public:
 	CNodeTypeUtilitiesBranching();
 	int OnEnter(class CNodeInstance* aTriggeringNodeInstance) override;
-	std::string GetNodeTypeCategory() override { return "Set Data"; }
+	std::string GetNodeTypeCategory() override { return "Utility"; }
 };
 

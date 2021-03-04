@@ -691,10 +691,11 @@
     <ClCompile Include="NodeTypeGameObjectGetRotation.cpp">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClCompile>
-    <ClCompile Include="NodeTypeMathGreater.cpp">
-    </ClCompile>
     <ClCompile Include="CameraSetting.cpp">
       <Filter>Imgui\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeMathGreater.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClCompile>
     <ClCompile Include="CharacterController.cpp">
       <Filter>PhysX</Filter>
@@ -1281,13 +1282,14 @@
     <ClInclude Include="NodeTypeGameObjectRotate.h">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClInclude>
-    <ClInclude Include="NodeTypeMathGreater.h">
-    </ClInclude>
     <ClInclude Include="CameraSetting.h">
       <Filter>Imgui\Windows</Filter>
+     </ClInclude>
+     <ClInclude Include="CharacterController.h">
+        <Filter>PhysX</Filter>
     </ClInclude>
-    <ClInclude Include="CharacterController.h">
-      <Filter>PhysX</Filter>
+    <ClInclude Include="NodeTypeMathGreater.h">
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
