@@ -37,7 +37,11 @@ void CPlayerControllerComponent::Start()
 
 void CPlayerControllerComponent::Update()
 {
+	
+	
+
 	GameObject().myTransform->Position(myController->GetPosition());
+
 }
 
 void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
@@ -71,6 +75,11 @@ void CPlayerControllerComponent::Move(Vector3 aDir)
 	physx::PxControllerCollisionFlags collisionflag = myController->GetController().move({aDir.x, aDir.y, aDir.z}, 0, CTimer::Dt(), 0);
 	if (collisionflag == physx::PxControllerCollisionFlag::eCOLLISION_DOWN) {
 	}
+}
+
+CCharacterController* CPlayerControllerComponent::GetCharacterController()
+{
+	return myController;
 }
 
 void CPlayerControllerComponent::UpdateHorizontalMovement()

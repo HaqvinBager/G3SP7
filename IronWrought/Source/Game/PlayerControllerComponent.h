@@ -19,6 +19,8 @@ public:
 
 	void Move(Vector3 aDir);
 
+	CCharacterController* GetCharacterController();
+
 private:
 	void UpdateHorizontalMovement();
 

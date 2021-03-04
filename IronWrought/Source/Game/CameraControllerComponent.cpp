@@ -5,6 +5,8 @@
 #include "Engine.h"
 #include "Scene.h"
 #include <algorithm>
+#include "PlayerControllerComponent.h"
+#include "CharacterController.h"
 
 #define PI 3.14159265f
 
@@ -105,10 +107,23 @@ void CCameraControllerComponent::UpdatePlayerFirstPerson()
 	float dx = static_cast<float>(Input::GetInstance()->MouseRawDeltaX());
 	float dy = static_cast<float>(Input::GetInstance()->MouseRawDeltaY());
 
+
+
 	myYaw	= WrapAngle(myYaw + (dx * myMouseRotationSpeed * dt));
 	myPitch = std::clamp(myPitch + (dy * myMouseRotationSpeed * dt), ToDegrees(-PI / 2.0f), ToDegrees(PI / 2.0f));
 
 	GameObject().myTransform->Rotation({ myPitch, myYaw, 0});
+
+	DirectX::SimpleMath::Vector3 translation;
+	DirectX::SimpleMath::Vector3 scale;
+	DirectX::SimpleMath::Quaternion quat;
+	DirectX::SimpleMath::Matrix transform = GameObject().myTransform->Transform();
+		transform.Decompose(scale, quat, translation);
+
+		GameObject().myTransform->GetParent()->GameObject().GetComponent<CPlayerControllerComponent>()->GetCharacterController()->GetController().getActor()->setGlobalPose({ GameObject().myTransform->GetParent()->GameObject().GetComponent<CPlayerControllerComponent>()->GetCharacterController()->GetController().getActor()->getGlobalPose().p, {quat.x, quat.y, quat.z, quat.w} });
+	
+
+
 
 	if (CEngine::GetInstance()->GetWindowHandler()->CursorLocked()) {
 		auto screenDimensions = CEngine::GetInstance()->GetWindowHandler()->GetResolution();
