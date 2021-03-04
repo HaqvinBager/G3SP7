@@ -1285,8 +1285,9 @@
     </ClInclude>
     <ClInclude Include="CameraSetting.h">
       <Filter>Imgui\Windows</Filter>
-      <ClInclude Include="CharacterController.h">
-        <Filter>PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterController.h">
+      <Filter>PhysX</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
