@@ -14,7 +14,7 @@ enum class EMessageType
 	Resume,
 
 	PlayerHealthChanged,
-	PlayerResourceChanged,
+	PlayerStaminaChanged,
 	PlayerTakeDamage,
 	PlayerDied,
 	EnemyDied,

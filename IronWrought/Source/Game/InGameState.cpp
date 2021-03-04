@@ -16,10 +16,10 @@
 #include "EnvironmentLight.h"
 #include "Timer.h"
 #include "Engine.h"
-#include "PostMaster.h"
 #include "WindowHandler.h"
 #include "MainSingleton.h"
 #include "InputMapper.h"
+#include "PostMaster.h"
 
 #include <CollisionManager.h>
 #include "ImguiManager.h"
@@ -59,6 +59,9 @@ void TEMP_VFX(CScene* aScene);
 #include "Canvas.h"
 CCanvas* gCanvasTemp = nullptr;
 void TEMP_HUD(CScene* aScene);
+
+float gPlayerHealth = 100.0f;
+float gPlayerStamina = 100.0f;
 
 void CInGameState::Start()
 {
@@ -111,6 +114,40 @@ void CInGameState::Update()
 			myVFX->GetComponent<CVFXSystemComponent>()->OnDisable();
 			myVFX->GetComponent<CVFXSystemComponent>()->OnEnable();
 		}
+	}
+
+	if (INPUT->IsKeyDown('U'))
+	{
+		if (gPlayerHealth < 100.0f)
+			gPlayerHealth += 1.0f;
+		float percent = gPlayerHealth / 100.0f;
+		SMessage msg; msg.myMessageType = EMessageType::PlayerHealthChanged; msg.data = &percent;
+		CMainSingleton::PostMaster().Send(msg);
+	}
+	if (INPUT->IsKeyDown('J'))
+	{
+		if(gPlayerHealth > 0.0f)
+			gPlayerHealth -= 1.0f;
+		float percent = gPlayerHealth / 100.0f;
+		SMessage msg; msg.myMessageType = EMessageType::PlayerHealthChanged; msg.data = &percent;
+		CMainSingleton::PostMaster().Send(msg);
+	}
+
+	if (INPUT->IsKeyDown('I'))
+	{
+		if (gPlayerStamina < 100.0f)
+			gPlayerStamina += 1.0f;
+		float percent = gPlayerStamina / 100.0f;
+		SMessage msg = {}; msg.myMessageType = EMessageType::PlayerStaminaChanged; msg.data = &percent;
+		CMainSingleton::PostMaster().Send(msg);
+	}
+	if (INPUT->IsKeyDown('K'))
+	{
+		if(gPlayerStamina > 0.0f)
+			gPlayerStamina -= 1.0f;
+		float percent = gPlayerStamina / 100.0f;
+		SMessage msg = {}; msg.myMessageType = EMessageType::PlayerStaminaChanged; msg.data = &percent;
+		CMainSingleton::PostMaster().Send(msg);
 	}
 
 	CEngine::GetInstance()->GetPhysx().Simulate();
@@ -188,7 +225,7 @@ void TEMP_DeferredRenderingTests(CScene* scene)
 	//scene->AddInstance(chest2);
 	//scene->AddInstance(chest3);
 
-	constexpr int numPointLights = 0;
+	constexpr int numPointLights = 2;
 	std::vector<CGameObject*> pointLights;
 	float x = -2.0f;
 	float y = 1.0f;

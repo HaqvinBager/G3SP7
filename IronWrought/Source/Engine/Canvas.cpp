@@ -208,13 +208,22 @@ void CCanvas::Update()
 	}
 }
 
-void CCanvas::Receive(const SMessage& /*aMessage*/)
+void CCanvas::Receive(const SMessage& aMessage)
 {
-	//switch (aMessage.myMessageType)
-	//{
-	//default:
-	//	break;
-	//}
+	switch (aMessage.myMessageType)
+	{
+		// TEMP
+		case EMessageType::PlayerHealthChanged:
+			myAnimatedUIs[0]->Level(*static_cast<float*>(aMessage.data));
+		break;
+		case EMessageType::PlayerStaminaChanged:
+			myAnimatedUIs[1]->Level(*static_cast<float*>(aMessage.data));
+		break;
+		// ! TEMP
+
+	default:
+		break;
+	}
 }
 
 void CCanvas::SubscribeToMessages()
