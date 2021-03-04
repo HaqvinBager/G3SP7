@@ -32,6 +32,13 @@
 #include "animationLoader.h"
 void TEMP_DeferredRenderingTests(CScene* aScene);
 
+#include "VFXSystemComponent.h"
+#include "VFXMeshFactory.h"
+#include "ParticleEmitterFactory.h"
+
+CGameObject* gVFX = nullptr;
+void TEMP_VFX(CScene* aScene);
+
 CInGameState::CInGameState(CStateStack& aStateStack, const CStateStack::EState aState)
 	: CState(aStateStack, aState),
 	myExitLevel(false)
@@ -50,6 +57,8 @@ void CInGameState::Start()
 	CJsonReader::Get()->Init();
 	CScene* scene = CSceneManager::CreateEmpty();
 	scene->AddPXScene(CEngine::GetInstance()->GetPhysx().CreatePXScene());
+	
+	TEMP_VFX(scene);
 
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);
@@ -91,6 +100,15 @@ void CInGameState::Stop()
 
 void CInGameState::Update()
 {
+	if (gVFX->GetComponent<CVFXSystemComponent>())
+	{
+		if (INPUT->IsKeyPressed('P'))
+		{
+			gVFX->GetComponent<CVFXSystemComponent>()->OnDisable();
+			gVFX->GetComponent<CVFXSystemComponent>()->OnEnable();
+		}
+	}
+
 	CEngine::GetInstance()->GetPhysx().Simulate();
 	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
 	{
@@ -269,4 +287,14 @@ void CInGameState::TEMP_DecalTests(CScene* aScene)
 	//decal2->myTransform->Rotation({ 0.0f, 45.0f, 0.0f });
 	//decal2->myTransform->Scale({ 1.0f, 1.0f, 1.0f });
 	//aScene->AddInstance(decal2);
+}
+
+void TEMP_VFX(CScene* aScene)
+{
+	static int id = 500;
+	CGameObject* abilityObject = new CGameObject(id++);
+	abilityObject->AddComponent<CVFXSystemComponent>(*abilityObject, "Assets/VFXTEMP/JSON/VFXSystem_ToLoad.json");
+
+	gVFX = abilityObject;
+	aScene->AddInstance(abilityObject);
 }
