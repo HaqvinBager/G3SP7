@@ -18,7 +18,7 @@ public:
 	CSpriteInstance();
 	~CSpriteInstance();
 
-	bool Init(CSprite* aSprite);
+	bool Init(CSprite* aSprite, const Vector2& aScale = {1.0f,1.0f});
 	void SetPosition(DirectX::SimpleMath::Vector2 aPosition);
 	void SetNormalPosition(DirectX::SimpleMath::Vector2 aPosition);
 	void SetColor(DirectX::SimpleMath::Vector4 aColor);

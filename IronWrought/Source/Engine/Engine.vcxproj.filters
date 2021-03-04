@@ -697,6 +697,9 @@
     <ClCompile Include="NodeTypeMathGreater.cpp">
       <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClCompile>
+    <ClCompile Include="CharacterController.cpp">
+      <Filter>PhysX</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1281,6 +1284,9 @@
     </ClInclude>
     <ClInclude Include="CameraSetting.h">
       <Filter>Imgui\Windows</Filter>
+     </ClInclude>
+     <ClInclude Include="CharacterController.h">
+        <Filter>PhysX</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeMathGreater.h">
       <Filter>Imgui\Node Editor\Nodes\Math</Filter>

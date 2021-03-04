@@ -4,7 +4,6 @@
 #include <d3d11.h>
 #include <fstream>
 #include "DDSTextureLoader.h"
-#include "FBXLoaderCustom.h"
 #include "ModelMath.h"
 #include "Model.h"
 #include <UnityFactory.h>// <-- Why?
@@ -95,6 +94,8 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 	meshData.resize(numberOfMeshes);
 
 	CLoaderMesh* mesh = loaderModel->myMeshes[0];
+	myMeshesMap.emplace(aFilePath, mesh);
+
 
 	unsigned int vertexSize = mesh->myVertexBufferSize;
 	unsigned int vertexCount = mesh->myVertexCount;
@@ -108,6 +109,10 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 	}
 	myFBXVertexMap.emplace(aFilePath, vertexPositions);
 
+	
+	SMeshFilter meshFilter;
+	meshFilter.myIndexes = mesh->myIndexes;
+	meshFilter.myVertecies = vertexPositions;
 
 	for (unsigned int i = 0; i < numberOfMeshes; ++i)
 	{
@@ -252,6 +257,7 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 
 	CModel::SModelData modelData;
 	modelData.myMeshes = meshData;
+	modelData.myMeshFilter = meshFilter;
 	modelData.myVertexShader = vertexShader;
 	modelData.myPixelShader = pixelShader;
 	modelData.mySamplerState = sampler;
@@ -314,6 +320,11 @@ CModel* CModelFactory::GetOutlineModelSubset()
 std::vector<DirectX::SimpleMath::Vector3>& CModelFactory::GetVertexPositions(const std::string& aFilePath)
 {
 	return myFBXVertexMap.at(aFilePath);
+}
+
+CLoaderMesh*& CModelFactory::GetMeshes(const std::string& aFilePath)
+{
+	return myMeshesMap.at(aFilePath);
 }
 
 void CModelFactory::ClearModel(std::string aFilePath, int aNumberOfInstances)
@@ -392,6 +403,23 @@ CModel* CModelFactory::CreateInstancedModels(std::string aFilePath, int aNumberO
 	meshData.resize(numberOfMeshes);
 
 	CLoaderMesh* mesh = loaderModel->myMeshes[0];
+
+	unsigned int vertexSize = mesh->myVertexBufferSize;
+	unsigned int vertexCount = mesh->myVertexCount;
+
+	std::vector<Vector3> vertexPositions;
+	vertexPositions.reserve(vertexCount);
+	for (unsigned i = 0; i < vertexCount * vertexSize; i += vertexSize) {
+		Vector3 vertexPosition = {};
+		memcpy(&vertexPosition, &mesh->myVerticies[i], sizeof(Vector3));
+		vertexPositions.emplace_back(vertexPosition);
+	}
+
+
+	SMeshFilter meshFilter;
+	meshFilter.myIndexes = mesh->myIndexes;
+	meshFilter.myVertecies = vertexPositions;
+
 	for (unsigned int i = 0; i < numberOfMeshes; ++i)
 	{
 		mesh = loaderModel->myMeshes[i];
@@ -554,6 +582,7 @@ CModel* CModelFactory::CreateInstancedModels(std::string aFilePath, int aNumberO
 
 	CModel::SModelInstanceData modelInstanceData;
 	modelInstanceData.myMeshes = meshData;
+	modelInstanceData.myMeshFilter = meshFilter;
 	modelInstanceData.myInstanceBuffer = instanceBuffer;
 	modelInstanceData.myVertexShader = vertexShader;
 	modelInstanceData.myPixelShader = pixelShader;

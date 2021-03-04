@@ -10,6 +10,8 @@
 #include "JsonReader.h"
 #include "PointLightComponent.h"
 #include "DecalComponent.h"
+#include "Engine.h"
+#include "Scene.h"
 //#include <iostream>
 
 CSceneManager::CSceneManager()
@@ -23,9 +25,9 @@ CSceneManager::~CSceneManager()
 CScene* CSceneManager::CreateEmpty()
 {
 	CGameObject* camera = new CGameObject(0);
-	camera->AddComponent<CCameraComponent>(*camera);//Default Fov is 70.0f 
+	camera->AddComponent<CCameraComponent>(*camera);//Default Fov is 70.0f
 	camera->AddComponent<CCameraControllerComponent>(*camera); //Default speed is 2.0f
-	
+
 	camera->myTransform->Position({ 0.0f, 1.0f, 0.0f });
 	camera->myTransform->Rotation({ 0.0f, 0.0f, 0.0f });
 
@@ -40,6 +42,7 @@ CScene* CSceneManager::CreateEmpty()
 	emptyScene->MainCamera(camera->GetComponent<CCameraComponent>());
 	emptyScene->EnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnvironmentLight());
 	emptyScene->AddInstance(envLight);
+	emptyScene->AddPXScene(CEngine::GetInstance()->GetPhysx().CreatePXScene());
 
 	return emptyScene;
 }
@@ -47,6 +50,7 @@ CScene* CSceneManager::CreateEmpty()
 CScene* CSceneManager::CreateScene(const std::string& aSceneName)
 {
 	CScene* scene = CreateEmpty();
+
 	AddInstancedModelComponents(*scene, aSceneName + "_InstanceModelCollection.json");
 
 	if (AddGameObjects(*scene, aSceneName + "_InstanceIDCollection.json")) {
@@ -55,6 +59,7 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneName)
 		AddPointLights(*scene, aSceneName + "_PointLightCollection.json");
 		AddDecalComponents(*scene, aSceneName + "_DecalCollection.json");
 	}
+	CEngine::GetInstance()->GetPhysx().Cooking(scene->ActiveGameObjects(), scene);
 	return scene;
 }
 
@@ -190,5 +195,5 @@ void CSceneManager::AddDecalComponents(CScene& aScene, const std::string& aJsonF
 }
 
 
-		//CDecalComponent* component = 
+		//CDecalComponent* component =
 		//component->SetAlphaThreshold(decal["alphaThreshold"].GetFloat());

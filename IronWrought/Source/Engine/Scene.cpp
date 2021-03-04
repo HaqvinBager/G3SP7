@@ -29,6 +29,7 @@
 #include "CollisionManager.h"
 
 #include "NavmeshLoader.h"
+#include "Canvas.h"
 
 #include "Debug.h"
 //SETUP START
@@ -54,6 +55,10 @@ CScene::CScene(const unsigned int aGameObjectCount)
 	myGrid->Init(CLineFactory::GetInstance()->CreateGrid({ 0.1f, 0.5f, 1.0f, 1.0f }));
 	this->AddInstance(myGrid);
 #endif
+
+	myCanvas = new CCanvas();
+	myCanvas->Init(ASSETPATH("Assets/Graphics/UI/JSON/UI_HUD.json"), *this);
+
 }
 
 CScene::~CScene()
@@ -61,6 +66,9 @@ CScene::~CScene()
 	myMainCamera = nullptr;
 	delete myEnvironmentLight;
 	myEnvironmentLight = nullptr;
+
+	delete myCanvas;
+	myCanvas = nullptr;
 
 	this->ClearGameObjects();
 	this->ClearPointLights();
@@ -140,6 +148,10 @@ void CScene::ShouldRenderLineInstance(const bool aShouldRender)
 #else
 	aShouldRender;
 #endif //  _DEBUG
+}
+void CScene::UpdateCanvas()
+{
+	myCanvas->Update();
 }
 //SETTERS END
 //GETTERS START
@@ -350,12 +362,6 @@ bool CScene::AddInstance(CLineInstance* aLineInstance)
 	return true;
 }
 
-bool CScene::AddInstance(CVFXInstance* aVFXInstance)
-{
-	myVFXInstances.emplace_back(aVFXInstance);
-	return true;
-}
-
 bool CScene::AddInstance(CAnimatedUIElement* anAnimatedUIElement)
 {
 	if (!anAnimatedUIElement)
@@ -410,6 +416,7 @@ bool CScene::AddInstance(CSpriteInstance* aSprite)
 
 	return true;
 }
+
 //PhysX
 bool CScene::AddPXScene(PxScene* aPXScene)
 {
