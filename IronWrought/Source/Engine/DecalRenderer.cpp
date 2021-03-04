@@ -168,7 +168,7 @@ void CDecalRenderer::Render(CCameraComponent* aCamera, std::vector<CGameObject*>
 		return;
 
 	SM::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
-	SM::Matrix projectionMatrix = aCamera->GetProjection();
+	const SM::Matrix& projectionMatrix = aCamera->GetProjection();
 	myFrameBufferData.myToCameraSpace = cameraMatrix.Invert();
 	myFrameBufferData.myToProjectionSpace = projectionMatrix;
 	myFrameBufferData.myToWorldFromCamera = cameraMatrix;
@@ -196,7 +196,7 @@ void CDecalRenderer::Render(CCameraComponent* aCamera, std::vector<CGameObject*>
 			continue;
 
 		CDecal* decal = decalComponent->GetMyDecal();
-		CDecal::SDecalData decalData = decal->GetDecalData();
+		const CDecal::SDecalData& decalData = decal->GetDecalData();
 
 		myObjectBufferData.myToWorld = gameObject->myTransform->GetWorldMatrix();
 		myObjectBufferData.myToObjectSpace = gameObject->myTransform->GetWorldMatrix().Invert();

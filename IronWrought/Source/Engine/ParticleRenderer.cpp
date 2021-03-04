@@ -70,11 +70,11 @@ void CParticleRenderer::Render(CCameraComponent* aCamera, std::vector<CGameObjec
         if (component == nullptr)
             continue;
 
-        std::vector<CParticleEmitter*> particles = component->GetParticleSet();
+        const std::vector<CParticleEmitter*>& particles = component->GetParticleSet();
         if (particles.empty())
             continue;
 
-        std::vector<Matrix> transforms = component->GetParticleTransforms();
+        const std::vector<Matrix>& transforms = component->GetParticleTransforms();
 
         for (unsigned int i = 0; i < particles.size(); ++i) {
             if (component->GetParticleVertices()[i].size() < 1) {
@@ -84,7 +84,7 @@ void CParticleRenderer::Render(CCameraComponent* aCamera, std::vector<CGameObjec
             myObjectBufferData.myToWorld = transforms[i];
             BindBuffer(myObjectBuffer, myObjectBufferData, "Object Buffer");
 
-            CParticleEmitter::SParticleData particleData = particles[i]->GetParticleData();
+            const CParticleEmitter::SParticleData& particleData = particles[i]->GetParticleData();
 
             ZeroMemory(&bufferData, sizeof(D3D11_MAPPED_SUBRESOURCE));
             ENGINE_HR_MESSAGE(myContext->Map(particleData.myParticleVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &bufferData), "Vertex Buffer could not be mapped.");

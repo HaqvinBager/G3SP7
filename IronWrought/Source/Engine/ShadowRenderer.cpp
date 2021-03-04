@@ -79,7 +79,7 @@ void CShadowRenderer::Render(CEnvironmentLight* anEnvironmentLight, std::vector<
 			continue;
 
 		CModel* model = modelComponent->GetMyModel();
-		CModel::SModelData modelData = model->GetModelData();
+		const CModel::SModelData& modelData = model->GetModelData();
 
 		myObjectBufferData.myToWorld = gameObject->myTransform->Transform();
 		BindBuffer(myObjectBuffer, myObjectBufferData, "Object Buffer");
@@ -119,7 +119,7 @@ void CShadowRenderer::Render(CEnvironmentLight* anEnvironmentLight, std::vector<
 			continue;
 
 		CModel* model = instanceComponent->GetModel();
-		CModel::SModelInstanceData modelData = model->GetModelInstanceData();
+		const CModel::SModelInstanceData& modelData = model->GetModelInstanceData();
 
 		BindBuffer(myObjectBuffer, myObjectBufferData, "Object Buffer");
 

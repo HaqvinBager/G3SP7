@@ -149,8 +149,8 @@ void CForwardRenderer::Render(CEnvironmentLight* anEnvironmentLight, std::vector
 
 		for (unsigned int i = 0; i < aModelPointLightList[modelIndex].first; ++i)
 		{
-			SM::Vector3 position = aModelPointLightList[modelIndex].second[i]->GetPosition();
-			SM::Vector3 color = aModelPointLightList[modelIndex].second[i]->GetColor();
+			const SM::Vector3& position = aModelPointLightList[modelIndex].second[i]->GetPosition();
+			const SM::Vector3& color = aModelPointLightList[modelIndex].second[i]->GetColor();
 			myObjectBufferData.myPointLights[i].myPositionAndIntensity = {position.x, position.y, position.z, aModelPointLightList[modelIndex].second[i]->GetIntensity()};
 			myObjectBufferData.myPointLights[i].myColorAndRange = {color.x, color.y, color.z, aModelPointLightList[modelIndex].second[i]->GetRange()};
 		}
@@ -159,7 +159,7 @@ void CForwardRenderer::Render(CEnvironmentLight* anEnvironmentLight, std::vector
 
 		CModel* model = gameobject->GetComponent<CModelComponent>()->GetMyModel();
 
-		CModel::SModelData modelData = model->GetModelData();
+		const CModel::SModelData& modelData = model->GetModelData();
 
 		myObjectBufferData.myToWorld = gameobject->myTransform->Transform();
 
@@ -223,7 +223,7 @@ void CForwardRenderer::Render(CEnvironmentLight* anEnvironmentLight, std::vector
 void CForwardRenderer::InstancedRender(CEnvironmentLight* anEnvironmentLight, std::vector<std::pair<unsigned int, std::array<CPointLight*, LIGHTCOUNT>>> aModelPointLightList, CCameraComponent* aCamera, std::vector<CGameObject*>& aGameObjectList)
 {
 	DirectX::SimpleMath::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
-	myFrameBufferData.myToCameraSpace = cameraMatrix.Invert();;
+	myFrameBufferData.myToCameraSpace = cameraMatrix.Invert();
 	myFrameBufferData.myToProjectionSpace = aCamera->GetProjection();
 	myFrameBufferData.myCameraPosition = DirectX::SimpleMath::Vector4{cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f};
 	myFrameBufferData.myDirectionalLightDirection = anEnvironmentLight->GetDirection();
@@ -274,7 +274,7 @@ void CForwardRenderer::InstancedRender(CEnvironmentLight* anEnvironmentLight, st
 		}
 
 		CModel* model = instanceComponent->GetModel();
-		CModel::SModelInstanceData modelData = model->GetModelInstanceData();
+		const CModel::SModelInstanceData& modelData = model->GetModelInstanceData();
 
 		{
 			D3D11_MAPPED_SUBRESOURCE instanceBuffer;
@@ -325,7 +325,7 @@ void CForwardRenderer::RenderLines(CCameraComponent* aCamera, const std::vector<
 
 	for (const SLineTime& instance : aLineList)
 	{
-		CLine::SLineData lineData = instance.myLine.GetLine()->GetLineData();
+		const CLine::SLineData& lineData = instance.myLine.GetLine()->GetLineData();
 
 		myObjectBufferData.myToWorld = instance.myLine.GetTransform();
 
@@ -414,7 +414,7 @@ void CForwardRenderer::RenderLineInstances(CCameraComponent* aCamera, const std:
 
 	for (const CLineInstance* instance : aLineList)
 	{
-		CLine::SLineData lineData = instance->GetLine()->GetLineData();
+		const CLine::SLineData& lineData = instance->GetLine()->GetLineData();
 
 		myObjectBufferData.myToWorld = instance->GetTransform();
 

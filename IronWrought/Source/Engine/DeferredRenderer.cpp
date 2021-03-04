@@ -220,7 +220,7 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 			continue;
 
 		CModel* model = modelComponent->GetMyModel();
-		CModel::SModelData modelData = model->GetModelData();
+		const CModel::SModelData& modelData = model->GetModelData();
 
 		myObjectBufferData.myToWorld = gameObject->myTransform->Transform();
 		int dnCounter = 0;
@@ -303,7 +303,7 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 			continue;
 
 		CModel* model = instanceComponent->GetModel();
-		CModel::SModelInstanceData modelData = model->GetModelInstanceData();
+		const CModel::SModelInstanceData& modelData = model->GetModelInstanceData();
 
 		int dnCounter = 0;
 		for (auto detailNormal : model->GetModelInstanceData().myDetailNormals)
@@ -437,8 +437,8 @@ void CDeferredRenderer::Render(CCameraComponent* aCamera, std::vector<CPointLigh
 		myContext->VSSetConstantBuffers(1, 1, &myObjectBuffer);
 		
 		//Update pointlightbufferdata and fill pointlightbuffer
-		SM::Vector3 position = currentInstance->GetPosition();
-		SM::Vector3 color = currentInstance->GetColor();
+		const SM::Vector3& position = currentInstance->GetPosition();
+		const SM::Vector3& color = currentInstance->GetColor();
 		myPointLightBufferData.myPositionAndRange = { position.x, position.y, position.z, currentInstance->GetRange() };
 		myPointLightBufferData.myColorAndIntensity = { color.x, color.y, color.z, currentInstance->GetIntensity() };
 

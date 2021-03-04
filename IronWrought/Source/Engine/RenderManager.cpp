@@ -215,7 +215,6 @@ void CRenderManager::Render(CScene& aScene)
 	std::vector<LightPair> pointlights;
 	std::vector<LightPair> pointLightsInstanced;
 
-
 	for (unsigned int i = 0; i < instancedGameObjectsWithAlpha.size(); ++i)
 	{
 		pointLightsInstanced.emplace_back(aScene.CullLightInstanced(instancedGameObjectsWithAlpha[i]->GetComponent<CInstancedModelComponent>()));

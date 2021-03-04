@@ -32,11 +32,11 @@ void CPointLight::SetIntensity(float aIntensity) {
 	myIntensity = aIntensity;
 }
 
-SM::Vector3 CPointLight::GetPosition() const {
+const SM::Vector3& CPointLight::GetPosition() const {
 	return myPosition;
 }
 
-SM::Vector3 CPointLight::GetColor() const {
+const SM::Vector3& CPointLight::GetColor() const {
 	return myColor;
 }
 

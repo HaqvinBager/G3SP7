@@ -87,7 +87,7 @@ void CSpriteRenderer::Render(std::vector<CSpriteInstance*>& aSpriteList)
 
         BindBuffer(myObjectBuffer, myObjectBufferData, "Object Buffer");
 
-        CSprite::SSpriteData spriteData = sprite->GetSpriteData();
+        const CSprite::SSpriteData& spriteData = sprite->GetSpriteData();
 
         myContext->IASetPrimitiveTopology(spriteData.myPrimitiveTopology);
         myContext->IASetInputLayout(nullptr);
@@ -150,7 +150,7 @@ void CSpriteRenderer::Render(std::vector<CAnimatedUIElement*>& someAnimatedEleme
         myTextureScrollingData.randomOffset = data->randomOffset;
         BindBuffer(myTextureScrollingBuffer, myTextureScrollingData, "Texture Scrolling Buffer");
 
-        CSprite::SSpriteData spriteData = sprite->GetSpriteData();
+        const CSprite::SSpriteData& spriteData = sprite->GetSpriteData();
 
         myContext->IASetPrimitiveTopology(spriteData.myPrimitiveTopology);
         myContext->IASetInputLayout(nullptr);

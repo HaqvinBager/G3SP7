@@ -58,16 +58,16 @@ void CVFXRenderer::Render(CCameraComponent* aCamera, std::vector<CGameObject*>& 
 		if (component == nullptr)
 			continue;
 
-		std::vector<CVFXBase*> vfxBases = component->GetVFXBases();
+		const std::vector<CVFXBase*>& vfxBases = component->GetVFXBases();
 		if (vfxBases.empty())
 			continue;
 		
-		std::vector<bool>& isActive = component->GetVFXIsActive();
-		std::vector<Matrix>& vfxMatrices = component->GetVFXTransforms();
+		const std::vector<bool>& isActive = component->GetVFXIsActive();
+		const std::vector<Matrix>& vfxMatrices = component->GetVFXTransforms();
 		for (unsigned int i = 0; i < vfxBases.size(); ++i) 
 		{
-			CVFXBase::SVFXBaseData vfxBaseData = vfxBases[i]->GetVFXBaseData();
-			Matrix transform = vfxMatrices[i];
+			const CVFXBase::SVFXBaseData& vfxBaseData = vfxBases[i]->GetVFXBaseData();
+			const Matrix& transform = vfxMatrices[i];
 
 			if (!isActive[i]) continue;
 

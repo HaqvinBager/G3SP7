@@ -15,7 +15,7 @@ public:
 	void Start() override;
 	void Update() override;
 
-	DirectX::SimpleMath::Matrix GetProjection() const { return myProjection; }
+	const DirectX::SimpleMath::Matrix& GetProjection() const { return myProjection; }
 	float GetFoV();
 
 	void SetTrauma(float aValue);
