@@ -67,14 +67,14 @@ PixelOutput main(VertexToPixel input)
 	
 	// No Tonemapping
 	//{
- //       returnValue.myColor.rgb = resource;
- //   }
+    //     returnValue.myColor.rgb = resource;
+    //}
 	// No Tonemapping
 
 	// Reinhard
 	//{
- //       returnValue.myColor.rgb = resource / (resource + 1.0f);
- //   }
+    //    returnValue.myColor.rgb = resource / (resource + 1.0f);
+    //}
 	// Reinhard
     
 	// Uncharted 2
