@@ -172,6 +172,9 @@
     <FxCompile Include="Decal_MaterialPixelShader.hlsl">
       <Filter>Shaders\Decal</Filter>
     </FxCompile>
+    <FxCompile Include="FullscreenPixelShader_Tonemap.hlsl">
+      <Filter>Shaders\Fullscreen</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimationComponent.cpp">
