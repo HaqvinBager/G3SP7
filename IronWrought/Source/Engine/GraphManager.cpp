@@ -42,6 +42,11 @@ CGraphManager::~CGraphManager()
 
 void CGraphManager::Load()
 {
+
+	//Global = Kan alltid n�s om programmet k�r
+	//Scene = Data som relaterar till Just denna Scen, kan alltid n�s n�r Scene �r ig�ng
+	//Script = Data som relaterar till just detta script
+
 	if (!CNodeDataManager::Get())
 		CNodeDataManager::Create();
 	myInstantiableVariables.push_back("Float");

@@ -8,7 +8,7 @@ class CSpriteInstance;
 class CCameraComponent : public CComponent
 {
 public:
-	CCameraComponent(CGameObject& aParent, const float aFoV/*, float aNearPlane = 0.3f, float aFarPlane = 10000.0f, DirectX::SimpleMath::Vector2 aResolution = {1600.f, 900.f}*/);
+	CCameraComponent(CGameObject& aParent, const float aFoV = 70.0f/*, float aNearPlane = 0.3f, float aFarPlane = 10000.0f, DirectX::SimpleMath::Vector2 aResolution = {1600.f, 900.f}*/);
 	~CCameraComponent();
 
 	void Awake() override;
@@ -16,9 +16,11 @@ public:
 	void Update() override;
 
 	DirectX::SimpleMath::Matrix GetProjection() const { return myProjection; }
+	float GetFoV();
 
 	void SetTrauma(float aValue);
 	void SetStartingRotation(DirectX::SimpleMath::Vector3 aRotation);
+	void SetFoV(float aFoV);
 
 	void Fade(bool aShouldFadeIn);
 	const bool IsFading() const;
@@ -47,5 +49,8 @@ private:
 	float myFadeSpeed;
 	bool myFadingIn;
 	bool myFadingPlaneActive;
+
+	float myFoV; 
+
 };
 

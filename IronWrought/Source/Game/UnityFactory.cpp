@@ -52,7 +52,7 @@ CUnityFactory::~CUnityFactory()
 //	aScene.MainCamera(camera->GetComponent<CCameraComponent>());
 //	CGameObject* envLight = CreateGameObject(aData.myDirectionalLight);
 //	aScene.AddInstance(envLight);
-//	aScene.EnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight());
+//	aScene.EnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnvironmentLight());
 //	return true;
 //}
 
@@ -64,7 +64,7 @@ CUnityFactory::~CUnityFactory()
 //
 //	CGameObject* envLight = CreateGameObject(aData.myDirectionalLight);
 //	aScene.AddInstance(envLight);
-//	aScene.EnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight());
+//	aScene.EnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnvironmentLight());
 //
 //	for (const auto& pointLightData : aData.myPointLightData)
 //	{

@@ -172,6 +172,9 @@
     <FxCompile Include="Decal_MaterialPixelShader.hlsl">
       <Filter>Shaders\Decal</Filter>
     </FxCompile>
+    <FxCompile Include="FullscreenPixelShader_Tonemap.hlsl">
+      <Filter>Shaders\Fullscreen</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimationComponent.cpp">
@@ -688,7 +691,11 @@
     <ClCompile Include="NodeTypeGameObjectGetRotation.cpp">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClCompile>
-    <ClCompile Include="NodeTypeMathGreater.cpp" />
+    <ClCompile Include="NodeTypeMathGreater.cpp">
+    </ClCompile>
+    <ClCompile Include="CameraSetting.cpp">
+      <Filter>Imgui\Windows</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1271,7 +1278,11 @@
     <ClInclude Include="NodeTypeGameObjectRotate.h">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClInclude>
-    <ClInclude Include="NodeTypeMathGreater.h" />
+    <ClInclude Include="NodeTypeMathGreater.h">
+    </ClInclude>
+    <ClInclude Include="CameraSetting.h">
+      <Filter>Imgui\Windows</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">

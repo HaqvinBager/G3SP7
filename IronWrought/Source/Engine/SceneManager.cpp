@@ -8,6 +8,8 @@
 #include "ModelComponent.h"
 //#include <PlayerControllerComponent.h>
 #include "JsonReader.h"
+#include "PointLightComponent.h"
+#include "DecalComponent.h"
 //#include <iostream>
 
 CSceneManager::CSceneManager()
@@ -21,20 +23,22 @@ CSceneManager::~CSceneManager()
 CScene* CSceneManager::CreateEmpty()
 {
 	CGameObject* camera = new CGameObject(0);
-	camera->AddComponent<CCameraComponent>(*camera, 70.0f);
-	camera->AddComponent<CCameraControllerComponent>(*camera, 2.0f);
+	camera->AddComponent<CCameraComponent>(*camera);//Default Fov is 70.0f 
+	camera->AddComponent<CCameraControllerComponent>(*camera); //Default speed is 2.0f
+	
 	camera->myTransform->Position({ 0.0f, 1.0f, 0.0f });
 	camera->myTransform->Rotation({ 0.0f, 0.0f, 0.0f });
 
 	CGameObject* envLight = new CGameObject(1);
 	envLight->AddComponent<CEnviromentLightComponent>(*envLight);
-	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetIntensity(1.f);
-	envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight()->SetDirection({ 0.0f,1.0f,1.0f });
+	envLight->GetComponent<CEnviromentLightComponent>()->GetEnvironmentLight()->SetIntensity(1.f);
+	envLight->GetComponent<CEnviromentLightComponent>()->GetEnvironmentLight()->SetDirection({ 0.0f,1.0f,1.0f });
+	//envLight->GetComponent<CEnviromentLightComponent>()->GetEnvironmentLight()->SetColor({ 1.0f, 0.0f, 0.0f });
 
 	CScene* emptyScene = new CScene(2);
 	emptyScene->AddInstance(camera);
 	emptyScene->MainCamera(camera->GetComponent<CCameraComponent>());
-	emptyScene->EnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnviromentLight());
+	emptyScene->EnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnvironmentLight());
 	emptyScene->AddInstance(envLight);
 
 	return emptyScene;
@@ -48,6 +52,8 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneName)
 	if (AddGameObjects(*scene, aSceneName + "_InstanceIDCollection.json")) {
 		SetTransforms(*scene, aSceneName + "_TransformCollection.json");
 		AddModelComponents(*scene, aSceneName + "_ModelCollection.json");
+		AddPointLights(*scene, aSceneName + "_PointLightCollection.json");
+		AddDecalComponents(*scene, aSceneName + "_DecalCollection.json");
 	}
 	return scene;
 }
@@ -141,3 +147,48 @@ void CSceneManager::AddInstancedModelComponents(CScene& aScene, const std::strin
 		aScene.AddInstance(gameObject);
 	}
 }
+
+void CSceneManager::AddPointLights(CScene& aScene, const std::string& aJsonFileName)
+{
+	const auto& doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + aJsonFileName));
+
+	if (!CJsonReader::IsValid(doc, { "lights" }))
+		return;
+
+	const auto& pointLightArray = doc["lights"].GetArray();
+	for (const auto& pointLight : pointLightArray) {
+		const auto& id = pointLight["instanceID"].GetInt();
+
+		CGameObject* gameObject = aScene.FindObjectWithID(id);
+		CPointLightComponent* pointLightComponent = gameObject->AddComponent<CPointLightComponent>(
+			*gameObject,
+			pointLight["range"].GetFloat(),
+			Vector3(pointLight["r"].GetFloat(),
+					pointLight["g"].GetFloat(),
+					pointLight["b"].GetFloat()),
+			pointLight["intensity"].GetFloat());
+
+		aScene.AddInstance(pointLightComponent->GetPointLight());
+	}
+}
+
+void CSceneManager::AddDecalComponents(CScene& aScene, const std::string& aJsonFileName)
+{
+	const auto& doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + aJsonFileName));
+	if (!CJsonReader::IsValid(doc, { "links" }))
+		return;
+
+	const auto& idArray = doc.GetObjectW()["links"].GetArray();
+
+	if (idArray.Size() == 0)
+		return;
+
+	for (const auto& decal : idArray) {
+		CGameObject* gameObject = aScene.FindObjectWithID(decal["instanceID"].GetInt());
+		gameObject->AddComponent<CDecalComponent>(*gameObject, decal["materialName"].GetString());
+	}
+}
+
+
+		//CDecalComponent* component = 
+		//component->SetAlphaThreshold(decal["alphaThreshold"].GetFloat());

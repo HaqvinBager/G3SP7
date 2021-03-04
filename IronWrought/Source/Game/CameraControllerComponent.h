@@ -15,13 +15,14 @@ public:
 	};
 
 public:
-	CCameraControllerComponent(CGameObject& gameObject,  float aCameraMoveSpeed = 5.0f, ECameraMode aCameraMode = ECameraMode::FreeCam, char aToggleFreeCam = VK_F4, DirectX::SimpleMath::Vector3 aOffset = {0.f, 0.f, 0.f});
+	CCameraControllerComponent(CGameObject& gameObject,  float aCameraMoveSpeed = 2.0f, ECameraMode aCameraMode = ECameraMode::FreeCam, char aToggleFreeCam = VK_F4, DirectX::SimpleMath::Vector3 aOffset = {0.f, 0.f, 0.f});
 	~CCameraControllerComponent() override;
 
 	void Awake() override;
 	void Start() override;
 	void Update() override;
-
+	float GetCameraMoveSpeed();
+	void SetCameraMoveSpeed(float aCameraMoveSpeed);
 public:
 	// Creates a camera and sets parent-child relationship with proper offsets.
 	static CGameObject* CreatePlayerFirstPersonCamera(CGameObject* aParentObject);

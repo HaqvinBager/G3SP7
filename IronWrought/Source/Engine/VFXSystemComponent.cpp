@@ -36,7 +36,7 @@ CVFXSystemComponent::CVFXSystemComponent(CGameObject& aParent, const std::string
 	myVFXBaseDurations.resize(size, 0.0f);
 	myVFXIsActive.resize(size, false);
 	for (unsigned int i = 0; i < doc["VFXMeshes"].Size(); ++i) {
-		vfxPaths.emplace_back(doc["VFXMeshes"][i]["Path"].GetString());
+		vfxPaths.emplace_back(ASSETPATH(doc["VFXMeshes"][i]["Path"].GetString()));
 
 		Matrix t;
 		t = Matrix::CreateFromYawPitchRoll
@@ -86,7 +86,7 @@ CVFXSystemComponent::CVFXSystemComponent(CGameObject& aParent, const std::string
 	myEmitterBaseDurations.resize(size);
 	myEmitterTimers.resize(size, 0.0f);
 	for (unsigned int i = 0; i < doc["ParticleSystems"].Size(); ++i) {
-		particlePaths.emplace_back(doc["ParticleSystems"][i]["Path"].GetString());
+		particlePaths.emplace_back(ASSETPATH(doc["ParticleSystems"][i]["Path"].GetString()));
 
 		Matrix t;
 		t = Matrix::CreateFromYawPitchRoll

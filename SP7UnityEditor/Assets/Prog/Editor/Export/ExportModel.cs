@@ -29,6 +29,9 @@ public class ExportModel
 
         foreach(Renderer renderer in allrenderers)
         {
+            if (renderer.sharedMaterial.shader.name.Contains("Decal"))
+                continue;
+
             if (renderer.TryGetComponent(out PolybrushFBX polyBrushFbx))
             {
                 string assetPath = AssetDatabase.GUIDToAssetPath(polyBrushFbx.originalFBXGUID);
@@ -41,15 +44,10 @@ public class ExportModel
                 if(!fbxLinks.modelLinks.Exists( e => e.instanceID == link.instanceID))
                     fbxLinks.modelLinks.Add(link);
 
-                Debug.Log("PolyBrush Mesh", renderer);
-
                 continue;
             } 
             else if(Json.TryIsValidExport(renderer, out GameObject prefabParent))
             {
-                Debug.Log("Regular Mesh", renderer);
-
-
                 if (renderer.TryGetComponent(out MeshFilter meshFilter))
                 {
                     GameObject modelAsset = PrefabUtility.GetCorrespondingObjectFromOriginalSource(meshFilter).gameObject;

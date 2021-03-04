@@ -50,6 +50,9 @@ void CInGameState::Awake(){}
 #include "VFXMeshFactory.h"
 #include "ParticleEmitterFactory.h"
 
+#include "TextFactory.h"
+#include "TextInstance.h"
+
 CGameObject* myVFX = nullptr;
 void TEMP_VFX(CScene* aScene);
 
@@ -61,7 +64,7 @@ void CInGameState::Start()
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);
 
-	
+	TEMP_DeferredRenderingTests(scene);
 	TEMP_VFX(scene);
 
 	myExitLevel = false;
@@ -102,28 +105,32 @@ void CInGameState::Stop()
 void CInGameState::Update()
 {
 	float speed = 10.0f;
-	if (Input::GetInstance()->IsKeyDown(VK_UP))
+	if (myVFX->GetComponent<CVFXSystemComponent>())
 	{
-		myVFX->myTransform->Move({0.0f, 0.0f, CTimer::Dt() * speed });
-	}
-	if (Input::GetInstance()->IsKeyDown(VK_DOWN))
-	{
-		myVFX->myTransform->Move({ 0.0f, 0.0f, -CTimer::Dt() * speed });
-	}
-	if (Input::GetInstance()->IsKeyDown(VK_LEFT))
-	{
-		myVFX->myTransform->Move({ -CTimer::Dt() * speed, 0.0f, 0.0f });
-	}
-	if (Input::GetInstance()->IsKeyDown(VK_RIGHT))
-	{
-		myVFX->myTransform->Move({ CTimer::Dt() * speed, 0.0f, 0.0f });
-	}
+		if (Input::GetInstance()->IsKeyDown(VK_UP))
+		{
+			myVFX->myTransform->Move({0.0f, 0.0f, CTimer::Dt() * speed });
+		}
+		if (Input::GetInstance()->IsKeyDown(VK_DOWN))
+		{
+			myVFX->myTransform->Move({ 0.0f, 0.0f, -CTimer::Dt() * speed });
+		}
+		if (Input::GetInstance()->IsKeyDown(VK_LEFT))
+		{
+			myVFX->myTransform->Move({ -CTimer::Dt() * speed, 0.0f, 0.0f });
+		}
+		if (Input::GetInstance()->IsKeyDown(VK_RIGHT))
+		{
+			myVFX->myTransform->Move({ CTimer::Dt() * speed, 0.0f, 0.0f });
+		}
 
-	//if (INPUT->IsKeyPressed('P'))
-	//{
-	//	myVFX->GetComponent<CVFXSystemComponent>()->OnDisable();
-	//	myVFX->GetComponent<CVFXSystemComponent>()->OnEnable();
-	//}
+
+		if (INPUT->IsKeyPressed('P'))
+		{
+			myVFX->GetComponent<CVFXSystemComponent>()->OnDisable();
+			myVFX->GetComponent<CVFXSystemComponent>()->OnEnable();
+		}
+	}
 
 	CEngine::GetInstance()->GetPhysx().Simulate();
 	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
@@ -200,7 +207,7 @@ void TEMP_DeferredRenderingTests(CScene* scene)
 	//scene->AddInstance(chest2);
 	//scene->AddInstance(chest3);
 
-	constexpr int numPointLights = 2;
+	constexpr int numPointLights = 0;
 	std::vector<CGameObject*> pointLights;
 	float x = -2.0f;
 	float y = 1.0f;
@@ -236,30 +243,36 @@ void TEMP_DeferredRenderingTests(CScene* scene)
 
 	}
 	pointLights[0]->myTransform->Position({ 6.0f, 0.0f, -10.0f });
-	pointLights[0]->GetComponent<CPointLightComponent>()->GetPointLight()->SetColor({ 0.0f,1.0f,0.0f });
-	pointLights[0]->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ 4.0f,0.0f,-3.0f });
+	pointLights[0]->GetComponent<CPointLightComponent>()->GetPointLight()->SetColor({ 0.0f,20.0f,0.0f });
+	pointLights[0]->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ 0.0f,0.0f,-3.0f });
 
 	pointLights[1]->myTransform->Position({ 4.0f, 1.0f, -10.0f });
-	pointLights[1]->GetComponent<CPointLightComponent>()->GetPointLight()->SetColor({ 1.0f,0.0f,0.0f });
-	pointLights[1]->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ 5.0f,2.0f,-1.0f });
+	pointLights[1]->GetComponent<CPointLightComponent>()->GetPointLight()->SetColor({ 20.0f,0.0f,0.0f });
+	pointLights[1]->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ 6.0f,0.0f,-1.0f });
 
 	pointLights[2]->myTransform->Position({ 7.0f, 2.0f, -10.0f });
-	pointLights[2]->GetComponent<CPointLightComponent>()->GetPointLight()->SetColor({ 0.0f,0.0f,1.0f });
-	pointLights[2]->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ 4.0f,-1.0f,-2.0f });
+	pointLights[2]->GetComponent<CPointLightComponent>()->GetPointLight()->SetColor({ 0.0f,0.0f,20.0f });
+	pointLights[2]->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ 12.0f,0.0f,-2.0f });
 
 	pointLights[3]->myTransform->Position({ 6.0f, 0.0f, -10.0f });
-	pointLights[3]->GetComponent<CPointLightComponent>()->GetPointLight()->SetColor({ 0.0f,0.5f,1.0f });
-	pointLights[3]->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ 4.0f,0.0f,-2.0f });
+	pointLights[3]->GetComponent<CPointLightComponent>()->GetPointLight()->SetColor({ 100.0f,100.0f,0.0f });
+	pointLights[3]->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ 18.0f,2.0f,-2.0f });
 
 	pointLights[4]->myTransform->Position({ 10.0f, 2.0f, -10.0f });
-	pointLights[4]->GetComponent<CPointLightComponent>()->GetPointLight()->SetColor({ 0.5f,0.0f,1.0f });
-	pointLights[4]->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ 5.0f,-2.0f,-2.0f });
+	pointLights[4]->GetComponent<CPointLightComponent>()->GetPointLight()->SetColor({ 0.5f,50.0f,50.0f });
+	pointLights[4]->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ 24.0f,1.0f,-2.0f });
 
 	scene->AddInstance(pointLights[0]->GetComponent<CPointLightComponent>()->GetPointLight());
 	scene->AddInstance(pointLights[1]->GetComponent<CPointLightComponent>()->GetPointLight());
 	scene->AddInstance(pointLights[2]->GetComponent<CPointLightComponent>()->GetPointLight());
 	scene->AddInstance(pointLights[3]->GetComponent<CPointLightComponent>()->GetPointLight());
 	scene->AddInstance(pointLights[4]->GetComponent<CPointLightComponent>()->GetPointLight());
+
+	CTextInstance* text = new CTextInstance();
+	text->Init(CTextFactory::GetInstance()->GetText("Text/baskerville16"));
+	text->SetText("hello");
+	text->SetPosition({0.0f, 0.0f});
+	scene->AddInstance(text);
 }
 
 void CInGameState::TEMP_DecalTests(CScene* aScene)
@@ -302,7 +315,7 @@ void TEMP_VFX(CScene* aScene)
 {
 	static int id = 500;
 	CGameObject* abilityObject = new CGameObject(id++);
-	abilityObject->AddComponent<CVFXSystemComponent>(*abilityObject, "Assets/VFXTEMP/JSON/VFXSystem_ToLoad.json");
+	abilityObject->AddComponent<CVFXSystemComponent>(*abilityObject, ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystem_ToLoad.json"));
 
 	myVFX = abilityObject;
 	aScene->AddInstance(abilityObject);

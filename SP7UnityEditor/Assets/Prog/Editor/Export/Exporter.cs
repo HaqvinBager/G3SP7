@@ -48,28 +48,6 @@ public class Exporter
 
         foreach (var gameObject in allScenesActiveObjects)
             gameObject.SetActive(true);
-
-
-        //for (int i = 0; i < SceneManager.sceneCount; ++i)
-        //{
-        //    GameObject[] gameobjects = SceneManager.GetSceneAt(i).GetRootGameObjects();
-        //    List<GameObject> activeobjects = new List<GameObject>();
-        //    foreach (var gameobject in gameobjects)
-        //    {
-        //        if (allScenesActiveObjects.Contains(gameobject))
-        //        {
-        //            activeobjects.Add(gameobject);
-        //            gameobject.SetActive(true);
-        //        }
-        //    }
-
-        //    ExportAScene(SceneManager.GetSceneAt(i));
-
-        //    foreach (var gameobject in activeobjects)
-        //    {
-        //        gameobject.SetActive(false);
-        //    }
-        //}
     }
 
     private static void ExportAScene(Scene aScene)
@@ -81,6 +59,8 @@ public class Exporter
         ExportInstancedModel.Export(aScene);
         ExportVertexPaint.ExportVertexPainting(aScene, validExportIds);
         ExportBluePrint.Export(aScene);
+        ExportPointlights.ExportPointlight(aScene);
+        ExportDecals.Export(aScene);
         AssetDatabase.Refresh();
     }
 
