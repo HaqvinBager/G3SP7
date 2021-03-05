@@ -197,6 +197,7 @@
     <ClInclude Include="NodeTypeDecisionCoinFlip.h" />
     <ClInclude Include="NodeTypeGameObjectGetRotation.h" />
     <ClInclude Include="NodeTypeGameObjectMove.h" />
+    <ClInclude Include="NodeTypeGameObjectMoveToPosition.h" />
     <ClInclude Include="NodeTypeGameObjectRotate.h" />
     <ClInclude Include="NodeTypeGameObjectSetRotation.h" />
     <ClInclude Include="NodeTypeMathGreater.h" />
@@ -390,6 +391,7 @@
     <ClCompile Include="NodeDataManager.cpp" />
     <ClCompile Include="NodeTypeDecisionCoinFlip.cpp" />
     <ClCompile Include="NodeTypeGameObjectMove.cpp" />
+    <ClCompile Include="NodeTypeGameObjectMoveToPosition.cpp" />
     <ClCompile Include="NodeTypeGameObjectRotate.cpp" />
     <ClCompile Include="NodeTypeGameObjectSetRotation.cpp" />
     <ClCompile Include="NodeTypeMathGreater.cpp" />
