@@ -74,9 +74,12 @@ public class Exporter
     private static void ExportPlayer(Scene aScene)
     {
         PlayerSpawnPosition player = GameObject.FindObjectOfType<PlayerSpawnPosition>();
-        Player data = new Player();
-        data.instanceID = player.transform.GetInstanceID();
-        Json.ExportToJson(data, aScene.name);
+        if(player != null)
+        {
+            Player data = new Player();
+            data.instanceID = player.transform.GetInstanceID();
+            Json.ExportToJson(data, aScene.name);
+        }
     }
 
     private static void DeactivateAndExportScene(int aSceneIndex, List<GameObject> allScenesActiveObjects)
