@@ -6,8 +6,6 @@
 #include "AudioChannel.h"
 #include "MainSingleton.h"
 #include "PostMaster.h"
-//#include "rapidjson\document.h"
-//#include "rapidjson\istreamwrapper.h"
 #include "JsonReader.h"
 
 /*////////////////////////////////////
@@ -30,70 +28,71 @@ using namespace rapidjson;
 CAudioManager::CAudioManager() : myWrapper() {
 	SubscribeToMessages();
 
-	//std::ifstream inputStream("Json/Audio/AudioPaths.json");
-	//IStreamWrapper inputWrapper(inputStream);
 	Document document = CJsonReader::Get()->LoadDocument("Json/Audio/AudioPaths.json");
-	//document.ParseStream(inputWrapper);
 
 	if (document.HasParseError()) { return; }
 
 	// Init Channels
 	for (unsigned int i = 0; i < static_cast<unsigned int>(EChannels::Count); ++i) {
-		myChannels.emplace_back(myWrapper.RequestChannel(TranslateChannels(static_cast<EChannels>(i))));
+		myChannels.push_back(myWrapper.RequestChannel(TranslateChannels(static_cast<EChannels>(i))));
 	}
-#pragma region AudioLoading
-
-	if (document.HasMember("Ambience"))
-	{
-		auto audioDataArray = document["Ambience"].GetArray();
-		for (unsigned int i = 0; i < audioDataArray.Size(); ++i)
-		{
-			auto audioData = audioDataArray[i].GetObjectW();
-			myAmbianceAudio.emplace_back(myWrapper.RequestSound(myAmbiancePath + audioData["Path"].GetString()));
-		}
-	}
-
-	if (document.HasMember("Music"))
-	{
-		auto audioDataArray = document["Music"].GetArray();
-		for (unsigned int i = 0; i < audioDataArray.Size(); ++i)
-		{
-			auto audioData = audioDataArray[i].GetObjectW();
-			myMusicAudio.emplace_back(myWrapper.RequestLoopingSound(myMusicPath + audioData["Path"].GetString()));
-		}
-	}
-
-	if (document.HasMember("SFX"))
-	{
-		auto audioDataArray = document["SFX"].GetArray();
-		for (unsigned int i = 0; i < audioDataArray.Size(); ++i)
-		{
-			auto audioData = audioDataArray[i].GetObjectW();
-			mySFXAudio.emplace_back(myWrapper.RequestSound(mySFXPath + audioData["Path"].GetString()));
-		}
-	}
-
-	if (document.HasMember("UI"))
-	{
-		auto audioDataArray = document["UI"].GetArray();
-		for (unsigned int i = 0; i < audioDataArray.Size(); ++i)
-		{
-			auto audioData = audioDataArray[i].GetObjectW();
-			myUIAudio.emplace_back(myWrapper.RequestSound(myUIPath + audioData["Path"].GetString()));
-		}
-	}
-
-	if (document.HasMember("VoiceLine"))
-	{
-		auto audioDataArray = document["VoiceLine"].GetArray();
-		for (unsigned int i = 0; i < audioDataArray.Size(); ++i)
-		{
-			auto audioData = audioDataArray[i].GetObjectW();
-			myVoicelineAudio.emplace_back(myWrapper.RequestSound(myVoxPath + audioData["Path"].GetString()));
-		}
-	}
-
-#pragma endregion
+//#pragma region AudioLoading
+//
+//	if (document.HasMember("Ambience"))
+//	{
+//		auto audioDataArray = document["Ambience"].GetArray();
+//		for (unsigned int i = 0; i < audioDataArray.Size(); ++i)
+//		{
+//			auto audioData = audioDataArray[i].GetObjectW();
+//			myAmbianceAudio.push_back(myWrapper.RequestSound(myAmbiencePath + audioData["Path"].GetString()));
+//		}
+//	}
+//
+//	if (document.HasMember("Music"))
+//	{
+//		auto audioDataArray = document["Music"].GetArray();
+//		for (unsigned int i = 0; i < audioDataArray.Size(); ++i)
+//		{
+//			auto audioData = audioDataArray[i].GetObjectW();
+//			myMusicAudio.push_back(myWrapper.RequestLoopingSound(myMusicPath + audioData["Path"].GetString()));
+//		}
+//	}
+//
+//	if (document.HasMember("SFX"))
+//	{
+//		auto audioDataArray = document["SFX"].GetArray();
+//		for (unsigned int i = 0; i < audioDataArray.Size(); ++i)
+//		{
+//			auto audioData = audioDataArray[i].GetObjectW();
+//			mySFXAudio.push_back(myWrapper.RequestSound(mySFXPath + audioData["Path"].GetString()));
+//		}
+//	}
+//
+//	if (document.HasMember("UI"))
+//	{
+//		auto audioDataArray = document["UI"].GetArray();
+//		for (unsigned int i = 0; i < audioDataArray.Size(); ++i)
+//		{
+//			auto audioData = audioDataArray[i].GetObjectW();
+//			myUIAudio.push_back(myWrapper.RequestSound(myUIPath + audioData["Path"].GetString()));
+//		}
+//	}
+//
+//	if (document.HasMember("VoiceLine"))
+//	{
+//		auto audioDataArray = document["VoiceLine"].GetArray();
+//		for (unsigned int i = 0; i < audioDataArray.Size(); ++i)
+//		{
+//			auto audioData = audioDataArray[i].GetObjectW();
+//			const std::string& path = audioData["Path"].GetString();
+//			if (path.find("Researcher"))
+//				myResearcherVoicelineAudio.push_back(myWrapper.RequestSound(myVoxPath + path));
+//			if (path.find("Robot"))
+//				myRobotVoicelineAudio.push_back(myWrapper.RequestSound(myVoxPath + path));
+//		}
+//	}
+//
+//#pragma endregion
 
 	std::ifstream volumeStream("Json/Audio/AudioVolume.json");
 	IStreamWrapper volumeWrapper(volumeStream);
@@ -105,7 +104,7 @@ CAudioManager::CAudioManager() : myWrapper() {
 	if (volDoc.HasMember("Ambience"))
 	{
 		float value = volDoc["Ambience"].GetFloat();
-		myChannels[CAST(EChannels::Ambiance)]->SetVolume(value);
+		myChannels[CAST(EChannels::Ambience)]->SetVolume(value);
 	}
 	if (volDoc.HasMember("Music"))
 	{
@@ -172,27 +171,27 @@ void CAudioManager::Receive(const SMessage& aMessage) {
 	// UI
 	case EMessageType::UIButtonPress:
 	{
-		if (myUIAudio.size() >= static_cast<unsigned int>(EUI::ButtonClick))
-		{
-			myWrapper.Play(myUIAudio[CAST(EUI::ButtonClick)], myChannels[CAST(EChannels::UI)]);
-		}
+		//if (myUIAudio.size() >= static_cast<unsigned int>(EUI::ButtonClick))
+		//{
+		//	myWrapper.Play(myUIAudio[CAST(EUI::ButtonClick)], myChannels[CAST(EChannels::UI)]);
+		//}
 	}break;
 
 	// VOICELINES
 	case EMessageType::PlayVoiceLine:
 	{
-		if (!myVoicelineAudio.empty()) {
-			int index = *static_cast<int*>(aMessage.data);
-			myChannels[CAST(EChannels::VOX)]->Stop();
-			myWrapper.Play(myVoicelineAudio[index], myChannels[CAST(EChannels::VOX)]);
-		}
+		//if (!myVoicelineAudio.empty()) {
+		//	int index = *static_cast<int*>(aMessage.data);
+		//	myChannels[CAST(EChannels::VOX)]->Stop();
+		//	myWrapper.Play(myVoicelineAudio[index], myChannels[CAST(EChannels::VOX)]);
+		//}
 	}break;
 
 	case EMessageType::StopDialogue:
 	{
-		if (!myVoicelineAudio.empty()) {
-			myChannels[CAST(EChannels::VOX)]->Stop();
-		}
+		//if (!myVoicelineAudio.empty()) {
+		//	myChannels[CAST(EChannels::VOX)]->Stop();
+		//}
 	}break;
 
 	default: break;
@@ -246,10 +245,10 @@ std::string CAudioManager::GetPath(EMusic type) const
 	return path;
 }
 
-std::string CAudioManager::GetPath(EAmbiance type) const
+std::string CAudioManager::GetPath(EAmbience type) const
 {
-	std::string path = myAmbiancePath;
-	path.append(TranslateAmbiance(type));
+	std::string path = myAmbiencePath;
+	path.append(TranslateAmbience(type));
 	path.append(".mp3");
 	return path;
 }
@@ -258,7 +257,7 @@ std::string CAudioManager::GetPath(ESFX type) const
 {
 	std::string path = mySFXPath;
 	path.append(TranslateSFX(type));
-	path.append(".wav");
+	path.append(".mp3");
 	return path;
 }
 
@@ -266,11 +265,19 @@ std::string CAudioManager::GetPath(EUI type) const
 {
 	std::string path = myUIPath;
 	path.append(TranslateUI(type));
-	path.append(".wav");
+	path.append(".mp3");
 	return path;
 }
 
-std::string CAudioManager::GetPath(EVoiceLine type) const
+std::string CAudioManager::GetPath(EResearcherVoiceLine type) const
+{
+	std::string path = myVoxPath;
+	path.append(TranslateVoiceLine(type));
+	path.append(".mp3");
+	return path;
+}
+
+std::string CAudioManager::GetPath(ERobotVoiceLine type) const
 {
 	std::string path = myVoxPath;
 	path.append(TranslateVoiceLine(type));
@@ -284,8 +291,8 @@ std::string CAudioManager::TranslateChannels(EChannels enumerator) const
 	{
 	case EChannels::Music:
 		return "Music";
-	case EChannels::Ambiance:
-		return "Ambiance";
+	case EChannels::Ambience:
+		return "Ambience";
 	case EChannels::SFX:
 		return "SFX";
 	case EChannels::UI:
@@ -303,46 +310,75 @@ std::string CAudioManager::TranslateMusic(EMusic /*enumerator*/) const
 	//default:
 	//	return "";
 	//}
-	return "";
+	return "DE";
 }
 
-std::string CAudioManager::TranslateAmbiance(EAmbiance /*enumerator*/) const {
-	//switch (enumerator) {
-	//	/*
-	//		case EAmiance::Something:
-	//			return "Something";
-	//			break;
-	//	*/
-	//default:
-	//	return "";
-	//}
-	return "";
-}
-std::string CAudioManager::TranslateSFX(ESFX /*enumerator*/) const {
-	//switch (enumerator) {
-	//	/*
-	//	case EAmiance::Something:
-	//	return "Something";
-	//	break;
-	//	*/
-	//
-	//default:
-	//	return "";
-	//}
-	return "";
-}
-std::string CAudioManager::TranslateUI(EUI enumerator) const {
-	switch (enumerator) {
-	case EUI::ButtonClick:
-		return "ButtonClick";
+std::string CAudioManager::TranslateAmbience(EAmbience enumerator) const {
+	switch (enumerator)
+	{
+	case EAmbience::AirVent:
+		return "AirVent";
+	case EAmbience::Factory:
+		return "Factory";
 	default:
 		return "";
 	}
 }
-std::string CAudioManager::TranslateVoiceLine(EVoiceLine enumerator) const {
-	switch (enumerator) {
-	case EVoiceLine::Count:
-		return std::string();
+std::string CAudioManager::TranslateSFX(ESFX enumerator) const {
+	switch (enumerator)
+	{
+	case ESFX::GravityGlovePullBuildup:
+		return "GravityGlovePullBuildup";
+	case ESFX::GravityGlovePullHit:
+		return "GravityGlovePullHit";
+	case ESFX::GravityGlovePush:
+		return "GravityGlovePush";
+	case ESFX::StepAirVent:
+		return "StepAirVent";
+	case ESFX::StepConcrete:
+		return "StepConcrete";
+	default:
+		return "";
+	}
+	
+}
+std::string CAudioManager::TranslateUI(EUI /*enumerator*/) const {
+	//switch (enumerator) {
+	////case EUI::ButtonClick:
+	////	return "ButtonClick";
+	//default:
+	//	return "";
+	//}
+	return "";
+}
+std::string CAudioManager::TranslateVoiceLine(EResearcherVoiceLine enumerator) const
+{
+	switch (enumerator)
+	{
+	case EResearcherVoiceLine::ResearcherDoorEventVerticalSlice:
+		return "ResearcherDoorEventVerticalSlice";
+	case EResearcherVoiceLine::ResearcherIntroVerticalSlice:
+		return "ResearcherIntroVerticalSlice";
+	case EResearcherVoiceLine::ResearcherReactionExplosives:
+		return "ResearcherReactionExplosives";
+	default:
+		return "";
+	}
+}
+std::string CAudioManager::TranslateVoiceLine(ERobotVoiceLine enumerator) const
+{
+	switch (enumerator)
+	{
+	case ERobotVoiceLine::RobotAttack:
+		return "RobotAttack";
+	case ERobotVoiceLine::RobotDeath:
+		return "RobotDeath";
+	case ERobotVoiceLine::RobotIdle:
+		return "RobotIdle";
+	case ERobotVoiceLine::RobotPatrolling:
+		return "RobotPatrolling";
+	case ERobotVoiceLine::RobotSearching:
+		return "RobotSearching";
 	default:
 		return "";
 	}
