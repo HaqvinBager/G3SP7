@@ -82,6 +82,12 @@ bool CAnimationController::ImportRig(const std::string& anFBXFilePath)
 		ret = InitFromScene(myAnimations[myAnim0Index]);
 		// Now we can access the file's contents.
 		logInfo("Import of _curScene " + anFBXFilePath + " succeeded.");
+
+		if (myAnimations[myAnim0Index]->mNumAnimations <= 0)
+		{
+			ENGINE_ERROR_BOOL_MESSAGE(false , std::string("Animation could not be loaded: " + anFBXFilePath).c_str());
+			return false;
+		}
 	}
 	else
 	{
@@ -116,6 +122,12 @@ bool CAnimationController::ImportAnimation(const std::string& fileName)
 	if (!myAnimations[myAnim0Index])
 	{
 		logInfo(importer.GetErrorString());
+		return false;
+	}
+
+	if (myAnimations[myAnim0Index]->mNumAnimations <= 0)
+	{
+		ENGINE_ERROR_BOOL_MESSAGE(false , std::string("Animation could not be loaded: " + fileName).c_str());
 		return false;
 	}
 

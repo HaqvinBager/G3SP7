@@ -17,6 +17,9 @@
 
 #define ANIMATED_AT_FRAMES_PER_SECOND 24.0f//30.0f // Original was 25.0f
 
+#ifdef _DEBUG
+#define ANIMATION_SAFE_MODE
+#endif
 struct VertexBoneDataAnim
 {
 	uint myIDs[NUM_BONES_PER_VERTEX];

@@ -55,6 +55,7 @@ private:
 	SAnimationBlend myAnimationBlend;
 	std::array<SlimMatrix44, 64> myBones { };
 
+
 // Used in SP6, optional to keep. Saves Id in vector using CStringID (int + _Debug::string).
 	//std::vector<CStringID> myAnimationIds;
 

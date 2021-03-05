@@ -101,8 +101,8 @@ void CAnimationComponent::SetBonesToIdentity()
 }
 void CAnimationComponent::UpdateBlended()
 {
-	myController->UpdateAnimationTimes();
 	SetBonesToIdentity();
+	myController->UpdateAnimationTimes();
 
 	//Calling SetBlendTime here causes AnimCtrl::myBlendTime to be used for lerping.
 	if(myShouldUseLerp)
@@ -110,5 +110,5 @@ void CAnimationComponent::UpdateBlended()
 
 	std::vector<aiMatrix4x4> trans;
 	myController->SetBoneTransforms(trans);
-	memcpy(myBones.data(), &trans[0], (sizeof(float) * 16) * trans.size());//was memcpy
+	memmove(myBones.data(), &trans[0], (sizeof(float) * 16) * trans.size());//was memcpy
 }
