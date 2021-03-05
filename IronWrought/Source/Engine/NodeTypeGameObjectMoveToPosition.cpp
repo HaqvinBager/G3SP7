@@ -42,19 +42,19 @@ int CNodeTypeGameObjectMoveToPosition::OnEnter(CNodeInstance* aTriggeringNodeIns
 	float speed = NodeData::Get<float>(someData);
 
 	Vector3 currentPosition = aTriggeringNodeInstance->GetCurrentGameObject()[1]->myTransform->Position();
-	Vector3 direction = { (currentPosition.x - x), (currentPosition.y - y), (currentPosition.z - z) };
+	Vector3 direction = { (x - currentPosition.x), (y - currentPosition.y), (z - currentPosition.z) };
 
-	if ((direction.x < 0.1f && direction.x > -0.1f))
+	if ((direction.x < 0.01f && direction.x > -0.01f))
 	{
 		stopMovingX = true;
-		direction.y = 0.0f;
+		direction.x = 0.0f;
 	}
-	if ((direction.y <  0.1f && direction.y > -0.1f))
+	if ((direction.y <  0.01f && direction.y > -0.01f))
 	{
 		stopMovingY = true;
 		direction.y = 0.0f;
 	}
-	if ((direction.z < 0.1f && direction.z > -0.1f))
+	if ((direction.z < 0.01f && direction.z > -0.01f))
 	{
 		stopMovingZ = true;
 		direction.z = 0.0f;
@@ -70,7 +70,7 @@ int CNodeTypeGameObjectMoveToPosition::OnEnter(CNodeInstance* aTriggeringNodeIns
 		direction.Normalize();
 		direction *= CTimer::Dt() * speed;
 
-		gameObject->myTransform->MoveLocal({ direction.x,  direction.y, direction.z });
+		gameObject->myTransform->Move({ direction.x,  direction.y, direction.z });
 	}
 
 
