@@ -756,19 +756,19 @@ void CGraphManager::CreateNewDataNode()
 					{
 						if (myNewVariableType == "Float")
 						{
-							float nullValue = 1.0f;
+							float nullValue = 0.0f;
 							CNodeTypeCollector::RegisterNewDataType(buffer, static_cast<int>(CNodeDataManager::EDataType::EFloat));
 							CNodeDataManager::Get()->SetData(buffer, CNodeDataManager::EDataType::EFloat, nullValue);
 						}
 						else if (myNewVariableType == "Int")
 						{
-							int nullValue = 1;
+							int nullValue = 0;
 							CNodeTypeCollector::RegisterNewDataType(buffer, static_cast<int>(CNodeDataManager::EDataType::EInt));
 							CNodeDataManager::Get()->SetData(buffer, CNodeDataManager::EDataType::EInt, nullValue);
 						}
 						else if (myNewVariableType == "Bool")
 						{
-							bool nullValue = true;
+							bool nullValue = false;
 							CNodeTypeCollector::RegisterNewDataType(buffer, static_cast<int>(CNodeDataManager::EDataType::EBool));
 							CNodeDataManager::Get()->SetData(buffer, CNodeDataManager::EDataType::EBool, nullValue);
 						}
@@ -806,19 +806,19 @@ void CGraphManager::LoadDataNodesFromFile()
 
 					if (myNewVariableType == "Float")
 					{
-						float value = 1.0f;
+						float value = 0.0f;
 						CNodeTypeCollector::RegisterNewDataType(nodeInstances[i]["Data key"].GetString(), static_cast<int>(CNodeDataManager::EDataType::EFloat));
 						CNodeDataManager::Get()->SetData(nodeInstances[i]["Data key"].GetString(), CNodeDataManager::EDataType::EFloat, value);
 					}
 					else if (myNewVariableType == "Int")
 					{
-						int value = 1;
+						int value = 0;
 						CNodeTypeCollector::RegisterNewDataType(nodeInstances[i]["Data key"].GetString(), static_cast<int>(CNodeDataManager::EDataType::EInt));
 						CNodeDataManager::Get()->SetData(nodeInstances[i]["Data key"].GetString(), CNodeDataManager::EDataType::EInt, value);
 					}
 					else if (myNewVariableType == "Bool")
 					{
-						bool value = true;
+						bool value = false;
 						CNodeTypeCollector::RegisterNewDataType(nodeInstances[i]["Data key"].GetString(), static_cast<int>(CNodeDataManager::EDataType::EBool));
 						CNodeDataManager::Get()->SetData(nodeInstances[i]["Data key"].GetString(), CNodeDataManager::EDataType::EBool, value);
 					}

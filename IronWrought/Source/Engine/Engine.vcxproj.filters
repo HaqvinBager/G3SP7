@@ -706,6 +706,9 @@
     <ClCompile Include="CharacterController.cpp">
       <Filter>PhysX</Filter>
     </ClCompile>
+    <ClCompile Include="NodeTypeGameObjectMoveToPosition.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1290,12 +1293,15 @@
     </ClInclude>
     <ClInclude Include="CameraSetting.h">
       <Filter>Imgui\Windows</Filter>
-     </ClInclude>
-     <ClInclude Include="CharacterController.h">
-        <Filter>PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterController.h">
+      <Filter>PhysX</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeMathGreater.h">
       <Filter>Imgui\Node Editor\Nodes\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeGameObjectMoveToPosition.h">
+      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
