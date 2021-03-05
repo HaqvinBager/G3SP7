@@ -7,6 +7,7 @@
 #include "NodeTypeGameObjectGetPosition.h"
 #include "NodeTypeGameObjectSetPosition.h"
 #include "NodeTypeGameObjectMove.h"
+#include "NodeTypeGameObjectMoveToPosition.h"
 #include "NodeTypeGameObjectGetRotation.h"
 #include "NodeTypeGameObjectSetRotation.h"
 #include "NodeTypeGameObjectRotate.h"
@@ -80,6 +81,7 @@ void CNodeTypeCollector::PopulateTypes()
 	RegisterType<CNodeTypeGameObjectGetPosition>("Get Object Position");
 	RegisterType<CNodeTypeGameObjectSetPosition>("Set Object Position");
 	RegisterType<CNodeTypeGameObjectMove>("Move Object");
+	RegisterType<CNodeTypeGameObjectMoveToPosition>("Move Object To Position");
 	RegisterType<CNodeTypeGameObjectGetRotation>("Get Object Rotation");
 	RegisterType<CNodeTypeGameObjectSetRotation>("Set Object Rotation");
 	RegisterType<CNodeTypeGameObjectRotate>("Rotate Object");
