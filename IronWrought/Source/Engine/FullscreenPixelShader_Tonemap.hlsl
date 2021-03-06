@@ -65,6 +65,9 @@ PixelOutput main(VertexToPixel input)
     PixelOutput returnValue;
     float3 resource = fullscreenTexture1.Sample(defaultSampler, input.myUV.xy).rgb;
 	
+    float3 whitePoint = 10.0f;
+    float exposure = 3.0f;
+    
 	// No Tonemapping
 	//{
     //     returnValue.myColor.rgb = resource;
@@ -79,16 +82,12 @@ PixelOutput main(VertexToPixel input)
     
 	// Uncharted 2
 	{
-        float3 whitePoint = 10.0f;
-        float exposure = 3.0f;
         returnValue.myColor.rgb = Uncharted2Tonemap(resource * exposure) / Uncharted2Tonemap(whitePoint);
     }
 	// Uncharted 2
     
     // ACES
     //{
-    //    float3 whitePoint = 10.0f;
-    //    float exposure = 3.0f;
     //    returnValue.myColor.rgb = ACESFitted(resource * exposure) / ACESFitted(whitePoint);
     //}
     // ACES
