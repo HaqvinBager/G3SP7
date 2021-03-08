@@ -15,19 +15,29 @@ CFModWrapper::~CFModWrapper()
 	myFModInstance = nullptr;
 }
 
-CAudio* CFModWrapper::RequestSound(std::string aFilePath)
+CAudio* CFModWrapper::RequestSound(const std::string& aFilePath, bool aShouldLoop)
 {
-	return new CAudio(myFModInstance->CreateSound(aFilePath));
+	CAudio* sound = new CAudio(myFModInstance->CreateSound(aFilePath, aShouldLoop));
+	return std::move(sound);
 }
 
-CAudio* CFModWrapper::RequestLoopingSound(std::string aFilePath)
+CAudio* CFModWrapper::TryGetSound(const std::string& aFilePath, bool aShouldLoop)
 {
-	return new CAudio(myFModInstance->CreateLoopingSound(aFilePath));
+	FMOD::Sound* sound = myFModInstance->TryCreateSound(aFilePath, aShouldLoop);
+	
+	if (sound)
+	{
+		CAudio* audio = new CAudio(sound);
+		return std::move(audio);
+	}
+
+	return nullptr;
 }
 
-CAudioChannel* CFModWrapper::RequestChannel(std::string aChannelName)
+CAudioChannel* CFModWrapper::RequestChannel(const std::string& aChannelName)
 {
-	return new CAudioChannel(myFModInstance->CreateChannel(aChannelName));
+	CAudioChannel* channel = new CAudioChannel(myFModInstance->CreateChannel(aChannelName));
+	return std::move(channel);
 }
 
 void CFModWrapper::Play(CAudio* aSound, CAudioChannel* aChannel)

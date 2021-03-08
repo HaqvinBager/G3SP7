@@ -1,7 +1,5 @@
 #pragma once
-#pragma once
 #include <vector>
-#include <random>
 #include <memory>
 #include "FModWrapper.h"
 #include "Observer.h"
@@ -11,16 +9,16 @@ class CAudioChannel;
 
 enum class EMusic { Count };
 enum class EAmbience { AirVent, Factory, Count };
-enum class ESFX { GravityGlovePullBuildup, GravityGlovePullHit, GravityGlovePush, StepAirVent, StepConcrete, Count };
+enum class ESFX { GravityGlovePullBuildup, GravityGlovePullHit, GravityGlovePush, Count };
+enum class ESFXCollection { StepAirVent, StepConcrete, Count };
 enum class EUI { Count };
-enum class EResearcherVoiceLine { ResearcherDoorEventVerticalSlice, ResearcherIntroVerticalSlice, ResearcherReactionExplosives, Count };
+enum class EResearcherEventVoiceLine { ResearcherDoorEventVerticalSlice, ResearcherIntroVerticalSlice, Count };
+enum class EResearcherReactionVoiceLine { ResearcherReactionExplosives, Count };
 enum class ERobotVoiceLine { RobotAttack, RobotDeath, RobotIdle, RobotPatrolling, RobotSearching, Count };
 
-enum class EChannels { Music, Ambience, SFX, UI, VOX, Count };
+enum class EChannel { Music, Ambience, SFX, UI, VOX, Count };
 
-enum class GroundType;
-enum class ESFXCollection;
-class SFXCollection;
+enum class GroundType { Concrete, AirVent, Count };
 
 enum class SoundChannels {
 	EMusic,
@@ -37,15 +35,12 @@ public:
 	CAudioManager();
 	~CAudioManager();
 
-	// Listen to PostMaster
 	void Receive(const SMessage& aMessage);
 	void Receive(const SStringMessage& aMessage);
 
 	void Update();
 
-
 private:
-	
 	void SubscribeToMessages();
 	void UnsubscribeToMessages();
 
@@ -53,16 +48,27 @@ private:
 	std::string GetPath(EAmbience type) const;
 	std::string GetPath(ESFX type) const;
 	std::string GetPath(EUI type) const;
-	std::string GetPath(EResearcherVoiceLine type) const;
-	std::string GetPath(ERobotVoiceLine type) const;
+	std::string GetPath(EResearcherEventVoiceLine type) const;
 
-	std::string TranslateChannels(EChannels enumerator) const;
-	std::string TranslateMusic(EMusic enumerator) const;
-	std::string TranslateAmbience(EAmbience enumerator) const;
-	std::string TranslateSFX(ESFX enumerator) const;
-	std::string TranslateUI(EUI enumerator) const;
-	std::string TranslateVoiceLine(EResearcherVoiceLine enumerator) const;
-	std::string TranslateVoiceLine(ERobotVoiceLine enumerator) const;
+	template <class T>
+	std::string GetCollectionPath(T enumerator, unsigned int anIndex) const;
+
+	std::string TranslateEnum(EChannel enumerator) const;
+	std::string TranslateEnum(EMusic enumerator) const;
+	std::string TranslateEnum(EAmbience enumerator) const;
+	std::string TranslateEnum(ESFX enumerator) const;
+	std::string TranslateEnum(ESFXCollection enumerator) const;
+	std::string TranslateEnum(EUI enumerator) const;
+	std::string TranslateEnum(EResearcherEventVoiceLine enumerator) const;
+	std::string TranslateEnum(EResearcherReactionVoiceLine enumerator) const;
+	std::string TranslateEnum(ERobotVoiceLine enumerator) const;
+
+	void FillCollection(ESFXCollection enumerator);
+	void FillCollection(EResearcherReactionVoiceLine enumerator);
+	void FillCollection(ERobotVoiceLine enumerator);
+
+private:
+	void PlayRandomSoundFromCollection(const std::vector<CAudio*>& aCollection, const EChannel& aChannel);
 
 private:
 	const std::string& myAmbiencePath = "Audio/Ambience/";
@@ -74,19 +80,24 @@ private:
 
 	CFModWrapper myWrapper;
 
-	std::vector<CAudio*> myAmbianceAudio;
+	std::vector<CAudio*> myAmbienceAudio;
 	std::vector<CAudio*> myMusicAudio;
 	std::vector<CAudio*> mySFXAudio;
 	std::vector<CAudio*> myUIAudio;
-	std::vector<CAudio*> myResearcherVoicelineAudio;
-	std::vector<CAudio*> myRobotVoicelineAudio;
+
+	std::vector<CAudio*> myAirVentStepSounds;
+	std::vector<CAudio*> myConcreteStepSounds;
+
+	std::vector<CAudio*> myResearcherEventSounds;
+	std::vector<CAudio*> myResearcherReactionsExplosives;
+
+	std::vector<CAudio*> myRobotAttackSounds;
+	std::vector<CAudio*> myRobotDeathSounds;
+	std::vector<CAudio*> myRobotIdleSounds;
+	std::vector<CAudio*> myRobotPatrollingSounds;
+	std::vector<CAudio*> myRobotSearchingSounds;
 
 	std::vector<CAudioChannel*> myChannels;
-
-	CAudio* mySound;
-	CAudioChannel* myChannel;
-
-	std::vector<EMusic> myMusics;
 
 	struct SDelayedSFX
 	{
@@ -96,3 +107,12 @@ private:
 	std::vector<SDelayedSFX> myDelayedSFX;
 };
 
+template<class T>
+inline std::string CAudioManager::GetCollectionPath(T enumerator, unsigned int anIndex) const
+{
+	std::string path = "";
+	path.append(TranslateEnum(enumerator));
+	path.append(std::to_string(anIndex));
+	path.append(".mp3");
+	return path;
+}
