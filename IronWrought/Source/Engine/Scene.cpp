@@ -386,6 +386,11 @@ bool CScene::AddInstance(CGameObject* aGameObject)
 {
 	myGameObjects.emplace_back(aGameObject);
 	myIDGameObjectMap[aGameObject->InstanceID()] = aGameObject;
+
+	for (auto& component : aGameObject->myComponents) {
+		myComponentMap[typeid(*component).hash_code()].push_back(component);
+	}
+
 	return true;
 }
 

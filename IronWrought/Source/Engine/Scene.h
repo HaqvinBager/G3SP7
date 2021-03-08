@@ -80,6 +80,8 @@ public:
 	std::vector<CGameObject*> CullGameObjects(CCameraComponent* aMainCamera);
 	std::vector<CSpriteInstance*> CullSprites();
 	CGameObject* FindObjectWithID(const int aGameObjectInstanceID);
+	template<class T>
+	std::vector<CComponent*>* GetAllComponents();
 //CULLING END
 public:
 	//POPULATE SCENE START
@@ -108,21 +110,6 @@ public:
 	bool ClearSprites();
 //CLEAR SCENE OF INSTANCES START
 
-	//Ev Remove // Ev? / Aki & Haqvin
-	//std::vector<CPointLight*> LightsNearestPlayer() { return myLightsSortedNearestPlayer;  }
-	//This will run every 5-10 frames (It doesn't need to run all the time anyway!)
-	//void UpdateLightsNearestPlayer();
-	//bool AddEnemies(CGameObject* aEnemy);
-	//bool AddBoss(CGameObject* aBoss);
-	//bool AddDestructible(CGameObject* aDestructible);
-	//bool AddPlayer(CGameObject* aPlayer);
-	/*std::vector<CGameObject*> GetEnemies() { return myEnemies; }
-	std::vector<CGameObject*> GetDestructibles() { return myDestructibles; }
-	CGameObject* GetBoss() { return myBoss; }*/
-	//CGameObject* GetPlayer() { return myPlayer; }
-	//void SetPlayerToOutline(CGameObject* aPlayer);
-	//void SetEnemyToOutline(CGameObject* anEnemy);
-	//void TakeOwnershipOfAIBehavior(IAIBehavior* aBehavior);
 
 private:
 	//Struct left because it might be needed later
@@ -138,9 +125,8 @@ private:
 	std::vector<CTextInstance*> myTexts;
 	std::vector<CGameObject*> myGameObjects;
 	std::vector<CGameObject*> myModelsToOutline;
-	
 	std::unordered_map<int, CGameObject*> myIDGameObjectMap;
-
+	std::unordered_map<size_t, std::vector<CComponent*>> myComponentMap;
 	std::unordered_map<ERenderOrder, std::vector<CSpriteInstance*>> mySpriteInstances;
 //CONTAINERS END
 private:
@@ -149,28 +135,23 @@ private:
 	SNavMesh* myNavMesh;
 	CLineInstance* myNavMeshGrid;
 	CCameraComponent* myMainCamera;
-	//PhysX scene
 	PxScene* myPXScene;
-
 	CCanvas* myCanvas;
 //POINTERS END
 
 	bool myIsReadyToRender;
-
-//Ev Remove // Ev? / Aki & Haqvin
-//std::vector<CPointLight*> myLightsSortedNearestPlayer;
-//std::vector<CCamera*> myCameras;
-//std::vector<CEnvironmentLight*> myEnvironmentLights;
-//std::vector<CGameObject*> myEnemies;
-//std::vector<CGameObject*> myDestructibles;
-//CGameObject* myPlayer;
-//CGameObject* myBoss;
-//IAIBehavior* myEnemyBehavior;
-//CCollisionManager* myCollisionManager;
-//static CScene* ourInstance;
 #ifdef  _DEBUG
 private:
 	bool myShouldRenderLineInstance;
 	CLineInstance* myGrid;
 #endif //  _DEBUG
 };
+
+template<class T>
+inline std::vector<CComponent*>* CScene::GetAllComponents()
+{
+	size_t hashCode = typeid(T).hash_code();
+	if (myComponentMap.find(hashCode) == myComponentMap.end())
+		return nullptr;
+	return &myComponentMap[hashCode];
+}

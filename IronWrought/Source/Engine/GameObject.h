@@ -44,6 +44,7 @@ class CBehaviour;
 
 class CGameObject
 {
+	friend class CScene;
 public:
 	CGameObject(const int aInstanceID);
 	~CGameObject();
