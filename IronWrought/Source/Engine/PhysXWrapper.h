@@ -3,66 +3,40 @@
 
 using namespace physx;
 
-class ContactReportCallback;
-class RigidDynamicBody;
-class CGameObject;
+class CContactReportCallback;
+class CRigidDynamicBody;
 class CScene;
 class CCharacterController;
-
 
 class CPhysXWrapper
 {
 public:
-
-	enum class materialfriction
-	{
-		metal,
-		wood,
-		bounce,
-		basic,
-		none
-		
-
-	};
-
-public:
-
 	CPhysXWrapper();
 	~CPhysXWrapper();
 
 	bool Init();
 
-	PxScene* CreatePXScene();
-
-
-	PxRaycastBuffer Raycast(Vector3 origin, Vector3 direction, float distance);
-	void RaycastHit(PxVec3 position, PxVec3 normal);
-	
-
-	PxMaterial* CreateMaterial(materialfriction amaterial);
+	bool CreatePXScene(CScene* aScene);
+	PxScene* GetPXScene();
+	PxPhysics* GetPhysics() { return myPhysics; }
 
 	void Simulate();
 
-	RigidDynamicBody* CreateDynamicRigidbody(Vector3 aPos);
+	CRigidDynamicBody* CreateDynamicRigidbody(const Vector3& aPos);
 
-	CCharacterController* CreateCharacterController(Vector3 aPos = {0.f, 0.f, 0.f});
+	CCharacterController* CreateCharacterController(PxControllerShapeType::Enum aType, const Vector3& aPos, const float& aRadius, const float& aHeight);
 
-	PxControllerManager& GetControllerManager() { return *myControllerManager; }
-
-	void DebugLines();
-
-	void Cooking(std::vector<CGameObject*> gameObjectsToCook, CScene* aScene);
+	PxControllerManager* GetControllerManger();
 private:
-	
-	
 	PxFoundation* myFoundation;
 	PxPhysics* myPhysics;
 	PxDefaultCpuDispatcher* myDispatcher;
 	PxMaterial* myPXMaterial;
 	PxPvd* myPhysicsVisualDebugger;
 	PxDefaultAllocator* myAllocator;
-	PxCooking* myCooking;
-	ContactReportCallback* myContactReportCallback;
-	PxControllerManager* myControllerManager;
+	CContactReportCallback* myContactReportCallback;
+	//PxControllerManager* myControllerManager;
+	std::unordered_map<PxScene*, PxControllerManager*> myControllerManagers;
+	std::unordered_map<CScene*, PxScene*> myPXScenes;
 };
 
