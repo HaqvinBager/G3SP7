@@ -53,7 +53,7 @@ bool CCharacterController::InitCapsuelController(const Vector3& aPos, const floa
 	return true;
 }
 
-Vector3 CCharacterController::GetPosition() const { 
+Vector3 CCharacterController::GetPosition() const {
 	Vector3 vec;
 	vec.x = static_cast<float>(myController->getPosition().x);
 	vec.y = static_cast<float>(myController->getPosition().y);

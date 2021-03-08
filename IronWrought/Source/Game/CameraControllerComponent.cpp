@@ -121,7 +121,7 @@ void CCameraControllerComponent::UpdatePlayerFirstPerson()
 		transform.Decompose(scale, quat, translation);
 
 		GameObject().myTransform->GetParent()->GameObject().GetComponent<CPlayerControllerComponent>()->GetCharacterController()->GetController().getActor()->setGlobalPose({ GameObject().myTransform->GetParent()->GameObject().GetComponent<CPlayerControllerComponent>()->GetCharacterController()->GetController().getActor()->getGlobalPose().p, {quat.x, quat.y, quat.z, quat.w} });
-	
+
 
 
 

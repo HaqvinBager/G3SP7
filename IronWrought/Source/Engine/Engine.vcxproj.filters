@@ -112,6 +112,69 @@
     <FxCompile Include="DeferredVertexShader.hlsl">
       <Filter>Shaders\Deferred</Filter>
     </FxCompile>
+    <FxCompile Include="DeferredInstancedModelVertexShader.hlsl">
+      <Filter>Shaders\Deferred</Filter>
+    </FxCompile>
+    <FxCompile Include="DeferredRenderPassFullscreenPixelShader_GammaCorrection.hlsl">
+      <Filter>Shaders\Deferred Render Passes</Filter>
+    </FxCompile>
+    <FxCompile Include="DeferredRenderPassGBufferPixelShader.hlsl">
+      <Filter>Shaders\Deferred Render Passes</Filter>
+    </FxCompile>
+    <FxCompile Include="DeferredRenderPassShader_Albedo.hlsl">
+      <Filter>Shaders\Deferred Render Passes</Filter>
+    </FxCompile>
+    <FxCompile Include="DeferredRenderPassShader_AO.hlsl">
+      <Filter>Shaders\Deferred Render Passes</Filter>
+    </FxCompile>
+    <FxCompile Include="DeferredRenderPassShader_Emissive.hlsl">
+      <Filter>Shaders\Deferred Render Passes</Filter>
+    </FxCompile>
+    <FxCompile Include="DeferredRenderPassShader_Metalness.hlsl">
+      <Filter>Shaders\Deferred Render Passes</Filter>
+    </FxCompile>
+    <FxCompile Include="DeferredRenderPassShader_Normal.hlsl">
+      <Filter>Shaders\Deferred Render Passes</Filter>
+    </FxCompile>
+    <FxCompile Include="DeferredRenderPassShader_Roughness.hlsl">
+      <Filter>Shaders\Deferred Render Passes</Filter>
+    </FxCompile>
+    <FxCompile Include="DeferredVertexPaintVertexShader.hlsl">
+      <Filter>Shaders\Vertex Paint</Filter>
+    </FxCompile>
+    <FxCompile Include="DeferredVertexPaintPixelShader.hlsl">
+      <Filter>Shaders\Vertex Paint</Filter>
+    </FxCompile>
+    <FxCompile Include="DeferredAnimationVertexShader.hlsl">
+      <Filter>Shaders\Deferred</Filter>
+    </FxCompile>
+    <FxCompile Include="DecalPixelShader.hlsl">
+      <Filter>Shaders\Decal</Filter>
+    </FxCompile>
+    <FxCompile Include="DecalVertexShader.hlsl">
+      <Filter>Shaders\Decal</Filter>
+    </FxCompile>
+    <FxCompile Include="FullscreenPixelShader_CopyDepth.hlsl">
+      <Filter>Shaders\Fullscreen</Filter>
+    </FxCompile>
+    <FxCompile Include="FullscreenPixelShader_CopyGBuffer.hlsl">
+      <Filter>Shaders\Fullscreen</Filter>
+    </FxCompile>
+    <FxCompile Include="Decal_AlbedoPixelShader.hlsl">
+      <Filter>Shaders\Decal</Filter>
+    </FxCompile>
+    <FxCompile Include="Decal_NormalPixelShader.hlsl">
+      <Filter>Shaders\Decal</Filter>
+    </FxCompile>
+    <FxCompile Include="Decal_VertexNormalPixelShader.hlsl">
+      <Filter>Shaders\Decal</Filter>
+    </FxCompile>
+    <FxCompile Include="Decal_MaterialPixelShader.hlsl">
+      <Filter>Shaders\Decal</Filter>
+    </FxCompile>
+    <FxCompile Include="FullscreenPixelShader_Tonemap.hlsl">
+      <Filter>Shaders\Fullscreen</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimationComponent.cpp">
@@ -125,9 +188,6 @@
     </ClCompile>
     <ClCompile Include="CircleColliderComponent.cpp">
       <Filter>GameObject and Component\Component</Filter>
-    </ClCompile>
-    <ClCompile Include="Animation.cpp">
-      <Filter>Animation</Filter>
     </ClCompile>
     <ClCompile Include="AnimMathFunc.cpp">
       <Filter>Animation</Filter>
@@ -201,19 +261,10 @@
     <ClCompile Include="Model.cpp">
       <Filter>Model</Filter>
     </ClCompile>
-    <ClCompile Include="Particle.cpp">
-      <Filter>Particles</Filter>
-    </ClCompile>
-    <ClCompile Include="ParticleFactory.cpp">
-      <Filter>Particles</Filter>
-    </ClCompile>
     <ClCompile Include="ParticleRenderer.cpp">
       <Filter>Renderers</Filter>
     </ClCompile>
     <ClCompile Include="ModelComponent.cpp">
-      <Filter>GameObject and Component\Component</Filter>
-    </ClCompile>
-    <ClCompile Include="ParticleEmitterComponent.cpp">
       <Filter>GameObject and Component\Component</Filter>
     </ClCompile>
     <ClCompile Include="PointLightComponent.cpp">
@@ -252,15 +303,6 @@
     <ClCompile Include="VFXBase.cpp">
       <Filter>VFX</Filter>
     </ClCompile>
-    <ClCompile Include="VFXComponent.cpp">
-      <Filter>VFX</Filter>
-    </ClCompile>
-    <ClCompile Include="VFXFactory.cpp">
-      <Filter>VFX</Filter>
-    </ClCompile>
-    <ClCompile Include="VFXInstance.cpp">
-      <Filter>VFX</Filter>
-    </ClCompile>
     <ClCompile Include="TransformComponent.cpp">
       <Filter>GameObject and Component\Component</Filter>
     </ClCompile>
@@ -275,12 +317,6 @@
     </ClCompile>
     <ClCompile Include="StackWalker.cpp">
       <Filter>Debug Tools</Filter>
-    </ClCompile>
-    <ClCompile Include="State.cpp">
-      <Filter>State Stack</Filter>
-    </ClCompile>
-    <ClCompile Include="StateStack.cpp">
-      <Filter>State Stack</Filter>
     </ClCompile>
     <ClCompile Include="Input.cpp">
       <Filter>Input</Filter>
@@ -372,6 +408,294 @@
     <ClCompile Include="GBuffer.cpp">
       <Filter>Renderers</Filter>
     </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>Engine Core</Filter>
+    </ClCompile>
+    <ClCompile Include="ImguiManager.cpp">
+      <Filter>Imgui\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Builders.cpp">
+      <Filter>Imgui\Blueprints</Filter>
+    </ClCompile>
+    <ClCompile Include="Drawing.cpp">
+      <Filter>Imgui\Blueprints</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets.cpp">
+      <Filter>Imgui\Blueprints</Filter>
+    </ClCompile>
+    <ClCompile Include="ImguiManager.cpp">
+      <Filter>Imgui\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGuiLevelSelect.cpp">
+      <Filter>Imgui\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>Engine Core</Filter>
+    </ClCompile>
+    <ClCompile Include="State.cpp" />
+    <ClCompile Include="StateStack.cpp" />
+    <ClCompile Include="MaterialHandler.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeType.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Base Type</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeInstance.cpp">
+      <Filter>Imgui\Node Editor\Nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphManager.cpp">
+      <Filter>Imgui\Node Editor\Node Editor Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeMathAbs.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeMathAdd.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeMathAtan2.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeMathCeil.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeMathCos.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeMathDistance.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeMathDot.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeMathFloor.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeMathLerp.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeMathMax.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="ImguiManager.cpp">
+      <Filter>Imgui\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGuiLevelSelect.cpp">
+      <Filter>Imgui\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>Engine Core</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeMathMin.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeMathMul.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeMathSaturate.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeMathSin.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeMathSmoothstep.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeMathSub.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeMathToDegrees.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeMathToRadians.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="JsonReader.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Includes\ImGui\Core\imgui_impl_dx11.cpp">
+      <Filter>Imgui\Imgui Implementations</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Includes\ImGui\Core\imgui_impl_win32.cpp">
+      <Filter>Imgui\Imgui Implementations</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Includes\ImGui\Core\imgui.cpp">
+      <Filter>Imgui\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Includes\ImGui\Core\imgui_demo.cpp">
+      <Filter>Imgui\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Includes\ImGui\Core\imgui_draw.cpp">
+      <Filter>Imgui\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Includes\ImGui\Core\imgui_widgets.cpp">
+      <Filter>Imgui\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Includes\ImGui\NodeEditor\crude_json.cpp">
+      <Filter>Imgui\Node Editor\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Includes\ImGui\NodeEditor\imgui_canvas.cpp">
+      <Filter>Imgui\Node Editor\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Includes\ImGui\NodeEditor\imgui_node_editor.cpp">
+      <Filter>Imgui\Node Editor\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Includes\ImGui\NodeEditor\imgui_node_editor_api.cpp">
+      <Filter>Imgui\Node Editor\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="DecisionNode.cpp">
+      <Filter>Decision Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="ActionNode.cpp">
+      <Filter>Decision Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="FloatDecisionNode.cpp">
+      <Filter>Decision Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="PrintActionNode.cpp">
+      <Filter>Decision Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="DecisionTreeManager.cpp">
+      <Filter>Decision Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeVolumeTrigger.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Trigger</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeForEachGameObject.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphNodeCollisionManager.cpp">
+      <Filter>Imgui\Node Editor\Node Editor Managers\NodeType Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphNodeTimerManager.cpp">
+      <Filter>Imgui\Node Editor\Node Editor Managers\NodeType Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="DecalRenderer.cpp">
+      <Filter>Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="DecalComponent.cpp">
+      <Filter>GameObject and Component\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="State.cpp" />
+    <ClCompile Include="StateStack.cpp" />
+    <ClCompile Include="AnimationController.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="CStateMachineComponent.cpp">
+      <Filter>GameObject and Component\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Decal.cpp">
+      <Filter>Decal</Filter>
+    </ClCompile>
+    <ClCompile Include="DecalFactory.cpp">
+      <Filter>Decal</Filter>
+    </ClCompile>
+    <ClCompile Include="ShadowRenderer.cpp">
+      <Filter>Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadScene.cpp">
+      <Filter>Imgui\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="Window.cpp">
+      <Filter>Imgui\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeStartDefault.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Start</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeInputGetMousePosition.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeDecisionTreeRun.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Decision Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeDecisionFloat.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Decision Tree\Decision</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeActionPrint.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Decision Tree\Action</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeGameObjectGetPosition.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeGameObjectSetPosition.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeTimeDeltaTotal.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Time</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeTimeTimer.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Time</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeDebugPrint.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeStartKeyboardInput.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Start</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeGameObjectMove.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeVariableSetBool.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Variables\Set</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeVariableSetFloat.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Variables\Set</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeVariableSetInt.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Variables\Set</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeVariableGetBool.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Variables\Get</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeVariableGetFloat.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Variables\Get</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeVariableGetInt.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Variables\Get</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeDataManager.cpp">
+      <Filter>Imgui\Node Editor\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeStartGetCustom.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Start</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeStartSetCustom.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Start</Filter>
+    </ClCompile>
+    <ClCompile Include="VFXSystemComponent.cpp">
+      <Filter>GameObject and Component\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleEmitter.cpp">
+      <Filter>VFX\Particles</Filter>
+    </ClCompile>
+    <ClCompile Include="VFXMeshFactory.cpp">
+      <Filter>VFX</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleEmitterFactory.cpp">
+      <Filter>VFX\Particles</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeDecisionCoinFlip.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Decision Tree\Decision</Filter>
+    </ClCompile>
+    <ClCompile Include="FlipACoinDecision.cpp">
+      <Filter>Decision Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeUtilitiesBranching.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeGameObjectRotate.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeGameObjectSetRotation.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeGameObjectGetRotation.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeMathGreater.cpp">
+    </ClCompile>
+    <ClCompile Include="CameraSetting.cpp">
+      <Filter>Imgui\Windows</Filter>
+    </ClCompile>
     <ClCompile Include="CharacterController.cpp">
       <Filter>PhysX</Filter>
     </ClCompile>
@@ -388,9 +712,6 @@
     </ClInclude>
     <ClInclude Include="CircleColliderComponent.h">
       <Filter>GameObject and Component\Component</Filter>
-    </ClInclude>
-    <ClInclude Include="Animation.h">
-      <Filter>Animation</Filter>
     </ClInclude>
     <ClInclude Include="AnimationController.h">
       <Filter>Animation</Filter>
@@ -476,19 +797,10 @@
     <ClInclude Include="Model.h">
       <Filter>Model</Filter>
     </ClInclude>
-    <ClInclude Include="Particle.h">
-      <Filter>Particles</Filter>
-    </ClInclude>
-    <ClInclude Include="ParticleFactory.h">
-      <Filter>Particles</Filter>
-    </ClInclude>
     <ClInclude Include="ParticleRenderer.h">
       <Filter>Renderers</Filter>
     </ClInclude>
     <ClInclude Include="ModelComponent.h">
-      <Filter>GameObject and Component\Component</Filter>
-    </ClInclude>
-    <ClInclude Include="ParticleEmitterComponent.h">
       <Filter>GameObject and Component\Component</Filter>
     </ClInclude>
     <ClInclude Include="PointLightComponent.h">
@@ -527,15 +839,6 @@
     <ClInclude Include="VFXBase.h">
       <Filter>VFX</Filter>
     </ClInclude>
-    <ClInclude Include="VFXComponent.h">
-      <Filter>VFX</Filter>
-    </ClInclude>
-    <ClInclude Include="VFXFactory.h">
-      <Filter>VFX</Filter>
-    </ClInclude>
-    <ClInclude Include="VFXInstance.h">
-      <Filter>VFX</Filter>
-    </ClInclude>
     <ClInclude Include="TransformComponent.h">
       <Filter>GameObject and Component\Component</Filter>
     </ClInclude>
@@ -556,12 +859,6 @@
     </ClInclude>
     <ClInclude Include="Heap.h">
       <Filter>Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="State.h">
-      <Filter>State Stack</Filter>
-    </ClInclude>
-    <ClInclude Include="StateStack.h">
-      <Filter>State Stack</Filter>
     </ClInclude>
     <ClInclude Include="Input.h">
       <Filter>Input</Filter>
@@ -638,9 +935,6 @@
     <ClInclude Include="StringIDLoader.h">
       <Filter>StringID</Filter>
     </ClInclude>
-    <ClInclude Include="animationEnums.h">
-      <Filter>Animation</Filter>
-    </ClInclude>
     <ClInclude Include="AnimatedUIElement.h">
       <Filter>Sprite</Filter>
     </ClInclude>
@@ -689,8 +983,311 @@
     <ClInclude Include="GBuffer.h">
       <Filter>Renderers</Filter>
     </ClInclude>
-    <ClInclude Include="CharacterController.h">
-      <Filter>PhysX</Filter>
+    <ClInclude Include="SceneManager.h">
+      <Filter>Engine Core</Filter>
+    </ClInclude>
+    <ClInclude Include="FolderUtility.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="ImguiManager.h">
+      <Filter>Imgui\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Builders.h">
+      <Filter>Imgui\Blueprints</Filter>
+    </ClInclude>
+    <ClInclude Include="Drawing.h">
+      <Filter>Imgui\Blueprints</Filter>
+    </ClInclude>
+    <ClInclude Include="Math2D.h">
+      <Filter>Imgui\Blueprints</Filter>
+    </ClInclude>
+    <ClInclude Include="Widgets.h">
+      <Filter>Imgui\Blueprints</Filter>
+    </ClInclude>
+    <ClInclude Include="ImguiManager.h">
+      <Filter>Imgui\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGuiLevelSelect.h">
+      <Filter>Imgui\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>Engine Core</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypes.h">
+      <Filter>Imgui\Node Editor\Nodes\Base Type</Filter>
+    </ClInclude>
+    <ClInclude Include="State.h" />
+    <ClInclude Include="StateStack.h" />
+    <ClInclude Include="MaterialHandler.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeType.h">
+      <Filter>Imgui\Node Editor\Nodes\Base Type</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeInstance.h">
+      <Filter>Imgui\Node Editor\Nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphManager.h">
+      <Filter>Imgui\Node Editor\Node Editor Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeMathAbs.h">
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeMathAdd.h">
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeMathAtan2.h">
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeMathCeil.h">
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeMathCos.h">
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeMathDistance.h">
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeMathDot.h">
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeMathFloor.h">
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeMathLerp.h">
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeMathMax.h">
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeMathMin.h">
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeMathMul.h">
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeMathSaturate.h">
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeMathSin.h">
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeMathSmoothstep.h">
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeMathSub.h">
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeMathToDegrees.h">
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeMathToRadians.h">
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Includes\ImGui\Core\imgui_impl_dx11.h">
+      <Filter>Imgui\Imgui Implementations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Includes\ImGui\Core\imgui_impl_win32.h">
+      <Filter>Imgui\Imgui Implementations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Includes\ImGui\Core\imgui.h">
+      <Filter>Imgui\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Includes\ImGui\Core\imgui_internal.h">
+      <Filter>Imgui\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Includes\ImGui\Core\imstb_rectpack.h">
+      <Filter>Imgui\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Includes\ImGui\Core\imstb_textedit.h">
+      <Filter>Imgui\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Includes\ImGui\Core\imstb_truetype.h">
+      <Filter>Imgui\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Includes\ImGui\NodeEditor\crude_json.h">
+      <Filter>Imgui\Node Editor\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Includes\ImGui\NodeEditor\imgui_bezier_math.h">
+      <Filter>Imgui\Node Editor\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Includes\ImGui\NodeEditor\imgui_canvas.h">
+      <Filter>Imgui\Node Editor\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Includes\ImGui\NodeEditor\imgui_extra_math.h">
+      <Filter>Imgui\Node Editor\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Includes\ImGui\NodeEditor\imgui_node_editor.h">
+      <Filter>Imgui\Node Editor\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Includes\ImGui\NodeEditor\imgui_node_editor_internal.h">
+      <Filter>Imgui\Node Editor\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Includes\ImGui\Core\imconfig.h">
+      <Filter>Imgui\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="ActionNode.h">
+      <Filter>Decision Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseDecisionNode.h">
+      <Filter>Decision Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="DecisionNode.h">
+      <Filter>Decision Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="FloatDecisionNode.h">
+      <Filter>Decision Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="PrintActionNode.h">
+      <Filter>Decision Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="DecisionTreeManager.h">
+      <Filter>Decision Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeVolumeTrigger.h">
+      <Filter>Imgui\Node Editor\Nodes\Trigger</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeForEachGameObject.h">
+      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphNodeCollisionManager.h">
+      <Filter>Imgui\Node Editor\Node Editor Managers\NodeType Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphNodeTimerManager.h">
+      <Filter>Imgui\Node Editor\Node Editor Managers\NodeType Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="State.h" />
+    <ClInclude Include="StateStack.h" />
+    <ClInclude Include="CStateMachineComponent.h">
+      <Filter>GameObject and Component\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="DecalRenderer.h">
+      <Filter>Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="DecalComponent.h">
+      <Filter>GameObject and Component\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Decal.h">
+      <Filter>Decal</Filter>
+    </ClInclude>
+    <ClInclude Include="DecalFactory.h">
+      <Filter>Decal</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowRenderer.h">
+      <Filter>Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadScene.h">
+      <Filter>Imgui\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="Window.h">
+      <Filter>Imgui\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGuiWindows.h">
+      <Filter>Imgui\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeStartDefault.h">
+      <Filter>Imgui\Node Editor\Nodes\Start</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeGameObjectMove.h">
+      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeInputGetMousePosition.h">
+      <Filter>Imgui\Node Editor\Nodes\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeDecisionTreeRun.h">
+      <Filter>Imgui\Node Editor\Nodes\Decision Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeDecisionFloat.h">
+      <Filter>Imgui\Node Editor\Nodes\Decision Tree\Decision</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeActionPrint.h">
+      <Filter>Imgui\Node Editor\Nodes\Decision Tree\Action</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeGameObjectGetPosition.h">
+      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeGameObjectSetPosition.h">
+      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeTimeDeltaTotal.h">
+      <Filter>Imgui\Node Editor\Nodes\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeTimeTimer.h">
+      <Filter>Imgui\Node Editor\Nodes\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeDebugPrint.h">
+      <Filter>Imgui\Node Editor\Nodes\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeStartKeyboardInput.h">
+      <Filter>Imgui\Node Editor\Nodes\Start</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeVariableSetBool.h">
+      <Filter>Imgui\Node Editor\Nodes\Variables\Set</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeVariableSetFloat.h">
+      <Filter>Imgui\Node Editor\Nodes\Variables\Set</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeVariableSetInt.h">
+      <Filter>Imgui\Node Editor\Nodes\Variables\Set</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeVariableGetBool.h">
+      <Filter>Imgui\Node Editor\Nodes\Variables\Get</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeVariableGetFloat.h">
+      <Filter>Imgui\Node Editor\Nodes\Variables\Get</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeVariableGetInt.h">
+      <Filter>Imgui\Node Editor\Nodes\Variables\Get</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeDataManager.h">
+      <Filter>Imgui\Node Editor\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsHelpers.h">
+      <Filter>Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeStartGetCustom.h">
+      <Filter>Imgui\Node Editor\Nodes\Start</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeStartSetCustom.h">
+      <Filter>Imgui\Node Editor\Nodes\Start</Filter>
+    </ClInclude>
+    <ClInclude Include="VFXSystemComponent.h">
+      <Filter>GameObject and Component\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleEmitter.h">
+      <Filter>VFX\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="VFXMeshFactory.h">
+      <Filter>VFX</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleEmitterFactory.h">
+      <Filter>VFX\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeDecisionCoinFlip.h">
+      <Filter>Imgui\Node Editor\Nodes\Decision Tree\Decision</Filter>
+    </ClInclude>
+    <ClInclude Include="FlipACoinDecision.h">
+      <Filter>Decision Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeUtilitiesBranching.h">
+      <Filter>Imgui\Node Editor\Nodes\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeGameObjectSetRotation.h">
+      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeGameObjectGetRotation.h">
+      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeGameObjectRotate.h">
+      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeMathGreater.h">
+    </ClInclude>
+    <ClInclude Include="CameraSetting.h">
+      <Filter>Imgui\Windows</Filter>
+      </ClInclude>
+      <ClInclude Include="CharacterController.h">
+        <Filter>PhysX</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -739,6 +1336,22 @@
     <None Include="DeferredShaderStructs.hlsli">
       <Filter>Shaders\Deferred</Filter>
     </None>
+    <None Include="Math2D.inl">
+      <Filter>Imgui\Blueprints</Filter>
+    </None>
+    <None Include="cpp.hint" />
+    <None Include="..\Includes\ImGui\NodeEditor\imgui_bezier_math.inl">
+      <Filter>Imgui\Node Editor\Core</Filter>
+    </None>
+    <None Include="..\Includes\ImGui\NodeEditor\imgui_extra_math.inl">
+      <Filter>Imgui\Node Editor\Core</Filter>
+    </None>
+    <None Include="..\Includes\ImGui\NodeEditor\imgui_node_editor_internal.inl">
+      <Filter>Imgui\Node Editor\Core</Filter>
+    </None>
+    <None Include="DecalShaderStructs.hlsli">
+      <Filter>Shaders\Decal</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">
@@ -777,9 +1390,6 @@
     <Filter Include="Model">
       <UniqueIdentifier>{12ecd6ab-d23c-4df9-9e11-b2d59f34eb4b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Particles">
-      <UniqueIdentifier>{cb6066cf-24a2-4f78-b1eb-a8c7aae1a535}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Sprite">
       <UniqueIdentifier>{aaaccb51-9afb-425c-9df1-e1bea8537179}</UniqueIdentifier>
     </Filter>
@@ -794,9 +1404,6 @@
     </Filter>
     <Filter Include="Utility">
       <UniqueIdentifier>{5c00f0f2-c35d-4d1a-afc5-0073457db6b4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="State Stack">
-      <UniqueIdentifier>{7e3d61a4-a177-4bd6-bf15-028199f8bc5c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Input">
       <UniqueIdentifier>{4c3b644f-8786-4eab-9932-57a1bf6e5c99}</UniqueIdentifier>
@@ -855,5 +1462,109 @@
     <Filter Include="Shaders\Deferred">
       <UniqueIdentifier>{cc09a61a-ce12-4e9a-a6ca-e9ecc120c994}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Imgui">
+      <UniqueIdentifier>{e133abf3-57ac-489e-828a-4dc34449865c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Manager">
+      <UniqueIdentifier>{cf9224c9-d296-4081-b1d8-7c2bb6b21f0d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Blueprints">
+      <UniqueIdentifier>{61efb602-1edc-4871-bb93-611607e3cbf2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor">
+      <UniqueIdentifier>{211fa6bb-7d1c-4a02-9f6e-71b96259a94e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Nodes">
+      <UniqueIdentifier>{bbbcd0c0-46e2-4f03-b955-0181c1622d4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Deferred Render Passes">
+      <UniqueIdentifier>{4e1a5e39-8e5c-4cda-9552-2d86c85c158e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Imgui Implementations">
+      <UniqueIdentifier>{4732a842-0d10-4335-b186-3c6e2bbf5b3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Node Editor Managers">
+      <UniqueIdentifier>{87b4700a-15b2-426d-b032-f3d2463faf7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Node Editor Managers\NodeType Managers">
+      <UniqueIdentifier>{86d033ab-85d5-4320-9d24-b75cab10223b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Vertex Paint">
+      <UniqueIdentifier>{286f625e-fdc4-4c90-8c1a-1a40c07bbbcb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Core">
+      <UniqueIdentifier>{cab40948-499e-4b38-a960-0516e5d2b1e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Core">
+      <UniqueIdentifier>{100a0dc1-32c8-4e4b-8d00-f091b7106618}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Decision Tree">
+      <UniqueIdentifier>{b8340d6e-3231-47ae-bf03-265453331bc3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Decal">
+      <UniqueIdentifier>{4e7bf04d-b17d-4c9d-92ad-e4b07cbbe120}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Decal">
+      <UniqueIdentifier>{fbb72eea-2e5f-4249-b6ca-925d6233bdde}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Windows">
+      <UniqueIdentifier>{4ca55a53-75be-4929-b51e-694576e6c8a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Nodes\Base Type">
+      <UniqueIdentifier>{b7cdf648-4b6e-4eaa-b986-8766bdbc5020}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Nodes\Variables">
+      <UniqueIdentifier>{94d2d326-5412-46b6-b23a-c2eedacb6ab6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Nodes\Trigger">
+      <UniqueIdentifier>{91609e06-4217-4759-beb5-82276c4b60bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Nodes\Math">
+      <UniqueIdentifier>{615e6ff6-4a3a-4b26-8b02-d27da0b082b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Nodes\Input">
+      <UniqueIdentifier>{7642cd3e-92c8-418d-a31f-1cfe24e1a16e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Nodes\Game Object">
+      <UniqueIdentifier>{8bbe5362-d12e-4d25-9a8f-5cd174138235}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Nodes\Decision Tree">
+      <UniqueIdentifier>{ca9bd566-2c6c-4fa1-8c61-915990d8a05d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Nodes\Decision Tree\Decision">
+      <UniqueIdentifier>{51c6e420-e832-4070-bd70-9d8819a8d136}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Nodes\Decision Tree\Action">
+      <UniqueIdentifier>{b6faa346-a15d-4302-a326-2f5d9d4ee004}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Nodes\Start">
+      <UniqueIdentifier>{a78b3e1e-7127-4471-8739-1b5baf7958e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Nodes\Time">
+      <UniqueIdentifier>{2e592059-39e1-49a6-a023-a4d3ba392358}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Nodes\Debug">
+      <UniqueIdentifier>{d29438b5-09ae-4a7d-a36f-ae3ad966a5ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Utilities">
+      <UniqueIdentifier>{bfd097c4-3b85-4aca-a05b-5ece8695f94b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Nodes\Variables\Set">
+      <UniqueIdentifier>{75ec4e39-ed4a-4e8d-849c-456f7e92334a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Nodes\Variables\Get">
+      <UniqueIdentifier>{c77b8dcc-917a-4872-8dfc-bb6632a1befb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="VFX\Particles">
+      <UniqueIdentifier>{cb6066cf-24a2-4f78-b1eb-a8c7aae1a535}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Nodes\Utilities">
+      <UniqueIdentifier>{833d2d1f-1cc9-4040-ae9a-0765b5b0130a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="..\Includes\ImGui\NodeEditor\imgui_node_editor.natvis">
+      <Filter>Imgui\Node Editor\Core</Filter>
+    </Natvis>
   </ItemGroup>
 </Project>
