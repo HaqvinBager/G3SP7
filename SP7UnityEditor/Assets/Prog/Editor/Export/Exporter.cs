@@ -16,6 +16,13 @@ public struct Assets
     public List<ModelAsset> models;
 }
 
+[System.Serializable]
+public struct Player
+{
+    public int instanceID;
+}
+
+
 public class Exporter
 {
 
@@ -62,6 +69,17 @@ public class Exporter
         ExportPointlights.ExportPointlight(aScene);
         ExportDecals.Export(aScene);
         AssetDatabase.Refresh();
+    }
+
+    private static void ExportPlayer(Scene aScene)
+    {
+        PlayerSpawnPosition player = GameObject.FindObjectOfType<PlayerSpawnPosition>();
+        if (player != null)
+        {
+            Player data = new Player();
+            data.instanceID = player.transform.GetInstanceID();
+            Json.ExportToJson(data, aScene.name);
+        }
     }
 
     private static void DeactivateAndExportScene(int aSceneIndex, List<GameObject> allScenesActiveObjects)
