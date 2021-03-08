@@ -6,6 +6,7 @@
 #include "CameraControllerComponent.h"
 #include "EnviromentLightComponent.h"
 #include "ModelComponent.h"
+#include <PlayerControllerComponent.h>
 //#include <PlayerControllerComponent.h>
 #include "JsonReader.h"
 #include "PointLightComponent.h"
@@ -58,11 +59,13 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneName)
 		AddModelComponents(*scene, aSceneName + "_ModelCollection.json");
 		AddPointLights(*scene, aSceneName + "_PointLightCollection.json");
 		AddDecalComponents(*scene, aSceneName + "_DecalCollection.json");
-		AddPlayer(*scene, aSceneName + "_Player.json");
+		AddPlayer(*scene, aSceneName);
 	}
 	CEngine::GetInstance()->GetPhysx().Cooking(scene->ActiveGameObjects(), scene);
 	return scene;
 }
+
+
 
 bool CSceneManager::AddGameObjects(CScene& aScene, const std::string& aJsonFileName)
 {
@@ -195,8 +198,32 @@ void CSceneManager::AddDecalComponents(CScene& aScene, const std::string& aJsonF
 	}
 }
 
-void CSceneManager::AddPlayer(CScene& /*aScene*/, const std::string& /*aJsonFileName*/)
+void CSceneManager::AddPlayer(CScene& aScene, const std::string& /*aJsonFileName*/)
 {
+
+	CGameObject* player = new CGameObject(87);
+	//add cmodelcomponent
+	player->AddComponent<CPlayerControllerComponent>(*player);
+
+
+	CGameObject* camera = new CGameObject(96);
+	camera->AddComponent<CCameraComponent>(*camera);//Default Fov is 70.0f
+	camera->AddComponent<CCameraControllerComponent>(*camera,2.0f, CCameraControllerComponent::ECameraMode::PlayerFirstPerson); //Default speed is 2.0f
+
+	camera->myTransform->Position({ 0.0f, 0.0f, 0.0f });
+	camera->myTransform->Rotation({ 0.0f, 0.0f, 0.0f });
+
+	camera->myTransform->SetParent(player->myTransform);
+
+	aScene.AddInstance(player);
+
+	aScene.AddInstance(camera);
+	aScene.MainCamera(camera->GetComponent<CCameraComponent>());
+
+	
+
+	
+
 
 }
 

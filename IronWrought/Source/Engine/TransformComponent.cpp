@@ -132,6 +132,11 @@ void CTransformComponent::Transform(DirectX::SimpleMath::Vector3 aPosition, Dire
 	Position(aPosition);
 }
 
+CTransformComponent* CTransformComponent::GetParent()
+{
+	return myParent;
+}
+
 DirectX::SimpleMath::Matrix& CTransformComponent::Transform()
 {
 	return myWorldTransform;

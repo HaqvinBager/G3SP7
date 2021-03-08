@@ -19,6 +19,10 @@ public:
 
 	void Move(Vector3 aDir);
 
+	void Jump();
+
+	CCharacterController* GetCharacterController();
+
 private:
 	void UpdateHorizontalMovement();
 
@@ -27,5 +31,6 @@ private:
 	Vector3 myMovement;
 	float myHorizontalMoveSpeed;
 	float mySpeed;
+	bool canJump;
 };
 
