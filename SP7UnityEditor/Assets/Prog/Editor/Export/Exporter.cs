@@ -22,7 +22,6 @@ public struct Player
     public int instanceID;
 }
 
-
 public class Exporter
 {
 
@@ -68,13 +67,14 @@ public class Exporter
         ExportBluePrint.Export(aScene);
         ExportPointlights.ExportPointlight(aScene);
         ExportDecals.Export(aScene);
+        ExportPlayer(aScene);
         AssetDatabase.Refresh();
     }
 
     private static void ExportPlayer(Scene aScene)
     {
         PlayerSpawnPosition player = GameObject.FindObjectOfType<PlayerSpawnPosition>();
-        if (player != null)
+        if(player != null)
         {
             Player data = new Player();
             data.instanceID = player.transform.GetInstanceID();
@@ -124,8 +124,15 @@ public class Exporter
     }
 
 
+    [MenuItem("Update Events")]
+    public static void UpdateEvents()
+    {
+        
 
 
+
+
+    }
 }
 
 

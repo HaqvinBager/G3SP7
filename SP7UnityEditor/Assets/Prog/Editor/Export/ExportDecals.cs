@@ -47,9 +47,9 @@ public class ExportDecals
             {
                 if (decal.TryGetComponent(out MeshFilter meshFilter))
                 {
-                    GameObject asset = PrefabUtility.GetCorrespondingObjectFromOriginalSource(meshFilter).gameObject;
-                    if (asset == null)
-                        continue;
+                    //GameObject asset = PrefabUtility.GetCorrespondingObjectFromOriginalSource(meshFilter).gameObject;
+                    //if (asset == null)
+                    //    continue;
 
                     Decal aDecal = new Decal();
                     aDecal.materialName = ExtractMaterialName(decal.sharedMaterials);
@@ -66,7 +66,7 @@ public class ExportDecals
         MaterialProperty[] matProperty = MaterialEditor.GetMaterialProperties(materials);
         for (int i = 0; i < matProperty.Length; ++i)
         {
-            if (!matProperty[i].displayName.Contains("Color"))
+            if (matProperty[i].displayName.ToString().Equals("Color"))
             {
                 if (matProperty[i].textureValue != null)
                 {

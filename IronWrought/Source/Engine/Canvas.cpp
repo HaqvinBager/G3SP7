@@ -70,6 +70,9 @@ void CCanvas::Init(std::string aFilePath, CScene& aScene, bool addToScene)
 	Document document = CJsonReader::Get()->LoadDocument(aFilePath);
 	//document.ParseStream(inputWrapper);
 
+	if (document.HasParseError())
+		return;
+
 	if (document.HasMember("Buttons"))
 	{
 		auto buttonDataArray = document["Buttons"].GetArray();

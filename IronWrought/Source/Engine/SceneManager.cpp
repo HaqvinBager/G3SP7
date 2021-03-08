@@ -195,7 +195,7 @@ void CSceneManager::AddDecalComponents(CScene& aScene, const std::string& aJsonF
 	}
 }
 
-void CSceneManager::AddPlayer(CScene& aScene, const std::string& aJsonFileName)
+void CSceneManager::AddPlayer(CScene& /*aScene*/, const std::string& /*aJsonFileName*/)
 {
 
 }

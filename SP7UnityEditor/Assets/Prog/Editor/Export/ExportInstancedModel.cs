@@ -5,7 +5,7 @@ using UnityEditor;
 using UnityEngine.SceneManagement;
 
 [System.Serializable]
-struct STransform
+public struct STransform
 {
     public Vector3 position;
     public Vector3 rotation;

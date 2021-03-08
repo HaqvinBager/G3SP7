@@ -1,7 +1,7 @@
 {
 	"VFXMeshes": [
 		{
-			"Path": "Assets/Graphics/VFX/JSON/Templates/VFXMeshData_Template.json",
+			"Path": "Assets/Graphics/VFX/JSON/Data/VFXMeshData_Beam.json",
 			"Offset X": 0.0,
 			"Offset Y": 0.0,
 			"Offset Z": 0.0,
@@ -14,7 +14,7 @@
 			"Rotate X per second": 0.0,
 			"Rotate Y per second": 0.0,
 			"Rotate Z per second": 0.0,
-			"Orbit": false,
+			"Orbit": true,
 			"Delay": 0.0,
 			"Duration": 5.0
 		}
@@ -22,7 +22,7 @@
 
 	"ParticleSystems": [
 		{
-			"Path": "Assets/Graphics/VFX/JSON/Templates/ParticleData_Template.json",
+			"Path": "Assets/Graphics/VFX/JSON/Data/ParticleData_Pull.json",
 			"Offset X": 0.0,
 			"Offset Y": 0.0,
 			"Offset Z": 0.0,

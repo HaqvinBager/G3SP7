@@ -64,33 +64,6 @@ void CInGameState::Start()
 	CEngine::GetInstance()->SetActiveScene(myState);
 
 	myExitLevel = false;
-
-	std::vector<CGameObject*>& gameObjects = CEngine::GetInstance()->GetActiveScene().myGameObjects;
-	size_t currentSize = gameObjects.size();
-	for (size_t i = 0; i < currentSize; ++i)
-	{
-		if (gameObjects[i])
-		{
-			gameObjects[i]->Awake();
-		}
-	}
-
-	////Late awake
-	size_t newSize = gameObjects.size();
-	for (size_t j = currentSize; j < newSize; ++j)
-	{
-		if (gameObjects[j])
-		{
-			gameObjects[j]->Awake();
-		}
-	}
-
-	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
-	{
-		gameObject->Start();
-	}
-
-	CEngine::GetInstance()->GetActiveScene().MainCamera()->Fade(true);
 }
 
 void CInGameState::Stop()
@@ -100,7 +73,7 @@ void CInGameState::Stop()
 
 void CInGameState::Update()
 {
-	if (gVFX->GetComponent<CVFXSystemComponent>())
+	/*if (gVFX->GetComponent<CVFXSystemComponent>())
 	{
 		if (INPUT->IsKeyPressed('P'))
 		{
@@ -123,7 +96,7 @@ void CInGameState::Update()
 	if (Input::GetInstance()->IsKeyPressed(VK_ESCAPE))
 	{
 		myStateStack.PopTopAndPush(CStateStack::EState::InGame);
-	}
+	}*/
 }
 
 void CInGameState::ReceiveEvent(const EInputEvent aEvent)
