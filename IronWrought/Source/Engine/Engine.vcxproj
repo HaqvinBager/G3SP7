@@ -265,6 +265,7 @@
     <ClInclude Include="NodeTypeGameObjectSetPosition.h" />
     <ClInclude Include="NodeTypeStartDefault.h" />
     <ClInclude Include="ImGuiLevelSelect.h" />
+    <ClInclude Include="CharacterController.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="ContactReportCallback.h" />
     <ClInclude Include="DeferredRenderer.h" />
@@ -456,6 +457,7 @@
     <ClCompile Include="NodeTypeGameObjectSetPosition.cpp" />
     <ClCompile Include="NodeTypeStartDefault.cpp" />
     <ClCompile Include="ImGuiLevelSelect.cpp" />
+    <ClCompile Include="CharacterController.cpp" />
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="ContactReportCallback.cpp" />
     <ClCompile Include="DeferredRenderer.cpp" />

@@ -12,6 +12,7 @@
 #include "RigidBodyComponent.h"
 #include "ModelComponent.h"
 #include "DecalComponent.h"
+#include "CharacterControllerComponent.h"
 
 #include "EnvironmentLight.h"
 #include "Timer.h"
@@ -65,53 +66,11 @@ void CInGameState::Start()
 	CEngine::GetInstance()->SetActiveScene(myState);
 
 
-	TEMP_DeferredRenderingTests(scene);
-	TEMP_VFX(scene);
 
-	CGameObject* test = new CGameObject(1452);
-	test->AddComponent<CModelComponent>(*test, std::string(ASSETPATH("Assets/Graphics/Exempel_Modeller/Wall/Wall.fbx")));
-	test->GetComponent<CTransformComponent>()->Position({ 0.0f,0.0f,0.0f });
-
-	CGameObject* test2 = new CGameObject(1453);
-	test2->AddComponent<CModelComponent>(*test2, std::string(ASSETPATH("Assets/Graphics/Exempel_Modeller/Wall/Wall.fbx")));
-	test2->GetComponent<CTransformComponent>()->Position({ 5.0f,0.0f,0.0f });
-
-	CGameObject* test3 = new CGameObject(1454);
-	test3->AddComponent<CModelComponent>(*test3, std::string(ASSETPATH("Assets/Graphics/Exempel_Modeller/Wall/Wall.fbx")));
-	test3->GetComponent<CTransformComponent>()->Position({ 10.0f,0.0f,0.0f });
-	test3->AddComponent<CPlayerControllerComponent>(*test3);
-
-	scene->AddInstance(test);
-	scene->AddInstance(test2);
-	scene->AddInstance(test3);
 
 	myExitLevel = false;
 
-	std::vector<CGameObject*>& gameObjects = CEngine::GetInstance()->GetActiveScene().myGameObjects;
-	size_t currentSize = gameObjects.size();
-	for (size_t i = 0; i < currentSize; ++i)
-	{
-		if (gameObjects[i])
-		{
-			gameObjects[i]->Awake();
-		}
-	}
-
-	////Late awake
-	size_t newSize = gameObjects.size();
-	for (size_t j = currentSize; j < newSize; ++j)
-	{
-		if (gameObjects[j])
-		{
-			gameObjects[j]->Awake();
-		}
-	}
-
-	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
-	{
-		gameObject->Start();
-	}
-	CEngine::GetInstance()->GetActiveScene().MainCamera()->Fade(true);
+	
 }
 
 void CInGameState::Stop()

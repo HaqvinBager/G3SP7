@@ -1,7 +1,7 @@
 #pragma once
 #include "Component.h"
 
-class RigidDynamicBody;
+class CRigidDynamicBody;
 
 class CRigidBodyComponent : public CComponent
 {
@@ -13,6 +13,6 @@ public:
 	void Start() override;
 	void Update() override;
 private:
-	RigidDynamicBody* myDynamicRigidBody;
+	CRigidDynamicBody* myDynamicRigidBody;
 };
 

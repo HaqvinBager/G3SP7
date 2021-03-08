@@ -49,7 +49,7 @@ CPhysXWrapper::CPhysXWrapper()
 
 CPhysXWrapper::~CPhysXWrapper()
 {
-	//I will fix later -- crashes because cant release nullptr //Alexander Matthäi 15/1 - 2021
+	//I will fix later -- crashes because cant release nullptr //Alexander Matthï¿½i 15/1 - 2021
 
 	//myPXMaterial->release();
 	//myDispatcher->release();
@@ -87,11 +87,11 @@ bool CPhysXWrapper::Init()
 	}
 
 	// All collisions gets pushed to this class
-	myContactReportCallback = new ContactReportCallback();
+	myContactReportCallback = new CContactReportCallback();
     return true;
 }
 
-PxScene* CPhysXWrapper::CreatePXScene()
+bool CPhysXWrapper::CreatePXScene(CScene* aScene)
 {
 	PxSceneDesc sceneDesc(myPhysics->getTolerancesScale());
 	sceneDesc.gravity = PxVec3(0.0f, -9.82f, 0.0f);
@@ -101,7 +101,7 @@ PxScene* CPhysXWrapper::CreatePXScene()
 	sceneDesc.simulationEventCallback = myContactReportCallback;
 	PxScene* pXScene = myPhysics->createScene(sceneDesc);
 	if (!pXScene) {
-		return nullptr;
+		return false;
 	}
 
 	PxPvdSceneClient* pvdClient = pXScene->getScenePvdClient();
@@ -119,14 +119,19 @@ PxScene* CPhysXWrapper::CreatePXScene()
 	//groundPlane->setGlobalPose( {15.0f,0.0f,0.0f} );
 	pXScene->addActor(*groundPlane);
 
-	pXScene->setVisualizationParameter(PxVisualizationParameter::eSCALE, 1.0f);
-	pXScene->setVisualizationParameter(PxVisualizationParameter::eACTOR_AXES, 2.0f);
+//pXScene->setVisualizationParameter(PxVisualizationParameter::eSCALE, 1.0f);
+//pXScene->setVisualizationParameter(PxVisualizationParameter::eACTOR_AXES, 2.0f);
 
-	myPXMaterial = CreateMaterial(materialfriction::basic);
+	myControllerManagers[pXScene] = PxCreateControllerManager(*pXScene);
 
-	myControllerManager = PxCreateControllerManager(*pXScene);
+	myPXScenes[aScene] = pXScene;
 
-	return pXScene;
+	return true;
+}
+
+PxScene* CPhysXWrapper::GetPXScene()
+{
+	return myPXScenes[&CEngine::GetInstance()->GetActiveScene()];
 }
 
 PxRaycastBuffer CPhysXWrapper::Raycast(Vector3 aOrigin, Vector3 aDirection, float /*aDistance*/)
@@ -136,7 +141,7 @@ PxRaycastBuffer CPhysXWrapper::Raycast(Vector3 aOrigin, Vector3 aDirection, floa
 	origin.x = aOrigin.x;
 	origin.y = aOrigin.y;
 	origin.z = aOrigin.z;
-	
+
 
 	PxVec3 unitDir;
 
@@ -148,10 +153,10 @@ PxRaycastBuffer CPhysXWrapper::Raycast(Vector3 aOrigin, Vector3 aDirection, floa
 	PxRaycastBuffer hit;
 
 	/*scene->raycast(origin, unitDir, maxDistance, hit);
-	
+
 		RaycastHit(hit.block.position, hit.block.normal);*/
-		
-	
+
+
 
 	return hit;
 }
@@ -200,25 +205,28 @@ PxMaterial* CPhysXWrapper::CreateMaterial(materialfriction amaterial)
 
 void CPhysXWrapper::Simulate()
 {
-	if (CEngine::GetInstance()->GetActiveScene().PXScene() != nullptr) {
-		CEngine::GetInstance()->GetActiveScene().PXScene()->simulate(CTimer::Dt());
-		CEngine::GetInstance()->GetActiveScene().PXScene()->fetchResults(true);
-		//DebugLines();
+	if (GetPXScene() != nullptr) {
+		GetPXScene()->simulate(CTimer::Dt());
+		GetPXScene()->fetchResults(true);
 	}
 }
 
-RigidDynamicBody* CPhysXWrapper::CreateDynamicRigidbody(Vector3 aPos)
+CRigidDynamicBody* CPhysXWrapper::CreateDynamicRigidbody(const Vector3& aPos)
 {
-	RigidDynamicBody* dynamicBody = new RigidDynamicBody(*myPhysics, aPos);
-	CEngine::GetInstance()->GetActiveScene().PXScene()->addActor(dynamicBody->GetBody());
+	CRigidDynamicBody* dynamicBody = new CRigidDynamicBody(*myPhysics, aPos);
+	GetPXScene()->addActor(dynamicBody->GetBody());
 	return dynamicBody;
 }
 
-CCharacterController* CPhysXWrapper::CreateCharacterController(Vector3 aPos)
+CCharacterController* CPhysXWrapper::CreateCharacterController(PxControllerShapeType::Enum aType, const Vector3& aPos, const float& aRadius, const float& aHeight)
 {
-	CCharacterController* characterController = new CCharacterController(aPos);
-
+	CCharacterController* characterController = new CCharacterController(aType, aPos, aRadius, aHeight);
 	return characterController;
+}
+
+PxControllerManager* CPhysXWrapper::GetControllerManger()
+{
+	return myControllerManagers[GetPXScene()];
 }
 
 void CPhysXWrapper::DebugLines()
@@ -313,4 +321,3 @@ void CPhysXWrapper::Cooking(std::vector<CGameObject*> gameObjectsToCook, CScene*
 			}
 		}
 	}
-}

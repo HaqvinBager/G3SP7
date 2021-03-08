@@ -23,7 +23,7 @@ std::string globalNames[] =
 	"Whiskers"
 };
 
-RigidDynamicBody::RigidDynamicBody(physx::PxPhysics& aPhysX, const Vector3 aPosition)
+CRigidDynamicBody::CRigidDynamicBody(physx::PxPhysics& aPhysX, const Vector3& aPosition)
 {
 	myBody = aPhysX.createRigidDynamic({ aPosition.x, aPosition.y, aPosition.z });
 
@@ -53,13 +53,13 @@ RigidDynamicBody::RigidDynamicBody(physx::PxPhysics& aPhysX, const Vector3 aPosi
 	myBody->attachShape(*shape);
 }
 
-Vector3 RigidDynamicBody::GetPosition() const
+Vector3 CRigidDynamicBody::GetPosition() const
 {
 	const physx::PxTransform transform = myBody->getGlobalPose();
 	return { transform.p.x, transform.p.y , transform.p.z};
 }
 
-float RigidDynamicBody::GetRotation() const
+float CRigidDynamicBody::GetRotation() const
 {
 	return myBody->getGlobalPose().q.z;
 }

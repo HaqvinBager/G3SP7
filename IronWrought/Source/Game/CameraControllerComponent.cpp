@@ -2,6 +2,8 @@
 #include "CameraControllerComponent.h"
 #include "CameraComponent.h"
 #include "TransformComponent.h"
+#include "CharacterControllerComponent.h"
+#include "CharacterController.h"
 #include "Engine.h"
 #include "Scene.h"
 #include <algorithm>
@@ -121,7 +123,7 @@ void CCameraControllerComponent::UpdatePlayerFirstPerson()
 		transform.Decompose(scale, quat, translation);
 
 		GameObject().myTransform->GetParent()->GameObject().GetComponent<CPlayerControllerComponent>()->GetCharacterController()->GetController().getActor()->setGlobalPose({ GameObject().myTransform->GetParent()->GameObject().GetComponent<CPlayerControllerComponent>()->GetCharacterController()->GetController().getActor()->getGlobalPose().p, {quat.x, quat.y, quat.z, quat.w} });
-	
+
 
 
 
@@ -149,7 +151,7 @@ void CCameraControllerComponent::UpdateFreeCam()
 	myYaw = WrapAngle(myYaw + (dx * myMouseRotationSpeed * dt));
 	myPitch = std::clamp(myPitch + (dy * myMouseRotationSpeed * dt), ToDegrees(-PI / 2.0f), ToDegrees(PI / 2.0f));
 
-	GameObject().myTransform->MoveLocal(cameraMovementInput * myCameraMoveSpeed * dt);
+	GameObject().myTransform->MoveLocal(GameObject().GetComponent<CCharacterControllerComponent>()->GetCharacterController()->GetPosition() * myCameraMoveSpeed * dt);
 	GameObject().myTransform->Rotation({ myPitch, myYaw, 0});
 
 	if (CEngine::GetInstance()->GetWindowHandler()->CursorLocked()) {
