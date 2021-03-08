@@ -58,6 +58,7 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneName)
 		AddModelComponents(*scene, aSceneName + "_ModelCollection.json");
 		AddPointLights(*scene, aSceneName + "_PointLightCollection.json");
 		AddDecalComponents(*scene, aSceneName + "_DecalCollection.json");
+		AddPlayer(*scene, aSceneName + "_Player.json");
 	}
 	CEngine::GetInstance()->GetPhysx().Cooking(scene->ActiveGameObjects(), scene);
 	return scene;
@@ -192,6 +193,11 @@ void CSceneManager::AddDecalComponents(CScene& aScene, const std::string& aJsonF
 		CGameObject* gameObject = aScene.FindObjectWithID(decal["instanceID"].GetInt());
 		gameObject->AddComponent<CDecalComponent>(*gameObject, decal["materialName"].GetString());
 	}
+}
+
+void CSceneManager::AddPlayer(CScene& /*aScene*/, const std::string& /*aJsonFileName*/)
+{
+
 }
 
 

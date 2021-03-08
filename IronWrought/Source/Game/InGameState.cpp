@@ -58,39 +58,12 @@ void CInGameState::Start()
 	CScene* scene = CSceneManager::CreateEmpty();
 	scene->AddPXScene(CEngine::GetInstance()->GetPhysx().CreatePXScene());
 	
-	TEMP_VFX(scene);
+	//TEMP_VFX(scene);
 
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);
 
 	myExitLevel = false;
-
-	std::vector<CGameObject*>& gameObjects = CEngine::GetInstance()->GetActiveScene().myGameObjects;
-	size_t currentSize = gameObjects.size();
-	for (size_t i = 0; i < currentSize; ++i)
-	{
-		if (gameObjects[i])
-		{
-			gameObjects[i]->Awake();
-		}
-	}
-
-	////Late awake
-	size_t newSize = gameObjects.size();
-	for (size_t j = currentSize; j < newSize; ++j)
-	{
-		if (gameObjects[j])
-		{
-			gameObjects[j]->Awake();
-		}
-	}
-
-	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
-	{
-		gameObject->Start();
-	}
-
-	CEngine::GetInstance()->GetActiveScene().MainCamera()->Fade(true);
 }
 
 void CInGameState::Stop()
@@ -100,14 +73,14 @@ void CInGameState::Stop()
 
 void CInGameState::Update()
 {
-	if (gVFX->GetComponent<CVFXSystemComponent>())
+	/*if (gVFX->GetComponent<CVFXSystemComponent>())
 	{
 		if (INPUT->IsKeyPressed('P'))
 		{
 			gVFX->GetComponent<CVFXSystemComponent>()->OnDisable();
 			gVFX->GetComponent<CVFXSystemComponent>()->OnEnable();
 		}
-	}
+	}*/
 
 	CEngine::GetInstance()->GetPhysx().Simulate();
 	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)

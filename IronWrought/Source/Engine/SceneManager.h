@@ -16,5 +16,6 @@ private:
 	static void AddInstancedModelComponents(CScene& aScene, const std::string& aJsonFileName);
 	static void AddPointLights(CScene& aScene, const std::string& aJsonFileName);
 	static void AddDecalComponents(CScene& aScene, const std::string& aJsonFileName);
+	static void AddPlayer(CScene& aScene, const std::string& aJsonFileName);
 };
 

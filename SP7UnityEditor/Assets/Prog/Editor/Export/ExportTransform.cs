@@ -32,8 +32,24 @@ public class ExportTransform
             {
                 TransformLink link = new TransformLink();
                 link.instanceID = transform.GetInstanceID();
+
+                if(transform.GetComponentInChildren<Renderer>() != null)
+                {
+                    Renderer rend = transform.GetComponentInChildren<Renderer>();
+                    if (rend.sharedMaterial.shader.name.Contains("Decal"))
+                    {
+                        link.rotation = transform.rotation.eulerAngles;
+                    }
+                    else 
+                    { 
+                        link.rotation = transform.ConvertToIronWroughtRotation();
+                    }
+                }
+                else
+                {
+                    link.rotation = transform.ConvertToIronWroughtRotation();
+                }
                 link.position = transform.ConvertToIronWroughtPosition();
-                link.rotation = transform.ConvertToIronWroughtRotation();
                 link.scale = transform.ConvertToIronWroughtScale();
                 transformCollection.transforms.Add(link);
             }        
