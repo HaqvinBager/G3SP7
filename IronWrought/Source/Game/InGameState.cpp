@@ -58,7 +58,7 @@ void CInGameState::Start()
 	CScene* scene = CSceneManager::CreateEmpty();
 	scene->AddPXScene(CEngine::GetInstance()->GetPhysx().CreatePXScene());
 	
-	TEMP_VFX(scene);
+	//TEMP_VFX(scene);
 
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);
@@ -80,7 +80,7 @@ void CInGameState::Update()
 			gVFX->GetComponent<CVFXSystemComponent>()->OnDisable();
 			gVFX->GetComponent<CVFXSystemComponent>()->OnEnable();
 		}
-	}
+	}*/
 
 	CEngine::GetInstance()->GetPhysx().Simulate();
 	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
@@ -96,7 +96,7 @@ void CInGameState::Update()
 	if (Input::GetInstance()->IsKeyPressed(VK_ESCAPE))
 	{
 		myStateStack.PopTopAndPush(CStateStack::EState::InGame);
-	}*/
+	}
 }
 
 void CInGameState::ReceiveEvent(const EInputEvent aEvent)
