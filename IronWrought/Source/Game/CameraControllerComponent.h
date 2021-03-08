@@ -23,6 +23,7 @@ public:
 	void Update() override;
 	float GetCameraMoveSpeed();
 	void SetCameraMoveSpeed(float aCameraMoveSpeed);
+	void SetCameraMode(const ECameraMode& aCameraMode) { myCameraMode = aCameraMode; }
 public:
 	// Creates a camera and sets parent-child relationship with proper offsets.
 	static CGameObject* CreatePlayerFirstPersonCamera(CGameObject* aParentObject);
