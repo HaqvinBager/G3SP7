@@ -16,7 +16,7 @@ public:
 
 	bool Init();
 
-	bool CreatePXScene(CScene* aScene);
+	physx::PxScene* CreatePXScene(CScene* aScene);
 	PxScene* GetPXScene();
 	PxPhysics* GetPhysics() { return myPhysics; }
 

@@ -56,7 +56,7 @@ void CInGameState::Start()
 {
 	CJsonReader::Get()->Init();
 	CScene* scene = CSceneManager::CreateEmpty();
-	scene->AddPXScene(CEngine::GetInstance()->GetPhysx().CreatePXScene());
+	scene->AddPXScene(CEngine::GetInstance()->GetPhysx().CreatePXScene(scene));
 	
 	//TEMP_VFX(scene);
 

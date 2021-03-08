@@ -20,7 +20,7 @@ CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, 
 	INPUT_MAPPER->AddObserver(EInputEvent::Jump, this);
 
 	canJump = true;
-	myController = CEngine::GetInstance()->GetPhysx().CreateCharacterController(gameObject.myTransform->Position());
+	myController = CEngine::GetInstance()->GetPhysx().CreateCharacterController(physx::PxControllerShapeType::eCAPSULE,gameObject.myTransform->Position(), 0.6f, 1.8f);
 }
 
 CPlayerControllerComponent::~CPlayerControllerComponent()

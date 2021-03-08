@@ -80,7 +80,7 @@ bool CPhysXWrapper::Init()
     return true;
 }
 
-bool CPhysXWrapper::CreatePXScene(CScene* aScene)
+physx::PxScene* CPhysXWrapper::CreatePXScene(CScene* aScene)
 {
 	PxSceneDesc sceneDesc(myPhysics->getTolerancesScale());
 	sceneDesc.gravity = PxVec3(0.0f, -9.82f, 0.0f);
@@ -112,7 +112,7 @@ bool CPhysXWrapper::CreatePXScene(CScene* aScene)
 
 	myPXScenes[aScene] = pXScene;
 
-	return true;
+	return pXScene;
 }
 
 PxScene* CPhysXWrapper::GetPXScene()
