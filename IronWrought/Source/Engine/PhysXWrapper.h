@@ -30,7 +30,7 @@ public:
 
 	bool Init();
 
-	bool CreatePXScene(CScene* aScene);
+	PxScene* CreatePXScene(CScene* aScene);
 	PxScene* GetPXScene();
 	PxPhysics* GetPhysics() { return myPhysics; }
 
@@ -52,7 +52,7 @@ public:
 
   //merge conflict 8/3/2021
 	//void DebugLines();
-	//void Cooking(std::vector<CGameObject*> gameObjectsToCook, CScene* aScene);
+	void Cooking(std::vector<CGameObject*> gameObjectsToCook, CScene* aScene);
 
 private:
 
@@ -63,8 +63,7 @@ private:
 	PxMaterial* myPXMaterial;
 	PxPvd* myPhysicsVisualDebugger;
 	PxDefaultAllocator* myAllocator;
-		//merge conflicttttt 8/3/2021
-		//PxCooking* myCooking;
+	PxCooking* myCooking;
 	CContactReportCallback* myContactReportCallback;
 	//PxControllerManager* myControllerManager;
 	std::unordered_map<PxScene*, PxControllerManager*> myControllerManagers;

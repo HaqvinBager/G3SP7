@@ -81,7 +81,8 @@ void CNodeTypeCollector::PopulateTypes()
 	RegisterType<CNodeTypeGameObjectGetPosition>("Get Object Position");
 	RegisterType<CNodeTypeGameObjectSetPosition>("Set Object Position");
 	RegisterType<CNodeTypeGameObjectMove>("Move Object");
-	RegisterType<CNodeTypeGameObjectMoveToPosition>("Move Object To Position");
+	// weird unresolved external error
+	//RegisterType<CNodeTypeGameObjectMoveToPosition>("Move Object To Position");
 	RegisterType<CNodeTypeGameObjectGetRotation>("Get Object Rotation");
 	RegisterType<CNodeTypeGameObjectSetRotation>("Set Object Rotation");
 	RegisterType<CNodeTypeGameObjectRotate>("Rotate Object");

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "CharacterController.h"
 #include "PhysXWrapper.h"
+#include "Engine.h"
 
 CCharacterController::CCharacterController(PxControllerShapeType::Enum aType, const Vector3& aPos, const float& aRadius, const float& aHeight)
 {
@@ -34,7 +35,7 @@ bool CCharacterController::InitCapsuelController(const Vector3& aPos, const floa
 	constexpr physx::PxReal staticFriction = 0.7f;
 	constexpr physx::PxReal dynamicFriction = 0.9f;
 	constexpr physx::PxReal restitution = 0.9f;
-	physx::PxMaterial* material = CMainSingleton::PhysXWrapper().GetPhysics()->createMaterial(staticFriction, dynamicFriction, restitution);
+	physx::PxMaterial* material = CEngine::GetInstance()->GetPhysx().GetPhysics()->createMaterial(staticFriction, dynamicFriction, restitution);
 	desc.material = material;
 	//desc.maxJumpHeight;
 	//desc.reportCallback;
@@ -46,7 +47,7 @@ bool CCharacterController::InitCapsuelController(const Vector3& aPos, const floa
 	if (!desc.isValid()) {
 		return false;
 	}
-	myController = CMainSingleton::PhysXWrapper().GetControllerManger()->createController(desc);
+	myController = CEngine::GetInstance()->GetPhysx().GetControllerManger()->createController(desc);
 	if (!myController) {
 		return false;
 	}

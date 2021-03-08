@@ -44,7 +44,7 @@ CPhysXWrapper::CPhysXWrapper()
 	myPhysicsVisualDebugger = nullptr;
 	myAllocator = nullptr;
 	myContactReportCallback = nullptr;
-	myControllerManager = nullptr;
+	//myControllerManager = nullptr;
 }
 
 CPhysXWrapper::~CPhysXWrapper()
@@ -91,7 +91,7 @@ bool CPhysXWrapper::Init()
     return true;
 }
 
-bool CPhysXWrapper::CreatePXScene(CScene* aScene)
+PxScene* CPhysXWrapper::CreatePXScene(CScene* aScene)
 {
 	PxSceneDesc sceneDesc(myPhysics->getTolerancesScale());
 	sceneDesc.gravity = PxVec3(0.0f, -9.82f, 0.0f);
@@ -101,7 +101,7 @@ bool CPhysXWrapper::CreatePXScene(CScene* aScene)
 	sceneDesc.simulationEventCallback = myContactReportCallback;
 	PxScene* pXScene = myPhysics->createScene(sceneDesc);
 	if (!pXScene) {
-		return false;
+		return nullptr;
 	}
 
 	PxPvdSceneClient* pvdClient = pXScene->getScenePvdClient();
@@ -126,7 +126,7 @@ bool CPhysXWrapper::CreatePXScene(CScene* aScene)
 
 	myPXScenes[aScene] = pXScene;
 
-	return true;
+	return pXScene;
 }
 
 PxScene* CPhysXWrapper::GetPXScene()
@@ -229,17 +229,17 @@ PxControllerManager* CPhysXWrapper::GetControllerManger()
 	return myControllerManagers[GetPXScene()];
 }
 
-void CPhysXWrapper::DebugLines()
-{
-	const PxRenderBuffer& rb = CEngine::GetInstance()->GetActiveScene().PXScene()->getRenderBuffer();
-	for (PxU32 i = 0; i < rb.getNbLines(); i++)
-	{
-		const PxDebugLine& line = rb.getLines()[i];
-		CLineInstance* myLine = new CLineInstance();
-		myLine->Init(CLineFactory::GetInstance()->CreateLine({ line.pos0.x, line.pos0.y, line.pos0.z }, { line.pos1.x, line.pos1.y, line.pos1.z }, { 0.1f, 255.0f, 0.1f, 1.0f }));
-		CEngine::GetInstance()->GetActiveScene().AddInstance(myLine);
-	}
-}
+//void CPhysXWrapper::DebugLines()
+//{
+//	const PxRenderBuffer& rb = CEngine::GetInstance()->GetActiveScene().PXScene()->getRenderBuffer();
+//	for (PxU32 i = 0; i < rb.getNbLines(); i++)
+//	{
+//		const PxDebugLine& line = rb.getLines()[i];
+//		CLineInstance* myLine = new CLineInstance();
+//		myLine->Init(CLineFactory::GetInstance()->CreateLine({ line.pos0.x, line.pos0.y, line.pos0.z }, { line.pos1.x, line.pos1.y, line.pos1.z }, { 0.1f, 255.0f, 0.1f, 1.0f }));
+//		CEngine::GetInstance()->GetActiveScene().AddInstance(myLine);
+//	}
+//}
 
 void CPhysXWrapper::Cooking(std::vector<CGameObject*> gameObjectsToCook, CScene* aScene)
 {
@@ -315,9 +315,10 @@ void CPhysXWrapper::Cooking(std::vector<CGameObject*> gameObjectsToCook, CScene*
 				DirectX::SimpleMath::Matrix transform = gameObjectsToCook[i]->GetComponent<CInstancedModelComponent>()->GetInstancedTransforms()[z];
 				transform.Decompose(scale, quat, translation);
 
-				PxVec3 pos = { translation.x, translation.y, translation.z};
-				PxQuat pxQuat = {quat.x, quat.y, quat.z, quat.w};
-				actor->setGlobalPose({pos, pxQuat});
+				PxVec3 pos = { translation.x, translation.y, translation.z };
+				PxQuat pxQuat = { quat.x, quat.y, quat.z, quat.w };
+				actor->setGlobalPose({ pos, pxQuat });
 			}
 		}
 	}
+}

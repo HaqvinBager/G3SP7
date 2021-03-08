@@ -43,7 +43,7 @@ CScene* CSceneManager::CreateEmpty()
 	emptyScene->MainCamera(camera->GetComponent<CCameraComponent>());
 	emptyScene->EnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnvironmentLight());
 	emptyScene->AddInstance(envLight);
-	emptyScene->AddPXScene(CEngine::GetInstance()->GetPhysx().CreatePXScene());
+	emptyScene->AddPXScene(CEngine::GetInstance()->GetPhysx().CreatePXScene(emptyScene));
 
 	return emptyScene;
 }

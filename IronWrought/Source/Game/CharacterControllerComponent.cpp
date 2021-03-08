@@ -2,11 +2,12 @@
 #include "CharacterControllerComponent.h"
 #include "CharacterController.h"
 #include "PhysXWrapper.h"
+#include "Engine.h"
 
 CCharacterControllerComponent::CCharacterControllerComponent(CGameObject& aParent, PxControllerShapeType::Enum aType, const Vector3& aPos, const float& aRadius, const float aHeight)
 	: CBehaviour(aParent)
 {
-	myCharacterController = CMainSingleton::PhysXWrapper().CreateCharacterController(aType, aPos, aRadius, aHeight);
+	myCharacterController = CEngine::GetInstance()->GetPhysx().CreateCharacterController(aType, aPos, aRadius, aHeight);
 }
 
 CCharacterControllerComponent::~CCharacterControllerComponent()
