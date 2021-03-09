@@ -20,7 +20,7 @@ CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, 
 	INPUT_MAPPER->AddObserver(EInputEvent::Jump, this);
 
 	canJump = true;
-	myController = CEngine::GetInstance()->GetPhysx().CreateCharacterController(physx::PxControllerShapeType::eCAPSULE,gameObject.myTransform->Position(), 0.6f, 1.8f);
+	//myController = CEngine::GetInstance()->GetPhysx().CreateCharacterController(physx::PxControllerShapeType::eCAPSULE,gameObject.myTransform->Position(), 0.6f, 1.8f);
 }
 
 CPlayerControllerComponent::~CPlayerControllerComponent()
@@ -44,14 +44,12 @@ void CPlayerControllerComponent::Update()
 	
 	
 
-	GameObject().myTransform->Position(myController->GetPosition());
+	//GameObject().myTransform->Position(myController->GetPosition());
 
 }
 
 void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
 {
-
-
 	switch (aEvent)
 	{
 		case EInputEvent::MoveForward:
@@ -83,8 +81,9 @@ void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
 
 	//}
 	//myMovement.y = -1.0f; //Gravity
-	//GameObject().myTransform->Move(myMovement * myHorizontalMoveSpeed * CTimer::Dt());
-	Move(myMovement * mySpeed);
+	myHorizontalMoveSpeed = 5.0f;
+	GameObject().myTransform->MoveLocal(myMovement * myHorizontalMoveSpeed * CTimer::Dt());
+	//Move(myMovement * mySpeed);
 	myMovement = { 0.f,0.f,0.f };
 }
 

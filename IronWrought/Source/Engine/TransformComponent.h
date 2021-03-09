@@ -19,6 +19,7 @@ public:
 	void Rotation(DirectX::SimpleMath::Vector3 aRotation);
 	void Rotation(DirectX::SimpleMath::Quaternion aQuaternion);
 	DirectX::SimpleMath::Quaternion Rotation() const;
+	void CopyRotation(const DirectX::SimpleMath::Matrix& aTransform);
 
 	void Scale(DirectX::SimpleMath::Vector3 aScale);
 	void Scale(float aScale);
@@ -27,6 +28,7 @@ public:
 	DirectX::SimpleMath::Matrix& Transform();
 	DirectX::SimpleMath::Matrix GetWorldMatrix() const;
 	DirectX::SimpleMath::Matrix GetLocalMatrix() const;
+	void SetToOtherTransform(const DirectX::SimpleMath::Matrix& otherTransform);
 
 	void Transform(DirectX::SimpleMath::Vector3 aPosition, DirectX::SimpleMath::Vector3 aRotation);
 	CTransformComponent* GetParent();

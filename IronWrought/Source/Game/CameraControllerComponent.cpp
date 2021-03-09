@@ -68,10 +68,10 @@ void CCameraControllerComponent::Update()
 	}
 
 	// TEMP
-	if (Input::GetInstance()->IsKeyPressed(VK_SPACE))
-	{
-		CEngine::GetInstance()->GetPhysx().Raycast(GameObject().myTransform->Position(), GameObject().myTransform->Transform().Forward(), 50000.0f);
-	}
+	//if (Input::GetInstance()->IsKeyPressed(VK_SPACE))
+	//{
+	//	CEngine::GetInstance()->GetPhysx().Raycast(GameObject().myTransform->Position(), GameObject().myTransform->Transform().Forward(), 50000.0f);
+	//}
 	// ! TEMP
 }
 
@@ -80,9 +80,9 @@ CGameObject* CCameraControllerComponent::CreatePlayerFirstPersonCamera(CGameObje
 	CGameObject* camera = new CGameObject(1000);
 	camera->AddComponent<CCameraComponent>(*camera, 70.0f);
 	camera->AddComponent<CCameraControllerComponent>(*camera, 2.0f, ECameraMode::PlayerFirstPerson);
-	camera->myTransform->SetParent(aParentObject->myTransform);
 	camera->myTransform->Position({ 0.0f, 1.6f, -0.22f });
 	camera->myTransform->Rotation({ 0.0f, 0.0f, 0.0f });
+	camera->myTransform->SetParent(aParentObject->myTransform);
 	return camera;
 }
 
@@ -107,23 +107,25 @@ void CCameraControllerComponent::UpdatePlayerFirstPerson()
 	float dx = static_cast<float>(Input::GetInstance()->MouseRawDeltaX());
 	float dy = static_cast<float>(Input::GetInstance()->MouseRawDeltaY());
 
-
-
 	myYaw	= WrapAngle(myYaw + (dx * myMouseRotationSpeed * dt));
 	myPitch = std::clamp(myPitch + (dy * myMouseRotationSpeed * dt), ToDegrees(-PI / 2.0f), ToDegrees(PI / 2.0f));
 
 	GameObject().myTransform->Rotation({ myPitch, myYaw, 0});
+	GameObject().myTransform->GetParent()->Rotation({ 0, myYaw, 0 });
+	//GameObject().myTransform->GetParent()->CopyRotation(GameObject().myTransform->GetLocalMatrix());
 
-	DirectX::SimpleMath::Vector3 translation;
-	DirectX::SimpleMath::Vector3 scale;
-	DirectX::SimpleMath::Quaternion quat;
-	DirectX::SimpleMath::Matrix transform = GameObject().myTransform->Transform();
-		transform.Decompose(scale, quat, translation);
+	//GameObject().myTransform->GetParent()->Transform(GameObject().myTransform->GetLocalMatrix());
+	//GameObject().myTransform->GetParent()->Transform().Forward(GameObject().myTransform->Transform().Forward());
 
-		GameObject().myTransform->GetParent()->GameObject().GetComponent<CPlayerControllerComponent>()->GetCharacterController()->GetController().getActor()->setGlobalPose({ GameObject().myTransform->GetParent()->GameObject().GetComponent<CPlayerControllerComponent>()->GetCharacterController()->GetController().getActor()->getGlobalPose().p, {quat.x, quat.y, quat.z, quat.w} });
-
-
-
+	//Vector3 translation;
+	//Vector3 scale;
+	//Quaternion quat;
+	//Matrix transform = GameObject().myTransform->Transform();
+	//transform.Decompose(scale, quat, translation);
+	//
+	//CPlayerControllerComponent* playerController = GameObject().myTransform->GetParent()->GameObject().GetComponent<CPlayerControllerComponent>();
+	//physx::PxRigidDynamic* actor = playerController->GetCharacterController()->GetController().getActor();
+	//actor->setGlobalPose({ actor->getGlobalPose().p, {quat.x, quat.y, quat.z, quat.w} });
 
 	if (CEngine::GetInstance()->GetWindowHandler()->CursorLocked()) {
 		auto screenDimensions = CEngine::GetInstance()->GetWindowHandler()->GetResolution();

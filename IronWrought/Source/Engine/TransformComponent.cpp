@@ -86,6 +86,13 @@ DirectX::SimpleMath::Quaternion CTransformComponent::Rotation() const
 	return quat;
 }
 
+void CTransformComponent::CopyRotation(const DirectX::SimpleMath::Matrix& aTransform)
+{
+	Vector3 pos = myLocalTransform.Translation();
+	myLocalTransform = aTransform;
+	myLocalTransform.Translation(pos);
+}
+
 void CTransformComponent::Scale(DirectX::SimpleMath::Vector3 aScale)
 {
 	myScale = aScale;
@@ -178,6 +185,11 @@ DirectX::SimpleMath::Matrix CTransformComponent::GetWorldMatrix() const
 DirectX::SimpleMath::Matrix CTransformComponent::GetLocalMatrix() const
 {
 	return myLocalTransform;
+}
+
+void CTransformComponent::SetToOtherTransform(const DirectX::SimpleMath::Matrix& otherTransform)
+{
+	myLocalTransform = otherTransform;
 }
 
 void CTransformComponent::SetParent(CTransformComponent* aParent)

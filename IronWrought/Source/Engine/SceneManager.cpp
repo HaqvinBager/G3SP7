@@ -25,12 +25,12 @@ CSceneManager::~CSceneManager()
 
 CScene* CSceneManager::CreateEmpty()
 {
-	CGameObject* camera = new CGameObject(0);
-	camera->AddComponent<CCameraComponent>(*camera);//Default Fov is 70.0f
-	camera->AddComponent<CCameraControllerComponent>(*camera); //Default speed is 2.0f
+	//CGameObject* camera = new CGameObject(0);
+	//camera->AddComponent<CCameraComponent>(*camera);//Default Fov is 70.0f
+	//camera->AddComponent<CCameraControllerComponent>(*camera); //Default speed is 2.0f
 
-	camera->myTransform->Position({ 0.0f, 1.0f, 0.0f });
-	camera->myTransform->Rotation({ 0.0f, 0.0f, 0.0f });
+	//camera->myTransform->Position({ 0.0f, 1.0f, 0.0f });
+	//camera->myTransform->Rotation({ 0.0f, 0.0f, 0.0f });
 
 	CGameObject* envLight = new CGameObject(1);
 	envLight->AddComponent<CEnviromentLightComponent>(*envLight);
@@ -39,11 +39,13 @@ CScene* CSceneManager::CreateEmpty()
 	//envLight->GetComponent<CEnviromentLightComponent>()->GetEnvironmentLight()->SetColor({ 1.0f, 0.0f, 0.0f });
 
 	CScene* emptyScene = new CScene(2);
-	emptyScene->AddInstance(camera);
-	emptyScene->MainCamera(camera->GetComponent<CCameraComponent>());
+	//emptyScene->AddInstance(camera);
+	//emptyScene->MainCamera(camera->GetComponent<CCameraComponent>());
 	emptyScene->EnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnvironmentLight());
 	emptyScene->AddInstance(envLight);
 	emptyScene->AddPXScene(CEngine::GetInstance()->GetPhysx().CreatePXScene(emptyScene));
+
+	AddPlayer(*emptyScene, std::string());
 
 	return emptyScene;
 }
@@ -200,31 +202,37 @@ void CSceneManager::AddDecalComponents(CScene& aScene, const std::string& aJsonF
 
 void CSceneManager::AddPlayer(CScene& aScene, const std::string& /*aJsonFileName*/)
 {
+	/*
+	PhysX notes: Rotating entire transform rotates collider as well. 
+	*/
+
 
 	CGameObject* player = new CGameObject(87);
 	//add cmodelcomponent
 	player->AddComponent<CPlayerControllerComponent>(*player);
+	//player->AddComponent<CModelComponent>(*player, ASSETPATH("Assets/Graphics/Character/Main_Character/CH_PL_SK_alt.fbx"));
 
+	CGameObject* camera = CCameraControllerComponent::CreatePlayerFirstPersonCamera(player);//new CGameObject(96);
 
-	CGameObject* camera = new CGameObject(96);
-	camera->AddComponent<CCameraComponent>(*camera);//Default Fov is 70.0f
-	camera->AddComponent<CCameraControllerComponent>(*camera,2.0f, CCameraControllerComponent::ECameraMode::PlayerFirstPerson); //Default speed is 2.0f
+	CGameObject* model = new CGameObject(88);
+	model->AddComponent<CModelComponent>(*model, ASSETPATH("Assets/Graphics/Character/Main_Character/CH_PL_SK_alt.fbx"));
+	model->myTransform->SetParent(camera->myTransform);
+	//model->myTransform->Rotate({ 0.0f,160.1f,0.0f });
+	model->myTransform->Position({ 0.0f,0.0f,0.0f });
+	
+	//camera->AddComponent<CCameraComponent>(*camera);//Default Fov is 70.0f
+	//camera->AddComponent<CCameraControllerComponent>(*camera,2.0f, CCameraControllerComponent::ECameraMode::PlayerFirstPerson); //Default speed is 2.0f
 
-	camera->myTransform->Position({ 0.0f, 0.0f, 0.0f });
-	camera->myTransform->Rotation({ 0.0f, 0.0f, 0.0f });
+	//camera->myTransform->Position({ 0.0f, 0.0f, 0.0f });
+	//camera->myTransform->Rotation({ 0.0f, 0.0f, 0.0f });
 
-	camera->myTransform->SetParent(player->myTransform);
+	//camera->myTransform->SetParent(player->myTransform);
 
 	aScene.AddInstance(player);
 
+	aScene.AddInstance(model);
 	aScene.AddInstance(camera);
 	aScene.MainCamera(camera->GetComponent<CCameraComponent>());
-
-	
-
-	
-
-
 }
 
 
