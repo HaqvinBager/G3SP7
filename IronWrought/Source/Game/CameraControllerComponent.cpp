@@ -51,11 +51,6 @@ void CCameraControllerComponent::Update()
 
 	if (Input::GetInstance()->IsKeyPressed(/*std::toupper(myToggleFreeCam)*/myToggleFreeCam)) {
 		myCameraMode = myCameraMode == ECameraMode::FreeCam ? ECameraMode::PlayerFirstPerson : ECameraMode::FreeCam;
-
-		// TEMPORARY
-		//bool showCursor = CEngine::GetInstance()->GetWindowHandler()->CursorLocked();
-		//CEngine::GetInstance()->GetWindowHandler()->LockCursor(!showCursor);
-		// TEMPORARY
 	}
 #endif
 	if (myCameraMode == ECameraMode::MenuCam) {
@@ -67,12 +62,6 @@ void CCameraControllerComponent::Update()
 		UpdatePlayerFirstPerson();
 	}
 
-	// TEMP
-	//if (Input::GetInstance()->IsKeyPressed(VK_SPACE))
-	//{
-	//	CEngine::GetInstance()->GetPhysx().Raycast(GameObject().myTransform->Position(), GameObject().myTransform->Transform().Forward(), 50000.0f);
-	//}
-	// ! TEMP
 }
 
 CGameObject* CCameraControllerComponent::CreatePlayerFirstPersonCamera(CGameObject* aParentObject)

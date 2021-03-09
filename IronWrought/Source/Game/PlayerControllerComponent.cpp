@@ -12,6 +12,7 @@
 CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, const float aSpeed)
 	: CComponent(gameObject)
 	, mySpeed(aSpeed)
+	, myHorizontalMoveSpeed(5.0f)
 {
 	INPUT_MAPPER->AddObserver(EInputEvent::MoveForward,		this);
 	INPUT_MAPPER->AddObserver(EInputEvent::MoveBackward,	this);
@@ -41,11 +42,7 @@ void CPlayerControllerComponent::Start()
 
 void CPlayerControllerComponent::Update()
 {
-	
-	
-
 	//GameObject().myTransform->Position(myController->GetPosition());
-
 }
 
 void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
@@ -53,35 +50,28 @@ void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
 	switch (aEvent)
 	{
 		case EInputEvent::MoveForward:
-			myMovement.z = 1.0f;
+			myMovement = -GameObject().myTransform->GetLocalMatrix().Forward();
 			break;
 		case EInputEvent::MoveBackward:
-			myMovement.z = -1.0f;
+			myMovement = -GameObject().myTransform->GetLocalMatrix().Backward();
 			break;
 		case EInputEvent::MoveLeft:
-			myMovement.x = -1.0f;
+			myMovement = GameObject().myTransform->GetLocalMatrix().Left();
 			break;
 		case EInputEvent::MoveRight:
-			myMovement.x = 1.0f;
+			myMovement = GameObject().myTransform->GetLocalMatrix().Right();
 			break;
 		case EInputEvent::Jump:
-			if (canJump == true)
-			{
-				Jump();
-			}
-			
-
+			if (canJump == true)			
+				Jump();		
 			break;
 		default:break;
 	}
-
 	//if (jumptimer == 0)
 	//{
 	//	myMovement.y = -1.0f; //Gravity
-
 	//}
 	//myMovement.y = -1.0f; //Gravity
-	myHorizontalMoveSpeed = 5.0f;
 	GameObject().myTransform->MoveLocal(myMovement * myHorizontalMoveSpeed * CTimer::Dt());
 	//Move(myMovement * mySpeed);
 	myMovement = { 0.f,0.f,0.f };

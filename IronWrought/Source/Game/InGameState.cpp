@@ -61,16 +61,10 @@ void CInGameState::Start()
 {
 	CJsonReader::Get()->Init();
 	CScene* scene = CSceneManager::CreateEmpty();
-	scene->AddPXScene(CEngine::GetInstance()->GetPhysx().CreatePXScene(scene));
-
-	
 
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);
-
-	myExitLevel = false;
-
-	
+	myExitLevel = false;	
 }
 
 void CInGameState::Stop()
