@@ -53,6 +53,13 @@ public:
 	void RemoveParent();
 
 private:
+
+
+	//NEEDS TO BE VERIFIED //AXel Savage 2021/03/09
+	void AddChild(CTransformComponent* aChild);
+	void RemoveChild(CTransformComponent* aChild);
+	//--------------------------------------------//
+
 	DirectX::SimpleMath::Vector3 myScale;
 	// TODO: Move speed into "Resource Component"
 	DirectX::SimpleMath::Matrix myLocalTransform;
@@ -68,6 +75,9 @@ private:
 	//DirectX::SimpleMath::Vector3 myWorldScale;
 
 	CTransformComponent* myParent;
+
+	//NEEDS TO BE VERIFIED //AXel Savage 2021/03/09
+	std::vector<CTransformComponent*> myChildren;
 	//float myScale;
 	//bool scalediff;
 };

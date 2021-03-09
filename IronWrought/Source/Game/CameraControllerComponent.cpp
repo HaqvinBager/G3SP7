@@ -100,7 +100,7 @@ void CCameraControllerComponent::UpdatePlayerFirstPerson()
 	myPitch = std::clamp(myPitch + (dy * myMouseRotationSpeed * dt), ToDegrees(-PI / 2.0f), ToDegrees(PI / 2.0f));
 
 	GameObject().myTransform->Rotation({ myPitch, myYaw, 0});
-	GameObject().myTransform->GetParent()->Rotation({ 0, myYaw, 0 });
+	//GameObject().myTransform->GetParent()->Rotation({ 0, myYaw, 0 });
 	//GameObject().myTransform->GetParent()->CopyRotation(GameObject().myTransform->GetLocalMatrix());
 
 	//GameObject().myTransform->GetParent()->Transform(GameObject().myTransform->GetLocalMatrix());

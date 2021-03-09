@@ -26,8 +26,11 @@ void CTransformComponent::Start()
 }
 
 void CTransformComponent::Update()
-{
-
+{/*
+	if (myParent != nullptr)
+		myWorldTransform = DirectX::XMMatrixMultiply(myLocalTransform, myParent->myWorldTransform);
+	else
+		myWorldTransform = myLocalTransform;*/
 }
 
 void CTransformComponent::LateUpdate()
@@ -196,6 +199,10 @@ void CTransformComponent::SetParent(CTransformComponent* aParent)
 {
 	myLocalTransform = DirectX::XMMatrixMultiply(myLocalTransform, aParent->myWorldTransform.Invert());
 	myParent = aParent;
+
+	//NEEDS TO BE VERIFIED //AXel Savage 2021/03/09
+	aParent->AddChild(this);
+
 }
 
 void CTransformComponent::RemoveParent()
@@ -203,5 +210,26 @@ void CTransformComponent::RemoveParent()
 	myLocalTransform = DirectX::XMMatrixMultiply(myLocalTransform, myParent->myWorldTransform);
 	Vector3 translation; Vector3 scale;  Quaternion quat;
 	GetLocalMatrix().Decompose(scale, quat, translation);
+	
+	//NEEDS TO BE VERIFIED //AXel Savage 2021/03/09
+	myParent->RemoveChild(this);
+	
 	myParent = nullptr;
+}
+
+//NEEDS TO BE VERIFIED //AXel Savage 2021/03/09
+void CTransformComponent::AddChild(CTransformComponent* aChild)
+{
+	myChildren.push_back(aChild);
+}
+
+//NEEDS TO BE VERIFIED //AXel Savage 2021/03/09
+void CTransformComponent::RemoveChild(CTransformComponent* aChild)
+{
+	for (auto it = myChildren.begin(); it != myChildren.end(); ++it) {
+		if (aChild == *it) {
+			myChildren.erase(it);
+			break;
+		}
+	}
 }

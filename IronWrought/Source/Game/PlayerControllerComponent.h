@@ -19,6 +19,7 @@ public:
 
 	void Move(Vector3 aDir);
 
+	void AddFaceMesh(CGameObject* aGameObject);
 	void Jump();
 
 	CCharacterController* GetCharacterController();
@@ -27,7 +28,7 @@ private:
 	void UpdateHorizontalMovement();
 
 	CCharacterController* myController;
-
+	CGameObject* myFaceMesh;
 	Vector3 myMovement;
 	float myHorizontalMoveSpeed;
 	float mySpeed;

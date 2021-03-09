@@ -9,6 +9,9 @@
 #include "PhysXWrapper.h"
 #include "CharacterController.h"
 
+#include "Scene.h"
+#include "CameraControllerComponent.h"
+
 CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, const float aSpeed)
 	: CComponent(gameObject)
 	, mySpeed(aSpeed)
@@ -47,19 +50,26 @@ void CPlayerControllerComponent::Update()
 
 void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
 {
+	CCameraControllerComponent* cameraController = CEngine::GetInstance()->GetActiveScene().FindFirstObjectWithComponent<CCameraControllerComponent>();
+
 	switch (aEvent)
 	{
 		case EInputEvent::MoveForward:
-			myMovement = -GameObject().myTransform->GetLocalMatrix().Forward();
+			//myMovement = -GameObject().myTransform->GetLocalMatrix().Forward();
+			myMovement = -cameraController->GameObject().myTransform->GetLocalMatrix().Forward();
+
 			break;
 		case EInputEvent::MoveBackward:
-			myMovement = -GameObject().myTransform->GetLocalMatrix().Backward();
+			//myMovement = -GameObject().myTransform->GetLocalMatrix().Backward();
+			myMovement = -cameraController->GameObject().myTransform->GetLocalMatrix().Backward();
 			break;
 		case EInputEvent::MoveLeft:
-			myMovement = GameObject().myTransform->GetLocalMatrix().Left();
+			//myMovement = GameObject().myTransform->GetLocalMatrix().Left();
+			myMovement = cameraController->GameObject().myTransform->GetLocalMatrix().Left();
 			break;
 		case EInputEvent::MoveRight:
-			myMovement = GameObject().myTransform->GetLocalMatrix().Right();
+			//myMovement = GameObject().myTransform->GetLocalMatrix().Right();
+			myMovement = cameraController->GameObject().myTransform->GetLocalMatrix().Right();
 			break;
 		case EInputEvent::Jump:
 			if (canJump == true)			
@@ -72,7 +82,8 @@ void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
 	//	myMovement.y = -1.0f; //Gravity
 	//}
 	//myMovement.y = -1.0f; //Gravity
-	GameObject().myTransform->MoveLocal(myMovement * myHorizontalMoveSpeed * CTimer::Dt());
+
+	GameObject().myTransform->Move(myMovement * myHorizontalMoveSpeed * CTimer::Dt());
 	//Move(myMovement * mySpeed);
 	myMovement = { 0.f,0.f,0.f };
 }

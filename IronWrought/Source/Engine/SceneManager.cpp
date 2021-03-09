@@ -216,8 +216,9 @@ void CSceneManager::AddPlayer(CScene& aScene, const std::string& /*aJsonFileName
 	CGameObject* model = new CGameObject(88);
 	model->AddComponent<CModelComponent>(*model, ASSETPATH("Assets/Graphics/Character/Main_Character/CH_PL_SK_alt.fbx"));
 	model->myTransform->SetParent(camera->myTransform);
+	model->myTransform->Rotation({ 0.0f, 0.0f, 0.0f });
 	//model->myTransform->Rotate({ 0.0f,160.1f,0.0f });
-	model->myTransform->Position({ 0.0f,0.0f,0.0f });
+	//model->myTransform->Position({ 0.0f, 1.6f, -0.22f });
 	
 	//camera->AddComponent<CCameraComponent>(*camera);//Default Fov is 70.0f
 	//camera->AddComponent<CCameraControllerComponent>(*camera,2.0f, CCameraControllerComponent::ECameraMode::PlayerFirstPerson); //Default speed is 2.0f
@@ -228,7 +229,6 @@ void CSceneManager::AddPlayer(CScene& aScene, const std::string& /*aJsonFileName
 	//camera->myTransform->SetParent(player->myTransform);
 
 	aScene.AddInstance(player);
-
 	aScene.AddInstance(model);
 	aScene.AddInstance(camera);
 	aScene.MainCamera(camera->GetComponent<CCameraComponent>());

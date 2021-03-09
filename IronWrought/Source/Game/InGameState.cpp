@@ -117,6 +117,11 @@ void CInGameState::Update()
 		gameObject->LateUpdate();
 	}
 
+	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
+	{
+		gameObject->LateUpdate();
+	}
+
 	if (Input::GetInstance()->IsKeyPressed(VK_ESCAPE))
 	{
 		myStateStack.PopTopAndPush(CStateStack::EState::InGame);

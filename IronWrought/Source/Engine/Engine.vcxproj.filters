@@ -175,6 +175,12 @@
     <FxCompile Include="FullscreenPixelShader_Tonemap.hlsl">
       <Filter>Shaders\Fullscreen</Filter>
     </FxCompile>
+    <FxCompile Include="PointLightGeometryShader.hlsl">
+      <Filter>Shaders\PointLight</Filter>
+    </FxCompile>
+    <FxCompile Include="PointLightVertexShader.hlsl">
+      <Filter>Shaders\PointLight</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimationComponent.cpp">
@@ -698,9 +704,6 @@
     </ClCompile>
     <ClCompile Include="CharacterController.cpp">
       <Filter>PhysX</Filter>
-    </ClCompile>
-    <ClCompile Include="NodeTypeGameObjectMoveToPosition.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClCompile>
     <ClCompile Include="NodeTypeAudioPlayStep.cpp">
       <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
@@ -1309,9 +1312,9 @@
     </ClInclude>
     <ClInclude Include="CameraSetting.h">
       <Filter>Imgui\Windows</Filter>
-      </ClInclude>
-      <ClInclude Include="CharacterController.h">
-        <Filter>PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterController.h">
+      <Filter>PhysX</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeAudioPlayStep.h">
       <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
@@ -1396,6 +1399,9 @@
     </None>
     <None Include="DecalShaderStructs.hlsli">
       <Filter>Shaders\Decal</Filter>
+    </None>
+    <None Include="PointLightShaderStructs.hlsli">
+      <Filter>Shaders\PointLight</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -1608,6 +1614,9 @@
     </Filter>
     <Filter Include="Imgui\Node Editor\Nodes\Audio">
       <UniqueIdentifier>{fb119114-266c-4e11-92b9-d9a0d1955cdd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\PointLight">
+      <UniqueIdentifier>{74affbc5-dd5c-4d83-a2bf-e2c3875912c9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
