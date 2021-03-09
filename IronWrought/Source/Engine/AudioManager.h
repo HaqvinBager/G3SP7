@@ -18,7 +18,7 @@ enum class ERobotVoiceLine { RobotAttack, RobotDeath, RobotIdle, RobotPatrolling
 
 enum class EChannel { Music, Ambience, SFX, UI, ResearcherVOX, RobotVOX, Count };
 
-enum class GroundType { Concrete, AirVent, Count };
+enum class EGroundType { Concrete, AirVent, Count };
 
 enum class SoundChannels {
 	EMusic,
@@ -76,7 +76,8 @@ private:
 	const std::string& mySFXPath = "Audio/SFX/";
 	const std::string& myUIPath = "Audio/UI/";
 	const std::string& myVoxPath = "Audio/VOX/";
-	GroundType myCurrentGroundType;
+	
+	EGroundType myCurrentGroundType;
 
 	CFModWrapper myWrapper;
 
