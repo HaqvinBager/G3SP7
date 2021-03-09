@@ -17,7 +17,7 @@
 #pragma comment(lib, "ModelLoader_Release.lib")
 #endif
 
-#define USING_FBX_MATERIALS
+//#define USING_FBX_MATERIALS
 
 #define ALLOW_ANIMATIONS
 
@@ -247,6 +247,7 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 		materials.push_back({ diffuseResourceView, materialResourceView, normalResourceView });
 		materialNames.push_back(modelName);
 	}
+	ID3D11ShaderResourceView* tintMapResourceView = GetShaderResourceView(device, (modelDirectory + modelName + "_t.dds"));
 #endif
 
 	delete loaderModel;
@@ -270,6 +271,8 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 	modelData.myDetailNormals[1] = detailNormal2;
 	modelData.myDetailNormals[2] = detailNormal3;
 	modelData.myDetailNormals[3] = detailNormal4;
+
+	modelData.myTintMap = tintMapResourceView;
 
 	model->Init(modelData);
 #ifdef ALLOW_ANIMATIONS

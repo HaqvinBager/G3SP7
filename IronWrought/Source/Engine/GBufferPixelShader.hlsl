@@ -8,6 +8,7 @@ struct GBufferOutput
     float4 myMetalRoughAOEm     : SV_TARGET3;
 };
 
+
 GBufferOutput main(VertexModelToPixel input)
 {
     VertexToPixel vertToPixel;
@@ -15,6 +16,17 @@ GBufferOutput main(VertexModelToPixel input)
     vertToPixel.myUV        = input.myUV;
     
     float3 albedo = PixelShader_Albedo(vertToPixel.myUV).rgb;
+    
+    float4 tintMap = PixelShader_TintMap(vertToPixel.myUV).rgba;
+    float3 color1 = float3(1, 0, 0) * tintMap.r;// tintmask red
+    float3 color2 = float3(0, 1, 0) * tintMap.g;// tintmask green
+    float3 color3 = float3(0, 0, 1) * tintMap.b;// tintmask blue
+    float3 color4 = float3(1, 1, 1) * tintMap.a;// tintmask alpha
+    albedo = /*albedo + */(color1 + color2 + color3 + color4) * 1.0f;
+    /*
+    If tint mask has data => tint with a color
+    */
+    
     float3 normal = PixelShader_Normal(vertToPixel.myUV).xyz;
     
     if (myNumberOfDetailNormals > 0)

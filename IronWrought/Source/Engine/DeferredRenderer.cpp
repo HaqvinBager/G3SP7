@@ -252,6 +252,7 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 
 		myContext->PSSetConstantBuffers(1, 1, &myObjectBuffer);
 		myContext->PSSetShaderResources(8, 4, &modelData.myDetailNormals[0]);
+		myContext->PSSetShaderResources(23, 1, &modelData.myTintMap);
 
 		myContext->PSSetShader(myCurrentGBufferPixelShader, nullptr, 0);
 		myContext->PSSetSamplers(0, 1, &modelData.mySamplerState);

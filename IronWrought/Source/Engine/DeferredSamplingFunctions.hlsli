@@ -39,6 +39,13 @@ float4 PixelShader_Albedo(float2 uv)
     return color;
 }
 
+float4 PixelShader_TintMap(float2 uv)
+{
+    float4 color = tintMapTexture.Sample(defaultSampler, uv).rgba;
+    //color.rgb = GammaToLinear(color.rgb);// Used for when testing Detail normals, tufted leather model had incorrect compression format (sLinear instead of sRGB) or something lika that i don't remember
+    return color;
+}
+
 float4 PixelShader_Albedo(Texture2D anAlbedoTexture, float2 uv)
 {
     float4 color = anAlbedoTexture.Sample(defaultSampler, uv).rgba;

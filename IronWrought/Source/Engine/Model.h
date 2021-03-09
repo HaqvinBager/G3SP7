@@ -44,6 +44,7 @@ public:
 		std::vector<std::array<ID3D11ShaderResourceView*, 3>> myMaterials { };
 		std::vector<std::string> myMaterialNames;
 		std::array<ID3D11ShaderResourceView*, 4> myDetailNormals { nullptr, nullptr, nullptr, nullptr };
+		ID3D11ShaderResourceView* myTintMap = nullptr;
 	};
 
 	struct SModelInstanceData {

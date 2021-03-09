@@ -58,7 +58,9 @@ void CInGameState::Start()
 	CScene* scene = CSceneManager::CreateEmpty();
 	scene->AddPXScene(CEngine::GetInstance()->GetPhysx().CreatePXScene());
 	
-	//TEMP_VFX(scene);
+	CGameObject* go = new CGameObject(123123);
+	go->AddComponent<CModelComponent>(*go, "Assets/Temp/Pokeball/pokeball.fbx");
+	scene->AddInstance(go);
 
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);
