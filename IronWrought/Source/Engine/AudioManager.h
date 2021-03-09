@@ -16,7 +16,7 @@ enum class EResearcherEventVoiceLine { ResearcherDoorEventVerticalSlice, Researc
 enum class EResearcherReactionVoiceLine { ResearcherReactionExplosives, Count };
 enum class ERobotVoiceLine { RobotAttack, RobotDeath, RobotIdle, RobotPatrolling, RobotSearching, Count };
 
-enum class EChannel { Music, Ambience, SFX, UI, VOX, Count };
+enum class EChannel { Music, Ambience, SFX, UI, ResearcherVOX, RobotVOX, Count };
 
 enum class GroundType { Concrete, AirVent, Count };
 

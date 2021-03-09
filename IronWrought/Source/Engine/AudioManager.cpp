@@ -104,10 +104,15 @@ CAudioManager::CAudioManager() : myWrapper() {
 		float value = volDoc["UI"].GetFloat();
 		myChannels[CAST(EChannel::UI)]->SetVolume(value);
 	}
-	if (volDoc.HasMember("Voice"))
+	if (volDoc.HasMember("ResearcherVoice"))
 	{
-		float value = volDoc["Voice"].GetFloat();
-		myChannels[CAST(EChannel::VOX)]->SetVolume(value);
+		float value = volDoc["ResearcherVoice"].GetFloat();
+		myChannels[CAST(EChannel::ResearcherVOX)]->SetVolume(value);
+	}
+	if (volDoc.HasMember("RobotVoice"))
+	{
+		float value = volDoc["RobotVoice"].GetFloat();
+		myChannels[CAST(EChannel::RobotVOX)]->SetVolume(value);
 	}
 }
 
@@ -203,8 +208,44 @@ void CAudioManager::Receive(const SMessage& aMessage) {
 	case EMessageType::PlayStepSound:
 	{
 		PlayRandomSoundFromCollection(myConcreteStepSounds, EChannel::SFX);
-	}break;
+	}
+	break;
 
+	case EMessageType::PlayResearcherReactionExplosives:
+	{
+		PlayRandomSoundFromCollection(myResearcherReactionsExplosives, EChannel::ResearcherVOX);
+	}
+	break;
+
+	case EMessageType::PlayRobotAttackSound:
+	{
+		PlayRandomSoundFromCollection(myRobotAttackSounds, EChannel::RobotVOX);
+	}
+	break;
+
+	case EMessageType::PlayRobotDeathSound:
+	{
+		PlayRandomSoundFromCollection(myRobotDeathSounds, EChannel::RobotVOX);
+	}
+	break;
+
+	case EMessageType::PlayRobotIdleSound:
+	{
+		PlayRandomSoundFromCollection(myRobotIdleSounds, EChannel::RobotVOX);
+	}
+	break;
+
+	case EMessageType::PlayRobotPatrolling:
+	{
+		PlayRandomSoundFromCollection(myRobotPatrollingSounds, EChannel::RobotVOX);
+	}
+	break;
+
+	case EMessageType::PlayRobotSearching:
+	{
+		PlayRandomSoundFromCollection(myRobotSearchingSounds, EChannel::RobotVOX);
+	}
+	break;
 	// VOICELINES
 	//case EMessageType::PlayVoiceLine:
 	//{
@@ -253,6 +294,12 @@ void CAudioManager::SubscribeToMessages()
 {
 	CMainSingleton::PostMaster().Subscribe(EMessageType::UIButtonPress, this);
 	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayStepSound, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayResearcherReactionExplosives, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayRobotAttackSound, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayRobotDeathSound, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayRobotIdleSound, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayRobotPatrolling, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayRobotSearching, this);
 
 	//CMainSingleton::PostMaster().Subscribe(EMessageType::PlayVoiceLine, this);
 	//CMainSingleton::PostMaster().Subscribe(EMessageType::StopDialogue, this);
@@ -262,6 +309,12 @@ void CAudioManager::UnsubscribeToMessages()
 {
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::UIButtonPress, this);
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayStepSound, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayResearcherReactionExplosives, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayRobotAttackSound, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayRobotDeathSound, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayRobotIdleSound, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayRobotPatrolling, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayRobotSearching, this);
 
 	//CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayVoiceLine, this);
 	//CMainSingleton::PostMaster().Unsubscribe(EMessageType::StopDialogue, this);
@@ -336,8 +389,10 @@ std::string CAudioManager::TranslateEnum(EChannel enumerator) const
 		return "SFX";
 	case EChannel::UI:
 		return "UI";
-	case EChannel::VOX:
-		return "VOX";
+	case EChannel::ResearcherVOX:
+		return "ResearcherVOX";
+	case EChannel::RobotVOX:
+		return "RobotVOX";
 	default:
 		return "";
 	}
