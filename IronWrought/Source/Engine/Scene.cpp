@@ -50,14 +50,14 @@ CScene::CScene(const unsigned int aGameObjectCount)
 	}
 
 #ifdef _DEBUG
-	myShouldRenderLineInstance = true;
+	myShouldRenderLineInstance = false;
 	myGrid = new CLineInstance();
 	myGrid->Init(CLineFactory::GetInstance()->CreateGrid({ 0.1f, 0.5f, 1.0f, 1.0f }));
 	this->AddInstance(myGrid);
 #endif
 
-	myCanvas = new CCanvas();
-	myCanvas->Init(ASSETPATH("Assets/Graphics/UI/JSON/UI_HUD.json"), *this);
+	//myCanvas = new CCanvas();
+	//myCanvas->Init(ASSETPATH("Assets/Graphics/UI/JSON/UI_HUD.json"), *this);
 
 }
 

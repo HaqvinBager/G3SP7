@@ -203,10 +203,10 @@ void CRenderManager::Render(CScene& aScene)
 	myDeferredLightingTexture.SetAsActiveTarget(&myIntermediateDepth);
 
 	// Render Lines
-	const std::vector<CLineInstance*>& lineInstances = aScene.CullLineInstances();
-	const std::vector<SLineTime>& lines = aScene.CullLines();
-	myForwardRenderer.RenderLines(maincamera, lines);
-	myForwardRenderer.RenderLineInstances(maincamera, lineInstances);
+	//const std::vector<CLineInstance*>& lineInstances = aScene.CullLineInstances();
+	//const std::vector<SLineTime>& lines = aScene.CullLines();
+	//myForwardRenderer.RenderLines(maincamera, lines);
+	//myForwardRenderer.RenderLineInstances(maincamera, lineInstances);
 
 	// Alpha stage for objects in World 3D space
 	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_ALPHABLEND);
