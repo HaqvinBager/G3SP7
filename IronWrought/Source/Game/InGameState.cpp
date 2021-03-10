@@ -236,7 +236,7 @@ void CInGameState::TEMP_DecalTests(CScene* aScene)
 	aScene->AddInstance(foliage);
 
 	CGameObject* decal = new CGameObject(20000);
-	decal->AddComponent<CDecalComponent>(*decal, "Alpha");
+	decal->AddComponent<CDecalComponent>(*decal, "EN_DE_yellowline_2048x64");
 	decal->GetComponent<CDecalComponent>()->SetAlphaThreshold(0.3f);
 	decal->myTransform->Position({ 0.0f, 1.0f, 0.0f });
 	decal->myTransform->Scale({ 2.0f, 2.0f, 1.0f });
