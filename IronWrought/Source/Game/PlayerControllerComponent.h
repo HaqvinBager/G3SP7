@@ -8,7 +8,7 @@ class CGameObject;
 class CPlayerControllerComponent : public CComponent, public IInputObserver
 {
 public:
-	CPlayerControllerComponent(CGameObject& gameObject, const float aSpeed = 0.025f);
+	CPlayerControllerComponent(CGameObject& gameObject, const float aSpeed = 0.015f);
 	~CPlayerControllerComponent() override;
 
 	void Awake() override;
