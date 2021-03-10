@@ -45,9 +45,9 @@ public:
 
 	CRigidDynamicBody* CreateDynamicRigidbody(const Vector3& aPos);
 
-	CCharacterController* CreateCharacterController(PxControllerShapeType::Enum aType, const Vector3& aPos, const float& aRadius, const float& aHeight);
+	CCharacterController* CreateCharacterController(const Vector3& aPos, const float& aRadius, const float& aHeight);
 
-	PxControllerManager* GetControllerManger();
+	PxControllerManager* GetControllerManager();
 
 
   //merge conflict 8/3/2021
@@ -65,7 +65,7 @@ private:
 	PxDefaultAllocator* myAllocator;
 	PxCooking* myCooking;
 	CContactReportCallback* myContactReportCallback;
-	//PxControllerManager* myControllerManager;
-	std::unordered_map<PxScene*, PxControllerManager*> myControllerManagers;
+	PxControllerManager* myControllerManager;
+	std::unordered_map<PxScene*, PxControllerManager*> myControllerManagers;// Should not be necessary
 	std::unordered_map<CScene*, PxScene*> myPXScenes;
 };

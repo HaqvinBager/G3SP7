@@ -8,7 +8,7 @@ class CCharacterController;
 class CCharacterControllerComponent : public CBehaviour
 {
 public:
-	CCharacterControllerComponent(CGameObject& aParent, PxControllerShapeType::Enum aType = PxControllerShapeType::Enum::eCAPSULE, const Vector3& aPos = {0, 0, 0}, const float& aRadius = 0.5f, const float aHeight = 2.f);
+	CCharacterControllerComponent(CGameObject& aParent, const Vector3& aPos = {0, 1, 0}, const float& aRadius = 0.6f, const float aHeight = 1.8f);
 	~CCharacterControllerComponent() override;
 
 	CCharacterController* GetCharacterController() { return myCharacterController; }

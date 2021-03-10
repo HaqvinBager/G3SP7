@@ -24,7 +24,7 @@ CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, 
 	INPUT_MAPPER->AddObserver(EInputEvent::Jump, this);
 
 	canJump = true;
-	//myController = CEngine::GetInstance()->GetPhysx().CreateCharacterController(physx::PxControllerShapeType::eCAPSULE,gameObject.myTransform->Position(), 0.6f, 1.8f);
+	myController = CEngine::GetInstance()->GetPhysx().CreateCharacterController(gameObject.myTransform->Position(), 0.6f * 0.5f, 1.8f * 0.5f);
 }
 
 CPlayerControllerComponent::~CPlayerControllerComponent()
@@ -45,7 +45,8 @@ void CPlayerControllerComponent::Start()
 
 void CPlayerControllerComponent::Update()
 {
-	//GameObject().myTransform->Position(myController->GetPosition());
+	Move({0.0f, -0.0098f, 0.0f});
+	GameObject().myTransform->Position(myController->GetPosition());
 }
 
 void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
@@ -81,11 +82,11 @@ void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
 	//{
 	//	myMovement.y = -1.0f; //Gravity
 	//}
-	//myMovement.y = -1.0f; //Gravity
+	myMovement.y = -1.0f; //Gravity
 
-	GameObject().myTransform->Move(myMovement * myHorizontalMoveSpeed * CTimer::Dt());
-	//Move(myMovement * mySpeed);
-	myMovement = { 0.f,0.f,0.f };
+	//GameObject().myTransform->Move(myMovement * myHorizontalMoveSpeed * CTimer::Dt());
+	Move(myMovement * mySpeed);
+	myMovement = { 0.f,-1.f,0.f };
 }
 
 void CPlayerControllerComponent::Move(Vector3 aDir)
@@ -94,7 +95,7 @@ void CPlayerControllerComponent::Move(Vector3 aDir)
 	if (collisionflag == physx::PxControllerCollisionFlag::eCOLLISION_DOWN) 
 	{
 		canJump = true;
-		std::cout << "collided with ground" << std::endl;
+		//std::cout << "collided with ground" << std::endl;
 	}
 }
 
@@ -110,6 +111,11 @@ void CPlayerControllerComponent::Jump()
 	}*/
 
 
+}
+
+void CPlayerControllerComponent::SetControllerPosition(const Vector3& aPos)
+{
+	myController->GetController().setPosition({ aPos.x, aPos.y, aPos.x });
 }
 
 CCharacterController* CPlayerControllerComponent::GetCharacterController()

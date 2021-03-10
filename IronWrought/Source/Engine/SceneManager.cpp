@@ -227,7 +227,7 @@ void CSceneManager::AddPlayer(CScene& aScene, const std::string& /*aJsonFileName
 	//camera->myTransform->Rotation({ 0.0f, 0.0f, 0.0f });
 
 	//camera->myTransform->SetParent(player->myTransform);
-
+	player->GetComponent<CPlayerControllerComponent>()->SetControllerPosition({ 0.f, 5.0f,0.0f });
 	aScene.AddInstance(player);
 	aScene.AddInstance(model);
 	aScene.AddInstance(camera);

@@ -44,7 +44,7 @@ CPhysXWrapper::CPhysXWrapper()
 	myPhysicsVisualDebugger = nullptr;
 	myAllocator = nullptr;
 	myContactReportCallback = nullptr;
-	//myControllerManager = nullptr;
+	myControllerManager = nullptr;
 }
 
 CPhysXWrapper::~CPhysXWrapper()
@@ -122,7 +122,7 @@ PxScene* CPhysXWrapper::CreatePXScene(CScene* aScene)
 //pXScene->setVisualizationParameter(PxVisualizationParameter::eSCALE, 1.0f);
 //pXScene->setVisualizationParameter(PxVisualizationParameter::eACTOR_AXES, 2.0f);
 
-	myControllerManagers[pXScene] = PxCreateControllerManager(*pXScene);
+	/*myControllerManagers[pXScene]*/myControllerManager = PxCreateControllerManager(*pXScene);
 
 	myPXScenes[aScene] = pXScene;
 
@@ -218,15 +218,15 @@ CRigidDynamicBody* CPhysXWrapper::CreateDynamicRigidbody(const Vector3& aPos)
 	return dynamicBody;
 }
 
-CCharacterController* CPhysXWrapper::CreateCharacterController(PxControllerShapeType::Enum aType, const Vector3& aPos, const float& aRadius, const float& aHeight)
+CCharacterController* CPhysXWrapper::CreateCharacterController(const Vector3& aPos, const float& aRadius, const float& aHeight)
 {
-	CCharacterController* characterController = new CCharacterController(aType, aPos, aRadius, aHeight);
+	CCharacterController* characterController = new CCharacterController(aPos, aRadius, aHeight);
 	return characterController;
 }
 
-PxControllerManager* CPhysXWrapper::GetControllerManger()
+PxControllerManager* CPhysXWrapper::GetControllerManager()
 {
-	return myControllerManagers[GetPXScene()];
+	return myControllerManager/*myControllerManagers[GetPXScene()]*/;
 }
 
 //void CPhysXWrapper::DebugLines()
@@ -273,7 +273,17 @@ void CPhysXWrapper::Cooking(std::vector<CGameObject*> gameObjectsToCook, CScene*
 			PxRigidStatic* actor = myPhysics->createRigidStatic({ 0.f, 0.f, 0.f });
 			PxShape* shape = myPhysics->createShape(pMeshGeometry, *myPXMaterial, true);
 			actor->attachShape(*shape);
-			actor->setGlobalPose({ gameObjectsToCook[i]->myTransform->Position().x,gameObjectsToCook[i]->myTransform->Position().y, gameObjectsToCook[i]->myTransform->Position().z });
+
+			DirectX::SimpleMath::Vector3 translation;
+			DirectX::SimpleMath::Vector3 scale;
+			DirectX::SimpleMath::Quaternion quat;
+			DirectX::SimpleMath::Matrix transform = gameObjectsToCook[i]->myTransform->GetLocalMatrix();
+			transform.Decompose(scale, quat, translation);
+			PxVec3 pos = { translation.x, translation.y, translation.z };
+			PxQuat pxQuat = { quat.x, quat.y, quat.z, quat.w };
+
+			actor->setGlobalPose({ pos, pxQuat });
+
 			aScene->PXScene()->addActor(*actor);
 
 		}

@@ -69,7 +69,7 @@ CGameObject* CCameraControllerComponent::CreatePlayerFirstPersonCamera(CGameObje
 	CGameObject* camera = new CGameObject(1000);
 	camera->AddComponent<CCameraComponent>(*camera, 70.0f);
 	camera->AddComponent<CCameraControllerComponent>(*camera, 2.0f, ECameraMode::PlayerFirstPerson);
-	camera->myTransform->Position({ 0.0f, 1.6f, -0.22f });
+	camera->myTransform->Position({ 0.0f, 1.6f * 0.5f, -0.22f });
 	camera->myTransform->Rotation({ 0.0f, 0.0f, 0.0f });
 	camera->myTransform->SetParent(aParentObject->myTransform);
 	return camera;

@@ -8,7 +8,7 @@ class CGameObject;
 class CPlayerControllerComponent : public CComponent, public IInputObserver
 {
 public:
-	CPlayerControllerComponent(CGameObject& gameObject, const float aSpeed = 0.005f);
+	CPlayerControllerComponent(CGameObject& gameObject, const float aSpeed = 0.025f);
 	~CPlayerControllerComponent() override;
 
 	void Awake() override;
@@ -21,6 +21,7 @@ public:
 
 	void AddFaceMesh(CGameObject* aGameObject);
 	void Jump();
+	void SetControllerPosition(const Vector3& aPos);
 
 	CCharacterController* GetCharacterController();
 
