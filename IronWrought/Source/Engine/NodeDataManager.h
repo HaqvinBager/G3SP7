@@ -9,6 +9,7 @@ public:
 		EInt,
 		EBool,
 		EStart,
+		EVector3,
 		ECount
 	};
 

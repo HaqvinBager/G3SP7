@@ -34,7 +34,8 @@ CScene* CSceneManager::CreateEmpty()
 
 	CGameObject* envLight = new CGameObject(1);
 	envLight->AddComponent<CEnviromentLightComponent>(*envLight);
-	envLight->GetComponent<CEnviromentLightComponent>()->GetEnvironmentLight()->SetIntensity(1.f);
+	envLight->GetComponent<CEnviromentLightComponent>()->GetEnvironmentLight()->SetIntensity(0.f);
+	envLight->GetComponent<CEnviromentLightComponent>()->GetEnvironmentLight()->SetColor({ 0.f, 0.f, 0.f });
 	envLight->GetComponent<CEnviromentLightComponent>()->GetEnvironmentLight()->SetDirection({ 0.0f,1.0f,1.0f });
 	//envLight->GetComponent<CEnviromentLightComponent>()->GetEnvironmentLight()->SetColor({ 1.0f, 0.0f, 0.0f });
 
@@ -54,7 +55,6 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneName)
 	CScene* scene = CreateEmpty();
 
 	AddInstancedModelComponents(*scene, aSceneName + "_InstanceModelCollection.json");
-
 	if (AddGameObjects(*scene, aSceneName + "_InstanceIDCollection.json")) {
 		SetTransforms(*scene, aSceneName + "_TransformCollection.json");
 		AddModelComponents(*scene, aSceneName + "_ModelCollection.json");
