@@ -279,6 +279,7 @@ IronWrought/Lib/ModelLoader_Debug.lib
 IronWrought/Lib/ModelLoader_Release.lib
 
 Ironwrought/Bin/Launcher_Release.exe
+Ironwrought/Bin/Launcher_Debug.exe
 
 # This .gitignore file should be placed at the root of your Unity project directory
 #
@@ -351,7 +352,3 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
-
-
-*.cso
-*.exe
