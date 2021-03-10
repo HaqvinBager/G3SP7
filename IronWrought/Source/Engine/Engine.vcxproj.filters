@@ -432,9 +432,6 @@
     <ClCompile Include="ImguiManager.cpp">
       <Filter>Imgui\Manager</Filter>
     </ClCompile>
-    <ClCompile Include="ImGuiLevelSelect.cpp">
-      <Filter>Imgui\Manager</Filter>
-    </ClCompile>
     <ClCompile Include="SceneManager.cpp">
       <Filter>Engine Core</Filter>
     </ClCompile>
@@ -1038,9 +1035,6 @@
       <Filter>Imgui\Blueprints</Filter>
     </ClInclude>
     <ClInclude Include="ImguiManager.h">
-      <Filter>Imgui\Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGuiLevelSelect.h">
       <Filter>Imgui\Manager</Filter>
     </ClInclude>
     <ClInclude Include="SceneManager.h">
