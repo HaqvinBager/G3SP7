@@ -194,6 +194,13 @@
     <ClInclude Include="CameraSetting.h" />
     <ClInclude Include="FlipACoinDecision.h" />
     <ClInclude Include="NodeDataManager.h" />
+    <ClInclude Include="NodeTypeAudioPlayResearcherReactionExplosives.h" />
+    <ClInclude Include="NodeTypeAudioPlayRobotPatrolling.h" />
+    <ClInclude Include="NodeTypeAudioPlayRobotAttack.h" />
+    <ClInclude Include="NodeTypeAudioPlayRobotDeath.h" />
+    <ClInclude Include="NodeTypeAudioPlayRobotSearching.h" />
+    <ClInclude Include="NodeTypeAudioPlayStep.h" />
+    <ClInclude Include="NodeTypeAudioPlayRobotIdle.h" />
     <ClInclude Include="NodeTypeDecisionCoinFlip.h" />
     <ClInclude Include="NodeTypeGameObjectGetRotation.h" />
     <ClInclude Include="NodeTypeGameObjectMove.h" />
@@ -387,6 +394,13 @@
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="AudioChannel.cpp" />
     <ClCompile Include="AudioManager.cpp" />
+    <ClCompile Include="NodeTypeAudioPlayResearcherReactionExplosives.cpp" />
+    <ClCompile Include="NodeTypeAudioPlayRobotPatrolling.cpp" />
+    <ClCompile Include="NodeTypeAudioPlayRobotAttack.cpp" />
+    <ClCompile Include="NodeTypeAudioPlayRobotDeath.cpp" />
+    <ClCompile Include="NodeTypeAudioPlayRobotSearching.cpp" />
+    <ClCompile Include="NodeTypeAudioPlayStep.cpp" />
+    <ClCompile Include="NodeTypeAudioPlayRobotIdle.cpp" />
     <ClCompile Include="NodeTypeGameObjectGetRotation.cpp" />
     <ClCompile Include="CameraSetting.cpp" />
     <ClCompile Include="FlipACoinDecision.cpp" />

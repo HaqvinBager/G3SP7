@@ -711,6 +711,28 @@
     </ClCompile>
     <ClCompile Include="NodeTypeVariableGetVector3.cpp" />
     <ClCompile Include="NodeTypeVariableSetVector3.cpp" />
+    <ClCompile Include="NodeTypeAudioPlayStep.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeAudioPlayRobotAttack.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeAudioPlayRobotDeath.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeAudioPlayRobotSearching.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeAudioPlayRobotPatrolling.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeAudioPlayRobotIdle.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeAudioPlayResearcherReactionExplosives.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
+    </ClCompile>
+>>>>>>> b0a69516430834e57a1bd49d1d708241cb564978
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1307,6 +1329,28 @@
     </ClInclude>
     <ClInclude Include="NodeTypeVariableGetVector3.h" />
     <ClInclude Include="NodeTypeVariableSetVector3.h" />
+    <ClInclude Include="NodeTypeAudioPlayStep.h">
+      <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeAudioPlayRobotAttack.h">
+      <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeAudioPlayRobotDeath.h">
+      <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeAudioPlayRobotSearching.h">
+      <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeAudioPlayRobotPatrolling.h">
+      <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeAudioPlayRobotIdle.h">
+      <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeAudioPlayResearcherReactionExplosives.h">
+      <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
+    </ClInclude>
+>>>>>>> b0a69516430834e57a1bd49d1d708241cb564978
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">
@@ -1584,6 +1628,9 @@
     </Filter>
     <Filter Include="Imgui\Node Editor\Nodes\Utilities">
       <UniqueIdentifier>{833d2d1f-1cc9-4040-ae9a-0765b5b0130a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Nodes\Audio">
+      <UniqueIdentifier>{fb119114-266c-4e11-92b9-d9a0d1955cdd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

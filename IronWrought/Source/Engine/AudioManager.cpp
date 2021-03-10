@@ -24,12 +24,11 @@ using namespace rapidjson;
 
 #define CAST(type) { static_cast<unsigned int>(type) }
 
-CAudioManager::CAudioManager() : myWrapper() {
+CAudioManager::CAudioManager() 
+	: myWrapper() 
+	, myCurrentGroundType(EGroundType::Concrete)
+{
 	SubscribeToMessages();
-
-	Document document = CJsonReader::Get()->LoadDocument("Json/Audio/AudioPaths.json");
-
-	if (document.HasParseError()) { return; }
 
 	// Init Channels
 	for (unsigned int i = 0; i < static_cast<unsigned int>(EChannel::Count); ++i) {
@@ -207,7 +206,14 @@ void CAudioManager::Receive(const SMessage& aMessage) {
 
 	case EMessageType::PlayStepSound:
 	{
-		PlayRandomSoundFromCollection(myConcreteStepSounds, EChannel::SFX);
+		if (myCurrentGroundType == EGroundType::Concrete)
+		{
+			PlayRandomSoundFromCollection(myConcreteStepSounds, EChannel::SFX);
+		}
+		else if (myCurrentGroundType == EGroundType::AirVent)
+		{
+			PlayRandomSoundFromCollection(myAirVentStepSounds, EChannel::SFX);
+		}
 	}
 	break;
 

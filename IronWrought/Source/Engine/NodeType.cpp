@@ -48,6 +48,13 @@
 #include "NodeTypeStartSetCustom.h"
 #include "NodeTypeDecisionCoinFlip.h"
 #include "NodeTypeUtilitiesBranching.h"
+#include "NodeTypeAudioPlayStep.h"
+#include "NodeTypeAudioPlayResearcherReactionExplosives.h"
+#include "NodeTypeAudioPlayRobotAttack.h"
+#include "NodeTypeAudioPlayRobotDeath.h"
+#include "NodeTypeAudioPlayRobotIdle.h"
+#include "NodeTypeAudioPlayRobotPatrolling.h"
+#include "NodeTypeAudioPlayRobotSearching.h"
 
 CNodeType* CNodeTypeCollector::myTypes[128];
 unsigned short CNodeTypeCollector::myTypeCounter = 0;
@@ -95,6 +102,13 @@ void CNodeTypeCollector::PopulateTypes()
 	RegisterType<CNodeTypeTimeDeltaTotal>("Delta & Total Time");
 	RegisterType<CNodeTypeTimeTimer>("Countdown Timer");
 	RegisterType<CNodeTypeUtilitiesBranching>("Branching");
+	RegisterType<CNodeTypeAudioPlayStep>("Play Step");
+	RegisterType<CNodeTypeAudioPlayResearcherReactionExplosives>("Play Researcher Explosives Reaction");
+	RegisterType<CNodeTypeAudioPlayRobotAttack>("Play Robot Attack");
+	RegisterType<CNodeTypeAudioPlayRobotDeath>("Play Robot Death");
+	RegisterType<CNodeTypeAudioPlayRobotIdle>("Play Robot Idle");
+	RegisterType<CNodeTypeAudioPlayRobotPatrolling>("Play Robot Patrolling");
+	RegisterType<CNodeTypeAudioPlayRobotSearching>("Play Robot Searching");
 }
 
 void CNodeTypeCollector::RegisterNewDataType(std::string aNodeName, unsigned int aType)
