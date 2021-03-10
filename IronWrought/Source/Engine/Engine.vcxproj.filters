@@ -559,9 +559,6 @@
     <ClCompile Include="ImGuiAnimationComponent.cpp">
       <Filter>Imgui\Manager</Filter>
     </ClCompile>
-    <ClCompile Include="ImGuiHaqvin.cpp">
-      <Filter>Imgui\Manager</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1034,9 +1031,6 @@
       <Filter>Imgui\Manager</Filter>
     </ClInclude>
     <ClInclude Include="ImGuiWindowDefines.h">
-      <Filter>Imgui\Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGuiHaqvin.h">
       <Filter>Imgui\Manager</Filter>
     </ClInclude>
   </ItemGroup>

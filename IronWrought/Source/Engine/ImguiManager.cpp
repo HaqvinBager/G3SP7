@@ -57,9 +57,6 @@ CImguiManager::CImguiManager() : myGraphManagerIsFullscreen(false), myIsEnabled(
 
 	myWindows.emplace_back(new ImGuiAnimationComponent("Animation"));
 	myWindows.emplace_back(new ImGuiStateMachine("StateMachine"));
-	myWindows.emplace_back(new ImGuiHaqvin("Haqvin"));
-
-
 }
 
 CImguiManager::~CImguiManager()
