@@ -56,8 +56,8 @@ CScene::CScene(const unsigned int aGameObjectCount)
 	this->AddInstance(myGrid);
 #endif
 
-	myCanvas = new CCanvas();
-	myCanvas->Init(ASSETPATH("Assets/Graphics/UI/JSON/UI_HUD.json"), *this);
+	//myCanvas = new CCanvas();
+	//myCanvas->Init(ASSETPATH("Assets/Graphics/UI/JSON/UI_HUD.json"), *this);
 
 }
 
@@ -67,8 +67,8 @@ CScene::~CScene()
 	delete myEnvironmentLight;
 	myEnvironmentLight = nullptr;
 
-	delete myCanvas;
-	myCanvas = nullptr;
+	//delete myCanvas;
+	//myCanvas = nullptr;
 
 	this->ClearGameObjects();
 	this->ClearPointLights();
@@ -151,7 +151,7 @@ void CScene::ShouldRenderLineInstance(const bool aShouldRender)
 }
 void CScene::UpdateCanvas()
 {
-	myCanvas->Update();
+	//myCanvas->Update();
 }
 //SETTERS END
 //GETTERS START

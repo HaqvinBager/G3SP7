@@ -181,6 +181,9 @@
     <FxCompile Include="FullscreenPixelShader_Tonemap.hlsl">
       <Filter>Shaders\Fullscreen</Filter>
     </FxCompile>
+    <FxCompile Include="GBufferPixelShader_TintMap.hlsl">
+      <Filter>Shaders\Deferred</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimationComponent.cpp">

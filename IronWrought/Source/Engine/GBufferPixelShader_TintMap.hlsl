@@ -17,6 +17,21 @@ GBufferOutput main(VertexModelToPixel input)
     
     float3 albedo = PixelShader_Albedo(vertToPixel.myUV).rgb;
     
+    float4 tintMap = PixelShader_TintMap(vertToPixel.myUV).rgba;
+    float3 color1 = float3(1, 0, 0);//* tintMap.r;// tintmask red
+    float3 color2 = float3(0, 1, 0);//* tintMap.g;// tintmask green
+    float3 color3 = float3(0, 0, 1);//* tintMap.b;// tintmask blue
+    float3 color4 = float3(1, 1, 1); //* tintMap.a;// tintmask alpha
+    float blendFactor = 0.65f;
+    
+    float emissive = PixelShader_Emissive(vertToPixel.myUV);
+    albedo = lerp(albedo, color1, tintMap.r * blendFactor * (1 - emissive));
+    albedo = lerp(albedo, color2, tintMap.g * blendFactor * (1 - emissive));
+    albedo = lerp(albedo, color3, tintMap.b * blendFactor * (1 - emissive));
+    albedo = lerp(albedo, color4, tintMap.a * blendFactor * (1 - emissive));
+
+    //Reminder: Nico säger att gamma korrigering kommer ske fast att det är onödigt, kan vara en grej!
+    
     float3 normal = PixelShader_Normal(vertToPixel.myUV).xyz;
     
     if (myNumberOfDetailNormals > 0)
@@ -80,7 +95,6 @@ GBufferOutput main(VertexModelToPixel input)
     float ambientOcclusion      = PixelShader_AmbientOcclusion(vertToPixel.myUV);
     float metalness             = PixelShader_Metalness(vertToPixel.myUV);
     float perceptualRoughness   = PixelShader_PerceptualRoughness(vertToPixel.myUV);
-    float emissive              = PixelShader_Emissive(vertToPixel.myUV);
     
     GBufferOutput output;    
     output.myAlbedo         = albedo.xyz;

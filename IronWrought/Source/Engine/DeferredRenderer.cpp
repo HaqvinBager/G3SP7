@@ -36,6 +36,7 @@ CDeferredRenderer::CDeferredRenderer()
 	, myPointLightGeometryShader(nullptr)
 	, myEnvironmentLightShader(nullptr)
 	, myGBufferPixelShader(nullptr)
+	, myGBufferPixelShader_TintMap(nullptr)
 	, myPointLightShader(nullptr)
 	, myVertexPaintPixelShader(nullptr)
 	, mySamplerState(nullptr)
@@ -142,6 +143,7 @@ bool CDeferredRenderer::Init(CDirectXFramework* aFramework)
 	Graphics::CreateVertexShader("Shaders/DeferredInstancedModelVertexShader.cso", aFramework, &myInstancedModelVertexShader, vsData);
 
 	Graphics::CreatePixelShader("Shaders/GBufferPixelShader.cso", aFramework, &myGBufferPixelShader);
+	Graphics::CreatePixelShader("Shaders/GBufferPixelShader_TintMap.cso", aFramework, &myGBufferPixelShader_TintMap);
 	Graphics::CreatePixelShader("Shaders/DeferredLightEnvironmentShader.cso", aFramework, &myEnvironmentLightShader);
 	Graphics::CreatePixelShader("Shaders/DeferredLightPointShader.cso", aFramework, &myPointLightShader);
 
@@ -254,6 +256,8 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 		myContext->PSSetShaderResources(8, 4, &modelData.myDetailNormals[0]);
 		myContext->PSSetShaderResources(23, 1, &modelData.myTintMap);
 
+		if (modelData.myTintMap)
+			myCurrentGBufferPixelShader = myGBufferPixelShader_TintMap;
 		myContext->PSSetShader(myCurrentGBufferPixelShader, nullptr, 0);
 		myContext->PSSetSamplers(0, 1, &modelData.mySamplerState);
 

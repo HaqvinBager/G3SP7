@@ -103,6 +103,7 @@ private:
 	ID3D11GeometryShader* myPointLightGeometryShader;
 // Pixel shaders.
 	ID3D11PixelShader* myGBufferPixelShader;
+	ID3D11PixelShader* myGBufferPixelShader_TintMap;
 	ID3D11PixelShader* myVertexPaintPixelShader;
 	ID3D11PixelShader* myEnvironmentLightShader;
 	ID3D11PixelShader* myPointLightShader;
