@@ -163,6 +163,7 @@
     <ClInclude Include="CollisionEventComponent.h" />
     <ClInclude Include="DialogueSystem.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="GameWorldState.h" />
     <ClInclude Include="InGameState.h" />
     <ClInclude Include="NavMeshComponent.h" />
     <ClInclude Include="PlayerControllerComponent.h" />
@@ -179,6 +180,7 @@
     <ClCompile Include="CollisionEventComponent.cpp" />
     <ClCompile Include="DialogueSystem.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameWorldState.cpp" />
     <ClCompile Include="InGameState.cpp" />
     <ClCompile Include="NavMeshComponent.cpp" />
     <ClCompile Include="PlayerControllerComponent.cpp" />

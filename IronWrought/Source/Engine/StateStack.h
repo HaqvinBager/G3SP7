@@ -7,6 +7,7 @@ class CStateStack {
 public:
 	enum class EState {
 		InGame,
+		GameWorld,
 		NoState
 	};
 

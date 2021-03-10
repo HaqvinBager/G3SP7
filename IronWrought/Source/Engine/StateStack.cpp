@@ -2,6 +2,7 @@
 #include "StateStack.h"
 #include "State.h"
 #include "InGameState.h"
+#include "GameWorldState.h"
 #include "Engine.h"
 
 CStateStack::~CStateStack()
@@ -21,6 +22,10 @@ bool CStateStack::Awake(std::initializer_list<CStateStack::EState> someStates, c
 		{
 		case CStateStack::EState::InGame:
 			myStateMap[state] = new CInGameState(*this);
+			myStateMap[state]->Awake();
+			break;
+		case CStateStack::EState::GameWorld:
+			myStateMap[state] = new CGameWorldState(*this);
 			myStateMap[state]->Awake();
 			break;
 		default:

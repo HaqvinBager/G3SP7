@@ -23,6 +23,10 @@ public:
 	{
 
 		std::vector<std::string> filePaths;
+
+		if (!std::filesystem::exists(aFolder))
+			return std::vector<std::string>();
+
 		ENGINE_BOOL_POPUP(std::filesystem::exists(aFolder), "Could not find Folder %s", aFolder.c_str());
 
 		for (const auto& file : std::filesystem::directory_iterator(aFolder)) {

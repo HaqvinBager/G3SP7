@@ -1,9 +1,5 @@
 #include "stdafx.h"
 #include "Game.h"
-#include "InGameState.h"
-
-//#include "MainSingleton.h"
-//#include "PostMaster.h"
 
 #ifdef _DEBUG
 #pragma comment(lib, "Engine_Debug.lib")
@@ -23,13 +19,11 @@ CGame::~CGame()
 void CGame::Init()
 {
 	InitDev();
-	//InitRealGame();
 }
 
 bool CGame::Update()
 {
 	bool stateStackHasUpdated = myStateStack.Update();
-	CMainSingleton::PostMaster().FlushEvents();
 	return stateStackHasUpdated;
 }
 
@@ -37,10 +31,9 @@ void CGame::InitDev()
 {
 	myStateStack.Awake(
 		{
-			//CStateStack::EState::LoadLevel,
-			CStateStack::EState::InGame
+			CStateStack::EState::GameWorld
 		},
-		CStateStack::EState::InGame);
+		CStateStack::EState::GameWorld);
 }
 
 void CGame::InitRealGame()
