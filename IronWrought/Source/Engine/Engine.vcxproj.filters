@@ -709,6 +709,8 @@
     <ClCompile Include="NodeTypeGameObjectMoveToPosition.cpp">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClCompile>
+    <ClCompile Include="NodeTypeVariableGetVector3.cpp" />
+    <ClCompile Include="NodeTypeVariableSetVector3.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1303,6 +1305,8 @@
     <ClInclude Include="NodeTypeGameObjectMoveToPosition.h">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClInclude>
+    <ClInclude Include="NodeTypeVariableGetVector3.h" />
+    <ClInclude Include="NodeTypeVariableSetVector3.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">

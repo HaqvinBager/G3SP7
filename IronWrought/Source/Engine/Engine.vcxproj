@@ -234,6 +234,7 @@
     <ClInclude Include="NodeTypeVariableGetBool.h" />
     <ClInclude Include="NodeTypeVariableGetFloat.h" />
     <ClInclude Include="NodeTypeVariableGetInt.h" />
+    <ClInclude Include="NodeTypeVariableGetVector3.h" />
     <ClInclude Include="NodeTypeVariableSetBool.h" />
     <ClInclude Include="NodeTypeTimeDeltaTotal.h" />
     <ClInclude Include="NodeTypeVariableSetFloat.h" />
@@ -290,6 +291,7 @@
     <ClInclude Include="MessageType.h" />
     <ClInclude Include="NodeTypes.h" />
     <ClInclude Include="NodeTypeTimeTimer.h" />
+    <ClInclude Include="NodeTypeVariableSetVector3.h" />
     <ClInclude Include="NodeTypeVolumeTrigger.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="PerlinNoise.h" />
@@ -415,10 +417,12 @@
     <ClCompile Include="NodeTypeVariableGetBool.cpp" />
     <ClCompile Include="NodeTypeVariableGetFloat.cpp" />
     <ClCompile Include="NodeTypeVariableGetInt.cpp" />
+    <ClCompile Include="NodeTypeVariableGetVector3.cpp" />
     <ClCompile Include="NodeTypeVariableSetBool.cpp" />
     <ClCompile Include="NodeTypeTimeDeltaTotal.cpp" />
     <ClCompile Include="NodeTypeVariableSetFloat.cpp" />
     <ClCompile Include="NodeTypeVariableSetInt.cpp" />
+    <ClCompile Include="NodeTypeVariableSetVector3.cpp" />
     <ClCompile Include="ShadowRenderer.cpp" />
     <ClCompile Include="Decal.cpp" />
     <ClCompile Include="DecalComponent.cpp" />
