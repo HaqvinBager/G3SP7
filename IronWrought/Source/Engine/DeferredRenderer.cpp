@@ -233,6 +233,15 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 		}
 		myObjectBufferData.myNumberOfDetailNormals = dnCounter;
 
+		if (modelData.myTintMap)
+		{
+			myCurrentGBufferPixelShader = myGBufferPixelShader_TintMap;
+			myObjectBufferData.myTint1 = model->Tint1();
+			myObjectBufferData.myTint2 = model->Tint2();
+			myObjectBufferData.myTint3 = model->Tint3();
+			myObjectBufferData.myTint4 = model->Tint4();
+		}
+
 		BindBuffer(myObjectBuffer, myObjectBufferData, "Object Buffer");
 		
 		if (gameObject->GetComponent<CAnimationComponent>() != nullptr) {
@@ -256,8 +265,6 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 		myContext->PSSetShaderResources(8, 4, &modelData.myDetailNormals[0]);
 		myContext->PSSetShaderResources(23, 1, &modelData.myTintMap);
 
-		if (modelData.myTintMap)
-			myCurrentGBufferPixelShader = myGBufferPixelShader_TintMap;
 		myContext->PSSetShader(myCurrentGBufferPixelShader, nullptr, 0);
 		myContext->PSSetSamplers(0, 1, &modelData.mySamplerState);
 

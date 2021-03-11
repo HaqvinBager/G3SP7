@@ -248,6 +248,7 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 		materialNames.push_back(modelName);
 	}
 	ID3D11ShaderResourceView* tintMapResourceView = GetShaderResourceView(device, (modelDirectory + modelName + "_t.dds"));
+
 #endif
 
 	delete loaderModel;
@@ -273,7 +274,11 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 	modelData.myDetailNormals[3] = detailNormal4;
 
 	modelData.myTintMap = tintMapResourceView;
-
+	modelData.myTints.resize(4);
+	modelData.myTints[0] = { 1.0f, 0.0f, 0.0f };
+	modelData.myTints[1] = { 0.0f, 1.0f, 0.0f };
+	modelData.myTints[2] = { 0.0f, 0.0f, 1.0f };
+	modelData.myTints[3] = { 1.0f, 1.0f, 1.0f };
 	model->Init(modelData);
 #ifdef ALLOW_ANIMATIONS
 	model->HasBones(mesh->myModel->myNumBones > 0);

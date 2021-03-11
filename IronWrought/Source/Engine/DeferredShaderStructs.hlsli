@@ -71,6 +71,11 @@ cbuffer ObjectBuffer : register(b1)
     float4x4 toWorld;
     unsigned int myNumberOfDetailNormals;
     unsigned int myNumberOfTextureSets;
+
+    float4 myTint1;
+    float4 myTint2;
+    float4 myTint3;
+    float4 myTint4;
 }
 
 cbuffer LightBuffer : register(b2)

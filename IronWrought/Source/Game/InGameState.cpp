@@ -59,7 +59,7 @@ void CInGameState::Start()
 	scene->AddPXScene(CEngine::GetInstance()->GetPhysx().CreatePXScene());
 	
 	CGameObject* go = new CGameObject(123123);
-	go->AddComponent<CModelComponent>(*go, "Assets/Temp/Pokeball/pokeball.fbx");
+	go->AddComponent<CModelComponent>(*go, "Assets/TintMap_Aki/Pokeball/pokeball.fbx");
 	scene->AddInstance(go);
 
 	CEngine::GetInstance()->AddScene(myState, scene);
