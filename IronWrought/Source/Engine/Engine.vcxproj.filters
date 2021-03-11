@@ -729,6 +729,9 @@
     <ClCompile Include="NodeTypeAudioPlayResearcherReactionExplosives.cpp">
       <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
     </ClCompile>
+    <ClCompile Include="VFXEffect.cpp">
+      <Filter>VFX</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1342,6 +1345,9 @@
     </ClInclude>
     <ClInclude Include="NodeTypeAudioPlayResearcherReactionExplosives.h">
       <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="VFXEffect.h">
+      <Filter>VFX</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
