@@ -566,7 +566,7 @@ void CGraphManager::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInstance
 			aPin.myData = new char[128];
 			static_cast<char*>(aPin.myData)[0] = '\0';
 		}
-		std::vector<std::string> c = *static_cast<std::vector<std::string>*>(aPin.myData);
+
 		ImGui::PushID(aPin.myUID.AsInt());
 		ImGui::PushItemWidth(100.0f);
 		if (aNodeInstance->IsPinConnected(aPin))
@@ -575,24 +575,7 @@ void CGraphManager::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInstance
 		}
 		else
 		{
-			//std::vector<const char*> item = { "hello","how","are","you","doing","yo?" };
-			std::string currentItem = NULL;
-
-			if (ImGui::BeginCombo("##combo", currentItem.c_str())) // The second parameter is the label previewed before opening the combo.
-			{
-				for (int n = 0; n < 6; n++)
-				{
-					bool is_selected = (currentItem == c[n]); // You can store your selection however you want, outside or inside your objects
-					if (ImGui::Selectable(c[n].c_str(), is_selected))
-					{
-						currentItem = c[n];
-						if (is_selected)
-							ImGui::SetItemDefaultFocus();   // You may set the initial focus when opening the combo (scrolling + for keyboard navigation support)
-					}
-				}
-				ImGui::EndCombo();
-				//ImGui:: ("##edit", 0, item, 6);//("##edit", (char*)aPin.myData, 127);
-			}
+			ImGui::InputText("##edit", (char*)aPin.myData, 127);
 		}
 		ImGui::PopItemWidth();
 
@@ -691,6 +674,47 @@ void CGraphManager::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInstance
 			ImGui::InputFloat("##edit", &c->x);
 			ImGui::InputFloat("##edit1", &c->y);
 			ImGui::InputFloat("##edit2", &c->z);
+		}
+		ImGui::PopItemWidth();
+
+		ImGui::PopID();
+		break;
+	}
+	case SPin::EPinType::EList:
+	{
+		if (!aPin.myData)
+		{
+			aPin.myData = new char[128];
+			static_cast<char*>(aPin.myData)[0] = '\0';
+		}
+
+		ImGui::PushID(aPin.myUID.AsInt());
+		ImGui::PushItemWidth(100.0f);
+		if (aNodeInstance->IsPinConnected(aPin))
+		{
+			DrawPinIcon(aPin, true, 255);
+		}
+		else
+		{
+			std::vector<std::string> item = CNodeDataManager::Get()->GetData<std::vector<std::string>>(aNodeInstance->GetNodeName());
+			std::string currentItem = "";
+
+			if (ImGui::BeginCombo("##combo", currentItem.c_str())) // The second parameter is the label previewed before opening the combo.
+			{
+				for (int n = 0; n < item.size(); n++)
+				{
+					bool is_selected = (currentItem == item[n]);
+
+					if (ImGui::Selectable(item[n].c_str(), is_selected))
+					{
+						currentItem = item[n];
+						if (is_selected)
+							aPin.myData = &currentItem;
+					}
+				}
+				ImGui::EndCombo();
+				//ImGui:: ("##edit", 0, item, 6);//("##edit", (char*)aPin.myData, 127);
+			}
 		}
 		ImGui::PopItemWidth();
 

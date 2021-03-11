@@ -55,6 +55,7 @@
 #include "NodeTypeAudioPlayRobotIdle.h"
 #include "NodeTypeAudioPlayRobotPatrolling.h"
 #include "NodeTypeAudioPlayRobotSearching.h"
+#include "NodeTypeListTest.h"
 
 CNodeType* CNodeTypeCollector::myTypes[128];
 unsigned short CNodeTypeCollector::myTypeCounter = 0;
@@ -109,6 +110,7 @@ void CNodeTypeCollector::PopulateTypes()
 	RegisterType<CNodeTypeAudioPlayRobotIdle>("Play Robot Idle");
 	RegisterType<CNodeTypeAudioPlayRobotPatrolling>("Play Robot Patrolling");
 	RegisterType<CNodeTypeAudioPlayRobotSearching>("Play Robot Searching");
+	RegisterType<CNodeTypeListTest>("List Test");
 }
 
 void CNodeTypeCollector::RegisterNewDataType(std::string aNodeName, unsigned int aType)
