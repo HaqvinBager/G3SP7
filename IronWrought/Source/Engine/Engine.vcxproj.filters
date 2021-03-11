@@ -727,6 +727,9 @@
       <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
     </ClCompile>
     <ClCompile Include="NodeTypeListTest.cpp" />
+    <ClCompile Include="VFXEffect.cpp">
+      <Filter>VFX</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1342,6 +1345,9 @@
       <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeListTest.h" />
+    <ClInclude Include="VFXEffect.h">
+      <Filter>VFX</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">
