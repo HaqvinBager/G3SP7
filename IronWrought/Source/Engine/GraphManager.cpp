@@ -566,7 +566,7 @@ void CGraphManager::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInstance
 			aPin.myData = new char[128];
 			static_cast<char*>(aPin.myData)[0] = '\0';
 		}
-
+		std::vector<std::string> c = *static_cast<std::vector<std::string>*>(aPin.myData);
 		ImGui::PushID(aPin.myUID.AsInt());
 		ImGui::PushItemWidth(100.0f);
 		if (aNodeInstance->IsPinConnected(aPin))
@@ -575,17 +575,17 @@ void CGraphManager::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInstance
 		}
 		else
 		{
-			std::vector<const char*> item = { "hello","how","are","you","doing","yo?" };
-			static const char* currentItem = NULL;
+			//std::vector<const char*> item = { "hello","how","are","you","doing","yo?" };
+			std::string currentItem = NULL;
 
-			if (ImGui::BeginCombo("##combo", currentItem)) // The second parameter is the label previewed before opening the combo.
+			if (ImGui::BeginCombo("##combo", currentItem.c_str())) // The second parameter is the label previewed before opening the combo.
 			{
 				for (int n = 0; n < 6; n++)
 				{
-					bool is_selected = (currentItem == item[n]); // You can store your selection however you want, outside or inside your objects
-					if (ImGui::Selectable(item[n], is_selected))
+					bool is_selected = (currentItem == c[n]); // You can store your selection however you want, outside or inside your objects
+					if (ImGui::Selectable(c[n].c_str(), is_selected))
 					{
-						currentItem = item[n];
+						currentItem = c[n];
 						if (is_selected)
 							ImGui::SetItemDefaultFocus();   // You may set the initial focus when opening the combo (scrolling + for keyboard navigation support)
 					}
