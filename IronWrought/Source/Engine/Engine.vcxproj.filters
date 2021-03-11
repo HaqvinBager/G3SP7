@@ -482,9 +482,6 @@
     <ClCompile Include="ImguiManager.cpp">
       <Filter>Imgui\Manager</Filter>
     </ClCompile>
-    <ClCompile Include="ImGuiLevelSelect.cpp">
-      <Filter>Imgui\Manager</Filter>
-    </ClCompile>
     <ClCompile Include="SceneManager.cpp">
       <Filter>Engine Core</Filter>
     </ClCompile>
@@ -729,6 +726,7 @@
     <ClCompile Include="NodeTypeAudioPlayResearcherReactionExplosives.cpp">
       <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
     </ClCompile>
+    <ClCompile Include="NodeTypeListTest.cpp" />
     <ClCompile Include="VFXEffect.cpp">
       <Filter>VFX</Filter>
     </ClCompile>
@@ -1346,6 +1344,7 @@
     <ClInclude Include="NodeTypeAudioPlayResearcherReactionExplosives.h">
       <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
     </ClInclude>
+    <ClInclude Include="NodeTypeListTest.h" />
     <ClInclude Include="VFXEffect.h">
       <Filter>VFX</Filter>
     </ClInclude>
