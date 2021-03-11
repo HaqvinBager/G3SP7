@@ -12,11 +12,12 @@
 #Submodule for Shared engine
 #SpelMotor/IronWrought/Source/SharedEngine
 
+IronWrought/Bin/Shaders/AnimatedVertexShader.cso
 SP7UnityEditor/Assets/Generated/
 IronWrought/Bin/Imgui/NodeScripts/
+IronWrought/Bin/Shaders/*
 *.cso
 
-*.cso
 
 # User-specific files
 *.rsuser
