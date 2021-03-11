@@ -42,6 +42,7 @@ public:
 	
 	void SetPosition(DirectX::SimpleMath::Vector2 aPosition);
 	void SetShouldRender(const bool aShouldRender);
+	void SetScale(const Vector2& aScale);
 
 public:
 	CSpriteInstance* GetInstance() const;

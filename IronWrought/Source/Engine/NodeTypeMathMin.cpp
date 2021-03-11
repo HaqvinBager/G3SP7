@@ -4,14 +4,14 @@
 
 CNodeTypeMathMin::CNodeTypeMathMin()
 {
-	myPins.push_back(SPin("Val1", SPin::PinTypeInOut::PinTypeInOut_IN, SPin::PinType::Float));
-	myPins.push_back(SPin("Val2", SPin::PinTypeInOut::PinTypeInOut_IN, SPin::PinType::Float));
-	myPins.push_back(SPin("OUT", SPin::PinTypeInOut::PinTypeInOut_OUT, SPin::PinType::Float));
+	myPins.push_back(SPin("Val1", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));
+	myPins.push_back(SPin("Val2", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));
+	myPins.push_back(SPin("OUT", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EFloat));
 }
 
 int CNodeTypeMathMin::OnEnter(class CNodeInstance* aTriggeringNodeInstance)
 {
-	SPin::PinType outType;
+	SPin::EPinType outType;
 	NodeDataPtr someData = nullptr;
 	size_t outSize = 0;
 

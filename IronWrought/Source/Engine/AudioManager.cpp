@@ -1,14 +1,11 @@
 #include "stdafx.h"
-#include <iostream>
-#include <random>
 #include "AudioManager.h"
 #include "Audio.h"
 #include "AudioChannel.h"
 #include "MainSingleton.h"
 #include "PostMaster.h"
-//#include "rapidjson\document.h"
-//#include "rapidjson\istreamwrapper.h"
 #include "JsonReader.h"
+#include "RandomNumberGenerator.h"
 
 /*////////////////////////////////////
 * Suggestion
@@ -27,73 +24,57 @@ using namespace rapidjson;
 
 #define CAST(type) { static_cast<unsigned int>(type) }
 
-CAudioManager::CAudioManager() : myWrapper() {
+CAudioManager::CAudioManager() 
+	: myWrapper() 
+	, myCurrentGroundType(EGroundType::Concrete)
+{
 	SubscribeToMessages();
 
-	//std::ifstream inputStream("Json/Audio/AudioPaths.json");
-	//IStreamWrapper inputWrapper(inputStream);
-	Document document = CJsonReader::Get()->LoadDocument("Json/Audio/AudioPaths.json");
-	//document.ParseStream(inputWrapper);
-
-	if (document.HasParseError()) { return; }
-
 	// Init Channels
-	for (unsigned int i = 0; i < static_cast<unsigned int>(EChannels::Count); ++i) {
-		myChannels.emplace_back(myWrapper.RequestChannel(TranslateChannels(static_cast<EChannels>(i))));
+	for (unsigned int i = 0; i < static_cast<unsigned int>(EChannel::Count); ++i) {
+		myChannels.push_back(myWrapper.RequestChannel(TranslateEnum(static_cast<EChannel>(i))));
 	}
-#pragma region AudioLoading
 
-	if (document.HasMember("Ambience"))
+	// Init Sounds
+	for (unsigned int i = 0; i < static_cast<unsigned int>(EMusic::Count); ++i)
 	{
-		auto audioDataArray = document["Ambience"].GetArray();
-		for (unsigned int i = 0; i < audioDataArray.Size(); ++i)
-		{
-			auto audioData = audioDataArray[i].GetObjectW();
-			myAmbianceAudio.emplace_back(myWrapper.RequestSound(myAmbiancePath + audioData["Path"].GetString()));
-		}
+		myMusicAudio.push_back(myWrapper.RequestSound(GetPath(static_cast<EMusic>(i)), true));
 	}
 
-	if (document.HasMember("Music"))
+	for (unsigned int i = 0; i < static_cast<unsigned int>(EAmbience::Count); ++i)
 	{
-		auto audioDataArray = document["Music"].GetArray();
-		for (unsigned int i = 0; i < audioDataArray.Size(); ++i)
-		{
-			auto audioData = audioDataArray[i].GetObjectW();
-			myMusicAudio.emplace_back(myWrapper.RequestLoopingSound(myMusicPath + audioData["Path"].GetString()));
-		}
+		myAmbienceAudio.push_back(myWrapper.RequestSound(GetPath(static_cast<EAmbience>(i)), true));
 	}
 
-	if (document.HasMember("SFX"))
+	for (unsigned int i = 0; i < static_cast<unsigned int>(ESFX::Count); ++i)
 	{
-		auto audioDataArray = document["SFX"].GetArray();
-		for (unsigned int i = 0; i < audioDataArray.Size(); ++i)
-		{
-			auto audioData = audioDataArray[i].GetObjectW();
-			mySFXAudio.emplace_back(myWrapper.RequestSound(mySFXPath + audioData["Path"].GetString()));
-		}
+		mySFXAudio.push_back(myWrapper.RequestSound(GetPath(static_cast<ESFX>(i))));
 	}
 
-	if (document.HasMember("UI"))
+	for (unsigned int i = 0; i < static_cast<unsigned int>(ESFXCollection::Count); ++i)
 	{
-		auto audioDataArray = document["UI"].GetArray();
-		for (unsigned int i = 0; i < audioDataArray.Size(); ++i)
-		{
-			auto audioData = audioDataArray[i].GetObjectW();
-			myUIAudio.emplace_back(myWrapper.RequestSound(myUIPath + audioData["Path"].GetString()));
-		}
+		FillCollection(static_cast<ESFXCollection>(i));
 	}
 
-	if (document.HasMember("VoiceLine"))
+	for (unsigned int i = 0; i < static_cast<unsigned int>(EUI::Count); ++i)
 	{
-		auto audioDataArray = document["VoiceLine"].GetArray();
-		for (unsigned int i = 0; i < audioDataArray.Size(); ++i)
-		{
-			auto audioData = audioDataArray[i].GetObjectW();
-			myVoicelineAudio.emplace_back(myWrapper.RequestSound(myVoxPath + audioData["Path"].GetString()));
-		}
+		myUIAudio.push_back(myWrapper.RequestSound(GetPath(static_cast<EUI>(i))));
 	}
 
-#pragma endregion
+	for (unsigned int i = 0; i < static_cast<unsigned int>(EResearcherEventVoiceLine::Count); ++i)
+	{
+		myResearcherEventSounds.push_back(myWrapper.RequestSound(GetPath(static_cast<EResearcherEventVoiceLine>(i))));
+	}
+
+	for (unsigned int i = 0; i < static_cast<unsigned int>(EResearcherReactionVoiceLine::Count); ++i)
+	{
+		FillCollection(static_cast<EResearcherReactionVoiceLine>(i));
+	}
+
+	for (unsigned int i = 0; i < static_cast<unsigned int>(ERobotVoiceLine::Count); ++i)
+	{
+		FillCollection(static_cast<ERobotVoiceLine>(i));
+	}
 
 	std::ifstream volumeStream("Json/Audio/AudioVolume.json");
 	IStreamWrapper volumeWrapper(volumeStream);
@@ -105,66 +86,110 @@ CAudioManager::CAudioManager() : myWrapper() {
 	if (volDoc.HasMember("Ambience"))
 	{
 		float value = volDoc["Ambience"].GetFloat();
-		myChannels[CAST(EChannels::Ambiance)]->SetVolume(value);
+		myChannels[CAST(EChannel::Ambience)]->SetVolume(value);
 	}
 	if (volDoc.HasMember("Music"))
 	{
 		float value = volDoc["Music"].GetFloat();
-		myChannels[CAST(EChannels::Music)]->SetVolume(value);
+		myChannels[CAST(EChannel::Music)]->SetVolume(value);
 	}
 	if (volDoc.HasMember("SFX"))
 	{
 		float value = volDoc["SFX"].GetFloat();
-		myChannels[CAST(EChannels::SFX)]->SetVolume(value);
+		myChannels[CAST(EChannel::SFX)]->SetVolume(value);
 	}
 	if (volDoc.HasMember("UI"))
 	{
 		float value = volDoc["UI"].GetFloat();
-		myChannels[CAST(EChannels::UI)]->SetVolume(value);
+		myChannels[CAST(EChannel::UI)]->SetVolume(value);
 	}
-	if (volDoc.HasMember("Voice"))
+	if (volDoc.HasMember("ResearcherVoice"))
 	{
-		float value = volDoc["Voice"].GetFloat();
-		myChannels[CAST(EChannels::VOX)]->SetVolume(value);
+		float value = volDoc["ResearcherVoice"].GetFloat();
+		myChannels[CAST(EChannel::ResearcherVOX)]->SetVolume(value);
+	}
+	if (volDoc.HasMember("RobotVoice"))
+	{
+		float value = volDoc["RobotVoice"].GetFloat();
+		myChannels[CAST(EChannel::RobotVOX)]->SetVolume(value);
 	}
 }
 
-	CAudioManager::~CAudioManager()
+CAudioManager::~CAudioManager()
+{
+	UnsubscribeToMessages();
+	// 2021 03 08 After using std::move in Request methods sounds seem to be destroyable. Channels still can't be safely destroyed though
+	//for (auto& channel : myChannels)
+	//{
+	//	delete channel;
+	//	channel = nullptr;
+	//}
+	for (auto& music : myMusicAudio)
 	{
-		UnsubscribeToMessages();
-		// 2020 12 06 - CAudio attempts to delete myFModSound, seems to be shared. 
-		//for (auto& channel : myChannels)
-		//{
-		//	delete channel;
-		//	channel = nullptr;
-		//}
-		//for (auto& music : myMusicAudio)
-		//{
-		//	delete music;
-		//	music = nullptr;
-		//}
-		//for (auto& ambience : myAmbianceAudio)
-		//{
-		//	delete ambience;
-		//	ambience = nullptr;
-		//}
-		//for (auto& sfx : mySFXAudio)
-		//{
-		//	delete sfx;
-		//	sfx = nullptr;
-		//}
-		//for (auto& ui : myUIAudio)
-		//{
-		//	delete ui;
-		//	ui = nullptr;
-		//}
-		//for (auto& voice : myVoicelineAudio)
-		//{
-		//	delete voice;
-		//	voice = nullptr;
-		//}
+		delete music;
+		music = nullptr;
 	}
-
+	for (auto& ambience : myAmbienceAudio)
+	{
+		delete ambience;
+		ambience = nullptr;
+	}
+	for (auto& sfx : mySFXAudio)
+	{
+		delete sfx;
+		sfx = nullptr;
+	}
+	for (auto& ui : myUIAudio)
+	{
+		delete ui;
+		ui = nullptr;
+	}
+	for (auto& sound : myAirVentStepSounds)
+	{
+		delete sound;
+		sound = nullptr;
+	}
+	for (auto& sound : myConcreteStepSounds)
+	{
+		delete sound;
+		sound = nullptr;
+	}
+	for (auto& sound : myResearcherEventSounds)
+	{
+		delete sound;
+		sound = nullptr;
+	}
+	for (auto& sound : myResearcherReactionsExplosives)
+	{
+		delete sound;
+		sound = nullptr;
+	}
+	for (auto& sound : myRobotAttackSounds)
+	{
+		delete sound;
+		sound = nullptr;
+	}
+	for (auto& sound : myRobotDeathSounds)
+	{
+		delete sound;
+		sound = nullptr;
+	}
+	for (auto& sound : myRobotIdleSounds)
+	{
+		delete sound;
+		sound = nullptr;
+	}
+	for (auto& sound : myRobotPatrollingSounds)
+	{
+		delete sound;
+		sound = nullptr;
+	}
+	for (auto& sound : myRobotSearchingSounds)
+	{
+		delete sound;
+		sound = nullptr;
+	}
+}
 
 void CAudioManager::Receive(const SMessage& aMessage) {
 	switch (aMessage.myMessageType)
@@ -172,28 +197,77 @@ void CAudioManager::Receive(const SMessage& aMessage) {
 	// UI
 	case EMessageType::UIButtonPress:
 	{
-		if (myUIAudio.size() >= static_cast<unsigned int>(EUI::ButtonClick))
+		//if (myUIAudio.size() >= static_cast<unsigned int>(EUI::ButtonClick))
+		//{
+		//	myWrapper.Play(myUIAudio[CAST(EUI::ButtonClick)], myChannels[CAST(EChannel::UI)]);
+		//}
+	}break;
+
+
+	case EMessageType::PlayStepSound:
+	{
+		if (myCurrentGroundType == EGroundType::Concrete)
 		{
-			myWrapper.Play(myUIAudio[CAST(EUI::ButtonClick)], myChannels[CAST(EChannels::UI)]);
+			PlayRandomSoundFromCollection(myConcreteStepSounds, EChannel::SFX);
 		}
-	}break;
+		else if (myCurrentGroundType == EGroundType::AirVent)
+		{
+			PlayRandomSoundFromCollection(myAirVentStepSounds, EChannel::SFX);
+		}
+	}
+	break;
 
+	case EMessageType::PlayResearcherReactionExplosives:
+	{
+		PlayRandomSoundFromCollection(myResearcherReactionsExplosives, EChannel::ResearcherVOX);
+	}
+	break;
+
+	case EMessageType::PlayRobotAttackSound:
+	{
+		PlayRandomSoundFromCollection(myRobotAttackSounds, EChannel::RobotVOX);
+	}
+	break;
+
+	case EMessageType::PlayRobotDeathSound:
+	{
+		PlayRandomSoundFromCollection(myRobotDeathSounds, EChannel::RobotVOX);
+	}
+	break;
+
+	case EMessageType::PlayRobotIdleSound:
+	{
+		PlayRandomSoundFromCollection(myRobotIdleSounds, EChannel::RobotVOX);
+	}
+	break;
+
+	case EMessageType::PlayRobotPatrolling:
+	{
+		PlayRandomSoundFromCollection(myRobotPatrollingSounds, EChannel::RobotVOX);
+	}
+	break;
+
+	case EMessageType::PlayRobotSearching:
+	{
+		PlayRandomSoundFromCollection(myRobotSearchingSounds, EChannel::RobotVOX);
+	}
+	break;
 	// VOICELINES
-	case EMessageType::PlayVoiceLine:
-	{
-		if (!myVoicelineAudio.empty()) {
-			int index = *static_cast<int*>(aMessage.data);
-			myChannels[CAST(EChannels::VOX)]->Stop();
-			myWrapper.Play(myVoicelineAudio[index], myChannels[CAST(EChannels::VOX)]);
-		}
-	}break;
+	//case EMessageType::PlayVoiceLine:
+	//{
+	//	//if (!myVoicelineAudio.empty()) {
+	//	//	int index = *static_cast<int*>(aMessage.data);
+	//	//	myChannels[CAST(EChannel::VOX)]->Stop();
+	//	//	myWrapper.Play(myVoicelineAudio[index], myChannels[CAST(EChannel::VOX)]);
+	//	//}
+	//}break;
 
-	case EMessageType::StopDialogue:
-	{
-		if (!myVoicelineAudio.empty()) {
-			myChannels[CAST(EChannels::VOX)]->Stop();
-		}
-	}break;
+	//case EMessageType::StopDialogue:
+	//{
+	//	//if (!myVoicelineAudio.empty()) {
+	//	//	myChannels[CAST(EChannel::VOX)]->Stop();
+	//	//}
+	//}break;
 
 	default: break;
 	}
@@ -213,7 +287,7 @@ void CAudioManager::Update()
 			it->myTimer -= dt;
 			if (it->myTimer <= 0.0f)
 			{
-				myWrapper.Play(mySFXAudio[CAST(it->mySFX)], myChannels[CAST(EChannels::SFX)]);
+				myWrapper.Play(mySFXAudio[CAST(it->mySFX)], myChannels[CAST(EChannel::SFX)]);
 				it = myDelayedSFX.erase(it);
 				continue;
 			}
@@ -225,31 +299,45 @@ void CAudioManager::Update()
 void CAudioManager::SubscribeToMessages()
 {
 	CMainSingleton::PostMaster().Subscribe(EMessageType::UIButtonPress, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayStepSound, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayResearcherReactionExplosives, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayRobotAttackSound, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayRobotDeathSound, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayRobotIdleSound, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayRobotPatrolling, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayRobotSearching, this);
 
-	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayVoiceLine, this);
-	CMainSingleton::PostMaster().Subscribe(EMessageType::StopDialogue, this);
+	//CMainSingleton::PostMaster().Subscribe(EMessageType::PlayVoiceLine, this);
+	//CMainSingleton::PostMaster().Subscribe(EMessageType::StopDialogue, this);
 }
 
 void CAudioManager::UnsubscribeToMessages()
 {
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::UIButtonPress, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayStepSound, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayResearcherReactionExplosives, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayRobotAttackSound, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayRobotDeathSound, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayRobotIdleSound, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayRobotPatrolling, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayRobotSearching, this);
 
-	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayVoiceLine, this);
-	CMainSingleton::PostMaster().Unsubscribe(EMessageType::StopDialogue, this);
+	//CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayVoiceLine, this);
+	//CMainSingleton::PostMaster().Unsubscribe(EMessageType::StopDialogue, this);
 }
 
 std::string CAudioManager::GetPath(EMusic type) const
 {
 	std::string path = myMusicPath;
-	path.append(TranslateMusic(type));
+	path.append(TranslateEnum(type));
 	path.append(".mp3");
 	return path;
 }
 
-std::string CAudioManager::GetPath(EAmbiance type) const
+std::string CAudioManager::GetPath(EAmbience type) const
 {
-	std::string path = myAmbiancePath;
-	path.append(TranslateAmbiance(type));
+	std::string path = myAmbiencePath;
+	path.append(TranslateEnum(type));
 	path.append(".mp3");
 	return path;
 }
@@ -257,93 +345,291 @@ std::string CAudioManager::GetPath(EAmbiance type) const
 std::string CAudioManager::GetPath(ESFX type) const
 {
 	std::string path = mySFXPath;
-	path.append(TranslateSFX(type));
-	path.append(".wav");
+	path.append(TranslateEnum(type));
+	path.append(".mp3");
 	return path;
 }
 
 std::string CAudioManager::GetPath(EUI type) const
 {
 	std::string path = myUIPath;
-	path.append(TranslateUI(type));
-	path.append(".wav");
-	return path;
-}
-
-std::string CAudioManager::GetPath(EVoiceLine type) const
-{
-	std::string path = myVoxPath;
-	path.append(TranslateVoiceLine(type));
+	path.append(TranslateEnum(type));
 	path.append(".mp3");
 	return path;
 }
 
-std::string CAudioManager::TranslateChannels(EChannels enumerator) const
+std::string CAudioManager::GetPath(EResearcherEventVoiceLine type) const
+{
+	std::string path = myVoxPath;
+	path.append(TranslateEnum(type));
+	path.append(".mp3");
+	return path;
+}
+
+//std::string CAudioManager::GetPath(EResearcherReactionVoiceLine type) const
+//{
+//	std::string path = myVoxPath;
+//	path.append(TranslateEnum(type));
+//	path.append(".mp3");
+//	return path;
+//}
+
+
+//std::string CAudioManager::GetPath(ERobotVoiceLine type) const
+//{
+//	std::string path = myVoxPath;
+//	path.append(TranslateEnum(type));
+//	path.append(".mp3");
+//	return path;
+//}
+
+std::string CAudioManager::TranslateEnum(EChannel enumerator) const
 {
 	switch (enumerator)
 	{
-	case EChannels::Music:
+	case EChannel::Music:
 		return "Music";
-	case EChannels::Ambiance:
-		return "Ambiance";
-	case EChannels::SFX:
+	case EChannel::Ambience:
+		return "Ambience";
+	case EChannel::SFX:
 		return "SFX";
-	case EChannels::UI:
+	case EChannel::UI:
 		return "UI";
-	case EChannels::VOX:
-		return "VOX";
+	case EChannel::ResearcherVOX:
+		return "ResearcherVOX";
+	case EChannel::RobotVOX:
+		return "RobotVOX";
 	default:
 		return "";
 	}
 }
 
-std::string CAudioManager::TranslateMusic(EMusic /*enumerator*/) const
+std::string CAudioManager::TranslateEnum(EMusic /*enumerator*/) const
 {
 	//switch (enumerator) {
 	//default:
 	//	return "";
 	//}
-	return "";
+	return "DE";
 }
 
-std::string CAudioManager::TranslateAmbiance(EAmbiance /*enumerator*/) const {
+std::string CAudioManager::TranslateEnum(EAmbience enumerator) const {
+	switch (enumerator)
+	{
+	case EAmbience::AirVent:
+		return "AirVent";
+	case EAmbience::Factory:
+		return "Factory";
+	default:
+		return "";
+	}
+}
+std::string CAudioManager::TranslateEnum(ESFX enumerator) const {
+	switch (enumerator)
+	{
+	case ESFX::GravityGlovePullBuildup:
+		return "GravityGlovePullBuildup";
+	case ESFX::GravityGlovePullHit:
+		return "GravityGlovePullHit";
+	case ESFX::GravityGlovePush:
+		return "GravityGlovePush";
+	default:
+		return "";
+	}
+}
+std::string CAudioManager::TranslateEnum(ESFXCollection enumerator) const
+{
+	switch (enumerator)
+	{
+	case ESFXCollection::StepAirVent:
+		return "StepAirVent";
+	case ESFXCollection::StepConcrete:
+		return "StepConcrete";
+	default:
+		return "";
+	}
+}
+std::string CAudioManager::TranslateEnum(EUI /*enumerator*/) const {
 	//switch (enumerator) {
-	//	/*
-	//		case EAmiance::Something:
-	//			return "Something";
-	//			break;
-	//	*/
+	////case EUI::ButtonClick:
+	////	return "ButtonClick";
 	//default:
 	//	return "";
 	//}
 	return "";
 }
-std::string CAudioManager::TranslateSFX(ESFX /*enumerator*/) const {
-	//switch (enumerator) {
-	//	/*
-	//	case EAmiance::Something:
-	//	return "Something";
-	//	break;
-	//	*/
-	//
-	//default:
-	//	return "";
-	//}
-	return "";
-}
-std::string CAudioManager::TranslateUI(EUI enumerator) const {
-	switch (enumerator) {
-	case EUI::ButtonClick:
-		return "ButtonClick";
+std::string CAudioManager::TranslateEnum(EResearcherEventVoiceLine enumerator) const
+{
+	switch (enumerator)
+	{
+	case EResearcherEventVoiceLine::ResearcherDoorEventVerticalSlice:
+		return "ResearcherDoorEventVerticalSlice";
+	case EResearcherEventVoiceLine::ResearcherIntroVerticalSlice:
+		return "ResearcherIntroVerticalSlice";
 	default:
 		return "";
 	}
 }
-std::string CAudioManager::TranslateVoiceLine(EVoiceLine enumerator) const {
-	switch (enumerator) {
-	case EVoiceLine::Count:
-		return std::string();
+std::string CAudioManager::TranslateEnum(EResearcherReactionVoiceLine enumerator) const
+{
+	switch (enumerator) 
+	{
+	case EResearcherReactionVoiceLine::ResearcherReactionExplosives:
+		return "ResearcherReactionExplosives";
+	default:
+		return "";	
+	}
+}
+std::string CAudioManager::TranslateEnum(ERobotVoiceLine enumerator) const
+{
+	switch (enumerator)
+	{
+	case ERobotVoiceLine::RobotAttack:
+		return "RobotAttack";
+	case ERobotVoiceLine::RobotDeath:
+		return "RobotDeath";
+	case ERobotVoiceLine::RobotIdle:
+		return "RobotIdle";
+	case ERobotVoiceLine::RobotPatrolling:
+		return "RobotPatrolling";
+	case ERobotVoiceLine::RobotSearching:
+		return "RobotSearching";
 	default:
 		return "";
 	}
+}
+
+void CAudioManager::FillCollection(ESFXCollection enumerator)
+{
+	unsigned int counter = 0;
+
+	switch (enumerator)
+	{
+	case ESFXCollection::StepAirVent:
+	{
+		CAudio* sound = myWrapper.TryGetSound(mySFXPath + GetCollectionPath(enumerator, ++counter));
+
+		while (sound != nullptr)
+		{
+			myAirVentStepSounds.push_back(sound);
+			sound = myWrapper.TryGetSound(mySFXPath + GetCollectionPath(enumerator, ++counter));
+		}
+	}
+		break;
+	case ESFXCollection::StepConcrete:
+	{
+		CAudio* sound = myWrapper.TryGetSound(mySFXPath + GetCollectionPath(enumerator, ++counter));
+
+		while (sound != nullptr)
+		{
+			myConcreteStepSounds.push_back(sound);
+			sound = myWrapper.TryGetSound(mySFXPath + GetCollectionPath(enumerator, ++counter));
+		}
+	}
+		break;
+	default:
+		break;
+	}
+}
+
+void CAudioManager::FillCollection(EResearcherReactionVoiceLine enumerator)
+{
+	unsigned int counter = 0;
+
+	switch (enumerator)
+	{
+	case EResearcherReactionVoiceLine::ResearcherReactionExplosives:
+	{
+		CAudio* sound = myWrapper.TryGetSound(myVoxPath + GetCollectionPath(enumerator, ++counter));
+		
+		while (sound != nullptr)
+		{
+			myResearcherReactionsExplosives.push_back(sound);
+			sound = myWrapper.TryGetSound(myVoxPath + GetCollectionPath(enumerator, ++counter));
+		}
+	}
+		break;
+	default:
+		break;
+	}
+}
+
+void CAudioManager::FillCollection(ERobotVoiceLine enumerator)
+{
+	unsigned int counter = 0;
+
+	switch (enumerator)
+	{
+	case ERobotVoiceLine::RobotAttack:
+	{
+		CAudio* sound = myWrapper.TryGetSound(myVoxPath + GetCollectionPath(enumerator, ++counter));
+		
+		while (sound != nullptr)
+		{
+			myRobotAttackSounds.push_back(sound);
+			sound = myWrapper.TryGetSound(myVoxPath + GetCollectionPath(enumerator, ++counter));
+		}
+	}
+	break;
+
+	case ERobotVoiceLine::RobotDeath:
+	{
+		CAudio* sound = myWrapper.TryGetSound(myVoxPath + GetCollectionPath(enumerator, ++counter));
+
+		while (sound != nullptr)
+		{
+			myRobotDeathSounds.push_back(sound);
+			sound = myWrapper.TryGetSound(myVoxPath + GetCollectionPath(enumerator, ++counter));
+		}
+	}
+	break;
+
+	case ERobotVoiceLine::RobotIdle:
+	{
+		CAudio* sound = myWrapper.TryGetSound(myVoxPath + GetCollectionPath(enumerator, ++counter));
+
+		while (sound != nullptr)
+		{
+			myRobotIdleSounds.push_back(sound);
+			sound = myWrapper.TryGetSound(myVoxPath + GetCollectionPath(enumerator, ++counter));
+		}
+	}
+	break;
+
+	case ERobotVoiceLine::RobotPatrolling:
+	{
+		CAudio* sound = myWrapper.TryGetSound(myVoxPath + GetCollectionPath(enumerator, ++counter));
+
+		while (sound != nullptr)
+		{
+			myRobotPatrollingSounds.push_back(sound);
+			sound = myWrapper.TryGetSound(myVoxPath + GetCollectionPath(enumerator, ++counter));
+		}
+	}
+	break;
+
+	case ERobotVoiceLine::RobotSearching:
+	{
+		CAudio* sound = myWrapper.TryGetSound(myVoxPath + GetCollectionPath(enumerator, ++counter));
+
+		while (sound != nullptr)
+		{
+			myRobotSearchingSounds.push_back(sound);
+			sound = myWrapper.TryGetSound(myVoxPath + GetCollectionPath(enumerator, ++counter));
+		}
+	}
+	break;
+
+	default:
+		break;
+	}
+}
+
+void CAudioManager::PlayRandomSoundFromCollection(const std::vector<CAudio*>& aCollection, const EChannel& aChannel)
+{
+	if (aCollection.empty())
+		return;
+
+	unsigned int randomIndex = Random(0, static_cast<int>(aCollection.size()) - 1);
+	myWrapper.Play(aCollection[randomIndex], myChannels[CAST(aChannel)]);
 }

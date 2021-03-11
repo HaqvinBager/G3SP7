@@ -4,15 +4,15 @@
 
 CNodeTypeMathSmoothstep::CNodeTypeMathSmoothstep()
 {
-    myPins.push_back(SPin("Edge1", SPin::PinTypeInOut::PinTypeInOut_IN, SPin::PinType::Float));
-    myPins.push_back(SPin("Edge2", SPin::PinTypeInOut::PinTypeInOut_IN, SPin::PinType::Float));
-    myPins.push_back(SPin("Val", SPin::PinTypeInOut::PinTypeInOut_IN, SPin::PinType::Float));
-    myPins.push_back(SPin("OUT", SPin::PinTypeInOut::PinTypeInOut_OUT, SPin::PinType::Float));
+    myPins.push_back(SPin("Edge1", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));
+    myPins.push_back(SPin("Edge2", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));
+    myPins.push_back(SPin("Val", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));
+    myPins.push_back(SPin("OUT", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EFloat));
 }
 
 int CNodeTypeMathSmoothstep::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 {
-	SPin::PinType outType;
+	SPin::EPinType outType;
 	NodeDataPtr someData = nullptr;
 	size_t outSize = 0;
 

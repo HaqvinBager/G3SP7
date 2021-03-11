@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "SpriteRenderer.h"
 #include "RenderManager.h"
+#include "GraphicsHelpers.h"
+
 #include "Sprite.h"
 #include "SpriteInstance.h"
 #include "AnimatedUIElement.h"
@@ -85,7 +87,7 @@ void CSpriteRenderer::Render(std::vector<CSpriteInstance*>& aSpriteList)
 
         BindBuffer(myObjectBuffer, myObjectBufferData, "Object Buffer");
 
-        CSprite::SSpriteData spriteData = sprite->GetSpriteData();
+        const CSprite::SSpriteData& spriteData = sprite->GetSpriteData();
 
         myContext->IASetPrimitiveTopology(spriteData.myPrimitiveTopology);
         myContext->IASetInputLayout(nullptr);
@@ -146,9 +148,9 @@ void CSpriteRenderer::Render(std::vector<CAnimatedUIElement*>& someAnimatedEleme
         myTextureScrollingData.verticalDirectionOfChange = data->verticalDirectionOfChange;
         myTextureScrollingData.maskOffset = data->maskOffset;
         myTextureScrollingData.randomOffset = data->randomOffset;
-        BindBuffer<STextureScrollingData>(myTextureScrollingBuffer, myTextureScrollingData, "Texture Scrolling Buffer");
+        BindBuffer(myTextureScrollingBuffer, myTextureScrollingData, "Texture Scrolling Buffer");
 
-        CSprite::SSpriteData spriteData = sprite->GetSpriteData();
+        const CSprite::SSpriteData& spriteData = sprite->GetSpriteData();
 
         myContext->IASetPrimitiveTopology(spriteData.myPrimitiveTopology);
         myContext->IASetInputLayout(nullptr);

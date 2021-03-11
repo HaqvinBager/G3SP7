@@ -2,14 +2,10 @@
 
 struct GBufferOutput
 {
-    float4 myWorldPosition      : SV_TARGET0;
-    float4 myAlbedo             : SV_TARGET1;
-    float4 myNormal             : SV_TARGET2;
-    float4 myVertexNormal       : SV_TARGET3;
-    //float myMetalness           : SV_TARGET4;
-    //float myRoughness           : SV_TARGET5;
-    //float myAmbientOcclusion    : SV_TARGET6;
-    //float myEmissive            : SV_TARGET7;
+    float3 myAlbedo             : SV_TARGET0;
+    float3 myNormal             : SV_TARGET1;
+    float3 myVertexNormal       : SV_TARGET2;
+    float4 myMetalRoughAOEm     : SV_TARGET3;
 };
 
 GBufferOutput main(VertexModelToPixel input)
@@ -18,19 +14,19 @@ GBufferOutput main(VertexModelToPixel input)
     vertToPixel.myPosition  = input.myPosition;
     vertToPixel.myUV        = input.myUV;
     
-    float3 albedo = PixelShader_Albedo(vertToPixel).myColor.rgb;
-    float3 normal = PixelShader_Normal(vertToPixel).myColor.xyz;
+    float3 albedo = PixelShader_Albedo(vertToPixel.myUV).rgb;
+    float3 normal = PixelShader_Normal(vertToPixel.myUV).xyz;
     
     if (myNumberOfDetailNormals > 0)
     {
-        float detailNormalStrength = PixelShader_DetailNormalStrength(vertToPixel);
+        float detailNormalStrength = PixelShader_DetailNormalStrength(vertToPixel.myUV);
         float strengthMultiplier = DetailStrengthDistanceMultiplier(cameraPosition.xyz, input.myWorldPosition.xyz);
         float3 detailNormal;
 
         // Blend based on detail normal strength
         // X3512 Sampler array index must be literal expression => DETAILNORMAL_#
         // Sampled detail normal strength value: 
-        //      0.1f - 0.24f    == DETAILNORMAL_1
+        //      0.2f - 0.24f    == DETAILNORMAL_1
         //      0.26f - 0.49f   == DETAILNORMAL_2
         //      0.51f - 0.74f   == DETAILNORMAL_3
         //      0.76f - 1.0f    == DETAILNORMAL_4
@@ -38,22 +34,22 @@ GBufferOutput main(VertexModelToPixel input)
         // Make this better please
         if (detailNormalStrength > DETAILNORMAL_4_STR_RANGE_MIN)
         {
-            detailNormal = PixelShader_DetailNormal(vertToPixel, DETAILNORMAL_4).myColor.xyz;
+            detailNormal = PixelShader_DetailNormal(vertToPixel.myUV, DETAILNORMAL_4).xyz;
             detailNormalStrength = (detailNormalStrength - DETAILNORMAL_4_STR_RANGE_MIN + 0.01f) / DETAILNORMAL_STR_RANGE_DIFF;
         }
         else if (detailNormalStrength > DETAILNORMAL_3_STR_RANGE_MIN)
         {
-            detailNormal = PixelShader_DetailNormal(vertToPixel, DETAILNORMAL_3).myColor.xyz;
+            detailNormal = PixelShader_DetailNormal(vertToPixel.myUV, DETAILNORMAL_3).xyz;
             detailNormalStrength = (detailNormalStrength - DETAILNORMAL_3_STR_RANGE_MIN + 0.01f) / DETAILNORMAL_STR_RANGE_DIFF;
         }
         else if (detailNormalStrength > DETAILNORMAL_2_STR_RANGE_MIN)
         {
-            detailNormal = PixelShader_DetailNormal(vertToPixel, DETAILNORMAL_2).myColor.xyz;
+            detailNormal = PixelShader_DetailNormal(vertToPixel.myUV, DETAILNORMAL_2).xyz;
             detailNormalStrength = (detailNormalStrength - DETAILNORMAL_2_STR_RANGE_MIN + 0.01f) / DETAILNORMAL_STR_RANGE_DIFF;
         }
         else
         {
-            detailNormal = PixelShader_DetailNormal(vertToPixel, DETAILNORMAL_1).myColor.xyz;
+            detailNormal = PixelShader_DetailNormal(vertToPixel.myUV, DETAILNORMAL_1).xyz;
             detailNormalStrength = (detailNormalStrength - DETAILNORMAL_1_STR_RANGE_MIN + 0.01f) / DETAILNORMAL_STR_RANGE_DIFF;
         }
         
@@ -79,33 +75,16 @@ GBufferOutput main(VertexModelToPixel input)
     normal = mul(normal.xyz, tangentSpaceMatrix);
     normal = normalize(normal);
     
-    float ambientOcclusion      = PixelShader_AmbientOcclusion(vertToPixel).myColor.r;
-    float metalness             = PixelShader_Metalness(vertToPixel).myColor.r;
-    float perceptualRoughness   = PixelShader_PerceptualRoughness(vertToPixel).myColor.r;
-    float emissive              = PixelShader_Emissive(vertToPixel).myColor.r;
+    float ambientOcclusion      = PixelShader_AmbientOcclusion(vertToPixel.myUV);
+    float metalness             = PixelShader_Metalness(vertToPixel.myUV);
+    float perceptualRoughness   = PixelShader_PerceptualRoughness(vertToPixel.myUV);
+    float emissive              = PixelShader_Emissive(vertToPixel.myUV);
     
-    // Original, using 8 textures
-    //GBufferOutput output;
-    //output.myWorldPosition = input.myWorldPosition;
-    //output.myAlbedo = float4(albedo, 1.0f);
-    //output.myNormal = float4(normal, 1.0f);
-    //output.myVertexNormal = float4(input.myNormal.xyz, 1.0f);
-    //output.myMetalness = metalness;
-    //output.myRoughness = perceptualRoughness;
-    //output.myAmbientOcclusion = ambientOcclusion;
-    //output.myEmissive = emissive;
-    //return output;
+    GBufferOutput output;    
+    output.myAlbedo         = albedo.xyz;
+    output.myNormal         = normal.xyz;
+    output.myVertexNormal   = input.myNormal.xyz;
+    output.myMetalRoughAOEm = float4(metalness, perceptualRoughness, ambientOcclusion, emissive);
     
-    // Using 4 textures
-    GBufferOutput output;
-    output.myWorldPosition  = input.myWorldPosition;
-    output.myAlbedo         = float4(albedo, 1.0f);
-    output.myNormal         = float4(normal, 1.0f);
-    output.myVertexNormal   = float4(input.myNormal.xyz, 1.0f);
-    
-    output.myWorldPosition.w = metalness;
-    output.myAlbedo.w        = perceptualRoughness;
-    output.myNormal.w        = ambientOcclusion;
-    output.myVertexNormal.w  = emissive;
     return output;
 }

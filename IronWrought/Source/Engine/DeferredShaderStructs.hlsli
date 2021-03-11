@@ -59,8 +59,10 @@ struct PixelOutput
 
 cbuffer FrameBuffer : register(b0)
 {
-    float4x4 toCamera;
-    float4x4 toProjection;
+    float4x4 toCameraSpace;
+    float4x4 toWorldFromCamera;
+    float4x4 toProjectionSpace;
+    float4x4 toCameraFromProjection;
     float4 cameraPosition;
 }
 
@@ -73,6 +75,9 @@ cbuffer ObjectBuffer : register(b1)
 
 cbuffer LightBuffer : register(b2)
 {
+    float4x4 toDirectionalLightTransform;
+    float4x4 toDirectionalLightView;
+    float4 directionalLightPosition; // For shadow calculations
     float4 toDirectionalLight;
     float4 directionalLightColor;
 }
@@ -83,17 +88,24 @@ cbuffer PointLightBuffer : register(b3)
     float4 myPositionAndRange;
 }
 
+cbuffer BoneBuffer : register(b4)
+{
+    matrix myBones[64];
+};
+
 // Cubemap used for environment light shading
 TextureCube environmentTexture : register(t0);
 // GBuffer Textures: textures stored in the GBuffer, contains data for models. Used for environment and point light calculations
-Texture2D worldPositionTexture      : register(t1);
-Texture2D albedoTextureGBuffer      : register(t2);
-Texture2D normalTextureGBuffer      : register(t3);
-Texture2D vertexNormalTexture       : register(t4);
-//Texture2D metalnessTexture          : register(t5);
-//Texture2D roughnessTexture          : register(t6);
-//Texture2D ambientOcclusionTexture   : register(t7);
-//Texture2D emissiveTexture           : register(t8);
+//Texture2D worldPositionTexture      : register(t1);
+//Texture2D albedoTextureGBuffer      : register(t2);
+//Texture2D normalTextureGBuffer      : register(t3);
+//Texture2D vertexNormalTexture       : register(t4);
+
+Texture2D albedoTextureGBuffer        : register(t1);
+Texture2D normalTextureGBuffer        : register(t2);
+Texture2D vertexNormalTextureGBuffer  : register(t3);
+Texture2D materialTextureGBuffer      : register(t4);
+
 // Model textures (used to create GBuffer textures )
 Texture2D albedoTexture     : register(t5);
 Texture2D materialTexture   : register(t6);
@@ -103,7 +115,11 @@ Texture2D detailNormals[4] : register(t8);
 // Vertex Paint Materials
 Texture2D vertexPaintTextures[9] : register(t12);
 
+Texture2D depthTexture          : register(t21);
+Texture2D shadowDepthTexture    : register(t22);
+
 sampler defaultSampler : register(s0);
+sampler shadowSampler  : register(s1);
 
 #define RED_ALBEDO      0
 #define RED_MATERIAL    1

@@ -4,12 +4,13 @@
 #include "Engine.h"
 #include "Scene.h"
 #include "SceneManager.h"
-#pragma comment(lib, "imgui.lib")
 #include "GraphManager.h"
 #include "RenderManager.h"
 #include <psapi.h>
+#include "JsonReader.h"
+#include "ImGuiWindows.h"
 
-#pragma comment(lib, "psapi.lib")
+//#pragma comment(lib, "psapi.lib")
 
 static ImFont* ImGui_LoadFont(ImFontAtlas& atlas, const char* name, float size, const ImVec2& displayOffset = ImVec2(0, 0))
 {
@@ -40,7 +41,7 @@ static ImFont* ImGui_LoadFont(ImFontAtlas& atlas, const char* name, float size, 
 }
 ImFontAtlas myFontAtlas;
 
-CImguiManager::CImguiManager() : myGraphManagerIsFullscreen(false), myIsEnabled(false)
+CImguiManager::CImguiManager() : myGraphManagerIsFullscreen(false), myIsEnabled(false), myScriptsStatus("Scripts Off")
 {
 	ImGui::DebugCheckVersionAndDataLayout("1.80 WIP", sizeof(ImGuiIO), sizeof(ImGuiStyle), sizeof(ImVec2), sizeof(ImVec4), sizeof(ImDrawVert), sizeof(unsigned int));
 	ImGui::CreateContext();
@@ -52,6 +53,9 @@ CImguiManager::CImguiManager() : myGraphManagerIsFullscreen(false), myIsEnabled(
 
 	myGraphManager = new CGraphManager();
 	myGraphManager->Load();
+
+	myWindows.emplace_back(std::make_unique<ImGuiWindow::CLoadScene>("Load Scene", true));
+	myWindows.emplace_back(std::make_unique <ImGuiWindow::CCameraSetting>("Camera Settings"));
 }
 
 CImguiManager::~CImguiManager()
@@ -66,26 +70,38 @@ void CImguiManager::Update()
 	if (myIsEnabled)
 	{
 		ImGui::BeginMainMenuBar();
-		if (ImGui::Button("Display Nodescripts"))
+		if (ImGui::Button("Display Scripts"))
 			myGraphManager->ToggleShouldRenderGraph();
-		ImGui::EndMainMenuBar();
-		LevelSelect();
-		DebugWindow();
-	}
-	myGraphManager->Update();
+		if (ImGui::Button(myScriptsStatus.c_str()))
+		{
+			if (myGraphManager->ToggleShouldRunScripts())
+				myScriptsStatus = "Scripts On ";
+			else
+				myScriptsStatus = "Scripts Off";
+		}
 
+		for (const auto& window : myWindows)
+			window->OnMainMenuGUI();
+							
+		ImGui::EndMainMenuBar();
+	}
+
+	for (const auto& window : myWindows) {
+		if (window->Enable() && !window->MainMenuBarChild()) {
+			window->OnInspectorGUI();
+		}
+	}
+	
+	DebugWindow();
+	myGraphManager->Update();
 
 	if (Input::GetInstance()->IsKeyPressed(VK_F1))
 	{
 		myIsEnabled = !myIsEnabled;
-		if(myGraphManager->ShouldRenderGraph())
+		if (myGraphManager->ShouldRenderGraph())
 			myGraphManager->ToggleShouldRenderGraph();
 	}
-}
 
-void CImguiManager::PostRender()
-{
-	myGraphManager->PostRender();
 }
 
 void CImguiManager::DebugWindow()
@@ -99,42 +115,44 @@ void CImguiManager::DebugWindow()
 	ImGui::End();
 }
 
-void CImguiManager::LevelSelect()
-{
-	//std::vector<std::string> files = CJsonReader::GetFilePathsInFolder(ASSETPATH + "Assets/Generated");
-	ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x - 200, 18));
-	float x = 10.f + ((ImGui::GetFontSize() + 5.5f) * static_cast<float>(myLevelsToSelectFrom.size()));
-	ImGui::SetNextWindowSize({200.f,  x});
-
-	ImGui::Begin("LevelSelect", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
-	/*if (ImGui::TreeNodeEx("Selection State: Single Selection", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Leaf))
-	{*/
-		static int selected = -1;
-		for (int n = 0; n < myLevelsToSelectFrom.size(); n++)
-		{
-			char buf[512];
-			sprintf_s(buf, "%s", myLevelsToSelectFrom[n].c_str());
-
-			if (ImGui::Selectable(buf, selected == n, ImGuiSelectableFlags_AllowDoubleClick))
-			{
-				selected = n;
-
-				if (ImGui::IsMouseDoubleClicked(0))
-				{
-					std::cout << "Load Level: " << buf << std::endl;
-					CScene* myUnityScene = CSceneManager::CreateScene(buf);
-					CEngine::GetInstance()->AddScene(CStateStack::EState::InGame, myUnityScene);
-					CEngine::GetInstance()->SetActiveScene(CStateStack::EState::InGame);
-					myIsEnabled = !myIsEnabled;
-				}
-			}
-		}
-	/*	ImGui::TreePop();
-	}*/
-
-
-	ImGui::End();
-}
+//void CImguiManager::LevelSelect()
+//{
+//	//std::vector<std::string> files = CJsonReader::GetFileNamesInFolder(ASSETPATH + "Assets/Generated");
+//	ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x - 200, 18));
+//	float x = 10.f + ((ImGui::GetFontSize() + 5.5f) * static_cast<float>(myLevelsToSelectFrom.size()));
+//	ImGui::SetNextWindowSize({200.f,  x});
+//
+//	ImGui::Begin("LevelSelect", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+//	/*if (ImGui::TreeNodeEx("Selection State: Single Selection", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Leaf))
+//	{*/
+//		static int selected = -1;
+//		for (int n = 0; n < myLevelsToSelectFrom.size(); n++)
+//		{
+//			char buf[512];
+//			sprintf_s(buf, "%s", myLevelsToSelectFrom[n].c_str());
+//
+//			if (ImGui::Selectable(buf, selected == n, ImGuiSelectableFlags_AllowDoubleClick))
+//			{
+//				selected = n;
+//
+//				if (ImGui::IsMouseDoubleClicked(0))
+//				{
+//					std::cout << "Load Level: " << buf << std::endl;
+//				
+//
+//					CScene* myUnityScene = CSceneManager::CreateScene(buf);
+//					CEngine::GetInstance()->AddScene(CStateStack::EState::InGame, myUnityScene);
+//					CEngine::GetInstance()->SetActiveScene(CStateStack::EState::InGame);
+//					myIsEnabled = !myIsEnabled;
+//				}
+//			}
+//		}
+//	/*	ImGui::TreePop();
+//	}*/
+//
+//
+//	ImGui::End();
+//}
 
 const std::string CImguiManager::GetSystemMemory()
 {
@@ -168,7 +186,15 @@ const std::string CImguiManager::GetDrawCalls()
 	return drawCalls;
 }
 
-void CImguiManager::LevelsToSelectFrom(std::vector<std::string> someLevelsToSelectFrom)
-{
-	myLevelsToSelectFrom = someLevelsToSelectFrom;
-}
+//void CImguiManager::LevelsToSelectFrom(std::vector<std::string> someLevelsToSelectFrom)
+//{
+//	for (unsigned int i = 0; i < someLevelsToSelectFrom.size(); ++i) {
+//		const auto& doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + someLevelsToSelectFrom[i]));
+//		if (!doc.HasParseError()) {
+//			if (doc.HasMember("instancedGameobjects") && 
+//				doc.HasMember("modelGameObjects")) {
+//				myLevelsToSelectFrom.push_back(someLevelsToSelectFrom[i]);
+//			}
+//		}
+//	}	
+//}

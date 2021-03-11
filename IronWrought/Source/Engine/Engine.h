@@ -8,6 +8,9 @@
 #include <vector>
 #include <unordered_map>
 
+#define IRONWROUGHT CEngine::GetInstance()
+#define IRONWROUGHT_ACTIVE_SCENE CEngine::GetInstance()->GetActiveScene()
+
 class CWindowHandler;
 class CDirextXFramework;
 class CTimer;
@@ -16,25 +19,28 @@ class CCameraFactory;
 class CLightFactory;
 class CScene;
 class CRenderManager;
-class CParticleFactory;
+class CParticleEmitterFactory;
 class CSpriteFactory;
 class CTextFactory;
+class CDecalFactory;
 class CInputMapper;
 class CDebug;
 class CMainSingleton;
 class CForwardRenderer;
-class CVFXFactory;
+class CVFXMeshFactory;
 class CLineFactory;
 class CAudioManager;
+class CPhysXWrapper;
 
 class CEngine
 {
 	friend class CForwardRenderer;
 	friend class CModelFactory;
-	friend class CVFXFactory;
+	friend class CVFXMeshFactory;
 	friend class CLightFactory;
 	friend class CRenderManager;
 	friend class CLineFactory;
+	friend class CDecalFactory;
 	friend class CMaterialHandler;
 
 public:
@@ -55,6 +61,8 @@ public:
 	const CStateStack::EState AddScene(const CStateStack::EState aState, CScene* aScene);
 	void SetActiveScene(const CStateStack::EState aState);
 	CScene& GetActiveScene();
+	
+	CPhysXWrapper& GetPhysx() { return *myPhysxWrapper; }
 
 	void ModelViewerSetScene(CScene* aScene);
 	//void PopBackScene();
@@ -75,6 +83,7 @@ private:
 	CRenderManager* myRenderManager;
 	CTimer* myTimer;
 	CDebug* myDebug;
+	CPhysXWrapper* myPhysxWrapper;
 
 	//unsigned int myActiveScene;
 	CStateStack::EState myActiveState;
@@ -84,11 +93,12 @@ private:
 	CModelFactory* myModelFactory;
 	CCameraFactory* myCameraFactory;
 	CLightFactory* myLightFactory;
-	CParticleFactory* myParticleFactory;
-	CVFXFactory* myVFXFactory;
+	CParticleEmitterFactory* myParticleFactory;
+	CVFXMeshFactory* myVFXFactory;
 	CLineFactory* myLineFactory;
 	CSpriteFactory* mySpriteFactory;
 	CTextFactory* myTextFactory;
+	CDecalFactory* myDecalFactory;
 	CInputMapper* myInputMapper;
 	CMainSingleton* myMainSingleton;
 	CAudioManager* myAudioManager;

@@ -16,7 +16,6 @@
 #include "SpriteInstance.h"
 #include "AnimatedUIElement.h"
 #include "TextInstance.h"
-#include "VFXInstance.h"
 
 #include "LineInstance.h"
 #include "LineFactory.h"
@@ -27,10 +26,10 @@
 #include "Camera.h"
 #include "CameraComponent.h"
 
-#include "PhysXWrapper.h"
 #include "CollisionManager.h"
 
 #include "NavmeshLoader.h"
+#include "Canvas.h"
 
 #include "Debug.h"
 //SETUP START
@@ -40,9 +39,7 @@ CScene::CScene(const unsigned int aGameObjectCount)
 	, myEnvironmentLight(nullptr)
 	, myNavMesh(nullptr)
 	, myNavMeshGrid(nullptr)
-	//, myEnemyBehavior(nullptr)
-	//, myPlayer(nullptr)
-	//, myBoss(nullptr)
+	, myPXScene(nullptr)
 {
 	myGameObjects.reserve(aGameObjectCount);
 
@@ -58,6 +55,10 @@ CScene::CScene(const unsigned int aGameObjectCount)
 	myGrid->Init(CLineFactory::GetInstance()->CreateGrid({ 0.1f, 0.5f, 1.0f, 1.0f }));
 	this->AddInstance(myGrid);
 #endif
+
+	myCanvas = new CCanvas();
+	myCanvas->Init(ASSETPATH("Assets/Graphics/UI/JSON/UI_HUD.json"), *this);
+
 }
 
 CScene::~CScene()
@@ -66,24 +67,20 @@ CScene::~CScene()
 	delete myEnvironmentLight;
 	myEnvironmentLight = nullptr;
 
+	delete myCanvas;
+	myCanvas = nullptr;
+
 	this->ClearGameObjects();
 	this->ClearPointLights();
-	this->ClearVFXInstances();
-	// This must be deleted after gameobjects have let go of their pointer to it
-
-	//if (myEnemyBehavior)
-	//{
-	//	delete myEnemyBehavior;
-	//	myEnemyBehavior = nullptr;
-	//}
 
 #ifdef _DEBUG
 	myGrid = nullptr;
 	delete myGrid;
 #endif
-
-	//myPXScene->release();
-	//myPXScene = nullptr;
+	if (myPXScene != nullptr) {
+		myPXScene->release();
+		myPXScene = nullptr;
+	}
 
 	// Any CScene that is not InGame's scene will not hold a NavMesh
 	if (myNavMesh)
@@ -152,6 +149,10 @@ void CScene::ShouldRenderLineInstance(const bool aShouldRender)
 	aShouldRender;
 #endif //  _DEBUG
 }
+void CScene::UpdateCanvas()
+{
+	myCanvas->Update();
+}
 //SETTERS END
 //GETTERS START
 CCameraComponent* CScene::MainCamera()
@@ -169,10 +170,10 @@ SNavMesh* CScene::NavMesh()
 	return myNavMesh;
 }
 
-//PxScene* CScene::PXScene()
-//{
-//	return myPXScene;
-//}
+PxScene* CScene::PXScene()
+{
+	return myPXScene;
+}
 
 std::vector<CGameObject*> CScene::ModelsToOutline() const
 {
@@ -250,17 +251,6 @@ const std::vector<SLineTime>& CScene::CullLines() const
 {
 	return CDebug::GetInstance()->GetLinesTime();
 	//return CDebug::GetInstance()->GetLines();
-}
-
-std::vector<CVFXInstance*> CScene::CullVFX(CCameraComponent* /*aMainCamera*/)
-{
-
-	for (unsigned int i = 0; i < myVFXInstances.size(); ++i)
-	{
-
-		myVFXInstances[i]->Scroll({0.15f * CTimer::Dt(), 0.15f * CTimer::Dt()}, {0.15f * CTimer::Dt() , 0.15f * CTimer::Dt()});
-	}
-	return myVFXInstances;
 }
 
 std::vector<CAnimatedUIElement*> CScene::CullAnimatedUI(std::vector<CSpriteInstance*>& someFramesToReturn)
@@ -351,6 +341,13 @@ std::vector<CSpriteInstance*> CScene::CullSprites()
 
 	return spritesToRender;
 }
+CGameObject* CScene::FindObjectWithID(const int aGameObjectInstanceID)
+{
+	if (myIDGameObjectMap.find(aGameObjectInstanceID) == myIDGameObjectMap.end())
+		return nullptr;
+
+	return myIDGameObjectMap[aGameObjectInstanceID];
+}
 //CULLING END
 //POPULATE SCENE START
 bool CScene::AddInstance(CPointLight* aPointLight)
@@ -362,12 +359,6 @@ bool CScene::AddInstance(CPointLight* aPointLight)
 bool CScene::AddInstance(CLineInstance* aLineInstance)
 {
 	myLineInstances.emplace_back(aLineInstance);
-	return true;
-}
-
-bool CScene::AddInstance(CVFXInstance* aVFXInstance)
-{
-	myVFXInstances.emplace_back(aVFXInstance);
 	return true;
 }
 
@@ -394,6 +385,12 @@ bool CScene::AddInstance(CTextInstance* aText)
 bool CScene::AddInstance(CGameObject* aGameObject)
 {
 	myGameObjects.emplace_back(aGameObject);
+	myIDGameObjectMap[aGameObject->InstanceID()] = aGameObject;
+
+	for (auto& component : aGameObject->myComponents) {
+		myComponentMap[typeid(*component).hash_code()].push_back(component);
+	}
+
 	return true;
 }
 
@@ -404,7 +401,8 @@ bool CScene::AddInstances(std::vector<CGameObject*>& someGameObjects)
 
 	for (unsigned int i = 0; i < someGameObjects.size(); ++i)
 	{
-		myGameObjects.emplace_back(someGameObjects[i]);
+		AddInstance(someGameObjects[i]);
+		//myGameObjects.emplace_back(someGameObjects[i]);
 	}
 
 
@@ -423,15 +421,16 @@ bool CScene::AddInstance(CSpriteInstance* aSprite)
 
 	return true;
 }
+
 //PhysX
-//bool CScene::AddPXScene(PxScene* aPXScene)
-//{
-//	if (!aPXScene) {
-//		return false;
-//	}
-//	myPXScene = aPXScene;
-//	return true;
-//}
+bool CScene::AddPXScene(PxScene* aPXScene)
+{
+	if (!aPXScene) {
+		return false;
+	}
+	myPXScene = aPXScene;
+	return true;
+}
 //POPULATE SCENE END
 //REMOVE SPECIFIC INSTANCE START
 bool CScene::RemoveInstance(CPointLight* aPointLight)
@@ -496,17 +495,6 @@ bool CScene::ClearLineInstances()
 			myLineInstances[i] = nullptr;
 		}
 	}
-	return false;
-}
-
-bool CScene::ClearVFXInstances()
-{
-	for (auto& vfx : myVFXInstances)
-	{
-		delete vfx;
-		vfx = nullptr;
-	}
-	myVFXInstances.clear();
 	return false;
 }
 

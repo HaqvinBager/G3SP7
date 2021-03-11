@@ -3,20 +3,21 @@
 #include "NodeType.h"
 #include <assert.h>
 #include "GraphManager.h"
+#include "BaseDecisionNode.h"
 
-
-CNodeInstance::CNodeInstance(bool aCreateNewUID)
-	:myUID(aCreateNewUID), myNodeType(nullptr)
-{
+CNodeInstance::CNodeInstance(CGraphManager* aGraphManager, std::string aGraphKey, bool aCreateNewUID)
+	:myGraphManager(aGraphManager), myGraphKey(aGraphKey), myUID(aCreateNewUID), myNodeType(nullptr), myEditorPosition{0.0f,0.0f}
+{/*
 	myEditorPosition[0] = 0.0f;
-	myEditorPosition[1] = 0.0f;	
+	myEditorPosition[1] = 0.0f;	*/
 }
+
 
 bool IsOutput(std::vector<SPin>& somePins, unsigned int anID)
 {
 	for (auto& pin : somePins)
 	{
-		if (pin.myPinType == SPin::PinTypeInOut::PinTypeInOut_OUT && pin.myUID.AsInt() == anID)
+		if (pin.myPinType == SPin::EPinTypeInOut::EPinTypeInOut_OUT && pin.myUID.AsInt() == anID)
 		{
 			return true;
 		}
@@ -38,7 +39,7 @@ void CNodeInstance::Enter()
 			}
 			else if (!IsOutput(myPins, link.myFromPinID) )
 			{
-				CGraphManager::ShowFlow(link.myLinkID);
+				myGraphManager->ShowFlow(link.myLinkID);
 			}
 		}
 	}
@@ -56,15 +57,15 @@ void CNodeInstance::ExitVia(unsigned int aPinIndex)
 
 void CNodeInstance::ConstructUniquePins()
 {
-	myPins = myNodeType->GetPins();
-
+	if (myNodeType != NULL)
+		myPins = myNodeType->GetPins();
 }
 
 bool CNodeInstance::CanAddLink(unsigned int aPinIDFromMe)
 {
 	SPin* pin = GetPinFromID(aPinIDFromMe);
 
-	if (pin->myPinType == SPin::PinTypeInOut::PinTypeInOut_IN &&  pin->myVariableType != SPin::PinType::Flow)
+	if (pin->myPinType == SPin::EPinTypeInOut::EPinTypeInOut_IN &&  pin->myVariableType != SPin::EPinType::EFlow)
 	{
 		if (GetLinkFromPin(aPinIDFromMe).size() != 0)
 		{
@@ -105,7 +106,7 @@ bool CNodeInstance::AddLinkVia(CNodeInstance* aLink, unsigned int aPinIDFromMe, 
 
 	SPin* pin = GetPinFromID(aPinIDFromMe);
 
-	if (pin->myPinType == SPin::PinTypeInOut::PinTypeInOut_IN &&  pin->myVariableType != SPin::PinType::Flow)
+	if (pin->myPinType == SPin::EPinTypeInOut::EPinTypeInOut_IN &&  pin->myVariableType != SPin::EPinType::EFlow)
 	{
 		if (GetLinkFromPin(aPinIDFromMe).size() != 0)
 		{
@@ -146,10 +147,10 @@ bool CNodeInstance::IsPinConnected(SPin& aPin)
 
 std::string CNodeInstance::GetNodeName()
 {
-	return myNodeType->GetNodeName();
+	return myNodeType->NodeName();
 }
 
-void CNodeInstance::ChangePinTypes(SPin::PinType aType)
+void CNodeInstance::ChangePinTypes(SPin::EPinType aType)
 {
 	for (auto& pin : myPins)
 	{
@@ -157,7 +158,7 @@ void CNodeInstance::ChangePinTypes(SPin::PinType aType)
 	}
 }
 
-std::vector< SNodeInstanceLink*> CNodeInstance::GetLinkFromPin(unsigned int aPinToFetchFrom)
+std::vector<SNodeInstanceLink*> CNodeInstance::GetLinkFromPin(unsigned int aPinToFetchFrom)
 {
 	std::vector< SNodeInstanceLink*> links;
 	for (int i = 0; i < myLinks.size(); i++)
@@ -217,12 +218,17 @@ void CNodeInstance::VisualUpdate(float aDeltaTime)
 	}
 }
 
-void CNodeInstance::FetchData(SPin::PinType& anOutType, NodeDataPtr& someData, size_t& anOutSize, unsigned int aPinToFetchFrom)
+std::vector<CGameObject*> CNodeInstance::GetCurrentGameObject()
+{
+	return myGraphManager->GetCurrentGameObject();
+}
+
+void CNodeInstance::FetchData(SPin::EPinType& anOutType, NodeDataPtr& someData, size_t& anOutSize, unsigned int aPinToFetchFrom)
 {
 	// If we dont have any data, but or link might have it, the link pin might have data written to it as well, then return that
 	if (!myNodeType->IsFlowNode())
 	{
-		if (myPins[aPinToFetchFrom].myPinType == SPin::PinTypeInOut::PinTypeInOut_IN)
+		if (myPins[aPinToFetchFrom].myPinType == SPin::EPinTypeInOut::EPinTypeInOut_IN)
 		{
 			std::vector< SNodeInstanceLink*> links = GetLinkFromPin(myPins[aPinToFetchFrom].myUID.AsInt());
 			if (links.size() > 0)
@@ -234,7 +240,7 @@ void CNodeInstance::FetchData(SPin::PinType& anOutType, NodeDataPtr& someData, s
 					assert(0);
 				}
 				
-				CGraphManager::ShowFlow(links[0]->myLinkID);
+				myGraphManager->ShowFlow(links[0]->myLinkID);
 				links[0]->myLink->FetchData(anOutType, someData, anOutSize, pinIndex);
 				//we have a link in a node that is supposed only to store data, apparently this is connected aswell
 				return;
@@ -249,7 +255,7 @@ void CNodeInstance::FetchData(SPin::PinType& anOutType, NodeDataPtr& someData, s
 	}
 	else
 	{
-		if (myPins[aPinToFetchFrom].myPinType == SPin::PinTypeInOut::PinTypeInOut_IN)
+		if (myPins[aPinToFetchFrom].myPinType == SPin::EPinTypeInOut::EPinTypeInOut_IN)
 		{
 			std::vector< SNodeInstanceLink*> links = GetLinkFromPin(myPins[aPinToFetchFrom].myUID.AsInt());
 			if (links.size() > 0)
@@ -273,24 +279,31 @@ void CNodeInstance::FetchData(SPin::PinType& anOutType, NodeDataPtr& someData, s
 
 	SPin& dataPin = myPins[aPinToFetchFrom];
 	// We have the data, set ut to the return values
-	if (dataPin.myVariableType == SPin::PinType::Float)
+	if (dataPin.myVariableType == SPin::EPinType::EFloat)
 	{
 		anOutSize = dataPin.myData != nullptr ? sizeof(float) : 0;
 	}
-	else if (dataPin.myVariableType == SPin::PinType::Int)
+	else if (dataPin.myVariableType == SPin::EPinType::EInt)
 	{
 		anOutSize = dataPin.myData != nullptr ? sizeof(int) : 0;
 	}
-	else if (dataPin.myVariableType == SPin::PinType::Bool)
+	else if (dataPin.myVariableType == SPin::EPinType::EBool)
 	{
 		anOutSize = dataPin.myData != nullptr ? sizeof(bool) : 0;
 	}
-	else if (dataPin.myVariableType == SPin::PinType::String)
+	else if (dataPin.myVariableType == SPin::EPinType::EString)
 	{
 		anOutSize = dataPin.myData != nullptr ? strlen(static_cast<char*>(dataPin.myData)) : 0;
+	}
+	else if (dataPin.myVariableType == SPin::EPinType::EVector3)
+	{
+		anOutSize = dataPin.myData != nullptr ? sizeof(DirectX::SimpleMath::Vector3) : 0;
+	}
+	else if (dataPin.myVariableType == SPin::EPinType::EList)
+	{
+		anOutSize = dataPin.myData != nullptr ? sizeof(0) : 0;
 	}
 	
 	someData = dataPin.myData;
 	anOutType = dataPin.myVariableType;
 }
-

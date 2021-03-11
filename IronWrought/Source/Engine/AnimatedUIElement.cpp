@@ -19,12 +19,12 @@ CAnimatedUIElement::CAnimatedUIElement(std::string aFilePath, CScene& aScene, bo
     //IStreamWrapper input_wrapper(input_stream);
     Document document = CJsonReader::Get()->LoadDocument(aFilePath);
     //document.ParseStream(input_wrapper);
-
     mySpriteInstance = new CSpriteInstance(aScene, addToScene);
-    mySpriteInstance->Init(CSpriteFactory::GetInstance()->GetSprite(document["Texture Overlay"].GetString()));
+    mySpriteInstance->Init(CSpriteFactory::GetInstance()->GetSprite(ASSETPATH(document["Texture Overlay"].GetString())));
     if (addToScene == false) {
         mySpriteInstance->SetShouldRender(false);
     }
+
     myData = CSpriteFactory::GetInstance()->GetVFXSprite(aFilePath);
     aScene.AddInstance(this);
 }
@@ -53,6 +53,11 @@ void CAnimatedUIElement::SetPosition(DirectX::SimpleMath::Vector2 aPosition)
 void CAnimatedUIElement::SetShouldRender(const bool aShouldRender)
 {
     mySpriteInstance->SetShouldRender(aShouldRender);
+}
+
+void CAnimatedUIElement::SetScale(const Vector2& aScale)
+{
+    mySpriteInstance->SetSize(aScale);
 }
 
 CSpriteInstance* CAnimatedUIElement::GetInstance() const

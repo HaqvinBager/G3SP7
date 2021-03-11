@@ -1,10 +1,10 @@
 #include "stdafx.h"
 #include "VFXRenderer.h"
-#include "VFXComponent.h"
+#include "VFXSystemComponent.h"
 #include "DirectXFramework.h"
 #include "RenderManager.h"
+#include "GraphicsHelpers.h"
 #include "Camera.h"
-#include "VFXInstance.h"
 #include "VFXBase.h"
 #include "CameraComponent.h"
 
@@ -44,31 +44,35 @@ bool CVFXRenderer::Init(CDirectXFramework* aFramework) {
 
 void CVFXRenderer::Render(CCameraComponent* aCamera, std::vector<CGameObject*>& aGameObjectList)
 {
-	myFrameBufferData.myToCamera = aCamera->GameObject().myTransform->Transform().Invert();
-	myFrameBufferData.myToProjection = aCamera->GetProjection();
+	myFrameBufferData.myToCameraSpace = aCamera->GameObject().myTransform->Transform().Invert();
+	myFrameBufferData.myToProjectionSpace = aCamera->GetProjection();
 
-	BindBuffer<SFrameBufferData>(myFrameBuffer, myFrameBufferData, "Frame Buffer");
+	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
 
 	myContext->VSSetConstantBuffers(0, 1, &myFrameBuffer);
 	myContext->PSSetConstantBuffers(0, 1, &myFrameBuffer);
 
 	for (CGameObject* gameobject : aGameObjectList) {
 		
-		CVFXComponent* component = gameobject->GetComponent<CVFXComponent>();
+		CVFXSystemComponent* component = gameobject->GetComponent<CVFXSystemComponent>();
 		if (component == nullptr)
 			continue;
 
-		std::vector<CVFXBase*> vfxBases = component->GetVFXBases();
+		const std::vector<CVFXBase*>& vfxBases = component->GetVFXBases();
 		if (vfxBases.empty())
 			continue;
 		
-		for (auto& vfxBase : vfxBases) {
-			CVFXBase::SVFXBaseData vfxBaseData = vfxBase->GetVFXBaseData();
+		const std::vector<bool>& isActive = component->GetVFXIsActive();
+		const std::vector<Matrix>& vfxMatrices = component->GetVFXTransforms();
+		for (unsigned int i = 0; i < vfxBases.size(); ++i) 
+		{
+			const CVFXBase::SVFXBaseData& vfxBaseData = vfxBases[i]->GetVFXBaseData();
+			const Matrix& transform = vfxMatrices[i];
 
-			if (!vfxBaseData.myIsActive) continue;
+			if (!isActive[i]) continue;
 
-			myObjectBufferData.myToWorld = component->GetTransform();
-			BindBuffer<SObjectBufferData>(myObjectBuffer, myObjectBufferData, "Object Buffer");
+			myObjectBufferData.myToWorld = transform;
+			BindBuffer(myObjectBuffer, myObjectBufferData, "Object Buffer");
 
 			myTime += CTimer::Dt();
 			if (myTime > FLT_MAX - 1.0f) {
@@ -86,7 +90,7 @@ void CVFXRenderer::Render(CCameraComponent* aCamera, std::vector<CGameObject*>& 
 			myTextureScrollingData.uvScale4 = vfxBaseData.uvScale4;
 			myTextureScrollingData.scrollTimer = myTime * scrollingScale; //..is now!
 			myTextureScrollingData.opacityStrength = vfxBaseData.opacityStrength;
-			BindBuffer<STextureScrollingData>(myTextureScrollingBuffer, myTextureScrollingData, "Texture Scrolling Buffer");
+			BindBuffer(myTextureScrollingBuffer, myTextureScrollingData, "Texture Scrolling Buffer");
 
 			myContext->IASetPrimitiveTopology(vfxBaseData.myPrimitiveTopology);
 			myContext->IASetInputLayout(vfxBaseData.myInputLayout);

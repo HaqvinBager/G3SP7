@@ -11,9 +11,10 @@ public:
 	CFModWrapper();
 	~CFModWrapper();
 
-	CAudio* RequestSound(std::string aFilePath);//Who takes care of the new CAudio* this returns? 2020 12 04 Adding destruction of it to CAudioManager
-	CAudio* RequestLoopingSound(std::string aFilePath);//Who takes care of the new CAudio* this returns? 2020 12 04 Adding destruction of it to CAudioManager
-	CAudioChannel* RequestChannel(std::string aChannelName);//Who takes care of the new CAudio* this returns? 2020 12 04 Adding destruction of it to CAudioManager
+	CAudio* RequestSound(const std::string& aFilePath, bool aShouldLoop = false);
+	CAudio* TryGetSound(const std::string& aFilePath, bool aShouldLoop = false);
+
+	CAudioChannel* RequestChannel(const std::string& aChannelName);
 
 	void Play(CAudio* aSound, CAudioChannel* aChannel);
 

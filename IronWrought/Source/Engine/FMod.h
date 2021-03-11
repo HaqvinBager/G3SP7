@@ -20,9 +20,9 @@ public:
 	const FMOD::Studio::System* GetStudioSystem() const;
 	const FMOD::System* GetCoreSystem() const;
 
-	FMOD::Sound* CreateSound(std::string aFilePath);
-	FMOD::Sound* CreateLoopingSound(std::string aFilePath);
-	FMOD::ChannelGroup* CreateChannel(std::string aChannelName);
+	FMOD::Sound* CreateSound(const std::string& aFilePath, bool aShouldLoop = false);
+	FMOD::Sound* TryCreateSound(const std::string& aFilePath, bool aShouldLoop = false);
+	FMOD::ChannelGroup* CreateChannel(const std::string& aChannelName);
 
 	void Play(FMOD::Sound* aSound, FMOD::ChannelGroup* aChannelGroup);
 

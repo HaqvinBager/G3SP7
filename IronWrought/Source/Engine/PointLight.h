@@ -12,8 +12,8 @@ public:
 	void SetColor(SM::Vector3 aColor);
 	void SetRange(float aRange);
 	void SetIntensity(float aIntensity);
-	SM::Vector3 GetPosition() const;
-	SM::Vector3 GetColor() const;
+	const SM::Vector3& GetPosition() const;
+	const SM::Vector3& GetColor() const;
 	float GetIntensity() const;
 	float GetRange() const;
 

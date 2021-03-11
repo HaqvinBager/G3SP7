@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include "Model.h"
 #include "MaterialHandler.h"
+#include "Model.h"
 
 CModelComponent::CModelComponent(CGameObject& aParent, const std::string& aFBXPath) : CBehaviour(aParent) {
 	myModel = CModelFactory::GetInstance()->GetModel(aFBXPath);
@@ -13,10 +14,16 @@ CModelComponent::CModelComponent(CGameObject& aParent, const std::string& aFBXPa
 	myVertexPaintColorID = vertexPaintData.myVertexColorID;
 	myVertexPaintMaterialNames = vertexPaintData.myRGBMaterialNames;
 
-
-
-
-
+	myRenderWithAlpha = false;
+	std::vector<std::string> materialNames = myModel->GetModelData().myMaterialNames;
+	for (auto& materialName : materialNames)
+	{
+		if (materialName.substr(materialName.size() - 2, 2) == "AL")
+		{
+			myRenderWithAlpha = true;
+			break;
+		}
+	}
 }
 
 CModelComponent::~CModelComponent()

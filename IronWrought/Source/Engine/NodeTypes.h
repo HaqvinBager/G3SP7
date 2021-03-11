@@ -16,9 +16,9 @@ namespace NodeData
 #endif
 		if (!someData)
 		{
-			return Type(0);
+			//return Type(NULL);
 		}
-		return *((Type*)someData);
+		return *(static_cast<Type*>(someData));
 	}
 }
 

@@ -40,22 +40,23 @@ const FMOD::System* CFMod::GetCoreSystem() const
     return myCoreSystem;
 }
 
-FMOD::Sound* CFMod::CreateSound(std::string aFilePath)
+FMOD::Sound* CFMod::TryCreateSound(const std::string& aFilePath, bool aShouldLoop)
 {
-
     FMOD::Sound* soundPtr;
-    FMOD_EXCEPTION(myCoreSystem->createSound(aFilePath.c_str(), FMOD_DEFAULT, nullptr, &soundPtr));
+    FMOD_MODE mode = aShouldLoop ? FMOD_LOOP_NORMAL : FMOD_DEFAULT;
+    myCoreSystem->createSound(aFilePath.c_str(), mode, nullptr, &soundPtr);
     return soundPtr;
 }
 
-FMOD::Sound* CFMod::CreateLoopingSound(std::string aFilePath)
+FMOD::Sound* CFMod::CreateSound(const std::string& aFilePath, bool aShouldLoop)
 {
     FMOD::Sound* soundPtr;
-    FMOD_EXCEPTION(myCoreSystem->createSound(aFilePath.c_str(), FMOD_LOOP_NORMAL, nullptr, &soundPtr));
+    FMOD_MODE mode = aShouldLoop ? FMOD_LOOP_NORMAL : FMOD_DEFAULT;
+    FMOD_EXCEPTION(myCoreSystem->createSound(aFilePath.c_str(), mode, nullptr, &soundPtr));
     return soundPtr;
 }
 
-FMOD::ChannelGroup* CFMod::CreateChannel(std::string aChannelName)
+FMOD::ChannelGroup* CFMod::CreateChannel(const std::string& aChannelName)
 {
     FMOD::ChannelGroup* channelPtr;
     FMOD_EXCEPTION(myCoreSystem->createChannelGroup(aChannelName.c_str(), &channelPtr));

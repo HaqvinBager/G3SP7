@@ -40,7 +40,7 @@ void CTextRenderer::Render(std::vector<CTextInstance*>& aTextInstanceList)
         instance = aTextInstanceList[i];
         textData = instance->GetTextData()->GetTextData();
         
-        DirectX::XMVECTOR result = textData.mySpriteFont->MeasureString(instance->GetText().c_str());
+        const DirectX::XMVECTOR& result = textData.mySpriteFont->MeasureString(instance->GetText().c_str());
         dimensions = { DirectX::XMVectorGetX(result), DirectX::XMVectorGetY(result) };
         dimensions *= instance->GetPivot() * instance->GetScale();
 

@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "RigidDynamicBody.h"
+#include "Engine.h"
+#include "PhysXWrapper.h"
 
 std::string globalNames[] = 
 {
@@ -37,7 +39,9 @@ RigidDynamicBody::RigidDynamicBody(physx::PxPhysics& aPhysX, const Vector3 aPosi
 	constexpr physx::PxReal staticFriction = 0.7f;
 	constexpr physx::PxReal dynamicFriction = 0.9f;
 	constexpr physx::PxReal restitution = 0.9f;
-	physx::PxMaterial* material = aPhysX.createMaterial(staticFriction, dynamicFriction, restitution);
+	//physx::PxMaterial* material = aPhysX.createMaterial(staticFriction, dynamicFriction, restitution);
+	physx::PxMaterial* material = CEngine::GetInstance()->GetPhysx().CreateMaterial(CPhysXWrapper::materialfriction::metal);
+
 
 	// Tip! A shape is not bound to a single body and can be reused
 	// Use shape as a seperate resource

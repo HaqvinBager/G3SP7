@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2956102574578519978}
+  - component: {fileID: -1011051177006202902}
   m_Layer: 0
   m_Name: En_W_wallkonkav
   m_TagString: Untagged
@@ -31,6 +32,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &-1011051177006202902
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7031780768583619225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b594af8195096074282ae575c277050f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &4178552782072856538
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -97,8 +110,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: -7983948388565990757, guid: ccc3d721446353341b9e5bb5202887ec,
-        type: 3}
+      objectReference: {fileID: 2100000, guid: 5568948a4eb0c08429ede989ee592d95, type: 2}
     - target: {fileID: 919132149155446097, guid: 4c259b298090b1142b29ca3c10665dda,
         type: 3}
       propertyPath: m_Name

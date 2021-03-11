@@ -9,6 +9,8 @@
 #include "RenderStateManager.h"
 #include "SpriteRenderer.h"
 #include "TextRenderer.h"
+#include "ShadowRenderer.h"
+#include "DecalRenderer.h"
 #include "GBuffer.h"
 
 class CDirectXFramework;
@@ -44,19 +46,25 @@ private:
 	CVFXRenderer myVFXRenderer;
 	CSpriteRenderer mySpriteRenderer;
 	CTextRenderer myTextRenderer;
+	CShadowRenderer myShadowRenderer;
+	CDecalRenderer myDecalRenderer;
 
 	CFullscreenTextureFactory myFullscreenTextureFactory;
 	CFullscreenTexture myBackbuffer;
 	CFullscreenTexture myIntermediateTexture;
 	CFullscreenTexture myIntermediateDepth;
+	CFullscreenTexture myEnvironmentShadowDepth;
+	CFullscreenTexture myDepthCopy;
 	CFullscreenTexture myLuminanceTexture;
 	CFullscreenTexture myHalfSizeTexture;
 	CFullscreenTexture myQuaterSizeTexture;
 	CFullscreenTexture myBlurTexture1;
 	CFullscreenTexture myBlurTexture2;
 	CFullscreenTexture myVignetteTexture;
-	CFullscreenTexture myDeferredTexture;
+	CFullscreenTexture myDeferredLightingTexture;
+	CFullscreenTexture myTonemappedTexture;
 	CGBuffer myGBuffer;
+	CGBuffer myGBufferCopy;
 
 	DirectX::SimpleMath::Vector4 myClearColor;
 

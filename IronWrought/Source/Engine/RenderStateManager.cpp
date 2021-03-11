@@ -4,10 +4,10 @@
 CRenderStateManager::CRenderStateManager()
 {
     myContext = nullptr;
-    myBlendStates;
-    myDepthStencilStates;
-    myRasterizerStates;
-    mySamplerStates;
+    myBlendStates = {};
+    myDepthStencilStates = {};
+    myRasterizerStates = {};
+    mySamplerStates = {};
 }
 
 CRenderStateManager::~CRenderStateManager()
@@ -20,32 +20,13 @@ bool CRenderStateManager::Init(CDirectXFramework* aFramework)
     myContext = aFramework->GetContext();
     ID3D11Device* device = aFramework->GetDevice();
 
-    if (!myContext) {
-        return false;
-    }
-
-    if (!device) {
-        return false;
-    }
-
-    if (!CreateBlendStates(device)) {
-        return false;
-    }
-
-    if (!CreateDepthStencilStates(device))
-    {
-        return false;
-    }
-
-    if (!CreateRasterizerStates(device)) 
-    {
-        return false;
-    }
+    ENGINE_ERROR_BOOL_MESSAGE(myContext, "Could not bind context.");
+    ENGINE_ERROR_BOOL_MESSAGE(device, "Device is null.");
     
-    if (!CreateSamplerStates(device))
-    {
-        return false;
-    }
+    ENGINE_ERROR_BOOL_MESSAGE(CreateBlendStates(device), "Could not create Blend States.");
+    ENGINE_ERROR_BOOL_MESSAGE(CreateDepthStencilStates(device), "Could not create Depth Stencil States.");
+    ENGINE_ERROR_BOOL_MESSAGE(CreateRasterizerStates(device), "Could not create Rasterizer States.");
+    ENGINE_ERROR_BOOL_MESSAGE(CreateSamplerStates(device), "Could not create Sampler States.");
 
     return true;
 }
@@ -200,11 +181,29 @@ bool CRenderStateManager::CreateRasterizerStates(ID3D11Device* aDevice)
     wireframeRasterizerDesc.CullMode = D3D11_CULL_BACK;
     wireframeRasterizerDesc.DepthClipEnable = true;
 
+    D3D11_RASTERIZER_DESC frontFaceDesc = {};
+    frontFaceDesc.FillMode = D3D11_FILL_SOLID;
+    frontFaceDesc.CullMode = D3D11_CULL_FRONT;
+    frontFaceDesc.DepthClipEnable = true;
+
+    D3D11_RASTERIZER_DESC noCullDesc = {};
+    noCullDesc.FillMode = D3D11_FILL_SOLID;
+    noCullDesc.CullMode = D3D11_CULL_NONE;
+    noCullDesc.DepthClipEnable = true;
+
     ID3D11RasterizerState* wireframeRasterizerState;
     ENGINE_HR_MESSAGE(aDevice->CreateRasterizerState(&wireframeRasterizerDesc, &wireframeRasterizerState), "Wireframe Rasterizer State could not be created.");
 
+    ID3D11RasterizerState* frontFaceState;
+    ENGINE_HR_MESSAGE(aDevice->CreateRasterizerState(&frontFaceDesc, &frontFaceState), "Front face Rasterizer State could not be created.");
+
+    ID3D11RasterizerState* noCullState;
+    ENGINE_HR_MESSAGE(aDevice->CreateRasterizerState(&noCullDesc, &noCullState), "No Face culling Rasterizer State could not be created.");
+
     myRasterizerStates[(size_t)RasterizerStates::RASTERIZERSTATE_DEFAULT] = nullptr;
     myRasterizerStates[(size_t)RasterizerStates::RASTERIZERSTATE_WIREFRAME] = wireframeRasterizerState;
+    myRasterizerStates[(size_t)RasterizerStates::RASTERIZERSTATE_FRONTFACECULLING] = frontFaceState;
+    myRasterizerStates[(size_t)RasterizerStates::RASTERIZERSTATE_NOFACECULLING] = noCullState;
 
     return true;
 }

@@ -2,7 +2,9 @@
 #include <array>
 #include <d3d11.h>
 
-class CAnimation;
+/* REMINDER (2021 02 09)
+* Move SModelInstancedData to its own class: CInstancedModel!
+*/
 
 struct SMeshData {
 	ID3D11Buffer* myVertexBuffer = nullptr;
@@ -24,10 +26,16 @@ struct SInstancedMeshData {
 	UINT myMaterialIndex = 0;
 };
 
+struct SMeshFilter {
+	std::vector<unsigned int> myIndexes;
+	std::vector<Vector3> myVertecies;
+};
+
 class CModel {
 public:
 	struct SModelData {
 		std::vector<SMeshData> myMeshes { };
+		SMeshFilter myMeshFilter;
 		ID3D11VertexShader* myVertexShader = nullptr;
 		ID3D11PixelShader* myPixelShader = nullptr;
 		ID3D11SamplerState* mySamplerState = nullptr;
@@ -40,6 +48,7 @@ public:
 
 	struct SModelInstanceData {
 		std::vector<SInstancedMeshData> myMeshes{ };
+		SMeshFilter myMeshFilter;
 		ID3D11Buffer* myInstanceBuffer = nullptr;
 		ID3D11VertexShader* myVertexShader = nullptr;
 		ID3D11PixelShader* myPixelShader = nullptr;
@@ -65,6 +74,10 @@ public:
 	SModelData& GetModelData();
 
 public:
+	void HasBones(const bool aHasBones) { myHasBones = aHasBones; }
+	const bool HasBones() const { return myHasBones; }
+
+public:
 	void Init(SModelInstanceData aData);
 	SModelInstanceData& GetModelInstanceData() { return myModelInstanceData; }
 
@@ -82,6 +95,7 @@ public:
 
 private:
 	SModelData myModelData;
+	bool myHasBones;
 
 private:
 	SModelInstanceData myModelInstanceData;

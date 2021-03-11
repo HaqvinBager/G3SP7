@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <map>
+#include "FBXLoaderCustom.h"
 
 class CEngine;
 class CModel;
@@ -11,7 +12,7 @@ class CModelFactory {
 	friend class CEngine;
 public:
 	static CModelFactory* GetInstance();
-	bool Init(CEngine& engine);
+	bool Init(CDirectXFramework* aFramework);
 	void ClearFactory();
 	
 	CModel* GetModel(std::string aFilePath);
@@ -19,6 +20,8 @@ public:
 	CModel* GetOutlineModelSubset();
 
 	std::vector<DirectX::SimpleMath::Vector3>& GetVertexPositions(const std::string& aFilePath);
+
+	CLoaderMesh*& GetMeshes(const std::string& aFilePath);
 
 	void ClearModel(std::string aFilePath, int aNumberOfInstances = 0);
 
@@ -56,7 +59,9 @@ private:
 	std::map<std::string, int> myModelMapReferences;
 	std::map<std::string, int> myInstancedModelMapReferences;
 	std::map<std::string, std::vector<DirectX::SimpleMath::Vector3>> myFBXVertexMap;
-	CEngine* myEngine;
+	std::map<std::string, CLoaderMesh*> myMeshesMap;
+	//CEngine* myEngine;
+	CDirectXFramework* myFramework;
 	CModel* myOutlineModelSubset;
 	static CModelFactory* ourInstance;
 };
