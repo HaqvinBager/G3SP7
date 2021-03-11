@@ -6,6 +6,7 @@
 #include "GraphicsHelpers.h"
 #include "Camera.h"
 #include "VFXBase.h"
+#include "VFXEffect.h"
 #include "CameraComponent.h"
 
 CVFXRenderer::CVFXRenderer() : myContext(nullptr), myFrameBuffer(), myObjectBuffer(), myTextureScrollingBuffer(), myTime(0.0f) {
@@ -58,60 +59,67 @@ void CVFXRenderer::Render(CCameraComponent* aCamera, std::vector<CGameObject*>& 
 		if (component == nullptr)
 			continue;
 
-		const std::vector<CVFXBase*>& vfxBases = component->GetVFXBases();
-		if (vfxBases.empty())
-			continue;
-		
-		const std::vector<bool>& isActive = component->GetVFXIsActive();
-		const std::vector<Matrix>& vfxMatrices = component->GetVFXTransforms();
-		for (unsigned int i = 0; i < vfxBases.size(); ++i) 
+		auto& effects = component->GetVFXEffects();
+		for (unsigned int j = 0; j < effects.size(); ++j)
 		{
-			const CVFXBase::SVFXBaseData& vfxBaseData = vfxBases[i]->GetVFXBaseData();
-			const Matrix& transform = vfxMatrices[i];
+			auto effect = effects[j];
 
-			if (!isActive[i]) continue;
+			const std::vector<CVFXBase*>& vfxBases = effect->GetVFXBases();
+			if (vfxBases.empty())
+				continue;
+		
+			const std::vector<bool>& isActive = effect->GetVFXIsActive();
+			const std::vector<Matrix>& vfxMatrices = effect->GetVFXTransforms();
+			for (unsigned int i = 0; i < vfxBases.size(); ++i) 
+			{
+				const CVFXBase::SVFXBaseData& vfxBaseData = vfxBases[i]->GetVFXBaseData();
+				const Matrix& transform = vfxMatrices[i];
 
-			myObjectBufferData.myToWorld = transform;
-			BindBuffer(myObjectBuffer, myObjectBufferData, "Object Buffer");
+				if (!isActive[i]) continue;
 
-			myTime += CTimer::Dt();
-			if (myTime > FLT_MAX - 1.0f) {
-				myTime -= FLT_MAX - 1.0f;
+				myObjectBufferData.myToWorld = transform;
+				BindBuffer(myObjectBuffer, myObjectBufferData, "Object Buffer");
+
+				myTime += CTimer::Dt();
+				if (myTime > FLT_MAX - 1.0f) {
+					myTime -= FLT_MAX - 1.0f;
+				}
+
+				float scrollingScale = 0.15f;
+				myTextureScrollingData.scrollSpeed1 = vfxBaseData.scrollSpeed1;
+				myTextureScrollingData.scrollSpeed2 = vfxBaseData.scrollSpeed2;
+				myTextureScrollingData.scrollSpeed3 = vfxBaseData.scrollSpeed3;
+				myTextureScrollingData.scrollSpeed4 = vfxBaseData.scrollSpeed4;
+				myTextureScrollingData.uvScale1 = vfxBaseData.uvScale1;
+				myTextureScrollingData.uvScale2 = vfxBaseData.uvScale2;
+				myTextureScrollingData.uvScale3 = vfxBaseData.uvScale3;
+				myTextureScrollingData.uvScale4 = vfxBaseData.uvScale4;
+				myTextureScrollingData.scrollTimer = myTime * scrollingScale; //..is now!
+				myTextureScrollingData.opacityStrength = vfxBaseData.opacityStrength;
+				BindBuffer(myTextureScrollingBuffer, myTextureScrollingData, "Texture Scrolling Buffer");
+
+				myContext->IASetPrimitiveTopology(vfxBaseData.myPrimitiveTopology);
+				myContext->IASetInputLayout(vfxBaseData.myInputLayout);
+
+				myContext->IASetVertexBuffers(0, 1, &vfxBaseData.myVertexBuffer, &vfxBaseData.myStride, &vfxBaseData.myOffset);
+				myContext->IASetIndexBuffer(vfxBaseData.myIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+
+				myContext->VSSetConstantBuffers(1, 1, &myObjectBuffer);
+				myContext->VSSetShader(vfxBaseData.myVertexShader, nullptr, 0);
+
+				myContext->GSSetShader(nullptr, nullptr, 0);
+
+				myContext->PSSetConstantBuffers(1, 1, &myObjectBuffer);
+				myContext->PSSetConstantBuffers(2, 1, &myTextureScrollingBuffer);
+				myContext->PSSetShaderResources(0, 4, &vfxBaseData.myTexture[0]);
+				myContext->PSSetShader(vfxBaseData.myPixelShader, nullptr, 0);
+
+				myContext->PSSetSamplers(0, 1, &vfxBaseData.mySampler);
+
+				myContext->DrawIndexed(vfxBaseData.myNumberOfIndices, 0, 0);
+				CRenderManager::myNumberOfDrawCallsThisFrame++;
 			}
-
-			float scrollingScale = 0.15f;
-			myTextureScrollingData.scrollSpeed1 = vfxBaseData.scrollSpeed1;
-			myTextureScrollingData.scrollSpeed2 = vfxBaseData.scrollSpeed2;
-			myTextureScrollingData.scrollSpeed3 = vfxBaseData.scrollSpeed3;
-			myTextureScrollingData.scrollSpeed4 = vfxBaseData.scrollSpeed4;
-			myTextureScrollingData.uvScale1 = vfxBaseData.uvScale1;
-			myTextureScrollingData.uvScale2 = vfxBaseData.uvScale2;
-			myTextureScrollingData.uvScale3 = vfxBaseData.uvScale3;
-			myTextureScrollingData.uvScale4 = vfxBaseData.uvScale4;
-			myTextureScrollingData.scrollTimer = myTime * scrollingScale; //..is now!
-			myTextureScrollingData.opacityStrength = vfxBaseData.opacityStrength;
-			BindBuffer(myTextureScrollingBuffer, myTextureScrollingData, "Texture Scrolling Buffer");
-
-			myContext->IASetPrimitiveTopology(vfxBaseData.myPrimitiveTopology);
-			myContext->IASetInputLayout(vfxBaseData.myInputLayout);
-
-			myContext->IASetVertexBuffers(0, 1, &vfxBaseData.myVertexBuffer, &vfxBaseData.myStride, &vfxBaseData.myOffset);
-			myContext->IASetIndexBuffer(vfxBaseData.myIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-
-			myContext->VSSetConstantBuffers(1, 1, &myObjectBuffer);
-			myContext->VSSetShader(vfxBaseData.myVertexShader, nullptr, 0);
-
-			myContext->GSSetShader(nullptr, nullptr, 0);
-
-			myContext->PSSetConstantBuffers(1, 1, &myObjectBuffer);
-			myContext->PSSetConstantBuffers(2, 1, &myTextureScrollingBuffer);
-			myContext->PSSetShaderResources(0, 4, &vfxBaseData.myTexture[0]);
-			myContext->PSSetShader(vfxBaseData.myPixelShader, nullptr, 0);
-
-			myContext->PSSetSamplers(0, 1, &vfxBaseData.mySampler);
-
-			myContext->DrawIndexed(vfxBaseData.myNumberOfIndices, 0, 0);
-			CRenderManager::myNumberOfDrawCallsThisFrame++;
 		}
+
 	}
 }
