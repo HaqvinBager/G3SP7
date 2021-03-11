@@ -15,6 +15,8 @@
 SP7UnityEditor/Assets/Generated/
 IronWrought/Bin/Imgui/NodeScripts/
 
+*.cso
+
 # User-specific files
 *.rsuser
 *.suo
@@ -268,8 +270,6 @@ FodyWeavers.xsd
 IronWrought/Bin/DebugLogs/
 TGA_Modelviewer/
 DeferredRenderer/
-
-#.cso 
 
 IronWrought/Lib/DirectXTK_Debug.lib
 IronWrought/Lib/DirectXTK_Release.lib
