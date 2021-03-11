@@ -299,6 +299,8 @@
     <ClInclude Include="NodeTypes.h" />
     <ClInclude Include="NodeTypeTimeTimer.h" />
     <ClInclude Include="NodeTypeVariableSetVector3.h" />
+    <ClInclude Include="NodeTypeVFXPlayVFX.h" />
+    <ClInclude Include="NodeTypeVFXStopVFX.h" />
     <ClInclude Include="NodeTypeVolumeTrigger.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="PerlinNoise.h" />
@@ -439,6 +441,8 @@
     <ClCompile Include="NodeTypeVariableSetFloat.cpp" />
     <ClCompile Include="NodeTypeVariableSetInt.cpp" />
     <ClCompile Include="NodeTypeVariableSetVector3.cpp" />
+    <ClCompile Include="NodeTypeVFXPlayVFX.cpp" />
+    <ClCompile Include="NodeTypeVFXStopVFX.cpp" />
     <ClCompile Include="ShadowRenderer.cpp" />
     <ClCompile Include="Decal.cpp" />
     <ClCompile Include="DecalComponent.cpp" />

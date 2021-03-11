@@ -56,6 +56,8 @@
 #include "NodeTypeAudioPlayRobotPatrolling.h"
 #include "NodeTypeAudioPlayRobotSearching.h"
 #include "NodeTypeListTest.h"
+#include "NodeTypeVFXPlayVFX.h"
+#include "NodeTypeVFXStopVFX.h"
 
 CNodeType* CNodeTypeCollector::myTypes[128];
 unsigned short CNodeTypeCollector::myTypeCounter = 0;
@@ -111,6 +113,8 @@ void CNodeTypeCollector::PopulateTypes()
 	RegisterType<CNodeTypeAudioPlayRobotPatrolling>("Play Robot Patrolling");
 	RegisterType<CNodeTypeAudioPlayRobotSearching>("Play Robot Searching");
 	RegisterType<CNodeTypeListTest>("List Test");
+	RegisterType<CNodeTypeVFXPlayVFX>("Play VFX");
+	RegisterType<CNodeTypeVFXStopVFX>("Stop VFX");
 }
 
 void CNodeTypeCollector::RegisterNewDataType(std::string aNodeName, unsigned int aType)

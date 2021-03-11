@@ -730,6 +730,12 @@
     <ClCompile Include="VFXEffect.cpp">
       <Filter>VFX</Filter>
     </ClCompile>
+    <ClCompile Include="NodeTypeVFXPlayVFX.cpp">
+      <Filter>Imgui\Node Editor\Nodes\VFX</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeVFXStopVFX.cpp">
+      <Filter>Imgui\Node Editor\Nodes\VFX</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1348,6 +1354,12 @@
     <ClInclude Include="VFXEffect.h">
       <Filter>VFX</Filter>
     </ClInclude>
+    <ClInclude Include="NodeTypeVFXPlayVFX.h">
+      <Filter>Imgui\Node Editor\Nodes\VFX</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeVFXStopVFX.h">
+      <Filter>Imgui\Node Editor\Nodes\VFX</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">
@@ -1628,6 +1640,9 @@
     </Filter>
     <Filter Include="Imgui\Node Editor\Nodes\Audio">
       <UniqueIdentifier>{fb119114-266c-4e11-92b9-d9a0d1955cdd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Nodes\VFX">
+      <UniqueIdentifier>{85ecef19-45a5-483c-bf6f-9e770b31e79b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
