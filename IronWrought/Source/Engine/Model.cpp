@@ -18,6 +18,7 @@ CModel::~CModel()
 		myModelData.myMaterials[i][0] = nullptr;
 		myModelData.myMaterials[i][1] = nullptr;
 		myModelData.myMaterials[i][2] = nullptr;
+		myModelData.myMaterials[i][3] = nullptr;
 	}
 
 	for (unsigned int i = 0; i < myModelInstanceData.myMaterialNames.size(); ++i)
@@ -26,6 +27,7 @@ CModel::~CModel()
 		myModelInstanceData.myMaterials[i][0] = nullptr;
 		myModelInstanceData.myMaterials[i][1] = nullptr;
 		myModelInstanceData.myMaterials[i][2] = nullptr;
+		myModelInstanceData.myMaterials[i][3] = nullptr;
 	}
 }
 

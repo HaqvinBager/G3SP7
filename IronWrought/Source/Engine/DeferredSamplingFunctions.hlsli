@@ -97,11 +97,11 @@ float4 PixelShader_DetailNormal(float2 uv, int index)
    
     float3 normal;
     
-    normal.xy = detailNormals[index].Sample(defaultSampler, uv * tilingModifier).ag;
-    normal.z = 0.0f;
-    normal = (normal * 2.0f) - 1.0f;
-    normal.z = sqrt(1 - saturate((normal.x * normal.x) + (normal.y * normal.y)));
-    normal = normalize(normal);
+    //normal.xy = detailNormals[index].Sample(defaultSampler, uv * tilingModifier).ag;
+    //normal.z = 0.0f;
+    //normal = (normal * 2.0f) - 1.0f;
+    //normal.z = sqrt(1 - saturate((normal.x * normal.x) + (normal.y * normal.y)));
+    //normal = normalize(normal);
     
     return float4(normal.x, normal.y, normal.z, 1.0f);
 }

@@ -110,8 +110,9 @@ Texture2D materialTextureGBuffer      : register(t4);
 Texture2D albedoTexture     : register(t5);
 Texture2D materialTexture   : register(t6);
 Texture2D normalTexture     : register(t7);
+Texture2D metalnessTexture : register(t8);
 // Detail normals
-Texture2D detailNormals[4] : register(t8);
+//Texture2D detailNormals[4] : register(t8);
 // Vertex Paint Materials
 Texture2D vertexPaintTextures[9] : register(t12);
 

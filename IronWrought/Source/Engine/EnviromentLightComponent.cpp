@@ -8,16 +8,13 @@
 CEnviromentLightComponent::CEnviromentLightComponent(CGameObject& aParent, DirectX::SimpleMath::Vector3 aColor, float anIntensity, DirectX::SimpleMath::Vector3 aDirection)
 	: CComponent(aParent)
 {
-	// TODO 
-	//	Step through code to look for issues. Like with mips.
-
-	myEnvironmentLight = CLightFactory::GetInstance()->CreateEnvironmentLight("Assets/Cubemaps/mondarrain_3_cubemap.dds");
+	myEnvironmentLight = CLightFactory::GetInstance()->CreateEnvironmentLight(ASSETPATH("Assets/Cubemaps/mondarrain_3_cubemap.dds"));
 	myEnvironmentLight->SetColor(aColor);
 	myEnvironmentLight->SetIntensity(anIntensity);
 	//not sure if this work! We want to set the direction of this transform!
 	aParent.myTransform->Transform().Forward(aDirection);
 	myEnvironmentLight->SetDirection(aParent.myTransform->Transform().Forward());
-	myEnvironmentLight->SetPosition({ 0.0f, 2.0f, 0.0f });
+	myEnvironmentLight->SetPosition({ 0.0f, 20.0f, 0.0f });
 }
 
 CEnviromentLightComponent::~CEnviromentLightComponent()

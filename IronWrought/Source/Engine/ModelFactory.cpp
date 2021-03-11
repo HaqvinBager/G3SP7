@@ -188,7 +188,7 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDesc.MinLOD = 0;
-	samplerDesc.MaxLOD = 10;
+	samplerDesc.MaxLOD = 20;
 
 	ENGINE_HR_MESSAGE(myFramework->GetDevice()->CreateSamplerState(&samplerDesc, &sampler), "Sampler State could not be created.");
 
@@ -230,12 +230,42 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 	}
 
 #ifdef USING_FBX_MATERIALS
-	std::vector<std::array<ID3D11ShaderResourceView*, 3>> materials;
-	std::vector<std::string> materialNames;
-	for (unsigned int i = 0; i < loaderModel->myMaterials.size(); ++i) {
-		std::string materialName = loaderModel->myMaterials[loaderModel->myMaterialIndices[i]];
-		materials.push_back(CMainSingleton::MaterialHandler().RequestMaterial(materialName));
-		materialNames.push_back(materialName);
+	std::vector<std::array<ID3D11ShaderResourceView*, 4>> materials;
+	
+	std::vector<std::string> materialNames = 
+	{
+		"Sponza_Thorn",
+		"VasePlant",
+		"VaseRound",
+		"Background",
+		"Sponza_Bricks_a",
+		"Sponza_Arch",
+		"Sponza_Ceiling",
+		"Sponza_Column_a",
+		"Sponza_Floor",
+		"Sponza_Column_c",
+		"Sponza_Details",
+		"Sponza_Column_b",
+		"Sponza_Bricks_a", // weird board
+		"Sponza_FlagPole",
+		"Sponza_Fabric_Green",
+		"Sponza_Fabric_Blue",
+		"Sponza_Fabric_Red",
+		"Sponza_Curtain_Blue",
+		"Sponza_Curtain_Red",
+		"Sponza_Curtain_Green",
+		"ChainTexture",
+		"VaseHanging",
+		"Vase",
+		"Lion",
+		"Sponza_Roof",
+	};
+	
+	for (unsigned int i = 0; i < materialNames.size(); ++i) {
+		//std::string materialName = loaderModel->myMaterials[loaderModel->myMaterialIndices[i]];
+		//materialName = materialName.substr(7);
+		materials.push_back(CMainSingleton::MaterialHandler().RequestSponzaMaterial(materialNames[i]));
+		//materialNames.push_back(materialName);
 	}
 #else
 	std::vector<std::string> materialNames;

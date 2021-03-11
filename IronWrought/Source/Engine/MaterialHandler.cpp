@@ -9,6 +9,29 @@
 #include <unordered_map>
 #include "FolderUtility.h"
 
+std::array<ID3D11ShaderResourceView*, 4> CMaterialHandler::RequestSponzaMaterial(const std::string& aMaterialName)
+{
+	if (mySponzaMaterials.find(aMaterialName) == mySponzaMaterials.end())
+	{
+		std::array<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>, 4> newTextures;
+		newTextures[0] = Graphics::GetShaderResourceView(myDevice, mySponzaPath + aMaterialName + "_c.dds");
+		newTextures[1] = Graphics::GetShaderResourceView(myDevice, mySponzaPath + aMaterialName + "_r.dds");
+		newTextures[2] = Graphics::GetShaderResourceView(myDevice, mySponzaPath + aMaterialName + "_n.dds");
+		newTextures[3] = Graphics::GetShaderResourceView(myDevice, mySponzaPath + aMaterialName + "_m.dds");
+
+		mySponzaMaterials.emplace(aMaterialName, std::move(newTextures));
+		myMaterialReferences.emplace(aMaterialName, 0);
+	}
+
+	myMaterialReferences[aMaterialName] += 1;
+	std::array<ID3D11ShaderResourceView*, 4> textures;
+	textures[0] = mySponzaMaterials[aMaterialName][0].Get();
+	textures[1] = mySponzaMaterials[aMaterialName][1].Get();
+	textures[2] = mySponzaMaterials[aMaterialName][2].Get();
+	textures[3] = mySponzaMaterials[aMaterialName][3].Get();
+	return textures;
+}
+
 std::array<ID3D11ShaderResourceView*, 3> CMaterialHandler::RequestMaterial(const std::string& aMaterialName)
 {
 	if (myMaterials.find(aMaterialName) == myMaterials.end())
@@ -222,6 +245,7 @@ CMaterialHandler::CMaterialHandler()
 	, myMaterialPath(ASSETPATH("Assets/Graphics/Textures/Materials/"))
 	, myDecalPath(ASSETPATH("Assets/Graphics/Textures/Decals/"))
 	, myVertexLinksPath(ASSETPATH("Assets/Generated/"))
+	, mySponzaPath(ASSETPATH("Assets/Graphics/Sponza/"))
 {
 }
 

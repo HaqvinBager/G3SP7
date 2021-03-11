@@ -257,30 +257,30 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 		myContext->PSSetSamplers(0, 1, &modelData.mySamplerState);
 
 		// Vertex Paint
-		unsigned int vertexColorID = modelComponent->VertexPaintColorID();
+		//unsigned int vertexColorID = modelComponent->VertexPaintColorID();
 
 		// Render all meshes
 		for (unsigned int i = 0; i < modelData.myMeshes.size(); ++i)
 		{
-			if (vertexColorID > 0)
-			{
-				auto vertexPaintMaterials = CMainSingleton::MaterialHandler().GetVertexPaintMaterials(modelComponent->VertexPaintMaterialNames());
-				ID3D11Buffer* vertexColorBuffer = CMainSingleton::MaterialHandler().GetVertexColorBuffer(vertexColorID);
-				UINT stride = sizeof(DirectX::SimpleMath::Vector3);
-				ID3D11Buffer* bufferPointers[2] = { modelData.myMeshes[i].myVertexBuffer, vertexColorBuffer };
-				UINT strides[2] = { modelData.myMeshes[i].myStride, stride };
-				UINT offsets[2] = { 0, 0 };
-				myContext->IASetInputLayout(myVertexPaintInputLayout);
-				myContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
-				myContext->VSSetShader(myVertexPaintModelVertexShader, nullptr, 0);
-				myContext->PSSetShader(myVertexPaintPixelShader, nullptr, 0);
-				myContext->PSSetShaderResources(12, 9, &vertexPaintMaterials[0]/*&myVertexPaintMaterials[0]*/);
-			}
-			else {
-				myContext->IASetVertexBuffers(0, 1, &modelData.myMeshes[i].myVertexBuffer, &modelData.myMeshes[i].myStride, &modelData.myMeshes[i].myOffset);
-			}
+			//if (vertexColorID > 0)
+			//{
+			//	auto vertexPaintMaterials = CMainSingleton::MaterialHandler().GetVertexPaintMaterials(modelComponent->VertexPaintMaterialNames());
+			//	ID3D11Buffer* vertexColorBuffer = CMainSingleton::MaterialHandler().GetVertexColorBuffer(vertexColorID);
+			//	UINT stride = sizeof(DirectX::SimpleMath::Vector3);
+			//	ID3D11Buffer* bufferPointers[2] = { modelData.myMeshes[i].myVertexBuffer, vertexColorBuffer };
+			//	UINT strides[2] = { modelData.myMeshes[i].myStride, stride };
+			//	UINT offsets[2] = { 0, 0 };
+			//	myContext->IASetInputLayout(myVertexPaintInputLayout);
+			//	myContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
+			//	myContext->VSSetShader(myVertexPaintModelVertexShader, nullptr, 0);
+			//	myContext->PSSetShader(myVertexPaintPixelShader, nullptr, 0);
+			//	myContext->PSSetShaderResources(12, 9, &vertexPaintMaterials[0]/*&myVertexPaintMaterials[0]*/);
+			//}
+			//else {
+			//}
+			myContext->IASetVertexBuffers(0, 1, &modelData.myMeshes[i].myVertexBuffer, &modelData.myMeshes[i].myStride, &modelData.myMeshes[i].myOffset);
 			myContext->IASetIndexBuffer(modelData.myMeshes[i].myIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-			myContext->PSSetShaderResources(5, 3, &modelData.myMaterials[modelData.myMeshes[i].myMaterialIndex][0]);
+			myContext->PSSetShaderResources(5, 4, &modelData.myMaterials[modelData.myMeshes[i].myMaterialIndex][0]);
 			myContext->DrawIndexed(modelData.myMeshes[i].myNumberOfIndices, 0, 0);
 			CRenderManager::myNumberOfDrawCallsThisFrame++;
 		}

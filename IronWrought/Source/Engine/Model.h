@@ -41,7 +41,7 @@ public:
 		ID3D11SamplerState* mySamplerState = nullptr;
 		D3D11_PRIMITIVE_TOPOLOGY myPrimitiveTopology;
 		ID3D11InputLayout* myInputLayout = nullptr;
-		std::vector<std::array<ID3D11ShaderResourceView*, 3>> myMaterials { };
+		std::vector<std::array<ID3D11ShaderResourceView*, 4>> myMaterials { };
 		std::vector<std::string> myMaterialNames;
 		std::array<ID3D11ShaderResourceView*, 4> myDetailNormals { nullptr, nullptr, nullptr, nullptr };
 	};

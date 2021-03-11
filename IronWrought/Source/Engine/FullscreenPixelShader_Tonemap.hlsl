@@ -79,8 +79,8 @@ PixelOutput main(VertexToPixel input)
     
 	// Uncharted 2
 	{
-        float3 whitePoint = 10.0f;
-        float exposure = 3.0f;
+        float3 whitePoint = 3.0f;
+        float exposure = 1.0f;
         returnValue.myColor.rgb = Uncharted2Tonemap(resource * exposure) / Uncharted2Tonemap(whitePoint);
     }
 	// Uncharted 2

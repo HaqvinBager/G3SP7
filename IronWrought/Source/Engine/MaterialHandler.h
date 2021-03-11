@@ -18,6 +18,7 @@ class CMaterialHandler
 	friend class CEngine;
 
 public:
+	std::array<ID3D11ShaderResourceView*, 4> RequestSponzaMaterial(const std::string& aMaterialName);
 	std::array<ID3D11ShaderResourceView*, 3> RequestMaterial(const std::string& aMaterialName);
 	std::array<ID3D11ShaderResourceView*, 3> RequestDecal(const std::string& aDecalName);
 	std::array<ID3D11ShaderResourceView*, 9> GetVertexPaintMaterials(const std::vector<std::string>& someMaterialNames);
@@ -33,6 +34,7 @@ protected:
 
 private:
 	std::map<std::string, std::array<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>, 3>> myMaterials;
+	std::map<std::string, std::array<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>, 4>> mySponzaMaterials;
 	std::map<unsigned int, std::vector<DirectX::SimpleMath::Vector3>> myVertexColors;
 	std::map<unsigned int, ID3D11Buffer*> myVertexColorBuffers;
 	std::map<std::string, int> myMaterialReferences;
@@ -42,6 +44,7 @@ private:
 	const std::string myMaterialPath;
 	const std::string myDecalPath;
 	const std::string myVertexLinksPath;
+	const std::string mySponzaPath;
 
 private:
 	CMaterialHandler();
