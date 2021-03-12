@@ -43,6 +43,12 @@ void CAnimationComponent::Start()
 
 void CAnimationComponent::Update()
 {
+	myController->Animation0Index(myAnimationBlend.myFirst);
+	myController->Animation1Index(myAnimationBlend.mySecond);
+	myController->SetBlendTime(myAnimationBlend.myBlendLerp);
+
+
+
 #ifndef ANIMATION_DEBUG
 	UpdateBlended();
 #endif
@@ -70,6 +76,7 @@ void CAnimationComponent::StepAnimation(const float aStep)
 }
 #endif
 
+//Hard Controll
 void CAnimationComponent::BlendLerpBetween(int anAnimationIndex0, int anAnimationIndex1, float aBlendLerp)
 {
 	myAnimationBlend.myFirst		= anAnimationIndex0;
@@ -77,10 +84,11 @@ void CAnimationComponent::BlendLerpBetween(int anAnimationIndex0, int anAnimatio
 	myAnimationBlend.myBlendLerp	= aBlendLerp;
 	myController->Animation0Index(anAnimationIndex0);
 	myController->Animation1Index(anAnimationIndex1);
-	myController->SetBlendTime(aBlendLerp);
+	myController->SetBlendTime(aBlendLerp); //This controlls Exactly where in any animation we are playing. Setting this will "snap" it to whatever it represents.
 	myShouldUseLerp = true;
 }
 
+//
 void CAnimationComponent::BlendToAnimation(unsigned int anAnimationIndex, float aBlendDuration, bool anUpdateBoth, bool aTemporary, float aTime)
 {
 	myController->BlendToAnimation(anAnimationIndex, anUpdateBoth, aBlendDuration, aTemporary, aTime);
@@ -90,6 +98,14 @@ void CAnimationComponent::BlendToAnimation(unsigned int anAnimationIndex, float 
 void CAnimationComponent::BlendLerp(float aLerpValue)
 {
 	myAnimationBlend.myBlendLerp = aLerpValue > 1.0f ? 1.0f : aLerpValue < 0.0f ? 0.0f : aLerpValue;
+}
+
+void CAnimationComponent::SetAnimationIndex(const int anAnimationIndex)
+{
+	myAnimationBlend.myFirst = anAnimationIndex;
+	myAnimationBlend.mySecond = anAnimationIndex;
+	myAnimationBlend.myBlendLerp = 0.0f;
+	myShouldUseLerp = true;
 }
 
 void CAnimationComponent::SetBonesToIdentity()

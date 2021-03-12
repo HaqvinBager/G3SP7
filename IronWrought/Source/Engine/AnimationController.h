@@ -161,6 +161,23 @@ private:
 	std::vector<BoneInfoAnim>			myBoneInfo;
 	std::vector<VertexBoneDataAnim>		myMass;
 
+private:
+	float Lerp(float a, float b, float t)
+	{
+		return (1.0f - t) * a + b * t;
+	}
+
+	float InvLerp(float a, float b, float v)
+	{
+		return (v - a) / (b - a);
+	}
+
+	float Remap(float inMin, float inMax, float outMin, float outMax, float v)
+	{
+		float t = InvLerp(inMin, inMax, v);
+		return Lerp(outMin, outMax, t);
+	}
+
 // No longer used 2021 02 01
 	// Takes ownership if myAnimations. I.e Importer has ownership if aiScene.
 	// Used for loading myAnimations. This is the FBX. Seems like an FBX can hold several animations?

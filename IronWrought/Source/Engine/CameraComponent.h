@@ -32,7 +32,7 @@ private:
 	void Shake();
 
 private:
-	CSpriteInstance* myFadingPlane;
+	//CSpriteInstance* myFadingPlane;
 	DirectX::SimpleMath::Matrix myProjection;
 	DirectX::SimpleMath::Matrix myView;
 	

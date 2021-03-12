@@ -18,6 +18,48 @@ public:
 	//	return filePath;
 	//}
 
+	static std::vector<std::string> GetFilePathsInFolder(const std::string& aFolder, const std::string& anExtension = "", const std::string& aContains = "")
+	{
+		std::vector<std::string> filePaths;
+
+		if (!std::filesystem::exists(aFolder))
+			return std::vector<std::string>();
+
+		for (const auto& file : std::filesystem::directory_iterator(aFolder)) {
+			if (file.path().extension().string() == ".meta")
+				continue;
+			if (anExtension.size() > 0) //If the user has asked for a certain Extension
+			{
+				if (aContains.size() > 0)
+				{
+					if (file.path().string().find(aContains) != std::string::npos)
+					{
+						filePaths.emplace_back(file.path().string());
+					}
+				}
+				else
+				{
+					if (file.path().string().find(aContains) != std::string::npos)
+					{
+						filePaths.emplace_back(file.path().string());
+					}
+				}
+			}
+			else if (aContains.size() > 0) 	//If the user has asked for the files to contain some key word
+			{
+
+				if (file.path().string().find(aContains) != std::string::npos)
+				{
+					filePaths.emplace_back(file.path().string());
+				}
+			}
+			else  //When the user has only asked for ALL the files inside this folder.
+			{
+				filePaths.emplace_back(file.path().string());
+			}
+		}
+		return filePaths;
+	}
 
 	static std::vector<std::string> GetFileNamesInFolder(const std::string& aFolder, const std::string& anExtension = "", const std::string& aContains = "")
 	{

@@ -26,7 +26,7 @@ CCameraComponent::CCameraComponent(CGameObject& aParent, const float aFoV/*, flo
 	myNoise = PerlinNoise(214125213);
 	myShakeTimer = 0.0f;
 	
-	myFadingPlane = nullptr;
+	//myFadingPlane = nullptr;
 	myFadeTimer = 1.0f;
 	myFadeSpeed = 0.75f;
 	myFadingIn = true;
@@ -35,19 +35,19 @@ CCameraComponent::CCameraComponent(CGameObject& aParent, const float aFoV/*, flo
 
 CCameraComponent::~CCameraComponent()
 {
-	delete myFadingPlane;
-	myFadingPlane = nullptr;
+	//delete myFadingPlane;
+	//myFadingPlane = nullptr;
 }
 
 void CCameraComponent::Awake()
 {
-	rapidjson::Document document = CJsonReader::Get()->LoadDocument("Json/Settings/CameraInit.json");
+	//rapidjson::Document document = CJsonReader::Get()->LoadDocument("Json/Settings/CameraInit.json");
 
-	myFadingPlane = new CSpriteInstance();
-	myFadingPlane->Init(CSpriteFactory::GetInstance()->GetSprite(document["Fade Screen Path"].GetString()));
-	myFadingPlane->SetSize({ 15.1f, 8.5f });
-	myFadingPlane->SetRenderOrder(ERenderOrder::PauseLayer);
-	myFadingPlane->SetShouldRender(false);
+	//myFadingPlane = new CSpriteInstance();
+	//myFadingPlane->Init(CSpriteFactory::GetInstance()->GetSprite(document["Fade Screen Path"].GetString()));
+	//myFadingPlane->SetSize({ 15.1f, 8.5f });
+	//myFadingPlane->SetRenderOrder(ERenderOrder::PauseLayer);
+	//myFadingPlane->SetShouldRender(false);
 }
 
 void CCameraComponent::Start()
@@ -75,39 +75,39 @@ void CCameraComponent::Update()
 		myTrauma = 0.0f;
 	}
 
-	if (myFadingPlaneActive) {
-		
-		if (!myFadingPlane->GetShouldRender())
-			myFadingPlane->SetShouldRender(true);
+	//if (myFadingPlaneActive) {
+	//	
+	//	if (!myFadingPlane->GetShouldRender())
+	//		myFadingPlane->SetShouldRender(true);
 
-		myFadeTimer -= myFadeSpeed * CTimer::Dt();
-		if (myFadingIn) {
-			DirectX::SimpleMath::Vector4 color = myFadingPlane->GetColor();
-			float alpha = color.w;
-			alpha = LogEaseOut(myFadeTimer);
-			if (alpha <= 0.01f) {
-				alpha = 0.0f;
-				myFadingPlaneActive = false;
-				myFadeTimer = 1.0f;
-				myFadingPlane->SetShouldRender(false);
-				CMainSingleton::PostMaster().SendLate({ EMessageType::FadeInComplete, 0 });
-			}
-			myFadingPlane->SetColor({ color.x, color.y, color.z, alpha });
-		}
-		else {
-			DirectX::SimpleMath::Vector4 color = myFadingPlane->GetColor();
-			float alpha = color.w;
-			alpha = LogEaseIn(myFadeTimer);
-			if (alpha >= 1.0f) {
-				alpha = 1.0f;
-				myFadingPlaneActive = false;
-				myFadeTimer = 1.0f;
-				myFadingPlane->SetShouldRender(false);
-				CMainSingleton::PostMaster().SendLate({ EMessageType::FadeOutComplete, 0 });
-			}
-			myFadingPlane->SetColor({ color.x, color.y, color.z, alpha });
-		}
-	}
+	//	myFadeTimer -= myFadeSpeed * CTimer::Dt();
+	//	if (myFadingIn) {
+	//		DirectX::SimpleMath::Vector4 color = myFadingPlane->GetColor();
+	//		float alpha = color.w;
+	//		alpha = LogEaseOut(myFadeTimer);
+	//		if (alpha <= 0.01f) {
+	//			alpha = 0.0f;
+	//			myFadingPlaneActive = false;
+	//			myFadeTimer = 1.0f;
+	//			myFadingPlane->SetShouldRender(false);
+	//			CMainSingleton::PostMaster().SendLate({ EMessageType::FadeInComplete, 0 });
+	//		}
+	//		myFadingPlane->SetColor({ color.x, color.y, color.z, alpha });
+	//	}
+	//	else {
+	//		DirectX::SimpleMath::Vector4 color = myFadingPlane->GetColor();
+	//		float alpha = color.w;
+	//		alpha = LogEaseIn(myFadeTimer);
+	//		if (alpha >= 1.0f) {
+	//			alpha = 1.0f;
+	//			myFadingPlaneActive = false;
+	//			myFadeTimer = 1.0f;
+	//			myFadingPlane->SetShouldRender(false);
+	//			CMainSingleton::PostMaster().SendLate({ EMessageType::FadeOutComplete, 0 });
+	//		}
+	//		myFadingPlane->SetColor({ color.x, color.y, color.z, alpha });
+	//	}
+	//}
 }
 
 void CCameraComponent::SetTrauma(float aValue)
@@ -142,12 +142,12 @@ const bool CCameraComponent::IsFading() const
 	return myFadingPlaneActive;
 }
 
-void CCameraComponent::EmplaceSprites(std::vector<CSpriteInstance*>& someSprites) const
+void CCameraComponent::EmplaceSprites(std::vector<CSpriteInstance*>& /*someSprites*/) const
 {
-	if (myFadingPlaneActive)
-	{
-		someSprites.emplace_back(myFadingPlane);
-	}
+	//if (myFadingPlaneActive)
+	//{
+	//	someSprites.emplace_back(myFadingPlane);
+	//}
 }
 
 const Matrix& CCameraComponent::GetViewMatrix()

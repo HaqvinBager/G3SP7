@@ -2,6 +2,7 @@
 #include "AnimationController.h"
 #include "Timer.h"
 
+
 //constexpr float f_milliseconds = 1000.0f;
 #ifdef _DEBUG
 //#define ALLOW_PRINT
@@ -83,11 +84,11 @@ bool CAnimationController::ImportRig(const std::string& anFBXFilePath)
 		// Now we can access the file's contents.
 		logInfo("Import of _curScene " + anFBXFilePath + " succeeded.");
 
-		if (myAnimations[myAnim0Index]->mNumAnimations <= 0)
-		{
-			ENGINE_ERROR_BOOL_MESSAGE(false , std::string("Animation could not be loaded: " + anFBXFilePath).c_str());
-			return false;
-		}
+		//if (myAnimations[myAnim0Index]->mNumAnimations <= 0)
+		//{
+		//	ENGINE_ERROR_BOOL_MESSAGE(false , std::string("Animation could not be loaded: " + anFBXFilePath).c_str());
+		//	return false;
+		//}
 	}
 	else
 	{
@@ -261,16 +262,23 @@ void CAnimationController::ReadNodeHeirarchy(
 	, float anAnimationTimeTo, const aiNode* aStartNodeFrom, const aiNode* aStartNodeTo
 	, const aiMatrix4x4& aParentTransform, int aStopAnimAtLevel)
 {
-	float time0(anAnimationTimeFrom);
-	float time1(anAnimationTimeTo);
+	const aiAnimation* pAnimation0 = aFromScene->mAnimations[0];
+	const aiAnimation* pAnimation1 = aToScene->mAnimations[0];
+
+	float time0 = Remap(0.0f, 1.0f, 0.0f, static_cast<float>(pAnimation0->mDuration), anAnimationTimeFrom);
+	float time1 = Remap(0.0f, 1.0f, 0.0f, static_cast<float>(pAnimation1->mDuration), anAnimationTimeTo);
+
+	//std::cout << anAnimationTimeFrom << std::endl;
+
+	//float time0(anAnimationTimeFrom);
+	//float time1(anAnimationTimeTo);
 
 	std::string NodeName0(aStartNodeFrom->mName.data);
 	std::string NodeName1(aStartNodeTo->mName.data);
 // Commented cause it was annoying when testing 2021 01 25
 	//assert(NodeName0 == NodeName1);
 
-	const aiAnimation* pAnimation0 = aFromScene->mAnimations[0];
-	const aiAnimation* pAnimation1 = aToScene->mAnimations[0];
+
 
 	aiMatrix4x4 NodeTransformation0(aStartNodeFrom->mTransformation);
 	aiMatrix4x4 NodeTransformation1(aStartNodeTo->mTransformation);
@@ -286,7 +294,14 @@ void CAnimationController::ReadNodeHeirarchy(
 		aiVector3D Scaling1;
 		CalcInterpolatedScaling(Scaling1, time1, pNodeAnim1);
 		aiMatrix4x4 ScalingM;
+
+		//Vector3 scaling0 = { Scaling0.x, Scaling0.y, Scaling0.z };
+		//Vector3 scaling1 = { Scaling1.x, Scaling1.y, Scaling1.z };
+		//Vector3 result = Vector3::Lerp(scaling0, scaling1, myBlendingTime);
+		//aiMatrix4x4::Scaling({ result.x, result.y, result.z }, ScalingM);
+
 		aiMatrix4x4::Scaling(Scaling0 * myBlendingTime + Scaling1 * (1.f - myBlendingTime), ScalingM);
+
 
 		// Interpolate rotation and generate rotation transformation matrix
 		aiQuaternion RotationQ0;

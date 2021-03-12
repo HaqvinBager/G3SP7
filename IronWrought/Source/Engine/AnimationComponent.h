@@ -42,12 +42,16 @@ public:
 	void ToggleUseLerp(bool shouldUseLerp) { myShouldUseLerp = shouldUseLerp; }
 	void BlendLerp(float aLerpValue);
 
+	void SetAnimationIndex(const int anAnimationIndex);
+
 public:
 	const float GetBlendLerp() const { return myAnimationBlend.myBlendLerp; }
 
 private:
 	void SetBonesToIdentity();
 	void UpdateBlended();
+
+
 
 private:
 	bool myShouldUseLerp;
