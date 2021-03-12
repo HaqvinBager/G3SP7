@@ -61,7 +61,7 @@ void CPlayerControllerComponent::Update()
 
 	if (myMovement.y >= -1)
 	{
-		myMovement.y -= 0.01f * CTimer::Dt();
+		myMovement.y -= 0.5f * CTimer::Dt();
 	}
 	
 	if (myIsJumping == false)
