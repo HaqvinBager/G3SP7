@@ -355,6 +355,8 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StringID.hpp" />
     <ClInclude Include="StringIDLoader.h" />
+    <ClInclude Include="TerrainGenerator.h" />
+    <ClInclude Include="TerrainMesh.h" />
     <ClInclude Include="Text.h" />
     <ClInclude Include="TextFactory.h" />
     <ClInclude Include="TextInstance.h" />
@@ -392,6 +394,7 @@
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="AudioChannel.cpp" />
     <ClCompile Include="AudioManager.cpp" />
+    <ClCompile Include="TerrainGenerator.cpp" />
     <ClCompile Include="NodeTypeAudioPlayResearcherReactionExplosives.cpp" />
     <ClCompile Include="NodeTypeAudioPlayRobotPatrolling.cpp" />
     <ClCompile Include="NodeTypeAudioPlayRobotAttack.cpp" />
@@ -541,6 +544,7 @@
     </ClCompile>
     <ClCompile Include="StringID.cpp" />
     <ClCompile Include="StringIDLoader.cpp" />
+    <ClCompile Include="TerrainMesh.cpp" />
     <ClCompile Include="Text.cpp" />
     <ClCompile Include="TextFactory.cpp" />
     <ClCompile Include="TextInstance.cpp" />

@@ -730,6 +730,12 @@
     <ClCompile Include="NodeTypeAudioPlayResearcherReactionExplosives.cpp">
       <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
     </ClCompile>
+    <ClCompile Include="TerrainGenerator.cpp">
+      <Filter>Specialisering</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainMesh.cpp">
+      <Filter>Specialisering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1345,6 +1351,12 @@
     <ClInclude Include="NodeTypeAudioPlayResearcherReactionExplosives.h">
       <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
     </ClInclude>
+    <ClInclude Include="TerrainGenerator.h">
+      <Filter>Specialisering</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainMesh.h">
+      <Filter>Specialisering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">
@@ -1625,6 +1637,9 @@
     </Filter>
     <Filter Include="Imgui\Node Editor\Nodes\Audio">
       <UniqueIdentifier>{fb119114-266c-4e11-92b9-d9a0d1955cdd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Specialisering">
+      <UniqueIdentifier>{004d4e87-2535-471c-aa5f-fc7cdb240260}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
