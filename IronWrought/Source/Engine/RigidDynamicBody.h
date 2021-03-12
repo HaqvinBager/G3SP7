@@ -11,7 +11,7 @@ namespace physx
 class CRigidDynamicBody
 {
 public:
-							CRigidDynamicBody(physx::PxPhysics& aPhysX, const Vector3& aPosition);
+							CRigidDynamicBody(physx::PxPhysics& aPhysX, int aInstanceID, const Vector3& aPosition);
 	physx::PxRigidDynamic&	GetBody();
 	Vector3	GetPosition() const;
 	float					GetRotation() const;
