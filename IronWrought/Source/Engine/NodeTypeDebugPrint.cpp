@@ -17,7 +17,7 @@ int CNodeTypeDebugPrint::OnEnter(class CNodeInstance* aTriggeringNodeInstance)
 	size_t outSize = 0;
 
 	GetDataOnPin(aTriggeringNodeInstance, 1, outType, someData, outSize); // Get data on pin index 1, this index is relative to what you push in the constructor
-	
+
 	// As this node can be connected to float, bool, inte, string, wee need to go through them and look what we got
 	if (outSize > 0)
 	{

@@ -301,7 +301,7 @@ void CNodeInstance::FetchData(SPin::EPinType& anOutType, NodeDataPtr& someData, 
 	}
 	else if (dataPin.myVariableType == SPin::EPinType::EList)
 	{
-		anOutSize = dataPin.myData != nullptr ? sizeof(0) : 0;
+		anOutSize = dataPin.myData != nullptr ? strlen(static_cast<char*>(dataPin.myData)) : 0;
 	}
 	
 	someData = dataPin.myData;
