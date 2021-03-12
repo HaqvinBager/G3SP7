@@ -4,7 +4,7 @@
 
 class CCharacterController;
 class CGameObject;
-
+class CCameraControllerComponent;
 class CPlayerControllerComponent : public CComponent, public IInputObserver
 {
 public:
@@ -27,6 +27,8 @@ public:
 
 private:
 	CCharacterController* myController;
+	// A.k.a the players eyes :U
+	CCameraControllerComponent* myCamera;
 	//CGameObject* myFaceMesh;
 	Vector3 myMovement;
 	float mySpeed;
@@ -43,9 +45,9 @@ private:
 	const float myColliderRadius = 0.6f * 0.5f;
 	// 1.8f is player height from GDD
 	const float myColliderHeightStanding = (1.8f * 0.5f);
-	const float myColliderHeightCrouched = myColliderHeightStanding - 0.75f;
+	const float myColliderHeightCrouched = myColliderHeightStanding - 0.85f;
 	const float myCameraPosYStanding = 1.6f * 0.5f;
-	const float myCameraPosYCrouching = 0.85f * 0.5f;
+	const float myCameraPosYCrouching = 0.95f * 0.5f;
 	const float myCameraPosZ = -0.22f;
 
 	/*

@@ -35,6 +35,7 @@ CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, 
 
 	GameObject().myTransform->FetchChildren()[0]->Position({ 0.0f, myCameraPosYStanding, myCameraPosZ });
 	GameObject().myTransform->FetchChildren()[0]->Rotation({ 0.0f, 0.0f, 0.0f });
+	myCamera = GameObject().myTransform->FetchChildren()[0]->GameObject().GetComponent<CCameraControllerComponent>();
 }
 
 CPlayerControllerComponent::~CPlayerControllerComponent()
@@ -55,17 +56,21 @@ void CPlayerControllerComponent::Start()
 
 void CPlayerControllerComponent::Update()
 {
+#ifdef _DEBUG
+	if (myCamera->IsFreeCamMode())
+		return;
+#endif
 	Move({0.0f, myMovement.y, 0.0f});
 	
 	if (myHasJumped == true)
 	{
-		myMovement.y = 0.01f;
+		myMovement.y = 0.025f;
 		myHasJumped = false;
 	}
 
 	if (myMovement.y >= -1)
 	{
-		myMovement.y -= 0.5f * CTimer::Dt();
+		myMovement.y -= 0.1f * CTimer::Dt();
 	}
 	
 	if (myIsJumping == false)
@@ -78,23 +83,27 @@ void CPlayerControllerComponent::Update()
 
 void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
 {
-	CCameraControllerComponent* cameraController = CEngine::GetInstance()->GetActiveScene().FindFirstObjectWithComponent<CCameraControllerComponent>();
+	/*CCameraControllerComponent* cameraController = CEngine::GetInstance()->GetActiveScene().FindFirstObjectWithComponent<CCameraControllerComponent>();*/
+#ifdef _DEBUG
+	if (myCamera->IsFreeCamMode())
+		return;
+#endif
 
 	float y = myMovement.y;
 
 	switch (aEvent)
 	{
 		case EInputEvent::MoveForward:
-			myMovement = -cameraController->GameObject().myTransform->GetLocalMatrix().Forward();
+			myMovement = -myCamera->GameObject().myTransform->GetLocalMatrix().Forward();
 			break;
 		case EInputEvent::MoveBackward:
-			myMovement = -cameraController->GameObject().myTransform->GetLocalMatrix().Backward();
+			myMovement = -myCamera->GameObject().myTransform->GetLocalMatrix().Backward();
 			break;
 		case EInputEvent::MoveLeft:
-			myMovement = cameraController->GameObject().myTransform->GetLocalMatrix().Left();
+			myMovement = myCamera->GameObject().myTransform->GetLocalMatrix().Left();
 			break;
 		case EInputEvent::MoveRight:
-			myMovement = cameraController->GameObject().myTransform->GetLocalMatrix().Right();
+			myMovement = myCamera->GameObject().myTransform->GetLocalMatrix().Right();
 			break;
 		case EInputEvent::Jump:
 			if (myCanJump == true)
@@ -136,13 +145,13 @@ void CPlayerControllerComponent::Crouch()
 	if (myIsCrouching)
 	{
 		myController->GetController().resize(myColliderHeightCrouched);
-		GameObject().myTransform->FetchChildren()[0]->Position({ 0.0f, myCameraPosYCrouching, myCameraPosZ });
+		GameObject().myTransform->FetchChildren()[0]->Position({ 0.0f, myCameraPosYCrouching, myCameraPosZ });// Equivalent to myCamera->GameObject().myTransform->Position
 		mySpeed = myCrouchSpeed;
 	}
 	else
 	{
 		myController->GetController().resize(myColliderHeightStanding);
-		GameObject().myTransform->FetchChildren()[0]->Position({ 0.0f, myCameraPosYStanding, myCameraPosZ });
+		GameObject().myTransform->FetchChildren()[0]->Position({ 0.0f, myCameraPosYStanding, myCameraPosZ });// Equivalent to myCamera->GameObject().myTransform->Position
 		mySpeed = myWalkSpeed;
 	}
 }
