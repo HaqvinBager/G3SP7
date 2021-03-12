@@ -30,7 +30,11 @@ CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, 
 	INPUT_MAPPER->AddObserver(EInputEvent::Jump, this);
 	INPUT_MAPPER->AddObserver(EInputEvent::Crouch, this);
 
-	myController = CEngine::GetInstance()->GetPhysx().CreateCharacterController(gameObject.myTransform->Position(), myColliderRadius, myColliderHeight);
+	myController = CEngine::GetInstance()->GetPhysx().CreateCharacterController(gameObject.myTransform->Position(), myColliderRadius, myColliderHeightStanding);
+	GameObject().myTransform->Position(myController->GetPosition());// This is a test / Aki 2021 03 12 
+
+	GameObject().myTransform->FetchChildren()[0]->Position({ 0.0f, myCameraPosYStanding, myCameraPosZ });
+	GameObject().myTransform->FetchChildren()[0]->Rotation({ 0.0f, 0.0f, 0.0f });
 }
 
 CPlayerControllerComponent::~CPlayerControllerComponent()
@@ -131,18 +135,14 @@ void CPlayerControllerComponent::Crouch()
 	myIsCrouching = !myIsCrouching;
 	if (myIsCrouching)
 	{
-		// Reduce collider size.
-		myController->GetController().resize(myColliderHeight * 0.5f);
-		// Move children down.
-		GameObject().myTransform->FetchChildren()[0]->Position({ 0.0f, 0.85f * 0.5f, -0.22f });
+		myController->GetController().resize(myColliderHeightCrouched);
+		GameObject().myTransform->FetchChildren()[0]->Position({ 0.0f, myCameraPosYCrouching, myCameraPosZ });
 		mySpeed = myCrouchSpeed;
 	}
 	else
 	{
-		// Reset collider size
-		myController->GetController().resize(myColliderHeight);
-		// Move children up
-		GameObject().myTransform->FetchChildren()[0]->Position({ 0.0f, 1.6f * 0.5f, -0.22f });
+		myController->GetController().resize(myColliderHeightStanding);
+		GameObject().myTransform->FetchChildren()[0]->Position({ 0.0f, myCameraPosYStanding, myCameraPosZ });
 		mySpeed = myWalkSpeed;
 	}
 }
