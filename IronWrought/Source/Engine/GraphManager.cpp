@@ -485,7 +485,7 @@ ImColor GetIconColor(SPin::EPinType type)
 	case SPin::EPinType::EInt:      return ImColor(68, 201, 156);
 	case SPin::EPinType::EFloat:    return ImColor(147, 226, 74);
 	case SPin::EPinType::EString:   return ImColor(124, 21, 153);
-	case SPin::EPinType::EVector3:   return ImColor(124, 21, 153);
+	case SPin::EPinType::EVector3:   return ImColor(255, 166, 0);
 	case SPin::EPinType::EUnknown:   return ImColor(255, 0, 0);
 	}
 };
@@ -664,7 +664,7 @@ void CGraphManager::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInstance
 		c = static_cast<DirectX::SimpleMath::Vector3*>(aPin.myData);
 
 		ImGui::PushID(aPin.myUID.AsInt());
-		ImGui::PushItemWidth(150.0f);
+		ImGui::PushItemWidth(45.0f);
 		if (aNodeInstance->IsPinConnected(aPin))
 		{
 			DrawPinIcon(aPin, true, 255);
@@ -672,7 +672,9 @@ void CGraphManager::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInstance
 		else
 		{
 			ImGui::InputFloat("##edit", &c->x);
+			ImGui::SameLine();
 			ImGui::InputFloat("##edit1", &c->y);
+			ImGui::SameLine();
 			ImGui::InputFloat("##edit2", &c->z);
 		}
 		ImGui::PopItemWidth();
@@ -680,7 +682,7 @@ void CGraphManager::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInstance
 		ImGui::PopID();
 		break;
 	}
-	case SPin::EPinType::EList:
+	case SPin::EPinType::EStringList:
 	{
 		if (!aPin.myData)
 		{
@@ -696,10 +698,18 @@ void CGraphManager::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInstance
 		}
 		else
 		{
+			static bool pressed = false;
 			std::vector<std::string> item = CNodeDataManager::Get()->GetData<std::vector<std::string>>(aNodeInstance->GetNodeName());
-
-			if (ImGui::BeginCombo("##combo", "Selectable")) // The second parameter is the label previewed before opening the combo.
+			std::string selected = static_cast<char*>(aPin.myData);
+			
+			if (pressed)
 			{
+				ImGui::SetNextWindowPos({ ImGui::GetMousePos().x + aNodeInstance->myEditorPosition[0], ImGui::GetMousePos().y + aNodeInstance->myEditorPosition[1] });
+			}
+
+			if (ImGui::BeginCombo("##combo", selected.c_str())) // The second parameter is the label previewed before opening the combo.
+			{
+				pressed = true;
 				int index = -1;
 				for (int n = 0; n < item.size(); n++)
 				{
@@ -710,6 +720,7 @@ void CGraphManager::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInstance
 						{*/
 
 						char* input = item[n].data();
+						selected = input;
 						size_t size = strlen(input) + 1;
 		/*				for (int i = 0; i < size; i++)
 						{
@@ -722,6 +733,7 @@ void CGraphManager::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInstance
 				}
 				ImGui::EndCombo();
 			}
+			pressed = false;
 		}
 		ImGui::PopItemWidth();
 
