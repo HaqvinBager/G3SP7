@@ -58,7 +58,7 @@ void CInGameState::Start()
 	CScene* scene = CSceneManager::CreateEmpty();
 	scene->AddPXScene(CEngine::GetInstance()->GetPhysx().CreatePXScene());
 	
-	//TEMP_VFX(scene);
+	TEMP_VFX(scene);
 
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);
@@ -73,14 +73,21 @@ void CInGameState::Stop()
 
 void CInGameState::Update()
 {
-	/*if (gVFX->GetComponent<CVFXSystemComponent>())
+	if (gVFX)
 	{
-		if (INPUT->IsKeyPressed('P'))
+		if (gVFX->GetComponent<CVFXSystemComponent>())
 		{
-			gVFX->GetComponent<CVFXSystemComponent>()->OnDisable();
-			gVFX->GetComponent<CVFXSystemComponent>()->OnEnable();
+			if (INPUT->IsKeyPressed('P'))
+			{
+				gVFX->GetComponent<CVFXSystemComponent>()->DisableEffect(0);
+				gVFX->GetComponent<CVFXSystemComponent>()->EnableEffect(0);
+			}
+			if (INPUT->IsKeyPressed('L'))
+			{
+				gVFX->GetComponent<CVFXSystemComponent>()->DisableEffect(0);
+			}
 		}
-	}*/
+	}
 
 	CEngine::GetInstance()->GetPhysx().Simulate();
 	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
