@@ -740,6 +740,9 @@
     <ClCompile Include="NodeTypeVariableSetVector3.cpp">
       <Filter>Imgui\Node Editor\Nodes\Variables\Set</Filter>
     </ClCompile>
+    <ClCompile Include="NodeTypeAudioPlayResearcherEvent.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1367,6 +1370,9 @@
     </ClInclude>
     <ClInclude Include="NodeTypeVariableSetVector3.h">
       <Filter>Imgui\Node Editor\Nodes\Variables\Set</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeAudioPlayResearcherEvent.h">
+      <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

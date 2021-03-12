@@ -486,6 +486,7 @@ ImColor GetIconColor(SPin::EPinType type)
 	case SPin::EPinType::EFloat:    return ImColor(147, 226, 74);
 	case SPin::EPinType::EString:   return ImColor(124, 21, 153);
 	case SPin::EPinType::EVector3:   return ImColor(255, 166, 0);
+	case SPin::EPinType::EStringListIndexed: return ImColor(0, 255, 0);
 	case SPin::EPinType::EUnknown:   return ImColor(255, 0, 0);
 	}
 };
@@ -503,6 +504,7 @@ void DrawPinIcon(const SPin& pin, bool connected, int alpha)
 	case SPin::EPinType::EFloat:    iconType = IconType::Circle; break;
 	case SPin::EPinType::EString:   iconType = IconType::Circle; break;
 	case SPin::EPinType::EVector3:   iconType = IconType::Circle; break;
+	case SPin::EPinType::EStringListIndexed: iconType = IconType::Circle; break;
 	case SPin::EPinType::EUnknown:  iconType = IconType::Circle; break;
 	default:
 		return;
@@ -729,6 +731,52 @@ void CGraphManager::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInstance
 						//}
 							//aPin.myData = &item[n];
 						//}
+					}
+				}
+				ImGui::EndCombo();
+			}
+			pressed = false;
+		}
+		ImGui::PopItemWidth();
+
+		ImGui::PopID();
+		break;
+	}
+	case SPin::EPinType::EStringListIndexed:
+	{
+		if (!aPin.myData)
+		{
+			aPin.myData = new char[128];
+			static_cast<char*>(aPin.myData)[0] = '\0';
+		}
+
+		ImGui::PushID(aPin.myUID.AsInt());
+		ImGui::PushItemWidth(100.0f);
+		if (aNodeInstance->IsPinConnected(aPin))
+		{
+			DrawPinIcon(aPin, true, 255);
+		}
+		else
+		{
+			static bool pressed = false;
+			std::vector<std::string> item = CNodeDataManager::Get()->GetData<std::vector<std::string>>(aNodeInstance->GetNodeName());
+			int selected = *static_cast<int*>(aPin.myData);
+			if (selected < 0) selected = 0;
+
+			if (pressed)
+			{
+				ImGui::SetNextWindowPos({ ImGui::GetMousePos().x + aNodeInstance->myEditorPosition[0], ImGui::GetMousePos().y + aNodeInstance->myEditorPosition[1] });
+			}
+
+			if (ImGui::BeginCombo("##combo", item[selected].c_str())) // The second parameter is the label previewed before opening the combo.
+			{
+				pressed = true;
+				int index = -1;
+				for (int n = 0; n < item.size(); n++)
+				{
+					if (ImGui::Selectable(item[n].c_str(), index == n))
+					{
+						memcpy(aPin.myData, &n, sizeof(int));
 					}
 				}
 				ImGui::EndCombo();
