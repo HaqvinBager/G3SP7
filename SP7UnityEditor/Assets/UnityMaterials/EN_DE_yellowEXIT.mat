@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: EN_DE_yellowcorner
+  m_Name: EN_DE_yellowEXIT
   m_Shader: {fileID: -6465566751694194690, guid: b9e97c83b98e1ae46b8a0120a8a35206,
     type: 3}
   m_ShaderKeywords: 
@@ -42,7 +42,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _COLOR:
-        m_Texture: {fileID: 2800000, guid: 9834770f9afebbd488e35e33adb3e25a, type: 3}
+        m_Texture: {fileID: 2800000, guid: 45a5ecd3f3a38bd43899ef748d7b501b, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
