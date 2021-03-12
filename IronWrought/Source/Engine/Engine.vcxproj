@@ -208,6 +208,7 @@
     <ClInclude Include="NodeTypeGameObjectMoveToPosition.h" />
     <ClInclude Include="NodeTypeGameObjectRotate.h" />
     <ClInclude Include="NodeTypeGameObjectSetRotation.h" />
+    <ClInclude Include="NodeTypeListTest.h" />
     <ClInclude Include="NodeTypeMathGreater.h" />
     <ClInclude Include="NodeTypeStartGetCustom.h" />
     <ClInclude Include="NodeTypeStartKeyboardInput.h" />
@@ -242,6 +243,7 @@
     <ClInclude Include="NodeTypeVariableGetBool.h" />
     <ClInclude Include="NodeTypeVariableGetFloat.h" />
     <ClInclude Include="NodeTypeVariableGetInt.h" />
+    <ClInclude Include="NodeTypeVariableGetVector3.h" />
     <ClInclude Include="NodeTypeVariableSetBool.h" />
     <ClInclude Include="NodeTypeTimeDeltaTotal.h" />
     <ClInclude Include="NodeTypeVariableSetFloat.h" />
@@ -273,7 +275,6 @@
     <ClInclude Include="NodeTypeDebugPrint.h" />
     <ClInclude Include="NodeTypeGameObjectSetPosition.h" />
     <ClInclude Include="NodeTypeStartDefault.h" />
-    <ClInclude Include="ImGuiLevelSelect.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="ContactReportCallback.h" />
     <ClInclude Include="DeferredRenderer.h" />
@@ -298,6 +299,9 @@
     <ClInclude Include="MessageType.h" />
     <ClInclude Include="NodeTypes.h" />
     <ClInclude Include="NodeTypeTimeTimer.h" />
+    <ClInclude Include="NodeTypeVariableSetVector3.h" />
+    <ClInclude Include="NodeTypeVFXPlayVFX.h" />
+    <ClInclude Include="NodeTypeVFXStopVFX.h" />
     <ClInclude Include="NodeTypeVolumeTrigger.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="PerlinNoise.h" />
@@ -365,6 +369,7 @@
     <ClInclude Include="TriangleColliderComponent.h" />
     <ClInclude Include="Utility.h" />
     <ClInclude Include="VFXBase.h" />
+    <ClInclude Include="VFXEffect.h" />
     <ClInclude Include="VFXMeshFactory.h" />
     <ClInclude Include="VFXRenderer.h" />
     <ClInclude Include="VFXSystemComponent.h" />
@@ -410,6 +415,7 @@
     <ClCompile Include="NodeTypeGameObjectMoveToPosition.cpp" />
     <ClCompile Include="NodeTypeGameObjectRotate.cpp" />
     <ClCompile Include="NodeTypeGameObjectSetRotation.cpp" />
+    <ClCompile Include="NodeTypeListTest.cpp" />
     <ClCompile Include="NodeTypeMathGreater.cpp" />
     <ClCompile Include="NodeTypeStartGetCustom.cpp" />
     <ClCompile Include="NodeTypeStartKeyboardInput.cpp" />
@@ -431,10 +437,14 @@
     <ClCompile Include="NodeTypeVariableGetBool.cpp" />
     <ClCompile Include="NodeTypeVariableGetFloat.cpp" />
     <ClCompile Include="NodeTypeVariableGetInt.cpp" />
+    <ClCompile Include="NodeTypeVariableGetVector3.cpp" />
     <ClCompile Include="NodeTypeVariableSetBool.cpp" />
     <ClCompile Include="NodeTypeTimeDeltaTotal.cpp" />
     <ClCompile Include="NodeTypeVariableSetFloat.cpp" />
     <ClCompile Include="NodeTypeVariableSetInt.cpp" />
+    <ClCompile Include="NodeTypeVariableSetVector3.cpp" />
+    <ClCompile Include="NodeTypeVFXPlayVFX.cpp" />
+    <ClCompile Include="NodeTypeVFXStopVFX.cpp" />
     <ClCompile Include="ShadowRenderer.cpp" />
     <ClCompile Include="Decal.cpp" />
     <ClCompile Include="DecalComponent.cpp" />
@@ -473,7 +483,6 @@
     <ClCompile Include="NodeTypeDebugPrint.cpp" />
     <ClCompile Include="NodeTypeGameObjectSetPosition.cpp" />
     <ClCompile Include="NodeTypeStartDefault.cpp" />
-    <ClCompile Include="ImGuiLevelSelect.cpp" />
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="ContactReportCallback.cpp" />
     <ClCompile Include="DeferredRenderer.cpp" />
@@ -551,6 +560,7 @@
     <ClCompile Include="TransformComponent.cpp" />
     <ClCompile Include="TriangleColliderComponent.cpp" />
     <ClCompile Include="VFXBase.cpp" />
+    <ClCompile Include="VFXEffect.cpp" />
     <ClCompile Include="VFXMeshFactory.cpp" />
     <ClCompile Include="VFXRenderer.cpp" />
     <ClCompile Include="VFXSystemComponent.cpp" />

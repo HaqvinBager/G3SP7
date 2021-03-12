@@ -42,7 +42,6 @@ CGraphManager::~CGraphManager()
 
 void CGraphManager::Load()
 {
-
 	//Global = Kan alltid n�s om programmet k�r
 	//Scene = Data som relaterar till Just denna Scen, kan alltid n�s n�r Scene �r ig�ng
 	//Script = Data som relaterar till just detta script
@@ -53,6 +52,7 @@ void CGraphManager::Load()
 	myInstantiableVariables.push_back("Int");
 	myInstantiableVariables.push_back("Bool");
 	myInstantiableVariables.push_back("Start");
+	myInstantiableVariables.push_back("Vector 3");
 
 	CGraphNodeTimerManager::Create();
 	for (const auto& blueprintLinksJsonPath : CFolderUtility::GetFileNamesInFolder(ASSETPATH("Assets/Generated"), "BluePrintLinks")) {
@@ -658,20 +658,63 @@ void CGraphManager::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInstance
 	{
 		if (!aPin.myData)
 		{
-			aPin.myData = new float;
-			float* c = ((float*)aPin.myData);
-			*c = 1.0f;
+			aPin.myData = new DirectX::SimpleMath::Vector3(1.0f, 1.0f, 1.0f);
 		}
-		float* c = ((float*)aPin.myData);
+		DirectX::SimpleMath::Vector3* c;
+		c = static_cast<DirectX::SimpleMath::Vector3*>(aPin.myData);
+
 		ImGui::PushID(aPin.myUID.AsInt());
-		ImGui::PushItemWidth(70.0f);
+		ImGui::PushItemWidth(150.0f);
 		if (aNodeInstance->IsPinConnected(aPin))
 		{
 			DrawPinIcon(aPin, true, 255);
 		}
 		else
 		{
-			ImGui::InputFloat("##edit", c);
+			ImGui::InputFloat("##edit", &c->x);
+			ImGui::InputFloat("##edit1", &c->y);
+			ImGui::InputFloat("##edit2", &c->z);
+		}
+		ImGui::PopItemWidth();
+
+		ImGui::PopID();
+		break;
+	}
+	case SPin::EPinType::EList:
+	{
+		if (!aPin.myData)
+		{
+			aPin.myData = new char[128];
+			static_cast<char*>(aPin.myData)[0] = '\0';
+		}
+
+		ImGui::PushID(aPin.myUID.AsInt());
+		ImGui::PushItemWidth(100.0f);
+		if (aNodeInstance->IsPinConnected(aPin))
+		{
+			DrawPinIcon(aPin, true, 255);
+		}
+		else
+		{
+			std::vector<std::string> item = CNodeDataManager::Get()->GetData<std::vector<std::string>>(aNodeInstance->GetNodeName());
+			std::string currentItem = "";
+
+			if (ImGui::BeginCombo("##combo", currentItem.c_str())) // The second parameter is the label previewed before opening the combo.
+			{
+				for (int n = 0; n < item.size(); n++)
+				{
+					bool is_selected = (currentItem == item[n]);
+
+					if (ImGui::Selectable(item[n].c_str(), is_selected))
+					{
+						currentItem = item[n];
+						if (is_selected)
+							aPin.myData = &currentItem;
+					}
+				}
+				ImGui::EndCombo();
+				//ImGui:: ("##edit", 0, item, 6);//("##edit", (char*)aPin.myData, 127);
+			}
 		}
 		ImGui::PopItemWidth();
 
@@ -778,6 +821,12 @@ void CGraphManager::CreateNewDataNode()
 							CNodeTypeCollector::RegisterNewDataType(buffer, static_cast<int>(CNodeDataManager::EDataType::EStart));
 							CNodeDataManager::Get()->SetData(buffer, CNodeDataManager::EDataType::EStart, nullValue);
 						}
+						else if (myNewVariableType == "Vector 3")
+						{
+							DirectX::SimpleMath::Vector3 nullValue = { 0.0f,0.0f,0.0f };
+							CNodeTypeCollector::RegisterNewDataType(buffer, static_cast<int>(CNodeDataManager::EDataType::EVector3));
+							CNodeDataManager::Get()->SetData(buffer, CNodeDataManager::EDataType::EVector3, nullValue);
+						}
 						CNodeDataManager::Get()->SaveDataTypesToJson();
 						hasCreatedNewVariable = true;
 					}
@@ -827,6 +876,12 @@ void CGraphManager::LoadDataNodesFromFile()
 						bool value = false;
 						CNodeTypeCollector::RegisterNewDataType(nodeInstances[i]["Data key"].GetString(), static_cast<int>(CNodeDataManager::EDataType::EStart));
 						CNodeDataManager::Get()->SetData(nodeInstances[i]["Data key"].GetString(), CNodeDataManager::EDataType::EStart, value);
+					}
+					else if (myNewVariableType == "Vector 3")
+					{
+						DirectX::SimpleMath::Vector3 value = { 0.0f,0.0f,0.0f };
+						CNodeTypeCollector::RegisterNewDataType(nodeInstances[i]["Data key"].GetString(), static_cast<int>(CNodeDataManager::EDataType::EVector3));
+						CNodeDataManager::Get()->SetData(nodeInstances[i]["Data key"].GetString(), CNodeDataManager::EDataType::EVector3, value);
 					}
 				}
 			}

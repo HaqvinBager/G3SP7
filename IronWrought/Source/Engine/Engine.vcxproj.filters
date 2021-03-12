@@ -432,9 +432,6 @@
     <ClCompile Include="ImguiManager.cpp">
       <Filter>Imgui\Manager</Filter>
     </ClCompile>
-    <ClCompile Include="ImGuiLevelSelect.cpp">
-      <Filter>Imgui\Manager</Filter>
-    </ClCompile>
     <ClCompile Include="SceneManager.cpp">
       <Filter>Engine Core</Filter>
     </ClCompile>
@@ -483,9 +480,6 @@
       <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClCompile>
     <ClCompile Include="ImguiManager.cpp">
-      <Filter>Imgui\Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImGuiLevelSelect.cpp">
       <Filter>Imgui\Manager</Filter>
     </ClCompile>
     <ClCompile Include="SceneManager.cpp">
@@ -709,6 +703,8 @@
     <ClCompile Include="NodeTypeGameObjectMoveToPosition.cpp">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClCompile>
+    <ClCompile Include="NodeTypeVariableGetVector3.cpp" />
+    <ClCompile Include="NodeTypeVariableSetVector3.cpp" />
     <ClCompile Include="NodeTypeAudioPlayStep.cpp">
       <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
     </ClCompile>
@@ -731,6 +727,16 @@
       <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
     </ClCompile>
     <ClCompile Include="CAnimator.cpp" />
+    <ClCompile Include="NodeTypeListTest.cpp" />
+    <ClCompile Include="VFXEffect.cpp">
+      <Filter>VFX</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeVFXPlayVFX.cpp">
+      <Filter>Imgui\Node Editor\Nodes\VFX</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeVFXStopVFX.cpp">
+      <Filter>Imgui\Node Editor\Nodes\VFX</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1039,9 +1045,6 @@
     <ClInclude Include="ImguiManager.h">
       <Filter>Imgui\Manager</Filter>
     </ClInclude>
-    <ClInclude Include="ImGuiLevelSelect.h">
-      <Filter>Imgui\Manager</Filter>
-    </ClInclude>
     <ClInclude Include="SceneManager.h">
       <Filter>Engine Core</Filter>
     </ClInclude>
@@ -1325,6 +1328,8 @@
     <ClInclude Include="NodeTypeGameObjectMoveToPosition.h">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClInclude>
+    <ClInclude Include="NodeTypeVariableGetVector3.h" />
+    <ClInclude Include="NodeTypeVariableSetVector3.h" />
     <ClInclude Include="NodeTypeAudioPlayStep.h">
       <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
     </ClInclude>
@@ -1347,6 +1352,16 @@
       <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
     </ClInclude>
     <ClInclude Include="CAnimator.h" />
+    <ClInclude Include="NodeTypeListTest.h" />
+    <ClInclude Include="VFXEffect.h">
+      <Filter>VFX</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeVFXPlayVFX.h">
+      <Filter>Imgui\Node Editor\Nodes\VFX</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeVFXStopVFX.h">
+      <Filter>Imgui\Node Editor\Nodes\VFX</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">
@@ -1627,6 +1642,9 @@
     </Filter>
     <Filter Include="Imgui\Node Editor\Nodes\Audio">
       <UniqueIdentifier>{fb119114-266c-4e11-92b9-d9a0d1955cdd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Nodes\VFX">
+      <UniqueIdentifier>{85ecef19-45a5-483c-bf6f-9e770b31e79b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

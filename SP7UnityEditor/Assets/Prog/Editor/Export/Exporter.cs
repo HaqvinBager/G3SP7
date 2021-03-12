@@ -46,7 +46,7 @@ public class Exporter
     }
 
     [MenuItem("Export/Export Scene")]
-    static void ExportScene()
+    public static void ExportScene()
     {
         List<GameObject> allScenesActiveObjects = GetAllOpenedSceneActiveObjects();
         for (int i = 0; i < SceneManager.sceneCount; ++i)
