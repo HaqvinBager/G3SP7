@@ -210,15 +210,13 @@ void CSceneManager::AddPlayer(CScene& aScene, const std::string& aJsonFileName)
 		player = new CGameObject(87);
 	}
 
-	player->AddComponent<CPlayerControllerComponent>(*player);
-
 	CGameObject* camera = CCameraControllerComponent::CreatePlayerFirstPersonCamera(player);//new CGameObject(96);
 	CGameObject* model = new CGameObject(88);
 	model->AddComponent<CModelComponent>(*model, ASSETPATH("Assets/Graphics/Character/Main_Character/CH_PL_SK_alt.fbx"));
 	model->myTransform->SetParent(camera->myTransform);
 	model->myTransform->Rotation({ 0.0f, 0.0f, 0.0f });
 
-	CEngine::GetInstance()->GetPhysx().CreateCharacterController(model->myTransform->Position(), 0.6f * 0.5f, 1.8f * 0.5f);
+	player->AddComponent<CPlayerControllerComponent>(*player);// Constructor sets position of camera child object.
 	player->GetComponent<CPlayerControllerComponent>()->SetControllerPosition({ 0.f, 5.0f,0.0f });
 	aScene.AddInstance(player);
 	aScene.AddInstance(model);

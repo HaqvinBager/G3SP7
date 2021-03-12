@@ -8,7 +8,7 @@ class CGameObject;
 class CPlayerControllerComponent : public CComponent, public IInputObserver
 {
 public:
-	CPlayerControllerComponent(CGameObject& gameObject, const float aWalkSpeed = 0.015f, const float aCrouchSpeed = 0.0075f);
+	CPlayerControllerComponent(CGameObject& gameObject, const float aWalkSpeed = 0.008f, const float aCrouchSpeed = 0.004f);
 	~CPlayerControllerComponent() override;
 
 	void Awake() override;
@@ -38,9 +38,15 @@ private:
 	bool myIsCrouching;
 	const float myWalkSpeed;
 	const float myCrouchSpeed;
-	// 0.6f and 1.8f from GDD values for player
+
+	// 0.6f is player width from GDD
 	const float myColliderRadius = 0.6f * 0.5f;
-	const float myColliderHeight = (1.8f * 0.5f);
+	// 1.8f is player height from GDD
+	const float myColliderHeightStanding = (1.8f * 0.5f);
+	const float myColliderHeightCrouched = myColliderHeightStanding - 0.75f;
+	const float myCameraPosYStanding = 1.6f * 0.5f;
+	const float myCameraPosYCrouching = 0.85f * 0.5f;
+	const float myCameraPosZ = -0.22f;
 
 	/*
 		Standing:
