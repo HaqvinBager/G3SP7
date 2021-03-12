@@ -44,6 +44,7 @@ enum class EMessageType
 	PlayRobotPatrolling,
 	PlayRobotSearching,
 	PlayResearcherEvent,
+	PlaySFX,
 
 	Count
 };

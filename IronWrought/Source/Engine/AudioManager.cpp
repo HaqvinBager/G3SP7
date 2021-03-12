@@ -261,6 +261,12 @@ void CAudioManager::Receive(const SMessage& aMessage) {
 	}
 	break;
 
+	case EMessageType::PlaySFX:
+	{
+		int index = *static_cast<int*>(aMessage.data);
+		myWrapper.Play(mySFXAudio[index], myChannels[CAST(EChannel::SFX)]);
+	}
+	break;
 	//// VOICELINES
 	//case EMessageType::PlayVoiceLine:
 	//{
@@ -318,6 +324,7 @@ void CAudioManager::SubscribeToMessages()
 	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayRobotPatrolling, this);
 	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayRobotSearching, this);
 	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayResearcherEvent, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::PlaySFX, this);
 
 	//CMainSingleton::PostMaster().Subscribe(EMessageType::PlayVoiceLine, this);
 	//CMainSingleton::PostMaster().Subscribe(EMessageType::StopDialogue, this);
@@ -334,6 +341,7 @@ void CAudioManager::UnsubscribeToMessages()
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayRobotPatrolling, this);
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayRobotSearching, this);
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayResearcherEvent, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlaySFX, this);
 
 	//CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayVoiceLine, this);
 	//CMainSingleton::PostMaster().Unsubscribe(EMessageType::StopDialogue, this);

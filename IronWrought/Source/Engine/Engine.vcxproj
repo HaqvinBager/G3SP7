@@ -200,6 +200,7 @@
     <ClInclude Include="NodeTypeAudioPlayRobotAttack.h" />
     <ClInclude Include="NodeTypeAudioPlayRobotDeath.h" />
     <ClInclude Include="NodeTypeAudioPlayRobotSearching.h" />
+    <ClInclude Include="NodeTypeAudioPlaySFX.h" />
     <ClInclude Include="NodeTypeAudioPlayStep.h" />
     <ClInclude Include="NodeTypeAudioPlayRobotIdle.h" />
     <ClInclude Include="NodeTypeDecisionCoinFlip.h" />
@@ -404,6 +405,7 @@
     <ClCompile Include="NodeTypeAudioPlayRobotAttack.cpp" />
     <ClCompile Include="NodeTypeAudioPlayRobotDeath.cpp" />
     <ClCompile Include="NodeTypeAudioPlayRobotSearching.cpp" />
+    <ClCompile Include="NodeTypeAudioPlaySFX.cpp" />
     <ClCompile Include="NodeTypeAudioPlayStep.cpp" />
     <ClCompile Include="NodeTypeAudioPlayRobotIdle.cpp" />
     <ClCompile Include="NodeTypeGameObjectGetRotation.cpp" />
