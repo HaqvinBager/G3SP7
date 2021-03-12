@@ -299,7 +299,7 @@ void CNodeInstance::FetchData(SPin::EPinType& anOutType, NodeDataPtr& someData, 
 	{
 		anOutSize = dataPin.myData != nullptr ? sizeof(DirectX::SimpleMath::Vector3) : 0;
 	}
-	else if (dataPin.myVariableType == SPin::EPinType::EList)
+	else if (dataPin.myVariableType == SPin::EPinType::EStringList)
 	{
 		anOutSize = dataPin.myData != nullptr ? strlen(static_cast<char*>(dataPin.myData)) : 0;
 	}
