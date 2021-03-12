@@ -198,10 +198,6 @@ void CSceneManager::AddDecalComponents(CScene& aScene, const std::string& aJsonF
 
 void CSceneManager::AddPlayer(CScene& aScene, const std::string& aJsonFileName)
 {
-	/*
-	PhysX notes: Rotating entire transform rotates collider as well.
-	*/
-
 	CGameObject* player = nullptr;
 	const auto& doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + aJsonFileName));
 	if (CJsonReader::IsValid(doc, { "instanceID" })) 
@@ -223,6 +219,7 @@ void CSceneManager::AddPlayer(CScene& aScene, const std::string& aJsonFileName)
 	model->myTransform->Rotation({ 0.0f, 0.0f, 0.0f });
 
 	CEngine::GetInstance()->GetPhysx().CreateCharacterController(model->myTransform->Position(), 0.6f * 0.5f, 1.8f * 0.5f);
+	player->GetComponent<CPlayerControllerComponent>()->SetControllerPosition({ 0.f, 5.0f,0.0f });
 	aScene.AddInstance(player);
 	aScene.AddInstance(model);
 	aScene.AddInstance(camera);

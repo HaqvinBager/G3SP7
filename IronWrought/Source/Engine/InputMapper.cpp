@@ -32,6 +32,7 @@ bool CInputMapper::Init()
 	MapEvent(IInputObserver::EInputAction::KeyD, IInputObserver::EInputEvent::MoveRight);
 	MapEvent(IInputObserver::EInputAction::KeyEscape, IInputObserver::EInputEvent::PauseGame);
 	MapEvent(IInputObserver::EInputAction::KeySpace, IInputObserver::EInputEvent::Jump);
+	MapEvent(IInputObserver::EInputAction::CTRL, IInputObserver::EInputEvent::Crouch);
 
 
 	if (this == nullptr)
@@ -94,6 +95,10 @@ void CInputMapper::UpdateKeyboardInput()
 	if (myInput->IsKeyDown('D'))
 	{
 		TranslateActionToEvent(IInputObserver::EInputAction::KeyD);
+	}
+	if (myInput->IsKeyPressed(VK_CONTROL))
+	{
+		TranslateActionToEvent(IInputObserver::EInputAction::CTRL);
 	}
 }
 

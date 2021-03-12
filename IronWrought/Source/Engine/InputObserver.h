@@ -16,7 +16,8 @@ public:
 		KeyA,
 		KeyS,
 		KeyD,
-		KeySpace
+		KeySpace,
+		CTRL
 	};
 
 	enum class EInputEvent
@@ -36,7 +37,8 @@ public:
 		MoveBackward,
 		MoveLeft,
 		MoveRight,
-		Jump
+		Jump,
+		Crouch
 	};
 
 public:
