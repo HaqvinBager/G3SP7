@@ -21,7 +21,9 @@ public:
 	std::array<ID3D11ShaderResourceView*, 3> RequestMaterial(const std::string& aMaterialName);
 	std::array<ID3D11ShaderResourceView*, 3> RequestDecal(const std::string& aDecalName);
 	std::array<ID3D11ShaderResourceView*, 9> GetVertexPaintMaterials(const std::vector<std::string>& someMaterialNames);
+	ID3D11ShaderResourceView* RequestTintMap(const std::string& aMaterialName);
 	void ReleaseMaterial(const std::string& aMaterialName);
+	void ReleaseTintMap(const std::string& aMaterialName);
 
 	SVertexPaintData RequestVertexColorID(int aGameObjectID, const std::string& aFbxModelPath);
 	std::vector<DirectX::SimpleMath::Vector3>& GetVertexColors(unsigned int aVertexColorID);
@@ -33,9 +35,11 @@ protected:
 
 private:
 	std::map<std::string, std::array<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>, 3>> myMaterials;
+	std::map<std::string, std::array<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>, 1>> myTintMaps;
 	std::map<unsigned int, std::vector<DirectX::SimpleMath::Vector3>> myVertexColors;
 	std::map<unsigned int, ID3D11Buffer*> myVertexColorBuffers;
 	std::map<std::string, int> myMaterialReferences;
+	std::map<std::string, int> myTintMapReferences;
 	std::map<unsigned int, int> myVertexColorReferences;
 
 	ID3D11Device* myDevice;

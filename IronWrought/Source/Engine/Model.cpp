@@ -27,6 +27,8 @@ CModel::~CModel()
 		myModelInstanceData.myMaterials[i][1] = nullptr;
 		myModelInstanceData.myMaterials[i][2] = nullptr;
 	}
+
+	//CMainSingleton::MaterialHandler().ReleaseTintMap(myModelData.myTintMap[i]);
 }
 
 void CModel::Init(SModelData data) {
@@ -83,27 +85,6 @@ void CModel::EvaluateModelSuffix(const std::string& aModelSuffix)
 	{
 		modelSuffix |= (1 << 4);
 	}
-}
-
-Vector4 CModel::Tint1() const
-{
-	Vector4 v = { myModelData.myTints[0].x, myModelData.myTints[0].y, myModelData.myTints[0].z, 1.0f };
-	return std::move(v);
-}
-Vector4 CModel::Tint2() const
-{
-	Vector4 v = { myModelData.myTints[1].x, myModelData.myTints[1].y, myModelData.myTints[1].z, 1.0f };
-	return std::move(v);
-}
-Vector4 CModel::Tint3() const
-{
-	Vector4 v = { myModelData.myTints[2].x, myModelData.myTints[2].y, myModelData.myTints[2].z, 1.0f };
-	return std::move(v);
-}
-Vector4 CModel::Tint4() const
-{
-	Vector4 v = { myModelData.myTints[3].x, myModelData.myTints[3].y, myModelData.myTints[3].z, 1.0f };
-	return std::move(v);
 }
 
 //bool CModel::AddInstancedTransform(DirectX::SimpleMath::Matrix aTransform)

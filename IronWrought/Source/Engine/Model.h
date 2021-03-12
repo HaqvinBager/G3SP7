@@ -46,7 +46,6 @@ public:
 		std::array<ID3D11ShaderResourceView*, 4> myDetailNormals { nullptr, nullptr, nullptr, nullptr };
 
 		ID3D11ShaderResourceView* myTintMap = nullptr;
-		std::vector<Vector3> myTints;
 	};
 
 	struct SModelInstanceData {
@@ -95,12 +94,6 @@ public:
 	const unsigned int UseTrimsheetNumber() const;
 
 	void EvaluateModelSuffix(const std::string& aModelSuffix);
-
-public:
-	Vector4 Tint1() const;
-	Vector4 Tint2() const;
-	Vector4 Tint3() const;
-	Vector4 Tint4() const;
 
 private:
 	SModelData myModelData;

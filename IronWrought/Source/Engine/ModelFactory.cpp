@@ -17,7 +17,7 @@
 #pragma comment(lib, "ModelLoader_Release.lib")
 #endif
 
-//#define USING_FBX_MATERIALS
+#define USING_FBX_MATERIALS
 
 #define ALLOW_ANIMATIONS
 
@@ -231,10 +231,12 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 
 #ifdef USING_FBX_MATERIALS
 	std::vector<std::array<ID3D11ShaderResourceView*, 3>> materials;
+	ID3D11ShaderResourceView* tintMapResourceView = nullptr;
 	std::vector<std::string> materialNames;
 	for (unsigned int i = 0; i < loaderModel->myMaterials.size(); ++i) {
 		std::string materialName = loaderModel->myMaterials[loaderModel->myMaterialIndices[i]];
 		materials.push_back(CMainSingleton::MaterialHandler().RequestMaterial(materialName));
+		tintMapResourceView = CMainSingleton::MaterialHandler().RequestTintMap(materialName);
 		materialNames.push_back(materialName);
 	}
 #else
@@ -274,11 +276,7 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 	modelData.myDetailNormals[3] = detailNormal4;
 
 	modelData.myTintMap = tintMapResourceView;
-	modelData.myTints.resize(4);
-	modelData.myTints[0] = { 1.0f, 0.0f, 0.0f };
-	modelData.myTints[1] = { 0.0f, 1.0f, 0.0f };
-	modelData.myTints[2] = { 0.0f, 0.0f, 1.0f };
-	modelData.myTints[3] = { 1.0f, 1.0f, 1.0f };
+
 	model->Init(modelData);
 #ifdef ALLOW_ANIMATIONS
 	model->HasBones(mesh->myModel->myNumBones > 0);

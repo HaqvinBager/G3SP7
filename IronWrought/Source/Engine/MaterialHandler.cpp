@@ -64,6 +64,24 @@ std::array<ID3D11ShaderResourceView*, 9> CMaterialHandler::GetVertexPaintMateria
 	return textures;
 }
 
+ID3D11ShaderResourceView* CMaterialHandler::RequestTintMap(const std::string& aMaterialName)
+{
+	if (myTintMaps.find(aMaterialName) == myTintMaps.end())
+	{
+		std::array<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>, 1> newTextures;
+		newTextures[0] = Graphics::GetShaderResourceView(myDevice, myMaterialPath + aMaterialName + "/" + aMaterialName + "_t.dds");
+
+		myTintMaps.emplace(aMaterialName, std::move(newTextures));
+		myTintMapReferences.emplace(aMaterialName, 0);
+	}
+
+	myTintMapReferences[aMaterialName] += 1;
+	ID3D11ShaderResourceView* texture;
+	texture = myTintMaps[aMaterialName][0].Get();
+
+	return texture;
+}
+
 void CMaterialHandler::ReleaseMaterial(const std::string& aMaterialName)
 {
 	if (myMaterials.find(aMaterialName) != myMaterials.end())
@@ -87,6 +105,29 @@ void CMaterialHandler::ReleaseMaterial(const std::string& aMaterialName)
 
 			myMaterials.erase(aMaterialName);
 			myMaterialReferences.erase(aMaterialName);
+		}
+	}
+}
+
+void CMaterialHandler::ReleaseTintMap(const std::string& aMaterialName)
+{
+	if (myTintMaps.find(aMaterialName) != myTintMaps.end())
+	{
+		myTintMapReferences[aMaterialName] -= 1;
+
+		if (myTintMapReferences[aMaterialName] <= 0)
+		{
+			ULONG remainingRefs = 0;
+			do
+			{
+				if (myTintMaps[aMaterialName][0].Get())
+					remainingRefs = myTintMaps[aMaterialName][0].Get()->Release();
+				else
+					remainingRefs = 0;
+			} while (remainingRefs > 1);
+
+			myTintMaps.erase(aMaterialName);
+			myTintMapReferences.erase(aMaterialName);
 		}
 	}
 }

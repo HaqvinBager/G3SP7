@@ -23,6 +23,18 @@ public:
 	void OnDisable() override;
 
 public:
+	void Tint1(const Vector3& aTint);
+	void Tint2(const Vector3& aTint);
+	void Tint3(const Vector3& aTint);
+	void Tint4(const Vector3& aTint);
+	Vector4 Tint1() const;
+	Vector4 Tint2() const;
+	Vector4 Tint3() const;
+	Vector4 Tint4() const;
+
+	void HasTintMap(const bool aHasTintMap);
+
+public:
 	const unsigned int VertexPaintColorID() const;
 	const std::vector<std::string>& VertexPaintMaterialNames() const;
 	const bool RenderWithAlpha() const { return myRenderWithAlpha; }
@@ -33,4 +45,6 @@ private:
 	std::vector<std::string> myVertexPaintMaterialNames;
 	unsigned int myVertexPaintColorID;
 	bool myRenderWithAlpha;
+
+	std::vector<Vector3> myTints;
 };

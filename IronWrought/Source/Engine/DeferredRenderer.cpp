@@ -236,10 +236,10 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 		if (modelData.myTintMap)
 		{
 			myCurrentGBufferPixelShader = myGBufferPixelShader_TintMap;
-			myObjectBufferData.myTint1 = model->Tint1();
-			myObjectBufferData.myTint2 = model->Tint2();
-			myObjectBufferData.myTint3 = model->Tint3();
-			myObjectBufferData.myTint4 = model->Tint4();
+			myObjectBufferData.myTint1 = modelComponent->Tint1();
+			myObjectBufferData.myTint2 = modelComponent->Tint2();
+			myObjectBufferData.myTint3 = modelComponent->Tint3();
+			myObjectBufferData.myTint4 = modelComponent->Tint4();
 		}
 
 		BindBuffer(myObjectBuffer, myObjectBufferData, "Object Buffer");
