@@ -181,6 +181,9 @@
     <FxCompile Include="FullscreenPixelShader_Tonemap.hlsl">
       <Filter>Shaders\Fullscreen</Filter>
     </FxCompile>
+    <FxCompile Include="DirectionalVolumetricLightPixelShader.hlsl">
+      <Filter>Shaders\Volumetric Light</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimationComponent.cpp">
@@ -1625,6 +1628,9 @@
     </Filter>
     <Filter Include="Imgui\Node Editor\Nodes\Audio">
       <UniqueIdentifier>{fb119114-266c-4e11-92b9-d9a0d1955cdd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Volumetric Light">
+      <UniqueIdentifier>{cee1659f-b322-4fca-bdc6-5750ff879045}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

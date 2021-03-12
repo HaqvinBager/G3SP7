@@ -64,7 +64,7 @@ void CShadowRenderer::Render(CEnvironmentLight* anEnvironmentLight, std::vector<
 	myFrameBufferData.myToCameraSpace(3, 0) = -pos.x;
 	myFrameBufferData.myToCameraSpace(3, 1) = -pos.y;
 	myFrameBufferData.myToCameraSpace(3, 2) = -pos.z;
-	myFrameBufferData.myToProjectionSpace = anEnvironmentLight->GetShadowView();
+	myFrameBufferData.myToProjectionSpace = anEnvironmentLight->GetShadowProjection();
 
 	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
 	myContext->VSSetConstantBuffers(0, 1, &myFrameBuffer);

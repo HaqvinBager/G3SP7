@@ -33,8 +33,8 @@ CScene* CSceneManager::CreateEmpty()
 
 	CGameObject* envLight = new CGameObject(1);
 	envLight->AddComponent<CEnviromentLightComponent>(*envLight);
-	envLight->GetComponent<CEnviromentLightComponent>()->GetEnvironmentLight()->SetIntensity(1.f);
-	envLight->GetComponent<CEnviromentLightComponent>()->GetEnvironmentLight()->SetDirection({ 0.0f,1.0f,0.0f });
+	envLight->GetComponent<CEnviromentLightComponent>()->GetEnvironmentLight()->SetIntensity(5.0f);
+	envLight->GetComponent<CEnviromentLightComponent>()->GetEnvironmentLight()->SetDirection({ 1.0f,1.0f,0.4f });
 	//envLight->GetComponent<CEnviromentLightComponent>()->GetEnvironmentLight()->SetColor({ 1.0f, 0.0f, 0.0f });
 
 	CScene* emptyScene = new CScene(2);

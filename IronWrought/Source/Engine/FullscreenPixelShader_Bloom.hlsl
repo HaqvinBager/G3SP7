@@ -6,16 +6,16 @@ PixelOutput main(VertexToPixel input) {
 	float3 resource2 = fullscreenTexture2.Sample(defaultSampler, input.myUV.xy).rgb;
 	
 	//Snippet 1
-	{
-		returnValue.myColor.rgb = resource + resource2;
-	}
+	//{
+	//	returnValue.myColor.rgb = resource + resource2;
+	//}
 	//Snippet 1
 	
 	//Snippet 2
-	//{
-	//	resource *= (1.0f - saturate(resource2));
-	//	returnValue.myColor.rgb = resource + resource2;
-	//}
+	{
+        resource *= (1.0f - saturate(resource2));
+        returnValue.myColor.rgb = resource + resource2;
+    }
 	//Snippet 2
 	
 	//Snippet 3

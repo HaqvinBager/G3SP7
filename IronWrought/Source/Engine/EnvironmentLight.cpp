@@ -78,6 +78,11 @@ void CEnvironmentLight::SetPosition(DirectX::SimpleMath::Vector3 aPosition)
 
 DirectX::SimpleMath::Matrix CEnvironmentLight::GetShadowView() const
 {
+	return DirectX::XMMatrixLookAtLH(myPosition, myDirection, Vector3::Up);
+}
+
+DirectX::SimpleMath::Matrix CEnvironmentLight::GetShadowProjection() const
+{
 	return DirectX::SimpleMath::Matrix::CreateOrthographic(myShadowcastSize.x, myShadowcastSize.y, 40.0f, -40.0f);
 }
 

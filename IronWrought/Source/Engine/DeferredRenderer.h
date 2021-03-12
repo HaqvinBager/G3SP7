@@ -23,6 +23,7 @@ public:
 	void GenerateGBuffer(CCameraComponent* aCamera, std::vector<CGameObject*>& aGameObjectList, std::vector<CGameObject*>& aInstancedGameObjectList);
 	void Render(CCameraComponent* aCamera, CEnvironmentLight* anEnvironmentLight);
 	void Render(CCameraComponent* aCamera, std::vector<CPointLight*>& aPointLightList);
+	void RenderVolumetricLight(CCameraComponent* aCamera, CEnvironmentLight* anEnvironmentLight);
 
 	bool ToggleRenderPass();
 
@@ -106,6 +107,7 @@ private:
 	ID3D11PixelShader* myVertexPaintPixelShader;
 	ID3D11PixelShader* myEnvironmentLightShader;
 	ID3D11PixelShader* myPointLightShader;
+	ID3D11PixelShader* myDirectionalVolumetricLightShader;
 // Samplers.
 	ID3D11SamplerState* mySamplerState;
 	ID3D11SamplerState* myShadowSampler;

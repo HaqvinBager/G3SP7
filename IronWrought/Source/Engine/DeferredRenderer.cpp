@@ -38,6 +38,7 @@ CDeferredRenderer::CDeferredRenderer()
 	, myGBufferPixelShader(nullptr)
 	, myPointLightShader(nullptr)
 	, myVertexPaintPixelShader(nullptr)
+	, myDirectionalVolumetricLightShader(nullptr)
 	, mySamplerState(nullptr)
 	, myShadowSampler(nullptr)
 	, myCurrentGBufferPixelShader(nullptr)
@@ -74,7 +75,7 @@ bool CDeferredRenderer::Init(CDirectXFramework* aFramework)
 
 	bufferDescription.ByteWidth = sizeof(SLightBufferData);
 	ENGINE_HR_BOOL_MESSAGE(device->CreateBuffer(&bufferDescription, nullptr, &myLightBuffer), "Light Buffer could not be created.");
-
+	
 	bufferDescription.ByteWidth = sizeof(SPointLightBufferData);
 	ENGINE_HR_MESSAGE(device->CreateBuffer(&bufferDescription, nullptr, &myPointLightBuffer), "Point Light Buffer could not be created.");
 
@@ -96,45 +97,6 @@ bool CDeferredRenderer::Init(CDirectXFramework* aFramework)
 
 	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateBuffer(&vertexBufferDesc, &subVertexResourceData, &myPointLightVertexBuffer), "Point Light Vertex Buffer could not be created.");
 
-	//std::ifstream vsFile;
-	//vsFile.open("Shaders/DeferredVertexShader.cso", std::ios::binary);
-	//std::string vsData = { std::istreambuf_iterator<char>(vsFile), std::istreambuf_iterator<char>() };
-	//ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateVertexShader(vsData.data(), vsData.size(), nullptr, &myFullscreenShader), "Fullscreen Vertex Shader could not be created.");
-	//vsFile.close();
-
-	//vsFile.open("Shaders/DeferredModelVertexShader.cso", std::ios::binary);
-	//vsData = { std::istreambuf_iterator<char>(vsFile), std::istreambuf_iterator<char>() };
-	//ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateVertexShader(vsData.data(), vsData.size(), nullptr, &myModelVertexShader), "Model Vertex Shader could not be created.");
-	//vsFile.close();
-
-	//vsFile.open("Shaders/DeferredAnimationVertexShader.cso", std::ios::binary);
-	//vsData = { std::istreambuf_iterator<char>(vsFile), std::istreambuf_iterator<char>() };
-	//ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateVertexShader(vsData.data(), vsData.size(), nullptr, &myAnimationVertexShader), "Animation Vertex Shader could not be created.");
-	//vsFile.close();
-
-	//vsFile.open("Shaders/DeferredInstancedModelVertexShader.cso", std::ios::binary);
-	//vsData = { std::istreambuf_iterator<char>(vsFile), std::istreambuf_iterator<char>() };
-	//ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateVertexShader(vsData.data(), vsData.size(), nullptr, &myInstancedModelVertexShader), "Instanced Model Vertex Shader could not be created.");
-	//vsFile.close();
-
-	//std::ifstream ps1File;
-	//ps1File.open("Shaders/GBufferPixelShader.cso", std::ios::binary);
-	//std::string psData = { std::istreambuf_iterator<char>(ps1File), std::istreambuf_iterator<char>() };
-	//ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreatePixelShader(psData.data(), psData.size(), nullptr, &myGBufferPixelShader), "GBuffer Pixel Shader could not be createed.");
-	//ps1File.close();
-
-	//std::ifstream ps2File;
-	//ps2File.open("Shaders/DeferredLightEnvironmentShader.cso", std::ios::binary);
-	//psData = { std::istreambuf_iterator<char>(ps2File), std::istreambuf_iterator<char>() };
-	//ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreatePixelShader(psData.data(), psData.size(), nullptr, &myEnvironmentLightShader), "Environment Pixel Shader could not be createed.");
-	//ps2File.close();
-
-	//std::ifstream ps3File;
-	//ps3File.open("Shaders/DeferredLightPointShader.cso", std::ios::binary);
-	//psData = { std::istreambuf_iterator<char>(ps3File), std::istreambuf_iterator<char>() };
-	//ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreatePixelShader(psData.data(), psData.size(), nullptr, &myPointLightShader), "Point Light Pixel Shader could not be createed.");
-	//ps3File.close();
-
 	std::string vsData;
 	Graphics::CreateVertexShader("Shaders/DeferredVertexShader.cso", aFramework, &myFullscreenShader, vsData);
 	Graphics::CreateVertexShader("Shaders/DeferredModelVertexShader.cso", aFramework, &myModelVertexShader, vsData);
@@ -144,6 +106,7 @@ bool CDeferredRenderer::Init(CDirectXFramework* aFramework)
 	Graphics::CreatePixelShader("Shaders/GBufferPixelShader.cso", aFramework, &myGBufferPixelShader);
 	Graphics::CreatePixelShader("Shaders/DeferredLightEnvironmentShader.cso", aFramework, &myEnvironmentLightShader);
 	Graphics::CreatePixelShader("Shaders/DeferredLightPointShader.cso", aFramework, &myPointLightShader);
+	Graphics::CreatePixelShader("Shaders/DirectionalVolumetricLightPixelShader.cso", aFramework, &myDirectionalVolumetricLightShader);
 
 	LoadRenderPassPixelShaders(aFramework->GetDevice());
 
@@ -166,8 +129,7 @@ bool CDeferredRenderer::Init(CDirectXFramework* aFramework)
 	Graphics::CreateVertexShader("Shaders/PointLightVertexShader.cso", aFramework, &myPointLightVertexShader, vsData);
 	D3D11_INPUT_ELEMENT_DESC pointLightLayout[] =
 	{
-		{"POSITION"	,	0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		//{"RANGE"	,	0, DXGI_FORMAT_R32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"POSITION"	,	0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
 	ENGINE_HR_MESSAGE(aFramework->GetDevice()->CreateInputLayout(pointLightLayout, sizeof(pointLightLayout) / sizeof(D3D11_INPUT_ELEMENT_DESC), vsData.data(), vsData.size(), &myPointLightInputLayout), "Point Light Input Layout could not be created.");
 
@@ -384,7 +346,7 @@ void CDeferredRenderer::Render(CCameraComponent* aCamera, CEnvironmentLight* anE
 	myLightBufferData.myDirectionalLightColor = anEnvironmentLight->GetColor();
 	myLightBufferData.myDirectionalLightPosition = anEnvironmentLight->GetShadowPosition();
 	myLightBufferData.myDirectionalLightTransform = anEnvironmentLight->GetShadowTransform();
-	myLightBufferData.myDirectionalLightView = anEnvironmentLight->GetShadowView();
+	myLightBufferData.myDirectionalLightView = anEnvironmentLight->GetShadowProjection();
 	BindBuffer(myLightBuffer, myLightBufferData, "Light Buffer");
 	myContext->PSSetConstantBuffers(2, 1, &myLightBuffer);
 
@@ -462,6 +424,47 @@ void CDeferredRenderer::Render(CCameraComponent* aCamera, std::vector<CPointLigh
 	}
 
 	myContext->GSSetShader(nullptr, nullptr, 0);
+}
+
+void CDeferredRenderer::RenderVolumetricLight(CCameraComponent* aCamera, CEnvironmentLight* anEnvironmentLight)
+{
+	SM::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
+	myFrameBufferData.myCameraPosition = SM::Vector4{ cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f };
+	myFrameBufferData.myToCameraSpace = cameraMatrix.Invert();
+	myFrameBufferData.myToWorldFromCamera = cameraMatrix;
+	myFrameBufferData.myToProjectionSpace = aCamera->GetProjection();
+	myFrameBufferData.myToCameraFromProjection = aCamera->GetProjection().Invert();
+	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
+
+	myContext->PSSetConstantBuffers(0, 1, &myFrameBuffer);
+	//ID3D11ShaderResourceView* environmentLightShaderResource = *anEnvironmentLight->GetCubeMap();
+	//myContext->PSSetShaderResources(0, 1, &environmentLightShaderResource);
+
+	// Update lightbufferdata and fill lightbuffer
+	myLightBufferData.myDirectionalLightDirection = anEnvironmentLight->GetDirection();
+	myLightBufferData.myDirectionalLightColor = anEnvironmentLight->GetColor();
+	myLightBufferData.myDirectionalLightPosition = anEnvironmentLight->GetShadowPosition();
+	myLightBufferData.myDirectionalLightTransform = anEnvironmentLight->GetShadowTransform(); // Actual view
+	myLightBufferData.myDirectionalLightView = anEnvironmentLight->GetShadowProjection(); // Actual projection
+	BindBuffer(myLightBuffer, myLightBufferData, "Light Buffer");
+	myContext->PSSetConstantBuffers(1, 1, &myLightBuffer);
+
+	myContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	myContext->IASetInputLayout(nullptr);
+	myContext->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
+	myContext->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0);
+
+	myContext->GSSetShader(nullptr, nullptr, 0);
+
+	myContext->VSSetShader(myFullscreenShader, nullptr, 0);
+
+	myContext->PSSetShader(myDirectionalVolumetricLightShader, nullptr, 0);
+
+	myContext->PSSetSamplers(0, 1, &mySamplerState);
+	myContext->PSSetSamplers(1, 1, &myShadowSampler);
+
+	myContext->Draw(3, 0);
+	CRenderManager::myNumberOfDrawCallsThisFrame++;
 }
 
 bool CDeferredRenderer::LoadRenderPassPixelShaders(ID3D11Device* aDevice)

@@ -19,6 +19,7 @@ public:
 	DirectX::SimpleMath::Vector4 GetColor() { return myColor; }
 	DirectX::SimpleMath::Matrix GetShadowTransform() const;
 	DirectX::SimpleMath::Matrix GetShadowView() const;
+	DirectX::SimpleMath::Matrix GetShadowProjection() const;
 	DirectX::SimpleMath::Vector4 GetShadowPosition() const;
 
 	void SetDirection(DirectX::SimpleMath::Vector3 aDirection);

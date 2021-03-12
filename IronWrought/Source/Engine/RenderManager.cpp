@@ -21,7 +21,7 @@
 unsigned int CRenderManager::myNumberOfDrawCallsThisFrame = 0;
 
 CRenderManager::CRenderManager()
-	: myDoFullRender(true)
+	: myDoFullRender(false)
 	, myClearColor(0.5f, 0.5f, 0.5f, 1.0f)
 {
 }
@@ -198,6 +198,8 @@ void CRenderManager::Render(CScene& aScene)
 
 	myDeferredRenderer.Render(maincamera, environmentlight);
 	myDeferredRenderer.Render(maincamera, onlyPointLights);
+
+	myDeferredRenderer.RenderVolumetricLight(maincamera, environmentlight);
 
 	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_DISABLE);
 	myDeferredLightingTexture.SetAsActiveTarget(&myIntermediateDepth);
