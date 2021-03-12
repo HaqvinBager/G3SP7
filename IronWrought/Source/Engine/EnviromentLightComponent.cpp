@@ -11,7 +11,7 @@ CEnviromentLightComponent::CEnviromentLightComponent(CGameObject& aParent, Direc
 	// TODO 
 	//	Step through code to look for issues. Like with mips.
 
-	myEnvironmentLight = CLightFactory::GetInstance()->CreateEnvironmentLight("Assets/Cubemaps/mondarrain_3_cubemap.dds");
+	myEnvironmentLight = CLightFactory::GetInstance()->CreateEnvironmentLight("Assets/Cubemaps/tomoco_studio_cubemap.dds");
 	myEnvironmentLight->SetColor(aColor);
 	myEnvironmentLight->SetIntensity(anIntensity);
 	//not sure if this work! We want to set the direction of this transform!

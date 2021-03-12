@@ -43,7 +43,7 @@ public:
 
 	void Simulate();
 
-	CRigidDynamicBody* CreateDynamicRigidbody(const Vector3& aPos);
+	CRigidDynamicBody* CreateDynamicRigidbody(const Vector3& aPos, const int aInstanceID);
 
 	CCharacterController* CreateCharacterController(const Vector3& aPos, const float& aRadius, const float& aHeight);
 
@@ -52,7 +52,7 @@ public:
 
   //merge conflict 8/3/2021
 	//void DebugLines();
-	void Cooking(std::vector<CGameObject*> gameObjectsToCook, CScene* aScene);
+	void Cooking(const std::vector<CGameObject*>& gameObjectsToCook, CScene* aScene);
 
 private:
 

@@ -117,6 +117,10 @@ void CNodeDataManager::SaveDataTypesToJson()
 			writer1.Key("Type");
 			writer1.String("Start");
 			break;
+		case CNodeDataManager::EDataType::EVector3:
+			writer1.Key("Type");
+			writer1.String("Vector 3");
+			break;
 		default:
 			break;
 		}

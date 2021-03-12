@@ -25,26 +25,24 @@ CSceneManager::~CSceneManager()
 
 CScene* CSceneManager::CreateEmpty()
 {
-	//CGameObject* camera = new CGameObject(0);
-	//camera->AddComponent<CCameraComponent>(*camera);//Default Fov is 70.0f
-	//camera->AddComponent<CCameraControllerComponent>(*camera); //Default speed is 2.0f
-
-	//camera->myTransform->Position({ 0.0f, 1.0f, 0.0f });
-	//camera->myTransform->Rotation({ 0.0f, 0.0f, 0.0f });
-
+	CGameObject* camera = new CGameObject(0);
+	camera->AddComponent<CCameraComponent>(*camera);//Default Fov is 70.0f
+	camera->AddComponent<CCameraControllerComponent>(*camera); //Default speed is 2.0f
+	camera->myTransform->Position({ 0.0f, 1.0f, 0.0f });
+	
 	CGameObject* envLight = new CGameObject(1);
 	envLight->AddComponent<CEnviromentLightComponent>(*envLight);
-	envLight->GetComponent<CEnviromentLightComponent>()->GetEnvironmentLight()->SetIntensity(1.f);
+	envLight->GetComponent<CEnviromentLightComponent>()->GetEnvironmentLight()->SetIntensity(0.f);
+	envLight->GetComponent<CEnviromentLightComponent>()->GetEnvironmentLight()->SetColor({ 0.f, 0.f, 0.f });
 	envLight->GetComponent<CEnviromentLightComponent>()->GetEnvironmentLight()->SetDirection({ 0.0f,1.0f,1.0f });
-	//envLight->GetComponent<CEnviromentLightComponent>()->GetEnvironmentLight()->SetColor({ 1.0f, 0.0f, 0.0f });
 
 	CScene* emptyScene = new CScene(2);
-	//emptyScene->AddInstance(camera);
-	//emptyScene->MainCamera(camera->GetComponent<CCameraComponent>());
+	emptyScene->AddInstance(camera);
+	emptyScene->MainCamera(camera->GetComponent<CCameraComponent>());
 	emptyScene->EnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnvironmentLight());
 	emptyScene->AddInstance(envLight);
 
-	AddPlayer(*emptyScene, std::string());
+	//AddPlayer(*emptyScene, std::string());
 
 	return emptyScene;
 }
@@ -54,13 +52,12 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneName)
 	CScene* scene = CreateEmpty();
 
 	AddInstancedModelComponents(*scene, aSceneName + "_InstanceModelCollection.json");
-
 	if (AddGameObjects(*scene, aSceneName + "_InstanceIDCollection.json")) {
 		SetTransforms(*scene, aSceneName + "_TransformCollection.json");
 		AddModelComponents(*scene, aSceneName + "_ModelCollection.json");
 		AddPointLights(*scene, aSceneName + "_PointLightCollection.json");
 		AddDecalComponents(*scene, aSceneName + "_DecalCollection.json");
-		AddPlayer(*scene, aSceneName);
+		AddPlayer(*scene, aSceneName + "_Player.json");
 	}
 	CEngine::GetInstance()->GetPhysx().Cooking(scene->ActiveGameObjects(), scene);
 	return scene;
@@ -134,7 +131,7 @@ void CSceneManager::AddInstancedModelComponents(CScene& aScene, const std::strin
 	for (const auto& i : instancedModelArray) {
 		int assetID = i["assetID"].GetInt();
 		CGameObject* gameObject = new CGameObject(assetID);
-
+		gameObject->IsStatic(true);
 		std::vector<Matrix> instancedModelTransforms;
 		instancedModelTransforms.reserve(i["transforms"].GetArray().Size());
 
@@ -174,8 +171,8 @@ void CSceneManager::AddPointLights(CScene& aScene, const std::string& aJsonFileN
 			*gameObject,
 			pointLight["range"].GetFloat(),
 			Vector3(pointLight["r"].GetFloat(),
-					pointLight["g"].GetFloat(),
-					pointLight["b"].GetFloat()),
+			pointLight["g"].GetFloat(),
+			pointLight["b"].GetFloat()),
 			pointLight["intensity"].GetFloat());
 
 		aScene.AddInstance(pointLightComponent->GetPointLight());
@@ -199,41 +196,35 @@ void CSceneManager::AddDecalComponents(CScene& aScene, const std::string& aJsonF
 	}
 }
 
-void CSceneManager::AddPlayer(CScene& aScene, const std::string& /*aJsonFileName*/)
+void CSceneManager::AddPlayer(CScene& aScene, const std::string& aJsonFileName)
 {
 	/*
-	PhysX notes: Rotating entire transform rotates collider as well. 
+	PhysX notes: Rotating entire transform rotates collider as well.
 	*/
 
+	CGameObject* player = nullptr;
+	const auto& doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + aJsonFileName));
+	if (CJsonReader::IsValid(doc, { "instanceID" })) 
+	{
+		const int instanceID = doc["instanceID"].GetInt();
+		player = aScene.FindObjectWithID(instanceID);
+	}
+	else 
+	{
+		player = new CGameObject(87);
+	}
 
-	CGameObject* player = new CGameObject(87);
-	//add cmodelcomponent
 	player->AddComponent<CPlayerControllerComponent>(*player);
-	//player->AddComponent<CModelComponent>(*player, ASSETPATH("Assets/Graphics/Character/Main_Character/CH_PL_SK_alt.fbx"));
 
 	CGameObject* camera = CCameraControllerComponent::CreatePlayerFirstPersonCamera(player);//new CGameObject(96);
-
 	CGameObject* model = new CGameObject(88);
 	model->AddComponent<CModelComponent>(*model, ASSETPATH("Assets/Graphics/Character/Main_Character/CH_PL_SK_alt.fbx"));
 	model->myTransform->SetParent(camera->myTransform);
 	model->myTransform->Rotation({ 0.0f, 0.0f, 0.0f });
-	//model->myTransform->Rotate({ 0.0f,160.1f,0.0f });
-	//model->myTransform->Position({ 0.0f, 1.6f, -0.22f });
-	
-	//camera->AddComponent<CCameraComponent>(*camera);//Default Fov is 70.0f
-	//camera->AddComponent<CCameraControllerComponent>(*camera,2.0f, CCameraControllerComponent::ECameraMode::PlayerFirstPerson); //Default speed is 2.0f
 
-	//camera->myTransform->Position({ 0.0f, 0.0f, 0.0f });
-	//camera->myTransform->Rotation({ 0.0f, 0.0f, 0.0f });
-
-	//camera->myTransform->SetParent(player->myTransform);
-	player->GetComponent<CPlayerControllerComponent>()->SetControllerPosition({ 0.f, 5.0f,0.0f });
+	CEngine::GetInstance()->GetPhysx().CreateCharacterController(model->myTransform->Position(), 0.6f * 0.5f, 1.8f * 0.5f);
 	aScene.AddInstance(player);
 	aScene.AddInstance(model);
 	aScene.AddInstance(camera);
 	aScene.MainCamera(camera->GetComponent<CCameraComponent>());
 }
-
-
-		//CDecalComponent* component =
-		//component->SetAlphaThreshold(decal["alphaThreshold"].GetFloat());

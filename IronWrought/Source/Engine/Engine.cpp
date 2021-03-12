@@ -188,7 +188,6 @@ float CEngine::BeginFrame()
 	return CTimer::Mark();
 }
 
-#include "ImGuiLevelSelect.h"
 void CEngine::RenderFrame()
 {
 	if (!myRenderSceneActive)

@@ -72,6 +72,7 @@ struct SPin
 		EFloat,
 		EString,
 		EVector3,
+		EList,
 		EUnknown
 	};
 

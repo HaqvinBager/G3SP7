@@ -23,13 +23,14 @@ std::string globalNames[] =
 	"Whiskers"
 };
 
-CRigidDynamicBody::CRigidDynamicBody(physx::PxPhysics& aPhysX, const Vector3& aPosition)
+CRigidDynamicBody::CRigidDynamicBody(physx::PxPhysics& aPhysX, int aInstanceID, const Vector3& aPosition)
 {
 	myBody = aPhysX.createRigidDynamic({ aPosition.x, aPosition.y, aPosition.z });
 
 	// Set userData to identify the collider (usually some GameObjectID)
 	// It's used in ContactReportCallBack::onContact
-	myBody->userData = &globalNames[rand() % 16];
+	myBody->userData = &aInstanceID;
+		//&globalNames[rand() % 16];
 
 	// Locks Z since the demo only uses two axis
 	myBody->setRigidDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Z);

@@ -37,9 +37,11 @@
 #include "NodeTypeDecisionFloat.h"
 #include "NodeTypeDecisionTreeRun.h"
 #include "NodeTypeVariableSetFloat.h"
+#include "NodeTypeVariableSetVector3.h"
 #include "NodeTypeVariableSetInt.h"
 #include "NodeTypeVariableSetBool.h"
 #include "NodeTypeVariableGetFloat.h"
+#include "NodeTypeVariableGetVector3.h"
 #include "NodeTypeVariableGetInt.h"
 #include "NodeTypeVariableGetBool.h"
 #include "NodeTypeStartGetCustom.h"
@@ -138,6 +140,12 @@ void CNodeTypeCollector::RegisterNewDataType(std::string aNodeName, unsigned int
 		RegisterDataType<CNodeTypeStartGetCustom>("Get: " + aNodeName, aNodeName);
 	}
 		break;
+	case 4:
+	{
+		RegisterDataType<CNodeTypeVariableSetVector3>("Set: " + aNodeName, aNodeName);
+		RegisterDataType<CNodeTypeVariableGetVector3>("Get: " + aNodeName, aNodeName);
+	}
+		break;
 	default:
 		break;
 	}
@@ -159,7 +167,12 @@ std::vector<SPin> CNodeType::GetPins()
 	return myPins;
 }
 
-void CNodeType::GetDataOnPin(CNodeInstance* aTriggeringNodeInstance, unsigned int aPinIndex, SPin::EPinType& outType, NodeDataPtr& someData, size_t& outSize)
+void CNodeType::GetDataOnPin(CNodeInstance* aTriggeringNodeInstance, unsigned int aPinIndex, SPin::EPinType& outType, void*& someData, size_t& outSize)
 {
 	aTriggeringNodeInstance->FetchData(outType, someData, outSize, aPinIndex);
 }
+//
+//void CNodeType::GetDataOnPin(CNodeInstance* aTriggeringNodeInstance, unsigned int aPinIndex, SPin::EPinType& outType, NodeDataPtr& someData, size_t& outSize)
+//{
+//	
+//}

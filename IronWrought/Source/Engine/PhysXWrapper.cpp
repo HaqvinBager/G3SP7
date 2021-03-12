@@ -211,9 +211,9 @@ void CPhysXWrapper::Simulate()
 	}
 }
 
-CRigidDynamicBody* CPhysXWrapper::CreateDynamicRigidbody(const Vector3& aPos)
+CRigidDynamicBody* CPhysXWrapper::CreateDynamicRigidbody(const Vector3& aPos, const int aInstanceID)
 {
-	CRigidDynamicBody* dynamicBody = new CRigidDynamicBody(*myPhysics, aPos);
+	CRigidDynamicBody* dynamicBody = new CRigidDynamicBody(*myPhysics, aInstanceID, aPos);
 	GetPXScene()->addActor(dynamicBody->GetBody());
 	return dynamicBody;
 }
@@ -241,11 +241,19 @@ PxControllerManager* CPhysXWrapper::GetControllerManager()
 //	}
 //}
 
-void CPhysXWrapper::Cooking(std::vector<CGameObject*> gameObjectsToCook, CScene* aScene)
+void CPhysXWrapper::Cooking(const std::vector<CGameObject*>& gameObjectsToCook, CScene* aScene)
 {
+
 	for (int i = 0; i < gameObjectsToCook.size(); ++i) {
-		if (gameObjectsToCook[i]->GetComponent<CModelComponent>() && !gameObjectsToCook[i]->GetComponent<CPlayerControllerComponent>()) {
+
+		if (!gameObjectsToCook[i]->IsStatic())
+			continue;
+
+		if (gameObjectsToCook[i]->GetComponent<CModelComponent>() &&
+			!gameObjectsToCook[i]->GetComponent<CPlayerControllerComponent>()) 
+		{
 			std::vector<PxVec3> verts(gameObjectsToCook[i]->GetComponent<CModelComponent>()->GetMyModel()->GetModelData().myMeshFilter.myVertecies.size());
+
 			for (auto y = 0; y < gameObjectsToCook[i]->GetComponent<CModelComponent>()->GetMyModel()->GetModelData().myMeshFilter.myVertecies.size(); ++y) {
 				Vector3 vec = gameObjectsToCook[i]->GetComponent<CModelComponent>()->GetMyModel()->GetModelData().myMeshFilter.myVertecies[y];
 				verts[y] = PxVec3(vec.x, vec.y, vec.z);
