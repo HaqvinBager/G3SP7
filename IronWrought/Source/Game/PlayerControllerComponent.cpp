@@ -24,6 +24,9 @@ CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, 
 	INPUT_MAPPER->AddObserver(EInputEvent::Jump, this);
 
 	canJump = true;
+	myYVelocity = 0.0f;
+	jumptimer = 0.0f;
+	
 	myController = CEngine::GetInstance()->GetPhysx().CreateCharacterController(gameObject.myTransform->Position(), 0.6f * 0.5f, 1.8f * 0.5f);
 }
 
@@ -45,13 +48,32 @@ void CPlayerControllerComponent::Start()
 
 void CPlayerControllerComponent::Update()
 {
-	Move({0.0f, -0.0098f, 0.0f});
+	Move({0.0f, myMovement.y, 0.0f});
+	
+	if (hasJumped == true)
+	{
+		myMovement.y = 0.01f;
+		hasJumped = false;
+	}
+
+	if (myMovement.y >= -1)
+	{
+		myMovement.y -= 0.01f * CTimer::Dt();
+	}
+	
+	if (isJumping == false)
+	{
+		myMovement.y = 0.0f;
+	}
+
 	GameObject().myTransform->Position(myController->GetPosition());
 }
 
 void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
 {
 	CCameraControllerComponent* cameraController = CEngine::GetInstance()->GetActiveScene().FindFirstObjectWithComponent<CCameraControllerComponent>();
+
+	float Y = myMovement.y;
 
 	switch (aEvent)
 	{
@@ -73,20 +95,27 @@ void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
 			myMovement = cameraController->GameObject().myTransform->GetLocalMatrix().Right();
 			break;
 		case EInputEvent::Jump:
-			if (canJump == true)			
-				Jump();		
+			if (canJump == true)
+			{
+				hasJumped = true;
+				isJumping = true;
+				canJump = false;
+			}
+			
+			
 			break;
 		default:break;
 	}
-	//if (jumptimer == 0)
-	//{
-	//	myMovement.y = -1.0f; //Gravity
-	//}
-	myMovement.y = -1.0f; //Gravity
+	
 
 	//GameObject().myTransform->Move(myMovement * myHorizontalMoveSpeed * CTimer::Dt());
+	myMovement.y = Y;
+
+	
 	Move(myMovement * mySpeed);
-	myMovement = { 0.f,-1.f,0.f };
+	myMovement = { 0.f, myMovement.y,0.f };
+
+	
 }
 
 void CPlayerControllerComponent::Move(Vector3 aDir)
@@ -95,20 +124,22 @@ void CPlayerControllerComponent::Move(Vector3 aDir)
 	if (collisionflag == physx::PxControllerCollisionFlag::eCOLLISION_DOWN) 
 	{
 		canJump = true;
+		
 		//std::cout << "collided with ground" << std::endl;
-	}
+ 	}
+
+
+	
 }
 
 void CPlayerControllerComponent::Jump()
 {
 	std::cout << "jumped" << std::endl;
-	/*float jumptimer = 0;
-	jumptimer += CTimer::Dt();
 
-	while (jumptimer < 5)
-	{
-		myMovement.y = 1.0f; 
-	}*/
+	
+
+	
+
 
 
 }

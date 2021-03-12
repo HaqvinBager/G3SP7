@@ -18,9 +18,10 @@ public:
 	void ReceiveEvent(const EInputEvent aEvent) override;
 
 	void Move(Vector3 aDir);
+	void Jump();
+
 
 	void AddFaceMesh(CGameObject* aGameObject);
-	void Jump();
 	void SetControllerPosition(const Vector3& aPos);
 
 	CCharacterController* GetCharacterController();
@@ -34,5 +35,10 @@ private:
 	float myHorizontalMoveSpeed;
 	float mySpeed;
 	bool canJump;
+	bool isJumping;
+	bool hasJumped;
+	float jumptimer;
+	float myYVelocity;
+	float gravity;
 };
 
