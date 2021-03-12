@@ -697,23 +697,30 @@ void CGraphManager::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInstance
 		else
 		{
 			std::vector<std::string> item = CNodeDataManager::Get()->GetData<std::vector<std::string>>(aNodeInstance->GetNodeName());
-			std::string currentItem = "";
 
-			if (ImGui::BeginCombo("##combo", currentItem.c_str())) // The second parameter is the label previewed before opening the combo.
+			if (ImGui::BeginCombo("##combo", "Selectable")) // The second parameter is the label previewed before opening the combo.
 			{
+				int index = -1;
 				for (int n = 0; n < item.size(); n++)
 				{
-					bool is_selected = (currentItem == item[n]);
-
-					if (ImGui::Selectable(item[n].c_str(), is_selected))
+					//bool is_selected = (currentItem == item[n]);
+					if (ImGui::Selectable(item[n].c_str(), index == n))
 					{
-						currentItem = item[n];
-						if (is_selected)
-							aPin.myData = &currentItem;
+						/*if (is_selected)
+						{*/
+
+						char* input = item[n].data();
+						size_t size = strlen(input) + 1;
+		/*				for (int i = 0; i < size; i++)
+						{
+						static_cast<char*>(aPin.myData)[i] = input[i];*/
+						memcpy(aPin.myData, input, size);
+						//}
+							//aPin.myData = &item[n];
+						//}
 					}
 				}
 				ImGui::EndCombo();
-				//ImGui:: ("##edit", 0, item, 6);//("##edit", (char*)aPin.myData, 127);
 			}
 		}
 		ImGui::PopItemWidth();

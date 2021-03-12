@@ -15,4 +15,3 @@
 #else
 #define ASSETPATH(path) std::string("../../SP7UnityEditor/").append(path)//UNITY
 #endif 
-
