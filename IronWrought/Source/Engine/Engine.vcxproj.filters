@@ -743,7 +743,9 @@
     <ClCompile Include="NodeTypeAudioPlayResearcherEvent.cpp">
       <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
     </ClCompile>
-    <ClCompile Include="NodeTypeAudioPlaySFX.cpp" />
+    <ClCompile Include="NodeTypeAudioPlaySFX.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1375,7 +1377,9 @@
     <ClInclude Include="NodeTypeAudioPlayResearcherEvent.h">
       <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
     </ClInclude>
-    <ClInclude Include="NodeTypeAudioPlaySFX.h" />
+    <ClInclude Include="NodeTypeAudioPlaySFX.h">
+      <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">
