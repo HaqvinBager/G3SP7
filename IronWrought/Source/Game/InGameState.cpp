@@ -77,14 +77,23 @@ void CInGameState::Update()
 	{
 		if (gVFX->GetComponent<CVFXSystemComponent>())
 		{
-			if (INPUT->IsKeyPressed('P'))
+			if (INPUT->IsKeyPressed('O'))
 			{
 				gVFX->GetComponent<CVFXSystemComponent>()->DisableEffect(0);
 				gVFX->GetComponent<CVFXSystemComponent>()->EnableEffect(0);
 			}
-			if (INPUT->IsKeyPressed('L'))
+			if (INPUT->IsKeyPressed('P'))
 			{
 				gVFX->GetComponent<CVFXSystemComponent>()->DisableEffect(0);
+			}
+			if (INPUT->IsKeyPressed('K'))
+			{
+				gVFX->GetComponent<CVFXSystemComponent>()->DisableEffect(1);
+				gVFX->GetComponent<CVFXSystemComponent>()->EnableEffect(1);
+			}
+			if (INPUT->IsKeyPressed('L'))
+			{
+				gVFX->GetComponent<CVFXSystemComponent>()->DisableEffect(1);
 			}
 		}
 	}
