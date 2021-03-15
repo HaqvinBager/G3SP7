@@ -194,11 +194,13 @@
     <ClInclude Include="CameraSetting.h" />
     <ClInclude Include="FlipACoinDecision.h" />
     <ClInclude Include="NodeDataManager.h" />
+    <ClInclude Include="NodeTypeAudioPlayResearcherEvent.h" />
     <ClInclude Include="NodeTypeAudioPlayResearcherReactionExplosives.h" />
     <ClInclude Include="NodeTypeAudioPlayRobotPatrolling.h" />
     <ClInclude Include="NodeTypeAudioPlayRobotAttack.h" />
     <ClInclude Include="NodeTypeAudioPlayRobotDeath.h" />
     <ClInclude Include="NodeTypeAudioPlayRobotSearching.h" />
+    <ClInclude Include="NodeTypeAudioPlaySFX.h" />
     <ClInclude Include="NodeTypeAudioPlayStep.h" />
     <ClInclude Include="NodeTypeAudioPlayRobotIdle.h" />
     <ClInclude Include="NodeTypeDecisionCoinFlip.h" />
@@ -206,6 +208,7 @@
     <ClInclude Include="NodeTypeGameObjectMove.h" />
     <ClInclude Include="NodeTypeGameObjectRotate.h" />
     <ClInclude Include="NodeTypeGameObjectSetRotation.h" />
+    <ClInclude Include="NodeTypeListTest.h" />
     <ClInclude Include="NodeTypeMathGreater.h" />
     <ClInclude Include="NodeTypeStartGetCustom.h" />
     <ClInclude Include="NodeTypeStartKeyboardInput.h" />
@@ -297,6 +300,8 @@
     <ClInclude Include="NodeTypes.h" />
     <ClInclude Include="NodeTypeTimeTimer.h" />
     <ClInclude Include="NodeTypeVariableSetVector3.h" />
+    <ClInclude Include="NodeTypeVFXPlayVFX.h" />
+    <ClInclude Include="NodeTypeVFXStopVFX.h" />
     <ClInclude Include="NodeTypeVolumeTrigger.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="PerlinNoise.h" />
@@ -364,6 +369,7 @@
     <ClInclude Include="TriangleColliderComponent.h" />
     <ClInclude Include="Utility.h" />
     <ClInclude Include="VFXBase.h" />
+    <ClInclude Include="VFXEffect.h" />
     <ClInclude Include="VFXMeshFactory.h" />
     <ClInclude Include="VFXRenderer.h" />
     <ClInclude Include="VFXSystemComponent.h" />
@@ -392,11 +398,13 @@
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="AudioChannel.cpp" />
     <ClCompile Include="AudioManager.cpp" />
+    <ClCompile Include="NodeTypeAudioPlayResearcherEvent.cpp" />
     <ClCompile Include="NodeTypeAudioPlayResearcherReactionExplosives.cpp" />
     <ClCompile Include="NodeTypeAudioPlayRobotPatrolling.cpp" />
     <ClCompile Include="NodeTypeAudioPlayRobotAttack.cpp" />
     <ClCompile Include="NodeTypeAudioPlayRobotDeath.cpp" />
     <ClCompile Include="NodeTypeAudioPlayRobotSearching.cpp" />
+    <ClCompile Include="NodeTypeAudioPlaySFX.cpp" />
     <ClCompile Include="NodeTypeAudioPlayStep.cpp" />
     <ClCompile Include="NodeTypeAudioPlayRobotIdle.cpp" />
     <ClCompile Include="NodeTypeGameObjectGetRotation.cpp" />
@@ -407,6 +415,7 @@
     <ClCompile Include="NodeTypeGameObjectMove.cpp" />
     <ClCompile Include="NodeTypeGameObjectRotate.cpp" />
     <ClCompile Include="NodeTypeGameObjectSetRotation.cpp" />
+    <ClCompile Include="NodeTypeListTest.cpp" />
     <ClCompile Include="NodeTypeMathGreater.cpp" />
     <ClCompile Include="NodeTypeStartGetCustom.cpp" />
     <ClCompile Include="NodeTypeStartKeyboardInput.cpp" />
@@ -433,6 +442,8 @@
     <ClCompile Include="NodeTypeVariableSetFloat.cpp" />
     <ClCompile Include="NodeTypeVariableSetInt.cpp" />
     <ClCompile Include="NodeTypeVariableSetVector3.cpp" />
+    <ClCompile Include="NodeTypeVFXPlayVFX.cpp" />
+    <ClCompile Include="NodeTypeVFXStopVFX.cpp" />
     <ClCompile Include="ShadowRenderer.cpp" />
     <ClCompile Include="Decal.cpp" />
     <ClCompile Include="DecalComponent.cpp" />
@@ -549,6 +560,7 @@
     <ClCompile Include="TransformComponent.cpp" />
     <ClCompile Include="TriangleColliderComponent.cpp" />
     <ClCompile Include="VFXBase.cpp" />
+    <ClCompile Include="VFXEffect.cpp" />
     <ClCompile Include="VFXMeshFactory.cpp" />
     <ClCompile Include="VFXRenderer.cpp" />
     <ClCompile Include="VFXSystemComponent.cpp" />
@@ -856,6 +868,16 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="SkyboxPixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="SkyboxVertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Vertex</ShaderType>
     </FxCompile>
     <FxCompile Include="SpriteGeometryShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>

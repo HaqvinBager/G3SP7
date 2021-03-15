@@ -181,6 +181,15 @@
     <FxCompile Include="PointLightVertexShader.hlsl">
       <Filter>Shaders\PointLight</Filter>
     </FxCompile>
+    <FxCompile Include="FullscreenPixelShader_Tonemap.hlsl">
+      <Filter>Shaders\Fullscreen</Filter>
+    </FxCompile>
+    <FxCompile Include="SkyboxVertexShader.hlsl">
+      <Filter>Shaders\Skybox</Filter>
+    </FxCompile>
+    <FxCompile Include="SkyboxPixelShader.hlsl">
+      <Filter>Shaders\Skybox</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimationComponent.cpp">
@@ -482,9 +491,6 @@
     <ClCompile Include="ImguiManager.cpp">
       <Filter>Imgui\Manager</Filter>
     </ClCompile>
-    <ClCompile Include="ImGuiLevelSelect.cpp">
-      <Filter>Imgui\Manager</Filter>
-    </ClCompile>
     <ClCompile Include="SceneManager.cpp">
       <Filter>Engine Core</Filter>
     </ClCompile>
@@ -705,8 +711,6 @@
     <ClCompile Include="NodeTypeGameObjectMoveToPosition.cpp">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClCompile>
-    <ClCompile Include="NodeTypeVariableGetVector3.cpp" />
-    <ClCompile Include="NodeTypeVariableSetVector3.cpp" />
     <ClCompile Include="NodeTypeAudioPlayStep.cpp">
       <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
     </ClCompile>
@@ -726,6 +730,28 @@
       <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
     </ClCompile>
     <ClCompile Include="NodeTypeAudioPlayResearcherReactionExplosives.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeListTest.cpp" />
+    <ClCompile Include="VFXEffect.cpp">
+      <Filter>VFX</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeVFXPlayVFX.cpp">
+      <Filter>Imgui\Node Editor\Nodes\VFX</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeVFXStopVFX.cpp">
+      <Filter>Imgui\Node Editor\Nodes\VFX</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeVariableGetVector3.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Variables\Get</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeVariableSetVector3.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Variables\Set</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeAudioPlayResearcherEvent.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeAudioPlaySFX.cpp">
       <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1321,8 +1347,6 @@
     <ClInclude Include="NodeTypeGameObjectMoveToPosition.h">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClInclude>
-    <ClInclude Include="NodeTypeVariableGetVector3.h" />
-    <ClInclude Include="NodeTypeVariableSetVector3.h" />
     <ClInclude Include="NodeTypeAudioPlayStep.h">
       <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
     </ClInclude>
@@ -1342,6 +1366,28 @@
       <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeAudioPlayResearcherReactionExplosives.h">
+      <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeListTest.h" />
+    <ClInclude Include="VFXEffect.h">
+      <Filter>VFX</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeVFXPlayVFX.h">
+      <Filter>Imgui\Node Editor\Nodes\VFX</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeVFXStopVFX.h">
+      <Filter>Imgui\Node Editor\Nodes\VFX</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeVariableGetVector3.h">
+      <Filter>Imgui\Node Editor\Nodes\Variables\Get</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeVariableSetVector3.h">
+      <Filter>Imgui\Node Editor\Nodes\Variables\Set</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeAudioPlayResearcherEvent.h">
+      <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeAudioPlaySFX.h">
       <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
     </ClInclude>
   </ItemGroup>
@@ -1624,6 +1670,12 @@
     </Filter>
     <Filter Include="Shaders\PointLight">
       <UniqueIdentifier>{74affbc5-dd5c-4d83-a2bf-e2c3875912c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Nodes\VFX">
+      <UniqueIdentifier>{85ecef19-45a5-483c-bf6f-9e770b31e79b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Skybox">
+      <UniqueIdentifier>{182a2bc5-f441-4560-b886-27d301c4e918}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

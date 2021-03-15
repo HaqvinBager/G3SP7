@@ -12,6 +12,12 @@
 #Submodule for Shared engine
 #SpelMotor/IronWrought/Source/SharedEngine
 
+IronWrought/Bin/Shaders/AnimatedVertexShader.cso
+SP7UnityEditor/Assets/Generated/
+IronWrought/Bin/Imgui/NodeScripts/
+IronWrought/Bin/Shaders/*
+*.cso
+
 
 # User-specific files
 *.rsuser
@@ -266,8 +272,6 @@ FodyWeavers.xsd
 IronWrought/Bin/DebugLogs/
 TGA_Modelviewer/
 DeferredRenderer/
-
-#.cso 
 
 IronWrought/Lib/DirectXTK_Debug.lib
 IronWrought/Lib/DirectXTK_Release.lib

@@ -61,6 +61,8 @@ void CInGameState::Start()
 {
 	CJsonReader::Get()->Init();
 	CScene* scene = CSceneManager::CreateEmpty();
+	
+	TEMP_VFX(scene);
 
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);
@@ -74,37 +76,30 @@ void CInGameState::Stop()
 
 void CInGameState::Update()
 {
-	float speed = 10.0f;
-	if (myVFX)
+	if (gVFX)
 	{
-		if (myVFX->GetComponent<CVFXSystemComponent>())
+		if (gVFX->GetComponent<CVFXSystemComponent>())
 		{
-			if (Input::GetInstance()->IsKeyDown(VK_UP))
+			if (INPUT->IsKeyPressed('O'))
 			{
-				myVFX->myTransform->Move({0.0f, 0.0f, CTimer::Dt() * speed });
+				gVFX->GetComponent<CVFXSystemComponent>()->DisableEffect(0);
+				gVFX->GetComponent<CVFXSystemComponent>()->EnableEffect(0);
 			}
-			if (Input::GetInstance()->IsKeyDown(VK_DOWN))
-			{
-				myVFX->myTransform->Move({ 0.0f, 0.0f, -CTimer::Dt() * speed });
-			}
-			if (Input::GetInstance()->IsKeyDown(VK_LEFT))
-			{
-				myVFX->myTransform->Move({ -CTimer::Dt() * speed, 0.0f, 0.0f });
-			}
-			if (Input::GetInstance()->IsKeyDown(VK_RIGHT))
-			{
-				myVFX->myTransform->Move({ CTimer::Dt() * speed, 0.0f, 0.0f });
-			}
-
-
 			if (INPUT->IsKeyPressed('P'))
 			{
-				myVFX->GetComponent<CVFXSystemComponent>()->OnDisable();
-				myVFX->GetComponent<CVFXSystemComponent>()->OnEnable();
+				gVFX->GetComponent<CVFXSystemComponent>()->DisableEffect(0);
+			}
+			if (INPUT->IsKeyPressed('K'))
+			{
+				gVFX->GetComponent<CVFXSystemComponent>()->DisableEffect(1);
+				gVFX->GetComponent<CVFXSystemComponent>()->EnableEffect(1);
+			}
+			if (INPUT->IsKeyPressed('L'))
+			{
+				gVFX->GetComponent<CVFXSystemComponent>()->DisableEffect(1);
 			}
 		}
 	}
-	
 
 	CEngine::GetInstance()->GetPhysx().Simulate();
 	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)

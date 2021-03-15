@@ -103,7 +103,28 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 9193531995247653709, guid: e949574b9e30ee44a93089c8f9eb7b7e,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9193531995247653709, guid: e949574b9e30ee44a93089c8f9eb7b7e,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9193531995247653709, guid: e949574b9e30ee44a93089c8f9eb7b7e,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9193531995247653709, guid: e949574b9e30ee44a93089c8f9eb7b7e,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: -4650420249420805115, guid: e949574b9e30ee44a93089c8f9eb7b7e, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: e949574b9e30ee44a93089c8f9eb7b7e, type: 3}
 --- !u!4 &8956825756169826780 stripped
 Transform:

@@ -39,6 +39,19 @@ using namespace DirectX::SimpleMath;
 #include "MainSingleton.h"
 //
 
+#define CONSOLE_DAQUA 3
+#define CONSOLE_GREEN 10
+#define CONSOLE_RED 12
+#define CONSOLE_MAGENTA 13
+#define CONSOLE_YELLOW 6
+#define CONSOLE_WHITE 15
+#define CONSOLE_BLUE_ON_BLUE 17
+static inline void SetConsoleColor(int aColor)
+{
+	HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleTextAttribute(handle, static_cast<WORD>(aColor));
+}
+
 //When Completed
 //#include "Engine.h"
 //#include "Scene.h"
