@@ -8,7 +8,7 @@
 #include "CameraComponent.h"
 #include "FolderUtility.h"
 
-ImGuiWindow::CLoadScene::CLoadScene(const char* aMenuName, const bool aIsMenuChild)
+IronWroughtImGui::CLoadScene::CLoadScene(const char* aMenuName, const bool aIsMenuChild)
 	: CWindow(aMenuName, aIsMenuChild)
 	, myState(EState::DropDownMenu)
 	, mySceneIndex(-1)
@@ -16,11 +16,11 @@ ImGuiWindow::CLoadScene::CLoadScene(const char* aMenuName, const bool aIsMenuChi
 	OnEnable();
 }
 
-ImGuiWindow::CLoadScene::~CLoadScene()
+IronWroughtImGui::CLoadScene::~CLoadScene()
 {
 }
 
-void ImGuiWindow::CLoadScene::OnEnable()
+void IronWroughtImGui::CLoadScene::OnEnable()
 {
 	std::vector<std::string> generatedJsonFiles = CFolderUtility::GetFileNamesInFolder(ASSETPATH ("Assets/Generated"), ".json"/*, "Level"*/);
 	for (auto& file : generatedJsonFiles) {
@@ -35,7 +35,7 @@ void ImGuiWindow::CLoadScene::OnEnable()
 }
 
 
-bool ImGuiWindow::CLoadScene::OnMainMenuGUI()
+bool IronWroughtImGui::CLoadScene::OnMainMenuGUI()
 {
 
 	std::string previewName;
@@ -77,11 +77,11 @@ bool ImGuiWindow::CLoadScene::OnMainMenuGUI()
 	return true;
 }
 
-void ImGuiWindow::CLoadScene::OnInspectorGUI()
+void IronWroughtImGui::CLoadScene::OnInspectorGUI()
 {
 }
 
-void ImGuiWindow::CLoadScene::OnDisable()
+void IronWroughtImGui::CLoadScene::OnDisable()
 {
 }
 
