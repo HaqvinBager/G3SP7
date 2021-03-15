@@ -78,7 +78,7 @@ void CEnvironmentLight::SetPosition(DirectX::SimpleMath::Vector3 aPosition)
 
 DirectX::SimpleMath::Matrix CEnvironmentLight::GetShadowView() const
 {
-	return DirectX::XMMatrixLookAtLH(myPosition, myDirection, Vector3::Up);
+	return DirectX::XMMatrixLookAtLH(/*myPosition*/GetShadowPosition(), myDirection, Vector3::Up);
 }
 
 DirectX::SimpleMath::Matrix CEnvironmentLight::GetShadowProjection() const

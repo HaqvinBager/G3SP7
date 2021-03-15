@@ -345,8 +345,9 @@ void CDeferredRenderer::Render(CCameraComponent* aCamera, CEnvironmentLight* anE
 	myLightBufferData.myDirectionalLightDirection = anEnvironmentLight->GetDirection();
 	myLightBufferData.myDirectionalLightColor = anEnvironmentLight->GetColor();
 	myLightBufferData.myDirectionalLightPosition = anEnvironmentLight->GetShadowPosition();
-	myLightBufferData.myDirectionalLightTransform = anEnvironmentLight->GetShadowTransform();
-	myLightBufferData.myDirectionalLightView = anEnvironmentLight->GetShadowProjection();
+	myLightBufferData.myDirectionalLightTransform = anEnvironmentLight->GetShadowTransform(); // used as transform in shader
+	myLightBufferData.myToDirectionalLightView = anEnvironmentLight->GetShadowView();
+	myLightBufferData.myToDirectionalLightProjection = anEnvironmentLight->GetShadowProjection();
 	BindBuffer(myLightBuffer, myLightBufferData, "Light Buffer");
 	myContext->PSSetConstantBuffers(2, 1, &myLightBuffer);
 
@@ -437,15 +438,14 @@ void CDeferredRenderer::RenderVolumetricLight(CCameraComponent* aCamera, CEnviro
 	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
 
 	myContext->PSSetConstantBuffers(0, 1, &myFrameBuffer);
-	//ID3D11ShaderResourceView* environmentLightShaderResource = *anEnvironmentLight->GetCubeMap();
-	//myContext->PSSetShaderResources(0, 1, &environmentLightShaderResource);
 
 	// Update lightbufferdata and fill lightbuffer
 	myLightBufferData.myDirectionalLightDirection = anEnvironmentLight->GetDirection();
 	myLightBufferData.myDirectionalLightColor = anEnvironmentLight->GetColor();
 	myLightBufferData.myDirectionalLightPosition = anEnvironmentLight->GetShadowPosition();
-	myLightBufferData.myDirectionalLightTransform = anEnvironmentLight->GetShadowTransform(); // Actual view
-	myLightBufferData.myDirectionalLightView = anEnvironmentLight->GetShadowProjection(); // Actual projection
+	myLightBufferData.myDirectionalLightTransform = anEnvironmentLight->GetShadowTransform()/*GetShadowView()*/;
+	myLightBufferData.myToDirectionalLightView = anEnvironmentLight->GetShadowView();
+	myLightBufferData.myToDirectionalLightProjection = anEnvironmentLight->GetShadowProjection(); // Actual projection
 	BindBuffer(myLightBuffer, myLightBufferData, "Light Buffer");
 	myContext->PSSetConstantBuffers(1, 1, &myLightBuffer);
 

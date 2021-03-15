@@ -88,8 +88,8 @@ PixelOutput main(VertexToPixel input)
     // ACES
     {
         float3 whitePoint = 100.0f;
-        float exposure = 1.5f;
-        returnValue.myColor.rgb = ACESFitted(resource * exposure) / ACESFitted(whitePoint);
+        float exposure = 3.0f;
+        returnValue.myColor.rgb = ACESFitted(resource/* * exposure*/)/* / ACESFitted(whitePoint)*/;
     }
     // ACES
     

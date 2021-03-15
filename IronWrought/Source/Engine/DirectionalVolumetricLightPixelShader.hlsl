@@ -6,7 +6,7 @@
 
 // RAYMARCHING
 #define TAU 0.0001
-#define PHI 10000000.0
+#define PHI 1000000.0/*10000000.0*/
 
 #define PI_RCP 0.31830988618379067153776752674503
 
@@ -21,6 +21,7 @@ cbuffer FrameBuffer : register(b0)
 
 cbuffer LightBuffer : register(b1)
 {
+    float4x4 directionalLightTransform;
     float4x4 toDirectionalLightView;
     float4x4 toDirectionalLightProjection;
     float4 directionalLightPosition; // For shadow calculations
@@ -50,29 +51,74 @@ float3 SampleShadowPos(float3 projectionPos)
 
     b *= oob;
 
-    return 1.0f;
+    //return 1.0f;
     
-    //if (b - a < 0.001f)
-    //{
-    //    return 0.0f;
-    //}
-    //else
-    //{
-    //    return 1.0f;
-    //}
+    if (b - a < 0.001f)
+    {
+        return 0.0f;
+    }
+    else
+    {
+        return 1.0f;
+    }
 }
 
-void ExecuteRaymarching(float3 rayPositionLightVS, float3 invViewDirLightVS, float stepSize, float l, inout float3 VLI)
+float3 ShadowFactor(float3 worldPosition)
+{
+    worldPosition -= directionalLightPosition.xyz;
+    float4 viewPos = mul(worldPosition, directionalLightTransform);
+    float4 projectionPos = mul(viewPos, toDirectionalLightProjection);
+    float3 viewCoords = projectionPos.xyz;
+
+    float total = 0.0f;
+    for (float x = -1.0; x < 1.5f; x += 1.0f)
+    {
+        for (float y = -1.0; y < 1.5f; y += 1.0f)
+        {
+            //2048.0f * 4.0f,
+            float3 off;
+            off.x = x / (2048.0f * 4.0f);
+            off.y = y / (2048.0f * 4.0f);
+            off.z = 0.0f;
+            total += SampleShadowPos(viewCoords + off);
+        }
+    }
+    total /= 9.0f;
+    return total;
+}
+
+//float4 PixelShader_WorldPosition(float2 uv)
+//{
+//    // Depth sampling
+//    float z = depthTexture.Sample(defaultSampler, uv).r;
+//    float x = uv.x * 2.0f - 1;
+//    float y = (1 - uv.y) * 2.0f - 1;
+//    float4 projectedPos = float4(x, y, z, 1.0f);
+//    float4 viewSpacePos = mul(toCameraFromProjection, projectedPos);
+//    viewSpacePos /= viewSpacePos.w;
+//    float4 worldPos = mul(toWorldFromCamera, viewSpacePos);
+
+//    worldPos.a = 1.0f;
+//    return worldPos;
+//}
+
+void ExecuteRaymarching(float4 vertexpos, inout float3 rayPositionLightVS, float3 invViewDirLightVS, float stepSize, float l, inout float3 VLI)
 {
     rayPositionLightVS.xyz += stepSize * invViewDirLightVS.xyz;
 
     // ... take rayPositionLightVS into clip/projection space to get rayPositionLightPS
-    //float4 rayPositionLightPS = mul(rayPositionLightVS, toDirectionalLightProjection); // check this, unsure of order
-    float4 rayPositionLightPS = mul(toDirectionalLightProjection, rayPositionLightVS); // check this, unsure of order
+    float4 rayPositionLightPS = mul(rayPositionLightVS, toDirectionalLightProjection); // check this, unsure of order
+    //float4 rayPositionLightPS = mul(toDirectionalLightProjection, rayPositionLightVS); // check this, unsure of order
     
     // Fetch whether the current position on the ray is visible from the light's perspective - or not
     //float3 shadowTerm = getShadowTerm(shadowMapSampler, shadowMapSamplerState, rayPositionLightSS.xyz).xxx;
-    float3 shadowTerm = SampleShadowPos(rayPositionLightPS.xyz).xxx;
+    
+    // MAKE THE EQUIVALENT OF WHAT HAPPENS WHEN SHADOW SAMPLING FOR ENVIRONMENTLIGHT, GET WORLDPOS FROM VERTEX INPUT
+    
+    //float4 viewPos = mul(worldPosition, directionalLightTransform);
+    //float4 projectionPos = mul(viewPos, toDirectionalLightProjection);
+    //float3 viewCoords = projectionPos.xyz;
+    float3 shadowTerm = SampleShadowPos( /*viewCoords*/rayPositionLightPS.xyz).xxx;
     
     // Distance to the current position on the ray in light view-space, LIGHT VIEW SPACE MEANING IF LIGHT WAS A CAMERA, ITS VIEW SPACE
     float d = length(rayPositionLightVS.xyz);
@@ -95,12 +141,9 @@ PixelOutput main(VertexToPixel input)
     
     // ...
     float4 invViewDirLightVS = -toDirectionalLight;
-    //invViewDirLightVS = mul(toDirectionalLightView, invViewDirLightVS);
-    //float3 positionLightVS = mul(toDirectionalLightView, directionalLightPosition);
-    //float3 cameraPositionLightVS = mul(toDirectionalLightView, cameraPosition);
-    invViewDirLightVS = mul(invViewDirLightVS, toDirectionalLightView);
-    float3 positionLightVS = mul(directionalLightPosition, toDirectionalLightView);
-    float3 cameraPositionLightVS = mul(cameraPosition, toDirectionalLightView);
+    invViewDirLightVS = mul(toDirectionalLightView, invViewDirLightVS);
+    float3 positionLightVS = mul(toDirectionalLightView, directionalLightPosition);
+    float3 cameraPositionLightVS = mul(toDirectionalLightView, cameraPosition);
     
     // Reduce noisyness by truncating the starting position
     float raymarchDistance = trunc(clamp(length(cameraPositionLightVS.xyz - positionLightVS.xyz), 0.0f, raymarchDistanceLimit));
@@ -115,9 +158,10 @@ PixelOutput main(VertexToPixel input)
     // Start ray marching
     [loop] for (float l = raymarchDistance; l > stepSize; l -= stepSize)
     {
-        ExecuteRaymarching(rayPositionLightVS, invViewDirLightVS.xyz, stepSize, l, VLI);
+        ExecuteRaymarching(input.myPosition, rayPositionLightVS, invViewDirLightVS.xyz, stepSize, l, VLI);
     }
     
     output.myColor.rgb = directionalLightColor.rgb * VLI;
+    output.myColor.a = 1.0f;
     return output;
 }

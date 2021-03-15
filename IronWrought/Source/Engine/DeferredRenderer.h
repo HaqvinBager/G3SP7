@@ -61,7 +61,8 @@ private:
 	struct SLightBufferData 
 	{
 		DirectX::SimpleMath::Matrix myDirectionalLightTransform;
-		DirectX::SimpleMath::Matrix myDirectionalLightView;
+		DirectX::SimpleMath::Matrix myToDirectionalLightView;
+		DirectX::SimpleMath::Matrix myToDirectionalLightProjection;
 		DirectX::SimpleMath::Vector4 myDirectionalLightPosition;
 		DirectX::SimpleMath::Vector4 myDirectionalLightDirection;
 		DirectX::SimpleMath::Vector4 myDirectionalLightColor;
