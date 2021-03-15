@@ -6,21 +6,21 @@
 #include "Scene.h"
 #include <iostream>
 
-ImGuiWindow::CCameraSetting::CCameraSetting(const char* aName)
+IronWroughtImGui::CCameraSetting::CCameraSetting(const char* aName)
 	: CWindow(aName)
 	, myCameraSpeed(2.0f)
 {
 }
 
-ImGuiWindow::CCameraSetting::~CCameraSetting()
+IronWroughtImGui::CCameraSetting::~CCameraSetting()
 {
 }
 
-void ImGuiWindow::CCameraSetting::OnEnable()
+void IronWroughtImGui::CCameraSetting::OnEnable()
 {
 }
 
-void ImGuiWindow::CCameraSetting::OnInspectorGUI()
+void IronWroughtImGui::CCameraSetting::OnInspectorGUI()
 {
 	ImGui::Begin(Name(), Open());
 
@@ -44,6 +44,6 @@ void ImGuiWindow::CCameraSetting::OnInspectorGUI()
 	ImGui::End();
 }
 
-void ImGuiWindow::CCameraSetting::OnDisable()
+void IronWroughtImGui::CCameraSetting::OnDisable()
 {
 }

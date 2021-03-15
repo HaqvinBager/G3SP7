@@ -9,11 +9,11 @@ namespace physx
 	struct PxConstraintInfo;
 }
 
-class ContactReportCallback : public physx::PxSimulationEventCallback
+class CContactReportCallback : public physx::PxSimulationEventCallback
 {
 public:
-						ContactReportCallback() = default;
-						~ContactReportCallback() = default;
+						CContactReportCallback() = default;
+						~CContactReportCallback() = default;
 	void				onWake(physx::PxActor** actors, physx::PxU32 count) override;
 	void				onSleep(physx::PxActor** actors, physx::PxU32 count) override;
 	void				onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 count) override;

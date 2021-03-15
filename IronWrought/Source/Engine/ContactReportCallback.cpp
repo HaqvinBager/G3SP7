@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "ContactReportCallback.h"
 
-void ContactReportCallback::onWake(physx::PxActor** actors, physx::PxU32 count)
+void CContactReportCallback::onWake(physx::PxActor** actors, physx::PxU32 count)
 {
 	for (physx::PxU32 actorIndex = 0; actorIndex < count; actorIndex++)
 	{
@@ -10,7 +10,7 @@ void ContactReportCallback::onWake(physx::PxActor** actors, physx::PxU32 count)
 	}
 }
 
-void ContactReportCallback::onSleep(physx::PxActor** actors, physx::PxU32 count)
+void CContactReportCallback::onSleep(physx::PxActor** actors, physx::PxU32 count)
 {
 	for (physx::PxU32 actorIndex = 0; actorIndex < count; actorIndex++)
 	{
@@ -19,26 +19,26 @@ void ContactReportCallback::onSleep(physx::PxActor** actors, physx::PxU32 count)
 	}
 }
 
-void ContactReportCallback::onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 count)
+void CContactReportCallback::onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 count)
 {
 	(pairs);
 	(count);
 }
 
-void ContactReportCallback::onAdvance(const physx::PxRigidBody* const* bodyBuffer, const physx::PxTransform* poseBuffer, const physx::PxU32 count)
+void CContactReportCallback::onAdvance(const physx::PxRigidBody* const* bodyBuffer, const physx::PxTransform* poseBuffer, const physx::PxU32 count)
 {
 	(bodyBuffer);
 	(poseBuffer);
 	(count);
 }
 
-void ContactReportCallback::onConstraintBreak(physx::PxConstraintInfo* constraints, physx::PxU32 count)
+void CContactReportCallback::onConstraintBreak(physx::PxConstraintInfo* constraints, physx::PxU32 count)
 {
 	(constraints);
 	(count);
 }
 
-void ContactReportCallback::onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* /*pairs*/, physx::PxU32 /*nbPairs*/)
+void CContactReportCallback::onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* /*pairs*/, physx::PxU32 /*nbPairs*/)
 {
 	// Walls don't uses userData. Only feedback when hamsters collide
 	if (pairHeader.actors[0]->userData != nullptr && pairHeader.actors[1]->userData != nullptr)

@@ -19,6 +19,11 @@ CDecalRenderer::CDecalRenderer()
     , myIndexBuffer(nullptr)
 	, myVertexShader(nullptr)
 	, myPixelShader(nullptr)
+    
+    , myAlbedoPixelShader(nullptr)
+    , myNormalPixelShader(nullptr)
+    , myMaterialPixelShader(nullptr)
+    
     , mySamplerState(nullptr)
     , myInputLayout(nullptr)
     , myPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED)
@@ -134,6 +139,10 @@ bool CDecalRenderer::Init(CDirectXFramework* aFramework)
 	Graphics::CreateVertexShader("Shaders/DecalVertexShader.cso", aFramework, &myVertexShader, vsData);
 	Graphics::CreatePixelShader("Shaders/DecalPixelShader.cso", aFramework, &myPixelShader);
 
+	Graphics::CreatePixelShader("Shaders/Decal_AlbedoPixelShader.cso", aFramework, &myAlbedoPixelShader);
+	Graphics::CreatePixelShader("Shaders/Decal_NormalPixelShader.cso", aFramework, &myNormalPixelShader);
+	Graphics::CreatePixelShader("Shaders/Decal_MaterialPixelShader.cso", aFramework, &myMaterialPixelShader);
+
     //Sampler
     D3D11_SAMPLER_DESC samplerDesc = { };
     samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
@@ -206,7 +215,19 @@ void CDecalRenderer::Render(CCameraComponent* aCamera, std::vector<CGameObject*>
 		myContext->VSSetConstantBuffers(1, 1, &myObjectBuffer);
 		myContext->PSSetConstantBuffers(1, 1, &myObjectBuffer);
 		myContext->PSSetShaderResources(5, 3, &decalData.myMaterial[0]);
-		
+
+        //myContext->PSSetShader(myAlbedoPixelShader, nullptr, 0);
+        //myContext->DrawIndexed(myNumberOfIndices, 0, 0);
+        //CRenderManager::myNumberOfDrawCallsThisFrame++;
+        //
+        //myContext->PSSetShader(myNormalPixelShader, nullptr, 0);
+        //myContext->DrawIndexed(myNumberOfIndices, 0, 0);
+        //CRenderManager::myNumberOfDrawCallsThisFrame++;
+        //
+        //myContext->PSSetShader(myMaterialPixelShader, nullptr, 0);
+        //myContext->DrawIndexed(myNumberOfIndices, 0, 0);
+        //CRenderManager::myNumberOfDrawCallsThisFrame++;
+
 		myContext->DrawIndexed(myNumberOfIndices, 0, 0);
 		CRenderManager::myNumberOfDrawCallsThisFrame++;
 	}

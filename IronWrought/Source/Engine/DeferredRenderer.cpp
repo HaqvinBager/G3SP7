@@ -33,20 +33,30 @@ CDeferredRenderer::CDeferredRenderer()
 	, myAnimationVertexShader(nullptr)
 	, myVertexPaintModelVertexShader(nullptr)
 	, myPointLightVertexShader(nullptr)
+	, mySkyboxVertexShader(nullptr)
 	, myPointLightGeometryShader(nullptr)
 	, myEnvironmentLightShader(nullptr)
 	, myGBufferPixelShader(nullptr)
 	, myPointLightShader(nullptr)
 	, myVertexPaintPixelShader(nullptr)
+	, mySkyboxPixelShader(nullptr)
 	, mySamplerState(nullptr)
 	, myShadowSampler(nullptr)
 	, myCurrentGBufferPixelShader(nullptr)
 	, myRenderPassGBuffer(nullptr)
 	, myCurrentRenderPassShader(nullptr)
 	, myVertexPaintInputLayout(nullptr)
+	, myPointLightInputLayout(nullptr)
 	, myRenderPassIndex(9)
 	, myBoneBuffer(nullptr)
 	, myBoneBufferData()
+	, mySkyboxVertexBuffer(nullptr)
+	, mySkyboxIndexBuffer(nullptr)
+	, mySkyboxInputLayout(nullptr)
+	, mySkyboxNumberOfVertices(0)
+	, mySkyboxNumberOfIndices(0)
+	, mySkyboxStride(0)
+	, mySkyboxOffset(0)
 {}
 
 CDeferredRenderer::~CDeferredRenderer()
@@ -81,6 +91,9 @@ bool CDeferredRenderer::Init(CDirectXFramework* aFramework)
 	bufferDescription.ByteWidth = static_cast<UINT>(sizeof(SBoneBufferData) + (16 - (sizeof(SBoneBufferData) % 16)));
 	ENGINE_HR_BOOL_MESSAGE(device->CreateBuffer(&bufferDescription, nullptr, &myBoneBuffer), "Bone Buffer could not be created.");
 
+	bufferDescription.ByteWidth = sizeof(SSkyboxTransformData);
+	ENGINE_HR_BOOL_MESSAGE(device->CreateBuffer(&bufferDescription, nullptr, &mySkyboxTransformBuffer), "Skybox Transform Buffer could not be created.");
+
 	struct PointLightVertex
 	{
 		float x, y, z, w;
@@ -95,45 +108,6 @@ bool CDeferredRenderer::Init(CDirectXFramework* aFramework)
 	subVertexResourceData.pSysMem = vertex;
 
 	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateBuffer(&vertexBufferDesc, &subVertexResourceData, &myPointLightVertexBuffer), "Point Light Vertex Buffer could not be created.");
-
-	//std::ifstream vsFile;
-	//vsFile.open("Shaders/DeferredVertexShader.cso", std::ios::binary);
-	//std::string vsData = { std::istreambuf_iterator<char>(vsFile), std::istreambuf_iterator<char>() };
-	//ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateVertexShader(vsData.data(), vsData.size(), nullptr, &myFullscreenShader), "Fullscreen Vertex Shader could not be created.");
-	//vsFile.close();
-
-	//vsFile.open("Shaders/DeferredModelVertexShader.cso", std::ios::binary);
-	//vsData = { std::istreambuf_iterator<char>(vsFile), std::istreambuf_iterator<char>() };
-	//ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateVertexShader(vsData.data(), vsData.size(), nullptr, &myModelVertexShader), "Model Vertex Shader could not be created.");
-	//vsFile.close();
-
-	//vsFile.open("Shaders/DeferredAnimationVertexShader.cso", std::ios::binary);
-	//vsData = { std::istreambuf_iterator<char>(vsFile), std::istreambuf_iterator<char>() };
-	//ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateVertexShader(vsData.data(), vsData.size(), nullptr, &myAnimationVertexShader), "Animation Vertex Shader could not be created.");
-	//vsFile.close();
-
-	//vsFile.open("Shaders/DeferredInstancedModelVertexShader.cso", std::ios::binary);
-	//vsData = { std::istreambuf_iterator<char>(vsFile), std::istreambuf_iterator<char>() };
-	//ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateVertexShader(vsData.data(), vsData.size(), nullptr, &myInstancedModelVertexShader), "Instanced Model Vertex Shader could not be created.");
-	//vsFile.close();
-
-	//std::ifstream ps1File;
-	//ps1File.open("Shaders/GBufferPixelShader.cso", std::ios::binary);
-	//std::string psData = { std::istreambuf_iterator<char>(ps1File), std::istreambuf_iterator<char>() };
-	//ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreatePixelShader(psData.data(), psData.size(), nullptr, &myGBufferPixelShader), "GBuffer Pixel Shader could not be createed.");
-	//ps1File.close();
-
-	//std::ifstream ps2File;
-	//ps2File.open("Shaders/DeferredLightEnvironmentShader.cso", std::ios::binary);
-	//psData = { std::istreambuf_iterator<char>(ps2File), std::istreambuf_iterator<char>() };
-	//ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreatePixelShader(psData.data(), psData.size(), nullptr, &myEnvironmentLightShader), "Environment Pixel Shader could not be createed.");
-	//ps2File.close();
-
-	//std::ifstream ps3File;
-	//ps3File.open("Shaders/DeferredLightPointShader.cso", std::ios::binary);
-	//psData = { std::istreambuf_iterator<char>(ps3File), std::istreambuf_iterator<char>() };
-	//ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreatePixelShader(psData.data(), psData.size(), nullptr, &myPointLightShader), "Point Light Pixel Shader could not be createed.");
-	//ps3File.close();
 
 	std::string vsData;
 	Graphics::CreateVertexShader("Shaders/DeferredVertexShader.cso", aFramework, &myFullscreenShader, vsData);
@@ -186,6 +160,92 @@ bool CDeferredRenderer::Init(CDirectXFramework* aFramework)
 	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
 
 	ENGINE_HR_BOOL_MESSAGE(device->CreateSamplerState(&samplerDesc, &myShadowSampler), "Shadow Sampler could not be created.");
+
+#pragma region Skybox
+	// Skybox
+	struct SkyboxVertex
+	{
+		float x, y, z;
+	} vertices[24] = {
+		// X      Y      Z    
+		{ -0.5f, -0.5f, -0.5f },
+		{  0.5f, -0.5f, -0.5f },
+		{ -0.5f,  0.5f, -0.5f },
+		{  0.5f,  0.5f, -0.5f },
+		{ -0.5f, -0.5f,  0.5f },
+		{  0.5f, -0.5f,  0.5f },
+		{ -0.5f,  0.5f,  0.5f },
+		{  0.5f,  0.5f,  0.5f },
+		// X      Y      Z    
+		{ -0.5f, -0.5f, -0.5f },
+		{ -0.5f,  0.5f, -0.5f },
+		{ -0.5f, -0.5f,  0.5f },
+		{ -0.5f,  0.5f,  0.5f },
+		{  0.5f, -0.5f, -0.5f },
+		{  0.5f,  0.5f, -0.5f },
+		{  0.5f, -0.5f,  0.5f },
+		{  0.5f,  0.5f,  0.5f },
+		// X      Y      Z    
+		{ -0.5f, -0.5f, -0.5f },
+		{  0.5f, -0.5f, -0.5f },
+		{ -0.5f, -0.5f,  0.5f },
+		{  0.5f, -0.5f,  0.5f },
+		{ -0.5f,  0.5f, -0.5f },
+		{  0.5f,  0.5f, -0.5f },
+		{ -0.5f,  0.5f,  0.5f },
+		{  0.5f,  0.5f,  0.5f }
+	};
+	unsigned int indices[36] = {
+		0,2,1,
+		2,3,1,
+		4,5,7,
+		4,7,6,
+		8,10,9,
+		10,11,9,
+		12,13,15,
+		12,15,14,
+		16,17,18,
+		18,17,19,
+		20,23,21,
+		20,22,23
+	};
+
+	D3D11_BUFFER_DESC skyboxVertexBufferDesc = { 0 };
+	skyboxVertexBufferDesc.ByteWidth = sizeof(vertices);
+	skyboxVertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	skyboxVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
+	D3D11_SUBRESOURCE_DATA skyboxSubVertexResourceData = { 0 };
+	skyboxSubVertexResourceData.pSysMem = vertices;
+
+	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateBuffer(&skyboxVertexBufferDesc, &skyboxSubVertexResourceData, &mySkyboxVertexBuffer), "Skybox Vertex Buffer could not be created.");
+
+	D3D11_BUFFER_DESC skyboxIndexBufferDesc = { 0 };
+	skyboxIndexBufferDesc.ByteWidth = sizeof(indices);
+	skyboxIndexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	skyboxIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+
+	D3D11_SUBRESOURCE_DATA skyboxIndexSubresourceData = { 0 };
+	skyboxIndexSubresourceData.pSysMem = indices;
+
+	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateBuffer(&skyboxIndexBufferDesc, &skyboxIndexSubresourceData, &mySkyboxIndexBuffer), "Skybox Index Buffer could not be created.");
+
+	mySkyboxNumberOfVertices = static_cast<UINT>(sizeof(vertices) / sizeof(SkyboxVertex));
+	mySkyboxNumberOfIndices = static_cast<UINT>(sizeof(indices) / sizeof(UINT));
+	mySkyboxStride = sizeof(SkyboxVertex);
+	mySkyboxOffset = 0;
+
+	Graphics::CreateVertexShader("Shaders/SkyboxVertexShader.cso", aFramework, &mySkyboxVertexShader, vsData);
+	Graphics::CreatePixelShader("Shaders/SkyboxPixelShader.cso", aFramework, &mySkyboxPixelShader);
+
+	D3D11_INPUT_ELEMENT_DESC skyboxLayout[] =
+	{
+		{"POSITION"	,	0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+	};
+	ENGINE_HR_MESSAGE(aFramework->GetDevice()->CreateInputLayout(skyboxLayout, sizeof(skyboxLayout) / sizeof(D3D11_INPUT_ELEMENT_DESC), vsData.data(), vsData.size(), &mySkyboxInputLayout), "Skybox Input Layout could not be created.");
+
+	// Skybox
+#pragma endregion
 
 	return true;
 }
@@ -470,6 +530,51 @@ void CDeferredRenderer::Render(CCameraComponent* aCamera, std::vector<CPointLigh
 	}
 
 	myContext->GSSetShader(nullptr, nullptr, 0);
+}
+
+void CDeferredRenderer::RenderSkybox(CCameraComponent* aCamera, CEnvironmentLight* anEnvironmentLight)
+{
+	//SM::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
+	//myFrameBufferData.myCameraPosition = SM::Vector4{ cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f };
+	//myFrameBufferData.myToCameraSpace = cameraMatrix.Invert();
+	//myFrameBufferData.myToWorldFromCamera = cameraMatrix;
+	//myFrameBufferData.myToProjectionSpace = aCamera->GetProjection();
+	//myFrameBufferData.myToCameraFromProjection = aCamera->GetProjection().Invert();
+	//BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
+
+	mySkyboxTransformData.myCameraViewProjection = aCamera->GetViewMatrix() * aCamera->GetProjection();
+	mySkyboxTransformData.myCameraViewProjection = mySkyboxTransformData.myCameraViewProjection.Transpose();
+	BindBuffer(mySkyboxTransformBuffer, mySkyboxTransformData, "Skybox Transform Buffer");
+	myContext->VSSetConstantBuffers(0, 1, &mySkyboxTransformBuffer);
+	
+	ID3D11ShaderResourceView* environmentLightShaderResource = *anEnvironmentLight->GetCubeMap();
+	myContext->PSSetShaderResources(0, 1, &environmentLightShaderResource);
+
+	//// Update lightbufferdata and fill lightbuffer
+	//myLightBufferData.myDirectionalLightDirection = anEnvironmentLight->GetDirection();
+	//myLightBufferData.myDirectionalLightColor = anEnvironmentLight->GetColor();
+	//myLightBufferData.myDirectionalLightPosition = anEnvironmentLight->GetShadowPosition();
+	//myLightBufferData.myDirectionalLightTransform = anEnvironmentLight->GetShadowTransform();
+	//myLightBufferData.myDirectionalLightView = anEnvironmentLight->GetShadowView();
+	//BindBuffer(myLightBuffer, myLightBufferData, "Light Buffer");
+	//myContext->PSSetConstantBuffers(2, 1, &myLightBuffer);
+
+	// MAKE CUBE GEOMETRY
+
+	myContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	myContext->IASetInputLayout(mySkyboxInputLayout);
+	myContext->IASetVertexBuffers(0, 1, &mySkyboxVertexBuffer, &mySkyboxStride, &mySkyboxOffset);
+	myContext->IASetIndexBuffer(mySkyboxIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+
+	myContext->GSSetShader(nullptr, nullptr, 0);
+
+	myContext->VSSetShader(mySkyboxVertexShader, nullptr, 0);
+	myContext->PSSetShader(mySkyboxPixelShader, nullptr, 0);
+
+	myContext->PSSetSamplers(0, 1, &mySamplerState);
+
+	myContext->DrawIndexed(mySkyboxNumberOfIndices, 0, 0);
+	CRenderManager::myNumberOfDrawCallsThisFrame++;
 }
 
 bool CDeferredRenderer::LoadRenderPassPixelShaders(ID3D11Device* aDevice)

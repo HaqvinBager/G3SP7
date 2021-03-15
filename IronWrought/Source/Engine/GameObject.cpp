@@ -4,9 +4,10 @@
 #include "TransformComponent.h"
 #include "Behaviour.h"
 
-CGameObject::CGameObject(const int aInstanceID) : myInstanceID(aInstanceID)
+CGameObject::CGameObject(const int aInstanceID) 
+	: myInstanceID(aInstanceID)
+	, myIsStatic(false)
 {
-
 	myTransform = new CTransformComponent(*this);
 	myComponents.emplace_back(myTransform);
 	myIsActive = true;

@@ -103,6 +103,8 @@ void SVFXEffect::ResetParticles()
 
 void SVFXEffect::Enable()
 {
+	myIsEnabled = true;
+
 	for (unsigned int i = 0; i < myVFXBases.size(); ++i) {
 		myVFXDelays[i] = myVFXBaseDelays[i];
 		myVFXDurations[i] = myVFXBaseDurations[i];
@@ -116,6 +118,8 @@ void SVFXEffect::Enable()
 
 void SVFXEffect::Disable()
 {
+	myIsEnabled = false;
+
 	for (unsigned int i = 0; i < myVFXBases.size(); ++i) {
 		myVFXIsActive[i] = false;
 	}

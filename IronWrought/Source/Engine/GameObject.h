@@ -79,9 +79,13 @@ public:
 
 	const int InstanceID() const { return  myInstanceID; }
 
+	const bool IsStatic() const { return myIsStatic; }
+	void IsStatic(const bool aIsStatic) { myIsStatic = aIsStatic; }
+
 private:
 	std::vector<CComponent*> myComponents;
 	bool myIsActive;
+	bool myIsStatic;
 	const int myInstanceID;
 };
 

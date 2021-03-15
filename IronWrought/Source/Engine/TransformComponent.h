@@ -19,6 +19,7 @@ public:
 	void Rotation(DirectX::SimpleMath::Vector3 aRotation);
 	void Rotation(DirectX::SimpleMath::Quaternion aQuaternion);
 	DirectX::SimpleMath::Quaternion Rotation() const;
+	void CopyRotation(const DirectX::SimpleMath::Matrix& aTransform);
 
 	void Scale(DirectX::SimpleMath::Vector3 aScale);
 	void Scale(float aScale);
@@ -27,8 +28,10 @@ public:
 	DirectX::SimpleMath::Matrix& Transform();
 	DirectX::SimpleMath::Matrix GetWorldMatrix() const;
 	DirectX::SimpleMath::Matrix GetLocalMatrix() const;
+	void SetToOtherTransform(const DirectX::SimpleMath::Matrix& otherTransform);
 
 	void Transform(DirectX::SimpleMath::Vector3 aPosition, DirectX::SimpleMath::Vector3 aRotation);
+	CTransformComponent* GetParent();
 
 	void Move(DirectX::SimpleMath::Vector3 aMovement);
 	void MoveLocal(DirectX::SimpleMath::Vector3 aMovement);
@@ -49,7 +52,17 @@ public:
 	void SetParent(CTransformComponent* aParent);
 	void RemoveParent();
 
+public:
+	std::vector<CTransformComponent*> FetchChildren() { return myChildren; }
+
 private:
+
+
+	//NEEDS TO BE VERIFIED //AXel Savage 2021/03/09
+	void AddChild(CTransformComponent* aChild);
+	void RemoveChild(CTransformComponent* aChild);
+	//--------------------------------------------//
+
 	DirectX::SimpleMath::Vector3 myScale;
 	// TODO: Move speed into "Resource Component"
 	DirectX::SimpleMath::Matrix myLocalTransform;
@@ -65,6 +78,9 @@ private:
 	//DirectX::SimpleMath::Vector3 myWorldScale;
 
 	CTransformComponent* myParent;
+
+	//NEEDS TO BE VERIFIED //AXel Savage 2021/03/09
+	std::vector<CTransformComponent*> myChildren;
 	//float myScale;
 	//bool scalediff;
 };

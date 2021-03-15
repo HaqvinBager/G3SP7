@@ -23,6 +23,9 @@ public:
 	void Update() override;
 	float GetCameraMoveSpeed();
 	void SetCameraMoveSpeed(float aCameraMoveSpeed);
+	void SetCameraMode(const ECameraMode& aCameraMode) { myCameraMode = aCameraMode; }
+	const bool IsFreeCamMode() const { return (myCameraMode == ECameraMode::FreeCam); }
+
 public:
 	// Creates a camera and sets parent-child relationship with proper offsets.
 	static CGameObject* CreatePlayerFirstPersonCamera(CGameObject* aParentObject);
@@ -37,7 +40,9 @@ private:
 	float myCameraMoveSpeed;
 	CCameraComponent* myCamera;
 	DirectX::SimpleMath::Vector3 myOffset;
-
+#ifdef _DEBUG
+	Vector3 myPositionBeforeFreeCam;
+#endif
 	float myMouseRotationSpeed;
 	float myPitch;
 	float myYaw;

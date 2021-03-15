@@ -9,7 +9,7 @@ CRigidBodyComponent::CRigidBodyComponent(CGameObject& aParent, bool isStatic)
 	: CComponent(aParent)
 {
 	if (isStatic == false) {
-		myDynamicRigidBody = CEngine::GetInstance()->GetPhysx().CreateDynamicRigidbody(aParent.GetComponent<CTransformComponent>()->Position());
+		myDynamicRigidBody = CEngine::GetInstance()->GetPhysx().CreateDynamicRigidbody(aParent.GetComponent<CTransformComponent>()->Position(), aParent.InstanceID());
 	}
 	else {
 		myDynamicRigidBody = nullptr;
