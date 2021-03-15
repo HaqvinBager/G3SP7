@@ -2,9 +2,9 @@
 
 struct GBufferOutput
 {
-    float3 myAlbedo         : SV_TARGET0;
-    float3 myNormal         : SV_TARGET1;
-    float3 myVertexNormal   : SV_TARGET2;
+    float4 myAlbedo         : SV_TARGET0;
+    float4 myNormal         : SV_TARGET1;
+    float4 myVertexNormal   : SV_TARGET2;
     float4 myMetalRoughAOEm : SV_TARGET3;
 };
 
@@ -16,6 +16,7 @@ float4 PixelShader_Normal(float2 uv)
     normal.z = 0.0f;
     normal = (normal * 2.0f) - 1.0f; 
     normal.z = sqrt(1 - saturate((normal.x * normal.x) + (normal.y * normal.y)));
+    //normal = (normal * 0.5f) + 0.5f;
     normal = normalize(normal);
     
     float4 output;
@@ -45,27 +46,28 @@ GBufferOutput main(VertexToPixel input)
     float2 decalUV = objectPosition.xy + 0.5f;
     decalUV.y *= -1.0f;
     float4 color = colorTexture.Sample(defaultSampler, decalUV).rgba;
-    clip(color.a - alphaClipThreshold);
+    //clip(color.a - alphaClipThreshold);
     
-    output.myNormal = gBufferNormalTexture.Sample(defaultSampler, screenSpaceUV);
-    output.myVertexNormal = gBufferVertexNormalTexture.Sample(defaultSampler, screenSpaceUV);
-    output.myMetalRoughAOEm = gBufferMaterialTexture.Sample(defaultSampler, screenSpaceUV);
+    output.myNormal = float4(gBufferNormalTexture.Sample(defaultSampler, screenSpaceUV).rgb, color.a);
+    output.myVertexNormal = float4(gBufferVertexNormalTexture.Sample(defaultSampler, screenSpaceUV).rgb, color.a);
+    output.myMetalRoughAOEm = float4(gBufferMaterialTexture.Sample(defaultSampler, screenSpaceUV).rgb, color.a);
     
     float3 material = materialTexture.Sample(defaultSampler, decalUV).rgb;
     
     if (length(material))
     {
         float3 normal = PixelShader_Normal(decalUV);
+        normal.x = 0.0f;
         float3x3 tangentSpaceMatrix = float3x3(normalize(input.myTangent.xyz), normalize(input.myBitangent.xyz), normalize(input.myNormal.xyz));
         normal = mul(normal.xyz, tangentSpaceMatrix);
         normal = normalize(normal);
-        output.myNormal = normal;
+        output.myNormal = float4(normal.rgb, color.a);
 
         float ambientOcclusion = normalTexture.Sample(defaultSampler, decalUV).b;
         float metalness           = material.r;
         float perceptualRoughness = material.g;
-        float emissive            = material.b;
-        output.myMetalRoughAOEm = float4(metalness, perceptualRoughness, ambientOcclusion, emissive);
+        float emissive = material.b;
+        output.myMetalRoughAOEm = float4(metalness, perceptualRoughness, ambientOcclusion, /*emissive*/color.a);
     }
       
     output.myAlbedo = color;

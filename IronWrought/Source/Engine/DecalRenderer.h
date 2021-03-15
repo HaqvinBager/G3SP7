@@ -55,6 +55,11 @@ private:
 	ID3D11Buffer* myIndexBuffer;
 	ID3D11VertexShader* myVertexShader;
 	ID3D11PixelShader* myPixelShader;
+
+	ID3D11PixelShader* myAlbedoPixelShader;
+	ID3D11PixelShader* myNormalPixelShader;
+	ID3D11PixelShader* myMaterialPixelShader;
+
 	ID3D11SamplerState* mySamplerState;
 	ID3D11InputLayout* myInputLayout;
 	D3D11_PRIMITIVE_TOPOLOGY myPrimitiveTopology;
