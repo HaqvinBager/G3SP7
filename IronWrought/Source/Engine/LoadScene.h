@@ -1,7 +1,7 @@
 #pragma once
 #include "Window.h"
 
-namespace ImGuiWindow {
+namespace IronWroughtImGui {
 
 	class CLoadScene : public CWindow
 	{

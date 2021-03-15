@@ -5,7 +5,7 @@ struct GBufferOutput
     float4 myAlbedo         : SV_TARGET0;
     float4 myNormal         : SV_TARGET1;
     float4 myVertexNormal   : SV_TARGET2;
-    float4 myMetalRoughAOEm : SV_TARGET3;
+    float4 myMetalRoughEmAO : SV_TARGET3;
 };
 
 float4 PixelShader_Normal(float2 uv)
@@ -46,11 +46,11 @@ GBufferOutput main(VertexToPixel input)
     float2 decalUV = objectPosition.xy + 0.5f;
     decalUV.y *= -1.0f;
     float4 color = colorTexture.Sample(defaultSampler, decalUV).rgba;
-    //clip(color.a - alphaClipThreshold);
+    clip(color.a - alphaClipThreshold);
     
     output.myNormal = float4(gBufferNormalTexture.Sample(defaultSampler, screenSpaceUV).rgb, color.a);
     output.myVertexNormal = float4(gBufferVertexNormalTexture.Sample(defaultSampler, screenSpaceUV).rgb, color.a);
-    output.myMetalRoughAOEm = float4(gBufferMaterialTexture.Sample(defaultSampler, screenSpaceUV).rgb, color.a);
+    output.myMetalRoughEmAO = float4(gBufferMaterialTexture.Sample(defaultSampler, screenSpaceUV).rgb, color.a);
     
     float3 material = materialTexture.Sample(defaultSampler, decalUV).rgb;
     
@@ -63,11 +63,11 @@ GBufferOutput main(VertexToPixel input)
         normal = normalize(normal);
         output.myNormal = float4(normal.rgb, color.a);
 
-        float ambientOcclusion = normalTexture.Sample(defaultSampler, decalUV).b;
+        //float ambientOcclusion = normalTexture.Sample(defaultSampler, decalUV).b;
         float metalness           = material.r;
         float perceptualRoughness = material.g;
-        float emissive = material.b;
-        output.myMetalRoughAOEm = float4(metalness, perceptualRoughness, ambientOcclusion, /*emissive*/color.a);
+        float emissive            = material.b;
+        output.myMetalRoughEmAO = float4(metalness, perceptualRoughness, emissive, /*ambientOcclusion*/color.a);
     }
       
     output.myAlbedo = color;

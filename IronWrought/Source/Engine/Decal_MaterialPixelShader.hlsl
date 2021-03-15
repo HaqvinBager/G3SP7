@@ -28,5 +28,5 @@ float4 main(VertexToPixel input) : SV_TARGET3
     float emissive = material.b;
     float ambientOcclusion = normalTexture.Sample(defaultSampler, decalUV).b;
 	
-    return float4(metalness, perceptualRoughness, ambientOcclusion, alpha/*emissive*/);;
+    return float4(metalness, perceptualRoughness, emissive, alpha/*ambientOcclusion*/);;
 }

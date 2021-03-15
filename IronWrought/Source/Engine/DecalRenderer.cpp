@@ -190,7 +190,7 @@ void CDecalRenderer::Render(CCameraComponent* aCamera, std::vector<CGameObject*>
 	myContext->IASetPrimitiveTopology(myPrimitiveTopology);
 	myContext->IASetInputLayout(myInputLayout);
 	myContext->VSSetShader(myVertexShader, nullptr, 0);
-	//myContext->PSSetShader(myPixelShader, nullptr, 0);
+	myContext->PSSetShader(myPixelShader, nullptr, 0);
 	myContext->PSSetSamplers(0, 1, &mySamplerState);
 	myContext->IASetVertexBuffers(0, 1, &myVertexBuffer, &myStride, &myOffset);
 	myContext->IASetIndexBuffer(myIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
@@ -216,19 +216,19 @@ void CDecalRenderer::Render(CCameraComponent* aCamera, std::vector<CGameObject*>
 		myContext->PSSetConstantBuffers(1, 1, &myObjectBuffer);
 		myContext->PSSetShaderResources(5, 3, &decalData.myMaterial[0]);
 
-        myContext->PSSetShader(myAlbedoPixelShader, nullptr, 0);
-        myContext->DrawIndexed(myNumberOfIndices, 0, 0);
-        CRenderManager::myNumberOfDrawCallsThisFrame++;
-        
-        myContext->PSSetShader(myNormalPixelShader, nullptr, 0);
-        myContext->DrawIndexed(myNumberOfIndices, 0, 0);
-        CRenderManager::myNumberOfDrawCallsThisFrame++;
-        
-        myContext->PSSetShader(myMaterialPixelShader, nullptr, 0);
-        myContext->DrawIndexed(myNumberOfIndices, 0, 0);
-        CRenderManager::myNumberOfDrawCallsThisFrame++;
+        //myContext->PSSetShader(myAlbedoPixelShader, nullptr, 0);
+        //myContext->DrawIndexed(myNumberOfIndices, 0, 0);
+        //CRenderManager::myNumberOfDrawCallsThisFrame++;
+        //
+        //myContext->PSSetShader(myNormalPixelShader, nullptr, 0);
+        //myContext->DrawIndexed(myNumberOfIndices, 0, 0);
+        //CRenderManager::myNumberOfDrawCallsThisFrame++;
+        //
+        //myContext->PSSetShader(myMaterialPixelShader, nullptr, 0);
+        //myContext->DrawIndexed(myNumberOfIndices, 0, 0);
+        //CRenderManager::myNumberOfDrawCallsThisFrame++;
 
-		//myContext->DrawIndexed(myNumberOfIndices, 0, 0);
-		//CRenderManager::myNumberOfDrawCallsThisFrame++;
+		myContext->DrawIndexed(myNumberOfIndices, 0, 0);
+		CRenderManager::myNumberOfDrawCallsThisFrame++;
 	}
 }
