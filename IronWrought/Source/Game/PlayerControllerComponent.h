@@ -8,7 +8,7 @@ class CCameraControllerComponent;
 class CPlayerControllerComponent : public CComponent, public IInputObserver
 {
 public:
-	CPlayerControllerComponent(CGameObject& gameObject, const float aWalkSpeed = 0.008f, const float aCrouchSpeed = 0.004f);
+	CPlayerControllerComponent(CGameObject& gameObject, const float aWalkSpeed = 0.01f, const float aCrouchSpeed = 0.005f);
 	~CPlayerControllerComponent() override;
 
 	void Awake() override;
@@ -27,7 +27,7 @@ public:
 
 private:
 	CCharacterController* myController;
-	// A.k.a the players eyes :U
+	// A.k.a the players eyes :U // Shortcut to access for freecam toggle, Aki 12/3/2021
 	CCameraControllerComponent* myCamera;
 	//CGameObject* myFaceMesh;
 	Vector3 myMovement;

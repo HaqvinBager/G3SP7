@@ -54,7 +54,7 @@ void CInGameState::Awake(){}
 #include "TextFactory.h"
 #include "TextInstance.h"
 
-CGameObject* myVFX = nullptr;
+CGameObject* gVFX = nullptr;
 void TEMP_VFX(CScene* aScene);
 
 void CInGameState::Start()
@@ -291,6 +291,6 @@ void TEMP_VFX(CScene* aScene)
 	CGameObject* abilityObject = new CGameObject(id++);
 	abilityObject->AddComponent<CVFXSystemComponent>(*abilityObject, ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystem_ToLoad.json"));
 
-	myVFX = abilityObject;
+	gVFX = abilityObject;
 	aScene->AddInstance(abilityObject);
 }

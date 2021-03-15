@@ -6,14 +6,17 @@
 #include "CameraControllerComponent.h"
 #include "EnviromentLightComponent.h"
 #include "ModelComponent.h"
-#include <PlayerControllerComponent.h>
-//#include <PlayerControllerComponent.h>
+
 #include "JsonReader.h"
 #include "PointLightComponent.h"
 #include "DecalComponent.h"
 #include "Engine.h"
 #include "Scene.h"
 //#include <iostream>
+
+#include <PlayerControllerComponent.h>
+#include "animationLoader.h"
+#include "AnimationComponent.h"
 
 CSceneManager::CSceneManager()
 {
@@ -212,9 +215,12 @@ void CSceneManager::AddPlayer(CScene& aScene, const std::string& aJsonFileName)
 
 	CGameObject* camera = CCameraControllerComponent::CreatePlayerFirstPersonCamera(player);//new CGameObject(96);
 	CGameObject* model = new CGameObject(88);
-	model->AddComponent<CModelComponent>(*model, ASSETPATH("Assets/Graphics/Character/Main_Character/CH_PL_SK_alt.fbx"));
+	std::string modelPath = ASSETPATH("Assets/Graphics/Character/Main_Character/CH_PL_SK.fbx");
+	model->AddComponent<CModelComponent>(*model, modelPath);
 	model->myTransform->SetParent(camera->myTransform);
 	model->myTransform->Rotation({ 0.0f, 0.0f, 0.0f });
+	CAnimationComponent* animComp = AnimationLoader::AddAnimationsToGameObject(model, modelPath);
+	animComp->BlendToAnimation(1);
 
 	player->AddComponent<CPlayerControllerComponent>(*player);// CPlayerControllerComponent constructor sets position of camera child object.
 	player->GetComponent<CPlayerControllerComponent>()->SetControllerPosition({ 0.f, 5.0f,0.0f });
