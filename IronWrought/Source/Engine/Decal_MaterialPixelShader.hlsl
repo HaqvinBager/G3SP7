@@ -20,7 +20,7 @@ float4 main(VertexToPixel input) : SV_TARGET3
     decalUV.y *= -1.0f;
 
     float alpha = colorTexture.Sample(defaultSampler, decalUV).a;
-    clip(alpha - alphaClipThreshold);
+    //clip(alpha - alphaClipThreshold);
     
     float3 material = materialTexture.Sample(defaultSampler, decalUV).rgb;
     float metalness = material.r;
@@ -28,5 +28,5 @@ float4 main(VertexToPixel input) : SV_TARGET3
     float emissive = material.b;
     float ambientOcclusion = normalTexture.Sample(defaultSampler, decalUV).b;
 	
-    return float4(metalness, perceptualRoughness, ambientOcclusion, emissive);;
+    return float4(metalness, perceptualRoughness, ambientOcclusion, alpha/*emissive*/);;
 }

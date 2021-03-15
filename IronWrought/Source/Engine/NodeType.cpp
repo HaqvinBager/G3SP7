@@ -58,6 +58,8 @@
 #include "NodeTypeListTest.h"
 #include "NodeTypeVFXPlayVFX.h"
 #include "NodeTypeVFXStopVFX.h"
+#include "NodeTypeAudioPlayResearcherEvent.h"
+#include "NodeTypeAudioPlaySFX.h"
 
 CNodeType* CNodeTypeCollector::myTypes[128];
 unsigned short CNodeTypeCollector::myTypeCounter = 0;
@@ -93,7 +95,8 @@ void CNodeTypeCollector::PopulateTypes()
 	RegisterType<CNodeTypeGameObjectGetPosition>("Get Object Position");
 	RegisterType<CNodeTypeGameObjectSetPosition>("Set Object Position");
 	RegisterType<CNodeTypeGameObjectMove>("Move Object");
-	RegisterType<CNodeTypeGameObjectMoveToPosition>("Move Object To Position");
+	// weird unresolved external error
+	//RegisterType<CNodeTypeGameObjectMoveToPosition>("Move Object To Position");
 	RegisterType<CNodeTypeGameObjectGetRotation>("Get Object Rotation");
 	RegisterType<CNodeTypeGameObjectSetRotation>("Set Object Rotation");
 	RegisterType<CNodeTypeGameObjectRotate>("Rotate Object");
@@ -115,6 +118,8 @@ void CNodeTypeCollector::PopulateTypes()
 	RegisterType<CNodeTypeListTest>("List Test");
 	RegisterType<CNodeTypeVFXPlayVFX>("Play VFX");
 	RegisterType<CNodeTypeVFXStopVFX>("Stop VFX");
+	RegisterType<CNodeTypeAudioPlayResearcherEvent>("Play Researcher Event");
+	RegisterType<CNodeTypeAudioPlaySFX>("Play SFX");
 }
 
 void CNodeTypeCollector::RegisterNewDataType(std::string aNodeName, unsigned int aType)

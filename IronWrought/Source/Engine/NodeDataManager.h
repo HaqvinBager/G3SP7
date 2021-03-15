@@ -10,7 +10,7 @@ public:
 		EBool,
 		EStart,
 		EVector3,
-		EList,
+		EStringList,
 		ECount
 	};
 

@@ -5,6 +5,8 @@
 #include "Engine.h"
 #include "Scene.h"
 #include <algorithm>
+#include "PlayerControllerComponent.h"
+#include "CharacterController.h"
 
 #define PI 3.14159265f
 
@@ -49,11 +51,11 @@ void CCameraControllerComponent::Update()
 
 	if (Input::GetInstance()->IsKeyPressed(/*std::toupper(myToggleFreeCam)*/myToggleFreeCam)) {
 		myCameraMode = myCameraMode == ECameraMode::FreeCam ? ECameraMode::PlayerFirstPerson : ECameraMode::FreeCam;
-
-		// TEMPORARY
-		//bool showCursor = CEngine::GetInstance()->GetWindowHandler()->CursorLocked();
-		//CEngine::GetInstance()->GetWindowHandler()->LockCursor(!showCursor);
-		// TEMPORARY
+		// So that the camera returns to the parent gameobject on return to ECameraMode::PlayerFirstPerson
+		if (myCameraMode == ECameraMode::FreeCam)
+			myPositionBeforeFreeCam = GameObject().myTransform->Position();
+		else
+			GameObject().myTransform->Position(myPositionBeforeFreeCam);
 	}
 #endif
 	if (myCameraMode == ECameraMode::MenuCam) {
@@ -65,12 +67,6 @@ void CCameraControllerComponent::Update()
 		UpdatePlayerFirstPerson();
 	}
 
-	// TEMP
-	if (Input::GetInstance()->IsKeyPressed(VK_SPACE))
-	{
-		CEngine::GetInstance()->GetPhysx().Raycast(GameObject().myTransform->Position(), GameObject().myTransform->Transform().Forward(), 50000.0f);
-	}
-	// ! TEMP
 }
 
 CGameObject* CCameraControllerComponent::CreatePlayerFirstPersonCamera(CGameObject* aParentObject)
@@ -79,8 +75,8 @@ CGameObject* CCameraControllerComponent::CreatePlayerFirstPersonCamera(CGameObje
 	camera->AddComponent<CCameraComponent>(*camera, 70.0f);
 	camera->AddComponent<CCameraControllerComponent>(*camera, 2.0f, ECameraMode::PlayerFirstPerson);
 	camera->myTransform->SetParent(aParentObject->myTransform);
-	camera->myTransform->Position({ 0.0f, 1.6f, -0.22f });
-	camera->myTransform->Rotation({ 0.0f, 0.0f, 0.0f });
+	camera->myTransform->Position({ 0.f,0.f,0.f });
+	camera->myTransform->Rotation({ 0.f,0.f,0.f });
 	return camera;
 }
 
@@ -109,6 +105,21 @@ void CCameraControllerComponent::UpdatePlayerFirstPerson()
 	myPitch = std::clamp(myPitch + (dy * myMouseRotationSpeed * dt), ToDegrees(-PI / 2.0f), ToDegrees(PI / 2.0f));
 
 	GameObject().myTransform->Rotation({ myPitch, myYaw, 0});
+	//GameObject().myTransform->GetParent()->Rotation({ 0, myYaw, 0 });
+	//GameObject().myTransform->GetParent()->CopyRotation(GameObject().myTransform->GetLocalMatrix());
+
+	//GameObject().myTransform->GetParent()->Transform(GameObject().myTransform->GetLocalMatrix());
+	//GameObject().myTransform->GetParent()->Transform().Forward(GameObject().myTransform->Transform().Forward());
+
+	//Vector3 translation;
+	//Vector3 scale;
+	//Quaternion quat;
+	//Matrix transform = GameObject().myTransform->Transform();
+	//transform.Decompose(scale, quat, translation);
+	//
+	//CPlayerControllerComponent* playerController = GameObject().myTransform->GetParent()->GameObject().GetComponent<CPlayerControllerComponent>();
+	//physx::PxRigidDynamic* actor = playerController->GetCharacterController()->GetController().getActor();
+	//actor->setGlobalPose({ actor->getGlobalPose().p, {quat.x, quat.y, quat.z, quat.w} });
 
 	if (CEngine::GetInstance()->GetWindowHandler()->CursorLocked()) {
 		auto screenDimensions = CEngine::GetInstance()->GetWindowHandler()->GetResolution();
