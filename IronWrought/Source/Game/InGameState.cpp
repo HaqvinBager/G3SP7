@@ -63,6 +63,7 @@ void CInGameState::Start()
 	CScene* scene = CSceneManager::CreateEmpty();
 	
 	TEMP_VFX(scene);
+	//TEMP_DecalTests(scene);
 
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);
@@ -89,15 +90,15 @@ void CInGameState::Update()
 			{
 				gVFX->GetComponent<CVFXSystemComponent>()->DisableEffect(0);
 			}
-			if (INPUT->IsKeyPressed('K'))
-			{
-				gVFX->GetComponent<CVFXSystemComponent>()->DisableEffect(1);
-				gVFX->GetComponent<CVFXSystemComponent>()->EnableEffect(1);
-			}
-			if (INPUT->IsKeyPressed('L'))
-			{
-				gVFX->GetComponent<CVFXSystemComponent>()->DisableEffect(1);
-			}
+			//if (INPUT->IsKeyPressed('K'))
+			//{
+			//	gVFX->GetComponent<CVFXSystemComponent>()->DisableEffect(1);
+			//	gVFX->GetComponent<CVFXSystemComponent>()->EnableEffect(1);
+			//}
+			//if (INPUT->IsKeyPressed('L'))
+			//{
+			//	gVFX->GetComponent<CVFXSystemComponent>()->DisableEffect(1);
+			//}
 		}
 	}
 
@@ -257,17 +258,17 @@ void CInGameState::TEMP_DecalTests(CScene* aScene)
 	chest->myTransform->Rotation({ 0.0f,0,0.0f });
 	aScene->AddInstance(chest);
 
-	CGameObject* foliage = new CGameObject(13330);
-	foliage->AddComponent<CModelComponent>(*foliage, std::string(ASSETPATH("Assets/Graphics/Environmentprops/Static props/Foliage_test.fbx")));
-	foliage->GetComponent<CTransformComponent>()->Position({ 0.0f,0.0f,-1.0f });
-	foliage->myTransform->Rotation({ 0.0f,0,0.0f });
-	aScene->AddInstance(foliage);
+	//CGameObject* foliage = new CGameObject(13330);
+	//foliage->AddComponent<CModelComponent>(*foliage, std::string(ASSETPATH("Assets/Graphics/Environmentprops/Static props/Foliage_test.fbx")));
+	//foliage->GetComponent<CTransformComponent>()->Position({ 0.0f,0.0f,-1.0f });
+	//foliage->myTransform->Rotation({ 0.0f,0,0.0f });
+	//aScene->AddInstance(foliage);
 
 	CGameObject* decal = new CGameObject(20000);
-	decal->AddComponent<CDecalComponent>(*decal, "EN_DE_yellowline_2048x64");
+	decal->AddComponent<CDecalComponent>(*decal, "gradient");
 	decal->GetComponent<CDecalComponent>()->SetAlphaThreshold(0.3f);
 	decal->myTransform->Position({ 0.0f, 1.0f, 0.0f });
-	decal->myTransform->Scale({ 2.0f, 2.0f, 1.0f });
+	decal->myTransform->Scale({ 1.0f, 1.0f, 1.0f });
 	myDecal = decal;
 	aScene->AddInstance(decal);
 

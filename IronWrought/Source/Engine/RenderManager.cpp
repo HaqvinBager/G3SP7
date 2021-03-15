@@ -178,15 +178,15 @@ void CRenderManager::Render(CScene& aScene)
 	myDepthCopy.SetAsActiveTarget();
 	myIntermediateDepth.SetAsResourceOnSlot(0);
 	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_COPYDEPTH);
-	//myGBufferCopy.SetAsActiveTarget();
-	//myGBuffer.SetAllAsResources();
-	//myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_COPYGBUFFER);
+	myGBufferCopy.SetAsActiveTarget();
+	myGBuffer.SetAllAsResources();
+	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_COPYGBUFFER);
 
 	myRenderStateManager.SetDepthStencilState(CRenderStateManager::DepthStencilStates::DEPTHSTENCILSTATE_ONLYREAD);
 	//myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_GBUFFERALPHABLEND);
-	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_ALPHABLEND);
+	//myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_ALPHABLEND);
 	myGBuffer.SetAsActiveTarget(&myIntermediateDepth);
-	//myGBufferCopy.SetAllAsResources();
+	myGBufferCopy.SetAllAsResources();
 	myDepthCopy.SetAsResourceOnSlot(21);
 	myDecalRenderer.Render(maincamera, gameObjects);
 
@@ -203,6 +203,13 @@ void CRenderManager::Render(CScene& aScene)
 
 	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_DISABLE);
 	myDeferredLightingTexture.SetAsActiveTarget(&myIntermediateDepth);
+
+	// Skybox
+	myRenderStateManager.SetDepthStencilState(CRenderStateManager::DepthStencilStates::DEPTHSTENCILSTATE_DEPTHFIRST);
+	myRenderStateManager.SetRasterizerState(CRenderStateManager::RasterizerStates::RASTERIZERSTATE_FRONTFACECULLING);
+	myDeferredRenderer.RenderSkybox(maincamera, environmentlight);
+	myRenderStateManager.SetDepthStencilState(CRenderStateManager::DepthStencilStates::DEPTHSTENCILSTATE_DEFAULT);
+	myRenderStateManager.SetRasterizerState(CRenderStateManager::RasterizerStates::RASTERIZERSTATE_DEFAULT);
 
 	// Render Lines
 	const std::vector<CLineInstance*>& lineInstances = aScene.CullLineInstances();
@@ -237,13 +244,6 @@ void CRenderManager::Render(CScene& aScene)
 	myParticleRenderer.Render(maincamera, gameObjects);
 
 	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_DISABLE);
-
-	//// Skybox
-	//myRenderStateManager.SetDepthStencilState(CRenderStateManager::DepthStencilStates::DEPTHSTENCILSTATE_DEPTHFIRST);
-	//myRenderStateManager.SetRasterizerState(CRenderStateManager::RasterizerStates::RASTERIZERSTATE_FRONTFACECULLING);
-	//myDeferredRenderer.RenderSkybox(maincamera, environmentlight);
-	//myRenderStateManager.SetDepthStencilState(CRenderStateManager::DepthStencilStates::DEPTHSTENCILSTATE_DEFAULT);
-	//myRenderStateManager.SetRasterizerState(CRenderStateManager::RasterizerStates::RASTERIZERSTATE_DEFAULT);
 
 	// Bloom
 	myDoFullRender ? RenderBloom() : RenderWithoutBloom();
