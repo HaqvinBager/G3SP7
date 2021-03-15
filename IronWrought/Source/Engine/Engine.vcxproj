@@ -176,6 +176,7 @@
     <ClInclude Include="..\Includes\ImGui\Core\imstb_rectpack.h" />
     <ClInclude Include="..\Includes\ImGui\Core\imstb_textedit.h" />
     <ClInclude Include="..\Includes\ImGui\Core\imstb_truetype.h" />
+    <ClInclude Include="..\Includes\ImGui\Core\widget_curve.h" />
     <ClInclude Include="..\Includes\ImGui\NodeEditor\crude_json.h" />
     <ClInclude Include="..\Includes\ImGui\NodeEditor\imgui_bezier_math.h" />
     <ClInclude Include="..\Includes\ImGui\NodeEditor\imgui_canvas.h" />
@@ -192,6 +193,7 @@
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Behaviour.h" />
     <ClInclude Include="CameraSetting.h" />
+    <ClInclude Include="CCurveWindow.h" />
     <ClInclude Include="FlipACoinDecision.h" />
     <ClInclude Include="NodeDataManager.h" />
     <ClInclude Include="NodeTypeAudioPlayResearcherEvent.h" />
@@ -398,6 +400,7 @@
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="AudioChannel.cpp" />
     <ClCompile Include="AudioManager.cpp" />
+    <ClCompile Include="CCurveWindow.cpp" />
     <ClCompile Include="NodeTypeAudioPlayResearcherEvent.cpp" />
     <ClCompile Include="NodeTypeAudioPlayResearcherReactionExplosives.cpp" />
     <ClCompile Include="NodeTypeAudioPlayRobotPatrolling.cpp" />
