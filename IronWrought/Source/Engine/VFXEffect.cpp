@@ -32,6 +32,7 @@ void SVFXEffect::UpdateParticles(unsigned int anIndex, DirectX::SimpleMath::Vect
 	std::vector<unsigned int> indicesOfParticlesToRemove;
 	for (UINT i = 0; i < myParticleVertices[anIndex].size(); ++i)
 	{
+
 		float quotient = myParticleVertices[anIndex][i].myLifeTime / particleData.myParticleLifetime;
 
 		myParticleVertices[anIndex][i].myColor = Vector4::Lerp

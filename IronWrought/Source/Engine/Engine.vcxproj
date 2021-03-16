@@ -168,6 +168,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Includes\ImGui\Core\curve_v122.hpp" />
     <ClInclude Include="..\Includes\ImGui\Core\imconfig.h" />
     <ClInclude Include="..\Includes\ImGui\Core\imgui.h" />
     <ClInclude Include="..\Includes\ImGui\Core\imgui_impl_dx11.h" />

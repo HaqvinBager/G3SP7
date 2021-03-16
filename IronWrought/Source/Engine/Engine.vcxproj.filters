@@ -1393,6 +1393,9 @@
     <ClInclude Include="..\Includes\ImGui\Core\widget_curve.h">
       <Filter>Imgui\Widgets</Filter>
     </ClInclude>
+    <ClInclude Include="..\Includes\ImGui\Core\curve_v122.hpp">
+      <Filter>Imgui\Widgets</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">

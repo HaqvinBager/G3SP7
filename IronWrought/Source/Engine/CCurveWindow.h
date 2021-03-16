@@ -19,11 +19,7 @@ namespace IronWroughtImGui {
 		void OnDisable() override;
 
 	private:
-
-		std::unordered_map<std::string, float[4]> myValueMap;
-
-		//float myValues[4];
-
+		std::unordered_map<std::string, std::vector<ImVec2>> myPointsMap;
 	};
 }
 
