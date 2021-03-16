@@ -113,7 +113,7 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 	SMeshFilter meshFilter;
 	meshFilter.myIndexes = mesh->myIndexes;
 	meshFilter.myVertecies = vertexPositions;
-
+	mesh = nullptr;
 	for (unsigned int i = 0; i < numberOfMeshes; ++i)
 	{
 		mesh = loaderModel->myMeshes[i];
@@ -153,14 +153,19 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 		meshData[i].myVertexBuffer = vertexBuffer;
 		meshData[i].myIndexBuffer = indexBuffer;
 	}
-
+	bool modelHasBones = false;
 	//VertexShader
 	std::ifstream vsFile;
 #ifdef ALLOW_ANIMATIONS
 	if (mesh->myModel->myNumBones > 0)
+	{
+		modelHasBones = true;
 		vsFile.open("Shaders/AnimatedVertexShader.cso", std::ios::binary);
-	else 
+	}
+	else
+	{
 		vsFile.open("Shaders/VertexShader.cso", std::ios::binary);
+	}
 #else
 	vsFile.open("Shaders/VertexShader.cso", std::ios::binary);
 #endif
@@ -271,10 +276,9 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 	modelData.myDetailNormals[2] = detailNormal3;
 	modelData.myDetailNormals[3] = detailNormal4;
 
+
+	model->HasBones(modelHasBones);
 	model->Init(modelData);
-#ifdef ALLOW_ANIMATIONS
-	model->HasBones(mesh->myModel->myNumBones > 0);
-#endif
 
 	myModelMap.emplace(aFilePath, model);
 	return model;

@@ -18,76 +18,186 @@ void color4_to_float4(const aiColor4D* c, float f[4])
 }
 
 
+float LerpTest(float a, float b, float t)
+{
+	return (1.0f - t) * a + b * t;
+}
+
+float InvLerp(float a, float b, float v)
+{
+	return (v - a) / (b - a);
+}
+
+float Remap(float inMin, float inMax, float outMin, float outMax, float v)
+{
+	float t = InvLerp(inMin, inMax, v);
+	return LerpTest(outMin, outMax, t);
+}
+
+
+
 uint FindRotation(float AnimationTime, const aiNodeAnim* pNodeAnim)
 {
 	assert(pNodeAnim->mNumRotationKeys > 0);
 
-	for (uint i = 0; i < pNodeAnim->mNumRotationKeys - 1; i++)
+	for (uint i = 0; i < pNodeAnim->mNumRotationKeys; i++)
 	{
-		if (AnimationTime < (float)pNodeAnim->mRotationKeys[i + 1].mTime)
+		if (AnimationTime < (float)pNodeAnim->mRotationKeys[i].mTime)
 		{
 			return i;
 		}
 	}
+	assert(0);
+	return 0xFFFFFFFF;
+}
+
+
 // This is an 'ugly-fix'
 // In short: bypasses the error by returning the last working key
-	return pNodeAnim->mNumRotationKeys - 2;
+	//return pNodeAnim->mNumRotationKeys - 2;
 
-	//assert(0);
-	//return 0xFFFFFFFF;
-}
+using namespace Assimp;
+
+
 
 void CalcInterpolatedRotation(aiQuaternion& Out, float AnimationTime, const aiNodeAnim* pNodeAnim)
 {
-	// we need at least two values to interpolate...
+	// we need at least two values to interpolate.
 	if (pNodeAnim->mNumRotationKeys == 1)
 	{
 		Out = pNodeAnim->mRotationKeys[0].mValue;
 		return;
 	}
 
-	uint RotationIndex = FindRotation(AnimationTime, pNodeAnim);
-	uint NextRotationIndex = (RotationIndex + 1);
-	assert(NextRotationIndex < pNodeAnim->mNumRotationKeys);
-	float DeltaTime = static_cast<float>(pNodeAnim->mRotationKeys[NextRotationIndex].mTime - pNodeAnim->mRotationKeys[RotationIndex].mTime);
-	float Factor = (AnimationTime - (float)pNodeAnim->mRotationKeys[RotationIndex].mTime) / DeltaTime;
-// This if just stops the assert below it from triggering. SP6 animations had some anims with issues and this was faster than having SG debug their animations.
-	if (!(Factor >= 0.0f && Factor <= 1.0f))
-	{
-		Factor = 0.0f;
-	}
-// ! If, that stops the assert below it 
-	assert(Factor >= 0.0f && Factor <= 1.0f);
-	const aiQuaternion& StartRotationQ = pNodeAnim->mRotationKeys[RotationIndex].mValue;
-	const aiQuaternion& EndRotationQ = pNodeAnim->mRotationKeys[NextRotationIndex].mValue;
-	aiQuaternion::Interpolate(Out, StartRotationQ, EndRotationQ, Factor);
+
+
+	auto keys = GetRotationKeys(AnimationTime, pNodeAnim);
+	float factor = InvLerp(
+		static_cast<float>(pNodeAnim->mRotationKeys[keys.first].mTime),
+		static_cast<float>(pNodeAnim->mRotationKeys[keys.second].mTime),
+		AnimationTime);
+	assert(factor >= 0.0 && factor <= 1.0);
+	
+	Assimp::Interpolator<aiQuaternion>()(
+		Out,
+		pNodeAnim->mRotationKeys[keys.first].mValue, 
+		pNodeAnim->mRotationKeys[keys.second].mValue, 
+		factor);
+
 	Out = Out.Normalize();
+}
+
+std::pair<uint, uint> GetRotationKeys(const float anAnimationTime, const aiNodeAnim* pNodeAnim)
+{
+	
+	assert(pNodeAnim->mNumRotationKeys > 0 && "AnimationNode does not have any Rotation Keys");
+
+	std::pair<uint, uint> keys = {};
+	keys.first = pNodeAnim->mNumRotationKeys;
+	keys.second = pNodeAnim->mNumRotationKeys;
+
+	for (uint i = 1; i < pNodeAnim->mNumRotationKeys - 1; i++)
+	{
+		if (anAnimationTime < static_cast<float>(pNodeAnim->mRotationKeys[i].mTime) &&
+			anAnimationTime > static_cast<float>(pNodeAnim->mRotationKeys[i - 1].mTime))
+		{
+			keys.first = i - 1;
+			break;
+		}
+	}
+
+	keys.second = keys.first + 1;
+	if (keys.first >= pNodeAnim->mNumRotationKeys - 1) //The Key to the left of the current time is the last key. 
+	{
+		keys.first = 0;
+		keys.second = min(pNodeAnim->mNumRotationKeys - 1, keys.first + 1);
+	}
+
+	assert(keys.first < pNodeAnim->mNumRotationKeys);
+	assert(keys.second < pNodeAnim->mNumRotationKeys);
+	assert(keys.second >= keys.first);
+
+	return keys;
+
+	//switch (pNodeAnim->mPreState)
+	//{
+	//case aiAnimBehaviour::aiAnimBehaviour_DEFAULT: //This will Repeat the Animation!
+	//	{
+	//		if (keyStart >= pNodeAnim->mNumRotationKeys - 1) //The Key to the left of the current time is the last key. 
+	//		{
+	//			keyStart = 0;
+	//			keyEnd = min(pNodeAnim->mNumRotationKeys - 1, keyStart + 1);
+	//		}
+	//		else
+	//		{
+	//			keyEnd = keyStart + 1;
+	//		}
+	//	}
+	//	break;
+	//	//case aiAnimBehaviour::aiAnimBehaviour_CONSTANT: WIP
+	//	//case aiAnimBehaviour::aiAnimBehaviour_LINEAR: WIP
+	//	//case aiAnimBehaviour::aiAnimBehaviour_REPEAT: WIP	
+	//}
+}
+
+std::pair<uint, uint> GetTranslationKeys(const float anAnimationTime, const aiNodeAnim* pNodeAnim)
+{
+	assert(pNodeAnim->mNumRotationKeys > 0 && "AnimationNode does not have any Translation Keys");
+
+	std::pair<uint, uint> keys;
+	keys.first = pNodeAnim->mNumPositionKeys;
+	keys.second = pNodeAnim->mNumPositionKeys;
+
+	for (uint i = 0; i < pNodeAnim->mNumPositionKeys; i++)
+	{
+		if (anAnimationTime < static_cast<float>(pNodeAnim->mPositionKeys[i].mTime))
+		{
+			keys.first = i;
+			//break;
+		}
+	}
+
+	keys.second = keys.first + 1;
+
+	if (keys.first >= pNodeAnim->mNumPositionKeys - 1) //The Key to the left of the current time is the last key. 
+	{
+		keys.first = 0;
+		keys.second = min(pNodeAnim->mNumPositionKeys - 1, keys.first + 1);
+	}
+
+	assert(keys.first < pNodeAnim->mNumRotationKeys);
+	assert(keys.second < pNodeAnim->mNumRotationKeys);
+	assert(keys.second >= keys.first);
+
+	return keys;
 }
 
 uint FindScaling(float AnimationTime, const aiNodeAnim* pNodeAnim)
 {
 	assert(pNodeAnim->mNumScalingKeys > 0);
 
-	// 2021 02 02 Testing/ Figuring out animation speed
-	//for (uint i = 0; i < pNodeAnim->mNumScalingKeys - 1; i++)
-	//{
-	//	std::cout << (float)pNodeAnim->mScalingKeys[i + 1].mTime << std::endl;
-	//}
-
-	for (uint i = 0; i < pNodeAnim->mNumScalingKeys - 1; i++)
+	for (uint i = 0; i < pNodeAnim->mNumScalingKeys; i++)
 	{
-		if (AnimationTime < (float)pNodeAnim->mScalingKeys[i + 1].mTime)
+	/*	const double& keyFrameTime = pNodeAnim->mScalingKeys[i].mTime;
+		const double& maxKeyFrameTime = pNodeAnim->mScalingKeys[pNodeAnim->mNumScalingKeys - 1].mTime;
+		double keyFrameTimeModf = 0.0;
+		if (i > 343)
+			keyFrameTimeModf = fmod(AnimationTime, maxKeyFrameTime);*/
+
+	/*	keyFrameTime;
+		keyFrameTimeModf;*/
+		if (fmodf(AnimationTime, static_cast<float>(pNodeAnim->mScalingKeys[pNodeAnim->mNumScalingKeys - 1].mTime)) < static_cast<float>(pNodeAnim->mScalingKeys[i].mTime))
 		{
 			return i;
 		}
 	}
 
-// This is an 'ugly-fix'
-// In short: bypasses the error by returning the last working key
-	return pNodeAnim->mNumScalingKeys - 2;
-	
-	//assert(0);
-	//return 0xFFFFFFFF;
+	assert(0);
+	return 0xFFFFFFFF;
+	// This is an 'ugly-fix'
+	// In short: bypasses the error by returning the last working key
+		//return pNodeAnim->mNumScalingKeys - 2;
+
 }
 
 void CalcInterpolatedScaling(aiVector3D& Out, float AnimationTime, const aiNodeAnim* pNodeAnim)
@@ -104,12 +214,12 @@ void CalcInterpolatedScaling(aiVector3D& Out, float AnimationTime, const aiNodeA
 	assert(NextScalingIndex < pNodeAnim->mNumScalingKeys);
 	float DeltaTime = static_cast<float>(pNodeAnim->mScalingKeys[NextScalingIndex].mTime - pNodeAnim->mScalingKeys[ScalingIndex].mTime);
 	float Factor = (AnimationTime - (float)pNodeAnim->mScalingKeys[ScalingIndex].mTime) / DeltaTime;
-// This if just stops the assert below it from triggering. SP6 animations had some anims with issues and this was faster than having SG debug their animations.
+	// This if just stops the assert below it from triggering. SP6 animations had some anims with issues and this was faster than having SG debug their animations.
 	if (!(Factor >= 0.0f && Factor <= 1.0f))
 	{
 		Factor = 0.0f;
 	}
-// ! If, that stops the assert below it 
+	// ! If, that stops the assert below it 
 	assert(Factor >= 0.0f && Factor <= 1.0f);
 	const aiVector3D& StartScaling = pNodeAnim->mScalingKeys[ScalingIndex].mValue;
 	const aiVector3D& EndScaling = pNodeAnim->mScalingKeys[NextScalingIndex].mValue;
@@ -120,7 +230,7 @@ uint FindPosition(float AnimationTime, const aiNodeAnim* pNodeAnim)
 {
 	assert(pNodeAnim->mNumPositionKeys > 0);
 
- 	for (uint i = 0; i < pNodeAnim->mNumPositionKeys - 1; i++)
+	for (uint i = 0; i < pNodeAnim->mNumPositionKeys - 1; i++)
 	{
 		if (AnimationTime < (float)pNodeAnim->mPositionKeys[i + 1].mTime)
 		{
@@ -128,38 +238,62 @@ uint FindPosition(float AnimationTime, const aiNodeAnim* pNodeAnim)
 		}
 	}
 
-// This is an 'ugly-fix'
-// In short: bypasses the error by returning the last working key
+	// This is an 'ugly-fix'
+	// In short: bypasses the error by returning the last working key
 	return pNodeAnim->mNumPositionKeys - 2;
-	
+
 	//assert(0);
 	//return 0xFFFFFFFF;
 }
 
 void CalcInterpolatedPosition(aiVector3D& Out, float AnimationTime, const aiNodeAnim* pNodeAnim)
 {
-	// we need at least two values to interpolate...
+	// we need at least two values to interpolate.
 	if (pNodeAnim->mNumPositionKeys == 1)
 	{
 		Out = pNodeAnim->mPositionKeys[0].mValue;
 		return;
 	}
 
-	uint PositionIndex = FindPosition(AnimationTime, pNodeAnim);
-	uint NextPositionIndex = (PositionIndex + 1);
-	assert(NextPositionIndex < pNodeAnim->mNumPositionKeys);
-	float DeltaTime = static_cast<float>(pNodeAnim->mPositionKeys[NextPositionIndex].mTime - pNodeAnim->mPositionKeys[PositionIndex].mTime);
-	float Factor = (AnimationTime - (float)pNodeAnim->mPositionKeys[PositionIndex].mTime) / DeltaTime;
-// This if just stops the assert below it from triggering. SP6 animations had some anims with issues and this was faster than having SG debug their animations.
-	if (!(Factor >= 0.0f && Factor <= 1.0f))
-	{
-		Factor = 0.0f;
-	}
-// ! If, that stops the assert below it 
-	assert(Factor >= 0.0f && Factor <= 1.0f);
-	const aiVector3D& StartPosition = pNodeAnim->mPositionKeys[PositionIndex].mValue;
-	const aiVector3D& EndPosition = pNodeAnim->mPositionKeys[NextPositionIndex].mValue;
-	Out = StartPosition * (1 - Factor) + EndPosition * Factor;
+	auto keys = GetTranslationKeys(AnimationTime, pNodeAnim);
+	float factor = LerpTest(
+		static_cast<float>(pNodeAnim->mPositionKeys[keys.first].mTime),
+		static_cast<float>(pNodeAnim->mPositionKeys[keys.second].mTime),
+		AnimationTime);
+
+	assert(factor >= 0.0 && factor <= 1.0);
+
+	//Gotta Lerp the Positions more appropriately!
+	Assimp::Interpolator<aiVector3D>()(
+		Out,
+		pNodeAnim->mPositionKeys[keys.first].mValue,
+		pNodeAnim->mPositionKeys[keys.second].mValue,
+		factor);
+
+	Out = Out.Normalize();
+
+	//// we need at least two values to interpolate...
+	//if (pNodeAnim->mNumPositionKeys == 1)
+	//{
+	//	Out = pNodeAnim->mPositionKeys[0].mValue;
+	//	return;
+	//}
+
+	//uint PositionIndex = FindPosition(AnimationTime, pNodeAnim);
+	//uint NextPositionIndex = (PositionIndex + 1);
+	//assert(NextPositionIndex < pNodeAnim->mNumPositionKeys);
+	//float DeltaTime = static_cast<float>(pNodeAnim->mPositionKeys[NextPositionIndex].mTime - pNodeAnim->mPositionKeys[PositionIndex].mTime);
+	//float Factor = (AnimationTime - (float)pNodeAnim->mPositionKeys[PositionIndex].mTime) / DeltaTime;
+	//// This if just stops the assert below it from triggering. SP6 animations had some anims with issues and this was faster than having SG debug their animations.
+	//if (!(Factor >= 0.0f && Factor <= 1.0f))
+	//{
+	//	Factor = 0.0f;
+	//}
+	//// ! If, that stops the assert below it 
+	//assert(Factor >= 0.0f && Factor <= 1.0f);
+	//const aiVector3D& StartPosition = pNodeAnim->mPositionKeys[PositionIndex].mValue;
+	//const aiVector3D& EndPosition = pNodeAnim->mPositionKeys[NextPositionIndex].mValue;
+	//Out = StartPosition * (1 - Factor) + EndPosition * Factor;
 }
 
 const aiNodeAnim* FindNodeAnim(const aiAnimation* pAnimation, const std::string& nodeName)
@@ -173,6 +307,27 @@ const aiNodeAnim* FindNodeAnim(const aiAnimation* pAnimation, const std::string&
 	}
 	return NULL;
 }
+
+aiVector3D LerpScaling(float t, const aiNodeAnim* pNodeAnim0, const aiNodeAnim* pNodeAnim1)
+{
+	uint animationKey0 = FindScaling(t, pNodeAnim0);
+	uint animationKey1 = FindScaling(t, pNodeAnim1);
+
+	animationKey0;
+	animationKey1;
+
+
+
+
+
+
+
+	return aiVector3D();
+}
+//// we need at least two values to interpolate...
+//if (pNodeAnim0->mNumScalingKeys == 1)
+//	return pNodeAnim->mScalingKeys[0].mValue;
+//
 
 void InitM4FromM3(aiMatrix4x4& out, const aiMatrix3x3& in)
 {

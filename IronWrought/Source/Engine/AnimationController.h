@@ -15,7 +15,7 @@
 #define NUM_BONES_PER_VERTEX 4
 #define TEMP_FRAMES_PER_SECOND 24.0f//30.0f // Original was 25.0f
 
-#define ANIMATED_AT_FRAMES_PER_SECOND 24.0f//30.0f // Original was 25.0f
+#define ANIMATED_AT_FRAMES_PER_SECOND 30.0f//30.0f // Original was 25.0f
 
 #ifdef _DEBUG
 #define ANIMATION_SAFE_MODE
@@ -90,21 +90,24 @@ public:
 	bool InitFromScene(const aiScene* pScene);
 	void LoadBones(uint aMeshIndex, const aiMesh* aMesh);
 
-// Update functions
-	void ReadNodeHeirarchy( const aiScene* aScene, float anAnimationTime, const aiNode* aNode
-						   , const aiMatrix4x4& aParentTransform, int aStopAnimAtLevel);
+	// Update functions
+	void ReadNodeHeirarchy(const aiScene* aScene, float anAnimationTime, const aiNode* aNode
+		, const aiMatrix4x4& aParentTransform, int aStopAnimAtLevel);
 
-	void ReadNodeHeirarchy( const aiScene* aFromScene, const aiScene* aToScene, float anAnimationTimeFrom
-						   , float anAnimationTimeTo, const aiNode* aStartNodeFrom, const aiNode* aStartNodeTo
-						   , const aiMatrix4x4& aParentTransform, int aStopAnimAtLevel);
+	void ReadNodeHeirarchy(const aiScene* aFromScene, const aiScene* aToScene, float anAnimationTimeFrom
+		, float anAnimationTimeTo, const aiNode* aStartNodeFrom, const aiNode* aStartNodeTo
+		, const aiMatrix4x4& aParentTransform, int aStopAnimAtLevel);
+
+	void Curve(const aiVector3D& a, const aiVector3D& b, const aiVector3D c, float t);
+	void Curve(std::vector<aiVector3D>& abc, std::vector<const aiNodeAnim*>& pNodeAnims, float t);
 
 	void SetBoneTransforms(std::vector<aiMatrix4x4>& aTransformsVector);
 	void UpdateAnimationTimes();
-#ifdef _DEBUG
-	// Used for Debug
-	void UpdateAnimationTimeConstant(const float aStep = 1.0f);
-#endif
-// ! Update functions
+//#ifdef _DEBUG
+//	// Used for Debug
+//	void UpdateAnimationTimeConstant(const float aStep = 1.0f);
+//#endif
+	// ! Update functions
 
 	void BlendToAnimation(uint anAnimationIndex, bool anUpdateBoth = true, float aBlendDuration = 0.3f, bool aTemporary = false, float aTime = 0.0f);
 	bool SetBlendTime(float aTime);
@@ -125,6 +128,48 @@ public:
 	const float Animation1Duration();
 
 	void ResetAnimationTimeCurrent() { myAnimationTime1 = 0.0f; }
+
+
+	struct SerializedObject {
+		SerializedObject(CAnimationController& data)
+		{
+			myAnimationTime0 = &data.myAnimationTime0;
+			myAnimationTime1 = &data.myAnimationTime1;
+			myBlendingTime = data.myBlendingTime;
+			myBlendingTimeMul = data.myBlendingTimeMul;;
+			myPlayTime = data.myPlayTime;
+			myAnim0Index = data.myAnim0Index;
+			myAnim1Index = data.myAnim1Index;
+			myNumOfBones = data.myNumOfBones;
+			myUpdateBoth = data.myUpdateBoth;
+			myTemporary = data.myTemporary;
+			myRotation = data.myRotation;
+			myAnimations = data.myAnimations;
+			myGlobalInverseTransform = data.myGlobalInverseTransform;
+			myBoneMapping = data.myBoneMapping;
+			myEntries = data.myEntries;
+			myBoneInfo = data.myBoneInfo;
+			myMass = data.myMass;
+		}
+
+		float*								myAnimationTime0;
+		float*								myAnimationTime1;
+		float								myBlendingTime;
+		float								myBlendingTimeMul;
+		float								myPlayTime;
+		uint								myAnim0Index;
+		uint								myAnim1Index;
+		uint								myNumOfBones;
+		bool								myUpdateBoth;
+		bool								myTemporary;
+		aiVector3D							myRotation;
+		std::vector<const aiScene*>			myAnimations;
+		aiMatrix4x4							myGlobalInverseTransform;
+		std::map<std::string, uint>			myBoneMapping;
+		std::vector<MeshEntry>				myEntries;
+		std::vector<BoneInfoAnim>			myBoneInfo;
+		std::vector<VertexBoneDataAnim>		myMass;
+	};
 
 private:
 	bool AnimationIndexWithinRange(uint anIndex);
@@ -160,6 +205,7 @@ private:
 	std::vector<MeshEntry>				myEntries;
 	std::vector<BoneInfoAnim>			myBoneInfo;
 	std::vector<VertexBoneDataAnim>		myMass;
+	std::vector<std::string>			myAnimationClipNames;
 
 private:
 	float Lerp(float a, float b, float t)
@@ -178,8 +224,8 @@ private:
 		return Lerp(outMin, outMax, t);
 	}
 
-// No longer used 2021 02 01
-	// Takes ownership if myAnimations. I.e Importer has ownership if aiScene.
-	// Used for loading myAnimations. This is the FBX. Seems like an FBX can hold several animations?
-	//std::vector<Assimp::Importer*>		myImporters;
+	// No longer used 2021 02 01
+		// Takes ownership if myAnimations. I.e Importer has ownership if aiScene.
+		// Used for loading myAnimations. This is the FBX. Seems like an FBX can hold several animations?
+		//std::vector<Assimp::Importer*>		myImporters;
 };

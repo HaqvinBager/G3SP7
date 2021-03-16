@@ -726,7 +726,6 @@
     <ClCompile Include="NodeTypeAudioPlayResearcherReactionExplosives.cpp">
       <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
     </ClCompile>
-    <ClCompile Include="CAnimator.cpp" />
     <ClCompile Include="NodeTypeListTest.cpp" />
     <ClCompile Include="VFXEffect.cpp">
       <Filter>VFX</Filter>
@@ -736,6 +735,9 @@
     </ClCompile>
     <ClCompile Include="NodeTypeVFXStopVFX.cpp">
       <Filter>Imgui\Node Editor\Nodes\VFX</Filter>
+    </ClCompile>
+    <ClCompile Include="Animator.cpp">
+      <Filter>Imgui\Windows</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1351,7 +1353,6 @@
     <ClInclude Include="NodeTypeAudioPlayResearcherReactionExplosives.h">
       <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
     </ClInclude>
-    <ClInclude Include="CAnimator.h" />
     <ClInclude Include="NodeTypeListTest.h" />
     <ClInclude Include="VFXEffect.h">
       <Filter>VFX</Filter>
@@ -1361,6 +1362,9 @@
     </ClInclude>
     <ClInclude Include="NodeTypeVFXStopVFX.h">
       <Filter>Imgui\Node Editor\Nodes\VFX</Filter>
+    </ClInclude>
+    <ClInclude Include="Animator.h">
+      <Filter>Imgui\Windows</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

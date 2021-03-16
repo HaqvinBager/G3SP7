@@ -17,6 +17,9 @@ void set_float4(float f[4], float a, float b, float c, float d);
 void color4_to_float4(const aiColor4D* c, float f[4]);
 void Color4f(const aiColor4D* color);
 
+float LerpTest(float a, float b, float t);
+float InvLerp(float a, float b, float v);
+
 uint FindRotation(float AnimationTime, const aiNodeAnim* pNodeAnim);
 void CalcInterpolatedRotation(aiQuaternion& Out, float AnimationTime, const aiNodeAnim* pNodeAnim);
 uint FindScaling(float AnimationTime, const aiNodeAnim* pNodeAnim);
@@ -24,6 +27,14 @@ void CalcInterpolatedScaling(aiVector3D& Out, float AnimationTime, const aiNodeA
 uint FindPosition(float AnimationTime, const aiNodeAnim* pNodeAnim);
 void CalcInterpolatedPosition(aiVector3D& Out, float AnimationTime, const aiNodeAnim* pNodeAnim);
 const aiNodeAnim* FindNodeAnim(const aiAnimation* pAnimation, const std::string& nodeName);
+std::pair<uint, uint> GetRotationKeys(const float anAnimationTime, const aiNodeAnim* pNodeAnim);
+std::pair<uint, uint> GetTranslationKeys(const float anAnimationTime, const aiNodeAnim* pNodeAnim);
+
+
+
+
+
+aiVector3D LerpScaling(float t, const aiNodeAnim* pNodeAnim);
 
 void InitM4FromM3(aiMatrix4x4& out, const aiMatrix3x3& in);
 void InitIdentityM4(aiMatrix4x4& m);

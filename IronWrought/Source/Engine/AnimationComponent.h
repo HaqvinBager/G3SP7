@@ -43,6 +43,7 @@ public:
 	void BlendLerp(float aLerpValue);
 
 	void SetAnimationIndex(const int anAnimationIndex);
+	CAnimationController* GetController() { return myController; }
 
 public:
 	const float GetBlendLerp() const { return myAnimationBlend.myBlendLerp; }
