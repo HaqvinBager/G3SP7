@@ -32,6 +32,10 @@ struct SVFXEffect {
 	std::vector<float> myEmitterTimers;
 	std::vector<bool>  myEmitterShouldOrbit;
 	
+	std::vector<std::array<Vector2, 4>> myParticleSizeCurves;
+
+
+	
 	bool myIsEnabled;
 
 	std::vector<CVFXBase*>& GetVFXBases() { return myVFXBases; }

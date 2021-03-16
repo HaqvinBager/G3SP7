@@ -75,7 +75,25 @@
 					"Rotate Z per second": 0.0,
 					"Orbit": true,
 					"Delay": 0.2,
-					"Duration": 4.8
+					"Duration": 4.8,
+					"SizeCurve": [
+						{
+							"x" : 0.0,
+							"y" : 0.0
+						},
+						{
+							"x": 0.25,
+							"y": 0.75
+						},
+						{
+							"x": 0.75,
+							"y": 0.25
+						},
+						{
+							"x": 1.0,
+							"y": 1.0
+						}
+					] 
 				},
 				{
 					"Path": "Assets/Graphics/VFX/JSON/Data/ParticleData_PullStar.json",
@@ -91,7 +109,25 @@
 					"Rotate Z per second": 0.0,
 					"Orbit": true,
 					"Delay": 0.2,
-					"Duration": 4.8
+					"Duration": 4.8,
+					"SizeCurve": [
+						{
+							"x": 0.0,
+							"y": 0.0
+						},
+						{
+							"x": 0.25,
+							"y": 0.75
+						},
+						{
+							"x": 0.75,
+							"y": 0.25
+						},
+						{
+							"x": 1.0,
+							"y": 1.0
+						}
+					]
 				}
 			]
 		},
@@ -135,7 +171,25 @@
 					"Rotate Z per second": 0.0,
 					"Orbit": false,
 					"Delay": 0.0,
-					"Duration": 2.0
+					"Duration": 2.0,
+					"SizeCurve": [
+						{
+							"x": 0.0,
+							"y": 0.0
+						},
+						{
+							"x": 0.25,
+							"y": 0.75
+						},
+						{
+							"x": 0.75,
+							"y": 0.25
+						},
+						{
+							"x": 1.0,
+							"y": 1.0
+						}
+					]
 				}
 			]
 		}

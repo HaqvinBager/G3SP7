@@ -98,6 +98,7 @@ CVFXSystemComponent::CVFXSystemComponent(CGameObject& aParent, const std::string
 		effect->myEmitterBaseDelays.resize(size);
 		effect->myEmitterBaseDurations.resize(size);
 		effect->myEmitterTimers.resize(size, 0.0f);
+		effect->myParticleSizeCurves.resize(size);
 		for (unsigned int i = 0; i < doc["ParticleSystems"].Size(); ++i) {
 			particlePaths.emplace_back(ASSETPATH(doc["ParticleSystems"][i]["Path"].GetString()));
 
@@ -129,6 +130,18 @@ CVFXSystemComponent::CVFXSystemComponent(CGameObject& aParent, const std::string
 
 			effect->myEmitterBaseDelays[i] = doc["ParticleSystems"][i]["Delay"].GetFloat();
 			effect->myEmitterBaseDurations[i] = doc["ParticleSystems"][i]["Duration"].GetFloat();
+
+			if (doc["ParticleSystems"][i].HasMember("SizeCurve"))
+			{
+				const auto& sizeCurveArray = doc["ParticleSystems"][i]["SizeCurve"].GetArray();
+				unsigned int curveIndex = 0;
+				for (const auto& point : sizeCurveArray)
+				{
+					effect->myParticleSizeCurves[i][curveIndex].x = point["x"].GetFloat();
+					effect->myParticleSizeCurves[i][curveIndex].y = point["y"].GetFloat();
+					curveIndex++;
+				}
+			}
 		}
 
 		effect->myParticleEmitters = CParticleEmitterFactory::GetInstance()->GetParticleSet(particlePaths);

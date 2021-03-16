@@ -42,11 +42,18 @@ void SVFXEffect::UpdateParticles(unsigned int anIndex, DirectX::SimpleMath::Vect
 			quotient
 		);
 
+		Vector2 p1 = { 0.0f, 0.0f };//myParticleSizeCurves[anIndex][0];
+		Vector2 p2 = { 0.33f, 1.0f };//myParticleSizeCurves[anIndex][1];
+		Vector2 p3 = { 0.66f, 0.0f };//myParticleSizeCurves[anIndex][2];
+		Vector2 p4 = { 1.0f, 1.0f };//myParticleSizeCurves[anIndex][3];
+
+		float evalutedQuotientOnCatmullRomCurve = Vector2::CatmullRom(p1, p2, p3, p4, quotient).y;
+		//std::cout << evalutedQuotientOnCatmullRomCurve << std::endl;
 		myParticleVertices[anIndex][i].mySize = Vector2::Lerp
 		(
 			{ particleData.myParticleEndSize * aScale, particleData.myParticleEndSize * aScale },
 			{ particleData.myParticleStartSize * aScale, particleData.myParticleStartSize * aScale },
-			quotient
+			evalutedQuotientOnCatmullRomCurve
 		);
 
 		myParticleVertices[anIndex][i].myMovement = Vector4::Lerp

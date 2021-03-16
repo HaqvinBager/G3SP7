@@ -11,10 +11,10 @@ IronWroughtImGui::CCurveWindow::CCurveWindow(const char* aName)
 	std::fill_n(myValueMap["Speed"], 4, 0.0f);*/
 	
 	myPointsMap["First Curve"] = { ImVec2(0.0f, 0.0f), ImVec2(0.25f, 0.25f), ImVec2(0.75f, 0.75f), ImVec2(1.0f, 1.0f) };
-	myPointsMap["Second Curve"] = { ImVec2(0.0f, 0.0f), ImVec2(0.25f, 0.25f), ImVec2(0.75f, 0.75f), ImVec2(1.0f, 1.0f) };
-	myPointsMap["Third Curve"] = { ImVec2(0.0f, 0.0f), ImVec2(0.25f, 0.25f), ImVec2(0.75f, 0.75f), ImVec2(1.0f, 1.0f) };
-	myPointsMap["Fourth Curve"] = { ImVec2(0.0f, 0.0f), ImVec2(0.25f, 0.25f), ImVec2(0.75f, 0.75f), ImVec2(1.0f, 1.0f) };
-	myPointsMap["Fifth Curve"] = { ImVec2(0.0f, 0.0f), ImVec2(0.25f, 0.25f), ImVec2(0.75f, 0.75f), ImVec2(1.0f, 1.0f) };
+	//myPointsMap["Second Curve"] = { ImVec2(0.0f, 0.0f), ImVec2(0.25f, 0.25f), ImVec2(0.75f, 0.75f), ImVec2(1.0f, 1.0f) };
+	//myPointsMap["Third Curve"] = { ImVec2(0.0f, 0.0f), ImVec2(0.25f, 0.25f), ImVec2(0.75f, 0.75f), ImVec2(1.0f, 1.0f) };
+	//myPointsMap["Fourth Curve"] = { ImVec2(0.0f, 0.0f), ImVec2(0.25f, 0.25f), ImVec2(0.75f, 0.75f), ImVec2(1.0f, 1.0f) };
+	//myPointsMap["Fifth Curve"] = { ImVec2(0.0f, 0.0f), ImVec2(0.25f, 0.25f), ImVec2(0.75f, 0.75f), ImVec2(1.0f, 1.0f) };
 
 /* 1hr */	//Read all VFX Json Files 
 /* 1hr */		//Drop-Down Selector for choosing which VFX you want to edit
@@ -45,7 +45,7 @@ void IronWroughtImGui::CCurveWindow::OnInspectorGUI()
 
 	for (auto& keyValue : myPointsMap)
 	{
-		ImGui::Curve(keyValue.first.c_str(), { 200.0f, 150.0f }, static_cast<int>(keyValue.second.size()), keyValue.second.data());
+		ImGui::IronCurve(keyValue.first.c_str(), keyValue.second.data());
 	}
 	ImGui::End();
 }
