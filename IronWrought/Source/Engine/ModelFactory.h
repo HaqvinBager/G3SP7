@@ -15,8 +15,8 @@ public:
 	bool Init(CDirectXFramework* aFramework);
 	void ClearFactory();
 	
-	CModel* GetModel(std::string aFilePath);
-	CModel* GetInstancedModel(std::string aFilePath, int aNumberOfInstanced);	
+	CModel* GetModel(const std::string& aFilePath);
+	CModel* GetInstancedModel(const std::string& aFilePath, int aNumberOfInstanced);	
 	CModel* GetOutlineModelSubset();
 
 	std::vector<DirectX::SimpleMath::Vector3>& GetVertexPositions(const std::string& aFilePath);
@@ -45,8 +45,8 @@ private:
 	};
 
 private:
-	CModel* LoadModel(std::string aFilePath);
-	CModel* CreateInstancedModels(std::string aFilePath, int aNumberOfInstanced);
+	CModel* LoadModel(const std::string& aFilePath);
+	CModel* CreateInstancedModels(const std::string& aFilePath, int aNumberOfInstanced);
 	ID3D11ShaderResourceView* GetShaderResourceView(ID3D11Device* aDevice, std::string aTexturePath);
 
 private:

@@ -1,10 +1,10 @@
 #include "stdafx.h"
 #include "ModelComponent.h"
+
 #include "ModelFactory.h"
 #include "GameObject.h"
 #include "Model.h"
 #include "MaterialHandler.h"
-#include "Model.h"
 
 CModelComponent::CModelComponent(CGameObject& aParent, const std::string& aFBXPath) : CBehaviour(aParent) {
 	myModel = CModelFactory::GetInstance()->GetModel(aFBXPath);
@@ -73,6 +73,27 @@ const std::vector<std::string>& CModelComponent::VertexPaintMaterialNames() cons
 	return myVertexPaintMaterialNames;
 }
 
+bool CModelComponent::SetTints(std::vector<Vector3>& aVectorWithTints)
+{
+	assert(!aVectorWithTints.empty());
+	if (aVectorWithTints.empty())
+		return false;
+	myTints = std::move(aVectorWithTints);
+	//if (myTints.empty())
+	//	myTints.resize(aVectorWithTints.size());
+	//
+	//memcpy(&myTints, &aVectorWithTints, sizeof(Vector3) * aVectorWithTints.size());
+	//myTints;
+	return true;
+}
+
+const std::vector<Vector3>& CModelComponent::GetTints()
+{
+	if (myTints.empty())
+		myTints.resize(4);
+	return myTints;
+}
+
 void CModelComponent::Tint1(const Vector3& aTint)
 {
 	if(!myTints.empty())
@@ -126,6 +147,6 @@ Vector4 CModelComponent::Tint4() const
 void CModelComponent::HasTintMap(const bool aHasTintMap)
 {
 	if(aHasTintMap)
-		if(myTints.empty())
+		if (myTints.empty())
 			myTints.resize(4);
 }

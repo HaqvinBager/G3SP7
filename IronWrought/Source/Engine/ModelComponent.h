@@ -23,6 +23,9 @@ public:
 	void OnDisable() override;
 
 public:
+	bool SetTints(std::vector<Vector3>& aVectorWithTints);
+	const std::vector<Vector3>& GetTints();
+
 	void Tint1(const Vector3& aTint);
 	void Tint2(const Vector3& aTint);
 	void Tint3(const Vector3& aTint);

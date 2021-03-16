@@ -53,6 +53,7 @@ void CInGameState::Awake(){}
 #include "PointLightComponent.h"
 #include "PlayerControllerComponent.h"
 #include "Model.h"
+#include "ModelHelperFunctions.h"
 void CInGameState::Start()
 {
 	CJsonReader::Get()->Init();
@@ -86,6 +87,13 @@ void CInGameState::Start()
 	models[2]->Tint3({ 1.0f, 0.0f, 0.0f });
 	models[2]->Tint4({ 1.0f, 1.0f, 1.0f });
 
+	//CModelHelperFunctions::SaveTintsFromModelComponent(models[0]->GetComponent<CModelComponent>(), ASSETPATH("Assets/Graphics/TintModels/Pokeball/pokeball.fbx"), "Assets/TintedModels/Data/rgbw.json");
+	//CModelHelperFunctions::SaveTintsFromModelComponent(models[1]->GetComponent<CModelComponent>(), ASSETPATH("Assets/Graphics/TintModels/Pokeball/pokeball.fbx"), "Assets/TintedModels/Data/qck.json");
+	//CModelHelperFunctions::SaveTintsFromModelComponent(models[2]->GetComponent<CModelComponent>(), ASSETPATH("Assets/Graphics/TintModels/Pokeball/pokeball.fbx"), "Assets/TintedModels/Data/premier.json");
+	
+	CModelHelperFunctions::LoadTintsToModelComponent(models[0]->GetComponent<CModelComponent>(), "Assets/TintedModels/Data/rgbw.json");
+	CModelHelperFunctions::LoadTintsToModelComponent(models[1]->GetComponent<CModelComponent>(), "Assets/TintedModels/Data/qck.json");
+	CModelHelperFunctions::LoadTintsToModelComponent(models[2]->GetComponent<CModelComponent>(), "Assets/TintedModels/Data/premier.json");
 	//CGameObject* go = new CGameObject(123123);
 	//go->AddComponent<CModelComponent>(*go, ASSETPATH("Assets/Graphics/TintModels/Pokeball/pokeball.fbx"));
 	//scene->AddInstance(go);

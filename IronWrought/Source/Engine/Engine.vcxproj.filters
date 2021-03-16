@@ -712,6 +712,9 @@
     <ClCompile Include="NodeTypeGameObjectMoveToPosition.cpp">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClCompile>
+    <ClCompile Include="ModelHelperFunctions.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1305,6 +1308,9 @@
     </ClInclude>
     <ClInclude Include="NodeTypeGameObjectMoveToPosition.h">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelHelperFunctions.h">
+      <Filter>Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -193,6 +193,7 @@
     <ClInclude Include="Behaviour.h" />
     <ClInclude Include="CameraSetting.h" />
     <ClInclude Include="FlipACoinDecision.h" />
+    <ClInclude Include="ModelHelperFunctions.h" />
     <ClInclude Include="NodeDataManager.h" />
     <ClInclude Include="NodeTypeDecisionCoinFlip.h" />
     <ClInclude Include="NodeTypeGameObjectGetRotation.h" />
@@ -385,6 +386,7 @@
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="AudioChannel.cpp" />
     <ClCompile Include="AudioManager.cpp" />
+    <ClCompile Include="ModelHelperFunctions.cpp" />
     <ClCompile Include="NodeTypeGameObjectGetRotation.cpp" />
     <ClCompile Include="CameraSetting.cpp" />
     <ClCompile Include="FlipACoinDecision.cpp" />
