@@ -1,11 +1,11 @@
 #include "DeferredSamplingFunctions.hlsli"
 
 struct GBufferOutput
-{
-    float4 myWorldPosition  : SV_TARGET0;
-    float4 myAlbedo         : SV_TARGET1;
-    float4 myNormal         : SV_TARGET2;
-    float4 myVertexNormal   : SV_TARGET3;
+{    
+    float4 myAlbedo             : SV_TARGET0;
+    float4 myNormal             : SV_TARGET1;
+    float4 myVertexNormal       : SV_TARGET2;
+    float4 myMetalRoughEmAO     : SV_TARGET3;
 };
 
 GBufferOutput main(VertexPaintModelToPixel input)
@@ -56,14 +56,13 @@ GBufferOutput main(VertexPaintModelToPixel input)
     
     // Using 4 textures
     GBufferOutput output;
-    output.myWorldPosition = input.myWorldPosition;
     output.myAlbedo = float4(lerp(lerp(lerp(albedo, albedo2, vertexColors.r), albedo3, vertexColors.g), albedo4, vertexColors.b), 1.0f);
     output.myNormal = float4(lerp(lerp(lerp(normal, normal2, vertexColors.r), normal3, vertexColors.g), normal4, vertexColors.b), 1.0f);
     output.myVertexNormal = float4(input.myNormal.xyz, 1.0f);
     
-    output.myWorldPosition.w = lerp(lerp(lerp(metalness, metalness2, vertexColors.r), metalness3, vertexColors.g), metalness4, vertexColors.b);
-    output.myAlbedo.w = lerp(lerp(lerp(perceptualRoughness, perceptualRoughness2, vertexColors.r), perceptualRoughness3, vertexColors.g), perceptualRoughness4, vertexColors.b);
-    output.myNormal.w = lerp(lerp(lerp(ambientOcclusion, ambientOcclusion2, vertexColors.r), ambientOcclusion3, vertexColors.g), ambientOcclusion4, vertexColors.b);
-    output.myVertexNormal = lerp(lerp(lerp(emissive, emissive2, vertexColors.r), emissive3, vertexColors.g), emissive4, vertexColors.b);
+    output.myMetalRoughEmAO.r = lerp(lerp(lerp(metalness, metalness2, vertexColors.r), metalness3, vertexColors.g), metalness4, vertexColors.b);
+    output.myMetalRoughEmAO.g = lerp(lerp(lerp(perceptualRoughness, perceptualRoughness2, vertexColors.r), perceptualRoughness3, vertexColors.g), perceptualRoughness4, vertexColors.b);
+    output.myMetalRoughEmAO.b = lerp(lerp(lerp(emissive, emissive2, vertexColors.r), emissive3, vertexColors.g), emissive4, vertexColors.b);
+    output.myMetalRoughEmAO.a = lerp(lerp(lerp(ambientOcclusion, ambientOcclusion2, vertexColors.r), ambientOcclusion3, vertexColors.g), ambientOcclusion4, vertexColors.b);
     return output;
 }
