@@ -6,6 +6,7 @@ public:
 	SVertex();
 	SVertex(const Vector3 aVertexPosition);
 	void VertexPosition(const Vector3 aVertexPosition);
+	void VertexYPosition(const float aYPosition);
 	const Vector3 VertexPosition() const;
 	void VertexNormal(const Vector3 aVertexNormal);
 	const Vector3 VertexNormal() const;
@@ -34,11 +35,11 @@ public:
 	CTerrainMesh();
 	~CTerrainMesh();
 
-	void GenerateVertexNormals(const SFace aFace);
+	void GenerateVertexNormals(SFace& aFace);
 
 	std::vector<SVertex> Vertices();
 	void Vertices(std::vector<SVertex> someVertices);
-	const std::vector<SFace> Faces() const;
+	std::vector<SFace> Faces();
 	void Faces(const std::vector<SFace> someFaces);
 	const int MeshSize() const;
 	void MeshSize(const int aGridSize);

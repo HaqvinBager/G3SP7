@@ -35,6 +35,9 @@ void TEMP_DeferredRenderingTests(CScene* aScene);
 #include "VFXSystemComponent.h"
 #include "VFXMeshFactory.h"
 #include "ParticleEmitterFactory.h"
+#include "ModelFactory.h"
+#include "Model.h"
+#include "TerrainGenerator.h"
 
 CGameObject* gVFX = nullptr;
 void TEMP_VFX(CScene* aScene);
@@ -59,11 +62,22 @@ void CInGameState::Start()
 	scene->AddPXScene(CEngine::GetInstance()->GetPhysx().CreatePXScene());
 	
 	//TEMP_VFX(scene);
+	//CTerrainGenerator terrainGenerator;
+	//terrainGenerator.InitMeshes(16, 4);
+	//terrainGenerator.GenerateFiles();
 
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);
-
+	std::string path = "D:/Game Dev/Specialisering/G3SP7/IronWrought/Bin/test.obj";
+	//CModel* model = CModelFactory::GetInstance()->GetModel(path);
+	//model;
+	std::vector<CGameObject*> aTerrain;
+	aTerrain.push_back(new CGameObject(1337));
+	aTerrain.back()->AddComponent<CModelComponent>(*aTerrain.back(), path);
+	aTerrain.back()->myTransform->Scale(500);
+	CEngine::GetInstance()->GetActiveScene().AddInstances(aTerrain);
 	myExitLevel = false;
+
 }
 
 void CInGameState::Stop()

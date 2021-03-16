@@ -14,6 +14,11 @@ void SVertex::VertexPosition(const Vector3 aVertexPosition)
 	myVertexPosition = aVertexPosition;
 }
 
+void SVertex::VertexYPosition(const float aYPosition)
+{
+	myVertexPosition.y = aYPosition;
+}
+
 const Vector3 SVertex::VertexPosition() const
 {
 	return myVertexPosition;
@@ -22,6 +27,7 @@ const Vector3 SVertex::VertexPosition() const
 void SVertex::VertexNormal(const Vector3 aVertexNormal)
 {
 	myVertexNormal = aVertexNormal;
+	myVertexNormal.Normalize();
 }
 
 const Vector3 SVertex::VertexNormal() const
@@ -59,8 +65,22 @@ CTerrainMesh::~CTerrainMesh()
 	myFaces.clear();
 }
 
-void CTerrainMesh::GenerateVertexNormals(const SFace aFace)
+void CTerrainMesh::GenerateVertexNormals(SFace& aFace)
 {
+	Vector3 U = myVertices[aFace.GetIndeces()[2] - 1].VertexPosition();
+	U *= myVertices[aFace.GetIndeces()[1] - 1].VertexPosition();
+	Vector3 V = myVertices[aFace.GetIndeces()[2] - 1].VertexPosition();
+	V *= myVertices[aFace.GetIndeces()[0] - 1].VertexPosition();
+
+	Vector3 result = U.Cross(V);
+	result.Normalize();
+	result.x = fabs(result.x);
+	result.y = fabs(result.y);
+	result.z = fabs(result.z);
+
+	myVertices[aFace.GetIndeces()[0] - 1].VertexNormal(myVertices[aFace.GetIndeces()[2] - 1].VertexNormal() + result);
+	myVertices[aFace.GetIndeces()[1] - 1].VertexNormal(myVertices[aFace.GetIndeces()[2] - 1].VertexNormal() + result);
+	myVertices[aFace.GetIndeces()[2] - 1].VertexNormal(myVertices[aFace.GetIndeces()[2] - 1].VertexNormal() + result);
 }
 
 std::vector<SVertex> CTerrainMesh::Vertices()
@@ -73,7 +93,7 @@ void CTerrainMesh::Vertices(std::vector<SVertex> someVertices)
 	myVertices = someVertices;
 }
 
-const std::vector<SFace> CTerrainMesh::Faces() const
+std::vector<SFace> CTerrainMesh::Faces()
 {
 	return myFaces;
 }
