@@ -9,6 +9,7 @@
 #include <psapi.h>
 #include "JsonReader.h"
 #include "ImGuiWindows.h"
+#include "JumpSetting.h"
 
 //#pragma comment(lib, "psapi.lib")
 
@@ -56,6 +57,9 @@ CImguiManager::CImguiManager() : myGraphManagerIsFullscreen(false), myIsEnabled(
 
 	myWindows.emplace_back(std::make_unique<ImGuiWindow::CLoadScene>("Load Scene", true));
 	myWindows.emplace_back(std::make_unique <ImGuiWindow::CCameraSetting>("Camera Settings"));
+	myWindows.emplace_back(std::make_unique <ImGuiWindow::CJumpSetting>("Jump Settings"));
+
+
 }
 
 CImguiManager::~CImguiManager()

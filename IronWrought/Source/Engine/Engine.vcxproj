@@ -193,6 +193,7 @@
     <ClInclude Include="Behaviour.h" />
     <ClInclude Include="CameraSetting.h" />
     <ClInclude Include="FlipACoinDecision.h" />
+    <ClInclude Include="JumpSetting.h" />
     <ClInclude Include="NodeDataManager.h" />
     <ClInclude Include="NodeTypeAudioPlayResearcherEvent.h" />
     <ClInclude Include="NodeTypeAudioPlayResearcherReactionExplosives.h" />
@@ -398,6 +399,7 @@
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="AudioChannel.cpp" />
     <ClCompile Include="AudioManager.cpp" />
+    <ClCompile Include="JumpSetting.cpp" />
     <ClCompile Include="NodeTypeAudioPlayResearcherEvent.cpp" />
     <ClCompile Include="NodeTypeAudioPlayResearcherReactionExplosives.cpp" />
     <ClCompile Include="NodeTypeAudioPlayRobotPatrolling.cpp" />

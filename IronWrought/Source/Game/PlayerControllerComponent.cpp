@@ -12,17 +12,20 @@
 #include "Scene.h"
 #include "CameraControllerComponent.h"
 
-CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, const float aWalkSpeed, const float aCrouchSpeed)
+CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, const float aWalkSpeed, const float aCrouchSpeed, float aJumpHeight)
 	: CComponent(gameObject)
 	, mySpeed(aWalkSpeed)
 	, myIsCrouching(false)
 	, myWalkSpeed(aWalkSpeed)
 	, myCrouchSpeed(aCrouchSpeed)
+	, myJumpHeight(aJumpHeight)
 	, myCanJump(true)
 	, myHasJumped(false)
 	, myIsJumping(false)
 	, myMovement( Vector3(0.0f, -0.098f, 0.0f ))
 {
+	
+
 	INPUT_MAPPER->AddObserver(EInputEvent::MoveForward,		this);
 	INPUT_MAPPER->AddObserver(EInputEvent::MoveBackward,	this);
 	INPUT_MAPPER->AddObserver(EInputEvent::MoveLeft,		this);
@@ -64,7 +67,7 @@ void CPlayerControllerComponent::Update()
 	
 	if (myHasJumped == true)
 	{
-		myMovement.y = 0.025f;
+		myMovement.y = myJumpHeight;
 		myHasJumped = false;
 	}
 
@@ -132,6 +135,11 @@ void CPlayerControllerComponent::Move(Vector3 aDir)
 	{
 		myCanJump = true;
  	}
+}
+
+void CPlayerControllerComponent::SetPlayerJumpHeight(float aJumpHeight)
+{
+	myJumpHeight = aJumpHeight;
 }
 
 void CPlayerControllerComponent::SetControllerPosition(const Vector3& aPos)

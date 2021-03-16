@@ -8,7 +8,7 @@ class CCameraControllerComponent;
 class CPlayerControllerComponent : public CComponent, public IInputObserver
 {
 public:
-	CPlayerControllerComponent(CGameObject& gameObject, const float aWalkSpeed = 0.01f, const float aCrouchSpeed = 0.005f);
+	CPlayerControllerComponent(CGameObject& gameObject, const float aWalkSpeed = 0.01f, const float aCrouchSpeed = 0.005f, float aJumpHeight = 0.025f);
 	~CPlayerControllerComponent() override;
 
 	void Awake() override;
@@ -19,8 +19,11 @@ public:
 
 	void Move(Vector3 aDir);
 
+	void SetPlayerJumpHeight(float aJumpHeight);
+
 	//void AddFaceMesh(CGameObject* aGameObject);
 	void SetControllerPosition(const Vector3& aPos);
+
 	void Crouch();
 
 	CCharacterController* GetCharacterController();
@@ -40,6 +43,8 @@ private:
 	bool myIsCrouching;
 	const float myWalkSpeed;
 	const float myCrouchSpeed;
+
+	float myJumpHeight;
 
 	// 0.6f is player width from GDD
 	const float myColliderRadius = 0.6f * 0.5f;
