@@ -284,8 +284,8 @@ float3 ShadowFactor(float3 worldPosition)
         {
             //2048.0f * 4.0f,
             float3 off;
-            off.x = x / (2048.0f * 4.0f);
-            off.y = y / (2048.0f * 4.0f);
+            off.x = x / (512.0f/*2048.0f*/ /** 4.0f*/);
+            off.y = y / (512.0f/*2048.0f*/ /** 4.0f*/);
             off.z = 0.0f;
             total += SampleShadowPos(viewCoords + off);
         }

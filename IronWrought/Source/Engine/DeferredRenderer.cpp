@@ -345,7 +345,7 @@ void CDeferredRenderer::Render(CCameraComponent* aCamera, CEnvironmentLight* anE
 	myLightBufferData.myDirectionalLightDirection = anEnvironmentLight->GetDirection();
 	myLightBufferData.myDirectionalLightColor = anEnvironmentLight->GetColor();
 	myLightBufferData.myDirectionalLightPosition = anEnvironmentLight->GetShadowPosition();
-	myLightBufferData.myDirectionalLightTransform = anEnvironmentLight->GetShadowTransform(); // used as transform in shader
+	myLightBufferData.myDirectionalLightTransform = anEnvironmentLight->GetShadowTransform(); 
 	myLightBufferData.myToDirectionalLightView = anEnvironmentLight->GetShadowView();
 	myLightBufferData.myToDirectionalLightProjection = anEnvironmentLight->GetShadowProjection();
 	BindBuffer(myLightBuffer, myLightBufferData, "Light Buffer");

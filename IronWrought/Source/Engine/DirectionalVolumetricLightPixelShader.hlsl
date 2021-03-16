@@ -1,12 +1,12 @@
 #include "FullscreenShaderStructs.hlsli"
 #include "MathHelpers.hlsli"
 
-#define NUM_SAMPLES 128
-#define NUM_SAMPLES_RCP 0.0078125
+#define NUM_SAMPLES 128/*64*//*32*//*16*/
+#define NUM_SAMPLES_RCP 0.0078125/*0.015625*//*0.03125*//*0.0625*/
 
 // RAYMARCHING
 #define TAU 0.0001
-#define PHI 1000000.0/*10000000.0*/
+#define PHI 10000000.0
 
 #define PI_RCP 0.31830988618379067153776752674503
 
@@ -30,7 +30,23 @@ cbuffer LightBuffer : register(b1)
 }
 
 sampler shadowSampler : register(s1);
+Texture2D depthTexture : register(t21);
 Texture2D shadowDepthTexture : register(t22);
+
+float4 PixelShader_WorldPosition(float2 uv)
+{
+    // Depth sampling
+    float z = depthTexture.Sample(defaultSampler, uv).r;
+    float x = uv.x * 2.0f - 1;
+    float y = (1 - uv.y) * 2.0f - 1;
+    float4 projectedPos = float4(x, y, z, 1.0f);
+    float4 viewSpacePos = mul(toCameraFromProjection, projectedPos);
+    viewSpacePos /= viewSpacePos.w;
+    float4 worldPos = mul(toWorldFromCamera, viewSpacePos);
+
+    worldPos.a = 1.0f;
+    return worldPos;
+}
 
 float3 SampleShadowPos(float3 projectionPos)
 {
@@ -55,72 +71,27 @@ float3 SampleShadowPos(float3 projectionPos)
     
     if (b - a < 0.001f)
     {
-        return 0.0f;
+        return 1.0f;
     }
     else
     {
-        return 1.0f;
+        return 0.0f;
     }
 }
 
-float3 ShadowFactor(float3 worldPosition)
+float3 ShadowFactor(float3 viewPos)
 {
-    worldPosition -= directionalLightPosition.xyz;
-    float4 viewPos = mul(worldPosition, directionalLightTransform);
     float4 projectionPos = mul(viewPos, toDirectionalLightProjection);
-    float3 viewCoords = projectionPos.xyz;
-
-    float total = 0.0f;
-    for (float x = -1.0; x < 1.5f; x += 1.0f)
-    {
-        for (float y = -1.0; y < 1.5f; y += 1.0f)
-        {
-            //2048.0f * 4.0f,
-            float3 off;
-            off.x = x / (2048.0f * 4.0f);
-            off.y = y / (2048.0f * 4.0f);
-            off.z = 0.0f;
-            total += SampleShadowPos(viewCoords + off);
-        }
-    }
-    total /= 9.0f;
-    return total;
+    return SampleShadowPos(projectionPos.xyz);
 }
 
-//float4 PixelShader_WorldPosition(float2 uv)
-//{
-//    // Depth sampling
-//    float z = depthTexture.Sample(defaultSampler, uv).r;
-//    float x = uv.x * 2.0f - 1;
-//    float y = (1 - uv.y) * 2.0f - 1;
-//    float4 projectedPos = float4(x, y, z, 1.0f);
-//    float4 viewSpacePos = mul(toCameraFromProjection, projectedPos);
-//    viewSpacePos /= viewSpacePos.w;
-//    float4 worldPos = mul(toWorldFromCamera, viewSpacePos);
-
-//    worldPos.a = 1.0f;
-//    return worldPos;
-//}
-
-void ExecuteRaymarching(float4 vertexpos, inout float3 rayPositionLightVS, float3 invViewDirLightVS, float stepSize, float l, inout float3 VLI)
+void ExecuteRaymarching(inout float3 rayPositionLightVS, float3 invViewDirLightVS, float stepSize, float l, inout float3 VLI)
 {
     rayPositionLightVS.xyz += stepSize * invViewDirLightVS.xyz;
 
-    // ... take rayPositionLightVS into clip/projection space to get rayPositionLightPS
-    float4 rayPositionLightPS = mul(rayPositionLightVS, toDirectionalLightProjection); // check this, unsure of order
-    //float4 rayPositionLightPS = mul(toDirectionalLightProjection, rayPositionLightVS); // check this, unsure of order
+    float3 shadowTerm = ShadowFactor(rayPositionLightVS.xyz).xxx;
     
-    // Fetch whether the current position on the ray is visible from the light's perspective - or not
-    //float3 shadowTerm = getShadowTerm(shadowMapSampler, shadowMapSamplerState, rayPositionLightSS.xyz).xxx;
-    
-    // MAKE THE EQUIVALENT OF WHAT HAPPENS WHEN SHADOW SAMPLING FOR ENVIRONMENTLIGHT, GET WORLDPOS FROM VERTEX INPUT
-    
-    //float4 viewPos = mul(worldPosition, directionalLightTransform);
-    //float4 projectionPos = mul(viewPos, toDirectionalLightProjection);
-    //float3 viewCoords = projectionPos.xyz;
-    float3 shadowTerm = SampleShadowPos( /*viewCoords*/rayPositionLightPS.xyz).xxx;
-    
-    // Distance to the current position on the ray in light view-space, LIGHT VIEW SPACE MEANING IF LIGHT WAS A CAMERA, ITS VIEW SPACE
+    // Distance to the current position on the ray in light view-space
     float d = length(rayPositionLightVS.xyz);
     float dRcp = rcp(d); // reciprocal
     
@@ -140,13 +111,19 @@ PixelOutput main(VertexToPixel input)
     float raymarchDistanceLimit = 99999.0f;
     
     // ...
-    float4 invViewDirLightVS = -toDirectionalLight;
-    invViewDirLightVS = mul(toDirectionalLightView, invViewDirLightVS);
-    float3 positionLightVS = mul(toDirectionalLightView, directionalLightPosition);
-    float3 cameraPositionLightVS = mul(toDirectionalLightView, cameraPosition);
+    float3 worldPosition = PixelShader_WorldPosition(input.myUV).rgb;
+    float3 camPos = cameraPosition.xyz;
+    
+    worldPosition -= directionalLightPosition.xyz;
+    float3 positionLightVS = mul(worldPosition, directionalLightTransform);
+   
+    camPos -= directionalLightPosition.xyz;
+    float3 cameraPositionLightVS = mul(camPos, directionalLightTransform); // done
     
     // Reduce noisyness by truncating the starting position
-    float raymarchDistance = trunc(clamp(length(cameraPositionLightVS.xyz - positionLightVS.xyz), 0.0f, raymarchDistanceLimit));
+    //float raymarchDistance = trunc(clamp(length(cameraPositionLightVS.xyz - positionLightVS.xyz), 0.0f, raymarchDistanceLimit));
+    float4 invViewDirLightVS = float4(normalize(cameraPositionLightVS.xyz - positionLightVS.xyz), 0.0f);
+    float raymarchDistance = clamp(length(cameraPositionLightVS.xyz - positionLightVS.xyz), 0.0f, raymarchDistanceLimit);
     
     // Calculate the size of each step
     float stepSize = raymarchDistance * NUM_SAMPLES_RCP;
@@ -158,7 +135,7 @@ PixelOutput main(VertexToPixel input)
     // Start ray marching
     [loop] for (float l = raymarchDistance; l > stepSize; l -= stepSize)
     {
-        ExecuteRaymarching(input.myPosition, rayPositionLightVS, invViewDirLightVS.xyz, stepSize, l, VLI);
+        ExecuteRaymarching(rayPositionLightVS, invViewDirLightVS.xyz, stepSize, l, VLI);
     }
     
     output.myColor.rgb = directionalLightColor.rgb * VLI;

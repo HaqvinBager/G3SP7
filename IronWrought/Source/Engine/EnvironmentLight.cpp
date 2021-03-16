@@ -28,8 +28,8 @@ bool CEnvironmentLight::Init(CDirectXFramework* aFramework, std::string aFilePat
 
 	ENGINE_BOOL_POPUP((cubeDescription.MiscFlags & D3D11_RESOURCE_MISC_TEXTURECUBE), "Cubemap texture could not be read as a cubemap! Is loaded as a Texture2D instead of TextureCube.")
 
-	myShadowcastSize = { 32.0f, 32.0f };
-	myShadowTextureSize = { 2048.0f * 4.0f, 2048.0f * 4.0f };
+	myShadowcastSize = /*{ 32.0f, 32.0f }*/{64.0f, 64.0f};
+	myShadowTextureSize = { 2048.0f /** 4.0f*/, 2048.0f /** 4.0f*/ };
 
 	return true;
 }
