@@ -43,14 +43,14 @@ void CAnimationComponent::Start()
 
 void CAnimationComponent::Update()
 {
-	myController->Animation0Index(myAnimationBlend.myFirst);
-	myController->Animation1Index(myAnimationBlend.mySecond);
-	myController->SetBlendTime(myAnimationBlend.myBlendLerp);
+	//myController->Animation0Index(myAnimationBlend.myFirst);
+	//myController->Animation1Index(myAnimationBlend.mySecond);
+	//myController->SetBlendTime(myAnimationBlend.myBlendLerp);
 
-
+	myController->UpdateAnimationTimes();
+	UpdateBlended();
 
 #ifndef ANIMATION_DEBUG
-	UpdateBlended();
 #endif
 }
 
@@ -123,7 +123,7 @@ void CAnimationComponent::UpdateBlended()
 	//Calling SetBlendTime here causes AnimCtrl::myBlendTime to be used for lerping.
 	if(myShouldUseLerp)
 		myController->SetBlendTime(myAnimationBlend.myBlendLerp);
-
+	//
 	std::vector<aiMatrix4x4> trans;
 	myController->SetBoneTransforms(trans);
 	memmove(myBones.data(), &trans[0], (sizeof(float) * 16) * trans.size());//was memcpy

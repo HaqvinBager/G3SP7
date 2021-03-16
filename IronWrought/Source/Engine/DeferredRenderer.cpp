@@ -295,19 +295,19 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 		
 		if (gameObject->GetComponent<CAnimationComponent>() != nullptr) {
 			auto animationComponent = gameObject->GetComponent<CAnimationComponent>();
-			if (animationComponent->AllowAnimationRender())
-			{
+			//if (animationComponent->AllowAnimationRender())
+			//{
 				memcpy(myBoneBufferData.myBones, animationComponent->GetBones().data(), sizeof(Matrix) * 64);
 
 				BindBuffer(myBoneBuffer, myBoneBufferData, "Bone Buffer");
 
 				myContext->VSSetConstantBuffers(4, 1, &myBoneBuffer);
 				myContext->VSSetShader(myAnimationVertexShader, nullptr, 0);
-			}
-			else
-			{
-				myContext->VSSetShader(myModelVertexShader, nullptr, 0);
-			}
+			//}
+			//else
+			//{
+				//myContext->VSSetShader(myModelVertexShader, nullptr, 0);
+			//}
 		}
 		else
 		{

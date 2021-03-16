@@ -25,6 +25,9 @@ float LerpTest(float a, float b, float t)
 
 float InvLerp(float a, float b, float v)
 {
+	//if (v >= b)
+	//	return b;
+
 	return (v - a) / (b - a);
 }
 
@@ -68,8 +71,6 @@ void CalcInterpolatedRotation(aiQuaternion& Out, float AnimationTime, const aiNo
 		Out = pNodeAnim->mRotationKeys[0].mValue;
 		return;
 	}
-
-
 
 	auto keys = GetRotationKeys(AnimationTime, pNodeAnim);
 	float factor = InvLerp(

@@ -110,11 +110,10 @@
     <ClCompile Include="PlayerControllerComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-<<<<<<< HEAD
     <ClCompile Include="GameWorldState.cpp">
-=======
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="CharacterControllerComponent.cpp">
->>>>>>> master
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

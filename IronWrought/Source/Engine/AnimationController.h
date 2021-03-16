@@ -103,6 +103,8 @@ public:
 
 	void SetBoneTransforms(std::vector<aiMatrix4x4>& aTransformsVector);
 	void UpdateAnimationTimes();
+
+	
 //#ifdef _DEBUG
 //	// Used for Debug
 //	void UpdateAnimationTimeConstant(const float aStep = 1.0f);
@@ -135,14 +137,14 @@ public:
 		{
 			myAnimationTime0 = &data.myAnimationTime0;
 			myAnimationTime1 = &data.myAnimationTime1;
-			myBlendingTime = data.myBlendingTime;
-			myBlendingTimeMul = data.myBlendingTimeMul;;
-			myPlayTime = data.myPlayTime;
-			myAnim0Index = data.myAnim0Index;
-			myAnim1Index = data.myAnim1Index;
-			myNumOfBones = data.myNumOfBones;
-			myUpdateBoth = data.myUpdateBoth;
-			myTemporary = data.myTemporary;
+			myBlendingTime = &data.myBlendingTime;
+			myBlendingTimeMul = &data.myBlendingTimeMul;;
+			myPlayTime = &data.myPlayTime;
+			myAnim0Index = &data.myAnim0Index;
+			myAnim1Index = &data.myAnim1Index;
+			myNumOfBones = &data.myNumOfBones;
+			myUpdateBoth = &data.myUpdateBoth;
+			myTemporary = &data.myTemporary;
 			myRotation = data.myRotation;
 			myAnimations = data.myAnimations;
 			myGlobalInverseTransform = data.myGlobalInverseTransform;
@@ -154,14 +156,14 @@ public:
 
 		float*								myAnimationTime0;
 		float*								myAnimationTime1;
-		float								myBlendingTime;
-		float								myBlendingTimeMul;
-		float								myPlayTime;
-		uint								myAnim0Index;
-		uint								myAnim1Index;
-		uint								myNumOfBones;
-		bool								myUpdateBoth;
-		bool								myTemporary;
+		float*								myBlendingTime;
+		float*								myBlendingTimeMul;
+		float*								myPlayTime;
+		uint*								myAnim0Index;
+		uint*								myAnim1Index;
+		uint*								myNumOfBones;
+		bool*								myUpdateBoth;
+		bool*								myTemporary;
 		aiVector3D							myRotation;
 		std::vector<const aiScene*>			myAnimations;
 		aiMatrix4x4							myGlobalInverseTransform;

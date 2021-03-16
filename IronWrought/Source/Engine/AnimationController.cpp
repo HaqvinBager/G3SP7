@@ -388,8 +388,12 @@ void CAnimationController::SetBoneTransforms(std::vector<aiMatrix4x4>& aTransfor
 		float timeInTicks = myAnimationTime0 * ticksPerSecond;
 
 		float duration0 = static_cast<float>(myAnimations[myAnim0Index]->mAnimations[0]->mDuration);
-		float animationTime0 = duration0 < (timeInTicks + (ticksPerSecond * 0.1f)) ? 0.0f : timeInTicks;
+		//float animationTime0 = duration0 < (timeInTicks + (ticksPerSecond * 0.1f)) ? 0.0f : timeInTicks;
 		//fmodf(timeInTicks, static_cast<float>(myAnimations[myAnim0Index]->mAnimations[0]->mDuration));
+
+
+		float totalFactor0 = InvLerp(0.0f,	static_cast<float>(myAnimations[myAnim1Index]->mAnimations[0]->mDuration), duration0);
+		float animationTime0 = Lerp(0.0f,	static_cast<float>(myAnimations[myAnim1Index]->mAnimations[0]->mDuration), totalFactor0);
 
 		ticksPerSecond = static_cast<float>(myAnimations[myAnim1Index]->mAnimations[0]->mTicksPerSecond);
 		ticksPerSecond = (ticksPerSecond != 0) ? ticksPerSecond : ANIMATED_AT_FRAMES_PER_SECOND;
@@ -397,8 +401,13 @@ void CAnimationController::SetBoneTransforms(std::vector<aiMatrix4x4>& aTransfor
 		timeInTicks = myAnimationTime1 * ticksPerSecond;
 
 		float duration1 = static_cast<float>(myAnimations[myAnim1Index]->mAnimations[0]->mDuration);
-		float animationTime1 = duration1 < (timeInTicks + (ticksPerSecond * 0.1f)) ? 0.0f : timeInTicks;
+		//float animationTime1 = duration1 < (timeInTicks + (ticksPerSecond * 0.1f)) ? 0.0f : timeInTicks;
 		//fmodf(timeInTicks, static_cast<float>(myAnimations[myAnim1Index]->mAnimations[0]->mDuration));
+
+		float totalFactor1 = InvLerp(0.0f,	static_cast<float>(myAnimations[myAnim1Index]->mAnimations[0]->mDuration), duration1);
+		float animationTime1 = Lerp(0.0f,	static_cast<float>(myAnimations[myAnim1Index]->mAnimations[0]->mDuration), totalFactor1);
+
+		std::cout << animationTime1 << std::endl;
 
 		ReadNodeHeirarchy(
 			myAnimations[myAnim0Index]
@@ -493,8 +502,14 @@ void CAnimationController::UpdateAnimationTimes()
 {
 	float dt = CTimer::Dt();
 
-	myAnimationTime0 += dt; //fmodf(myAnimationTime0 + dt, static_cast<float>(myAnimations[myAnim0Index]->mAnimations[0]->mDuration));
-	myAnimationTime1 += dt;  //fmodf(myAnimationTime1 + dt, static_cast<float>(myAnimations[myAnim1Index]->mAnimations[0]->mDuration));
+	//float duration0 = static_cast<float>(myAnimations[myAnim0Index]->mAnimations[0]->mDuration);
+	myAnimationTime0 = fmodf(myAnimationTime0 + dt, Animation0Duration());//duration0 /*- dt*/);
+	myAnimationTime1 = fmodf(myAnimationTime1 + dt, Animation1Duration());
+
+	//std::cout << myAnimationTime0 << std::endl;
+
+	//myAnimationTime0 += dt; //fmodf(myAnimationTime0 + dt, static_cast<float>(myAnimations[myAnim0Index]->mAnimations[0]->mDuration));
+	//myAnimationTime1 += dt;  //fmodf(myAnimationTime1 + dt, static_cast<float>(myAnimations[myAnim1Index]->mAnimations[0]->mDuration));
 
 	//myAnimationTime0 += dt;
 	//myAnimationTime1 += dt;
