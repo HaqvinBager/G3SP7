@@ -707,28 +707,18 @@ void CGraphManager::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInstance
 				ImGui::SetNextWindowPos({ ImGui::GetMousePos().x + aNodeInstance->myEditorPosition[0], ImGui::GetMousePos().y + aNodeInstance->myEditorPosition[1] });
 			}
 
-			if (ImGui::BeginCombo("##combo", selected.c_str())) // The second parameter is the label previewed before opening the combo.
+			if (ImGui::BeginCombo("##combo", selected.c_str()))
 			{
 				pressed = true;
 				int index = -1;
 				for (int n = 0; n < item.size(); n++)
 				{
-					//bool is_selected = (currentItem == item[n]);
 					if (ImGui::Selectable(item[n].c_str(), index == n))
 					{
-						/*if (is_selected)
-						{*/
-
 						char* input = item[n].data();
 						selected = input;
 						size_t size = strlen(input) + 1;
-		/*				for (int i = 0; i < size; i++)
-						{
-						static_cast<char*>(aPin.myData)[i] = input[i];*/
 						memcpy(aPin.myData, input, size);
-						//}
-							//aPin.myData = &item[n];
-						//}
 					}
 				}
 				ImGui::EndCombo();
