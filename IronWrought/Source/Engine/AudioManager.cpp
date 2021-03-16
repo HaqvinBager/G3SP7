@@ -252,9 +252,26 @@ void CAudioManager::Receive(const SMessage& aMessage) {
 		PlayRandomSoundFromCollection(myRobotSearchingSounds, EChannel::RobotVOX);
 	}
 	break;
-	// VOICELINES
+	
+	case EMessageType::PlayResearcherEvent:
+	{
+		int index = *static_cast<int*>(aMessage.data);
+		myChannels[CAST(EChannel::ResearcherVOX)]->Stop();
+		myWrapper.Play(myResearcherEventSounds[index], myChannels[CAST(EChannel::ResearcherVOX)]);
+	}
+	break;
+
+	case EMessageType::PlaySFX:
+	{
+		int index = *static_cast<int*>(aMessage.data);
+		myWrapper.Play(mySFXAudio[index], myChannels[CAST(EChannel::SFX)]);
+	}
+	break;
+	//// VOICELINES
 	//case EMessageType::PlayVoiceLine:
 	//{
+	//	std::string message = static_cast<char*>(aMessage.data);
+	//	message.append("20");
 	//	//if (!myVoicelineAudio.empty()) {
 	//	//	int index = *static_cast<int*>(aMessage.data);
 	//	//	myChannels[CAST(EChannel::VOX)]->Stop();
@@ -306,6 +323,8 @@ void CAudioManager::SubscribeToMessages()
 	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayRobotIdleSound, this);
 	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayRobotPatrolling, this);
 	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayRobotSearching, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayResearcherEvent, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::PlaySFX, this);
 
 	//CMainSingleton::PostMaster().Subscribe(EMessageType::PlayVoiceLine, this);
 	//CMainSingleton::PostMaster().Subscribe(EMessageType::StopDialogue, this);
@@ -321,6 +340,8 @@ void CAudioManager::UnsubscribeToMessages()
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayRobotIdleSound, this);
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayRobotPatrolling, this);
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayRobotSearching, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayResearcherEvent, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlaySFX, this);
 
 	//CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayVoiceLine, this);
 	//CMainSingleton::PostMaster().Unsubscribe(EMessageType::StopDialogue, this);

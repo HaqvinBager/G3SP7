@@ -5,7 +5,7 @@
 class CGraphManager;
 struct ImFontAtlas;
 
-namespace ImGuiWindow {
+namespace IronWroughtImGui {
 	class CWindow;
 }
 
@@ -18,7 +18,7 @@ public:
 	void DebugWindow();
 
 private:
-	std::vector<std::unique_ptr<ImGuiWindow::CWindow>> myWindows;
+	std::vector<std::unique_ptr<IronWroughtImGui::CWindow>> myWindows;
 
 	CGraphManager* myGraphManager;
 	const std::string GetSystemMemory();

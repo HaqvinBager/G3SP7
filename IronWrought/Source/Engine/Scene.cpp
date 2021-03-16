@@ -22,14 +22,13 @@
 
 #include "EnvironmentLight.h"
 #include "PointLight.h"
-
+#include "Engine.h"
 #include "Camera.h"
 #include "CameraComponent.h"
 
 #include "CollisionManager.h"
 
 #include "NavmeshLoader.h"
-#include "Canvas.h"
 
 #include "Debug.h"
 //SETUP START
@@ -42,6 +41,7 @@ CScene::CScene(const unsigned int aGameObjectCount)
 	, myPXScene(nullptr)
 {
 	myGameObjects.reserve(aGameObjectCount);
+	myPXScene = CEngine::GetInstance()->GetPhysx().CreatePXScene(this);
 
 	myModelsToOutline.resize(2);
 	for (unsigned int i = 0; i < myModelsToOutline.size(); ++i)
@@ -55,10 +55,6 @@ CScene::CScene(const unsigned int aGameObjectCount)
 	myGrid->Init(CLineFactory::GetInstance()->CreateGrid({ 0.1f, 0.5f, 1.0f, 1.0f }));
 	this->AddInstance(myGrid);
 #endif
-
-	myCanvas = new CCanvas();
-	myCanvas->Init(ASSETPATH("Assets/Graphics/UI/JSON/UI_HUD.json"), *this);
-
 }
 
 CScene::~CScene()
@@ -66,9 +62,6 @@ CScene::~CScene()
 	myMainCamera = nullptr;
 	delete myEnvironmentLight;
 	myEnvironmentLight = nullptr;
-
-	delete myCanvas;
-	myCanvas = nullptr;
 
 	this->ClearGameObjects();
 	this->ClearPointLights();
@@ -148,10 +141,6 @@ void CScene::ShouldRenderLineInstance(const bool aShouldRender)
 #else
 	aShouldRender;
 #endif //  _DEBUG
-}
-void CScene::UpdateCanvas()
-{
-	myCanvas->Update();
 }
 //SETTERS END
 //GETTERS START
@@ -269,7 +258,7 @@ std::vector<CAnimatedUIElement*> CScene::CullAnimatedUI(std::vector<CSpriteInsta
 
 LightPair CScene::CullLightInstanced(CInstancedModelComponent* aModelType)
 {
-	//Sätt så att Range täcker objektet längst bort
+	//Sï¿½tt sï¿½ att Range tï¿½cker objektet lï¿½ngst bort
 	//if (myPlayer != nullptr) {
 	//	aModelType->GameObject().myTransform->Position(GetPlayer()->myTransform->Position());
 	//}
@@ -362,6 +351,7 @@ bool CScene::AddInstance(CLineInstance* aLineInstance)
 	return true;
 }
 
+
 bool CScene::AddInstance(CAnimatedUIElement* anAnimatedUIElement)
 {
 	if (!anAnimatedUIElement)
@@ -386,11 +376,6 @@ bool CScene::AddInstance(CGameObject* aGameObject)
 {
 	myGameObjects.emplace_back(aGameObject);
 	myIDGameObjectMap[aGameObject->InstanceID()] = aGameObject;
-
-	for (auto& component : aGameObject->myComponents) {
-		myComponentMap[typeid(*component).hash_code()].push_back(component);
-	}
-
 	return true;
 }
 
@@ -421,7 +406,6 @@ bool CScene::AddInstance(CSpriteInstance* aSprite)
 
 	return true;
 }
-
 //PhysX
 bool CScene::AddPXScene(PxScene* aPXScene)
 {

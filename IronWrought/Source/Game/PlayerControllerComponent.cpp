@@ -9,16 +9,33 @@
 #include "PhysXWrapper.h"
 #include "CharacterController.h"
 
-CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, const float aSpeed)
+#include "Scene.h"
+#include "CameraControllerComponent.h"
+
+CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, const float aWalkSpeed, const float aCrouchSpeed)
 	: CComponent(gameObject)
-	, mySpeed(aSpeed)
+	, mySpeed(aWalkSpeed)
+	, myIsCrouching(false)
+	, myWalkSpeed(aWalkSpeed)
+	, myCrouchSpeed(aCrouchSpeed)
+	, myCanJump(true)
+	, myHasJumped(false)
+	, myIsJumping(false)
+	, myMovement( Vector3(0.0f, -0.098f, 0.0f ))
 {
 	INPUT_MAPPER->AddObserver(EInputEvent::MoveForward,		this);
 	INPUT_MAPPER->AddObserver(EInputEvent::MoveBackward,	this);
 	INPUT_MAPPER->AddObserver(EInputEvent::MoveLeft,		this);
 	INPUT_MAPPER->AddObserver(EInputEvent::MoveRight,		this);
+	INPUT_MAPPER->AddObserver(EInputEvent::Jump, this);
+	INPUT_MAPPER->AddObserver(EInputEvent::Crouch, this);
 
-	myController = CEngine::GetInstance()->GetPhysx().CreateCharacterController(gameObject.myTransform->Position());
+	myController = CEngine::GetInstance()->GetPhysx().CreateCharacterController(gameObject.myTransform->Position(), myColliderRadius, myColliderHeightStanding);
+	GameObject().myTransform->Position(myController->GetPosition());// This is a test / Aki 2021 03 12 
+
+	GameObject().myTransform->FetchChildren()[0]->Position({ 0.0f, myCameraPosYStanding, myCameraPosZ });
+	GameObject().myTransform->FetchChildren()[0]->Rotation({ 0.0f, 0.0f, 0.0f });
+	myCamera = GameObject().myTransform->FetchChildren()[0]->GameObject().GetComponent<CCameraControllerComponent>();
 }
 
 CPlayerControllerComponent::~CPlayerControllerComponent()
@@ -27,6 +44,8 @@ CPlayerControllerComponent::~CPlayerControllerComponent()
 	INPUT_MAPPER->RemoveObserver(EInputEvent::MoveBackward, this);
 	INPUT_MAPPER->RemoveObserver(EInputEvent::MoveLeft,		this);
 	INPUT_MAPPER->RemoveObserver(EInputEvent::MoveRight,	this);
+	INPUT_MAPPER->RemoveObserver(EInputEvent::Jump, this);
+	INPUT_MAPPER->RemoveObserver(EInputEvent::Crouch, this);
 }
 
 void CPlayerControllerComponent::Awake()
@@ -37,43 +56,107 @@ void CPlayerControllerComponent::Start()
 
 void CPlayerControllerComponent::Update()
 {
+#ifdef _DEBUG
+	if (myCamera->IsFreeCamMode())
+		return;
+#endif
+	Move({0.0f, myMovement.y, 0.0f});
+	
+	if (myHasJumped == true)
+	{
+		myMovement.y = 0.025f;
+		myHasJumped = false;
+	}
+
+	if (myMovement.y >= -1)
+	{
+		myMovement.y -= 0.1f * CTimer::Dt();
+	}
+	
+	if (myIsJumping == false)
+	{
+		myMovement.y = -0.098f;
+	}
+
 	GameObject().myTransform->Position(myController->GetPosition());
 }
 
 void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
 {
+	/*CCameraControllerComponent* cameraController = CEngine::GetInstance()->GetActiveScene().FindFirstObjectWithComponent<CCameraControllerComponent>();*/
+#ifdef _DEBUG
+	if (myCamera->IsFreeCamMode())
+		return;
+#endif
+
+	float y = myMovement.y;
+
 	switch (aEvent)
 	{
 		case EInputEvent::MoveForward:
-			myMovement.z = 1.0f;
+			myMovement = -myCamera->GameObject().myTransform->GetLocalMatrix().Forward();
 			break;
 		case EInputEvent::MoveBackward:
-			myMovement.z = -1.0f;
+			myMovement = -myCamera->GameObject().myTransform->GetLocalMatrix().Backward();
 			break;
 		case EInputEvent::MoveLeft:
-			myMovement.x = -1.0f;
+			myMovement = myCamera->GameObject().myTransform->GetLocalMatrix().Left();
 			break;
 		case EInputEvent::MoveRight:
-			myMovement.x = 1.0f;
+			myMovement = myCamera->GameObject().myTransform->GetLocalMatrix().Right();
 			break;
-
+		case EInputEvent::Jump:
+			if (myCanJump == true)
+			{
+				myHasJumped = true;
+				myIsJumping = true;
+				myCanJump = false;
+			}
+			break;
+		case EInputEvent::Crouch:
+			Crouch();
+		break;
 		default:break;
 	}
 
-	myMovement.y = -1.0f; //Gravity
-	//GameObject().myTransform->Move(myMovement * myHorizontalMoveSpeed * CTimer::Dt());
+	myMovement.y = y;
+
 	Move(myMovement * mySpeed);
-	myMovement = { 0.f,0.f,0.f };
+	myMovement = { 0.f, myMovement.y,0.f };	
 }
 
 void CPlayerControllerComponent::Move(Vector3 aDir)
 {
 	physx::PxControllerCollisionFlags collisionflag = myController->GetController().move({aDir.x, aDir.y, aDir.z}, 0, CTimer::Dt(), 0);
-	if (collisionflag == physx::PxControllerCollisionFlag::eCOLLISION_DOWN) {
+	if (collisionflag == physx::PxControllerCollisionFlag::eCOLLISION_DOWN) 
+	{
+		myCanJump = true;
+ 	}
+}
+
+void CPlayerControllerComponent::SetControllerPosition(const Vector3& aPos)
+{
+	myController->GetController().setPosition({ aPos.x, aPos.y, aPos.x });
+}
+
+void CPlayerControllerComponent::Crouch()
+{
+	myIsCrouching = !myIsCrouching;
+	if (myIsCrouching)
+	{
+		myController->GetController().resize(myColliderHeightCrouched);
+		GameObject().myTransform->FetchChildren()[0]->Position({ 0.0f, myCameraPosYCrouching, myCameraPosZ });// Equivalent to myCamera->GameObject().myTransform->Position
+		mySpeed = myCrouchSpeed;
+	}
+	else
+	{
+		myController->GetController().resize(myColliderHeightStanding);
+		GameObject().myTransform->FetchChildren()[0]->Position({ 0.0f, myCameraPosYStanding, myCameraPosZ });// Equivalent to myCamera->GameObject().myTransform->Position
+		mySpeed = myWalkSpeed;
 	}
 }
 
-void CPlayerControllerComponent::UpdateHorizontalMovement()
+CCharacterController* CPlayerControllerComponent::GetCharacterController()
 {
-	
+	return myController;
 }

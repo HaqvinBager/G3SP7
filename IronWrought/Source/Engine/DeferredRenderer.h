@@ -23,6 +23,7 @@ public:
 	void GenerateGBuffer(CCameraComponent* aCamera, std::vector<CGameObject*>& aGameObjectList, std::vector<CGameObject*>& aInstancedGameObjectList);
 	void Render(CCameraComponent* aCamera, CEnvironmentLight* anEnvironmentLight);
 	void Render(CCameraComponent* aCamera, std::vector<CPointLight*>& aPointLightList);
+	void RenderSkybox(CCameraComponent* aCamera, CEnvironmentLight* anEnvironmentLight);
 
 	bool ToggleRenderPass();
 
@@ -76,6 +77,10 @@ private:
 		/*SlimMatrix44*/Matrix myBones[64];
 	} myBoneBufferData;
 
+	struct SSkyboxTransformData {
+		Matrix myCameraViewProjection;
+	} mySkyboxTransformData;
+
 	static_assert((sizeof(SBoneBufferData) % 16) == 0, "SBoneBufferData size not padded correctly");
 
 private:
@@ -89,6 +94,7 @@ private:
 	ID3D11Buffer* myPointLightBuffer;
 	ID3D11Buffer* myBoneBuffer;
 	ID3D11Buffer* myPointLightVertexBuffer;
+	ID3D11Buffer* mySkyboxTransformBuffer;
 
 	ID3D11InputLayout* myVertexPaintInputLayout;
 	ID3D11InputLayout* myPointLightInputLayout;
@@ -99,6 +105,7 @@ private:
 	ID3D11VertexShader* myVertexPaintModelVertexShader;
 	ID3D11VertexShader* myInstancedModelVertexShader;
 	ID3D11VertexShader* myPointLightVertexShader;
+	ID3D11VertexShader* mySkyboxVertexShader;
 // Geometry shaders.
 	ID3D11GeometryShader* myPointLightGeometryShader;
 // Pixel shaders.
@@ -106,6 +113,7 @@ private:
 	ID3D11PixelShader* myVertexPaintPixelShader;
 	ID3D11PixelShader* myEnvironmentLightShader;
 	ID3D11PixelShader* myPointLightShader;
+	ID3D11PixelShader* mySkyboxPixelShader;
 // Samplers.
 	ID3D11SamplerState* mySamplerState;
 	ID3D11SamplerState* myShadowSampler;
@@ -116,5 +124,14 @@ private:
 	ID3D11PixelShader* myCurrentGBufferPixelShader;
 	ID3D11PixelShader* myRenderPassGBuffer;
 	unsigned short myRenderPassIndex;
+
+	ID3D11Buffer* mySkyboxVertexBuffer;
+	ID3D11Buffer* mySkyboxIndexBuffer;
+	ID3D11InputLayout* mySkyboxInputLayout;
+	UINT mySkyboxNumberOfVertices;
+	UINT mySkyboxNumberOfIndices;
+	UINT mySkyboxStride;
+	UINT mySkyboxOffset;
+
 };
 

@@ -165,6 +165,9 @@ void CVFXSystemComponent::Update()
 	for (unsigned int j = 0; j < myEffects.size(); ++j)
 	{
 		auto effect = myEffects[j];
+
+		if (!effect->myIsEnabled) continue;
+
 		for (unsigned int i = 0; i < effect->myVFXBases.size(); ++i)
 		{
 			if ((effect->myVFXDelays[i] -= CTimer::Dt()) > 0.0f) continue;

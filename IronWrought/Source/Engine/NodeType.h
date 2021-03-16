@@ -73,6 +73,7 @@ struct SPin
 		EString,
 		EVector3,
 		EStringList,
+		EStringListIndexed,
 		EUnknown
 	};
 

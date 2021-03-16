@@ -8,10 +8,10 @@ namespace physx
 	class PxPhysics;
 }
 
-class RigidDynamicBody
+class CRigidDynamicBody
 {
 public:
-							RigidDynamicBody(physx::PxPhysics& aPhysX, const Vector3 aPosition);
+							CRigidDynamicBody(physx::PxPhysics& aPhysX, int aInstanceID, const Vector3& aPosition);
 	physx::PxRigidDynamic&	GetBody();
 	Vector3	GetPosition() const;
 	float					GetRotation() const;
@@ -20,7 +20,7 @@ private:
 	physx::PxRigidDynamic*	myBody = nullptr;
 };
 
-inline physx::PxRigidDynamic& RigidDynamicBody::GetBody()
+inline physx::PxRigidDynamic& CRigidDynamicBody::GetBody()
 {
 	return *myBody;
 }
