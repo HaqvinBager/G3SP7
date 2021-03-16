@@ -160,6 +160,7 @@
     <ClInclude Include="AIBehavior.h" />
     <ClInclude Include="AIBehaviorComponent.h" />
     <ClInclude Include="CameraControllerComponent.h" />
+    <ClInclude Include="CharacterControllerComponent.h" />
     <ClInclude Include="CollisionEventComponent.h" />
     <ClInclude Include="DialogueSystem.h" />
     <ClInclude Include="Game.h" />
@@ -177,6 +178,7 @@
     <ClCompile Include="AIBehavior.cpp" />
     <ClCompile Include="AIBehaviorComponent.cpp" />
     <ClCompile Include="CameraControllerComponent.cpp" />
+    <ClCompile Include="CharacterControllerComponent.cpp" />
     <ClCompile Include="CollisionEventComponent.cpp" />
     <ClCompile Include="DialogueSystem.cpp" />
     <ClCompile Include="Game.cpp" />

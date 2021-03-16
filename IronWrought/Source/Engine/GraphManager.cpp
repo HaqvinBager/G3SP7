@@ -485,7 +485,8 @@ ImColor GetIconColor(SPin::EPinType type)
 	case SPin::EPinType::EInt:      return ImColor(68, 201, 156);
 	case SPin::EPinType::EFloat:    return ImColor(147, 226, 74);
 	case SPin::EPinType::EString:   return ImColor(124, 21, 153);
-	case SPin::EPinType::EVector3:   return ImColor(124, 21, 153);
+	case SPin::EPinType::EVector3:   return ImColor(255, 166, 0);
+	case SPin::EPinType::EStringListIndexed: return ImColor(0, 255, 0);
 	case SPin::EPinType::EUnknown:   return ImColor(255, 0, 0);
 	}
 };
@@ -503,6 +504,7 @@ void DrawPinIcon(const SPin& pin, bool connected, int alpha)
 	case SPin::EPinType::EFloat:    iconType = IconType::Circle; break;
 	case SPin::EPinType::EString:   iconType = IconType::Circle; break;
 	case SPin::EPinType::EVector3:   iconType = IconType::Circle; break;
+	case SPin::EPinType::EStringListIndexed: iconType = IconType::Circle; break;
 	case SPin::EPinType::EUnknown:  iconType = IconType::Circle; break;
 	default:
 		return;
@@ -664,7 +666,7 @@ void CGraphManager::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInstance
 		c = static_cast<DirectX::SimpleMath::Vector3*>(aPin.myData);
 
 		ImGui::PushID(aPin.myUID.AsInt());
-		ImGui::PushItemWidth(150.0f);
+		ImGui::PushItemWidth(45.0f);
 		if (aNodeInstance->IsPinConnected(aPin))
 		{
 			DrawPinIcon(aPin, true, 255);
@@ -672,7 +674,9 @@ void CGraphManager::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInstance
 		else
 		{
 			ImGui::InputFloat("##edit", &c->x);
+			ImGui::SameLine();
 			ImGui::InputFloat("##edit1", &c->y);
+			ImGui::SameLine();
 			ImGui::InputFloat("##edit2", &c->z);
 		}
 		ImGui::PopItemWidth();
@@ -680,7 +684,7 @@ void CGraphManager::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInstance
 		ImGui::PopID();
 		break;
 	}
-	case SPin::EPinType::EList:
+	case SPin::EPinType::EStringList:
 	{
 		if (!aPin.myData)
 		{
@@ -696,25 +700,88 @@ void CGraphManager::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInstance
 		}
 		else
 		{
+			static bool pressed = false;
 			std::vector<std::string> item = CNodeDataManager::Get()->GetData<std::vector<std::string>>(aNodeInstance->GetNodeName());
-			std::string currentItem = "";
-
-			if (ImGui::BeginCombo("##combo", currentItem.c_str())) // The second parameter is the label previewed before opening the combo.
+			std::string selected = static_cast<char*>(aPin.myData);
+			
+			if (pressed)
 			{
+				ImGui::SetNextWindowPos({ ImGui::GetMousePos().x + aNodeInstance->myEditorPosition[0], ImGui::GetMousePos().y + aNodeInstance->myEditorPosition[1] });
+			}
+
+			if (ImGui::BeginCombo("##combo", selected.c_str())) // The second parameter is the label previewed before opening the combo.
+			{
+				pressed = true;
+				int index = -1;
 				for (int n = 0; n < item.size(); n++)
 				{
-					bool is_selected = (currentItem == item[n]);
-
-					if (ImGui::Selectable(item[n].c_str(), is_selected))
+					//bool is_selected = (currentItem == item[n]);
+					if (ImGui::Selectable(item[n].c_str(), index == n))
 					{
-						currentItem = item[n];
-						if (is_selected)
-							aPin.myData = &currentItem;
+						/*if (is_selected)
+						{*/
+
+						char* input = item[n].data();
+						selected = input;
+						size_t size = strlen(input) + 1;
+		/*				for (int i = 0; i < size; i++)
+						{
+						static_cast<char*>(aPin.myData)[i] = input[i];*/
+						memcpy(aPin.myData, input, size);
+						//}
+							//aPin.myData = &item[n];
+						//}
 					}
 				}
 				ImGui::EndCombo();
-				//ImGui:: ("##edit", 0, item, 6);//("##edit", (char*)aPin.myData, 127);
 			}
+			pressed = false;
+		}
+		ImGui::PopItemWidth();
+
+		ImGui::PopID();
+		break;
+	}
+	case SPin::EPinType::EStringListIndexed:
+	{
+		if (!aPin.myData)
+		{
+			aPin.myData = new char[128];
+			static_cast<char*>(aPin.myData)[0] = '\0';
+		}
+
+		ImGui::PushID(aPin.myUID.AsInt());
+		ImGui::PushItemWidth(100.0f);
+		if (aNodeInstance->IsPinConnected(aPin))
+		{
+			DrawPinIcon(aPin, true, 255);
+		}
+		else
+		{
+			static bool pressed = false;
+			std::vector<std::string> item = CNodeDataManager::Get()->GetData<std::vector<std::string>>(aNodeInstance->GetNodeName());
+			int selected = *static_cast<int*>(aPin.myData);
+			if (selected < 0) selected = 0;
+
+			if (pressed)
+			{
+				ImGui::SetNextWindowPos({ ImGui::GetMousePos().x + aNodeInstance->myEditorPosition[0], ImGui::GetMousePos().y + aNodeInstance->myEditorPosition[1] });
+			}
+
+			if (ImGui::BeginCombo("##combo", item[selected].c_str())) // The second parameter is the label previewed before opening the combo.
+			{
+				pressed = true;
+				int index = -1;
+				for (int n = 0; n < item.size(); n++)
+				{
+					if (ImGui::Selectable(item[n].c_str(), index == n))
+					{
+						memcpy(aPin.myData, &n, sizeof(int));
+					}
+				}
+				ImGui::EndCombo();
+			}
+			pressed = false;
 		}
 		ImGui::PopItemWidth();
 

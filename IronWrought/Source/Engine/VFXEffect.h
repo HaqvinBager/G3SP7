@@ -31,6 +31,8 @@ struct SVFXEffect {
 	std::vector<float> myEmitterBaseDurations;
 	std::vector<float> myEmitterTimers;
 	std::vector<bool>  myEmitterShouldOrbit;
+	
+	bool myIsEnabled;
 
 	std::vector<CVFXBase*>& GetVFXBases() { return myVFXBases; }
 	std::vector<Matrix>& GetVFXTransforms() { return myVFXTransforms; }

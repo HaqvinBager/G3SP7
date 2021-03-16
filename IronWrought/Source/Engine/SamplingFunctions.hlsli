@@ -7,7 +7,7 @@ PixelOutPut PixelShader_Color(VertexToPixel input)
     PixelOutPut output;
     float4 color = colorTexture.Sample(defaultSampler, input.myUV.xy).rgba;
 	color.rgb = GammaToLinear(color.rgb);
-	output.myColor.rgb = color;
+	output.myColor.rgb = color.rgb;
 	output.myColor.a = color.a;
     return output;
 }

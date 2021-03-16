@@ -3,6 +3,7 @@
 
     <PropertyGroup>
         <SourceFolder> ..\Source</SourceFolder>
+        <SourceFolder>..\Source</SourceFolder>
     </PropertyGroup>
 
     <Target Name="Start">

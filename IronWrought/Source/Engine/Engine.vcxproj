@@ -176,6 +176,7 @@
     <ClInclude Include="..\Includes\ImGui\Core\imstb_rectpack.h" />
     <ClInclude Include="..\Includes\ImGui\Core\imstb_textedit.h" />
     <ClInclude Include="..\Includes\ImGui\Core\imstb_truetype.h" />
+    <ClInclude Include="..\Includes\ImGui\Core\widget_curve.h" />
     <ClInclude Include="..\Includes\ImGui\NodeEditor\crude_json.h" />
     <ClInclude Include="..\Includes\ImGui\NodeEditor\imgui_bezier_math.h" />
     <ClInclude Include="..\Includes\ImGui\NodeEditor\imgui_canvas.h" />
@@ -193,26 +194,27 @@
     <ClInclude Include="Behaviour.h" />
     <ClInclude Include="CameraSetting.h" />
     <ClInclude Include="Animator.h" />
+    <ClInclude Include="CCurveWindow.h" />
     <ClInclude Include="FlipACoinDecision.h" />
     <ClInclude Include="NodeDataManager.h" />
+    <ClInclude Include="NodeTypeAudioPlayResearcherEvent.h" />
     <ClInclude Include="NodeTypeAudioPlayResearcherReactionExplosives.h" />
     <ClInclude Include="NodeTypeAudioPlayRobotPatrolling.h" />
     <ClInclude Include="NodeTypeAudioPlayRobotAttack.h" />
     <ClInclude Include="NodeTypeAudioPlayRobotDeath.h" />
     <ClInclude Include="NodeTypeAudioPlayRobotSearching.h" />
+    <ClInclude Include="NodeTypeAudioPlaySFX.h" />
     <ClInclude Include="NodeTypeAudioPlayStep.h" />
     <ClInclude Include="NodeTypeAudioPlayRobotIdle.h" />
     <ClInclude Include="NodeTypeDecisionCoinFlip.h" />
     <ClInclude Include="NodeTypeGameObjectGetRotation.h" />
     <ClInclude Include="NodeTypeGameObjectMove.h" />
-    <ClInclude Include="NodeTypeGameObjectMoveToPosition.h" />
     <ClInclude Include="NodeTypeGameObjectRotate.h" />
     <ClInclude Include="NodeTypeGameObjectSetRotation.h" />
     <ClInclude Include="NodeTypeListTest.h" />
     <ClInclude Include="NodeTypeMathGreater.h" />
     <ClInclude Include="NodeTypeStartGetCustom.h" />
     <ClInclude Include="NodeTypeStartKeyboardInput.h" />
-    <ClInclude Include="CharacterController.h" />
     <ClInclude Include="DecisionTreeManager.h" />
     <ClInclude Include="FloatDecisionNode.h" />
     <ClInclude Include="Builders.h" />
@@ -275,6 +277,7 @@
     <ClInclude Include="NodeTypeDebugPrint.h" />
     <ClInclude Include="NodeTypeGameObjectSetPosition.h" />
     <ClInclude Include="NodeTypeStartDefault.h" />
+    <ClInclude Include="CharacterController.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="ContactReportCallback.h" />
     <ClInclude Include="DeferredRenderer.h" />
@@ -399,11 +402,14 @@
     <ClCompile Include="AudioChannel.cpp" />
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="Animator.cpp" />
+    <ClCompile Include="CCurveWindow.cpp" />
+    <ClCompile Include="NodeTypeAudioPlayResearcherEvent.cpp" />
     <ClCompile Include="NodeTypeAudioPlayResearcherReactionExplosives.cpp" />
     <ClCompile Include="NodeTypeAudioPlayRobotPatrolling.cpp" />
     <ClCompile Include="NodeTypeAudioPlayRobotAttack.cpp" />
     <ClCompile Include="NodeTypeAudioPlayRobotDeath.cpp" />
     <ClCompile Include="NodeTypeAudioPlayRobotSearching.cpp" />
+    <ClCompile Include="NodeTypeAudioPlaySFX.cpp" />
     <ClCompile Include="NodeTypeAudioPlayStep.cpp" />
     <ClCompile Include="NodeTypeAudioPlayRobotIdle.cpp" />
     <ClCompile Include="NodeTypeGameObjectGetRotation.cpp" />
@@ -412,14 +418,12 @@
     <ClCompile Include="NodeDataManager.cpp" />
     <ClCompile Include="NodeTypeDecisionCoinFlip.cpp" />
     <ClCompile Include="NodeTypeGameObjectMove.cpp" />
-    <ClCompile Include="NodeTypeGameObjectMoveToPosition.cpp" />
     <ClCompile Include="NodeTypeGameObjectRotate.cpp" />
     <ClCompile Include="NodeTypeGameObjectSetRotation.cpp" />
     <ClCompile Include="NodeTypeListTest.cpp" />
     <ClCompile Include="NodeTypeMathGreater.cpp" />
     <ClCompile Include="NodeTypeStartGetCustom.cpp" />
     <ClCompile Include="NodeTypeStartKeyboardInput.cpp" />
-    <ClCompile Include="CharacterController.cpp" />
     <ClCompile Include="DecisionTreeManager.cpp" />
     <ClCompile Include="FloatDecisionNode.cpp" />
     <ClCompile Include="Builders.cpp" />
@@ -483,6 +487,7 @@
     <ClCompile Include="NodeTypeDebugPrint.cpp" />
     <ClCompile Include="NodeTypeGameObjectSetPosition.cpp" />
     <ClCompile Include="NodeTypeStartDefault.cpp" />
+    <ClCompile Include="CharacterController.cpp" />
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="ContactReportCallback.cpp" />
     <ClCompile Include="DeferredRenderer.cpp" />
@@ -836,11 +841,8 @@
     </FxCompile>
     <FxCompile Include="PointLightGeometryShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Geometry</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Geometry</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">4.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="PointLightVertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
@@ -871,6 +873,16 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="SkyboxPixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="SkyboxVertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Vertex</ShaderType>
     </FxCompile>
     <FxCompile Include="SpriteGeometryShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>

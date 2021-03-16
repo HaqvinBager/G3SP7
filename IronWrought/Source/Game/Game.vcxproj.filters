@@ -63,6 +63,9 @@
     <ClInclude Include="GameWorldState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CharacterControllerComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp">
@@ -107,7 +110,11 @@
     <ClCompile Include="PlayerControllerComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="GameWorldState.cpp">
+=======
+    <ClCompile Include="CharacterControllerComponent.cpp">
+>>>>>>> master
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

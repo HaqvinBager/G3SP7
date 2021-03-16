@@ -2,10 +2,10 @@
 
 struct GBufferOutput
 {
-    float3 myAlbedo             : SV_TARGET0;
-    float3 myNormal             : SV_TARGET1;
-    float3 myVertexNormal       : SV_TARGET2;
-    float4 myMetalRoughAOEm     : SV_TARGET3;
+    float4 myAlbedo             : SV_TARGET0;
+    float4 myNormal             : SV_TARGET1;
+    float4 myVertexNormal       : SV_TARGET2;
+    float4 myMetalRoughEmAO     : SV_TARGET3;
 };
 
 GBufferOutput main(VertexModelToPixel input)
@@ -81,10 +81,10 @@ GBufferOutput main(VertexModelToPixel input)
     float emissive              = PixelShader_Emissive(vertToPixel.myUV);
     
     GBufferOutput output;    
-    output.myAlbedo         = albedo.xyz;
-    output.myNormal         = normal.xyz;
-    output.myVertexNormal   = input.myNormal.xyz;
-    output.myMetalRoughAOEm = float4(metalness, perceptualRoughness, ambientOcclusion, emissive);
+    output.myAlbedo = float4(albedo.xyz, 1.0f);
+    output.myNormal = float4(normal.xyz, 1.0f);
+    output.myVertexNormal = float4(input.myNormal.xyz, 1.0f);
+    output.myMetalRoughEmAO = float4(metalness, perceptualRoughness, emissive, ambientOcclusion);
     
     return output;
 }

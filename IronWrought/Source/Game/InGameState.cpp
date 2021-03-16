@@ -12,6 +12,7 @@
 #include "RigidBodyComponent.h"
 #include "ModelComponent.h"
 #include "DecalComponent.h"
+#include "CharacterControllerComponent.h"
 
 #include "EnvironmentLight.h"
 #include "Timer.h"
@@ -32,13 +33,6 @@
 #include "animationLoader.h"
 void TEMP_DeferredRenderingTests(CScene* aScene);
 
-#include "VFXSystemComponent.h"
-#include "VFXMeshFactory.h"
-#include "ParticleEmitterFactory.h"
-
-CGameObject* gVFX = nullptr;
-void TEMP_VFX(CScene* aScene);
-
 CInGameState::CInGameState(CStateStack& aStateStack, const CStateStack::EState aState)
 	: CState(aStateStack, aState),
 	myExitLevel(false)
@@ -52,18 +46,28 @@ void CInGameState::Awake(){}
 #include "PointLight.h"
 #include "PointLightComponent.h"
 #include "PlayerControllerComponent.h"
+
+#include "VFXSystemComponent.h"
+#include "VFXMeshFactory.h"
+#include "ParticleEmitterFactory.h"
+
+#include "TextFactory.h"
+#include "TextInstance.h"
+
+CGameObject* gVFX = nullptr;
+void TEMP_VFX(CScene* aScene);
+
 void CInGameState::Start()
 {
 	CJsonReader::Get()->Init();
 	CScene* scene = CSceneManager::CreateEmpty();
-	scene->AddPXScene(CEngine::GetInstance()->GetPhysx().CreatePXScene());
 	
-	//TEMP_VFX(scene);
+	TEMP_VFX(scene);
+	//TEMP_DecalTests(scene);
 
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);
-
-	myExitLevel = false;
+	myExitLevel = false;	
 }
 
 void CInGameState::Stop()
@@ -73,19 +77,40 @@ void CInGameState::Stop()
 
 void CInGameState::Update()
 {
-	/*if (gVFX->GetComponent<CVFXSystemComponent>())
+	if (gVFX)
 	{
-		if (INPUT->IsKeyPressed('P'))
+		if (gVFX->GetComponent<CVFXSystemComponent>())
 		{
-			gVFX->GetComponent<CVFXSystemComponent>()->OnDisable();
-			gVFX->GetComponent<CVFXSystemComponent>()->OnEnable();
+			if (INPUT->IsKeyPressed('O'))
+			{
+				gVFX->GetComponent<CVFXSystemComponent>()->DisableEffect(0);
+				gVFX->GetComponent<CVFXSystemComponent>()->EnableEffect(0);
+			}
+			if (INPUT->IsKeyPressed('P'))
+			{
+				gVFX->GetComponent<CVFXSystemComponent>()->DisableEffect(0);
+			}
+			//if (INPUT->IsKeyPressed('K'))
+			//{
+			//	gVFX->GetComponent<CVFXSystemComponent>()->DisableEffect(1);
+			//	gVFX->GetComponent<CVFXSystemComponent>()->EnableEffect(1);
+			//}
+			//if (INPUT->IsKeyPressed('L'))
+			//{
+			//	gVFX->GetComponent<CVFXSystemComponent>()->DisableEffect(1);
+			//}
 		}
-	}*/
+	}
 
 	CEngine::GetInstance()->GetPhysx().Simulate();
 	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
 	{
 		gameObject->Update();
+	}
+
+	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
+	{
+		gameObject->LateUpdate();
 	}
 
 	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
@@ -126,8 +151,6 @@ void CInGameState::Receive(const SMessage& /*aMessage*/)
 	//}
 }
 
-
-
 void TEMP_DeferredRenderingTests(CScene* scene)
 {
 	CGameObject* chest = new CGameObject(1337);
@@ -159,7 +182,7 @@ void TEMP_DeferredRenderingTests(CScene* scene)
 	//scene->AddInstance(chest2);
 	//scene->AddInstance(chest3);
 
-	constexpr int numPointLights = 2;
+	constexpr int numPointLights = 0;
 	std::vector<CGameObject*> pointLights;
 	float x = -2.0f;
 	float y = 1.0f;
@@ -195,30 +218,36 @@ void TEMP_DeferredRenderingTests(CScene* scene)
 
 	}
 	pointLights[0]->myTransform->Position({ 6.0f, 0.0f, -10.0f });
-	pointLights[0]->GetComponent<CPointLightComponent>()->GetPointLight()->SetColor({ 0.0f,1.0f,0.0f });
-	pointLights[0]->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ 4.0f,0.0f,-3.0f });
+	pointLights[0]->GetComponent<CPointLightComponent>()->GetPointLight()->SetColor({ 0.0f,20.0f,0.0f });
+	pointLights[0]->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ 0.0f,0.0f,-3.0f });
 
 	pointLights[1]->myTransform->Position({ 4.0f, 1.0f, -10.0f });
-	pointLights[1]->GetComponent<CPointLightComponent>()->GetPointLight()->SetColor({ 1.0f,0.0f,0.0f });
-	pointLights[1]->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ 5.0f,2.0f,-1.0f });
+	pointLights[1]->GetComponent<CPointLightComponent>()->GetPointLight()->SetColor({ 20.0f,0.0f,0.0f });
+	pointLights[1]->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ 6.0f,0.0f,-1.0f });
 
 	pointLights[2]->myTransform->Position({ 7.0f, 2.0f, -10.0f });
-	pointLights[2]->GetComponent<CPointLightComponent>()->GetPointLight()->SetColor({ 0.0f,0.0f,1.0f });
-	pointLights[2]->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ 4.0f,-1.0f,-2.0f });
+	pointLights[2]->GetComponent<CPointLightComponent>()->GetPointLight()->SetColor({ 0.0f,0.0f,20.0f });
+	pointLights[2]->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ 12.0f,0.0f,-2.0f });
 
 	pointLights[3]->myTransform->Position({ 6.0f, 0.0f, -10.0f });
-	pointLights[3]->GetComponent<CPointLightComponent>()->GetPointLight()->SetColor({ 0.0f,0.5f,1.0f });
-	pointLights[3]->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ 4.0f,0.0f,-2.0f });
+	pointLights[3]->GetComponent<CPointLightComponent>()->GetPointLight()->SetColor({ 100.0f,100.0f,0.0f });
+	pointLights[3]->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ 18.0f,2.0f,-2.0f });
 
 	pointLights[4]->myTransform->Position({ 10.0f, 2.0f, -10.0f });
-	pointLights[4]->GetComponent<CPointLightComponent>()->GetPointLight()->SetColor({ 0.5f,0.0f,1.0f });
-	pointLights[4]->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ 5.0f,-2.0f,-2.0f });
+	pointLights[4]->GetComponent<CPointLightComponent>()->GetPointLight()->SetColor({ 0.5f,50.0f,50.0f });
+	pointLights[4]->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ 24.0f,1.0f,-2.0f });
 
 	scene->AddInstance(pointLights[0]->GetComponent<CPointLightComponent>()->GetPointLight());
 	scene->AddInstance(pointLights[1]->GetComponent<CPointLightComponent>()->GetPointLight());
 	scene->AddInstance(pointLights[2]->GetComponent<CPointLightComponent>()->GetPointLight());
 	scene->AddInstance(pointLights[3]->GetComponent<CPointLightComponent>()->GetPointLight());
 	scene->AddInstance(pointLights[4]->GetComponent<CPointLightComponent>()->GetPointLight());
+
+	CTextInstance* text = new CTextInstance();
+	text->Init(CTextFactory::GetInstance()->GetText("Text/baskerville16"));
+	text->SetText("hello");
+	text->SetPosition({0.0f, 0.0f});
+	scene->AddInstance(text);
 }
 
 void CInGameState::TEMP_DecalTests(CScene* aScene)
@@ -229,25 +258,20 @@ void CInGameState::TEMP_DecalTests(CScene* aScene)
 	chest->myTransform->Rotation({ 0.0f,0,0.0f });
 	aScene->AddInstance(chest);
 
-	CGameObject* foliage = new CGameObject(13330);
-	foliage->AddComponent<CModelComponent>(*foliage, std::string(ASSETPATH("Assets/Graphics/Environmentprops/Static props/Foliage_test.fbx")));
-	foliage->GetComponent<CTransformComponent>()->Position({ 0.0f,0.0f,-1.0f });
-	foliage->myTransform->Rotation({ 0.0f,0,0.0f });
-	aScene->AddInstance(foliage);
+	//CGameObject* foliage = new CGameObject(13330);
+	//foliage->AddComponent<CModelComponent>(*foliage, std::string(ASSETPATH("Assets/Graphics/Environmentprops/Static props/Foliage_test.fbx")));
+	//foliage->GetComponent<CTransformComponent>()->Position({ 0.0f,0.0f,-1.0f });
+	//foliage->myTransform->Rotation({ 0.0f,0,0.0f });
+	//aScene->AddInstance(foliage);
 
 	CGameObject* decal = new CGameObject(20000);
-	decal->AddComponent<CDecalComponent>(*decal, "EN_DE_yellowline_2048x64");
+	decal->AddComponent<CDecalComponent>(*decal, "gradient");
 	decal->GetComponent<CDecalComponent>()->SetAlphaThreshold(0.3f);
 	decal->myTransform->Position({ 0.0f, 1.0f, 0.0f });
-	decal->myTransform->Scale({ 2.0f, 2.0f, 1.0f });
+	decal->myTransform->Scale({ 1.0f, 1.0f, 1.0f });
 	myDecal = decal;
 	aScene->AddInstance(decal);
 
-	CGameObject* pointLight = new CGameObject(3000);
-	pointLight->AddComponent<CPointLightComponent>(*pointLight, 0.2f, SM::Vector3{ 1,0,0 }, 15.f);
-	pointLight->GetComponent<CPointLightComponent>()->GetPointLight()->SetPosition({ 0.0f, 1.0f, -0.1f });
-	aScene->AddInstance(pointLight);
-	aScene->AddInstance(pointLight->GetComponent<CPointLightComponent>()->GetPointLight());
 	//decal->GetComponent<CTransformComponent>()->Position({ 29.0f,2.0f, 0.0f });
 	//decal->myTransform->Rotation({ 90.0f, 0.0f, 0.0f });
 	//decal->GetComponent<CTransformComponent>()->Position({ 33.0f,2.0f, 25.5f });

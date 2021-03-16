@@ -54,8 +54,9 @@ CImguiManager::CImguiManager() : myGraphManagerIsFullscreen(false), myIsEnabled(
 	myGraphManager = new CGraphManager();
 	myGraphManager->Load();
 
-	myWindows.emplace_back(std::make_unique<ImGuiWindow::CLoadScene>("Load Scene", true));
-	myWindows.emplace_back(std::make_unique <ImGuiWindow::CCameraSetting>("Camera Settings"));
+	myWindows.emplace_back(std::make_unique<IronWroughtImGui::CLoadScene>("Load Scene", true));
+	myWindows.emplace_back(std::make_unique <IronWroughtImGui::CCameraSetting>("Camera Settings"));
+	myWindows.emplace_back(std::make_unique <IronWroughtImGui::CCurveWindow>("Curve Editor"));
 	myWindows.emplace_back(std::make_unique <ImGuiWindow::CAnimator>("Animator"));
 
 }
@@ -84,7 +85,7 @@ void CImguiManager::Update()
 
 		for (const auto& window : myWindows)
 			window->OnMainMenuGUI();
-							
+
 		ImGui::EndMainMenuBar();
 	}
 
@@ -93,7 +94,7 @@ void CImguiManager::Update()
 			window->OnInspectorGUI();
 		}
 	}
-	
+
 	DebugWindow();
 	myGraphManager->Update();
 
@@ -140,7 +141,7 @@ void CImguiManager::DebugWindow()
 //				if (ImGui::IsMouseDoubleClicked(0))
 //				{
 //					std::cout << "Load Level: " << buf << std::endl;
-//				
+//
 //
 //					CScene* myUnityScene = CSceneManager::CreateScene(buf);
 //					CEngine::GetInstance()->AddScene(CStateStack::EState::InGame, myUnityScene);
@@ -193,10 +194,10 @@ const std::string CImguiManager::GetDrawCalls()
 //	for (unsigned int i = 0; i < someLevelsToSelectFrom.size(); ++i) {
 //		const auto& doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + someLevelsToSelectFrom[i]));
 //		if (!doc.HasParseError()) {
-//			if (doc.HasMember("instancedGameobjects") && 
+//			if (doc.HasMember("instancedGameobjects") &&
 //				doc.HasMember("modelGameObjects")) {
 //				myLevelsToSelectFrom.push_back(someLevelsToSelectFrom[i]);
 //			}
 //		}
-//	}	
+//	}
 //}

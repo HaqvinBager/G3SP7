@@ -3,12 +3,10 @@
 
 using namespace physx;
 
-class ContactReportCallback;
-class RigidDynamicBody;
-class CGameObject;
+class CContactReportCallback;
+class CRigidDynamicBody;
 class CScene;
 class CCharacterController;
-
 
 class CPhysXWrapper
 {
@@ -21,7 +19,7 @@ public:
 		bounce,
 		basic,
 		none
-		
+
 
 	};
 
@@ -32,29 +30,33 @@ public:
 
 	bool Init();
 
-	PxScene* CreatePXScene();
+	PxScene* CreatePXScene(CScene* aScene);
+	PxScene* GetPXScene();
+	PxPhysics* GetPhysics() { return myPhysics; }
 
 
 	PxRaycastBuffer Raycast(Vector3 origin, Vector3 direction, float distance);
 	void RaycastHit(PxVec3 position, PxVec3 normal);
-	
+
 
 	PxMaterial* CreateMaterial(materialfriction amaterial);
 
 	void Simulate();
 
-	RigidDynamicBody* CreateDynamicRigidbody(Vector3 aPos);
+	CRigidDynamicBody* CreateDynamicRigidbody(const Vector3& aPos, const int aInstanceID);
 
-	CCharacterController* CreateCharacterController(Vector3 aPos = {0.f, 0.f, 0.f});
+	CCharacterController* CreateCharacterController(const Vector3& aPos, const float& aRadius, const float& aHeight);
 
-	PxControllerManager& GetControllerManager() { return *myControllerManager; }
+	PxControllerManager* GetControllerManager();
 
-	void DebugLines();
 
-	void Cooking(std::vector<CGameObject*> gameObjectsToCook, CScene* aScene);
+  //merge conflict 8/3/2021
+	//void DebugLines();
+	void Cooking(const std::vector<CGameObject*>& gameObjectsToCook, CScene* aScene);
+
 private:
-	
-	
+
+
 	PxFoundation* myFoundation;
 	PxPhysics* myPhysics;
 	PxDefaultCpuDispatcher* myDispatcher;
@@ -62,7 +64,8 @@ private:
 	PxPvd* myPhysicsVisualDebugger;
 	PxDefaultAllocator* myAllocator;
 	PxCooking* myCooking;
-	ContactReportCallback* myContactReportCallback;
+	CContactReportCallback* myContactReportCallback;
 	PxControllerManager* myControllerManager;
+	std::unordered_map<PxScene*, PxControllerManager*> myControllerManagers;// Should not be necessary
+	std::unordered_map<CScene*, PxScene*> myPXScenes;
 };
-
