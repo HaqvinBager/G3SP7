@@ -2,11 +2,11 @@
 #include "NodeType.h"
 #include "NodeTypes.h"
 
-class CNodeTypeMathDot : public CNodeType
+class CNodeTypeVector3Dot : public CNodeType
 {
 public:
-	CNodeTypeMathDot();
+	CNodeTypeVector3Dot();
 	int OnEnter(class CNodeInstance* aTriggeringNodeInstance) override;
-	std::string GetNodeTypeCategory() override { return "Math"; }
+	std::string GetNodeTypeCategory() override { return "Vector3"; }
 };
 

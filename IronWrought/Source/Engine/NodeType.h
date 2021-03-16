@@ -91,12 +91,12 @@ struct SPin
 		myPinType = aType;
 	}
 
-	SPin(const SPin& p2)
+	SPin(const SPin& aPinToCopy)
 	{
-		myText = p2.myText;
-		myVariableType = p2.myVariableType;
-		myPinType = p2.myPinType;
-		myData = p2.myData;
+		myText = aPinToCopy.myText;
+		myVariableType = aPinToCopy.myVariableType;
+		myPinType = aPinToCopy.myPinType;
+		myData = aPinToCopy.myData;
 		//myUID.SetUID(p2.myUID.AsInt()); // Cant do this here, copy constructor should create new UID and it will if we dont set it here
 	}
 
@@ -157,7 +157,7 @@ protected:
 		}
 	}
 	virtual int OnEnter(class CNodeInstance* aTriggeringNodeInstance) = 0;
-	void GetDataOnPin(CNodeInstance* aTriggeringNodeInstance, unsigned int aPinIndex, SPin::EPinType& outType, void*& someData, size_t& outSize);
+	void GetDataOnPin(CNodeInstance* aTriggeringNodeInstance, unsigned int aPinIndex, SPin::EPinType& anOutType, void*& someData, size_t& anOutSize);
 	std::vector<SPin> myPins;
 	std::string myNodeName = "N/A";
 	std::string myNodeDataKey = "";

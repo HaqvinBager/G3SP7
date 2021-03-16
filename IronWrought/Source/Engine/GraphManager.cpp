@@ -666,7 +666,7 @@ void CGraphManager::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInstance
 		c = static_cast<DirectX::SimpleMath::Vector3*>(aPin.myData);
 
 		ImGui::PushID(aPin.myUID.AsInt());
-		ImGui::PushItemWidth(45.0f);
+		ImGui::PushItemWidth(35.0f);
 		if (aNodeInstance->IsPinConnected(aPin))
 		{
 			DrawPinIcon(aPin, true, 255);
