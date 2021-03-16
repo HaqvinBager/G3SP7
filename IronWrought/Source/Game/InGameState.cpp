@@ -31,17 +31,8 @@
 #include "FolderUtility.h"
 
 #include "animationLoader.h"
-void TEMP_DeferredRenderingTests(CScene* aScene);
 
-CInGameState::CInGameState(CStateStack& aStateStack, const CStateStack::EState aState)
-	: CState(aStateStack, aState),
-	myExitLevel(false)
-{
-}
 
-CInGameState::~CInGameState(){}
-
-void CInGameState::Awake(){}
 
 #include "PointLight.h"
 #include "PointLightComponent.h"
@@ -56,17 +47,36 @@ void CInGameState::Awake(){}
 
 CGameObject* gVFX = nullptr;
 void TEMP_VFX(CScene* aScene);
+void TEMP_DeferredRenderingTests(CScene* aScene);
 
-void CInGameState::Start()
+CInGameState::CInGameState(CStateStack& aStateStack, const CStateStack::EState aState)
+	: CState(aStateStack, aState),
+	myExitLevel(false)
+{
+}
+
+CInGameState::~CInGameState() {}
+
+
+void CInGameState::Awake()
 {
 	CJsonReader::Get()->Init();
 	CScene* scene = CSceneManager::CreateEmpty();
-	
 	TEMP_VFX(scene);
 	//TEMP_DecalTests(scene);
 
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);
+	CMainSingleton::PostMaster().Subscribe("LoadScene", this);
+}
+
+
+void CInGameState::Start()
+{
+
+
+	TEMP_VFX(&CEngine::GetInstance()->GetActiveScene());
+
 	myExitLevel = false;	
 }
 
@@ -138,8 +148,13 @@ void CInGameState::ReceiveEvent(const EInputEvent aEvent)
 	}
 }
 
-void CInGameState::Receive(const SStringMessage& /*aMessage*/)
+void CInGameState::Receive(const SStringMessage& aMessage)
 {
+	const char* test = "LoadScene";
+	if (aMessage.myMessageType == test)
+	{
+		Start();
+	}
 	myExitLevel = true;
 }
 

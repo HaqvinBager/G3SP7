@@ -7,6 +7,8 @@
 #include "SceneManager.h"
 #include "CameraComponent.h"
 #include "FolderUtility.h"
+#include "MainSingleton.h"
+#include "PostMaster.h"
 
 IronWroughtImGui::CLoadScene::CLoadScene(const char* aMenuName, const bool aIsMenuChild)
 	: CWindow(aMenuName, aIsMenuChild)
@@ -32,6 +34,9 @@ void IronWroughtImGui::CLoadScene::OnEnable()
 	}
 	myScenes.push_back("Empty");
 	myState = EState::DropDownMenu;
+
+
+
 }
 
 
@@ -62,9 +67,14 @@ bool IronWroughtImGui::CLoadScene::OnMainMenuGUI()
 				CEngine::GetInstance()->SetActiveScene(CStateStack::EState::InGame);
 
 				CCameraComponent* newCamera = CEngine::GetInstance()->GetActiveScene().FindFirstObjectWithComponent<CCameraComponent>();
-				newCamera->GameObject().myTransform->Position(camPos);
+				newCamera->GameObject().myTransform->Position(camPos);				
+				
+				CMainSingleton::PostMaster().Send({ "LoadScene", nullptr });
 
 				myScenes.clear();
+
+				
+
 				OnEnable();
 
 			}
