@@ -21,7 +21,6 @@ cbuffer FrameBuffer : register(b0)
 
 cbuffer LightBuffer : register(b1)
 {
-    float4x4 directionalLightTransform;
     float4x4 toDirectionalLightView;
     float4x4 toDirectionalLightProjection;
     float4 directionalLightPosition; // For shadow calculations
@@ -81,7 +80,7 @@ float3 SampleShadowPos(float3 projectionPos)
 
 float3 ShadowFactor(float3 viewPos)
 {
-    float4 projectionPos = mul(viewPos, toDirectionalLightProjection);
+    float4 projectionPos = mul(toDirectionalLightProjection, viewPos);
     return SampleShadowPos(projectionPos.xyz);
 }
 
@@ -115,10 +114,10 @@ PixelOutput main(VertexToPixel input)
     float3 camPos = cameraPosition.xyz;
     
     worldPosition -= directionalLightPosition.xyz;
-    float3 positionLightVS = mul(worldPosition, directionalLightTransform);
+    float3 positionLightVS = mul(toDirectionalLightView, worldPosition);
    
     camPos -= directionalLightPosition.xyz;
-    float3 cameraPositionLightVS = mul(camPos, directionalLightTransform); // done
+    float3 cameraPositionLightVS = mul(toDirectionalLightView, camPos);
     
     // Reduce noisyness by truncating the starting position
     //float raymarchDistance = trunc(clamp(length(cameraPositionLightVS.xyz - positionLightVS.xyz), 0.0f, raymarchDistanceLimit));

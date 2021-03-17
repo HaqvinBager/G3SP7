@@ -75,7 +75,6 @@ cbuffer ObjectBuffer : register(b1)
 
 cbuffer LightBuffer : register(b2)
 {
-    float4x4 directionalLightTransform;
     float4x4 toDirectionalLightView;
     float4x4 toDirectionalLightProjection;
     float4 directionalLightPosition; // For shadow calculations

@@ -273,8 +273,8 @@ float SampleShadowPos(float3 projectionPos)
 float3 ShadowFactor(float3 worldPosition)
 {
     worldPosition -= directionalLightPosition.xyz;
-    float4 viewPos = mul(worldPosition, directionalLightTransform);
-    float4 projectionPos = mul(viewPos, toDirectionalLightProjection);
+    float4 viewPos = mul(toDirectionalLightView, worldPosition);
+    float4 projectionPos = mul(toDirectionalLightProjection, viewPos);
     float3 viewCoords = projectionPos.xyz;
 
     float total = 0.0f;
@@ -284,8 +284,8 @@ float3 ShadowFactor(float3 worldPosition)
         {
             //2048.0f * 4.0f,
             float3 off;
-            off.x = x / (512.0f/*2048.0f*/ /** 4.0f*/);
-            off.y = y / (512.0f/*2048.0f*/ /** 4.0f*/);
+            off.x = x / (2048.0f * 4.0f);
+            off.y = y / (2048.0f * 4.0f);
             off.z = 0.0f;
             total += SampleShadowPos(viewCoords + off);
         }

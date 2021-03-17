@@ -13,13 +13,11 @@ public:
 	bool Init(CDirectXFramework* aFramework, std::string aFilePath);
 
 	ID3D11ShaderResourceView* const* GetCubeMap();
-	//CFullscreenTexture* GetShadowDepth();
 
-	DirectX::SimpleMath::Vector4 GetDirection() { return myDirection; }
-	DirectX::SimpleMath::Vector4 GetColor() { return myColor; }
-	DirectX::SimpleMath::Matrix GetShadowTransform() const;
 	DirectX::SimpleMath::Matrix GetShadowView() const;
 	DirectX::SimpleMath::Matrix GetShadowProjection() const;
+	DirectX::SimpleMath::Vector4 GetDirection() { return myDirection; }
+	DirectX::SimpleMath::Vector4 GetColor() { return myColor; }
 	DirectX::SimpleMath::Vector4 GetShadowPosition() const;
 
 	void SetDirection(DirectX::SimpleMath::Vector3 aDirection);
@@ -28,7 +26,11 @@ public:
 	void SetPosition(DirectX::SimpleMath::Vector3 aPosition); // Used for shadow calculation
 
 private:
-	//CFullscreenTexture* myShadowDepth;
+	DirectX::SimpleMath::Matrix GetShadowTransform() const; // Used for shadow position calculation
+
+private:
+	Matrix myShadowmapViewMatrix;
+	Matrix myShadowmapProjectionMatrix;
 	DirectX::SimpleMath::Vector2 myShadowcastSize = { 32.0f, 32.0f };
 	DirectX::SimpleMath::Vector2 myShadowTextureSize = { 2048.0f * 4.0f, 2048.0f * 4.0f };
 
