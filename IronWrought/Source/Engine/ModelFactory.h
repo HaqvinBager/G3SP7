@@ -15,15 +15,15 @@ public:
 	bool Init(CDirectXFramework* aFramework);
 	void ClearFactory();
 	
-	CModel* GetModel(std::string aFilePath);
-	CModel* GetInstancedModel(std::string aFilePath, int aNumberOfInstanced);	
+	CModel* GetModel(const std::string& aFilePath);
+	CModel* GetInstancedModel(const std::string& aFilePath, int aNumberOfInstanced);	
 	CModel* GetOutlineModelSubset();
 
 	std::vector<DirectX::SimpleMath::Vector3>& GetVertexPositions(const std::string& aFilePath);
 
 	CLoaderMesh*& GetMeshes(const std::string& aFilePath);
 
-	void ClearModel(std::string aFilePath, int aNumberOfInstances = 0);
+	void ClearModel(const std::string& aFilePath, int aNumberOfInstances = 0);
 
 private:
 	struct SInstancedModel
@@ -32,7 +32,7 @@ private:
 		const int myCount;
 		size_t myModelTypeHashCode;
 
-		SInstancedModel(const std::string aModelType, const int aCount)
+		SInstancedModel(const std::string& aModelType, const int aCount)
 			: myModelType(aModelType)
 			, myCount(aCount)
 		{
@@ -45,9 +45,9 @@ private:
 	};
 
 private:
-	CModel* LoadModel(std::string aFilePath);
-	CModel* CreateInstancedModels(std::string aFilePath, int aNumberOfInstanced);
-	ID3D11ShaderResourceView* GetShaderResourceView(ID3D11Device* aDevice, std::string aTexturePath);
+	CModel* LoadModel(const std::string& aFilePath);
+	CModel* CreateInstancedModels(const std::string& aFilePath, int aNumberOfInstanced);
+	ID3D11ShaderResourceView* GetShaderResourceView(ID3D11Device* aDevice, const std::string& aTexturePath);
 
 private:
 	CModelFactory();

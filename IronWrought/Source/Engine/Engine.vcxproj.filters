@@ -181,6 +181,12 @@
     <FxCompile Include="FullscreenPixelShader_Tonemap.hlsl">
       <Filter>Shaders\Fullscreen</Filter>
     </FxCompile>
+    <FxCompile Include="TerrainPixelShader.hlsl">
+      <Filter>Shaders\Specialisering</Filter>
+    </FxCompile>
+    <FxCompile Include="TerrainVertexShader.hlsl">
+      <Filter>Shaders\Specialisering</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimationComponent.cpp">
@@ -734,6 +740,12 @@
       <Filter>Specialisering</Filter>
     </ClCompile>
     <ClCompile Include="TerrainMesh.cpp">
+      <Filter>Specialisering</Filter>
+    </ClCompile>
+    <ClCompile Include="SpecPerlinOctave.cpp">
+      <Filter>Specialisering</Filter>
+    </ClCompile>
+    <ClCompile Include="SpecPerlinNoise.cpp">
       <Filter>Specialisering</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1357,6 +1369,12 @@
     <ClInclude Include="TerrainMesh.h">
       <Filter>Specialisering</Filter>
     </ClInclude>
+    <ClInclude Include="SpecPerlinOctave.h">
+      <Filter>Specialisering</Filter>
+    </ClInclude>
+    <ClInclude Include="SpecPerlinNoise.h">
+      <Filter>Specialisering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">
@@ -1422,6 +1440,9 @@
     </None>
     <None Include="PointLightShaderStructs.hlsli">
       <Filter>Shaders\PointLight</Filter>
+    </None>
+    <None Include="TerrainShaderStructs.hlsli">
+      <Filter>Shaders\Specialisering</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -1640,6 +1661,9 @@
     </Filter>
     <Filter Include="Specialisering">
       <UniqueIdentifier>{004d4e87-2535-471c-aa5f-fc7cdb240260}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Specialisering">
+      <UniqueIdentifier>{0cd85235-90ee-435c-bfed-f31c6a544024}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -205,7 +205,7 @@ void CTerrainGenerator::GenerateTerrains()
 	int faceOffset = 0;
 	int vertexOffset = 0;
 	int offset = 0;
-	int indexOffset = 0;
+	//int indexOffset = 0;
 	//int offsetX = 0;
 	//int offsetZ = 0;
 
@@ -236,8 +236,8 @@ void CTerrainGenerator::GenerateTerrains()
 	int zOffset = 0;
 	for (int i = 0; i < myTerrainMeshes.size(); ++i)
 	{
-		xOffset = i / myGridWidth;
-		zOffset = i % myGridWidth;
+		xOffset = i % myGridWidth;
+		zOffset = i / myGridWidth;
 		vertexOffset = 0;
 		faceOffset = 0;
 		for (int j = 0; j < myTerrainMeshes[i]->MeshSize(); ++j)
@@ -337,26 +337,26 @@ void CTerrainGenerator::GenerateTerrains()
 
 				if (gridOffset % 2 == 0)
 				{
-					face.SetVertexIndexAtIndex(0, index3 + indexOffset);
-					face.SetVertexIndexAtIndex(1, index2 + indexOffset);
-					face.SetVertexIndexAtIndex(2, index1 + indexOffset);
+					face.SetVertexIndexAtIndex(0, index3 /*+ indexOffset*/);
+					face.SetVertexIndexAtIndex(1, index2 /*+ indexOffset*/);
+					face.SetVertexIndexAtIndex(2, index1 /*+ indexOffset*/);
 					faces[offset + faceOffset] = face;
 					faceOffset++;
-					face.SetVertexIndexAtIndex(0, index2 + indexOffset);
-					face.SetVertexIndexAtIndex(1, index3 + indexOffset);
-					face.SetVertexIndexAtIndex(2, index4 + indexOffset);
+					face.SetVertexIndexAtIndex(0, index2 /*+ indexOffset*/);
+					face.SetVertexIndexAtIndex(1, index3 /*+ indexOffset*/);
+					face.SetVertexIndexAtIndex(2, index4 /*+ indexOffset*/);
 					faces[offset + faceOffset] = face;
 				}
 				else if (gridOffset % 2 == 1)
 				{
-					face.SetVertexIndexAtIndex(0, index4 + indexOffset);
-					face.SetVertexIndexAtIndex(1, index2 + indexOffset);
-					face.SetVertexIndexAtIndex(2, index1 + indexOffset);
+					face.SetVertexIndexAtIndex(0, index4 /*+ indexOffset*/);
+					face.SetVertexIndexAtIndex(1, index2 /*+ indexOffset*/);
+					face.SetVertexIndexAtIndex(2, index1 /*+ indexOffset*/);
 					faces[offset + faceOffset] = face;
 					faceOffset++;
-					face.SetVertexIndexAtIndex(0, index1 + indexOffset);
-					face.SetVertexIndexAtIndex(1, index3 + indexOffset);
-					face.SetVertexIndexAtIndex(2, index4 + indexOffset);
+					face.SetVertexIndexAtIndex(0, index1 /*+ indexOffset*/);
+					face.SetVertexIndexAtIndex(1, index3 /*+ indexOffset*/);
+					face.SetVertexIndexAtIndex(2, index4 /*+ indexOffset*/);
 					faces[offset + faceOffset] = face;
 				}
 			}
@@ -375,8 +375,10 @@ void CTerrainGenerator::GenerateTerrains()
 		vertices.resize(meshSizeSquared + vertexOffset);
 		myTerrainMeshes[i]->Vertices(vertices);
 
-		indexOffset += offset + vertexOffset + 1;
+		//indexOffset += offset + vertexOffset + 1;
 	}
+
+	index;
 }
 
 void CTerrainGenerator::GenerateFile()
@@ -408,38 +410,45 @@ void CTerrainGenerator::GenerateFile()
 
 void CTerrainGenerator::GenerateFiles()
 {
-	std::ofstream outfile("test.obj");
-
-	if (!outfile)
-	{
-		std::cerr << "Cannot open the output file." << std::endl;
-	}
+	std::string name = "Test";
+	std::string extension = ".obj";
+	std::string index;
+	std::string path;
 
 	for (int i = 0; i < myTerrainMeshes.size(); ++i)
 	{
+		index = std::to_string(i);
+		path = name + index + extension;
+		std::ofstream outfile(path);
+
+		if (!outfile)
+		{
+			std::cerr << "Cannot open the output file." << std::endl;
+		}
+
 		for (auto& position : myTerrainMeshes[i]->Vertices())
 		{
 			outfile << "v " << position.VertexPosition().x << " " << position.VertexPosition().y << " " << position.VertexPosition().z << "\n";
 		}
-	}
+		//}
 
-	//for (int i = 0; i < myTerrainMeshes.size(); ++i)
-	//{
-	//	for (auto& position : myTerrainMeshes[i]->Vertices())
-	//	{
-	//		outfile << "vn " << position.VertexNormal().x << " " << position.VertexNormal().y << " " << position.VertexNormal().z << "\n";
-	//	}
-	//}
+		//for (int i = 0; i < myTerrainMeshes.size(); ++i)
+		//{
+		//	for (auto& position : myTerrainMeshes[i]->Vertices())
+		//	{
+		//		outfile << "vn " << position.VertexNormal().x << " " << position.VertexNormal().y << " " << position.VertexNormal().z << "\n";
+		//	}
+		//}
 
-	for (int i = 0; i < myTerrainMeshes.size(); ++i)
-	{
+		//for (int i = 0; i < myTerrainMeshes.size(); ++i)
+		//{
 		for (int j = 0; j < myTerrainMeshes[i]->Faces().size(); ++j)
 		{
 			outfile << "f " << myTerrainMeshes[i]->Faces()[j].GetIndeces()[0] << " " << myTerrainMeshes[i]->Faces()[j].GetIndeces()[1] << " " << myTerrainMeshes[i]->Faces()[j].GetIndeces()[2] << "\n";
 		}
+		outfile.close();
+		path.clear();
 	}
-
-	outfile.close();
 }
 
 const CTerrainMesh* CTerrainGenerator::TerrainMesh() const

@@ -48,9 +48,9 @@ CInGameState::CInGameState(CStateStack& aStateStack, const CStateStack::EState a
 {
 }
 
-CInGameState::~CInGameState(){}
+CInGameState::~CInGameState() {}
 
-void CInGameState::Awake(){}
+void CInGameState::Awake() {}
 
 #include "PointLight.h"
 #include "PointLightComponent.h"
@@ -60,24 +60,29 @@ void CInGameState::Start()
 	CJsonReader::Get()->Init();
 	CScene* scene = CSceneManager::CreateEmpty();
 	scene->AddPXScene(CEngine::GetInstance()->GetPhysx().CreatePXScene());
-	
-	//TEMP_VFX(scene);
-	//CTerrainGenerator terrainGenerator;
-	//terrainGenerator.InitMeshes(16, 4);
-	//terrainGenerator.GenerateFiles();
 
+	TEMP_VFX(scene);
+	CTerrainGenerator terrainGenerator;
+	terrainGenerator.InitMeshes(4, 16);
+	terrainGenerator.GenerateFiles();
+	std::vector<CGameObject*> aTerrain;
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);
-	std::string path = "D:/Game Dev/Specialisering/G3SP7/IronWrought/Bin/test.obj";
-	//CModel* model = CModelFactory::GetInstance()->GetModel(path);
-	//model;
-	std::vector<CGameObject*> aTerrain;
-	aTerrain.push_back(new CGameObject(1337));
-	aTerrain.back()->AddComponent<CModelComponent>(*aTerrain.back(), path);
-	aTerrain.back()->myTransform->Scale(500);
-	CEngine::GetInstance()->GetActiveScene().AddInstances(aTerrain);
-	myExitLevel = false;
 
+	for (int i = 0; i < terrainGenerator.TerrainMeshes().size(); ++i)
+	{
+		std::string path = "D:/Game Dev/Specialisering/G3SP7/IronWrought/Bin/Test" + std::to_string(i) + ".obj";
+		//CModel* model = CModelFactory::GetInstance()->GetModel(path);
+		//model;
+		int GOID = 100330 + i;
+
+		aTerrain.push_back(new CGameObject(GOID));
+		aTerrain.back()->AddComponent<CModelComponent>(*aTerrain.back(), path);
+		aTerrain.back()->myTransform->Scale(500);
+	}
+	CEngine::GetInstance()->GetActiveScene().AddInstances(aTerrain);
+
+	myExitLevel = false;
 }
 
 void CInGameState::Stop()
@@ -119,10 +124,10 @@ void CInGameState::ReceiveEvent(const EInputEvent aEvent)
 	{
 		switch (aEvent)
 		{
-			case IInputObserver::EInputEvent::PauseGame:
-				break;
-			default:
-				break;
+		case IInputObserver::EInputEvent::PauseGame:
+			break;
+		default:
+			break;
 		}
 	}
 }
@@ -146,23 +151,23 @@ void TEMP_DeferredRenderingTests(CScene* scene)
 {
 	CGameObject* chest = new CGameObject(1337);
 	chest->AddComponent<CModelComponent>(*chest, std::string(ASSETPATH("Assets/Graphics/Exempel_Modeller/Wall/Wall.fbx")));
-	chest->GetComponent<CTransformComponent>()->Position({5.0f,0.0f,5.0f});
+	chest->GetComponent<CTransformComponent>()->Position({ 5.0f,0.0f,5.0f });
 	chest->myTransform->Rotation({ 0.0f,180.0f,0.0f });
 
 	CGameObject* chest55 = new CGameObject(123123123);
 	chest55->AddComponent<CModelComponent>(*chest55, std::string(ASSETPATH("Assets/Graphics/Exempel_Modeller/Wall/Wall.fbx")));
-	chest55->GetComponent<CTransformComponent>()->Position({8.0f,0.0f,5.0f});
+	chest55->GetComponent<CTransformComponent>()->Position({ 8.0f,0.0f,5.0f });
 	chest55->myTransform->Rotation({ 0.0f,0.0f,0.0f });
 
 	CGameObject* chest4 = new CGameObject(132342347);
 	chest4->AddComponent<CModelComponent>(*chest4, std::string(ASSETPATH("Assets/Graphics/Exempel_Modeller/Wall/Wall.fbx")));
-	chest4->GetComponent<CTransformComponent>()->Position({-1.0f,0.0f,5.0f});
+	chest4->GetComponent<CTransformComponent>()->Position({ -1.0f,0.0f,5.0f });
 	//chest4->myTransform->Scale({ 100.0f,100.0f,100.0f });
 	chest4->myTransform->Rotation({ 0.0f,90.0f,0.0f });
 
 	CGameObject* chest44 = new CGameObject(132342347);
 	chest44->AddComponent<CModelComponent>(*chest44, std::string(ASSETPATH("Assets/Graphics/Exempel_Modeller/Wall/Wall.fbx")));
-	chest44->GetComponent<CTransformComponent>()->Position({2.0f,-1.0f,-20.0f});
+	chest44->GetComponent<CTransformComponent>()->Position({ 2.0f,-1.0f,-20.0f });
 	chest44->myTransform->Rotation({ 90.0f,0.0f,0.0f });
 	chest44->myTransform->Scale({ 50.0f,50.0f,50.0f });
 

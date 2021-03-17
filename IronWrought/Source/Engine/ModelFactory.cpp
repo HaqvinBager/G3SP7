@@ -17,7 +17,7 @@
 #pragma comment(lib, "ModelLoader_Release.lib")
 #endif
 
-#define USING_FBX_MATERIALS
+//#define USING_FBX_MATERIALS
 
 #define ALLOW_ANIMATIONS
 
@@ -64,7 +64,7 @@ bool CModelFactory::Init(CDirectXFramework* aFramework)
 	return true;
 }
 
-CModel* CModelFactory::GetModel(std::string aFilePath)
+CModel* CModelFactory::GetModel(const std::string& aFilePath)
 {
 	if (myModelMap.find(aFilePath) == myModelMap.end())
 	{
@@ -77,7 +77,7 @@ CModel* CModelFactory::GetModel(std::string aFilePath)
 	return myModelMap.at(aFilePath);
 }
 
-CModel* CModelFactory::LoadModel(std::string aFilePath)
+CModel* CModelFactory::LoadModel(const std::string& aFilePath)
 {
 	// Loading
 	const size_t last_slash_idx = aFilePath.find_last_of("\\/");
@@ -86,7 +86,7 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 
 	CFBXLoaderCustom modelLoader;
 	CLoaderModel* loaderModel = modelLoader.LoadModel(aFilePath.c_str());
-	ENGINE_ERROR_BOOL_MESSAGE(loaderModel, aFilePath.append(" could not be loaded.").c_str());
+	ENGINE_ERROR_BOOL_MESSAGE(loaderModel, std::string(aFilePath + " could not be loaded.").c_str());
 
 	// Mesh Data
 	size_t numberOfMeshes = loaderModel->myMeshes.size();
@@ -327,7 +327,7 @@ CLoaderMesh*& CModelFactory::GetMeshes(const std::string& aFilePath)
 	return myMeshesMap.at(aFilePath);
 }
 
-void CModelFactory::ClearModel(std::string aFilePath, int aNumberOfInstances)
+void CModelFactory::ClearModel(const std::string& aFilePath, int aNumberOfInstances)
 {
 	if (myModelMap.find(aFilePath) != myModelMap.end())
 	{
@@ -352,7 +352,7 @@ void CModelFactory::ClearModel(std::string aFilePath, int aNumberOfInstances)
 	}
 }
 
-CModel* CModelFactory::GetInstancedModel(std::string aFilePath, int aNumberOfInstanced)
+CModel* CModelFactory::GetInstancedModel(const std::string& aFilePath, int aNumberOfInstanced)
 {
 	SInstancedModel instancedModel = {aFilePath, aNumberOfInstanced};
 	if (myInstancedModelMap.find(instancedModel) == myInstancedModelMap.end())
@@ -387,7 +387,7 @@ void CModelFactory::ClearFactory()
 	myInstancedModelMap.clear();
 }
 
-CModel* CModelFactory::CreateInstancedModels(std::string aFilePath, int aNumberOfInstanced)
+CModel* CModelFactory::CreateInstancedModels(const std::string& aFilePath, int aNumberOfInstanced)
 {
 	const size_t last_slash_idx = aFilePath.find_last_of("\\/");
 	std::string modelDirectory = aFilePath.substr(0, last_slash_idx + 1);
@@ -395,7 +395,7 @@ CModel* CModelFactory::CreateInstancedModels(std::string aFilePath, int aNumberO
 
 	CFBXLoaderCustom modelLoader;
 	CLoaderModel* loaderModel = modelLoader.LoadModel(aFilePath.c_str());
-	ENGINE_ERROR_BOOL_MESSAGE(loaderModel, aFilePath.append(" could not be loaded.").c_str());
+	ENGINE_ERROR_BOOL_MESSAGE(loaderModel, std::string(aFilePath + " could not be loaded.").c_str());
 
 	// Mesh Data
 	size_t numberOfMeshes = loaderModel->myMeshes.size();
@@ -604,7 +604,7 @@ CModel* CModelFactory::CreateInstancedModels(std::string aFilePath, int aNumberO
 	return model;
 }
 
-ID3D11ShaderResourceView* CModelFactory::GetShaderResourceView(ID3D11Device* aDevice, std::string aTexturePath)
+ID3D11ShaderResourceView* CModelFactory::GetShaderResourceView(ID3D11Device* aDevice, const std::string& aTexturePath)
 {
 	ID3D11ShaderResourceView* shaderResourceView;
 
