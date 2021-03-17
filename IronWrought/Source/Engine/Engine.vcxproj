@@ -316,6 +316,7 @@
     <ClInclude Include="Observer.h" />
     <ClInclude Include="PerlinNoise.h" />
     <ClInclude Include="PhysXWrapper.h" />
+    <ClInclude Include="PlayerAnimationController.h" />
     <ClInclude Include="PointLightComponent.h" />
     <ClInclude Include="PostMaster.h" />
     <ClInclude Include="Debug.h" />
@@ -461,6 +462,7 @@
     <ClCompile Include="NodeTypeVector3Sub.cpp" />
     <ClCompile Include="NodeTypeVFXPlayVFX.cpp" />
     <ClCompile Include="NodeTypeVFXStopVFX.cpp" />
+    <ClCompile Include="PlayerAnimationController.cpp" />
     <ClCompile Include="ShadowRenderer.cpp" />
     <ClCompile Include="Decal.cpp" />
     <ClCompile Include="DecalComponent.cpp" />

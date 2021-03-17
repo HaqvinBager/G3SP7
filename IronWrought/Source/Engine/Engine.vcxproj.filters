@@ -746,6 +746,7 @@
     <ClCompile Include="CCurveWindow.cpp">
       <Filter>Imgui\Windows</Filter>
     </ClCompile>
+    <ClCompile Include="PlayerAnimationController.cpp" />
     <ClCompile Include="NodeTypeVector3Add.cpp">
       <Filter>Imgui\Node Editor\Nodes\Vector3</Filter>
     </ClCompile>
@@ -1406,6 +1407,7 @@
     <ClInclude Include="..\Includes\ImGui\Core\widget_curve.h">
       <Filter>Imgui\Widgets</Filter>
     </ClInclude>
+    <ClInclude Include="PlayerAnimationController.h" />
     <ClInclude Include="NodeTypeVector3Add.h">
       <Filter>Imgui\Node Editor\Nodes\Vector3</Filter>
     </ClInclude>

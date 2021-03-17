@@ -419,7 +419,7 @@ void CAnimationController::UpdateAnimationTimes()
 	UpdateAnimationTimeFrames();
 }
 
-void CAnimationController::BlendToAnimation(uint anAnimationIndex, bool anUpdateBoth, float aBlendDuration, bool aTemporary, float aTime)
+void CAnimationController::BlendToAnimation(uint anAnimationIndex, bool anUpdateBoth, float aBlendDuration, bool aTemporary, float aTimeMultiplier)
 {
 	if (AnimationIndexWithinRange(anAnimationIndex))
 		return;
@@ -431,7 +431,12 @@ void CAnimationController::BlendToAnimation(uint anAnimationIndex, bool anUpdate
 	myAnimationTime1 = 0.f;
 	myUpdateBoth = anUpdateBoth;
 	myTemporary = aTemporary;
-	myPlayTime = aTime;
+	if (myTemporary)
+	{
+		float ticksPerSecond = static_cast<float>(myAnimations[myAnim0Index]->mAnimations[0]->mTicksPerSecond);
+		ticksPerSecond = (ticksPerSecond != 0) ? ticksPerSecond : ANIMATED_AT_FRAMES_PER_SECOND;
+		myPlayTime = ((float)myAnimations[myAnim0Index]->mAnimations[0]->mDuration * aTimeMultiplier) / ticksPerSecond;
+	}
 }
 
 bool CAnimationController::SetBlendTime(float aTime)
