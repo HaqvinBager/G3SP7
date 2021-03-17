@@ -33,27 +33,21 @@ void SVFXEffect::UpdateParticles(unsigned int anIndex, DirectX::SimpleMath::Vect
 	for (UINT i = 0; i < myParticleVertices[anIndex].size(); ++i)
 	{
 
-		float quotient = myParticleVertices[anIndex][i].myLifeTime / particleData.myParticleLifetime;
-		std::cout << myParticleVertices[anIndex][i].myLifeTime << std::endl;
+		float quotient = myParticleVertices[anIndex][i].myLifeTime / particleData.myParticleLifetime;		
 		myParticleVertices[anIndex][i].myColor = Vector4::Lerp
 		(
 			particleData.myParticleEndColor,
 			particleData.myParticleStartColor,
 			quotient
 		);
-
-		Vector2 p1 = { 0.0f, 0.0f };//myParticleSizeCurves[anIndex][0];
-		Vector2 p2 = { 0.75f, 0.5f };//myParticleSizeCurves[anIndex][1];
-		Vector2 p3 = { 0.85f, 1.0f };//myParticleSizeCurves[anIndex][2];
-		Vector2 p4 = { 1.0f, 0.5f };//myParticleSizeCurves[anIndex][3];
-
-		float evalutedQuotientOnCatmullRomCurve = Vector2::CatmullRom(p1, p2, p3, p4, quotient).x;
+	
 		myParticleVertices[anIndex][i].mySize = Vector2::Lerp
 		(
 			{ particleData.myParticleStartSize * aScale, particleData.myParticleStartSize * aScale },
 			{ particleData.myParticleEndSize * aScale, particleData.myParticleEndSize * aScale },
-			evalutedQuotientOnCatmullRomCurve
+			CalculateInterpolator(myParticleSizeCurves[anIndex], quotient)
 		);
+		
 
 		myParticleVertices[anIndex][i].myMovement = Vector4::Lerp
 		(
@@ -93,6 +87,23 @@ void SVFXEffect::UpdateParticles(unsigned int anIndex, DirectX::SimpleMath::Vect
 		myParticlePools[anIndex].push(myParticleVertices[anIndex].back());
 		myParticleVertices[anIndex].pop_back();
 	}
+}
+
+const float SVFXEffect::CalculateInterpolator(const std::vector<Vector2>& somePoints, const float t) const
+{
+	unsigned int pointIndex = static_cast<unsigned int>(somePoints.size() - 1);
+	for (unsigned int j = 1; j < somePoints.size() - 1; ++j)
+	{
+		if (t < somePoints[j].x &&
+			t > somePoints[j - 1].x)
+		{
+			pointIndex = j;
+			break;
+		}
+	}
+
+	float val = Remap(somePoints[pointIndex - 1].x, somePoints[pointIndex].x, 0.0f, 1.0f, t);
+	return Lerp(somePoints[pointIndex - 1].y, somePoints[pointIndex].y, val);
 }
 
 void SVFXEffect::ResetParticles()

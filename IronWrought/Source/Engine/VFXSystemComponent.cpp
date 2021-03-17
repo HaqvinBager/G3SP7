@@ -135,6 +135,7 @@ CVFXSystemComponent::CVFXSystemComponent(CGameObject& aParent, const std::string
 			{
 				const auto& sizeCurveArray = doc["ParticleSystems"][i]["SizeCurve"].GetArray();
 				unsigned int curveIndex = 0;
+				effect->myParticleSizeCurves[i].resize(sizeCurveArray.Size());
 				for (const auto& point : sizeCurveArray)
 				{
 					effect->myParticleSizeCurves[i][curveIndex].x = point["x"].GetFloat();

@@ -32,7 +32,7 @@ struct SVFXEffect {
 	std::vector<float> myEmitterTimers;
 	std::vector<bool>  myEmitterShouldOrbit;
 	
-	std::vector<std::array<Vector2, 4>> myParticleSizeCurves;
+	std::vector<std::vector<Vector2>> myParticleSizeCurves;
 
 
 	
@@ -48,6 +48,21 @@ struct SVFXEffect {
 
 	void SpawnParticles(unsigned int anIndex, DirectX::SimpleMath::Vector3& aCameraPosition, CParticleEmitter::SParticleData& someParticleData, const Vector3& aTranslation, const float aScale);
 	void UpdateParticles(unsigned int anIndex, DirectX::SimpleMath::Vector3& aCameraPosition, CParticleEmitter::SParticleData& particleData, const float aScale);
+	float Lerp(float a, float b, float t) const
+	{
+		return a + t * (b - a);
+	}
+	float InverseLerp(float a, float b, float t) const
+	{
+		return (t - a) / (b - a);
+	}
+
+	float Remap(const float iMin, const float iMax, const float oMin, const float oMax, const float v) const
+	{
+		float t = InverseLerp(iMin, iMax, v);
+		return Lerp(oMin, oMax, t);
+	}
+	const float CalculateInterpolator(const std::vector<Vector2>& somePoints, const float t) const;
 
 	void ResetParticles();
 

@@ -42,7 +42,6 @@ void IronWroughtImGui::CCurveWindow::OnEnable()
 void IronWroughtImGui::CCurveWindow::OnInspectorGUI()
 {
 	ImGui::Begin(Name(), Open());
-
 	for (auto& keyValue : myPointsMap)
 	{
 		ImGui::IronCurve(keyValue.first.c_str(), keyValue.second.data());
