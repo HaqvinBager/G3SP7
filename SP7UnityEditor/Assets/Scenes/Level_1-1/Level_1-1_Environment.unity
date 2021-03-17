@@ -651,6 +651,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: EN_P_Lager_modul (12)
       objectReference: {fileID: 0}
+    - target: {fileID: 2740015294470538381, guid: 070341f1a070f924184708912027490c,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5350800002417129032, guid: 070341f1a070f924184708912027490c,
         type: 3}
       propertyPath: m_RootOrder
@@ -923,6 +928,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: EN_P_Controlpanel (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 6530845126687984242, guid: f55ca65ee149870489a6e714b873c5b0,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f55ca65ee149870489a6e714b873c5b0, type: 3}
 --- !u!1001 &227833307
@@ -1055,6 +1065,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: EN_P_conveyor2 (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 1159150272723612673, guid: 1414fa5d07fa1c047a18911329674a40,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1414fa5d07fa1c047a18911329674a40, type: 3}
 --- !u!1001 &231867605
@@ -1068,6 +1083,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: EN_P_Lager_modul (15)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2740015294470538381, guid: 070341f1a070f924184708912027490c,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5350800002417129032, guid: 070341f1a070f924184708912027490c,
         type: 3}
@@ -1137,6 +1157,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: EN_P_BookShelf (15)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1023497090092669677, guid: dabd2a372327e4849a2f04079c966211,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1107055905310071989, guid: dabd2a372327e4849a2f04079c966211,
         type: 3}
@@ -1355,6 +1380,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: EN_P_BookShelf (13)
       objectReference: {fileID: 0}
+    - target: {fileID: 1023497090092669677, guid: dabd2a372327e4849a2f04079c966211,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1107055905310071989, guid: dabd2a372327e4849a2f04079c966211,
         type: 3}
       propertyPath: m_RootOrder
@@ -1498,6 +1528,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: EN_P_GarageLamp (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 6023869633295613486, guid: 50ff2ccd3cf906844a28ca8f2deb493a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6514772746696133235, guid: 50ff2ccd3cf906844a28ca8f2deb493a,
         type: 3}
       propertyPath: m_RootOrder
@@ -1640,6 +1675,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: EN_P_conveyor
+      objectReference: {fileID: 0}
+    - target: {fileID: 8225100086041455032, guid: e8da29475e1e4f94eb18fec9f217c205,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8225100086041455035, guid: e8da29475e1e4f94eb18fec9f217c205,
         type: 3}
@@ -2080,6 +2120,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: EN_P_BookShelf (21)
       objectReference: {fileID: 0}
+    - target: {fileID: 1023497090092669677, guid: dabd2a372327e4849a2f04079c966211,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1107055905310071989, guid: dabd2a372327e4849a2f04079c966211,
         type: 3}
       propertyPath: m_RootOrder
@@ -2192,6 +2237,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: EN_P_conveyor2 (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1159150272723612673, guid: 1414fa5d07fa1c047a18911329674a40,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1414fa5d07fa1c047a18911329674a40, type: 3}
@@ -2695,6 +2745,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: EN_P_conveyor2 (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 1159150272723612673, guid: 1414fa5d07fa1c047a18911329674a40,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1414fa5d07fa1c047a18911329674a40, type: 3}
 --- !u!1001 &624904302
@@ -2782,6 +2837,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: EN_P_Lager_modul (14)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2740015294470538381, guid: 070341f1a070f924184708912027490c,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5350800002417129032, guid: 070341f1a070f924184708912027490c,
         type: 3}
@@ -3147,6 +3207,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: EN_P_Lager (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8523092838444162342, guid: cd4306916f1139b42b3ca4420840c162,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8730819022901452599, guid: cd4306916f1139b42b3ca4420840c162,
         type: 3}
@@ -3587,6 +3652,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: EN_P_Lager_modul (19)
       objectReference: {fileID: 0}
+    - target: {fileID: 2740015294470538381, guid: 070341f1a070f924184708912027490c,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5350800002417129032, guid: 070341f1a070f924184708912027490c,
         type: 3}
       propertyPath: m_RootOrder
@@ -3656,6 +3726,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: EN_P_Lager (10)
       objectReference: {fileID: 0}
+    - target: {fileID: 8523092838444162342, guid: cd4306916f1139b42b3ca4420840c162,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8730819022901452599, guid: cd4306916f1139b42b3ca4420840c162,
         type: 3}
       propertyPath: m_RootOrder
@@ -3724,6 +3799,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: EN_P_BookShelf (16)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1023497090092669677, guid: dabd2a372327e4849a2f04079c966211,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1107055905310071989, guid: dabd2a372327e4849a2f04079c966211,
         type: 3}
@@ -3996,6 +4076,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: EN_P_SecurityCamera (16)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3212670261504438295, guid: 52731dbf1e985dc42bcd58bef135bf76,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 52731dbf1e985dc42bcd58bef135bf76, type: 3}
@@ -4380,6 +4465,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: EN_P_BookShelf (20)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1023497090092669677, guid: dabd2a372327e4849a2f04079c966211,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1107055905310071989, guid: dabd2a372327e4849a2f04079c966211,
         type: 3}
@@ -4820,6 +4910,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: EN_P_BookShelf (6)
       objectReference: {fileID: 0}
+    - target: {fileID: 1023497090092669677, guid: dabd2a372327e4849a2f04079c966211,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1107055905310071989, guid: dabd2a372327e4849a2f04079c966211,
         type: 3}
       propertyPath: m_RootOrder
@@ -4888,6 +4983,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: EN_P_Lager (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8523092838444162342, guid: cd4306916f1139b42b3ca4420840c162,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8730819022901452599, guid: cd4306916f1139b42b3ca4420840c162,
         type: 3}
@@ -5032,6 +5132,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: EN_P_BookShelf (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 1023497090092669677, guid: dabd2a372327e4849a2f04079c966211,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1107055905310071989, guid: dabd2a372327e4849a2f04079c966211,
         type: 3}
       propertyPath: m_RootOrder
@@ -5175,6 +5280,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: EN_P_BookShelf (18)
       objectReference: {fileID: 0}
+    - target: {fileID: 1023497090092669677, guid: dabd2a372327e4849a2f04079c966211,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1107055905310071989, guid: dabd2a372327e4849a2f04079c966211,
         type: 3}
       propertyPath: m_RootOrder
@@ -5317,6 +5427,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: EN_P_Lager_modul (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2740015294470538381, guid: 070341f1a070f924184708912027490c,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5350800002417129032, guid: 070341f1a070f924184708912027490c,
         type: 3}
@@ -5534,6 +5649,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: EN_P_BookShelf (7)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1023497090092669677, guid: dabd2a372327e4849a2f04079c966211,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1107055905310071989, guid: dabd2a372327e4849a2f04079c966211,
         type: 3}
@@ -6122,6 +6242,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: EN_P_Lager (7)
       objectReference: {fileID: 0}
+    - target: {fileID: 8523092838444162342, guid: cd4306916f1139b42b3ca4420840c162,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8730819022901452599, guid: cd4306916f1139b42b3ca4420840c162,
         type: 3}
       propertyPath: m_RootOrder
@@ -6190,6 +6315,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: EN_P_BookShelf (8)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1023497090092669677, guid: dabd2a372327e4849a2f04079c966211,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1107055905310071989, guid: dabd2a372327e4849a2f04079c966211,
         type: 3}
@@ -6685,6 +6815,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: EN_P_conveyor_bent
       objectReference: {fileID: 0}
+    - target: {fileID: 4420606383548659841, guid: 9d8ba4cabd98d3b4c8f0c0d5ad5db806,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9d8ba4cabd98d3b4c8f0c0d5ad5db806, type: 3}
 --- !u!1001 &1457799073
@@ -6772,6 +6907,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: EN_P_Lager (6)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8523092838444162342, guid: cd4306916f1139b42b3ca4420840c162,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8730819022901452599, guid: cd4306916f1139b42b3ca4420840c162,
         type: 3}
@@ -7064,6 +7204,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: EN_P_GarageLamp (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 6023869633295613486, guid: 50ff2ccd3cf906844a28ca8f2deb493a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6514772746696133235, guid: 50ff2ccd3cf906844a28ca8f2deb493a,
         type: 3}
       propertyPath: m_RootOrder
@@ -7132,6 +7277,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: EN_P_GarageLamp
+      objectReference: {fileID: 0}
+    - target: {fileID: 6023869633295613486, guid: 50ff2ccd3cf906844a28ca8f2deb493a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6514772746696133235, guid: 50ff2ccd3cf906844a28ca8f2deb493a,
         type: 3}
@@ -7427,7 +7577,7 @@ PrefabInstance:
     - target: {fileID: 3629556004701145971, guid: 3f6e1bb0c4e53b74aaba3eb179ae0e27,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 116.5
+      value: 118
       objectReference: {fileID: 0}
     - target: {fileID: 3629556004701145971, guid: 3f6e1bb0c4e53b74aaba3eb179ae0e27,
         type: 3}
@@ -7646,6 +7796,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: EN_P_Lager (9)
       objectReference: {fileID: 0}
+    - target: {fileID: 8523092838444162342, guid: cd4306916f1139b42b3ca4420840c162,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8730819022901452599, guid: cd4306916f1139b42b3ca4420840c162,
         type: 3}
       propertyPath: m_RootOrder
@@ -7863,6 +8018,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: EN_P_Lager (8)
       objectReference: {fileID: 0}
+    - target: {fileID: 8523092838444162342, guid: cd4306916f1139b42b3ca4420840c162,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8730819022901452599, guid: cd4306916f1139b42b3ca4420840c162,
         type: 3}
       propertyPath: m_RootOrder
@@ -7987,6 +8147,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: EN_P_SecurityCamera (15)
       objectReference: {fileID: 0}
+    - target: {fileID: 3212670261504438295, guid: 52731dbf1e985dc42bcd58bef135bf76,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 52731dbf1e985dc42bcd58bef135bf76, type: 3}
 --- !u!1001 &1786274319
@@ -8000,6 +8165,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: EN_P_Lager_modul (13)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2740015294470538381, guid: 070341f1a070f924184708912027490c,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5350800002417129032, guid: 070341f1a070f924184708912027490c,
         type: 3}
@@ -8199,6 +8369,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: EN_P_Controlpanel (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 6530845126687984242, guid: f55ca65ee149870489a6e714b873c5b0,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f55ca65ee149870489a6e714b873c5b0, type: 3}
 --- !u!1001 &1804682666
@@ -8212,6 +8387,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: EN_P_BookShelf (19)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1023497090092669677, guid: dabd2a372327e4849a2f04079c966211,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1107055905310071989, guid: dabd2a372327e4849a2f04079c966211,
         type: 3}
@@ -8474,6 +8654,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: EN_P_conveyor2
       objectReference: {fileID: 0}
+    - target: {fileID: 1159150272723612673, guid: 1414fa5d07fa1c047a18911329674a40,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1414fa5d07fa1c047a18911329674a40, type: 3}
 --- !u!1001 &1847852126
@@ -8487,6 +8672,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: EN_P_Lager_modul (16)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2740015294470538381, guid: 070341f1a070f924184708912027490c,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5350800002417129032, guid: 070341f1a070f924184708912027490c,
         type: 3}
@@ -8556,6 +8746,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: EN_P_GarageLamp (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6023869633295613486, guid: 50ff2ccd3cf906844a28ca8f2deb493a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6514772746696133235, guid: 50ff2ccd3cf906844a28ca8f2deb493a,
         type: 3}
@@ -8925,7 +9120,7 @@ PrefabInstance:
     - target: {fileID: 3629556004701145971, guid: 3f6e1bb0c4e53b74aaba3eb179ae0e27,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 107.25
+      value: 106
       objectReference: {fileID: 0}
     - target: {fileID: 3629556004701145971, guid: 3f6e1bb0c4e53b74aaba3eb179ae0e27,
         type: 3}
@@ -9410,6 +9605,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: EN_P_conveyor2 (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 1159150272723612673, guid: 1414fa5d07fa1c047a18911329674a40,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1414fa5d07fa1c047a18911329674a40, type: 3}
 --- !u!1001 &2015206814
@@ -9645,6 +9845,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: EN_P_BookShelf (17)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1023497090092669677, guid: dabd2a372327e4849a2f04079c966211,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1107055905310071989, guid: dabd2a372327e4849a2f04079c966211,
         type: 3}
