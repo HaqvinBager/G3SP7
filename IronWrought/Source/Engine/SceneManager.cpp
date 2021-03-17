@@ -219,8 +219,6 @@ void CSceneManager::AddPlayer(CScene& aScene, const std::string& aJsonFileName)
 	model->AddComponent<CModelComponent>(*model, modelPath);
 	model->myTransform->SetParent(camera->myTransform);
 	model->myTransform->Rotation({ 0.0f, 0.0f, 0.0f });
-	CAnimationComponent* animComp = AnimationLoader::AddAnimationsToGameObject(model, modelPath);
-	animComp->BlendToAnimation(1);
 
 	player->AddComponent<CPlayerControllerComponent>(*player);// CPlayerControllerComponent constructor sets position of camera child object.
 	player->GetComponent<CPlayerControllerComponent>()->SetControllerPosition({ 0.f, 5.0f,0.0f });

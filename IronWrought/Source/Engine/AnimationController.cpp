@@ -43,15 +43,15 @@ CAnimationController::CAnimationController()
 
 CAnimationController::~CAnimationController()
 {
-	for (size_t i = 0; i < myAnimations.size(); ++i)
+	for (size_t i = 0; i < myScenes.size(); ++i)
 	{
-		delete myAnimations[i];
-		myAnimations[i] = nullptr;
+		delete myScenes[i];
+		myScenes[i] = nullptr;
 	}
-	myAnimations.clear();
+	myScenes.clear();
 }
 
-bool CAnimationController::ImportRig(const std::string& anFBXFilePath)
+bool CAnimationController::ImportRig(const std::string& anFBXFilePath/*, const std::vector<std::string>& someAnimationPaths*/)
 {
 	if (anFBXFilePath.length() <= 0)
 		return false;
@@ -68,21 +68,25 @@ bool CAnimationController::ImportRig(const std::string& anFBXFilePath)
 		return false;
 	}
 
-	myAnim0Index = static_cast<int>(myAnimations.size());
+	myAnim0Index = static_cast<int>(myScenes.size());
 
 	Assimp::Importer importer;
 	if (importer.ReadFile(anFBXFilePath, aiProcessPreset_TargetRealtime_Quality | aiProcess_ConvertToLeftHanded))
-		myAnimations.emplace_back(importer.GetOrphanedScene());
+	{
+		//scene->mAnimations = new aiAnimation[someAnimationPaths.size()];
+		myScenes.emplace_back(importer.GetOrphanedScene());
+	}
 	else
 		return false;
 
 	bool ret = false;
 	// If the import failed, report it
-	if (myAnimations[myAnim0Index])
+	if (myScenes[myAnim0Index])
 	{
-		myGlobalInverseTransform = myAnimations[myAnim0Index]->mRootNode->mTransformation;
+		myGlobalInverseTransform = myScenes[myAnim0Index]->mRootNode->mTransformation;
 		myGlobalInverseTransform.Inverse();
-		ret = InitFromScene(myAnimations[myAnim0Index]);
+		ret = InitFromScene(myScenes[myAnim0Index]);
+
 		// Now we can access the file's contents.
 		logInfo("Import of _curScene " + anFBXFilePath + " succeeded.");
 
@@ -100,7 +104,6 @@ bool CAnimationController::ImportRig(const std::string& anFBXFilePath)
 	// We're done. Everything will be cleaned up by the importer destructor
 	return ret;
 }
-
 bool CAnimationController::ImportAnimation(const std::string& fileName)
 {
 	// Check if file exists
@@ -115,22 +118,22 @@ bool CAnimationController::ImportAnimation(const std::string& fileName)
 
 	Assimp::Importer importer;
 
-	myAnim0Index = static_cast<int>(myAnimations.size());
+	myAnim0Index = static_cast<int>(myScenes.size());
 	if (importer.ReadFile(fileName, aiProcessPreset_TargetRealtime_Quality | aiProcess_ConvertToLeftHanded))
-		myAnimations.push_back(importer.GetOrphanedScene());
+		myScenes.push_back(importer.GetOrphanedScene());
 	else
 		return false;
 
 	myAnimationClipNames.push_back(fileName);
 
 	// If the import failed, report it
-	if (!myAnimations[myAnim0Index])
+	if (!myScenes[myAnim0Index])
 	{
 		logInfo(importer.GetErrorString());
 		return false;
 	}
 
-	if (myAnimations[myAnim0Index]->mNumAnimations <= 0)
+	if (myScenes[myAnim0Index]->mNumAnimations <= 0)
 	{
 		ENGINE_ERROR_BOOL_MESSAGE(false, std::string("Animation could not be loaded: " + fileName).c_str());
 		return false;
@@ -138,7 +141,6 @@ bool CAnimationController::ImportAnimation(const std::string& fileName)
 
 	return true;
 }
-
 bool CAnimationController::InitFromScene(const aiScene* pScene)
 {
 	myAnimationTime0 = 0.0f;
@@ -169,7 +171,6 @@ bool CAnimationController::InitFromScene(const aiScene* pScene)
 	}
 	return true;
 }
-
 void CAnimationController::LoadBones(uint aMeshIndex, const aiMesh* aMesh)
 {
 	for (uint i = 0; i < aMesh->mNumBones; i++)
@@ -200,6 +201,71 @@ void CAnimationController::LoadBones(uint aMeshIndex, const aiMesh* aMesh)
 		}
 	}
 }
+
+void CAnimationController::SetBoneTransforms(std::vector<aiMatrix4x4>& aTransformsVector)
+{
+	aiMatrix4x4 Identity;
+	InitIdentityM4(Identity);
+
+	if (myAnim0Index == myAnim1Index)
+	{	
+		float interpolation = 0.0f;
+
+		ReadNodeHeirarchy(
+			myScenes[myAnim0Index], 
+			interpolation, 
+			myScenes[myAnim0Index]->mRootNode, 
+			Identity, 
+			2);
+	}
+	else
+	{
+		float interpolation0 = 0.0f;
+		float interpolation1 = 0.0f;
+
+		ReadNodeHeirarchy(
+			myScenes[myAnim0Index]
+			, myScenes[myAnim1Index]
+			, interpolation0
+			, interpolation1
+			, myScenes[myAnim0Index]->mRootNode
+			, myScenes[myAnim1Index]->mRootNode
+			, Identity, 2);
+	}
+
+	aTransformsVector.resize(myNumOfBones);
+	for (uint i = 0; i < myNumOfBones; i++)
+	{
+		aTransformsVector[i] = myBoneInfo[i].myFinalTransformation;
+	}
+}
+
+//float ticksPerSecond = static_cast<float>(myScenes[myAnim0Index]->mAnimations[0]->mTicksPerSecond);
+	//ticksPerSecond = (ticksPerSecond != 0) ? ticksPerSecond : ANIMATED_AT_FRAMES_PER_SECOND;
+
+	//float timeInTicks = myAnimationTime0 * ticksPerSecond;
+	//float duration = static_cast<float>(myScenes[myAnim0Index]->mAnimations[0]->mDuration);
+	//float animationTime = duration < (timeInTicks + (ticksPerSecond * 0.1f)) ? 0.0f : timeInTicks;
+
+
+
+// Ticks == Frames
+/*	float ticksPerSecond = static_cast<float>(myScenes[myAnim0Index]->mAnimations[0]->mTicksPerSecond);
+	ticksPerSecond = (ticksPerSecond != 0) ? ticksPerSecond : ANIMATED_AT_FRAMES_PER_SECOND;
+
+	float timeInTicks = myAnimationTime0 * ticksPerSecond;
+
+
+	float totalFactor0 = InvLerp(0.0f, static_cast<float>(myScenes[myAnim0Index]->mAnimations[0]->mDuration), timeInTicks);
+
+	ticksPerSecond = static_cast<float>(myScenes[myAnim1Index]->mAnimations[0]->mTicksPerSecond);
+	ticksPerSecond = (ticksPerSecond != 0) ? ticksPerSecond : ANIMATED_AT_FRAMES_PER_SECOND;
+
+	timeInTicks = myAnimationTime1 * ticksPerSecond;
+
+	float totalFactor1 = InvLerp(0.0f, static_cast<float>(myScenes[myAnim1Index]->mAnimations[0]->mDuration), timeInTicks);
+
+	std::cout << totalFactor0 << ", " << totalFactor1 << std::endl;*/
 
 void CAnimationController::ReadNodeHeirarchy(
 	const aiScene* aScene, float anAnimationTime, const aiNode* aNode
@@ -261,36 +327,21 @@ void CAnimationController::ReadNodeHeirarchy(
 	, float anAnimationTimeTo, const aiNode* aStartNodeFrom, const aiNode* aStartNodeTo
 	, const aiMatrix4x4& aParentTransform, int aStopAnimAtLevel)
 {
+
 	const aiAnimation* pAnimation0 = aFromScene->mAnimations[0];
 	const aiAnimation* pAnimation1 = aToScene->mAnimations[0];
-
-	//float time0 = Remap(0.0f, 1.0f, 0.0f, static_cast<float>(pAnimation0->mDuration), anAnimationTimeFrom);
-	//float time1 = Remap(0.0f, 1.0f, 0.0f, static_cast<float>(pAnimation1->mDuration), anAnimationTimeTo);
-
-	//std::cout << anAnimationTimeFrom << std::endl;
-
 	float time0(anAnimationTimeFrom);
 	float time1(anAnimationTimeTo);
-
 	std::string NodeName0(aStartNodeFrom->mName.data);
 	std::string NodeName1(aStartNodeTo->mName.data);
-	// Commented cause it was annoying when testing 2021 01 25
-		//assert(NodeName0 == NodeName1);
-
-
-
 	aiMatrix4x4 NodeTransformation0(aStartNodeFrom->mTransformation);
 	aiMatrix4x4 NodeTransformation1(aStartNodeTo->mTransformation);
-
 	const aiNodeAnim* pNodeAnim0 = FindNodeAnim(pAnimation0, NodeName0);
 	const aiNodeAnim* pNodeAnim1 = FindNodeAnim(pAnimation1, NodeName0);
 
-
 	if (pNodeAnim0 && pNodeAnim1)
 	{
-			//aiMatrix4x4 interpolatedMatrix = CalculateInterpolation(pNodeAnim0, pNodeAnim1);	
-
-
+		//aiMatrix4x4 interpolatedMatrix = CalculateInterpolation(pNodeAnim0, pNodeAnim1);	
 		// Interpolate scaling and generate scaling transformation lerpMatrixA
 		//aiVector3D Scaling0;
 		//CalcInterpolatedScaling(Scaling0, time0, pNodeAnim0);
@@ -310,16 +361,12 @@ void CAnimationController::ReadNodeHeirarchy(
 		InitM4FromM3(RotationM, RotationQ.GetMatrix());
 
 		// Interpolate translation and generate translation transformation lerpMatrixA
+		float time = aStopAnimAtLevel <= 0 ? anAnimationTimeFrom : 0.f;
 		aiVector3D Translation0;
-		{
-			float time(aStopAnimAtLevel <= 0 ? anAnimationTimeFrom : 0.f);
-			CalcInterpolatedPosition(Translation0, time, pNodeAnim0);
-		}
+		CalcInterpolatedPosition(Translation0, time, pNodeAnim0);
 		aiVector3D Translation1;
-		{
-			float time(aStopAnimAtLevel <= 0 ? anAnimationTimeTo : 0.f);
-			CalcInterpolatedPosition(Translation1, time, pNodeAnim1);
-		}
+		CalcInterpolatedPosition(Translation1, time, pNodeAnim1);
+	
 		aiMatrix4x4 TranslationM;
 		aiMatrix4x4::Translation(Translation0 * myBlendingTime + Translation1 * (1.f - myBlendingTime), TranslationM);
 
@@ -344,230 +391,35 @@ void CAnimationController::ReadNodeHeirarchy(
 	}
 }
 
-//void CAnimationController::Curve(const aiVector3D& a, const aiVector3D& b, const aiVector3D c, float t)
-//{
-//	
-//}
 
-void CAnimationController::Curve(std::vector<aiVector3D>& /*abc*/, std::vector<const aiNodeAnim*>& /*pNodeAnims*/, float /*t*/)
-{
-
-	/*CalcInterpolatedScaling(abc[0], t, pNodeAnims[0]);
-	CalcInterpolatedScaling(abc[1], t, pNodeAnims[1]);
-	CalcInterpolatedScaling(abc[2], t, pNodeAnims[2]);
-	aiMatrix4x4 lerpMatrixA = {};
-	aiMatrix4x4::Scaling((abc[0] * t + abc[1] * (1.0f - t)), lerpMatrixA);
-
-	aiMatrix4x4 lerpMatrixB = {};
-	aiMatrix4x4::Scaling((abc[1] * t + abc[2] * (1.0f - t)), lerpMatrixB);*/
-}
-
-void CAnimationController::SetBoneTransforms(std::vector<aiMatrix4x4>& aTransformsVector)
-{
-	aiMatrix4x4 Identity;
-	InitIdentityM4(Identity);
-
-	if (myAnim0Index == myAnim1Index)
-	{
-		float ticksPerSecond = static_cast<float>(myAnimations[myAnim0Index]->mAnimations[0]->mTicksPerSecond);
-		ticksPerSecond = (ticksPerSecond != 0) ? ticksPerSecond : ANIMATED_AT_FRAMES_PER_SECOND;
-
-		float timeInTicks = myAnimationTime0 * ticksPerSecond;
-
-		float duration = static_cast<float>(myAnimations[myAnim0Index]->mAnimations[0]->mDuration);
-		float animationTime = duration < (timeInTicks + (ticksPerSecond * 0.1f)) ? 0.0f : timeInTicks;
-
-		ReadNodeHeirarchy(myAnimations[myAnim0Index], animationTime, myAnimations[myAnim0Index]->mRootNode, Identity, 2);//stopAnimLevel=2
-	}
-	else
-	{
-		// Ticks == Frames
-		float ticksPerSecond = static_cast<float>(myAnimations[myAnim0Index]->mAnimations[0]->mTicksPerSecond);
-		ticksPerSecond = (ticksPerSecond != 0) ? ticksPerSecond : ANIMATED_AT_FRAMES_PER_SECOND;
-
-		float timeInTicks = myAnimationTime0 * ticksPerSecond;
-
-		float duration0 = static_cast<float>(myAnimations[myAnim0Index]->mAnimations[0]->mDuration);
-		//float animationTime0 = duration0 < (timeInTicks + (ticksPerSecond * 0.1f)) ? 0.0f : timeInTicks;
-		//fmodf(timeInTicks, static_cast<float>(myAnimations[myAnim0Index]->mAnimations[0]->mDuration));
-
-
-		float totalFactor0 = InvLerp(0.0f,	static_cast<float>(myAnimations[myAnim1Index]->mAnimations[0]->mDuration), duration0);
-		float animationTime0 = Lerp(0.0f,	static_cast<float>(myAnimations[myAnim1Index]->mAnimations[0]->mDuration), totalFactor0);
-
-		ticksPerSecond = static_cast<float>(myAnimations[myAnim1Index]->mAnimations[0]->mTicksPerSecond);
-		ticksPerSecond = (ticksPerSecond != 0) ? ticksPerSecond : ANIMATED_AT_FRAMES_PER_SECOND;
-
-		timeInTicks = myAnimationTime1 * ticksPerSecond;
-
-		float duration1 = static_cast<float>(myAnimations[myAnim1Index]->mAnimations[0]->mDuration);
-		//float animationTime1 = duration1 < (timeInTicks + (ticksPerSecond * 0.1f)) ? 0.0f : timeInTicks;
-		//fmodf(timeInTicks, static_cast<float>(myAnimations[myAnim1Index]->mAnimations[0]->mDuration));
-
-		float totalFactor1 = InvLerp(0.0f,	static_cast<float>(myAnimations[myAnim1Index]->mAnimations[0]->mDuration), duration1);
-		float animationTime1 = Lerp(0.0f,	static_cast<float>(myAnimations[myAnim1Index]->mAnimations[0]->mDuration), totalFactor1);
-
-		std::cout << animationTime1 << std::endl;
-
-		ReadNodeHeirarchy(
-			myAnimations[myAnim0Index]
-			, myAnimations[myAnim1Index]
-			, animationTime0
-			, animationTime1
-			, myAnimations[myAnim0Index]->mRootNode
-			, myAnimations[myAnim1Index]->mRootNode
-			, Identity, 2);
-	}
-
-
-	//if (myBlendingTime > 0.f)
-	//{
-	//	// Ticks == Frames
-	//	float ticksPerSecond = static_cast<float>(myAnimations[myAnim0Index]->mAnimations[0]->mTicksPerSecond);
-	//	ticksPerSecond = (ticksPerSecond != 0) ? ticksPerSecond : ANIMATED_AT_FRAMES_PER_SECOND;
-	//	
-	//	float timeInTicks = myAnimationTime0 * ticksPerSecond;
-
-	//	float animationTime0 = fmodf(timeInTicks, static_cast<float>(myAnimations[myAnim0Index]->mAnimations[0]->mDuration));
-	//	
-	//	ticksPerSecond = static_cast<float>(myAnimations[myAnim1Index]->mAnimations[0]->mTicksPerSecond);
-	//	ticksPerSecond = (ticksPerSecond != 0) ? ticksPerSecond : ANIMATED_AT_FRAMES_PER_SECOND;
-	//	
-	//	timeInTicks = myAnimationTime1 * ticksPerSecond;
-
-	//	float animationTime1 = fmodf(timeInTicks, static_cast<float>(myAnimations[myAnim1Index]->mAnimations[0]->mDuration));
-
-	//	
-
-	//	ReadNodeHeirarchy(	myAnimations[myAnim0Index], myAnimations[myAnim1Index]
-	//					  , animationTime0, animationTime1
-	//					  , myAnimations[myAnim0Index]->mRootNode, myAnimations[myAnim1Index]->mRootNode
-	//					  , Identity, 2);//stopAnimLevel=2
-	//}
-	//else
-	//{
-	//	float ticksPerSecond = static_cast<float>(myAnimations[myAnim0Index]->mAnimations[0]->mTicksPerSecond);
-	//	ticksPerSecond = (ticksPerSecond != 0) ? ticksPerSecond : ANIMATED_AT_FRAMES_PER_SECOND;
-
-	//	float timeInTicks = myAnimationTime0 * ticksPerSecond;
-
-	//	float duration = static_cast<float>(myAnimations[myAnim0Index]->mAnimations[0]->mDuration);
-	//	float animationTime = fmodf(timeInTicks, duration);
-
-	//	ReadNodeHeirarchy(myAnimations[myAnim0Index], animationTime, myAnimations[myAnim0Index]->mRootNode, Identity, 2);//stopAnimLevel=2
-	//}
-
-	aTransformsVector.resize(myNumOfBones);
-
-	for (uint i = 0; i < myNumOfBones; i++)
-	{
-		aTransformsVector[i] = myBoneInfo[i].myFinalTransformation;
-	}
-}
-//#ifdef _DEBUG
-//void CAnimationController::UpdateAnimationTimeConstant(const float aStep)
-//{
-//	float dt = aStep;// Close to good (right)
-//
-//	myAnimationTime0 += dt;
-//	if (myBlendingTime > 0.f)
-//	{
-//		myBlendingTime -= dt * myBlendingTimeMul;
-//		if (myBlendingTime <= 0.f)
-//		{
-//			myAnimationTime0 = myAnimationTime1;
-//		}
-//		if (myUpdateBoth)
-//		{
-//			myAnimationTime1 += dt;
-//		}
-//	}
-//	else
-//	{
-//		myAnimationTime1 += dt;
-//	}
-//
-//	if (myTemporary)// If the animation was temporary, return to the previous animation after the playtime is over
-//	{
-//		myPlayTime -= dt;
-//		if (myPlayTime <= 0.f)
-//		{
-//			myTemporary = false;
-//			BlendToAnimation(myAnim1Index);
-//		}
-//	}
-//}
-//#endif
-void CAnimationController::UpdateAnimationTimes()
+void CAnimationController::UpdateAnimationTimes(std::array<SlimMatrix44, 64>& someBones)
 {
 	float dt = CTimer::Dt();
 
-	//float duration0 = static_cast<float>(myAnimations[myAnim0Index]->mAnimations[0]->mDuration);
-	myAnimationTime0 = fmodf(myAnimationTime0 + dt, Animation0Duration());//duration0 /*- dt*/);
-	myAnimationTime1 = fmodf(myAnimationTime1 + dt, Animation1Duration());
+	myAnimationTime0 = fmodf(myAnimationTime0 + dt, AnimationDurationInSeconds(myAnim0Index));//duration0 /*- dt*/);
+	myAnimationTime1 = fmodf(myAnimationTime1 + dt, AnimationDurationInSeconds(myAnim1Index));
 
-	//std::cout << myAnimationTime0 << std::endl;
-
-	//myAnimationTime0 += dt; //fmodf(myAnimationTime0 + dt, static_cast<float>(myAnimations[myAnim0Index]->mAnimations[0]->mDuration));
-	//myAnimationTime1 += dt;  //fmodf(myAnimationTime1 + dt, static_cast<float>(myAnimations[myAnim1Index]->mAnimations[0]->mDuration));
-
-	//myAnimationTime0 += dt;
-	//myAnimationTime1 += dt;
-
-	//UpdateAnimationTimeFrames();
+	std::vector<aiMatrix4x4> trans;
+	SetBoneTransforms(trans);
+	memmove(someBones.data(), &trans[0], (sizeof(float) * 16) * trans.size());//was memcpy
 }
 
-void CAnimationController::BlendToAnimation(uint anAnimationIndex, bool anUpdateBoth, float aBlendDuration, bool aTemporary, float aTime)
+uint CAnimationController::AnimationCount()
 {
-	if (AnimationIndexWithinRange(anAnimationIndex))
-		return;
-
-	myAnim1Index = myAnim0Index;
-	myAnim0Index = anAnimationIndex;
-	myBlendingTime = aBlendDuration;
-	myBlendingTimeMul = aBlendDuration > 0.0f ? 1.0f / aBlendDuration : 1.0f;
-	myAnimationTime1 = 0.f;
-	myUpdateBoth = anUpdateBoth;
-	myTemporary = aTemporary;
-	myPlayTime = aTime;
+	return static_cast<uint>(myScenes.size());
 }
 
-bool CAnimationController::SetBlendTime(float aTime)
-{
-	myBlendingTime = aTime;
-	return true;
-}
 
-uint CAnimationController::GetMaxIndex()
-{
-	return static_cast<uint>(myAnimations.size());
-}
-
-bool CAnimationController::IsDoneBlending()
-{
-	return myBlendingTime <= 0.0f;
-}
-
-const float CAnimationController::AnimationDuration(uint anIndex)
+const float CAnimationController::AnimationDurationInSeconds(uint anIndex)
 {
 	if (AnimationIndexWithinRange(anIndex))
-		return (float)myAnimations[anIndex]->mAnimations[0]->mDuration;
+		return static_cast<float>(myScenes[anIndex]->mAnimations[0]->mDuration / myScenes[anIndex]->mAnimations[0]->mTicksPerSecond);
 	return 0.0f;
-}
-
-const float CAnimationController::Animation0Duration()
-{
-	return (float)myAnimations[myAnim0Index]->mAnimations[0]->mDuration;
-}
-
-const float CAnimationController::Animation1Duration()
-{
-	return (float)myAnimations[myAnim1Index]->mAnimations[0]->mDuration;
 }
 
 bool CAnimationController::AnimationIndexWithinRange(uint anIndex)
 {
-	return anIndex == myAnim0Index || anIndex >= static_cast<uint>(myAnimations.size());
+	return anIndex == myAnim0Index || anIndex >= static_cast<uint>(myScenes.size());
 }
 
 void CAnimationController::UpdateAnimationTimeFrames()

@@ -9,7 +9,6 @@
 
 CAnimationComponent::CAnimationComponent(CGameObject& aParent, const std::string& aModelFilePath, std::vector<std::string>& someAnimationPaths)
 	: CBehaviour(aParent)
-	, myShouldUseLerp(false)
 {
 	myController = new CAnimationController();
 	myController->ImportRig(aModelFilePath);
@@ -17,14 +16,6 @@ CAnimationComponent::CAnimationComponent(CGameObject& aParent, const std::string
 	{
 		myController->ImportAnimation(s);
 	}
-
-// Used in SP6, optional to keep. Saves Id in vector using CStringID (int + _Debug::string).
-	//myAnimationIds.reserve(someAnimationPaths.size());
-	//for (auto& str : someAnimationPaths)
-	//{
-	//	myAnimationIds.emplace_back(CStringID(str, CStringIDLoader::EStringIDFiles::AnimFile));
-	//}
-	//myAnimationIds.shrink_to_fit();
 }
 
 CAnimationComponent::~CAnimationComponent()
@@ -32,80 +23,20 @@ CAnimationComponent::~CAnimationComponent()
 	delete myController;
 	myController = nullptr;
 }
+void CAnimationComponent::OnEnable() { }
+void CAnimationComponent::Start() { }
+void CAnimationComponent::OnDisable() { }
 
 void CAnimationComponent::Awake()
 {
 	SetBonesToIdentity();
 }
 
-void CAnimationComponent::Start()
-{}
 
 void CAnimationComponent::Update()
 {
-	//myController->Animation0Index(myAnimationBlend.myFirst);
-	//myController->Animation1Index(myAnimationBlend.mySecond);
-	//myController->SetBlendTime(myAnimationBlend.myBlendLerp);
-
-	myController->UpdateAnimationTimes();
-	UpdateBlended();
-
-#ifndef ANIMATION_DEBUG
-#endif
-}
-
-void CAnimationComponent::OnEnable()
-{}
-void CAnimationComponent::OnDisable()
-{}
-#ifdef ANIMATION_DEBUG
-void CAnimationComponent::StepAnimation(const float aStep)
-{
-
-	myController->UpdateAnimationTimeConstant(aStep);
 	SetBonesToIdentity();
-
-	//Calling SetBlendTime here causes AnimCtrl::myBlendTime to be used for lerping.
-	if(myShouldUseLerp)
-		myController->SetBlendTime(myAnimationBlend.myBlendLerp);
-
-	std::vector<aiMatrix4x4> trans;
-	myController->SetBoneTransforms(trans);
-	memcpy(myBones.data(), &trans[0], (sizeof(float) * 16) * trans.size());//was memcpy
-
-}
-#endif
-
-//Hard Controll
-void CAnimationComponent::BlendLerpBetween(int anAnimationIndex0, int anAnimationIndex1, float aBlendLerp)
-{
-	myAnimationBlend.myFirst		= anAnimationIndex0;
-	myAnimationBlend.mySecond		= anAnimationIndex1;
-	myAnimationBlend.myBlendLerp	= aBlendLerp;
-	myController->Animation0Index(anAnimationIndex0);
-	myController->Animation1Index(anAnimationIndex1);
-	myController->SetBlendTime(aBlendLerp); //This controlls Exactly where in any animation we are playing. Setting this will "snap" it to whatever it represents.
-	myShouldUseLerp = true;
-}
-
-//
-void CAnimationComponent::BlendToAnimation(unsigned int anAnimationIndex, float aBlendDuration, bool anUpdateBoth, bool aTemporary, float aTime)
-{
-	myController->BlendToAnimation(anAnimationIndex, anUpdateBoth, aBlendDuration, aTemporary, aTime);
-	myShouldUseLerp = false;
-}
-
-void CAnimationComponent::BlendLerp(float aLerpValue)
-{
-	myAnimationBlend.myBlendLerp = aLerpValue > 1.0f ? 1.0f : aLerpValue < 0.0f ? 0.0f : aLerpValue;
-}
-
-void CAnimationComponent::SetAnimationIndex(const int anAnimationIndex)
-{
-	myAnimationBlend.myFirst = anAnimationIndex;
-	myAnimationBlend.mySecond = anAnimationIndex;
-	myAnimationBlend.myBlendLerp = 0.0f;
-	myShouldUseLerp = true;
+	myController->UpdateAnimationTimes(myBones);
 }
 
 void CAnimationComponent::SetBonesToIdentity()
@@ -115,16 +46,4 @@ void CAnimationComponent::SetBonesToIdentity()
 		myBones[i].SetIdentity();
 	}
 }
-void CAnimationComponent::UpdateBlended()
-{
-	SetBonesToIdentity();
-	myController->UpdateAnimationTimes();
 
-	//Calling SetBlendTime here causes AnimCtrl::myBlendTime to be used for lerping.
-	if(myShouldUseLerp)
-		myController->SetBlendTime(myAnimationBlend.myBlendLerp);
-	//
-	std::vector<aiMatrix4x4> trans;
-	myController->SetBoneTransforms(trans);
-	memmove(myBones.data(), &trans[0], (sizeof(float) * 16) * trans.size());//was memcpy
-}

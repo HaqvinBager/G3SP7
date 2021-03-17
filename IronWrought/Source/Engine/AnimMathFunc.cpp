@@ -18,7 +18,7 @@ void color4_to_float4(const aiColor4D* c, float f[4])
 }
 
 
-float LerpTest(float a, float b, float t)
+float Lerp(float a, float b, float t)
 {
 	return (1.0f - t) * a + b * t;
 }
@@ -34,7 +34,7 @@ float InvLerp(float a, float b, float v)
 float Remap(float inMin, float inMax, float outMin, float outMax, float v)
 {
 	float t = InvLerp(inMin, inMax, v);
-	return LerpTest(outMin, outMax, t);
+	return Lerp(outMin, outMax, t);
 }
 
 
@@ -72,17 +72,18 @@ void CalcInterpolatedRotation(aiQuaternion& Out, float AnimationTime, const aiNo
 		return;
 	}
 
+
 	auto keys = GetRotationKeys(AnimationTime, pNodeAnim);
-	float factor = InvLerp(
+	float factor = Lerp(
 		static_cast<float>(pNodeAnim->mRotationKeys[keys.first].mTime),
 		static_cast<float>(pNodeAnim->mRotationKeys[keys.second].mTime),
 		AnimationTime);
 	assert(factor >= 0.0 && factor <= 1.0);
 	
-	Assimp::Interpolator<aiQuaternion>()(
+	Assimp::Interpolator<aiQuatKey>()(
 		Out,
-		pNodeAnim->mRotationKeys[keys.first].mValue, 
-		pNodeAnim->mRotationKeys[keys.second].mValue, 
+		pNodeAnim->mRotationKeys[keys.first], 
+		pNodeAnim->mRotationKeys[keys.second], 
 		factor);
 
 	Out = Out.Normalize();
@@ -257,7 +258,7 @@ void CalcInterpolatedPosition(aiVector3D& Out, float AnimationTime, const aiNode
 	}
 
 	auto keys = GetTranslationKeys(AnimationTime, pNodeAnim);
-	float factor = LerpTest(
+	float factor = Lerp(
 		static_cast<float>(pNodeAnim->mPositionKeys[keys.first].mTime),
 		static_cast<float>(pNodeAnim->mPositionKeys[keys.second].mTime),
 		AnimationTime);

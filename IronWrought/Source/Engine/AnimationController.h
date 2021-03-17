@@ -9,6 +9,7 @@
 #include <fstream>
 
 #include "AnimMathFunc.h"
+#include "ModelMath.h"
 
 //#define ANIMATION_DURATION_IN_MILLISECONDS// AS of 2021 02 23 is not used
 
@@ -98,38 +99,23 @@ public:
 		, float anAnimationTimeTo, const aiNode* aStartNodeFrom, const aiNode* aStartNodeTo
 		, const aiMatrix4x4& aParentTransform, int aStopAnimAtLevel);
 
-	void Curve(const aiVector3D& a, const aiVector3D& b, const aiVector3D c, float t);
-	void Curve(std::vector<aiVector3D>& abc, std::vector<const aiNodeAnim*>& pNodeAnims, float t);
+	/*void Curve(const aiVector3D& a, const aiVector3D& b, const aiVector3D c, float t);
+	void Curve(std::vector<aiVector3D>& abc, std::vector<const aiNodeAnim*>& pNodeAnims, float t);*/
 
 	void SetBoneTransforms(std::vector<aiMatrix4x4>& aTransformsVector);
-	void UpdateAnimationTimes();
+	void UpdateAnimationTimes(std::array<SlimMatrix44, 64>& someBones);
 
 	
-//#ifdef _DEBUG
-//	// Used for Debug
-//	void UpdateAnimationTimeConstant(const float aStep = 1.0f);
-//#endif
-	// ! Update functions
+	uint AnimationCount();
 
-	void BlendToAnimation(uint anAnimationIndex, bool anUpdateBoth = true, float aBlendDuration = 0.3f, bool aTemporary = false, float aTime = 0.0f);
-	bool SetBlendTime(float aTime);
-	uint GetMaxIndex();
-	bool IsDoneBlending();
-
-	void SetRotation(const aiVector3D& aRotation) { myRotation = aRotation; }
-	aiVector3D GetRotation() { return myRotation; }
 
 	void Animation0Index(int anIndex) { myAnim0Index = anIndex; }
 	void Animation1Index(int anIndex) { myAnim1Index = anIndex; }
 	const uint Animation0Index() { return myAnim0Index; }
 	const uint Animation1Index() { return myAnim1Index; }
-	const size_t GetNrOfAnimations() const { return myAnimations.size(); }
 
-	const float AnimationDuration(uint anIndex);
-	const float Animation0Duration();
-	const float Animation1Duration();
+	const float AnimationDurationInSeconds(uint anIndex);
 
-	void ResetAnimationTimeCurrent() { myAnimationTime1 = 0.0f; }
 
 
 	struct SerializedObject {
@@ -146,7 +132,7 @@ public:
 			myUpdateBoth = &data.myUpdateBoth;
 			myTemporary = &data.myTemporary;
 			myRotation = data.myRotation;
-			myAnimations = data.myAnimations;
+			myAnimations = data.myScenes;
 			myGlobalInverseTransform = data.myGlobalInverseTransform;
 			myBoneMapping = data.myBoneMapping;
 			myEntries = data.myEntries;
@@ -180,6 +166,18 @@ private:
 	/*void UpdateAnimationTimeMilliseconds();*/ // As of 2021 02 22 No longer needed
 	/*void ConvertAnimationTimesToFrames(aiScene* aScene);*/ // As of 2021 02 22 No longer needed
 
+	/// <summary>
+	/// Interpolate for aiQuatKey, aiVectorKey 
+	/// </summary>
+	/// <param name="time">the current time * ticksPerSecond</param>
+	template<class T>
+	void Interpolate(T& out, const float time, const uint keyStart, const uint keyEnd, const T* someKeys)
+	{
+		const float percent = InvLerp(someKeys[keyStart].mTime, someKeys[keyEnd].mTime, time);
+		Assimp::Interpolator<T>()(out, someKeys[keyStart], someKeys[keyEnd], t);
+	}
+
+
 private:
 	float myAnimationTime0;
 	float myAnimationTime1;
@@ -201,7 +199,7 @@ private:
 	aiVector3D myRotation;
 
 	// Holds the animations that we play. Each animation modifies bonetransforms depending on animation time.
-	std::vector<const aiScene*>			myAnimations;// was std::vector<const aiScene*>
+	std::vector<const aiScene*>			myScenes;// was std::vector<const aiScene*>
 	aiMatrix4x4							myGlobalInverseTransform;
 	std::map<std::string, uint>			myBoneMapping;
 	std::vector<MeshEntry>				myEntries;
