@@ -11,7 +11,7 @@ CEnviromentLightComponent::CEnviromentLightComponent(CGameObject& aParent, Direc
 	// TODO 
 	//	Step through code to look for issues. Like with mips.
 
-	myEnvironmentLight = CLightFactory::GetInstance()->CreateEnvironmentLight(ASSETPATH("Assets/Cubemaps/mondarrain_3_cubemap.dds"));
+	myEnvironmentLight = CLightFactory::GetInstance()->CreateEnvironmentLight(ASSETPATH("Assets/Cubemaps/Cubemap_Inside.dds"));
 	myEnvironmentLight->SetColor(aColor);
 	myEnvironmentLight->SetIntensity(anIntensity);
 	aParent.myTransform->Transform().Forward(aDirection);
