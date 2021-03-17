@@ -99,15 +99,10 @@ public:
 		, float anAnimationTimeTo, const aiNode* aStartNodeFrom, const aiNode* aStartNodeTo
 		, const aiMatrix4x4& aParentTransform, int aStopAnimAtLevel);
 
-	/*void Curve(const aiVector3D& a, const aiVector3D& b, const aiVector3D c, float t);
-	void Curve(std::vector<aiVector3D>& abc, std::vector<const aiNodeAnim*>& pNodeAnims, float t);*/
-
 	void SetBoneTransforms(std::vector<aiMatrix4x4>& aTransformsVector);
 	void UpdateAnimationTimes(std::array<SlimMatrix44, 64>& someBones);
-
 	
 	uint AnimationCount();
-
 
 	void Animation0Index(int anIndex) { myAnim0Index = anIndex; }
 	void Animation1Index(int anIndex) { myAnim1Index = anIndex; }
@@ -115,8 +110,6 @@ public:
 	const uint Animation1Index() { return myAnim1Index; }
 
 	const float AnimationDurationInSeconds(uint anIndex);
-
-
 
 	struct SerializedObject {
 		SerializedObject(CAnimationController& data)
@@ -161,10 +154,7 @@ public:
 
 private:
 	bool AnimationIndexWithinRange(uint anIndex);
-
 	void UpdateAnimationTimeFrames();
-	/*void UpdateAnimationTimeMilliseconds();*/ // As of 2021 02 22 No longer needed
-	/*void ConvertAnimationTimesToFrames(aiScene* aScene);*/ // As of 2021 02 22 No longer needed
 
 	/// <summary>
 	/// Interpolate for aiQuatKey, aiVectorKey 
