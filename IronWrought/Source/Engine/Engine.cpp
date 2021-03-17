@@ -298,6 +298,7 @@ void CEngine::SetActiveScene(const CStateStack::EState aState)
 		gameObject->Start();
 	}
 
+	CTimer::Mark();
 	CEngine::GetInstance()->GetActiveScene().MainCamera()->Fade(true);
 }
 

@@ -84,7 +84,7 @@ CVFXSystemComponent::CVFXSystemComponent(CGameObject& aParent, const std::string
 		}
 
 		effect->myVFXBases = CVFXMeshFactory::GetInstance()->GetVFXBaseSet(vfxPaths);
-		ENGINE_BOOL_POPUP(!effect->myVFXBases.empty(), "No VFX data found.");
+		//ENGINE_BOOL_POPUP(!effect->myVFXBases.empty(), "No VFX data found.");
 
 		std::vector<std::string> particlePaths;
 		ENGINE_BOOL_POPUP(doc.HasMember("ParticleSystems"), "VFX Json: %s is not structured correctly! Please compare to VFXSystem_ToLoad.json", aVFXDataPath.c_str());

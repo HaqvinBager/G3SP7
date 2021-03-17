@@ -8,7 +8,7 @@ void SVFXEffect::SpawnParticles(unsigned int anIndex, DirectX::SimpleMath::Vecto
 	if (myEmitterTimers[anIndex] > (1.0f / someParticleData.mySpawnRate) && (myParticleVertices[anIndex].size() < someParticleData.myNumberOfParticles)) {
 		myParticleVertices[anIndex].emplace_back(myParticlePools[anIndex].front());
 		myParticlePools[anIndex].pop();
-		myParticleVertices[anIndex].back().myLifeTime = someParticleData.myParticleLifetime + Random(someParticleData.myLifetimeLowerBound, someParticleData.myLifetimeUpperBound);
+		myParticleVertices[anIndex].back().myLifeTime = /*someParticleData.myParticleLifetime*/0.0f + Random(someParticleData.myLifetimeLowerBound, someParticleData.myLifetimeUpperBound);
 		myParticleVertices[anIndex].back().myPosition =
 		{ ((Random(someParticleData.myOffsetLowerBound.x, someParticleData.myOffsetUpperBound.x)) * (1.0f))
 			, ((Random(someParticleData.myOffsetLowerBound.y, someParticleData.myOffsetUpperBound.y)) * (1.0f))
@@ -34,7 +34,7 @@ void SVFXEffect::UpdateParticles(unsigned int anIndex, DirectX::SimpleMath::Vect
 	{
 
 		float quotient = myParticleVertices[anIndex][i].myLifeTime / particleData.myParticleLifetime;
-
+		std::cout << myParticleVertices[anIndex][i].myLifeTime << std::endl;
 		myParticleVertices[anIndex][i].myColor = Vector4::Lerp
 		(
 			particleData.myParticleEndColor,
@@ -43,16 +43,15 @@ void SVFXEffect::UpdateParticles(unsigned int anIndex, DirectX::SimpleMath::Vect
 		);
 
 		Vector2 p1 = { 0.0f, 0.0f };//myParticleSizeCurves[anIndex][0];
-		Vector2 p2 = { 0.33f, 1.0f };//myParticleSizeCurves[anIndex][1];
-		Vector2 p3 = { 0.66f, 0.0f };//myParticleSizeCurves[anIndex][2];
-		Vector2 p4 = { 1.0f, 1.0f };//myParticleSizeCurves[anIndex][3];
+		Vector2 p2 = { 0.75f, 0.5f };//myParticleSizeCurves[anIndex][1];
+		Vector2 p3 = { 0.85f, 1.0f };//myParticleSizeCurves[anIndex][2];
+		Vector2 p4 = { 1.0f, 0.5f };//myParticleSizeCurves[anIndex][3];
 
-		float evalutedQuotientOnCatmullRomCurve = Vector2::CatmullRom(p1, p2, p3, p4, quotient).y;
-		//std::cout << evalutedQuotientOnCatmullRomCurve << std::endl;
+		float evalutedQuotientOnCatmullRomCurve = Vector2::CatmullRom(p1, p2, p3, p4, quotient).x;
 		myParticleVertices[anIndex][i].mySize = Vector2::Lerp
 		(
-			{ particleData.myParticleEndSize * aScale, particleData.myParticleEndSize * aScale },
 			{ particleData.myParticleStartSize * aScale, particleData.myParticleStartSize * aScale },
+			{ particleData.myParticleEndSize * aScale, particleData.myParticleEndSize * aScale },
 			evalutedQuotientOnCatmullRomCurve
 		);
 
@@ -81,9 +80,11 @@ void SVFXEffect::UpdateParticles(unsigned int anIndex, DirectX::SimpleMath::Vect
 		Vector4 newPosition = direction * particleData.myParticleSpeed * CTimer::Dt() + myParticleVertices[anIndex][i].myPosition;
 		myParticleVertices[anIndex][i].myPosition = newPosition;
 
-		if ((myParticleVertices[anIndex][i].myLifeTime -= CTimer::Dt()) < 0.0f) {
+		if ((myParticleVertices[anIndex][i].myLifeTime += CTimer::Dt()) > particleData.myParticleLifetime) {
 			indicesOfParticlesToRemove.emplace_back(i);
 		}
+
+
 	}
 
 	std::sort(indicesOfParticlesToRemove.begin(), indicesOfParticlesToRemove.end(), [](UINT a, UINT b) { return a > b; });
