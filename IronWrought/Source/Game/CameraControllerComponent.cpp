@@ -58,8 +58,13 @@ void CCameraControllerComponent::Update()
 #endif
 	if (myCameraMode == ECameraMode::MenuCam) {
 
-	} else if (myCameraMode == ECameraMode::FreeCam) {
+	}
+	else if (myCameraMode == ECameraMode::FreeCam)
+	{
 		UpdateFreeCam();
+	}
+	else if (myCameraMode == ECameraMode::OrbitCamera){
+		UpdateOrbitCam();
 	} else if(myCameraMode == ECameraMode::UnlockCursor){
 	} else {
 		UpdatePlayerFirstPerson();
@@ -142,6 +147,69 @@ void CCameraControllerComponent::UpdateFreeCam()
 		Input::GetInstance()->SetMouseScreenPosition(static_cast<int>(screenDimensions.x / 2.0f), static_cast<int>(screenDimensions.y / 2.0f));
 	}
 }
+
+void CCameraControllerComponent::UpdateOrbitCam()
+{
+	/*
+	* r		clamped to 0.0f - 80.0f
+	* theta clamped to -180.0f - 180.0f
+	* phi	clamped to -89.0f - 89.0f
+	* 
+	* roll	clamped to -180.0f - 180.0f
+	* pitch	clamped to -180.0f - 180.0f
+	* yaw	clamped to -180.0f - 180.0f
+	* 
+	* //Controls the cameras position in space
+	*	//Distance from origin
+	*	float r;
+	*	//Rotates the camera around the origin, rotation around the equator
+	*	float theta;
+	*	//Rotates the camera around the origin, rotation towards north and southpole
+	*	float phi;
+	* //Controls camera orientation
+	*	float pitch;
+	*	float yaw;
+	*	float roll;
+	*/
+	const float cameraMoveSpeed = 3.0f;
+	const float dt = CTimer::Dt();
+	phi		= Input::GetInstance()->IsKeyDown(VK_UP)	? phi + (cameraMoveSpeed * dt) : phi;
+	phi		= Input::GetInstance()->IsKeyDown(VK_DOWN)	? phi - (cameraMoveSpeed * dt) : phi;
+	theta	= Input::GetInstance()->IsKeyDown(VK_LEFT)	? theta + (cameraMoveSpeed * dt) : theta;
+	theta	= Input::GetInstance()->IsKeyDown(VK_RIGHT) ? theta - (cameraMoveSpeed * dt) : theta;
+	r		= Input::GetInstance()->IsKeyDown('M')		? r + (cameraMoveSpeed * dt) : r;
+	r		= Input::GetInstance()->IsKeyDown('N')		? r - (cameraMoveSpeed * dt) : r;
+
+	phi = min(89.0f, phi);
+	phi = max(-89.0f, phi);
+	theta = min(180.0f, theta);
+	theta = max(-180.0f, theta);
+	r = min(80.0f, r);
+	r = max(0.0f, r);
+
+	//phi = DirectX::XMConvertToRadians(phi);
+	//theta = DirectX::XMConvertToRadians(theta);
+	//r = DirectX::XMConvertToRadians(r);
+
+	std::cout << "phi: "<< phi << ", theta: " << theta << ", r: " << r << std::endl;
+
+	const Vector3 pos = DirectX::XMVector3Transform(
+		DirectX::XMVectorSet(0.0f, 0.0f, -r, 0.0f),
+		DirectX::XMMatrixRotationRollPitchYaw(phi, theta, 0.0f)
+	);
+	std::cout << "posx: "<< pos.x << ", posy: " << pos.y << ", posz: " << pos.z << std::endl;
+
+	Matrix m = DirectX::XMMatrixLookAtLH(
+		pos, DirectX::XMVectorZero(),
+		DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f)
+	);
+	//m = m * DirectX::XMMatrixRotationRollPitchYaw(pitch, -yaw, roll);
+
+	GameObject().myTransform->Transform(m);// Chilis
+	//GameObject().myTransform->Rotation({ myPitch, myYaw, 0});
+	GameObject().myTransform->Position(pos);
+}
+
 void CCameraControllerComponent::SetCameraMoveSpeed(float aCameraMoveSpeed) {
 	myCameraMoveSpeed = aCameraMoveSpeed;
 }

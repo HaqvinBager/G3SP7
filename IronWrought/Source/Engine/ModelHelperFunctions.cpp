@@ -26,6 +26,10 @@ bool CModelHelperFunctions::LoadTintsToModelComponent(CModelComponent* aModelCom
     for (short i = 0; i < static_cast<short>(tintsArray.Size()); ++i)
     {
         GenericObject tintRGB = tintsArray[i].GetObjectW();
+        //if (tintRGB.HasMember("Texture"))
+        //    // read the texture instead
+        //else
+        //    //tints[i] = Vector3(tintRGB["Red"].GetFloat(), tintRGB["Green"].GetFloat(), tintRGB["Blue"].GetFloat());
         tints[i] = Vector3(tintRGB["Red"].GetFloat(), tintRGB["Green"].GetFloat(), tintRGB["Blue"].GetFloat());
     }
     return aModelComponent->SetTints(tints);
@@ -45,7 +49,7 @@ bool CModelHelperFunctions::SaveTintsFromModelComponent(CModelComponent* aModelC
         localtime_s(&timeInfo, &rawTime);
         char timeBuffer[18];// YYYY-MM-DD-hhmmss == 17 + '\0' = 18
         ZeroMemory(timeBuffer, 18);
-        strftime(timeBuffer, 18, "%F-%H%M%S", &timeInfo);
+        strftime(timeBuffer, 18, "%F-%H%M%S", &timeInfo);//%F gets YYYY-MM-DD, %H gets hours: 00->24, %M gets minutes: 00->59, %S gets seconds: 00->59. 
 
         aFileName.append(timeBuffer);
         aFileName.append(".json");
@@ -99,6 +103,26 @@ bool CModelHelperFunctions::SaveTintsFromModelComponent(CModelComponent* aModelC
     outFileStream.close();
 
     return true;
+}
+
+bool CModelHelperFunctions::LoadTintsToModelComponent(CGameObject* aGameObject, const std::string& aTintDataPath)
+{
+    CModelComponent* modelComp = aGameObject->GetComponent<CModelComponent>();
+    assert(modelComp != nullptr && "GameObject has no CModelComponent!");
+    if (!modelComp)
+        return false;
+
+    return LoadTintsToModelComponent(modelComp, aTintDataPath);
+}
+
+bool CModelHelperFunctions::SaveTintsFromModelComponent(CGameObject* aGameObject, const std::string& aModelPath, const std::string& aTintDataPath)
+{
+    CModelComponent* modelComp = aGameObject->GetComponent<CModelComponent>();
+    assert(modelComp != nullptr && "GameObject has no CModelComponent!");
+    if (!modelComp)
+        return false;
+
+    return SaveTintsFromModelComponent(modelComp, aModelPath, aTintDataPath);
 }
 
 CGameObject* CModelHelperFunctions::CreateGameObjectWithTintedModel(const int anInstanceId, const std::string& aModelPath, const std::string& aTintDataPath)

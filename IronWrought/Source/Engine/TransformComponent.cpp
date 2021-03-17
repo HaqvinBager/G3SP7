@@ -131,6 +131,10 @@ void CTransformComponent::Transform(DirectX::SimpleMath::Vector3 aPosition, Dire
 	Rotation(aRotation);
 	Position(aPosition);
 }
+void CTransformComponent::Transform(DirectX::SimpleMath::Matrix& aTransform)
+{
+	myLocalTransform = aTransform;
+}
 
 DirectX::SimpleMath::Matrix& CTransformComponent::Transform()
 {

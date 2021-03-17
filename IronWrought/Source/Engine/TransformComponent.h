@@ -29,6 +29,7 @@ public:
 	DirectX::SimpleMath::Matrix GetLocalMatrix() const;
 
 	void Transform(DirectX::SimpleMath::Vector3 aPosition, DirectX::SimpleMath::Vector3 aRotation);
+	void Transform(DirectX::SimpleMath::Matrix& aTransform);
 
 	void Move(DirectX::SimpleMath::Vector3 aMovement);
 	void MoveLocal(DirectX::SimpleMath::Vector3 aMovement);
