@@ -75,7 +75,7 @@ void CPlayerControllerComponent::Start()
 void CPlayerControllerComponent::Update()
 {
 #ifdef _DEBUG
-	if (myCamera->IsFreeCamMode())
+	if (myCamera->IsFreeCamMode() || myCamera->IsCursorUnlocked())
 		return;
 #endif
 	Move({0.0f, myMovement.y, 0.0f});
@@ -108,7 +108,7 @@ void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
 {
 	/*CCameraControllerComponent* cameraController = CEngine::GetInstance()->GetActiveScene().FindFirstObjectWithComponent<CCameraControllerComponent>();*/
 #ifdef _DEBUG
-	if (myCamera->IsFreeCamMode())
+	if (myCamera->IsFreeCamMode() || myCamera->IsCursorUnlocked())
 		return;
 #endif
 

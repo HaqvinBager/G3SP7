@@ -46,5 +46,8 @@ enum class EMessageType
 	PlayResearcherEvent,
 	PlaySFX,
 
+	CursorHideAndLock,
+	CursorShowAndUnlock,
+
 	Count
 };
