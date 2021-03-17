@@ -754,6 +754,7 @@
     <ClCompile Include="CCurveWindow.cpp">
       <Filter>Imgui\Windows</Filter>
     </ClCompile>
+    <ClCompile Include="PlayerAnimationController.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1393,6 +1394,7 @@
     <ClInclude Include="..\Includes\ImGui\Core\widget_curve.h">
       <Filter>Imgui\Widgets</Filter>
     </ClInclude>
+    <ClInclude Include="PlayerAnimationController.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">

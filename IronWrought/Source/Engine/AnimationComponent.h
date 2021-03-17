@@ -45,7 +45,7 @@ public:
 	std::array<SlimMatrix44, 64> GetBones() { return myBones; }
 
 	void BlendLerpBetween(int anAnimationIndex0, int anAnimationIndex1, float aBlendLerp);
-	void BlendToAnimation(unsigned int anAnimationIndex, float aBlendDuration = 0.3f, bool anUpdateBoth = true, bool aTemporary = false, float aTime = 0.0f);
+	void BlendToAnimation(unsigned int anAnimationIndex, float aBlendDuration = 0.3f, bool anUpdateBoth = true, bool aTemporary = false, float aTimeMultiplier = 1.0f);
 	void ToggleUseLerp(bool shouldUseLerp) { myShouldUseLerp = shouldUseLerp; }
 	void BlendLerp(float aLerpValue);
 

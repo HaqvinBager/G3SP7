@@ -6,7 +6,7 @@ public:
 	{
 		MouseLeftPressed,
 		MouseLeftDown,
-		MouseRight,
+		MouseRightDown,
 		MouseMiddle,
 		KeyEscape,
 		KeyEnter,
@@ -23,9 +23,9 @@ public:
 	enum class EInputEvent
 	{
 		PopState,
-		MoveClick,
+		Push,
+		Pull,
 		MoveDown,
-		AttackClick,
 		OpenMenuPress,
 		LoadLevel,
 		PauseGame,
