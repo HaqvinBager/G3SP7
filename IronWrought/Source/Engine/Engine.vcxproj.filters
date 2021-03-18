@@ -751,7 +751,10 @@
     <ClCompile Include="NodeTypeAudioPlaySFX.cpp">
       <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
     </ClCompile>
-    <ClCompile Include="CCurveWindow.cpp">
+    <ClCompile Include="JsonWriter.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="CurveWindow.cpp">
       <Filter>Imgui\Windows</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1387,14 +1390,17 @@
     <ClInclude Include="NodeTypeAudioPlaySFX.h">
       <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
     </ClInclude>
-    <ClInclude Include="CCurveWindow.h">
-      <Filter>Imgui\Windows</Filter>
-    </ClInclude>
     <ClInclude Include="..\Includes\ImGui\Core\widget_curve.h">
       <Filter>Imgui\Widgets</Filter>
     </ClInclude>
     <ClInclude Include="..\Includes\ImGui\Core\curve_v122.hpp">
       <Filter>Imgui\Widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="JsonWriter.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="CurveWindow.h">
+      <Filter>Imgui\Windows</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

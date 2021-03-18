@@ -194,8 +194,9 @@
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Behaviour.h" />
     <ClInclude Include="CameraSetting.h" />
-    <ClInclude Include="CCurveWindow.h" />
+    <ClInclude Include="CurveWindow.h" />
     <ClInclude Include="FlipACoinDecision.h" />
+    <ClInclude Include="JsonWriter.h" />
     <ClInclude Include="NodeDataManager.h" />
     <ClInclude Include="NodeTypeAudioPlayResearcherEvent.h" />
     <ClInclude Include="NodeTypeAudioPlayResearcherReactionExplosives.h" />
@@ -401,7 +402,8 @@
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="AudioChannel.cpp" />
     <ClCompile Include="AudioManager.cpp" />
-    <ClCompile Include="CCurveWindow.cpp" />
+    <ClCompile Include="CurveWindow.cpp" />
+    <ClCompile Include="JsonWriter.cpp" />
     <ClCompile Include="NodeTypeAudioPlayResearcherEvent.cpp" />
     <ClCompile Include="NodeTypeAudioPlayResearcherReactionExplosives.cpp" />
     <ClCompile Include="NodeTypeAudioPlayRobotPatrolling.cpp" />

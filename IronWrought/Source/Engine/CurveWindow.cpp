@@ -1,8 +1,9 @@
 #include "stdafx.h"
-#include "CCurveWindow.h"
+#include "CurveWindow.h"
 #include <widget_curve.h>
 #include <curve_v122.hpp>
 #include "JsonReader.h"
+#include "JsonWriter.h"
 
 IronWroughtImGui::CCurveWindow::CCurveWindow(const char* aName)
 	: CWindow(aName)	
@@ -60,5 +61,6 @@ void IronWroughtImGui::CCurveWindow::OnDisable()
 
 void IronWroughtImGui::CCurveWindow::SaveToFile()
 {
-	
+	CJsonWriter::WriteGenericValue(ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystemTestercoppeeeee.json").c_str(), "Name", 0.1f);
+	CJsonWriter::WriteGenericValue(ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystemTestercoppeeeee.json").c_str(), "hej", 0.1f);
 }
