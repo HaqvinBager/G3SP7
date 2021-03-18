@@ -1,49 +1,28 @@
 #include "stdafx.h"
 #include "InGameState.h"
 
-#include "Scene.h"
+#include <GameObject.h>
+#include <TransformComponent.h>
+#include <ModelComponent.h>
+#include <DecalComponent.h>
+#include <PointLightComponent.h>
 
-#include "GameObject.h"
-#include "CameraComponent.h"
-#include "CameraControllerComponent.h"
-#include "EnviromentLightComponent.h"
-#include "TransformComponent.h"
-#include "InstancedModelComponent.h"
-#include "RigidBodyComponent.h"
-#include "ModelComponent.h"
-#include "DecalComponent.h"
-#include "CharacterControllerComponent.h"
-
-#include "EnvironmentLight.h"
-#include "Timer.h"
-#include "Engine.h"
-#include "PostMaster.h"
-#include "WindowHandler.h"
-#include "MainSingleton.h"
-#include "InputMapper.h"
-
+#include <Scene.h>
+#include <Engine.h>
+#include <PostMaster.h>
+#include <MainSingleton.h>
 #include <CollisionManager.h>
-#include "ImguiManager.h"
+#include <PointLight.h>
 
 #include <JsonReader.h>
-#include <iostream>
-#include "SceneManager.h"
-#include "FolderUtility.h"
+#include <SceneManager.h>
 
-#include "animationLoader.h"
+#include <VFXSystemComponent.h>
+#include <VFXMeshFactory.h>
+#include <ParticleEmitterFactory.h>
 
-
-
-#include "PointLight.h"
-#include "PointLightComponent.h"
-#include "PlayerControllerComponent.h"
-
-#include "VFXSystemComponent.h"
-#include "VFXMeshFactory.h"
-#include "ParticleEmitterFactory.h"
-
-#include "TextFactory.h"
-#include "TextInstance.h"
+#include <TextFactory.h>
+#include <TextInstance.h>
 
 CGameObject* gVFX = nullptr;
 void TEMP_VFX(CScene* aScene);
@@ -63,7 +42,6 @@ void CInGameState::Awake()
 	CJsonReader::Get()->Init();
 	CScene* scene = CSceneManager::CreateEmpty();
 	TEMP_VFX(scene);
-	//TEMP_DecalTests(scene);
 
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);
@@ -211,7 +189,7 @@ void TEMP_DeferredRenderingTests(CScene* scene)
 		x -= 1.0f;
 
 		CGameObject* pl = new CGameObject(1789 + i);
-		pl->AddComponent<CPointLightComponent>(*pl, 15.f, SM::Vector3{ 1,1,1 }, 10.f);
+		pl->AddComponent<CPointLightComponent>(*pl, 15.f, Vector3{ 1,1,1 }, 10.f);
 		pl->myTransform->Position({ x, y, -3.0f });
 
 		int thirdRange = numPointLights / 3;
@@ -227,7 +205,7 @@ void TEMP_DeferredRenderingTests(CScene* scene)
 	for (int i = 0; i < 5; ++i)
 	{
 		CGameObject* pl = new CGameObject(9999 + i);
-		pl->AddComponent<CPointLightComponent>(*pl, 10.f, SM::Vector3{ 1,1,1 }, 10.f);
+		pl->AddComponent<CPointLightComponent>(*pl, 10.f, Vector3{ 1,1,1 }, 10.f);
 		pointLights.emplace_back(pl);
 		pl->myTransform->Position({ 0xDEAD, 0xDEAD, 0xDEAD });
 
