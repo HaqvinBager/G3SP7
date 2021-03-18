@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include "EnvironmentLight.h"
 #include "PointLight.h"
+#include "SpotLight.h"
 
 #include "GameObject.h"
 #include "CameraComponent.h"
@@ -26,17 +27,22 @@ CDeferredRenderer::CDeferredRenderer()
 	, myObjectBuffer(nullptr)
 	, myLightBuffer(nullptr)
 	, myPointLightBuffer(nullptr)
+	, mySpotLightBuffer(nullptr)
 	, myPointLightVertexBuffer(nullptr)
+	, mySpotLightVertexBuffer(nullptr)
 	, myFullscreenShader(nullptr)
 	, myModelVertexShader(nullptr)
 	, myInstancedModelVertexShader(nullptr)
 	, myAnimationVertexShader(nullptr)
 	, myVertexPaintModelVertexShader(nullptr)
 	, myPointLightVertexShader(nullptr)
+	, mySpotLightVertexShader(nullptr)
 	, myPointLightGeometryShader(nullptr)
+	, mySpotLightGeometryShader(nullptr)
 	, myEnvironmentLightShader(nullptr)
 	, myGBufferPixelShader(nullptr)
 	, myPointLightShader(nullptr)
+	, mySpotLightShader(nullptr)
 	, myVertexPaintPixelShader(nullptr)
 	, myDirectionalVolumetricLightShader(nullptr)
 	, mySamplerState(nullptr)
@@ -79,6 +85,9 @@ bool CDeferredRenderer::Init(CDirectXFramework* aFramework)
 	bufferDescription.ByteWidth = sizeof(SPointLightBufferData);
 	ENGINE_HR_MESSAGE(device->CreateBuffer(&bufferDescription, nullptr, &myPointLightBuffer), "Point Light Buffer could not be created.");
 
+	bufferDescription.ByteWidth = sizeof(SSpotLightBufferData);
+	ENGINE_HR_MESSAGE(device->CreateBuffer(&bufferDescription, nullptr, &mySpotLightBuffer), "Spot Light Buffer could not be created.");
+
 	bufferDescription.ByteWidth = static_cast<UINT>(sizeof(SBoneBufferData) + (16 - (sizeof(SBoneBufferData) % 16)));
 	ENGINE_HR_BOOL_MESSAGE(device->CreateBuffer(&bufferDescription, nullptr, &myBoneBuffer), "Bone Buffer could not be created.");
 
@@ -96,6 +105,7 @@ bool CDeferredRenderer::Init(CDirectXFramework* aFramework)
 	subVertexResourceData.pSysMem = vertex;
 
 	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateBuffer(&vertexBufferDesc, &subVertexResourceData, &myPointLightVertexBuffer), "Point Light Vertex Buffer could not be created.");
+	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateBuffer(&vertexBufferDesc, &subVertexResourceData, &mySpotLightVertexBuffer), "Spot Light Vertex Buffer could not be created.");
 
 	std::string vsData;
 	Graphics::CreateVertexShader("Shaders/DeferredVertexShader.cso", aFramework, &myFullscreenShader, vsData);
@@ -106,6 +116,7 @@ bool CDeferredRenderer::Init(CDirectXFramework* aFramework)
 	Graphics::CreatePixelShader("Shaders/GBufferPixelShader.cso", aFramework, &myGBufferPixelShader);
 	Graphics::CreatePixelShader("Shaders/DeferredLightEnvironmentShader.cso", aFramework, &myEnvironmentLightShader);
 	Graphics::CreatePixelShader("Shaders/DeferredLightPointShader.cso", aFramework, &myPointLightShader);
+	Graphics::CreatePixelShader("Shaders/DeferredLightSpotShader.cso", aFramework, &mySpotLightShader);
 	Graphics::CreatePixelShader("Shaders/DirectionalVolumetricLightPixelShader.cso", aFramework, &myDirectionalVolumetricLightShader);
 
 	LoadRenderPassPixelShaders(aFramework->GetDevice());
@@ -133,6 +144,11 @@ bool CDeferredRenderer::Init(CDirectXFramework* aFramework)
 	};
 	ENGINE_HR_MESSAGE(aFramework->GetDevice()->CreateInputLayout(pointLightLayout, sizeof(pointLightLayout) / sizeof(D3D11_INPUT_ELEMENT_DESC), vsData.data(), vsData.size(), &myPointLightInputLayout), "Point Light Input Layout could not be created.");
 
+	// Spot light
+	Graphics::CreateGeometryShader("Shaders/SpotLightGeometryShader.cso", aFramework, &mySpotLightGeometryShader);
+	Graphics::CreateVertexShader("Shaders/SpotLightVertexShader.cso", aFramework, &mySpotLightVertexShader, vsData);
+
+	// Samplers
 	D3D11_SAMPLER_DESC samplerDesc = {};
 	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -376,6 +392,9 @@ void CDeferredRenderer::Render(CCameraComponent* aCamera, std::vector<CPointLigh
 	if (myCurrentRenderPassShader)
 		return;
 
+	if (aPointLightList.empty())
+		return;
+
 	SM::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
 	myFrameBufferData.myCameraPosition = SM::Vector4{ cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f };
 	myFrameBufferData.myToCameraSpace = cameraMatrix.Invert();
@@ -417,6 +436,65 @@ void CDeferredRenderer::Render(CCameraComponent* aCamera, std::vector<CPointLigh
 		myContext->GSSetShader(myPointLightGeometryShader, nullptr, 0);
 
 		myContext->PSSetShader(myPointLightShader, nullptr, 0);
+		myContext->PSSetSamplers(0, 1, &mySamplerState);
+
+		myContext->Draw(1, 0);
+		CRenderManager::myNumberOfDrawCallsThisFrame++;
+	}
+
+	myContext->GSSetShader(nullptr, nullptr, 0);
+}
+
+void CDeferredRenderer::Render(CCameraComponent* aCamera, std::vector<CSpotLight*>& aSpotLightList) 
+{
+	if (myCurrentRenderPassShader)
+		return;
+
+	if (aSpotLightList.empty())
+		return;
+
+	SM::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
+	myFrameBufferData.myCameraPosition = SM::Vector4{ cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f };
+	myFrameBufferData.myToCameraSpace = cameraMatrix.Invert();
+	myFrameBufferData.myToWorldFromCamera = cameraMatrix;
+	myFrameBufferData.myToProjectionSpace = aCamera->GetProjection();
+	myFrameBufferData.myToCameraFromProjection = aCamera->GetProjection().Invert();
+	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
+	myContext->VSSetConstantBuffers(0, 1, &myFrameBuffer);
+	myContext->GSSetConstantBuffers(0, 1, &myFrameBuffer);
+	myContext->PSSetConstantBuffers(0, 1, &myFrameBuffer);
+
+	Matrix transform = {};
+	UINT stride = sizeof(Vector4);
+	UINT offset = 0;
+
+	for (CSpotLight* currentInstance : aSpotLightList) {
+		transform.Translation(currentInstance->GetPosition());
+		myObjectBufferData.myToWorld = transform;
+
+		BindBuffer(myObjectBuffer, myObjectBufferData, "Spot Light Object Buffer");
+		myContext->VSSetConstantBuffers(1, 1, &myObjectBuffer);
+
+		const SM::Vector3& position = currentInstance->GetPosition();
+		const SM::Vector3& color = currentInstance->GetColor();
+		const Vector3& direction = currentInstance->GetDirection();
+		mySpotLightBufferData.myPositionAndRange = { position.x, position.y, position.z, currentInstance->GetRange() };
+		mySpotLightBufferData.myColorAndIntensity = { color.x, color.y, color.z, currentInstance->GetIntensity() };
+		mySpotLightBufferData.myDirectionAndAngleExponent = { direction.x, direction.y, direction.z, currentInstance->GetAngleExponent() };
+
+		BindBuffer(mySpotLightBuffer, mySpotLightBufferData, "Spot Light Buffer");
+		myContext->PSSetConstantBuffers(3, 1, &mySpotLightBuffer);
+		myContext->GSSetConstantBuffers(3, 1, &mySpotLightBuffer);
+
+		myContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+		myContext->IASetInputLayout(myPointLightInputLayout);								// Probably fine, generate geometry in the same way
+		myContext->IASetVertexBuffers(0, 1, &myPointLightVertexBuffer, &stride, &offset);
+		myContext->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0);
+
+		myContext->VSSetShader(mySpotLightVertexShader, nullptr, 0);
+		myContext->GSSetShader(mySpotLightGeometryShader, nullptr, 0);
+
+		myContext->PSSetShader(mySpotLightShader, nullptr, 0);
 		myContext->PSSetSamplers(0, 1, &mySamplerState);
 
 		myContext->Draw(1, 0);

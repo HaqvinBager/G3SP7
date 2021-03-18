@@ -19,8 +19,8 @@ public:
 
 private:
 	SM::Vector3 myPosition;
-	float myIntensity;
 	SM::Vector3 myColor;
+	float myIntensity;
 	float myRange;
 };
 

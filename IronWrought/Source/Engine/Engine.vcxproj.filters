@@ -184,6 +184,15 @@
     <FxCompile Include="DirectionalVolumetricLightPixelShader.hlsl">
       <Filter>Shaders\Volumetric Light</Filter>
     </FxCompile>
+    <FxCompile Include="DeferredLightSpotShader.hlsl">
+      <Filter>Shaders\Deferred</Filter>
+    </FxCompile>
+    <FxCompile Include="SpotLightGeometryShader.hlsl">
+      <Filter>Shaders\SpotLight</Filter>
+    </FxCompile>
+    <FxCompile Include="SpotLightVertexShader.hlsl">
+      <Filter>Shaders\SpotLight</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimationComponent.cpp">
@@ -732,6 +741,12 @@
     </ClCompile>
     <ClCompile Include="NodeTypeAudioPlayResearcherReactionExplosives.cpp">
       <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="SpotLight.cpp">
+      <Filter>Light</Filter>
+    </ClCompile>
+    <ClCompile Include="SpotLightComponent.cpp">
+      <Filter>GameObject and Component\Component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1348,6 +1363,12 @@
     <ClInclude Include="NodeTypeAudioPlayResearcherReactionExplosives.h">
       <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
     </ClInclude>
+    <ClInclude Include="SpotLight.h">
+      <Filter>Light</Filter>
+    </ClInclude>
+    <ClInclude Include="SpotLightComponent.h">
+      <Filter>GameObject and Component\Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">
@@ -1413,6 +1434,9 @@
     </None>
     <None Include="PointLightShaderStructs.hlsli">
       <Filter>Shaders\PointLight</Filter>
+    </None>
+    <None Include="SpotLightShaderStructs.hlsli">
+      <Filter>Shaders\SpotLight</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -1631,6 +1655,9 @@
     </Filter>
     <Filter Include="Shaders\Volumetric Light">
       <UniqueIdentifier>{cee1659f-b322-4fca-bdc6-5750ff879045}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\SpotLight">
+      <UniqueIdentifier>{6e3d5219-fb83-49eb-9461-b8807d9d0b4f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

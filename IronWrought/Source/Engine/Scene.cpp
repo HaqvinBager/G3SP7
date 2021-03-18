@@ -22,6 +22,7 @@
 
 #include "EnvironmentLight.h"
 #include "PointLight.h"
+#include "SpotLight.h"
 
 #include "Camera.h"
 #include "CameraComponent.h"
@@ -72,6 +73,7 @@ CScene::~CScene()
 
 	this->ClearGameObjects();
 	this->ClearPointLights();
+	this->ClearSpotLights();
 
 #ifdef _DEBUG
 	myGrid = nullptr;
@@ -206,6 +208,11 @@ std::vector<CPointLight*> CScene::CullPointLights(CGameObject* /*aGameObject*/)
 {
 	//std::cout << __FUNCTION__ << " Reminde to add actual culling to this function!" << std::endl;
 	return myPointLights;
+}
+
+std::vector<CSpotLight*> CScene::CullSpotLights(CGameObject* /*aGameObject*/)
+{
+	return mySpotLights;
 }
 
 std::pair<unsigned int, std::array<CPointLight*, LIGHTCOUNT>> CScene::CullLights(CGameObject* aGameObject)
@@ -356,6 +363,12 @@ bool CScene::AddInstance(CPointLight* aPointLight)
 	return true;
 }
 
+bool CScene::AddInstance(CSpotLight* aSpotLight)
+{
+	mySpotLights.emplace_back(aSpotLight);
+	return true;
+}
+
 bool CScene::AddInstance(CLineInstance* aLineInstance)
 {
 	myLineInstances.emplace_back(aLineInstance);
@@ -447,6 +460,18 @@ bool CScene::RemoveInstance(CPointLight* aPointLight)
 	return true;
 }
 
+bool CScene::RemoveInstance(CSpotLight* aSpotLight)
+{
+	for (int i = 0; i < mySpotLights.size(); ++i)
+	{
+		if (aSpotLight == mySpotLights[i])
+		{
+			mySpotLights.erase(mySpotLights.begin() + i);
+		}
+	}
+	return true;
+}
+
 bool CScene::RemoveInstance(CAnimatedUIElement* anAnimatedUIElement)
 {
 	for (int i = 0; i < myAnimatedUIElements.size(); ++i)
@@ -483,6 +508,11 @@ bool CScene::ClearPointLights()
 	}
 	myPointLights.clear();
 	return true;
+}
+
+bool CScene::ClearSpotLights()
+{
+	return false;
 }
 
 bool CScene::ClearLineInstances()

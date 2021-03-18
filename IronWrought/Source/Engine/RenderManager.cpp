@@ -195,9 +195,12 @@ void CRenderManager::Render(CScene& aScene)
 	myEnvironmentShadowDepth.SetAsResourceOnSlot(22);
 	std::vector<CPointLight*> onlyPointLights;
 	onlyPointLights = aScene.CullPointLights(&maincamera->GameObject());
+	std::vector<CSpotLight*> onlySpotLights;
+	onlySpotLights = aScene.CullSpotLights(&maincamera->GameObject());
 
 	myDeferredRenderer.Render(maincamera, environmentlight);
 	myDeferredRenderer.Render(maincamera, onlyPointLights);
+	myDeferredRenderer.Render(maincamera, onlySpotLights);
 
 	myDeferredRenderer.RenderVolumetricLight(maincamera, environmentlight);
 

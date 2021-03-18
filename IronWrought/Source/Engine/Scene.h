@@ -11,6 +11,7 @@ class CCamera;
 class CEnvironmentLight;
 class CCollisionManager;
 class CPointLight;
+class CSpotLight;
 class CLineInstance;
 class CCanvas;
 
@@ -72,6 +73,7 @@ public:
 public:
 //CULLING START
 	std::vector<CPointLight*> CullPointLights(CGameObject* aGameObject);
+	std::vector<CSpotLight*> CullSpotLights(CGameObject* aGameObject);
 	std::pair<unsigned int, std::array<CPointLight*, LIGHTCOUNT>> CullLights(CGameObject* aGameObject);
 	const std::vector<CLineInstance*>& CullLineInstances() const;
 	const std::vector<SLineTime>& CullLines() const;
@@ -86,6 +88,7 @@ public:
 public:
 	//POPULATE SCENE START
 	bool AddInstance(CPointLight* aPointLight);
+	bool AddInstance(CSpotLight* aSpotLight);
 	bool AddInstance(CLineInstance* aLineInstance);
 	bool AddInstance(CAnimatedUIElement* anAnimatedUIElement);
 	bool AddInstance(CTextInstance* aText);
@@ -98,11 +101,13 @@ public:
 public:
 //REMOVE SPECIFIC INSTANCE START
 	bool RemoveInstance(CPointLight* aPointLight);
+	bool RemoveInstance(CSpotLight* aSpotLight);
 	bool RemoveInstance(CAnimatedUIElement* anAnimatedUIElement);
 	bool RemoveInstance(CGameObject* aGameObject);
 //REMOVE SPECIFIC INSTANCE END
 //CLEAR SCENE OF INSTANCES START
 	bool ClearPointLights();
+	bool ClearSpotLights();
 	bool ClearLineInstances();
 	bool ClearAnimatedUIElement();
 	bool ClearTextInstances();
@@ -120,6 +125,7 @@ private:
 private:
 //CONTAINERS START
 	std::vector<CPointLight*> myPointLights;
+	std::vector<CSpotLight*> mySpotLights;
 	std::vector<CLineInstance*> myLineInstances;
 	std::vector<CAnimatedUIElement*> myAnimatedUIElements;
 	std::vector<CTextInstance*> myTexts;

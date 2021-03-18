@@ -33,9 +33,9 @@ CScene* CSceneManager::CreateEmpty()
 
 	CGameObject* envLight = new CGameObject(1);
 	envLight->AddComponent<CEnviromentLightComponent>(*envLight);
-	envLight->GetComponent<CEnviromentLightComponent>()->GetEnvironmentLight()->SetIntensity(5.0f);
+	envLight->GetComponent<CEnviromentLightComponent>()->GetEnvironmentLight()->SetIntensity(1.0f);
 	envLight->GetComponent<CEnviromentLightComponent>()->GetEnvironmentLight()->SetDirection({ 1.0f,1.0f,0.4f });
-	//envLight->GetComponent<CEnviromentLightComponent>()->GetEnvironmentLight()->SetColor({ 0.0f, 0.5f, 1.0f });
+	envLight->GetComponent<CEnviromentLightComponent>()->GetEnvironmentLight()->SetColor({ 253.0f/255.0f, 184.0f/255.0f, 100.0f/255.0f });
 
 	CScene* emptyScene = new CScene(2);
 	emptyScene->AddInstance(camera);

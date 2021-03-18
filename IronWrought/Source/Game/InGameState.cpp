@@ -71,6 +71,8 @@ void CInGameState::Stop()
 
 void CInGameState::Update()
 {
+	//IRONWROUGHT->GetActiveScene().EnvironmentLight()->SetDirection({ 0.0f, 1.0f, sinf(CTimer::Time()) });
+
 	CEngine::GetInstance()->GetPhysx().Simulate();
 	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
 	{

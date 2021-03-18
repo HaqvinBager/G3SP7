@@ -9,6 +9,7 @@ class CModelInstance;
 class CModel;
 class CEnvironmentLight;
 class CPointLight;
+class CSpotLight;
 class CGameObject;
 class CCameraComponent;
 
@@ -23,6 +24,7 @@ public:
 	void GenerateGBuffer(CCameraComponent* aCamera, std::vector<CGameObject*>& aGameObjectList, std::vector<CGameObject*>& aInstancedGameObjectList);
 	void Render(CCameraComponent* aCamera, CEnvironmentLight* anEnvironmentLight);
 	void Render(CCameraComponent* aCamera, std::vector<CPointLight*>& aPointLightList);
+	void Render(CCameraComponent* aCamera, std::vector<CSpotLight*>& aSpotLightList);
 	void RenderVolumetricLight(CCameraComponent* aCamera, CEnvironmentLight* anEnvironmentLight);
 
 	bool ToggleRenderPass();
@@ -73,6 +75,13 @@ private:
 		DirectX::SimpleMath::Vector4 myPositionAndRange;
 	} myPointLightBufferData;
 
+	struct SSpotLightBufferData
+	{
+		DirectX::SimpleMath::Vector4 myColorAndIntensity;
+		DirectX::SimpleMath::Vector4 myPositionAndRange;
+		DirectX::SimpleMath::Vector4 myDirectionAndAngleExponent;
+	} mySpotLightBufferData;
+
 	struct SBoneBufferData {
 		/*SlimMatrix44*/Matrix myBones[64];
 	} myBoneBufferData;
@@ -88,8 +97,11 @@ private:
 	ID3D11Buffer* myObjectBuffer;
 	ID3D11Buffer* myLightBuffer;
 	ID3D11Buffer* myPointLightBuffer;
+	ID3D11Buffer* mySpotLightBuffer;
 	ID3D11Buffer* myBoneBuffer;
+
 	ID3D11Buffer* myPointLightVertexBuffer;
+	ID3D11Buffer* mySpotLightVertexBuffer;
 
 	ID3D11InputLayout* myVertexPaintInputLayout;
 	ID3D11InputLayout* myPointLightInputLayout;
@@ -99,14 +111,18 @@ private:
 	ID3D11VertexShader* myAnimationVertexShader;
 	ID3D11VertexShader* myVertexPaintModelVertexShader;
 	ID3D11VertexShader* myInstancedModelVertexShader;
+
 	ID3D11VertexShader* myPointLightVertexShader;
+	ID3D11VertexShader* mySpotLightVertexShader;
 // Geometry shaders.
 	ID3D11GeometryShader* myPointLightGeometryShader;
+	ID3D11GeometryShader* mySpotLightGeometryShader;
 // Pixel shaders.
 	ID3D11PixelShader* myGBufferPixelShader;
 	ID3D11PixelShader* myVertexPaintPixelShader;
 	ID3D11PixelShader* myEnvironmentLightShader;
 	ID3D11PixelShader* myPointLightShader;
+	ID3D11PixelShader* mySpotLightShader;
 	ID3D11PixelShader* myDirectionalVolumetricLightShader;
 // Samplers.
 	ID3D11SamplerState* mySamplerState;
