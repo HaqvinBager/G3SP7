@@ -195,7 +195,9 @@
     <ClInclude Include="CameraSetting.h" />
     <ClInclude Include="CCurveWindow.h" />
     <ClInclude Include="Interop.h" />
+    <ClInclude Include="NodeTypeActionPatrol.h" />
     <ClInclude Include="NodeTypeFloatDecision.h" />
+    <ClInclude Include="NodeTypeGameObjectGetChildPosition.h" />
     <ClInclude Include="NodeTypeGameObjectMoveToPosition.h" />
     <ClInclude Include="NodeTypeVector3Add.h" />
     <ClInclude Include="NodeTypeVector3Cross.h" />
@@ -410,6 +412,8 @@
     <ClCompile Include="AudioChannel.cpp" />
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="CCurveWindow.cpp" />
+    <ClCompile Include="NodeTypeActionPatrol.cpp" />
+    <ClCompile Include="NodeTypeGameObjectGetChildPosition.cpp" />
     <ClCompile Include="NodeTypeGameObjectMoveToPosition.cpp" />
     <ClCompile Include="NodeTypeVector3Add.cpp" />
     <ClCompile Include="NodeTypeVector3Cross.cpp" />

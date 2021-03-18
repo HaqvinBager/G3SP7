@@ -774,6 +774,8 @@
     <ClCompile Include="NodeTypeGameObjectMoveToPosition.cpp">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClCompile>
+    <ClCompile Include="NodeTypeActionPatrol.cpp" />
+    <ClCompile Include="NodeTypeGameObjectGetChildPosition.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1429,14 +1431,16 @@
     <ClInclude Include="NodeTypeVector3Sub.h">
       <Filter>Imgui\Node Editor\Nodes\Vector3</Filter>
     </ClInclude>
-    <ClInclude Include="Interop.h">
-      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
-    </ClInclude>
     <ClInclude Include="NodeTypeFloatDecision.h">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeGameObjectMoveToPosition.h">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeActionPatrol.h" />
+    <ClInclude Include="NodeTypeGameObjectGetChildPosition.h" />
+    <ClInclude Include="Interop.h">
+      <Filter>Imgui\Blueprints</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

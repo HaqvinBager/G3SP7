@@ -23,8 +23,8 @@ int CNodeTypeVector3Dot::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 
 	float result = position1.Dot(position2);/*position1.x * position2.x + position1.y * position2.y + position1.z * position2.z;*/
 	std::vector<SPin>& pins = aTriggeringNodeInstance->GetPins();
-	DeclareDataOnPinIfNecessary<float>(pins[6]);
-	memcpy(pins[6].myData, &result, sizeof(float));
+	DeclareDataOnPinIfNecessary<float>(pins[2]);
+	memcpy(pins[2].myData, &result, sizeof(float));
 
 	return -1;
 }

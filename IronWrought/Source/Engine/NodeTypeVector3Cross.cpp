@@ -23,8 +23,8 @@ int CNodeTypeVector3Cross::OnEnter(class CNodeInstance* aTriggeringNodeInstance)
 	Vector3 temp = input1.Cross(input2);
 
 	std::vector<SPin>& pins = aTriggeringNodeInstance->GetPins();
-	DeclareDataOnPinIfNecessary<Vector3>(pins[4]);
-	memcpy(pins[4].myData, &temp, sizeof(Vector3));
+	DeclareDataOnPinIfNecessary<Vector3>(pins[2]);
+	memcpy(pins[2].myData, &temp, sizeof(Vector3));
 
 	return -1;
 }
