@@ -244,19 +244,19 @@ void CDecalRenderer::Render(CCameraComponent* aCamera, std::vector<CGameObject*>
 		myContext->PSSetConstantBuffers(1, 1, &myObjectBuffer);
 		myContext->PSSetShaderResources(5, 3, &decalData.myMaterial[0]);
 
-        //myContext->PSSetShader(myAlbedoPixelShader, nullptr, 0);
-        //myContext->DrawIndexed(myNumberOfIndices, 0, 0);
-        //CRenderManager::myNumberOfDrawCallsThisFrame++;
-        //
-        //myContext->PSSetShader(myNormalPixelShader, nullptr, 0);
-        //myContext->DrawIndexed(myNumberOfIndices, 0, 0);
-        //CRenderManager::myNumberOfDrawCallsThisFrame++;
-        //
-        //myContext->PSSetShader(myMaterialPixelShader, nullptr, 0);
-        //myContext->DrawIndexed(myNumberOfIndices, 0, 0);
-        //CRenderManager::myNumberOfDrawCallsThisFrame++;
+        myContext->PSSetShader(myAlbedoPixelShader, nullptr, 0);
+        myContext->DrawIndexed(myNumberOfIndices, 0, 0);
+        CRenderManager::myNumberOfDrawCallsThisFrame++;
+        
+        myContext->PSSetShader(myNormalPixelShader, nullptr, 0);
+        myContext->DrawIndexed(myNumberOfIndices, 0, 0);
+        CRenderManager::myNumberOfDrawCallsThisFrame++;
+        
+        myContext->PSSetShader(myMaterialPixelShader, nullptr, 0);
+        myContext->DrawIndexed(myNumberOfIndices, 0, 0);
+        CRenderManager::myNumberOfDrawCallsThisFrame++;
 
-		myContext->DrawIndexed(myNumberOfIndices, 0, 0);
-		CRenderManager::myNumberOfDrawCallsThisFrame++;
+		//myContext->DrawIndexed(myNumberOfIndices, 0, 0);
+		//CRenderManager::myNumberOfDrawCallsThisFrame++;
 	}
 }
