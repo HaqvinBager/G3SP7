@@ -23,8 +23,8 @@ int CNodeTypeVector3Distance::OnEnter(class CNodeInstance* aTriggeringNodeInstan
 	float temp = Vector3::Distance(input1, input2);
 
 	std::vector<SPin>& pins = aTriggeringNodeInstance->GetPins();
-	DeclareDataOnPinIfNecessary<float>(pins[4]);
-	memcpy(pins[4].myData, &temp, sizeof(float));
+	DeclareDataOnPinIfNecessary<float>(pins[2]);
+	memcpy(pins[2].myData, &temp, sizeof(float));
 
 	return -1;
 }

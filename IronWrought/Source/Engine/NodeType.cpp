@@ -5,6 +5,7 @@
 #include "NodeTypeDebugPrint.h"
 #include "NodeInstance.h"
 #include "NodeTypeGameObjectGetPosition.h"
+#include "NodeTypeGameObjectGetChildPosition.h"
 #include "NodeTypeGameObjectSetPosition.h"
 #include "NodeTypeGameObjectMove.h"
 #include "NodeTypeGameObjectMoveToPosition.h"
@@ -65,10 +66,13 @@
 #include "NodeTypeVector3Split.h"
 #include "NodeTypeVector3Join.h"
 #include "NodeTypeVector3Cross.h"
+#include "Scene.h"
+#include "Engine.h"
+#include "NodeDataManager.h"
 
 CNodeType* CNodeTypeCollector::myTypes[128];
 unsigned short CNodeTypeCollector::myTypeCounter = 0;
-unsigned short CNodeTypeCollector::myTypeCount = 0;
+std::unordered_map<std::string, SNodeTypeData> CNodeTypeCollector::myChildNodeTypesMap;
 
 std::vector<unsigned int> CUID::myAllUIDs;
 unsigned int CUID::myGlobalUID = 0;
@@ -131,7 +135,7 @@ void CNodeTypeCollector::PopulateTypes()
 	RegisterType<CNodeTypeVector3Cross>("Vec3 Cross");
 }
 
-void CNodeTypeCollector::RegisterNewDataType(std::string aNodeName, unsigned int aType)
+void CNodeTypeCollector::RegisterNewDataType(const std::string& aNodeName, unsigned int aType)
 {
 	switch (aType)
 	{
@@ -170,6 +174,19 @@ void CNodeTypeCollector::RegisterNewDataType(std::string aNodeName, unsigned int
 	}
 }
 
+void CNodeTypeCollector::RegisterChildNodeTypes(std::string aKey, const unsigned int aNumberOfChildren)
+{
+	std::string name;
+	int index;
+	for (unsigned int i = 0; i < aNumberOfChildren; ++i)
+	{
+		index = i + 2;
+		name = "Get " + aKey + " Child " + std::to_string(index - 2) + " Position";
+		RegisterChildType<CNodeTypeGameObjectGetChildPosition>(aKey, name);
+		CNodeDataManager::Get()->SetData(name, CNodeDataManager::EDataType::EInt, index);
+	}
+}
+
 void CNodeType::ClearNodeInstanceFromMap(CNodeInstance* /*aTriggeringNodeInstance*/)
 {
 }
@@ -190,8 +207,3 @@ void CNodeType::GetDataOnPin(CNodeInstance* aTriggeringNodeInstance, unsigned in
 {
 	aTriggeringNodeInstance->FetchData(anOutType, someData, anOutSize, aPinIndex);
 }
-//
-//void CNodeType::GetDataOnPin(CNodeInstance* aTriggeringNodeInstance, unsigned int aPinIndex, SPin::EPinType& outType, NodeDataPtr& someData, size_t& outSize)
-//{
-//	
-//}
