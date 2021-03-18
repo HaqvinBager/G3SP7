@@ -84,6 +84,9 @@ void CGraphManager::Load()
 						bpInstance.childrenIDs.emplace_back(childID.GetInt());
 					}
 					myGameObjectIDsMap[key].emplace_back(bpInstance);
+					CNodeTypeCollector::PopulateTypes();
+					unsigned int aSize = static_cast<unsigned int>(myGameObjectIDsMap[key].back().childrenIDs.size()) - 1;
+					CNodeTypeCollector::RegisterChildNodeTypes(key, aSize);
 				}
 
 				std::string folder = "Imgui/NodeScripts/" + key;
@@ -111,7 +114,6 @@ void CGraphManager::Load()
 	std::string simple = "Imgui/NodeScripts/Simple.json";
 	config.SettingsFile = simple.c_str();
 	g_Context = ed::CreateEditor(&config);
-	CNodeTypeCollector::PopulateTypes();
 	LoadDataNodesFromFile();
 	myMenuSeachField = new char[127];
 	memset(&myMenuSeachField[0], 0, sizeof(myMenuSeachField));
@@ -475,6 +477,17 @@ std::vector<CGameObject*> CGraphManager::GetCurrentGameObject()
 	return gameObjects;
 }
 
+std::vector<CGameObject*> CGraphManager::GetCurrentGameObjectChildren()
+{
+	CScene& scene = CEngine::GetInstance()->GetActiveScene();
+	std::vector<CGameObject*> gameObjects = {};
+	//gameObjects.push_back(scene.FindObjectWithID(myCurrentBluePrintInstance.rootID));
+	for (int i = 1; i < myCurrentBluePrintInstance.childrenIDs.size(); ++i)
+		gameObjects.push_back(scene.FindObjectWithID(myCurrentBluePrintInstance.childrenIDs[i]));
+
+	return gameObjects;
+}
+
 ImColor GetIconColor(SPin::EPinType type)
 {
 	switch (type)
@@ -703,7 +716,7 @@ void CGraphManager::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInstance
 			static bool pressed = false;
 			std::vector<std::string> item = CNodeDataManager::Get()->GetData<std::vector<std::string>>(aNodeInstance->GetNodeName());
 			std::string selected = static_cast<char*>(aPin.myData);
-			
+
 			if (pressed)
 			{
 				ImGui::SetNextWindowPos({ ImGui::GetMousePos().x + aNodeInstance->myEditorPosition[0], ImGui::GetMousePos().y + aNodeInstance->myEditorPosition[1] });
@@ -880,7 +893,7 @@ void CGraphManager::CreateNewDataNode()
 						}
 						else if (myNewVariableType == "Vector 3")
 						{
-							DirectX::SimpleMath::Vector3 nullValue = { 0.0f,0.0f,0.0f };
+							Vector3 nullValue = { 0.0f,0.0f,0.0f };
 							CNodeTypeCollector::RegisterNewDataType(buffer, static_cast<int>(CNodeDataManager::EDataType::EVector3));
 							CNodeDataManager::Get()->SetData(buffer, CNodeDataManager::EDataType::EVector3, nullValue);
 						}
@@ -936,7 +949,7 @@ void CGraphManager::LoadDataNodesFromFile()
 					}
 					else if (myNewVariableType == "Vector 3")
 					{
-						DirectX::SimpleMath::Vector3 value = { 0.0f,0.0f,0.0f };
+						Vector3 value = { 0.0f,0.0f,0.0f };
 						CNodeTypeCollector::RegisterNewDataType(nodeInstances[i]["Data key"].GetString(), static_cast<int>(CNodeDataManager::EDataType::EVector3));
 						CNodeDataManager::Get()->SetData(nodeInstances[i]["Data key"].GetString(), CNodeDataManager::EDataType::EVector3, value);
 					}
@@ -1434,6 +1447,9 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 			auto newNodePostion = openPopupPosition;
 			CNodeType** types = CNodeTypeCollector::GetAllNodeTypes();
 			unsigned short noOfTypes = CNodeTypeCollector::GetNodeTypeCount();
+			
+			CNodeType** childTypes = CNodeTypeCollector::GetAllChildNodeTypes(myCurrentKey);
+			unsigned short noOfChildTypes = CNodeTypeCollector::GetChildNodeTypeCount(myCurrentKey);
 
 			std::map< std::string, std::vector<CNodeType*>> cats;
 			static bool noVariablesCreated = true;
@@ -1442,6 +1458,10 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 				cats[types[i]->GetNodeTypeCategory()].push_back(types[i]);
 				if (types[i]->GetNodeTypeCategory() == "New Node Type")
 					noVariablesCreated = false;
+			}
+			for (int i = 0; i < noOfChildTypes; i++)
+			{
+				cats[childTypes[i]->GetNodeTypeCategory()].push_back(childTypes[i]);
 			}
 
 			if (noVariablesCreated)

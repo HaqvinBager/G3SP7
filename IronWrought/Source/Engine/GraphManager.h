@@ -42,6 +42,7 @@ public:
 	bool ShouldRenderGraph() { return myShouldRenderGraph; }
 
 	std::vector<CGameObject*> GetCurrentGameObject();
+	std::vector<CGameObject*> GetCurrentGameObjectChildren();
 
 private:
 	ImTextureID HeaderTextureID();
