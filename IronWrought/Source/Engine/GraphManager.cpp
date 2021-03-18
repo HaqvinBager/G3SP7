@@ -84,7 +84,6 @@ void CGraphManager::Load()
 						bpInstance.childrenIDs.emplace_back(childID.GetInt());
 					}
 					myGameObjectIDsMap[key].emplace_back(bpInstance);
-					CNodeTypeCollector::PopulateTypes();
 					unsigned int aSize = static_cast<unsigned int>(myGameObjectIDsMap[key].back().childrenIDs.size()) - 1;
 					CNodeTypeCollector::RegisterChildNodeTypes(key, aSize);
 				}
@@ -109,6 +108,7 @@ void CGraphManager::Load()
 		}
 	}
 
+	CNodeTypeCollector::PopulateTypes();
 	myHeaderTextureID = nullptr;
 	ed::Config config;
 	std::string simple = "Imgui/NodeScripts/Simple.json";
@@ -1447,7 +1447,7 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 			auto newNodePostion = openPopupPosition;
 			CNodeType** types = CNodeTypeCollector::GetAllNodeTypes();
 			unsigned short noOfTypes = CNodeTypeCollector::GetNodeTypeCount();
-			
+
 			CNodeType** childTypes = CNodeTypeCollector::GetAllChildNodeTypes(myCurrentKey);
 			unsigned short noOfChildTypes = CNodeTypeCollector::GetChildNodeTypeCount(myCurrentKey);
 
