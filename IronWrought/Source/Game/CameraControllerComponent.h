@@ -41,19 +41,20 @@ private:
 	DirectX::SimpleMath::Vector3 myOffset;
 
 	float myMouseRotationSpeed;
-	float myPitch;
-	float myYaw;
-	
-	//Controls the cameras position in space
-		//Distance from origin
-		float r = 10.0f;
-		//Rotates the camera around the origin, rotation around the equator
-		float theta = 0.0f;
-		//Rotates the camera around the origin, rotation towards north and southpole
-		float phi = 0.0f;
-	//Controls camera orientation
-		float pitch = 0.0f;
-		float yaw = 0.0f;
-		float roll = 0.0f;
-
+	union
+	{
+		float myPitch;
+		float myTheta;//Rotates the camera around the origin, rotation around the equator. Used for Orbit Camera.
+	};
+	union
+	{
+		float myYaw;
+		float myPhi;//Rotates the camera around the origin, rotation towards north and southpole. Used for Orbit Camera.
+	};
+	float myOrbitRadius;// Distance from origin 
+	Vector3 myOrbitCenter;
+	// Not used.
+	//float myOrbitPitch;
+	//float myOrbitYaw;
+	//float myOrbitRoll;
 };

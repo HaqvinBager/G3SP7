@@ -17,7 +17,8 @@ CCameraControllerComponent::CCameraControllerComponent(CGameObject& aGameObject,
 	myOffset(aOffset),
 	myMouseRotationSpeed(120.0f),
 	myPitch(0.0f),
-	myYaw(0.0f)
+	myYaw(0.0f),
+	myOrbitRadius(10.0f)
 {
 }
 
@@ -150,64 +151,73 @@ void CCameraControllerComponent::UpdateFreeCam()
 
 void CCameraControllerComponent::UpdateOrbitCam()
 {
-	/*
-	* r		clamped to 0.0f - 80.0f
-	* theta clamped to -180.0f - 180.0f
-	* phi	clamped to -89.0f - 89.0f
-	* 
-	* roll	clamped to -180.0f - 180.0f
-	* pitch	clamped to -180.0f - 180.0f
-	* yaw	clamped to -180.0f - 180.0f
-	* 
-	* //Controls the cameras position in space
-	*	//Distance from origin
-	*	float r;
-	*	//Rotates the camera around the origin, rotation around the equator
-	*	float theta;
-	*	//Rotates the camera around the origin, rotation towards north and southpole
-	*	float phi;
-	* //Controls camera orientation
-	*	float pitch;
-	*	float yaw;
-	*	float roll;
-	*/
-	const float cameraMoveSpeed = 3.0f;
 	const float dt = CTimer::Dt();
-	phi		= Input::GetInstance()->IsKeyDown(VK_UP)	? phi + (cameraMoveSpeed * dt) : phi;
-	phi		= Input::GetInstance()->IsKeyDown(VK_DOWN)	? phi - (cameraMoveSpeed * dt) : phi;
-	theta	= Input::GetInstance()->IsKeyDown(VK_LEFT)	? theta + (cameraMoveSpeed * dt) : theta;
-	theta	= Input::GetInstance()->IsKeyDown(VK_RIGHT) ? theta - (cameraMoveSpeed * dt) : theta;
-	r		= Input::GetInstance()->IsKeyDown('M')		? r + (cameraMoveSpeed * dt) : r;
-	r		= Input::GetInstance()->IsKeyDown('N')		? r - (cameraMoveSpeed * dt) : r;
+	const float dy = static_cast<float>(Input::GetInstance()->MouseRawDeltaY());
+	const float dx = static_cast<float>(Input::GetInstance()->MouseRawDeltaX());
+	if (INPUT->IsMouseDown(Input::EMouseButton::Left) && GetAsyncKeyState(VK_LMENU))
+	{
+		const float rotationSpeed = 150.0f;
+		myPhi	+= (dy * rotationSpeed * dt);
+		myTheta += (dx * rotationSpeed * dt);
+	}
+	const float scroll = -static_cast<float>(INPUT->MouseWheel());
+	const float zoomSpeed = 10.0f;
+	myOrbitRadius += (scroll * zoomSpeed * dt);
 
-	phi = min(89.0f, phi);
-	phi = max(-89.0f, phi);
-	theta = min(180.0f, theta);
-	theta = max(-180.0f, theta);
-	r = min(80.0f, r);
-	r = max(0.0f, r);
+	myPhi = std::clamp(myPhi, -89.0f, 89.0f);
+	//theta = std::clamp(theta, -360.0f, 360.0f);// If rotation around equator should be limited.
+	myOrbitRadius = std::clamp(myOrbitRadius, 0.1f, 80.0f);// Can't be zero:  EyePosition == FocusPosition is not allowed DirectX::XMMatrixLookAtLH(EyePosition, FocusPosition, UpDirection)
 
-	//phi = DirectX::XMConvertToRadians(phi);
-	//theta = DirectX::XMConvertToRadians(theta);
-	//r = DirectX::XMConvertToRadians(r);
+	float phiRadians = ToRadians(myPhi);
+	float thetaRadians = ToRadians(myTheta);
 
-	std::cout << "phi: "<< phi << ", theta: " << theta << ", r: " << r << std::endl;
-
-	const Vector3 pos = DirectX::XMVector3Transform(
-		DirectX::XMVectorSet(0.0f, 0.0f, -r, 0.0f),
-		DirectX::XMMatrixRotationRollPitchYaw(phi, theta, 0.0f)
+	Vector3 viewPos = DirectX::XMVector3Transform(
+		DirectX::XMVectorSet(0.0f, 0.0f, -myOrbitRadius, 0.0f),
+		DirectX::XMMatrixRotationRollPitchYaw(phiRadians, thetaRadians, 0.0f)
 	);
-	std::cout << "posx: "<< pos.x << ", posy: " << pos.y << ", posz: " << pos.z << std::endl;
 
-	Matrix m = DirectX::XMMatrixLookAtLH(
-		pos, DirectX::XMVectorZero(),
+	if (INPUT->IsMouseDown(Input::EMouseButton::Middle))
+	{
+		const float panningSpeed = 10.0f;
+		myOrbitCenter.x += dx * panningSpeed * dt;
+		myOrbitCenter.y += dy * panningSpeed * dt;
+
+		//https://gamedev.stackexchange.com/questions/20758/how-can-i-orbit-a-camera-about-its-target-point
+		Vector3 centerPoint = viewPos - myOrbitCenter;
+		Matrix cameraTransform = GameObject().myTransform->Transform();
+		Matrix up = Matrix::CreateFromAxisAngle(cameraTransform.Up(), 0.0f);
+		Matrix right = Matrix::CreateFromAxisAngle(cameraTransform.Right(), 0.0f);
+		centerPoint = DirectX::XMVector3Transform(
+			centerPoint,
+			up
+		);
+		centerPoint = DirectX::XMVector3Transform(
+			centerPoint,
+			right
+		);
+		myOrbitCenter = centerPoint;
+		//float panFactorX = (dx * panningSpeed * dt);
+		//float panFactorY = (dy * panningSpeed * dt);
+		//Matrix cameraTranform = GameObject().myTransform->GetLocalMatrix();
+		//Vector3 panX = cameraTranform.Right() * panFactorX;
+		//Vector3 panY = cameraTranform.Up() * panFactorY;
+		////viewPos += panX + panY;
+		//myOrbitCenter += panX + panY;
+
+		//myOrbitCenter = DirectX::XMVector3Transform(
+		//	myOrbitCenter,
+		//	cameraTranform
+		//);
+	}
+
+	viewPos = viewPos + myOrbitCenter;
+	Matrix view = DirectX::XMMatrixLookAtLH(
+		viewPos, myOrbitCenter,
 		DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f)
 	);
-	//m = m * DirectX::XMMatrixRotationRollPitchYaw(pitch, -yaw, roll);
-
-	GameObject().myTransform->Transform(m);// Chilis
-	//GameObject().myTransform->Rotation({ myPitch, myYaw, 0});
-	GameObject().myTransform->Position(pos);
+	//view = view * DirectX::XMMatrixRotationRollPitchYaw(pitch, -yaw, roll);// Allows camera rotation around itself.
+	view = view.Invert();
+	GameObject().myTransform->Transform(view);
 }
 
 void CCameraControllerComponent::SetCameraMoveSpeed(float aCameraMoveSpeed) {

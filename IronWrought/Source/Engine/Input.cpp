@@ -155,14 +155,8 @@ bool Input::MoveDown() {
 }
 //const auto& ImguiInput = ImGui::GetIO();
 
-bool Input::IsKeyDown(WPARAM wParam) {
-	
-	
-	//if (ImguiInput.WantCaptureMouse)
-	//{
-	//	return false;
-	//}
-
+bool Input::IsKeyDown(WPARAM wParam) 
+{
 	return myKeyDown[wParam];
 }
 
