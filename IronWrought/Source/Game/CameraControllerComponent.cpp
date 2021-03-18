@@ -149,7 +149,7 @@ void CCameraControllerComponent::UpdateFreeCam()
 	}
 }
 
-inline constexpr float Lerp(const float a, const float b, const float t)
+inline constexpr float Lerp(const float& a, const float& b, const float& t)
 {
 	return ((a * t) + (b * (1.0f - t)));
 }
@@ -186,31 +186,14 @@ void CCameraControllerComponent::UpdateOrbitCam()
 	if (INPUT->IsMouseDown(Input::EMouseButton::Middle))
 	{
 		const float panningSpeed = 10.0f;
-		myOrbitCenter.x += -dx * panningSpeed * dt;
-		myOrbitCenter.y += dy * panningSpeed * dt;
 
-		//https://gamedev.stackexchange.com/questions/20758/how-can-i-orbit-a-camera-about-its-target-point
-		//Vector3 centerPoint = viewPos - myOrbitCenter;
-		Vector3 centerPoint = myOrbitCenter - viewPos;
-
-
-
-		Matrix cameraTransform = GameObject().myTransform->Transform();
+		const Matrix& cameraTransform = GameObject().myTransform->Transform();
 		Matrix cameraRight = Matrix::CreateFromAxisAngle(cameraTransform.Right(), phiRadians);
 		Matrix cameraUp = Matrix::CreateFromAxisAngle(cameraTransform.Up(), thetaRadians);
-		cameraUp = cameraRight * cameraUp;
-		centerPoint = DirectX::XMVector3Transform(
-			centerPoint,
-			cameraUp
-		);
-		//centerPoint = DirectX::XMVector3Transform(
-		//	centerPoint,
-		//	cameraRight
-		//);
-		myOrbitCenter = centerPoint;//Vector3::Lerp(myOrbitCenter, centerPoint, 0.5f);
-	}
 
-	//view_matrix = glm::lookat(cameraPosition + (rot_mat * glm::vec4(cameraTarget - cameraPosition,0.f)), cameraTarget, up);
+		myOrbitCenter = myOrbitCenter + Vector3(DirectX::XMVector3Transform({(-dx * panningSpeed * dt), 0.0f, 0.0f }, cameraUp));
+		myOrbitCenter = myOrbitCenter + Vector3(DirectX::XMVector3Transform({0.0f,(dy * panningSpeed * dt), 0.0f }, cameraRight));
+	}
 	viewPos = viewPos + myOrbitCenter;
 	Matrix view = DirectX::XMMatrixLookAtLH(
 		viewPos, myOrbitCenter,
