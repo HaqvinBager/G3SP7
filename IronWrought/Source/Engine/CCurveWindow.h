@@ -18,6 +18,8 @@ namespace IronWroughtImGui {
 		void OnInspectorGUI() override;
 		void OnDisable() override;
 
+		void SaveToFile();
+
 	private:
 		std::unordered_map<std::string, std::array<ImVec2, 4>> myPointsMap;
 	};

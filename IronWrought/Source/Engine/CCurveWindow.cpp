@@ -2,6 +2,7 @@
 #include "CCurveWindow.h"
 #include <widget_curve.h>
 #include <curve_v122.hpp>
+#include "JsonReader.h"
 
 IronWroughtImGui::CCurveWindow::CCurveWindow(const char* aName)
 	: CWindow(aName)	
@@ -45,10 +46,19 @@ void IronWroughtImGui::CCurveWindow::OnInspectorGUI()
 	for (auto& keyValue : myPointsMap)
 	{
 		ImGui::IronCurve(keyValue.first.c_str(), keyValue.second.data());
+		
+		if (ImGui::Button("Save")) {
+			SaveToFile();
+		}
 	}
 	ImGui::End();
 }
 
 void IronWroughtImGui::CCurveWindow::OnDisable()
 {
+}
+
+void IronWroughtImGui::CCurveWindow::SaveToFile()
+{
+	
 }
