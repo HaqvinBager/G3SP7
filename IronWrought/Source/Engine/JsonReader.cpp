@@ -52,6 +52,10 @@ void CJsonReader::Init()
 	}
 }
 
+const bool CJsonReader::HasAssetPath(const int anAssetID) const
+{
+	return myModelAssetMap.find(anAssetID) != myModelAssetMap.end();
+}
 const std::string& CJsonReader::GetAssetPath(const int anAssetID) const
 {
 	return myModelAssetMap.at(anAssetID);
