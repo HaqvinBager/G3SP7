@@ -7,6 +7,9 @@
 class CGraphManager;
 struct ImFontAtlas;
 
+namespace ImGuiWindow {
+	class CWindow;
+}
 //namespace IronWroughtImGui {
 //	class CWindow;
 //}
@@ -23,7 +26,7 @@ public://Inherited
 	void Receive(const SMessage& aMessage) override;
 
 private:
-	//std::vector<std::unique_ptr<IronWroughtImGui::CWindow>> myWindows;
+	std::vector<std::unique_ptr<ImGuiWindow::CWindow>> myWindows;
 
 	CGraphManager* myGraphManager;
 	const std::string GetSystemMemory();

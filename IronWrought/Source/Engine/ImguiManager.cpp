@@ -56,9 +56,9 @@ CImguiManager::CImguiManager() : myGraphManagerIsFullscreen(false), myIsEnabled(
 	myGraphManager = new CGraphManager();
 	myGraphManager->Load();
 
-	//myWindows.emplace_back(std::make_unique<IronWroughtImGui::CLoadScene>("Load Scene", true));
-	//myWindows.emplace_back(std::make_unique <IronWroughtImGui::CCameraSetting>("Camera Settings"));
-	//myWindows.emplace_back(std::make_unique <IronWroughtImGui::CCurveWindow>("Curve Editor"));
+	myWindows.emplace_back(std::make_unique<ImGuiWindow::CLoadScene>("Load Scene", true));
+	myWindows.emplace_back(std::make_unique <ImGuiWindow::CCameraSetting>("Camera Settings"));
+	//myWindows.emplace_back(std::make_unique <ImGuiWindow::CCurveWindow>("Curve Editor"));
 
 	CMainSingleton::PostMaster().Subscribe(EMessageType::CursorHideAndLock, this);
 	CMainSingleton::PostMaster().Subscribe(EMessageType::CursorShowAndUnlock, this);
