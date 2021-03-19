@@ -1402,6 +1402,9 @@
     <ClInclude Include="CurveWindow.h">
       <Filter>Imgui\Windows</Filter>
     </ClInclude>
+    <ClInclude Include="SerializerUtility.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">

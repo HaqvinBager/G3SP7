@@ -11,7 +11,6 @@ CJsonWriter* CJsonWriter::Get()
     return ourInstance;
 }
 
-
 void CJsonWriter::Init()
 {
 }

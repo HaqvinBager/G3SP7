@@ -5,6 +5,9 @@
 #include "JsonReader.h"
 #include "JsonWriter.h"
 
+#include "rapidjson/filewritestream.h"
+#include <fstream>
+
 IronWroughtImGui::CCurveWindow::CCurveWindow(const char* aName)
 	: CWindow(aName)	
 {
@@ -12,7 +15,7 @@ IronWroughtImGui::CCurveWindow::CCurveWindow(const char* aName)
 	std::fill_n(myValueMap["Opacity"], 4, 0.0f);
 	std::fill_n(myValueMap["Speed"], 4, 0.0f);*/
 	
-	myPointsMap["First Curve"] = { ImVec2(0.0f, 0.0f), ImVec2(0.25f, 0.25f), ImVec2(0.75f, 0.75f), ImVec2(1.0f, 1.0f) };
+	myPointsMap["First Curve"] = { {0.0f, 0.0f}, {0.25f, 0.25f}, {0.75f, 0.75f}, {1.0f, 1.0f} };
 	//myPointsMap["Second Curve"] = { ImVec2(0.0f, 0.0f), ImVec2(0.25f, 0.25f), ImVec2(0.75f, 0.75f), ImVec2(1.0f, 1.0f) };
 	//myPointsMap["Third Curve"] = { ImVec2(0.0f, 0.0f), ImVec2(0.25f, 0.25f), ImVec2(0.75f, 0.75f), ImVec2(1.0f, 1.0f) };
 	//myPointsMap["Fourth Curve"] = { ImVec2(0.0f, 0.0f), ImVec2(0.25f, 0.25f), ImVec2(0.75f, 0.75f), ImVec2(1.0f, 1.0f) };
@@ -44,14 +47,15 @@ void IronWroughtImGui::CCurveWindow::OnEnable()
 void IronWroughtImGui::CCurveWindow::OnInspectorGUI()
 {
 	ImGui::Begin(Name(), Open());
-	for (auto& keyValue : myPointsMap)
-	{
-		ImGui::IronCurve(keyValue.first.c_str(), keyValue.second.data());
-		
+	//for (auto& keyValue : myPointsMap)
+	//{
+	//	//std::vector<ImVec2> vec = keyValue.second;
+	//	//ImGui::IronCurve(keyValue.first.c_str(), keyValue.second.data());
+	//	
+	//}
 		if (ImGui::Button("Save")) {
 			SaveToFile();
 		}
-	}
 	ImGui::End();
 }
 
@@ -61,15 +65,21 @@ void IronWroughtImGui::CCurveWindow::OnDisable()
 
 void IronWroughtImGui::CCurveWindow::SaveToFile()
 {
-	//CJsonWriter::Get()->WriteGenericValue(ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystemTestercoppeeeee123.json").c_str(), "Name", 0.1f);
-	CJsonWriter::Get()->WriteGenericValue(ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystemTestercoppeeeee123.json").c_str(), {"VFXEffects", "ParticleSystems", "0", "Offset X"}, 0.1f);
+	rapidjson::StringBuffer s;
+	rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(s);
 
+	SVFXSerializable data;
+	data.myParticleSizeCurves.push_back(myPointsMap["First Curve"]);
+	
+	writer.StartObject();
+	data.Serialize(writer);
+	writer.EndObject();
+	std::ofstream of(ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystemTester.json").c_str());
+	of << s.GetString();
 
-	//CJsonWriter::Get()->WriteGenericValue(ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystemTestercoppeeeee515125.json").c_str(), "hej", 0.1f);
-	//CJsonWriter::Get()->WriteGenericValue(ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystemTestercoppeeeee515125.json").c_str(), "hej", 0.1f);
-	//CJsonWriter::Get()->WriteGenericValue(ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystemTestercoppeeeee515125.json").c_str(), "hej", 0.1f);
-	//CJsonWriter::Get()->WriteGenericValue(ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystemTestercoppeeeee515125.json").c_str(), "hej", 0.1f);
+	of.close();
 
+	//CJsonWriter::Get()->WriteGenericValue(ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystemTester.json").c_str(), {"VFXEffects", "0", "ParticleSystems", "0", "Offset X"}, 0.1f);
 }
 
 //void IronWroughtImGui::CCurveWindow::Save(const char* aJsonFile, const char* aVariableName, const std::vector<ImVec2>& somePoints)

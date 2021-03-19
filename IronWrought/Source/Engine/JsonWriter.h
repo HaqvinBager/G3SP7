@@ -7,7 +7,7 @@
 #include <fstream>
 #include <filesystem>
 
-typedef rapidjson::GenericObject<false, rapidjson::Value>& RapidObject;
+using RapidObject = const rapidjson::Value::Object&;
 using rapidjson::IStreamWrapper;
 using rapidjson::Document;
 using rapidjson::FileWriteStream;
@@ -95,12 +95,16 @@ template<class T>
 	 FileWriteStream os(file.fp, file.writeBuffer, sizeof(file.writeBuffer));
 	 Writer<FileWriteStream> writer(os);
 
-	 RapidObject scopedObject = document[someKeys[0].c_str()].GetObjectW();
-	 for (unsigned int i = 1; i < someKeys.size(); ++i)
+	 auto propertyArray = document[someKeys[0].c_str()].GetArray();
+
+	 auto index = std::stoi(someKeys[1].c_str());
+	 auto scopedObject = propertyArray[index].GetObjectW();
+
+	 for (unsigned int i = 2; i < someKeys.size() - 1; ++i)
 	 {
 		 if (scopedObject[someKeys[i].c_str()].IsArray())
 		 {
-			 auto index = std::stoi(someKeys[i + 1].c_str());
+			 index = std::stoi(someKeys[i + 1]);
 			 scopedObject = scopedObject[someKeys[i].c_str()].GetArray()[index].GetObjectW();
 			 i++;
 			 continue;
@@ -108,11 +112,10 @@ template<class T>
 		 scopedObject = scopedObject[someKeys[i].c_str()].GetObjectW();
 	 }
 
-
 	 if (!scopedObject.HasMember(someKeys.back().c_str()))
-		 scopedObject.AddMember(rapidjson::GenericStringRef(someKeys.back()), aValue, document.GetAllocator());
+		 scopedObject.AddMember(rapidjson::GenericStringRef(someKeys.back().c_str()), aValue, document.GetAllocator());
 	 else
-		 scopedObject[someKeys.back()] = aValue;
+		 scopedObject[someKeys.back().c_str()] = aValue;
 
 	 document.Accept(writer);
 	 file.Close();
