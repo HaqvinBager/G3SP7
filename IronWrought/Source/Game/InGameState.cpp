@@ -36,6 +36,12 @@ void TEMP_DeferredRenderingTests(CScene* aScene);
 #include "VFXMeshFactory.h"
 #include "ParticleEmitterFactory.h"
 
+#include "PointLight.h"
+#include "PointLightComponent.h"
+#include "PlayerControllerComponent.h"
+#include "Model.h"
+#include "ModelHelperFunctions.h"
+
 CGameObject* gVFX = nullptr;
 void TEMP_VFX(CScene* aScene);
 
@@ -49,11 +55,6 @@ CInGameState::~CInGameState(){}
 
 void CInGameState::Awake(){}
 
-#include "PointLight.h"
-#include "PointLightComponent.h"
-#include "PlayerControllerComponent.h"
-#include "Model.h"
-#include "ModelHelperFunctions.h"
 void CInGameState::Start()
 {
 	CJsonReader::Get()->Init();
