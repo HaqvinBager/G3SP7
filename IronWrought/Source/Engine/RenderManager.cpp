@@ -178,15 +178,15 @@ void CRenderManager::Render(CScene& aScene)
 	myDepthCopy.SetAsActiveTarget();
 	myIntermediateDepth.SetAsResourceOnSlot(0);
 	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_COPYDEPTH);
-	myGBufferCopy.SetAsActiveTarget();
-	myGBuffer.SetAllAsResources();
-	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_COPYGBUFFER);
+	//myGBufferCopy.SetAsActiveTarget();
+	//myGBuffer.SetAllAsResources();
+	//myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_COPYGBUFFER);
 
 	myRenderStateManager.SetDepthStencilState(CRenderStateManager::DepthStencilStates::DEPTHSTENCILSTATE_ONLYREAD);
 	//myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_GBUFFERALPHABLEND);
-	//myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_ALPHABLEND);
+	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_ALPHABLEND);
 	myGBuffer.SetAsActiveTarget(&myIntermediateDepth);
-	myGBufferCopy.SetAllAsResources();
+	//myGBufferCopy.SetAllAsResources();
 	myDepthCopy.SetAsResourceOnSlot(21);
 	myDecalRenderer.Render(maincamera, gameObjects);
 
