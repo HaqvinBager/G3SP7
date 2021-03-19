@@ -115,8 +115,8 @@ PxScene* CPhysXWrapper::CreatePXScene(CScene* aScene)
 	// Create a basic setup for a scene - contain the rodents in a invisible cage
 	/*PxMaterial* myMaterial*/myPXMaterial = CreateMaterial(CPhysXWrapper::materialfriction::basic);
 
-	PxRigidStatic* groundPlane = PxCreatePlane(*myPhysics, PxPlane(0, 1, 0, 3.3f), *myPXMaterial/**myMaterial*/);
-	//groundPlane->setGlobalPose( {15.0f,0.0f,0.0f} );
+	PxRigidStatic* groundPlane = PxCreatePlane(*myPhysics, PxPlane(0, -1, 0, 3.3f), *myPXMaterial/**myMaterial*/);
+	//groundPlane->setGlobalPose( {0.0f,-9999.0f,0.0f} );
 	pXScene->addActor(*groundPlane);
 
 //pXScene->setVisualizationParameter(PxVisualizationParameter::eSCALE, 1.0f);

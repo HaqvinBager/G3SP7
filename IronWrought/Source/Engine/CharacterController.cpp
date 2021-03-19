@@ -25,6 +25,10 @@ Vector3 CCharacterController::GetPosition() const
     const PxExtendedVec3 vec3 = myController->getPosition();
     return {(float)vec3.x, (float)vec3.y, (float)vec3.z};
 }
+void CCharacterController::SetPosition(const Vector3& aPosition)
+{
+    myController->setPosition({ aPosition.x, aPosition.y, aPosition.z });
+}
 
 //CCharacterController::CCharacterController(PxControllerShapeType::Enum aType, const Vector3& aPos, const float& aRadius, const float& aHeight)
 //{

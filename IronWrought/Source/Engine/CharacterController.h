@@ -14,6 +14,7 @@ public:
     physx::PxController& GetController();
 
     Vector3 GetPosition() const;
+    void SetPosition(const Vector3& aPosition);
 
 private:
     physx::PxController* myController = nullptr;

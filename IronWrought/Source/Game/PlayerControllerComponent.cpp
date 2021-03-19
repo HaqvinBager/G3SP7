@@ -38,6 +38,8 @@ CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, 
 	INPUT_MAPPER->AddObserver(EInputEvent::Crouch, this);
 	INPUT_MAPPER->AddObserver(EInputEvent::Pull, this);
 	INPUT_MAPPER->AddObserver(EInputEvent::Push, this);
+	INPUT_MAPPER->AddObserver(EInputEvent::ResetEntities, this);
+	INPUT_MAPPER->AddObserver(EInputEvent::SetResetPointEntities, this);
 
 	myController = CEngine::GetInstance()->GetPhysx().CreateCharacterController(gameObject.myTransform->Position(), myColliderRadius, myColliderHeightStanding);
 	GameObject().myTransform->Position(myController->GetPosition());// This is a test / Aki 2021 03 12 
@@ -61,6 +63,8 @@ CPlayerControllerComponent::~CPlayerControllerComponent()
 	INPUT_MAPPER->RemoveObserver(EInputEvent::Crouch, this);
 	INPUT_MAPPER->RemoveObserver(EInputEvent::Pull, this);
 	INPUT_MAPPER->RemoveObserver(EInputEvent::Push, this);
+	INPUT_MAPPER->RemoveObserver(EInputEvent::ResetEntities, this);
+	INPUT_MAPPER->RemoveObserver(EInputEvent::SetResetPointEntities, this);
 
 	delete myAnimationComponentController;
 	myAnimationComponentController = nullptr;
@@ -70,7 +74,9 @@ void CPlayerControllerComponent::Awake()
 {}
 
 void CPlayerControllerComponent::Start()
-{}
+{
+	myRespawnPosition = myController->GetPosition();
+}
 
 void CPlayerControllerComponent::Update()
 {
@@ -158,7 +164,15 @@ void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
 			gPretendObjectCurrentDistance = 0.0f;
 			break;
 
-		break;
+		case EInputEvent::ResetEntities:
+			myController->SetPosition(myRespawnPosition);
+			GameObject().myTransform->Position(myController->GetPosition());
+			break;
+
+		case EInputEvent::SetResetPointEntities:
+			myRespawnPosition = myController->GetPosition();
+			break;
+
 		default:break;
 	}
 

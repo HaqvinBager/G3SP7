@@ -17,7 +17,9 @@ public:
 		KeyS,
 		KeyD,
 		KeySpace,
-		CTRL
+		CTRL,
+		KeyF5,
+		KeyF8
 	};
 
 	enum class EInputEvent
@@ -38,7 +40,9 @@ public:
 		MoveLeft,
 		MoveRight,
 		Jump,
-		Crouch
+		Crouch,
+		ResetEntities,
+		SetResetPointEntities
 	};
 
 public:

@@ -32,6 +32,7 @@ private:
 	// A.k.a the players eyes :U // Shortcut to access for freecam toggle, Aki 12/3/2021
 	CCameraControllerComponent* myCamera;
 	//CGameObject* myFaceMesh;
+	Vector3 myRespawnPosition;
 	Vector3 myMovement;
 	float mySpeed;
 
