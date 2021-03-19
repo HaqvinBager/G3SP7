@@ -32,7 +32,7 @@ class CGameObject;
 class CNodeInstance
 {
 public:
-	CNodeInstance(CGraphManager* aGraphManager, std::string aGraphKey, bool aCreateNewUID = true);
+	CNodeInstance(CGraphManager* aGraphManager, bool aCreateNewUID = true);
 	CUID myUID;
 	class CNodeType* myNodeType;
 	void Enter();
@@ -41,7 +41,7 @@ public:
 
 	bool CanAddLink(unsigned int aPinIdFromMe);
 	bool HasLinkBetween(unsigned int aFirstPin, unsigned int aSecondPin);
-	bool AddLinkVia(CNodeInstance* aLink, unsigned int aPinIdFromMe, unsigned int aPinIdToMe, unsigned int aLinkID);
+	bool AddLinkToVia(CNodeInstance* aLink, unsigned int aPinIdFromMe, unsigned int aPinIdToMe, unsigned int aLinkID);
 	void RemoveLinkToVia(CNodeInstance* aLink, unsigned int aPinThatIOwn);
 
 	bool IsPinConnected(SPin& aPin);
@@ -189,11 +189,9 @@ public:
 	}
 	float myEnteredTimer = 0.0f;
 
-	std::string GetGraphKey() { return myGraphKey; }
 	std::vector<CGameObject*> GetCurrentGameObject();
 
 private:
-	std::string myGraphKey;
 	CGraphManager* myGraphManager;
 };
 

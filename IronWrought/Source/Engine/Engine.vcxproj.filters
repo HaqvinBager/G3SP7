@@ -778,7 +778,9 @@
     <ClCompile Include="NodeTypeGameObjectGetChildPosition.cpp">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClCompile>
-    <ClCompile Include="NodeTypeGameObjectGetPlayerPosition.cpp" />
+    <ClCompile Include="NodeTypeGameObjectGetPlayerPosition.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1447,7 +1449,9 @@
     <ClInclude Include="NodeTypeGameObjectGetChildPosition.h">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClInclude>
-    <ClInclude Include="NodeTypeGameObjectGetPlayerPosition.h" />
+    <ClInclude Include="NodeTypeGameObjectGetPlayerPosition.h">
+      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">
