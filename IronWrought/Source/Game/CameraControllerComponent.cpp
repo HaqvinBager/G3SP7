@@ -168,7 +168,7 @@ void CCameraControllerComponent::UpdateOrbitCam()
 	const float scroll = -static_cast<float>(INPUT->MouseWheel());
 	const float zoomSpeed = 10.0f;
 	const float newOrbitRadius = myOrbitRadius + (scroll * zoomSpeed * dt);
-	myOrbitRadius = Lerp(myOrbitRadius, newOrbitRadius, 0.5f);
+	myOrbitRadius = Lerp(myOrbitRadius, newOrbitRadius, 0.5f);// Attempt at smoothing scroll
 	//myOrbitRadius += (scroll * zoomSpeed * dt);
 
 	myPhi = std::clamp(myPhi, -89.0f, 89.0f);

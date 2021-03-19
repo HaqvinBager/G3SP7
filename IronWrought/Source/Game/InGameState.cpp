@@ -62,7 +62,7 @@ void CInGameState::Start()
 
 	constexpr int nrOfModels = 3;
 	constexpr float offsetX = 2.0f;
-	float minX = ((-(float)nrOfModels / 2.0f) - offsetX);
+	float minX = -offsetX;
 	std::vector<CModelComponent*> models;
 	models.reserve(nrOfModels);
 	for (int i = 0; i < nrOfModels; ++i)
