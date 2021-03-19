@@ -16,6 +16,9 @@
 #include "InstancedModelComponent.h"
 #include "MaterialHandler.h"
 
+#include "Engine.h"
+#include "Scene.h"
+
 #include <fstream>
 
 namespace SM = DirectX::SimpleMath;
@@ -57,7 +60,8 @@ CDeferredRenderer::CDeferredRenderer()
 	, mySkyboxNumberOfIndices(0)
 	, mySkyboxStride(0)
 	, mySkyboxOffset(0)
-{}
+{
+}
 
 CDeferredRenderer::~CDeferredRenderer()
 {
@@ -252,7 +256,7 @@ bool CDeferredRenderer::Init(CDirectXFramework* aFramework)
 
 void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<CGameObject*>& aGameObjectList, std::vector<CGameObject*>& aInstancedGameObjectList)
 {
-	SM::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
+	SM::Matrix& cameraMatrix = aCamera->GameObject().myTransform->WorldMatrix();
 	myFrameBufferData.myCameraPosition = SM::Vector4{ cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f };
 	myFrameBufferData.myToCameraSpace = cameraMatrix.Invert();
 	myFrameBufferData.myToWorldFromCamera = cameraMatrix;
@@ -270,6 +274,57 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 	else
 		myCurrentGBufferPixelShader = myRenderPassGBuffer;
 
+	/*std::vector<CComponent*>* modelComponents = CEngine::GetInstance()->GetActiveScene().GetAllComponents<CModelComponent>();
+	if (modelComponents != nullptr)
+	{
+		for (const auto& component : *modelComponents)
+		{
+			myObjectBufferData.myToWorld = component->Transform()->WorldMatrix();
+
+			CModelComponent* modelComponent = static_cast<CModelComponent*>(component);
+			CModel* model = modelComponent->GetMyModel();
+			const CModel::SModelData& data = model->GetModelData();
+
+			int dnCounter = 0;
+			for (auto detailNormal : data.myDetailNormals)
+				if (detailNormal)
+					++dnCounter;
+			myObjectBufferData.myNumberOfDetailNormals = dnCounter;
+			BindBuffer(myObjectBuffer, myObjectBufferData, "Object Buffer");
+
+			CAnimationComponent* animationComponent = component->GetComponent<CAnimationComponent>();
+			if (animationComponent != nullptr)
+			{
+				memcpy(myBoneBufferData.myBones, animationComponent->GetBones().data(), sizeof(aiMatrix4x4) * 64);
+				BindBuffer(myBoneBuffer, myBoneBufferData, "Bone Buffer");
+				myContext->VSSetConstantBuffers(4, 1, &myBoneBuffer);
+				myContext->VSSetShader(myAnimationVertexShader, nullptr, 0);
+			}
+			else
+			{
+				myContext->VSSetShader(myModelVertexShader, nullptr, 0);
+			}
+
+			myContext->IASetPrimitiveTopology(data.myPrimitiveTopology);
+			myContext->IASetInputLayout(data.myInputLayout);
+			myContext->VSSetConstantBuffers(1, 1, &myObjectBuffer);
+			myContext->PSSetConstantBuffers(1, 1, &myObjectBuffer);
+			myContext->PSSetShaderResources(8, 4, &data.myDetailNormals[0]);
+			myContext->PSSetShader(myCurrentGBufferPixelShader, nullptr, 0);
+			myContext->PSSetSamplers(0, 1, &data.mySamplerState);
+
+			for (const auto& mesh : data.myMeshes)
+			{
+				myContext->IASetVertexBuffers(0, 1, &mesh.myVertexBuffer, &mesh.myStride, &mesh.myOffset);
+				myContext->IASetIndexBuffer(mesh.myIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+				myContext->PSSetShaderResources(5, 3, &data.myMaterials[mesh.myMaterialIndex][0]);
+				myContext->DrawIndexed(mesh.myNumberOfIndices, 0, 0);
+				CRenderManager::myNumberOfDrawCallsThisFrame++;
+			}
+		}
+	}*/
+
+
 	for (auto& gameObject : aGameObjectList)
 	{
 		CModelComponent* modelComponent = gameObject->GetComponent<CModelComponent>();
@@ -282,45 +337,34 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 		CModel* model = modelComponent->GetMyModel();
 		const CModel::SModelData& modelData = model->GetModelData();
 
-		myObjectBufferData.myToWorld = gameObject->myTransform->Transform();
-		int dnCounter = 0;
+		myObjectBufferData.myToWorld = gameObject->myTransform->WorldMatrix();
+		myObjectBufferData.myNumberOfDetailNormals = 0;
 		for (auto detailNormal : model->GetModelData().myDetailNormals)
 		{
 			if (detailNormal)
-				++dnCounter;
+				++myObjectBufferData.myNumberOfDetailNormals;
 		}
-		myObjectBufferData.myNumberOfDetailNormals = dnCounter;
-
 		BindBuffer(myObjectBuffer, myObjectBufferData, "Object Buffer");
-		
-		if (gameObject->GetComponent<CAnimationComponent>() != nullptr) {
+
+
+		if (gameObject->GetComponent<CAnimationComponent>() != nullptr)
+		{
 			auto animationComponent = gameObject->GetComponent<CAnimationComponent>();
-			//if (animationComponent->AllowAnimationRender())
-			//{
-				memcpy(myBoneBufferData.myBones, animationComponent->GetBones().data(), sizeof(Matrix) * 64);
-
-				BindBuffer(myBoneBuffer, myBoneBufferData, "Bone Buffer");
-
-				myContext->VSSetConstantBuffers(4, 1, &myBoneBuffer);
-				myContext->VSSetShader(myAnimationVertexShader, nullptr, 0);
-			//}
-			//else
-			//{
-				//myContext->VSSetShader(myModelVertexShader, nullptr, 0);
-			//}
+			memcpy(myBoneBufferData.myBones, animationComponent->GetBones().data(), sizeof(Matrix) * 64);
+			BindBuffer(myBoneBuffer, myBoneBufferData, "Bone Buffer");
+			myContext->VSSetConstantBuffers(4, 1, &myBoneBuffer);
+			myContext->VSSetShader(myAnimationVertexShader, nullptr, 0);
 		}
 		else
 		{
 			myContext->VSSetShader(myModelVertexShader, nullptr, 0);
 		}
+
 		myContext->IASetPrimitiveTopology(modelData.myPrimitiveTopology);
 		myContext->IASetInputLayout(modelData.myInputLayout);
-
 		myContext->VSSetConstantBuffers(1, 1, &myObjectBuffer);
-
 		myContext->PSSetConstantBuffers(1, 1, &myObjectBuffer);
 		myContext->PSSetShaderResources(8, 4, &modelData.myDetailNormals[0]);
-
 		myContext->PSSetShader(myCurrentGBufferPixelShader, nullptr, 0);
 		myContext->PSSetSamplers(0, 1, &modelData.mySamplerState);
 
@@ -344,7 +388,8 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 				myContext->PSSetShader(myVertexPaintPixelShader, nullptr, 0);
 				myContext->PSSetShaderResources(12, 9, &vertexPaintMaterials[0]/*&myVertexPaintMaterials[0]*/);
 			}
-			else {
+			else
+			{
 				myContext->IASetVertexBuffers(0, 1, &modelData.myMeshes[i].myVertexBuffer, &modelData.myMeshes[i].myStride, &modelData.myMeshes[i].myOffset);
 			}
 			myContext->IASetIndexBuffer(modelData.myMeshes[i].myIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
@@ -355,7 +400,7 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 	}
 
 	ID3D11ShaderResourceView* nullView = NULL;
-	myContext->PSSetShaderResources(5,  1, &nullView);// Albedo
+	myContext->PSSetShaderResources(5, 1, &nullView);// Albedo
 	myContext->PSSetShaderResources(6, 1, &nullView);// Normal
 	myContext->PSSetShaderResources(7, 1, &nullView);// Material
 	myContext->PSSetShaderResources(8, 1, &nullView);// DN1
@@ -363,7 +408,7 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 	myContext->PSSetShaderResources(10, 1, &nullView);// DN3
 	myContext->PSSetShaderResources(11, 1, &nullView);// DN4
 	myObjectBufferData.myNumberOfDetailNormals = 0;// Making sure to reset it!
-	
+
 	for (auto& gameobject : aInstancedGameObjectList)
 	{
 		CInstancedModelComponent* instanceComponent = gameobject->GetComponent<CInstancedModelComponent>();
@@ -423,7 +468,7 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 		}
 	}
 
-	myContext->PSSetShaderResources(5,  1, &nullView);// Albedo
+	myContext->PSSetShaderResources(5, 1, &nullView);// Albedo
 	myContext->PSSetShaderResources(6, 1, &nullView);// Normal
 	myContext->PSSetShaderResources(7, 1, &nullView);// Material
 	myContext->PSSetShaderResources(8, 1, &nullView);// DN1
@@ -435,7 +480,7 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 
 void CDeferredRenderer::Render(CCameraComponent* aCamera, CEnvironmentLight* anEnvironmentLight)
 {
-	SM::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
+	SM::Matrix& cameraMatrix = aCamera->GameObject().myTransform->WorldMatrix();
 	myFrameBufferData.myCameraPosition = SM::Vector4{ cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f };
 	myFrameBufferData.myToCameraSpace = cameraMatrix.Invert();
 	myFrameBufferData.myToWorldFromCamera = cameraMatrix;
@@ -465,7 +510,7 @@ void CDeferredRenderer::Render(CCameraComponent* aCamera, CEnvironmentLight* anE
 
 	myContext->VSSetShader(myFullscreenShader, nullptr, 0);
 
-	if(myCurrentRenderPassShader)
+	if (myCurrentRenderPassShader)
 		myContext->PSSetShader(myRenderPassShaders[myRenderPassIndex], nullptr, 0);
 	else
 		myContext->PSSetShader(myEnvironmentLightShader, nullptr, 0);
@@ -482,7 +527,7 @@ void CDeferredRenderer::Render(CCameraComponent* aCamera, std::vector<CPointLigh
 	if (myCurrentRenderPassShader)
 		return;
 
-	SM::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
+	SM::Matrix& cameraMatrix = aCamera->GameObject().myTransform->WorldMatrix();
 	myFrameBufferData.myCameraPosition = SM::Vector4{ cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f };
 	myFrameBufferData.myToCameraSpace = cameraMatrix.Invert();
 	myFrameBufferData.myToWorldFromCamera = cameraMatrix;
@@ -497,13 +542,14 @@ void CDeferredRenderer::Render(CCameraComponent* aCamera, std::vector<CPointLigh
 	UINT stride = sizeof(Vector4);
 	UINT offset = 0;
 
-	for (CPointLight* currentInstance : aPointLightList) {
+	for (CPointLight* currentInstance : aPointLightList)
+	{
 		transform.Translation(currentInstance->GetPosition());
 		myObjectBufferData.myToWorld = transform;
 
 		BindBuffer(myObjectBuffer, myObjectBufferData, "Point Light Object Buffer");
 		myContext->VSSetConstantBuffers(1, 1, &myObjectBuffer);
-		
+
 		//Update pointlightbufferdata and fill pointlightbuffer
 		const SM::Vector3& position = currentInstance->GetPosition();
 		const SM::Vector3& color = currentInstance->GetColor();
@@ -546,7 +592,7 @@ void CDeferredRenderer::RenderSkybox(CCameraComponent* aCamera, CEnvironmentLigh
 	mySkyboxTransformData.myCameraViewProjection = mySkyboxTransformData.myCameraViewProjection.Transpose();
 	BindBuffer(mySkyboxTransformBuffer, mySkyboxTransformData, "Skybox Transform Buffer");
 	myContext->VSSetConstantBuffers(0, 1, &mySkyboxTransformBuffer);
-	
+
 	ID3D11ShaderResourceView* environmentLightShaderResource = *anEnvironmentLight->GetCubeMap();
 	myContext->PSSetShaderResources(0, 1, &environmentLightShaderResource);
 
@@ -582,49 +628,49 @@ bool CDeferredRenderer::LoadRenderPassPixelShaders(ID3D11Device* aDevice)
 	// Render pass shaders
 	std::ifstream psFile;
 	psFile.open("Shaders/DeferredRenderPassShader_Albedo.cso", std::ios::binary);
-	std::string psData = {std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>()};
+	std::string psData = { std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>() };
 	psFile.close();
 	myRenderPassShaders.emplace_back();
 	ENGINE_HR_MESSAGE(aDevice->CreatePixelShader(psData.data(), psData.size(), nullptr, &myRenderPassShaders[0]), "Color Pixel Shader could not be created.");
 
 	// ===============
 	psFile.open("Shaders/DeferredRenderPassShader_Normal.cso", std::ios::binary);
-	psData = {std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>()};
+	psData = { std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>() };
 	psFile.close();
 	myRenderPassShaders.emplace_back();
 	ENGINE_HR_MESSAGE(aDevice->CreatePixelShader(psData.data(), psData.size(), nullptr, &myRenderPassShaders[1]), "Normal Pixel Shader could not be created.");
 
 	// ===============
 	psFile.open("Shaders/DeferredRenderPassShader_Roughness.cso", std::ios::binary);
-	psData = {std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>()};
+	psData = { std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>() };
 	psFile.close();
 	myRenderPassShaders.emplace_back();
 	ENGINE_HR_MESSAGE(aDevice->CreatePixelShader(psData.data(), psData.size(), nullptr, &myRenderPassShaders[2]), "Roughness Pixel Shader could not be created.");
 
 	// ===============
 	psFile.open("Shaders/DeferredRenderPassShader_Metalness.cso", std::ios::binary);
-	psData = {std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>()};
+	psData = { std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>() };
 	psFile.close();
 	myRenderPassShaders.emplace_back();
 	ENGINE_HR_MESSAGE(aDevice->CreatePixelShader(psData.data(), psData.size(), nullptr, &myRenderPassShaders[3]), "Metalness Pixel Shader could not be created.");
 
 	// ===============
 	psFile.open("Shaders/DeferredRenderPassShader_AO.cso", std::ios::binary);
-	psData = {std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>()};
+	psData = { std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>() };
 	psFile.close();
 	myRenderPassShaders.emplace_back();
 	ENGINE_HR_MESSAGE(aDevice->CreatePixelShader(psData.data(), psData.size(), nullptr, &myRenderPassShaders[4]), "Ambient Occlusion Pixel Shader could not be created.");
 
 	// ===============
 	psFile.open("Shaders/DeferredRenderPassShader_Emissive.cso", std::ios::binary);
-	psData = {std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>()};
+	psData = { std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>() };
 	psFile.close();
 	myRenderPassShaders.emplace_back();
 	ENGINE_HR_MESSAGE(aDevice->CreatePixelShader(psData.data(), psData.size(), nullptr, &myRenderPassShaders[5]), "Emissive Pixel Shader could not be created.");
 
 	// ===============
 	psFile.open("Shaders/DeferredRenderPassGBufferPixelShader.cso", std::ios::binary);
-	psData = {std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>()};
+	psData = { std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>() };
 	psFile.close();
 	ENGINE_HR_MESSAGE(aDevice->CreatePixelShader(psData.data(), psData.size(), nullptr, &myRenderPassGBuffer), "Renderpass GBuffer could not be created.");
 
@@ -638,7 +684,8 @@ bool CDeferredRenderer::ToggleRenderPass()
 	{
 		myCurrentRenderPassShader = nullptr;
 		return true;
-	} else if (myRenderPassIndex > myRenderPassShaders.size())
+	}
+	else if (myRenderPassIndex > myRenderPassShaders.size())
 	{
 		myRenderPassIndex = 0;
 	}

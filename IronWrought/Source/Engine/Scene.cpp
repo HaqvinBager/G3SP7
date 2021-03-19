@@ -203,7 +203,7 @@ std::pair<unsigned int, std::array<CPointLight*, LIGHTCOUNT>> CScene::CullLights
 	UINT counter = 0;
 	for (UINT i = 0; i < myPointLights.size(); ++i)
 	{
-		float distanceSquared = DirectX::SimpleMath::Vector3::DistanceSquared(myPointLights[i]->GetPosition(), aGameObject->GetComponent<CTransformComponent>()->Transform().Translation());
+		float distanceSquared = DirectX::SimpleMath::Vector3::DistanceSquared(myPointLights[i]->GetPosition(), aGameObject->GetComponent<CTransformComponent>()->WorldMatrix().Translation());
 		float range = myPointLights[i]->GetRange();
 		if (distanceSquared < (range * range))
 		{

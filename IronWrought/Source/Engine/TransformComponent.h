@@ -25,7 +25,7 @@ public:
 	void Scale(float aScale);
 	DirectX::SimpleMath::Vector3 Scale() const;
 
-	DirectX::SimpleMath::Matrix& Transform();
+	DirectX::SimpleMath::Matrix& WorldMatrix();
 	DirectX::SimpleMath::Matrix GetWorldMatrix() const;
 	DirectX::SimpleMath::Matrix GetLocalMatrix() const;
 	void SetToOtherTransform(const DirectX::SimpleMath::Matrix& otherTransform);

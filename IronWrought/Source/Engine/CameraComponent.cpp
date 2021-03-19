@@ -152,7 +152,7 @@ void CCameraComponent::EmplaceSprites(std::vector<CSpriteInstance*>& /*someSprit
 
 const Matrix& CCameraComponent::GetViewMatrix()
 {
-	myView = DirectX::XMMatrixLookAtLH(GameObject().myTransform->Position(), GameObject().myTransform->Position() - GameObject().myTransform->Transform().Forward(), GameObject().myTransform->Transform().Up());
+	myView = DirectX::XMMatrixLookAtLH(GameObject().myTransform->Position(), GameObject().myTransform->Position() - GameObject().myTransform->WorldMatrix().Forward(), GameObject().myTransform->WorldMatrix().Up());
 	return myView;
 }
 

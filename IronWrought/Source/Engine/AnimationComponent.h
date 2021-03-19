@@ -2,6 +2,7 @@
 #include "Behaviour.h"
 #include "StringID.hpp"
 #include "ModelMath.h"
+#include "assimp/matrix4x4.h"
 
 class CAnimationController;
 class CGameObject;
@@ -18,12 +19,14 @@ public:
 	void OnEnable() override;
 	void OnDisable() override;
 
+
 public:
+	void SetBones(std::array<aiMatrix4x4, 64> someBones) { myBones = someBones; };
 	void SetBonesToIdentity();
-	std::array<SlimMatrix44, 64> GetBones() { return myBones; }
+	std::array<aiMatrix4x4, 64> GetBones() { return myBones; }
 	CAnimationController* GetController() { return myController; }
 
 private:
 	CAnimationController* myController;
-	std::array<SlimMatrix44, 64> myBones{ };
+	std::array<aiMatrix4x4, 64> myBones{ };
 };

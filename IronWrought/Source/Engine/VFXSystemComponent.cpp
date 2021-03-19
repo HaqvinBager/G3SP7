@@ -210,7 +210,7 @@ void CVFXSystemComponent::LateUpdate()
 	Vector3		translation;
 	GameObject().myTransform->GetWorldMatrix().Decompose(scale, quat, translation);
 
-	Matrix goTransform = GameObject().myTransform->Transform();
+	Matrix goTransform = GameObject().myTransform->WorldMatrix();
 	Vector3 goPos = GameObject().myTransform->Position();
 
 	for (unsigned int j = 0; j < myEffects.size(); ++j)

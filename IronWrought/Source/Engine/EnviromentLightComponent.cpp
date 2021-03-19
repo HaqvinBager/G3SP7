@@ -14,8 +14,8 @@ CEnviromentLightComponent::CEnviromentLightComponent(CGameObject& aParent, Direc
 	myEnvironmentLight = CLightFactory::GetInstance()->CreateEnvironmentLight(ASSETPATH("Assets/Cubemaps/mondarrain_3_cubemap.dds"));
 	myEnvironmentLight->SetColor(aColor);
 	myEnvironmentLight->SetIntensity(anIntensity);
-	aParent.myTransform->Transform().Forward(aDirection);
-	myEnvironmentLight->SetDirection(aParent.myTransform->Transform().Forward());
+	aParent.myTransform->WorldMatrix().Forward(aDirection);
+	myEnvironmentLight->SetDirection(aParent.myTransform->WorldMatrix().Forward());
 	myEnvironmentLight->SetPosition({ 0.0f, 2.0f, 0.0f });
 }
 

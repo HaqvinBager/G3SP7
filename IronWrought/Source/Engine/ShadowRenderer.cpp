@@ -81,7 +81,7 @@ void CShadowRenderer::Render(CEnvironmentLight* anEnvironmentLight, std::vector<
 		CModel* model = modelComponent->GetMyModel();
 		const CModel::SModelData& modelData = model->GetModelData();
 
-		myObjectBufferData.myToWorld = gameObject->myTransform->Transform();
+		myObjectBufferData.myToWorld = gameObject->myTransform->WorldMatrix();
 		BindBuffer(myObjectBuffer, myObjectBufferData, "Object Buffer");
 
 		if (gameObject->GetComponent<CAnimationComponent>() != nullptr) 

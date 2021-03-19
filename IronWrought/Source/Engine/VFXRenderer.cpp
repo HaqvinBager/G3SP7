@@ -45,7 +45,7 @@ bool CVFXRenderer::Init(CDirectXFramework* aFramework) {
 
 void CVFXRenderer::Render(CCameraComponent* aCamera, std::vector<CGameObject*>& aGameObjectList)
 {
-	myFrameBufferData.myToCameraSpace = aCamera->GameObject().myTransform->Transform().Invert();
+	myFrameBufferData.myToCameraSpace = aCamera->GameObject().myTransform->WorldMatrix().Invert();
 	myFrameBufferData.myToProjectionSpace = aCamera->GetProjection();
 
 	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");

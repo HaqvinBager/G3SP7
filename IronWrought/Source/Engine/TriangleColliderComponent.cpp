@@ -57,11 +57,11 @@ CTriangleColliderComponent::~CTriangleColliderComponent() {
 
 
 void CTriangleColliderComponent::Awake() {
-	DirectX::SimpleMath::Vector3 vector = GameObject().GetComponent<CTransformComponent>()->Position() + GameObject().GetComponent<CTransformComponent>()->Transform().Forward() * myHeight * 100.0f;
+	DirectX::SimpleMath::Vector3 vector = GameObject().GetComponent<CTransformComponent>()->Position() + GameObject().GetComponent<CTransformComponent>()->WorldMatrix().Forward() * myHeight * 100.0f;
 
 	SetPosition(GameObject().GetComponent<CTransformComponent>()->Position()); //Verex 0
-	myLeftVertex = (vector - GameObject().GetComponent<CTransformComponent>()->Transform().Right() * (myWidth / 2.0f) * 100.0f); //Verex 1
-	myRightVertex = (vector + GameObject().GetComponent<CTransformComponent>()->Transform().Right() * (myWidth / 2.0f) * 100.0f); //Verex 2
+	myLeftVertex = (vector - GameObject().GetComponent<CTransformComponent>()->WorldMatrix().Right() * (myWidth / 2.0f) * 100.0f); //Verex 1
+	myRightVertex = (vector + GameObject().GetComponent<CTransformComponent>()->WorldMatrix().Right() * (myWidth / 2.0f) * 100.0f); //Verex 2
 
 #ifdef _DEBUG
 	myVisualizer = new CLineInstance();

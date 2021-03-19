@@ -147,7 +147,7 @@ CTransformComponent* CTransformComponent::GetParent()
 	return myParent;
 }
 
-DirectX::SimpleMath::Matrix& CTransformComponent::Transform()
+DirectX::SimpleMath::Matrix& CTransformComponent::WorldMatrix()
 {
 	return myWorldTransform;
 }

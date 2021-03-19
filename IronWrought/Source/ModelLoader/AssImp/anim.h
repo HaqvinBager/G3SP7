@@ -550,8 +550,10 @@ struct Interpolator<aiVectorKey>  {
 
 template <>
 struct Interpolator<aiQuatKey>  {
-    void operator () (aiQuaternion& out, const aiQuatKey& a,
-        const aiQuatKey& b, ai_real d) const
+    void operator () (aiQuaternion& out,
+        const aiQuatKey& a,
+        const aiQuatKey& b,
+        ai_real d) const
     {
         Interpolator<aiQuaternion> ipl;
         ipl(out,a.mValue,b.mValue,d);

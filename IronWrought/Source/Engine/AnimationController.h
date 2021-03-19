@@ -10,6 +10,9 @@
 
 #include "AnimMathFunc.h"
 #include "ModelMath.h"
+#include "IronMath.h"
+
+#include "Animator.h"
 
 //#define ANIMATION_DURATION_IN_MILLISECONDS// AS of 2021 02 23 is not used
 
@@ -80,6 +83,8 @@ struct MeshEntry
 
 class CAnimationController
 {
+
+	friend class IronWroughtImGui::CAnimator;
 public:
 	CAnimationController();
 	~CAnimationController();
@@ -92,85 +97,41 @@ public:
 	void LoadBones(uint aMeshIndex, const aiMesh* aMesh);
 
 	// Update functions
-	void ReadNodeHeirarchy(const aiScene* aScene, float anAnimationTime, const aiNode* aNode
-		, const aiMatrix4x4& aParentTransform, int aStopAnimAtLevel);
+	void ReadNodeHeirarchy(
+		  const aiScene* aScene
+		, float anAnimationTime
+		, const aiNode* aNode
+		, const aiMatrix4x4& aParentTransform);
 
-	void ReadNodeHeirarchy(const aiScene* aFromScene, const aiScene* aToScene, float anAnimationTimeFrom
-		, float anAnimationTimeTo, const aiNode* aStartNodeFrom, const aiNode* aStartNodeTo
-		, const aiMatrix4x4& aParentTransform, int aStopAnimAtLevel);
+	void ReadNodeHeirarchy(
+		  const aiScene* aFromScene
+		, const aiScene* aToScene
+		, float aTickFrom
+		, float aTickTo
+		, const aiNode* aNodeFrom
+		, const aiNode* aNodeTo
+		, const aiMatrix4x4& aParentTransform);
 
-	void SetBoneTransforms(std::vector<aiMatrix4x4>& aTransformsVector);
+	void SetBoneTransforms(std::array<aiMatrix4x4, 64>& aTransformsVector);
 	void UpdateAnimationTimes(std::array<SlimMatrix44, 64>& someBones);
 	
 	uint AnimationCount();
 
-	void Animation0Index(int anIndex) { myAnim0Index = anIndex; }
-	void Animation1Index(int anIndex) { myAnim1Index = anIndex; }
-	const uint Animation0Index() { return myAnim0Index; }
-	const uint Animation1Index() { return myAnim1Index; }
+	void Animation0Index(int anIndex) { myAnimIndex0 = anIndex; }
+	void Animation1Index(int anIndex) { myAnimIndex1 = anIndex; }
+	const uint Animation0Index() { return myAnimIndex0; }
+	const uint Animation1Index() { return myAnimIndex1; }
 
 	const float AnimationDurationInSeconds(uint anIndex);
 
-	struct SerializedObject {
-		SerializedObject(CAnimationController& data)
-		{
-			myAnimationTime0 = &data.myAnimationTime0;
-			myAnimationTime1 = &data.myAnimationTime1;
-			myBlendingTime = &data.myBlendingTime;
-			myBlendingTimeMul = &data.myBlendingTimeMul;;
-			myPlayTime = &data.myPlayTime;
-			myAnim0Index = &data.myAnim0Index;
-			myAnim1Index = &data.myAnim1Index;
-			myNumOfBones = &data.myNumOfBones;
-			myUpdateBoth = &data.myUpdateBoth;
-			myTemporary = &data.myTemporary;
-			myRotation = data.myRotation;
-			myAnimations = data.myScenes;
-			myGlobalInverseTransform = data.myGlobalInverseTransform;
-			myBoneMapping = data.myBoneMapping;
-			myEntries = data.myEntries;
-			myBoneInfo = data.myBoneInfo;
-			myMass = data.myMass;
-		}
-
-		float*								myAnimationTime0;
-		float*								myAnimationTime1;
-		float*								myBlendingTime;
-		float*								myBlendingTimeMul;
-		float*								myPlayTime;
-		uint*								myAnim0Index;
-		uint*								myAnim1Index;
-		uint*								myNumOfBones;
-		bool*								myUpdateBoth;
-		bool*								myTemporary;
-		aiVector3D							myRotation;
-		std::vector<const aiScene*>			myAnimations;
-		aiMatrix4x4							myGlobalInverseTransform;
-		std::map<std::string, uint>			myBoneMapping;
-		std::vector<MeshEntry>				myEntries;
-		std::vector<BoneInfoAnim>			myBoneInfo;
-		std::vector<VertexBoneDataAnim>		myMass;
-	};
 
 private:
 	bool AnimationIndexWithinRange(uint anIndex);
 	void UpdateAnimationTimeFrames();
 
-	/// <summary>
-	/// Interpolate for aiQuatKey, aiVectorKey 
-	/// </summary>
-	/// <param name="time">the current time * ticksPerSecond</param>
-	template<class T>
-	void Interpolate(T& out, const float time, const uint keyStart, const uint keyEnd, const T* someKeys)
-	{
-		const float percent = InvLerp(someKeys[keyStart].mTime, someKeys[keyEnd].mTime, time);
-		Assimp::Interpolator<T>()(out, someKeys[keyStart], someKeys[keyEnd], t);
-	}
-
-
 private:
-	float myAnimationTime0;
-	float myAnimationTime1;
+	float myTicks0;
+	float myTicks1;
 
 	// Used to set the time it should take to blend from myAnimation1 to myAnimation0
 	float myBlendingTime;
@@ -178,9 +139,9 @@ private:
 	float myPlayTime;
 
 	// With a myBlendingTime of 0 myAnimIndex0 is played. Using lerp use: 0.0f, to play.
-	uint myAnim0Index;
+	uint myAnimIndex0;
 	// With a myBlendingTime of > 0 myAnimIndex1 is played. Using lerp use: 1.0f, to play.
-	uint myAnim1Index;
+	uint myAnimIndex1;
 
 	uint myNumOfBones;
 	bool myUpdateBoth;
@@ -197,7 +158,74 @@ private:
 	std::vector<VertexBoneDataAnim>		myMass;
 	std::vector<std::string>			myAnimationClipNames;
 
+
+public:
+
+	uint GetCurrentAnimationIndex0()
+	{
+		return myAnimIndex0;
+	}
+
+	std::vector<std::string>& GetAnimationClipNames() 
+	{
+		return myAnimationClipNames;
+	}
+
+	struct SerializedObject {
+		SerializedObject(CAnimationController& data)
+		{
+			myAnimationTime0 = &data.myTicks0;
+			myAnimationTime1 = &data.myTicks1;
+			myBlendingTime = &data.myBlendingTime;
+			myBlendingTimeMul = &data.myBlendingTimeMul;;
+			myPlayTime = &data.myPlayTime;
+			myAnim0Index = &data.myAnimIndex0;
+			myAnim1Index = &data.myAnimIndex1;
+			myNumOfBones = &data.myNumOfBones;
+			myUpdateBoth = &data.myUpdateBoth;
+			myTemporary = &data.myTemporary;
+			myRotation = data.myRotation;
+			myAnimations = data.myScenes;
+			myGlobalInverseTransform = data.myGlobalInverseTransform;
+			myBoneMapping = data.myBoneMapping;
+			myEntries = data.myEntries;
+			myBoneInfo = data.myBoneInfo;
+			myMass = data.myMass;
+		}
+
+		float* myAnimationTime0;
+		float* myAnimationTime1;
+		float* myBlendingTime;
+		float* myBlendingTimeMul;
+		float* myPlayTime;
+		uint* myAnim0Index;
+		uint* myAnim1Index;
+		uint* myNumOfBones;
+		bool* myUpdateBoth;
+		bool* myTemporary;
+		aiVector3D							myRotation;
+		std::vector<const aiScene*>			myAnimations;
+		aiMatrix4x4							myGlobalInverseTransform;
+		std::map<std::string, uint>			myBoneMapping;
+		std::vector<MeshEntry>				myEntries;
+		std::vector<BoneInfoAnim>			myBoneInfo;
+		std::vector<VertexBoneDataAnim>		myMass;
+	};
+
 private:
+	/// <summary>
+	/// Interpolate for aiQuatKey, aiVectorKey 
+	/// </summary>
+	/// <param name="time">the current time * ticksPerSecond</param>
+	template<class T>
+	void Interpolate(T& out, const float time, const uint keyStart, const uint keyEnd, const T* someKeys)
+	{
+		//const float percent = InvLerp(someKeys[keyStart].mTime, someKeys[keyEnd].mTime, time);
+		const float percent = Remap(someKeys[keyStart].mTime, someKeys[keyEnd].mTime, 0.0f, 1.0f, time);
+		Assimp::Interpolator<T>()(out, someKeys[keyStart], someKeys[keyEnd], time);
+	}
+
+
 	float Lerp(float a, float b, float t)
 	{
 		return (1.0f - t) * a + b * t;
@@ -213,9 +241,4 @@ private:
 		float t = InvLerp(inMin, inMax, v);
 		return Lerp(outMin, outMax, t);
 	}
-
-	// No longer used 2021 02 01
-		// Takes ownership if myAnimations. I.e Importer has ownership if aiScene.
-		// Used for loading myAnimations. This is the FBX. Seems like an FBX can hold several animations?
-		//std::vector<Assimp::Importer*>		myImporters;
 };

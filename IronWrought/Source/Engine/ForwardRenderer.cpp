@@ -119,7 +119,7 @@ bool CForwardRenderer::Init(CDirectXFramework* aFramework) {
 
 void CForwardRenderer::Render(CEnvironmentLight* anEnvironmentLight, std::vector<std::pair<unsigned int, std::array<CPointLight*, LIGHTCOUNT>>> aModelPointLightList, CCameraComponent* aCamera, std::vector<CGameObject*>& aGameObjectList)
 {
-	DirectX::SimpleMath::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
+	DirectX::SimpleMath::Matrix& cameraMatrix = aCamera->GameObject().myTransform->WorldMatrix();
 	myFrameBufferData.myToCameraSpace = cameraMatrix.Invert();
 	myFrameBufferData.myToProjectionSpace = aCamera->GetProjection();
 	myFrameBufferData.myCameraPosition = DirectX::SimpleMath::Vector4{cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f};
@@ -161,7 +161,7 @@ void CForwardRenderer::Render(CEnvironmentLight* anEnvironmentLight, std::vector
 
 		const CModel::SModelData& modelData = model->GetModelData();
 
-		myObjectBufferData.myToWorld = gameobject->myTransform->Transform();
+		myObjectBufferData.myToWorld = gameobject->myTransform->WorldMatrix();
 
 		int counter = 0;
 		for (auto detailNormal : model->GetModelData().myDetailNormals)
@@ -222,7 +222,7 @@ void CForwardRenderer::Render(CEnvironmentLight* anEnvironmentLight, std::vector
 
 void CForwardRenderer::InstancedRender(CEnvironmentLight* anEnvironmentLight, std::vector<std::pair<unsigned int, std::array<CPointLight*, LIGHTCOUNT>>> aModelPointLightList, CCameraComponent* aCamera, std::vector<CGameObject*>& aGameObjectList)
 {
-	DirectX::SimpleMath::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
+	DirectX::SimpleMath::Matrix& cameraMatrix = aCamera->GameObject().myTransform->WorldMatrix();
 	myFrameBufferData.myToCameraSpace = cameraMatrix.Invert();
 	myFrameBufferData.myToProjectionSpace = aCamera->GetProjection();
 	myFrameBufferData.myCameraPosition = DirectX::SimpleMath::Vector4{cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f};
@@ -315,7 +315,7 @@ void CForwardRenderer::InstancedRender(CEnvironmentLight* anEnvironmentLight, st
 void CForwardRenderer::RenderLines(CCameraComponent* aCamera, const std::vector<SLineTime>& aLineList) {
 
 	namespace SM = DirectX::SimpleMath;
-	myFrameBufferData.myToCameraSpace = aCamera->GameObject().myTransform->Transform().Invert();
+	myFrameBufferData.myToCameraSpace = aCamera->GameObject().myTransform->WorldMatrix().Invert();
 	myFrameBufferData.myToProjectionSpace = aCamera->GetProjection();
 
 	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
@@ -352,7 +352,7 @@ void CForwardRenderer::RenderOutline(CCameraComponent* aCamera, CGameObject* aMo
 	if (!someOutlineModelData) {
 		return;
 	}
-	DirectX::SimpleMath::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
+	DirectX::SimpleMath::Matrix& cameraMatrix = aCamera->GameObject().myTransform->WorldMatrix();
 	myFrameBufferData.myCameraPosition = DirectX::SimpleMath::Vector4(cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f);
 	myFrameBufferData.myToCameraSpace = cameraMatrix.Invert();
 	myFrameBufferData.myToProjectionSpace = aCamera->GetProjection();
@@ -366,7 +366,7 @@ void CForwardRenderer::RenderOutline(CCameraComponent* aCamera, CGameObject* aMo
 	CModel::SModelData modelData = model->GetModelData();
 	CModel::SModelData outlineModelData = someOutlineModelData->GetModelData();
 
-	myObjectBufferData.myToWorld = aModelInstance->GetComponent<CTransformComponent>()->Transform();
+	myObjectBufferData.myToWorld = aModelInstance->GetComponent<CTransformComponent>()->WorldMatrix();
 
 	BindBuffer(myObjectBuffer, myObjectBufferData, "Object Buffer");
 
@@ -404,7 +404,7 @@ void CForwardRenderer::RenderOutline(CCameraComponent* aCamera, CGameObject* aMo
 void CForwardRenderer::RenderLineInstances(CCameraComponent* aCamera, const std::vector<CLineInstance*>& aLineList) {
 
 	namespace SM = DirectX::SimpleMath;
-	myFrameBufferData.myToCameraSpace = aCamera->GameObject().myTransform->Transform().Invert();
+	myFrameBufferData.myToCameraSpace = aCamera->GameObject().myTransform->WorldMatrix().Invert();
 	myFrameBufferData.myToProjectionSpace = aCamera->GetProjection();
 
 	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");

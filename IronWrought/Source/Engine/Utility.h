@@ -20,6 +20,8 @@ public:
 		return screen;
 	}
 
+
+
 	//Maybe add ScreenToWorld?
 };
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GameObject.h"
+class CTransformComponent;
 class CComponent
 {
 public:
@@ -23,6 +24,7 @@ public:
 	T* GetComponent();
 
 	CGameObject& GameObject() const;
+	CTransformComponent* Transform();
 
 private:
 	CGameObject& myParent;

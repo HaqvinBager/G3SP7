@@ -739,8 +739,6 @@
     <ClCompile Include="NodeTypeVFXStopVFX.cpp">
       <Filter>Imgui\Node Editor\Nodes\VFX</Filter>
     </ClCompile>
-        <ClCompile Include="Animator.cpp">
-    </ClCompile>
     <ClCompile Include="NodeTypeVariableGetVector3.cpp">
       <Filter>Imgui\Node Editor\Nodes\Variables\Get</Filter>
     </ClCompile>
@@ -754,6 +752,9 @@
       <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
     </ClCompile>
     <ClCompile Include="CCurveWindow.cpp">
+      <Filter>Imgui\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="Animator.cpp">
       <Filter>Imgui\Windows</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1378,7 +1379,7 @@
       <Filter>Imgui\Node Editor\Nodes\VFX</Filter>
     </ClInclude>
     <ClInclude Include="Animator.h">
-          <Filter>Imgui\Windows</Filter>
+      <Filter>Imgui\Windows</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeVariableGetVector3.h">
       <Filter>Imgui\Node Editor\Nodes\Variables\Get</Filter>
@@ -1397,6 +1398,12 @@
     </ClInclude>
     <ClInclude Include="..\Includes\ImGui\Core\widget_curve.h">
       <Filter>Imgui\Widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="IronMath.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGuiHelper.h">
+      <Filter>Imgui\Helper</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1687,6 +1694,9 @@
     </Filter>
     <Filter Include="Imgui\Widgets">
       <UniqueIdentifier>{8a53a5f2-4ecd-4d71-abbe-c564d545b6e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Helper">
+      <UniqueIdentifier>{bf481271-35aa-46b7-aefd-3fa20999b273}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -92,7 +92,7 @@ public:
 		float xV = (((2 * mouseX) / width) - 1) / cam->GetProjection()._11;
 		float yV = (-((2 * mouseY) / height) + 1) / cam->GetProjection()._22;
 
-		DirectX::SimpleMath::Vector3 target = camTransform->Position() - camTransform->Transform().Forward();
+		DirectX::SimpleMath::Vector3 target = camTransform->Position() - camTransform->WorldMatrix().Forward();
 
 		//DirectX::SimpleMath::Matrix viewMatrix = DirectX::XMMatrixLookAtLH(camTransform->Position(), target, camTransform->Transform().Up());
 		DirectX::SimpleMath::Matrix viewMatrix = cam->GetViewMatrix();

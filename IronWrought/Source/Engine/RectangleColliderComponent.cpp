@@ -58,19 +58,19 @@ CRectangleColliderComponent::~CRectangleColliderComponent() {
 
 void CRectangleColliderComponent::Awake() {
 
-	DirectX::SimpleMath::Vector3 vector = GameObject().GetComponent<CTransformComponent>()->Position() + GameObject().GetComponent<CTransformComponent>()->Transform().Forward() * (myHeight / 2.0f) * 100.0f;
+	DirectX::SimpleMath::Vector3 vector = GameObject().GetComponent<CTransformComponent>()->Position() + GameObject().GetComponent<CTransformComponent>()->WorldMatrix().Forward() * (myHeight / 2.0f) * 100.0f;
 
 	SetPosition(GameObject().GetComponent<CTransformComponent>()->Position());
 	
 	//TODO Fix after Merge Conflicts Resolved
-	myMin = vector - GameObject().GetComponent<CTransformComponent>()->Transform().Right() * (myWidth / 2.0f) * 100.0f;
+	myMin = vector - GameObject().GetComponent<CTransformComponent>()->WorldMatrix().Right() * (myWidth / 2.0f) * 100.0f;
 	//myMin.z = vector + GameObject().GetComponent<CTransformComponent>()->Position().Right * (myWidth / 2.0f));
 	
-	vector = GameObject().GetComponent<CTransformComponent>()->Position() - GameObject().GetComponent<CTransformComponent>()->Transform().Forward() * (myHeight / 2.0f) * 100.0f;
+	vector = GameObject().GetComponent<CTransformComponent>()->Position() - GameObject().GetComponent<CTransformComponent>()->WorldMatrix().Forward() * (myHeight / 2.0f) * 100.0f;
 	
 	//TODO Fix after Merge Conflicts Resolved
 	//myVertices.emplace_back(vector - GameObject().GetComponent<CTransformComponent>()->Position().Right * (myWidth / 2.0f));
-	myMax = vector + GameObject().GetComponent<CTransformComponent>()->Transform().Right() * (myWidth / 2.0f) * 100.0f;
+	myMax = vector + GameObject().GetComponent<CTransformComponent>()->WorldMatrix().Right() * (myWidth / 2.0f) * 100.0f;
 
 #ifdef _DEBUG
 	myVisualizer = new CLineInstance();
@@ -90,19 +90,19 @@ void CRectangleColliderComponent::Update()
 	// myHeight is Length
 	// myWidth is Width
 
-	DirectX::SimpleMath::Vector3 vector = GameObject().GetComponent<CTransformComponent>()->Position() + GameObject().GetComponent<CTransformComponent>()->Transform().Forward() * (myHeight / 2.0f) * 100.0f;
+	DirectX::SimpleMath::Vector3 vector = GameObject().GetComponent<CTransformComponent>()->Position() + GameObject().GetComponent<CTransformComponent>()->WorldMatrix().Forward() * (myHeight / 2.0f) * 100.0f;
 
 	SetPosition(GameObject().GetComponent<CTransformComponent>()->Position());
 
 	//TODO Fix after Merge Conflicts Resolved
-	myMin = vector - GameObject().GetComponent<CTransformComponent>()->Transform().Right() * (myWidth / 2.0f) * 100.0f;
+	myMin = vector - GameObject().GetComponent<CTransformComponent>()->WorldMatrix().Right() * (myWidth / 2.0f) * 100.0f;
 	//myMin.z = vector + GameObject().GetComponent<CTransformComponent>()->Position().Right * (myWidth / 2.0f));
 
-	vector = GameObject().GetComponent<CTransformComponent>()->Position() - GameObject().GetComponent<CTransformComponent>()->Transform().Forward() * (myHeight / 2.0f) * 100.0f;
+	vector = GameObject().GetComponent<CTransformComponent>()->Position() - GameObject().GetComponent<CTransformComponent>()->WorldMatrix().Forward() * (myHeight / 2.0f) * 100.0f;
 
 	//TODO Fix after Merge Conflicts Resolved
 	//myVertices.emplace_back(vector - GameObject().GetComponent<CTransformComponent>()->Position().Right * (myWidth / 2.0f));
-	myMax = vector + GameObject().GetComponent<CTransformComponent>()->Transform().Right() * (myWidth / 2.0f) * 100.0f;
+	myMax = vector + GameObject().GetComponent<CTransformComponent>()->WorldMatrix().Right() * (myWidth / 2.0f) * 100.0f;
 
 #ifdef _DEBUG
 	myVisualizer->SetPosition(GameObject().GetComponent<CTransformComponent>()->Position());
