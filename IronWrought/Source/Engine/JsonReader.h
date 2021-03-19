@@ -27,6 +27,7 @@ public:
 	static bool HasParseError(const rapidjson::Document& aDoc);
 
 	void Init();
+	const bool HasAssetPath(const int anAssetID) const;
 	const std::string& GetAssetPath(const int anAssetID) const;
 
 
