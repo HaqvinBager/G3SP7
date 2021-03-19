@@ -5,8 +5,8 @@
 #include "GraphManager.h"
 #include "BaseDecisionNode.h"
 
-CNodeInstance::CNodeInstance(CGraphManager* aGraphManager, std::string aGraphKey, bool aCreateNewUID)
-	:myGraphManager(aGraphManager), myGraphKey(aGraphKey), myUID(aCreateNewUID), myNodeType(nullptr), myEditorPosition{0.0f,0.0f}
+CNodeInstance::CNodeInstance(CGraphManager* aGraphManager, bool aCreateNewUID)
+	:myGraphManager(aGraphManager), myUID(aCreateNewUID), myNodeType(nullptr), myEditorPosition{0.0f,0.0f}
 {/*
 	myEditorPosition[0] = 0.0f;
 	myEditorPosition[1] = 0.0f;	*/
@@ -90,7 +90,7 @@ bool CNodeInstance::HasLinkBetween(unsigned int aFirstPin, unsigned int aSecondP
 	return false;
 }
 
-bool CNodeInstance::AddLinkVia(CNodeInstance* aLink, unsigned int aPinIDFromMe, unsigned int aPinIDToMe, unsigned int aLinkID)
+bool CNodeInstance::AddLinkToVia(CNodeInstance* aLink, unsigned int aPinIDFromMe, unsigned int aPinIDToMe, unsigned int aLinkID)
 {
 	if (aLink == nullptr)
 		return false;

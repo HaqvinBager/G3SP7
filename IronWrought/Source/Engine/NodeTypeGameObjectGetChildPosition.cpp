@@ -16,16 +16,12 @@ CNodeTypeGameObjectGetChildPosition::CNodeTypeGameObjectGetChildPosition()
 int CNodeTypeGameObjectGetChildPosition::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 {
 	int index = CNodeDataManager::Get()->GetData<int>(myNodeName);
-	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject()[index];
-	Vector3 position = gameObject->myTransform->Position();
+	std::vector<CGameObject*> gameObject = aTriggeringNodeInstance->GetCurrentGameObject();
+	Vector3 position = gameObject[index]->myTransform->Position();
 
 	std::vector<SPin>& pins = aTriggeringNodeInstance->GetPins();
 	DeclareDataOnPinIfNecessary<Vector3>(pins[0]);
 	memcpy(pins[0].myData, &position, sizeof(Vector3));
-	//DeclareDataOnPinIfNecessary<float>(pins[1]);
-	//memcpy(pins[1].myData, &position.y, sizeof(float));
-	//DeclareDataOnPinIfNecessary<float>(pins[2]);
-	//memcpy(pins[2].myData, &position.z, sizeof(float));
 
 	return -1;
 }
