@@ -1,4 +1,12 @@
-float4 main( float4 pos : POSITION ) : SV_POSITION
+#include "SpotLightShaderStructs.hlsli"
+
+SpotLightVertexToGeometry main(SpotLightVertexInput input)
 {
-	return pos;
+    SpotLightVertexToGeometry returnValue;
+    float4 vertexObjectPos = input.myPosition.xyzw;
+    float4 vertexWorldPos = mul(spotLightToWorld, vertexObjectPos);
+    float4 vertexViewPos = mul(spotLightToCamera, vertexWorldPos);
+    returnValue.myPosition = vertexViewPos;
+
+    return returnValue;
 }

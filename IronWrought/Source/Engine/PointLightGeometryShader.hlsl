@@ -19,7 +19,7 @@ void main(
     {
         PointLightGeometryToPixel vertex;
         vertex.myPosition = inputVertex.myPosition;
-        vertex.myPosition.xy += offset[index] * /*inputVertex.myRange*/pointLightPositionAndRange.w;
+        vertex.myPosition.xy += offset[index] * pointLightPositionAndRange.w;
         vertex.myPosition = mul(pointLightToProjection, vertex.myPosition);
         vertex.myUV = vertex.myPosition.xyw;
         vertex.myUV.y *= -1.0f;

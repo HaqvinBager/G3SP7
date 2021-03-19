@@ -116,5 +116,35 @@ float3 EvaluatePointLight(float3 diffuseColor, float3 specularColor, float3 norm
     float physicalAttenuation = saturate(1.0f / (lightDistance * lightDistance));
     float attenuation = lambert * linearAttenuation * physicalAttenuation;
     
-    return saturate(intensityScaledColor * lambert * linearAttenuation * physicalAttenuation * ((cDiff * (1.0f - cSpec) + cSpec) * PI));
+    return saturate(intensityScaledColor * attenuation * ((cDiff * (1.0f - cSpec) + cSpec) * PI));
+}
+
+float3 EvaluateSpotLight(float3 diffuseColor, float3 specularColor, float3 normal, float roughness, float3 intensityScaledColor, float3 lightRange, float3 toLight, float3 lightDistance, float3 toEye, float3 lightDir, float angleExponent)
+{
+    float NdL = saturate(dot(normal, toLight));
+    float lambert = NdL;
+    float NdV = saturate(dot(normal, toEye));
+    float3 h = normalize(toLight + toEye);
+    float NdH = saturate(dot(normal, h));
+    float VdH = saturate(dot(toEye, h));
+    float LdV = saturate(dot(toLight, toEye));
+    float a = max(0.001f, roughness * roughness);
+    
+    float3 cDiff = Diffuse(diffuseColor);
+    float3 cSpec = Specular(specularColor, h, toEye, toLight, a, NdL, NdV, NdH, VdH, LdV);
+    
+    float linearAttenuation = lightDistance / lightRange;
+    linearAttenuation = 1.0f - linearAttenuation;
+    linearAttenuation = saturate(linearAttenuation);
+    float physicalAttenuation = saturate(1.0f / (lightDistance * lightDistance));
+    float attenuation = lambert * linearAttenuation * physicalAttenuation;
+    
+    float3 finalColor = 0.0f;
+    finalColor += intensityScaledColor * ((cDiff * (1.0f - cSpec) + cSpec) * PI);
+    
+    finalColor *= linearAttenuation * physicalAttenuation;
+    
+    finalColor *= pow(max(dot(lightDir, -toLight), 0.0f), angleExponent);
+    
+    return saturate(finalColor);
 }

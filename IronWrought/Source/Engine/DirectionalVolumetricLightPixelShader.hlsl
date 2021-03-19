@@ -1,8 +1,8 @@
 #include "FullscreenShaderStructs.hlsli"
 #include "MathHelpers.hlsli"
 
-#define NUM_SAMPLES 128/*64*//*32*//*16*/
-#define NUM_SAMPLES_RCP 0.0078125/*0.015625*//*0.03125*//*0.0625*/
+#define NUM_SAMPLES 128
+#define NUM_SAMPLES_RCP 0.0078125
 
 // RAYMARCHING
 #define TAU 0.0001

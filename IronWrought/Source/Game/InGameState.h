@@ -23,6 +23,8 @@ public:
 	void Receive(const SStringMessage& aMessage) override;
 	void Receive(const SMessage& aMessage) override;
 
+	void TEMP_Sponza(CScene* aScene);
+
 private:
 	bool myExitLevel;
 
@@ -31,4 +33,5 @@ private:
 	CGameObject* myTestCameraOne;
 	CGameObject* myCamera;
 	CGameObject* myDecal;
+	CGameObject* mySpotlight;
 };

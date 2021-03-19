@@ -7,6 +7,7 @@
 #include "CameraComponent.h"
 #include "CameraControllerComponent.h"
 #include "EnviromentLightComponent.h"
+#include "SpotLightComponent.h"
 #include "TransformComponent.h"
 #include "InstancedModelComponent.h"
 #include "RigidBodyComponent.h"
@@ -14,6 +15,7 @@
 #include "DecalComponent.h"
 
 #include "EnvironmentLight.h"
+#include "SpotLight.h"
 #include "Timer.h"
 #include "Engine.h"
 #include "PostMaster.h"
@@ -71,7 +73,7 @@ void CInGameState::Stop()
 
 void CInGameState::Update()
 {
-	//IRONWROUGHT->GetActiveScene().EnvironmentLight()->SetDirection({ 0.0f, 1.0f, sinf(CTimer::Time()) });
+	mySpotlight->GetComponent<CSpotLightComponent>()->GetSpotLight()->SetWideness(abs(sinf(CTimer::Time())));
 
 	CEngine::GetInstance()->GetPhysx().Simulate();
 	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
@@ -117,11 +119,19 @@ void CInGameState::Receive(const SMessage& /*aMessage*/)
 	//}
 }
 
-void TEMP_Sponza(CScene* aScene)
+void CInGameState::TEMP_Sponza(CScene* aScene)
 {
 	CGameObject* sponza = new CGameObject(1337);
 	sponza->AddComponent<CModelComponent>(*sponza, std::string(ASSETPATH("Assets/Graphics/Sponza/Sponza.fbx")));
 	sponza->GetComponent<CTransformComponent>()->Position({ 0.0f,0.0f,0.0f });
 	sponza->myTransform->Rotation({ 0.0f,0.0f,0.0f });
 	aScene->AddInstance(sponza);
+
+	CGameObject* spotLight = new CGameObject(13414);
+	spotLight->myTransform->Position({ 0.0f, 1.0f, -2.0f });
+	Vector3 color = { 1.0f, 1.0f, 1.0f };
+	Vector3 direction = { 0.0f, -1.0f, 0.0f };
+	spotLight->AddComponent<CSpotLightComponent>(*spotLight, color, 6.0f, direction, 2.0f, 0.01f);
+	mySpotlight = spotLight;
+	aScene->AddInstance(spotLight->GetComponent<CSpotLightComponent>()->GetSpotLight());
 }
