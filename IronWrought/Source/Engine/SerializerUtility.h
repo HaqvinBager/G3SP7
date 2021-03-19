@@ -68,3 +68,24 @@ struct Serializer<std::vector<Vector2>> {
         aWriter.EndArray();
     }
 };
+
+template<>
+struct Serializer<std::vector<Vector3>> {
+    void Serialize(const char* aKey, std::vector<Vector3>& someValues, rapidjson::PrettyWriter<rapidjson::StringBuffer>& aWriter)
+    {
+        aWriter.Key(aKey);
+        aWriter.StartArray();
+        for (const auto& value : someValues)
+        {
+            aWriter.StartObject();
+            aWriter.Key("x");
+            aWriter.Double(value.x);
+            aWriter.Key("y");
+            aWriter.Double(value.y);
+            aWriter.Key("z");
+            aWriter.Double(value.z);
+            aWriter.EndObject();
+        }
+        aWriter.EndArray();
+    }
+};
