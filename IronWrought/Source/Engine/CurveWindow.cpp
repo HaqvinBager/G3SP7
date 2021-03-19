@@ -61,6 +61,19 @@ void IronWroughtImGui::CCurveWindow::OnDisable()
 
 void IronWroughtImGui::CCurveWindow::SaveToFile()
 {
-	CJsonWriter::WriteGenericValue(ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystemTestercoppeeeee.json").c_str(), "Name", 0.1f);
-	CJsonWriter::WriteGenericValue(ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystemTestercoppeeeee.json").c_str(), "hej", 0.1f);
+	//CJsonWriter::Get()->WriteGenericValue(ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystemTestercoppeeeee123.json").c_str(), "Name", 0.1f);
+	CJsonWriter::Get()->WriteGenericValue(ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystemTestercoppeeeee123.json").c_str(), {"VFXEffects", "ParticleSystems", "0", "Offset X"}, 0.1f);
+
+
+	//CJsonWriter::Get()->WriteGenericValue(ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystemTestercoppeeeee515125.json").c_str(), "hej", 0.1f);
+	//CJsonWriter::Get()->WriteGenericValue(ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystemTestercoppeeeee515125.json").c_str(), "hej", 0.1f);
+	//CJsonWriter::Get()->WriteGenericValue(ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystemTestercoppeeeee515125.json").c_str(), "hej", 0.1f);
+	//CJsonWriter::Get()->WriteGenericValue(ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystemTestercoppeeeee515125.json").c_str(), "hej", 0.1f);
+
 }
+
+//void IronWroughtImGui::CCurveWindow::Save(const char* aJsonFile, const char* aVariableName, const std::vector<ImVec2>& somePoints)
+//{
+//
+//	//CJsonWriter::Get()->WriteGenericValue(aJsonFile, )
+//}

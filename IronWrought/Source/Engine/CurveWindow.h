@@ -17,10 +17,14 @@ namespace IronWroughtImGui {
 		void OnEnable()	override;
 		void OnInspectorGUI() override;
 		void OnDisable() override;
-
 		void SaveToFile();
 
 	private:
+		//void Save(const char* aJsonFile, const char* aVariableName, const std::vector<ImVec2>& somePoints);
+
+
+
+
 		std::unordered_map<std::string, std::array<ImVec2, 4>> myPointsMap;
 	};
 }

@@ -11,6 +11,7 @@ CJsonWriter* CJsonWriter::Get()
     return ourInstance;
 }
 
+
 void CJsonWriter::Init()
 {
 }
@@ -47,4 +48,28 @@ void CJsonWriter::WriteString(const char* aFilePath, const char* aKey, const std
 
 	document.Accept(writer);
 	fclose(fp);
+}
+
+rapidjson::Document CJsonWriter::GetCreateDocument(const char* aFilePath)
+{
+	std::ifstream inputStream(aFilePath);
+	IStreamWrapper inputWrapper(inputStream);
+	Document document;
+	document.ParseStream(inputWrapper);
+	inputStream.close();
+
+	if (document.HasParseError())
+	{
+		std::ofstream of(aFilePath);
+		ENGINE_BOOL_POPUP(of.good(), "Could not create file: %s", aFilePath);
+		of.put('{');
+		of.put('}');
+		of.close();
+
+		inputStream.open(aFilePath);
+		IStreamWrapper backupInputWrapper(inputStream);
+		document.ParseStream(backupInputWrapper);
+		inputStream.close();
+	}
+	return document;
 }
