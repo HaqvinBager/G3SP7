@@ -37,6 +37,17 @@ enum class EMessageType
 	SetResolution1920x1080,
 
 	PlayStepSound,
+	PlayResearcherReactionExplosives,
+	PlayRobotAttackSound,
+	PlayRobotDeathSound,
+	PlayRobotIdleSound,
+	PlayRobotPatrolling,
+	PlayRobotSearching,
+	PlayResearcherEvent,
+	PlaySFX,
+
+	CursorHideAndLock,
+	CursorShowAndUnlock,
 
 	Count
 };

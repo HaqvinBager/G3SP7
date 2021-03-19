@@ -13,6 +13,7 @@ CCameraControllerComponent::CCameraControllerComponent(CGameObject& aGameObject,
 	myCameraMoveSpeed(aCameraMoveSpeed),
 	myCamera(nullptr),
 	myCameraMode(aCameraMode),
+	myPrevCameraMode(aCameraMode),
 	myToggleFreeCam(aToggleFreeCam),
 	myOffset(aOffset),
 	myMouseRotationSpeed(120.0f),
@@ -29,6 +30,7 @@ CCameraControllerComponent::~CCameraControllerComponent()
 void CCameraControllerComponent::Awake()
 {
 	myCamera = CEngine::GetInstance()->GetActiveScene().MainCamera();
+	//CEngine::GetInstance()->GetWindowHandler()->HideAndLockCursor();
 }
 
 void CCameraControllerComponent::Start()
@@ -42,41 +44,54 @@ void CCameraControllerComponent::Update()
 	// TEMPORARY
 	if (Input::GetInstance()->IsKeyPressed(VK_F1))
 	{
-		bool showCursor = CEngine::GetInstance()->GetWindowHandler()->CursorLocked();
-		CEngine::GetInstance()->GetWindowHandler()->LockCursor(!showCursor);
-		myCameraMode = (myCameraMode == ECameraMode::UnlockCursor) ? ECameraMode::FreeCam : ECameraMode::UnlockCursor;
+		if (myCameraMode != ECameraMode::UnlockCursor)
+		{
+			myPrevCameraMode = myCameraMode;
+			myCameraMode = ECameraMode::UnlockCursor;
+		}
+		else
+		{
+			myCameraMode = myPrevCameraMode;
+		}
+
+		if (myCameraMode == ECameraMode::UnlockCursor)
+			CEngine::GetInstance()->GetWindowHandler()->ShowAndUnlockCursor();
+		else
+			CEngine::GetInstance()->GetWindowHandler()->HideAndLockCursor();
 	}
 	// ! TEMPORARY
 
 	if (Input::GetInstance()->IsKeyPressed(/*std::toupper(myToggleFreeCam)*/myToggleFreeCam)) {
 		myCameraMode = myCameraMode == ECameraMode::FreeCam ? ECameraMode::PlayerFirstPerson : ECameraMode::FreeCam;
-
-		// TEMPORARY
-		//bool showCursor = CEngine::GetInstance()->GetWindowHandler()->CursorLocked();
-		//CEngine::GetInstance()->GetWindowHandler()->LockCursor(!showCursor);
-		// TEMPORARY
+		// So that the camera returns to the parent gameobject on return to ECameraMode::PlayerFirstPerson
+		if (myCameraMode == ECameraMode::FreeCam)
+			myPositionBeforeFreeCam = GameObject().myTransform->Position();
+		else
+			GameObject().myTransform->Position(myPositionBeforeFreeCam);
 	}
 #endif
-	if (myCameraMode == ECameraMode::MenuCam) {
-
-	}
-	else if (myCameraMode == ECameraMode::FreeCam)
+	switch (myCameraMode)
 	{
-		UpdateFreeCam();
-	}
-	else if (myCameraMode == ECameraMode::OrbitCamera){
-		UpdateOrbitCam();
-	} else if(myCameraMode == ECameraMode::UnlockCursor){
-	} else {
-		UpdatePlayerFirstPerson();
-	}
+		case ECameraMode::MenuCam: 
+			break;
 
-	// TEMP
-	if (Input::GetInstance()->IsKeyPressed(VK_SPACE))
-	{
-		CEngine::GetInstance()->GetPhysx().Raycast(GameObject().myTransform->Position(), GameObject().myTransform->Transform().Forward(), 50000.0f);
+		case ECameraMode::FreeCam: 
+			UpdateFreeCam();
+			break;
+
+		case ECameraMode::PlayerFirstPerson: 
+			UpdatePlayerFirstPerson();
+			break;
+
+		case ECameraMode::UnlockCursor:
+			break;
+
+		case ECameraMode::OrbitCamera:
+			UpdateOrbitCam();
+			break;
+
+		default:break;
 	}
-	// ! TEMP
 }
 
 CGameObject* CCameraControllerComponent::CreatePlayerFirstPersonCamera(CGameObject* aParentObject)
@@ -156,11 +171,14 @@ inline constexpr float Lerp(const float& a, const float& b, const float& t)
 
 void CCameraControllerComponent::UpdateOrbitCam()
 {
+	bool hideCursor = false;
+
 	const float dt = CTimer::Dt();
 	const float dy = static_cast<float>(Input::GetInstance()->MouseRawDeltaY());
 	const float dx = static_cast<float>(Input::GetInstance()->MouseRawDeltaX());
 	if (INPUT->IsMouseDown(Input::EMouseButton::Left) && GetAsyncKeyState(VK_LMENU))
 	{
+		hideCursor = true;
 		const float rotationSpeed = 150.0f;
 		myPhi	+= (dy * rotationSpeed * dt);
 		myTheta += (dx * rotationSpeed * dt);
@@ -185,6 +203,7 @@ void CCameraControllerComponent::UpdateOrbitCam()
 
 	if (INPUT->IsMouseDown(Input::EMouseButton::Middle))
 	{
+		hideCursor = true;
 		const float panningSpeed = 10.0f;
 
 		const Matrix& cameraTransform = GameObject().myTransform->Transform();
@@ -203,6 +222,11 @@ void CCameraControllerComponent::UpdateOrbitCam()
 	//view = view * DirectX::XMMatrixRotationRollPitchYaw(pitch, -yaw, roll);// Allows camera rotation around itself.
 	view = view.Invert();
 	GameObject().myTransform->Transform(view);
+
+	if(hideCursor)
+		CEngine::GetInstance()->GetWindowHandler()->HideAndLockCursor();
+	else
+		CEngine::GetInstance()->GetWindowHandler()->ShowAndUnlockCursor();
 }
 
 void CCameraControllerComponent::SetCameraMoveSpeed(float aCameraMoveSpeed) {

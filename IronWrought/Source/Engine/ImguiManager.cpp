@@ -10,6 +10,8 @@
 #include "JsonReader.h"
 #include "ImGuiWindows.h"
 
+#include "PostMaster.h"
+
 //#pragma comment(lib, "psapi.lib")
 
 static ImFont* ImGui_LoadFont(ImFontAtlas& atlas, const char* name, float size, const ImVec2& displayOffset = ImVec2(0, 0))
@@ -54,8 +56,12 @@ CImguiManager::CImguiManager() : myGraphManagerIsFullscreen(false), myIsEnabled(
 	myGraphManager = new CGraphManager();
 	myGraphManager->Load();
 
-	myWindows.emplace_back(std::make_unique<ImGuiWindow::CLoadScene>("Load Scene", true));
-	myWindows.emplace_back(std::make_unique <ImGuiWindow::CCameraSetting>("Camera Settings"));
+	//myWindows.emplace_back(std::make_unique<IronWroughtImGui::CLoadScene>("Load Scene", true));
+	//myWindows.emplace_back(std::make_unique <IronWroughtImGui::CCameraSetting>("Camera Settings"));
+	//myWindows.emplace_back(std::make_unique <IronWroughtImGui::CCurveWindow>("Curve Editor"));
+
+	CMainSingleton::PostMaster().Subscribe(EMessageType::CursorHideAndLock, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::CursorShowAndUnlock, this);
 }
 
 CImguiManager::~CImguiManager()
@@ -80,28 +86,27 @@ void CImguiManager::Update()
 				myScriptsStatus = "Scripts Off";
 		}
 
-		for (const auto& window : myWindows)
-			window->OnMainMenuGUI();
+		//for (const auto& window : myWindows)
+		//	window->OnMainMenuGUI();
 							
 		ImGui::EndMainMenuBar();
 	}
 
-	for (const auto& window : myWindows) {
-		if (window->Enable() && !window->MainMenuBarChild()) {
-			window->OnInspectorGUI();
-		}
-	}
+	//for (const auto& window : myWindows) {
+	//	if (window->Enable() && !window->MainMenuBarChild()) {
+	//		window->OnInspectorGUI();
+	//	}
+	//}
 	
 	DebugWindow();
 	myGraphManager->Update();
 
-	if (Input::GetInstance()->IsKeyPressed(VK_F1))
-	{
-		myIsEnabled = !myIsEnabled;
-		if (myGraphManager->ShouldRenderGraph())
-			myGraphManager->ToggleShouldRenderGraph();
-	}
-
+	//if (Input::GetInstance()->IsKeyPressed(VK_F1))
+	//{
+	//	myIsEnabled = !myIsEnabled;
+	//	if (myGraphManager->ShouldRenderGraph())
+	//		myGraphManager->ToggleShouldRenderGraph();
+	//}
 }
 
 void CImguiManager::DebugWindow()
@@ -113,6 +118,22 @@ void CImguiManager::DebugWindow()
 		ImGui::Text(GetDrawCalls().c_str());
 	}
 	ImGui::End();
+}
+
+void CImguiManager::Receive(const SMessage& aMessage)
+{
+	if (aMessage.myMessageType == EMessageType::CursorHideAndLock)
+	{
+		myIsEnabled = false;
+		if (myGraphManager->ShouldRenderGraph())
+			myGraphManager->ToggleShouldRenderGraph();
+	}
+	else if (aMessage.myMessageType == EMessageType::CursorShowAndUnlock)
+	{
+		myIsEnabled = true;
+		if (myGraphManager->ShouldRenderGraph())
+			myGraphManager->ToggleShouldRenderGraph();
+	}
 }
 
 //void CImguiManager::LevelSelect()

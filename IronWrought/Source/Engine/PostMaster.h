@@ -9,7 +9,6 @@
 
 class CPostMaster
 {	
-
 	friend class CMainSingleton;
 
 public:
