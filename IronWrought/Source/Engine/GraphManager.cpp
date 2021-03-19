@@ -61,9 +61,9 @@ void CGraphManager::Load()
 			continue;
 
 		auto jsonObject = doc.GetObjectW();
-		if (jsonObject.HasMember("links")) 
+		if (jsonObject.HasMember("links"))
 		{
-			for (const auto& jsonLink : jsonObject["links"].GetArray()) 
+			for (const auto& jsonLink : jsonObject["links"].GetArray())
 			{
 
 				if (!jsonLink.HasMember("type"))
@@ -86,7 +86,7 @@ void CGraphManager::Load()
 					}
 					BluePrintInstance bpInstance;
 					bpInstance.rootID = jsonGameObjectID["instanceID"].GetInt();
-					for (const auto& childID : jsonGameObjectID["childrenInstanceIDs"].GetArray()) 
+					for (const auto& childID : jsonGameObjectID["childrenInstanceIDs"].GetArray())
 					{
 						bpInstance.childrenIDs.emplace_back(childID.GetInt());
 					}
@@ -591,7 +591,10 @@ void CGraphManager::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInstance
 		}
 		else
 		{
-			ImGui::InputText("##edit", (char*)aPin.myData, 127);
+			if (!myRunScripts)
+			{
+				ImGui::InputText("##edit", (char*)aPin.myData, 127);
+			}
 		}
 		ImGui::PopItemWidth();
 
@@ -615,7 +618,10 @@ void CGraphManager::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInstance
 		}
 		else
 		{
-			ImGui::InputInt("##edit", c);
+			if (!myRunScripts)
+			{
+				ImGui::InputInt("##edit", c);
+			}
 		}
 		ImGui::PopItemWidth();
 
@@ -639,7 +645,10 @@ void CGraphManager::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInstance
 		}
 		else
 		{
-			ImGui::Checkbox("##edit", c);
+			if (!myRunScripts)
+			{
+				ImGui::Checkbox("##edit", c);
+			}
 		}
 		ImGui::PopItemWidth();
 
@@ -663,7 +672,10 @@ void CGraphManager::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInstance
 		}
 		else
 		{
-			ImGui::InputFloat("##edit", c);
+			if (!myRunScripts)
+			{
+				ImGui::InputFloat("##edit", c);
+			}
 		}
 		ImGui::PopItemWidth();
 
@@ -687,11 +699,14 @@ void CGraphManager::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInstance
 		}
 		else
 		{
-			ImGui::InputFloat("##edit", &c->x);
-			ImGui::SameLine();
-			ImGui::InputFloat("##edit1", &c->y);
-			ImGui::SameLine();
-			ImGui::InputFloat("##edit2", &c->z);
+			if (!myRunScripts)
+			{
+				ImGui::InputFloat("##edit", &c->x);
+				ImGui::SameLine();
+				ImGui::InputFloat("##edit1", &c->y);
+				ImGui::SameLine();
+				ImGui::InputFloat("##edit2", &c->z);
+			}
 		}
 		ImGui::PopItemWidth();
 
@@ -723,21 +738,24 @@ void CGraphManager::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInstance
 				ImGui::SetNextWindowPos({ ImGui::GetMousePos().x + aNodeInstance->myEditorPosition[0], ImGui::GetMousePos().y + aNodeInstance->myEditorPosition[1] });
 			}
 
-			if (ImGui::BeginCombo("##combo", selected.c_str()))
+			if (!myRunScripts)
 			{
-				pressed = true;
-				int index = -1;
-				for (int n = 0; n < item.size(); n++)
+				if (ImGui::BeginCombo("##combo", selected.c_str()))
 				{
-					if (ImGui::Selectable(item[n].c_str(), index == n))
+					pressed = true;
+					int index = -1;
+					for (int n = 0; n < item.size(); n++)
 					{
-						char* input = item[n].data();
-						selected = input;
-						size_t size = strlen(input) + 1;
-						memcpy(aPin.myData, input, size);
+						if (ImGui::Selectable(item[n].c_str(), index == n))
+						{
+							char* input = item[n].data();
+							selected = input;
+							size_t size = strlen(input) + 1;
+							memcpy(aPin.myData, input, size);
+						}
 					}
+					ImGui::EndCombo();
 				}
-				ImGui::EndCombo();
 			}
 			pressed = false;
 		}
@@ -771,19 +789,21 @@ void CGraphManager::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInstance
 			{
 				ImGui::SetNextWindowPos({ ImGui::GetMousePos().x + aNodeInstance->myEditorPosition[0], ImGui::GetMousePos().y + aNodeInstance->myEditorPosition[1] });
 			}
-
-			if (ImGui::BeginCombo("##combo", item[selected].c_str())) // The second parameter is the label previewed before opening the combo.
+			if (!myRunScripts)
 			{
-				pressed = true;
-				int index = -1;
-				for (int n = 0; n < item.size(); n++)
+				if (ImGui::BeginCombo("##combo", item[selected].c_str())) // The second parameter is the label previewed before opening the combo.
 				{
-					if (ImGui::Selectable(item[n].c_str(), index == n))
+					pressed = true;
+					int index = -1;
+					for (int n = 0; n < item.size(); n++)
 					{
-						memcpy(aPin.myData, &n, sizeof(int));
+						if (ImGui::Selectable(item[n].c_str(), index == n))
+						{
+							memcpy(aPin.myData, &n, sizeof(int));
+						}
 					}
+					ImGui::EndCombo();
 				}
-				ImGui::EndCombo();
 			}
 			pressed = false;
 		}
@@ -794,40 +814,42 @@ void CGraphManager::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInstance
 	}
 	case SPin::EPinType::EUnknown:
 	{
-		ImGui::PushID(aPin.myUID.AsInt());
-		ImGui::PushItemWidth(100.0f);
+		if (!myRunScripts)
+		{
+			ImGui::PushID(aPin.myUID.AsInt());
+			ImGui::PushItemWidth(100.0f);
 
-		int selectedIndex = -1;
-		if (ImGui::RadioButton("Bool", false))
-		{
-			selectedIndex = (int)SPin::EPinType::EBool;
-		}
-		if (ImGui::RadioButton("Int", false))
-		{
-			selectedIndex = (int)SPin::EPinType::EInt;
-		}
-		if (ImGui::RadioButton("Float", false))
-		{
-			selectedIndex = (int)SPin::EPinType::EFloat;
-		}
-		if (ImGui::RadioButton("Vector3", false))
-		{
-			selectedIndex = (int)SPin::EPinType::EVector3;
-		}
-		if (ImGui::RadioButton("String", false))
-		{
-			selectedIndex = (int)SPin::EPinType::EString;
-		}
+			int selectedIndex = -1;
+			if (ImGui::RadioButton("Bool", false))
+			{
+				selectedIndex = (int)SPin::EPinType::EBool;
+			}
+			if (ImGui::RadioButton("Int", false))
+			{
+				selectedIndex = (int)SPin::EPinType::EInt;
+			}
+			if (ImGui::RadioButton("Float", false))
+			{
+				selectedIndex = (int)SPin::EPinType::EFloat;
+			}
+			if (ImGui::RadioButton("Vector3", false))
+			{
+				selectedIndex = (int)SPin::EPinType::EVector3;
+			}
+			if (ImGui::RadioButton("String", false))
+			{
+				selectedIndex = (int)SPin::EPinType::EString;
+			}
 
-		if (selectedIndex != -1)
-		{
-			CNodeInstance* instance = GetNodeFromPinID(aPin.myUID.AsInt());
-			instance->ChangePinTypes((SPin::EPinType)selectedIndex);
+			if (selectedIndex != -1)
+			{
+				CNodeInstance* instance = GetNodeFromPinID(aPin.myUID.AsInt());
+				instance->ChangePinTypes((SPin::EPinType)selectedIndex);
+			}
+
+			ImGui::PopItemWidth();
+			ImGui::PopID();
 		}
-
-
-		ImGui::PopItemWidth();
-		ImGui::PopID();
 		break;
 	}
 	default:
@@ -1138,124 +1160,126 @@ size_t uiLevenshteinDistance(const T& source, const T& target)
 
 void CGraphManager::ConstructEditorTreeAndConnectLinks()
 {
-		for (auto& nodeInstance : myCurrentGraph->myNodeInstances)
+	for (auto& nodeInstance : myCurrentGraph->myNodeInstances)
+	{
+		if (!nodeInstance->myHasSetEditorPosition)
 		{
-			if (!nodeInstance->myHasSetEditorPosition)
+			ed::SetNodePosition(nodeInstance->myUID.AsInt(), ImVec2(nodeInstance->myEditorPosition[0], nodeInstance->myEditorPosition[1]));
+			nodeInstance->myHasSetEditorPosition = true;
+		}
+
+		// Start drawing nodes.
+		ed::PushStyleVar(ed::StyleVar_NodePadding, ImVec4(8, 4, 8, 8));
+		ed::BeginNode(nodeInstance->myUID.AsInt());
+		ImGui::PushID(nodeInstance->myUID.AsInt());
+		ImGui::BeginVertical("node");
+
+		ImGui::BeginHorizontal("header");
+		ImGui::Spring(0);
+		ImGui::TextUnformatted(nodeInstance->GetNodeName().c_str());
+		ImGui::Spring(1);
+		ImGui::Dummy(ImVec2(0, 28));
+		ImGui::Spring(0);
+
+		ImGui::EndHorizontal();
+		ax::rect HeaderRect = ImGui_GetItemRect();
+		ImGui::Spring(0, ImGui::GetStyle().ItemSpacing.y * 2.0f);
+
+		bool previusWasOut = false;
+		bool isFirstInput = true;
+		bool isFirstIteration = true;
+		for (auto& pin : nodeInstance->GetPins())
+		{
+			if (isFirstIteration)
 			{
-				ed::SetNodePosition(nodeInstance->myUID.AsInt(), ImVec2(nodeInstance->myEditorPosition[0], nodeInstance->myEditorPosition[1]));
-				nodeInstance->myHasSetEditorPosition = true;
+				if (pin.myPinType == SPin::EPinTypeInOut::EPinTypeInOut_OUT)
+				{
+					isFirstInput = false;
+				}
+				isFirstIteration = false;
 			}
 
-			// Start drawing nodes.
-			ed::PushStyleVar(ed::StyleVar_NodePadding, ImVec4(8, 4, 8, 8));
-			ed::BeginNode(nodeInstance->myUID.AsInt());
-			ImGui::PushID(nodeInstance->myUID.AsInt());
-			ImGui::BeginVertical("node");
-
-			ImGui::BeginHorizontal("header");
-			ImGui::Spring(0);
-			ImGui::TextUnformatted(nodeInstance->GetNodeName().c_str());
-			ImGui::Spring(1);
-			ImGui::Dummy(ImVec2(0, 28));
-			ImGui::Spring(0);
-
-			ImGui::EndHorizontal();
-			ax::rect HeaderRect = ImGui_GetItemRect();
-			ImGui::Spring(0, ImGui::GetStyle().ItemSpacing.y * 2.0f);
-
-			bool previusWasOut = false;
-			bool isFirstInput = true;
-			bool isFirstIteration = true;
-			for (auto& pin : nodeInstance->GetPins())
+			if (pin.myPinType == SPin::EPinTypeInOut::EPinTypeInOut_IN)
 			{
-				if (isFirstIteration)
+				ed::BeginPin(pin.myUID.AsInt(), ed::PinKind::Input);
+
+				ImGui::Text(pin.myText.c_str());
+				ImGui::SameLine(0, 0);
+				if (pin.myVariableType == SPin::EPinType::EFlow)
 				{
-					if (pin.myPinType == SPin::EPinTypeInOut::EPinTypeInOut_OUT)
-					{
-						isFirstInput = false;
-					}
-					isFirstIteration = false;
-				}
-
-				if (pin.myPinType == SPin::EPinTypeInOut::EPinTypeInOut_IN)
-				{
-					ed::BeginPin(pin.myUID.AsInt(), ed::PinKind::Input);
-
-					ImGui::Text(pin.myText.c_str());
-					ImGui::SameLine(0, 0);
-					if (pin.myVariableType == SPin::EPinType::EFlow)
-					{
-						DrawPinIcon(pin, nodeInstance->IsPinConnected(pin), 255);
-					}
-					else
-					{
-						DrawTypeSpecificPin(pin, nodeInstance);
-
-					}
-
-
-					ed::EndPin();
-					previusWasOut = false;
-
+					DrawPinIcon(pin, nodeInstance->IsPinConnected(pin), 255);
 				}
 				else
 				{
-					if (isFirstInput)
-					{
-						ImGui::SameLine(100, 0);
-					}
+					DrawTypeSpecificPin(pin, nodeInstance);
 
-					ImGui::Indent(150.0f);
-
-
-					ed::BeginPin(pin.myUID.AsInt(), ed::PinKind::Output);
-
-					ImGui::Text(pin.myText.c_str());
-					ImGui::SameLine(0, 0);
-
-					DrawPinIcon(pin, nodeInstance->IsPinConnected(pin), 255);
-					ed::EndPin();
-					previusWasOut = true;
-					ImGui::Unindent(150.0f);
-					isFirstInput = false;
 				}
+
+
+				ed::EndPin();
+				previusWasOut = false;
+
 			}
-
-			ImGui::EndVertical();
-			auto ContentRect = ImGui_GetItemRect();
-			ed::EndNode();
-
-			if (ImGui::IsItemVisible())
+			else
 			{
-				auto drawList = ed::GetNodeBackgroundDrawList(nodeInstance->myUID.AsInt());
+				if (isFirstInput)
+				{
+					ImGui::SameLine(100, 0);
+				}
 
-				const auto halfBorderWidth = ed::GetStyle().NodeBorderWidth * 0.5f;
-				auto headerColor = nodeInstance->GetColor();
-				const auto uv = ImVec2(
-					HeaderRect.w / (float)(4.0f * ImGui_GetTextureWidth(HeaderTextureID())),
-					HeaderRect.h / (float)(4.0f * ImGui_GetTextureHeight(HeaderTextureID())));
-
-				drawList->AddImageRounded(HeaderTextureID(),
-					to_imvec(HeaderRect.top_left()) - ImVec2(8 - halfBorderWidth, 4 - halfBorderWidth),
-					to_imvec(HeaderRect.bottom_right()) + ImVec2(8 - halfBorderWidth, 0),
-					ImVec2(0.0f, 0.0f), uv,
-					headerColor, ed::GetStyle().NodeRounding, 1 | 2);
+				ImGui::Indent(150.0f);
 
 
-				auto headerSeparatorRect = ax::rect(HeaderRect.bottom_left(), ContentRect.top_right());
-				drawList->AddLine(
-					to_imvec(headerSeparatorRect.top_left()) + ImVec2(-(8 - halfBorderWidth), -0.5f),
-					to_imvec(headerSeparatorRect.top_right()) + ImVec2((8 - halfBorderWidth), -0.5f),
-					ImColor(255, 255, 255, 255), 1.0f);
+				ed::BeginPin(pin.myUID.AsInt(), ed::PinKind::Output);
+
+				ImGui::Text(pin.myText.c_str());
+				ImGui::SameLine(0, 0);
+
+				DrawPinIcon(pin, nodeInstance->IsPinConnected(pin), 255);
+				ed::EndPin();
+				previusWasOut = true;
+				ImGui::Unindent(150.0f);
+				isFirstInput = false;
 			}
-			ImGui::PopID();
-			ed::PopStyleVar();
 		}
 
+		ImGui::EndVertical();
+		auto ContentRect = ImGui_GetItemRect();
+		ed::EndNode();
 
-		for (auto& linkInfo : myCurrentGraph->myLinks)
-			ed::Link(linkInfo.myID, linkInfo.myInputID, linkInfo.myOutputID);
+		if (ImGui::IsItemVisible())
+		{
+			auto drawList = ed::GetNodeBackgroundDrawList(nodeInstance->myUID.AsInt());
 
+			const auto halfBorderWidth = ed::GetStyle().NodeBorderWidth * 0.5f;
+			auto headerColor = nodeInstance->GetColor();
+			const auto uv = ImVec2(
+				HeaderRect.w / (float)(4.0f * ImGui_GetTextureWidth(HeaderTextureID())),
+				HeaderRect.h / (float)(4.0f * ImGui_GetTextureHeight(HeaderTextureID())));
+
+			drawList->AddImageRounded(HeaderTextureID(),
+				to_imvec(HeaderRect.top_left()) - ImVec2(8 - halfBorderWidth, 4 - halfBorderWidth),
+				to_imvec(HeaderRect.bottom_right()) + ImVec2(8 - halfBorderWidth, 0),
+				ImVec2(0.0f, 0.0f), uv,
+				headerColor, ed::GetStyle().NodeRounding, 1 | 2);
+
+
+			auto headerSeparatorRect = ax::rect(HeaderRect.bottom_left(), ContentRect.top_right());
+			drawList->AddLine(
+				to_imvec(headerSeparatorRect.top_left()) + ImVec2(-(8 - halfBorderWidth), -0.5f),
+				to_imvec(headerSeparatorRect.top_right()) + ImVec2((8 - halfBorderWidth), -0.5f),
+				ImColor(255, 255, 255, 255), 1.0f);
+		}
+		ImGui::PopID();
+		ed::PopStyleVar();
+	}
+
+
+	for (auto& linkInfo : myCurrentGraph->myLinks)
+		ed::Link(linkInfo.myID, linkInfo.myInputID, linkInfo.myOutputID);
+
+	if (!myRunScripts)
+	{
 		// Handle creation action, returns true if editor want to create new object (node or link)
 		if (ed::BeginCreate())
 		{
@@ -1703,6 +1727,7 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 				}
 			}
 		}
+	}
 }
 
 void CGraphManager::PostFrame()
