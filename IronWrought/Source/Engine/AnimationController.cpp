@@ -341,22 +341,32 @@ void CAnimationController::UpdateAnimationTimes(std::array<SlimMatrix44, 64>& so
 	memmove(someBones.data(), &trans[0], (sizeof(float) * 16) * trans.size());//was memcpy
 }
 
-uint CAnimationController::AnimationCount()
+const int CAnimationController::AnimationCount() const
 {
 	return static_cast<uint>(myScenes.size());
 }
 
 
-const float CAnimationController::AnimationDurationInSeconds(uint anIndex)
+const float CAnimationController::AnimationDurationInTicks(int anIndex) const
+{
+	return static_cast<float>(myScenes[anIndex]->mAnimations[0]->mDuration);
+}
+
+const float CAnimationController::AnimationTPS(int anIndex) const
+{
+	return static_cast<float>(myScenes[anIndex]->mAnimations[0]->mTicksPerSecond);
+}
+
+const float CAnimationController::AnimationDurationInSeconds(int anIndex) const
 {
 	if (AnimationIndexWithinRange(anIndex))
 		return static_cast<float>(myScenes[anIndex]->mAnimations[0]->mDuration / myScenes[anIndex]->mAnimations[0]->mTicksPerSecond);
 	return 0.0f;
 }
 
-bool CAnimationController::AnimationIndexWithinRange(uint anIndex)
+bool CAnimationController::AnimationIndexWithinRange(int anIndex) const
 {
-	return anIndex == myAnimIndex0 || anIndex >= static_cast<uint>(myScenes.size());
+	return anIndex == static_cast<int>(myAnimIndex0) || anIndex >= static_cast<int>(myScenes.size());
 }
 
 void CAnimationController::UpdateAnimationTimeFrames()

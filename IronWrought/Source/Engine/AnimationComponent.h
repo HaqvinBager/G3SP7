@@ -19,7 +19,6 @@ public:
 	void OnEnable() override;
 	void OnDisable() override;
 
-
 public:
 	void SetBones(std::array<aiMatrix4x4, 64> someBones) { myBones = someBones; };
 	void SetBonesToIdentity();

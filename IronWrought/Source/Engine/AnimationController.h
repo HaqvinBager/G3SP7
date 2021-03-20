@@ -79,12 +79,15 @@ struct MeshEntry
 	unsigned int myBaseIndex;
 	unsigned int myMaterialIndex;
 };
-
+//
+//struct SBlendTree {
+//	std::vector<int> myMotionIndexes;
+//};
 
 class CAnimationController
 {
 
-	friend class IronWroughtImGui::CAnimator;
+	//friend class IronWroughtImGui::CAnimator;
 public:
 	CAnimationController();
 	~CAnimationController();
@@ -115,18 +118,22 @@ public:
 	void SetBoneTransforms(std::array<aiMatrix4x4, 64>& aTransformsVector);
 	void UpdateAnimationTimes(std::array<SlimMatrix44, 64>& someBones);
 	
-	uint AnimationCount();
+	const int AnimationCount() const;
+	const int Animation0Index() const { return static_cast<int>(myAnimIndex0); }
+	const int Animation1Index() const { return static_cast<int>(myAnimIndex1); }
+	
+	const float AnimationTPS(int anIndex) const;
+	const float AnimationDurationInTicks(int anIndex) const;
+	const float AnimationDurationInSeconds(int anIndex) const;
 
-	void Animation0Index(int anIndex) { myAnimIndex0 = anIndex; }
-	void Animation1Index(int anIndex) { myAnimIndex1 = anIndex; }
-	const uint Animation0Index() { return myAnimIndex0; }
-	const uint Animation1Index() { return myAnimIndex1; }
-
-	const float AnimationDurationInSeconds(uint anIndex);
-
+	void AnimationIndex0(int anIndex) { myAnimIndex0 = static_cast<uint>(anIndex); }
+	void AnimationIndex1(int anIndex) { myAnimIndex1 = static_cast<uint>(anIndex); }
+	void SetAnimationIndexTick0(const float aTick) { myTicks0 = aTick; }
+	void SetAnimationIndexTick1(const float aTick) { myTicks1 = aTick; }
+	void SetBlendingTime(const float aBlendValue) { myBlendingTime = aBlendValue; }
 
 private:
-	bool AnimationIndexWithinRange(uint anIndex);
+	bool AnimationIndexWithinRange(int anIndex) const;
 	void UpdateAnimationTimeFrames();
 
 private:

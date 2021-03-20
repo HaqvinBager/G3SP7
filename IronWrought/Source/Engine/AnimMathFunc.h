@@ -72,7 +72,6 @@ T CalculateInterpolation(const T* someKeys, const unsigned int aNumKeys, const f
 //uint FindRotation(float AnimationTime, const aiNodeAnim* pNodeAnim);
 //uint FindPosition(float AnimationTime, const aiNodeAnim* pNodeAnim);
 //uint FindScaling(float AnimationTime, const aiNodeAnim* pNodeAnim);
-
 //void set_float4(float f[4], float a, float b, float c, float d);
 //void color4_to_float4(const aiColor4D* c, float f[4]);
 //void Color4f(const aiColor4D* color);
