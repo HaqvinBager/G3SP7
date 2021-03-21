@@ -1,6 +1,7 @@
 #pragma once
 #include "ForwardRenderer.h"
 #include "DeferredRenderer.h"
+#include "LightRenderer.h"
 #include "FullscreenRenderer.h"
 #include "FullscreenTexture.h"
 #include "FullscreenTextureFactory.h"
@@ -41,6 +42,7 @@ private:
 	CRenderStateManager myRenderStateManager;
 	CForwardRenderer myForwardRenderer;
 	CDeferredRenderer myDeferredRenderer;
+	CLightRenderer myLightRenderer;
 	CFullscreenRenderer myFullscreenRenderer;
 	CParticleRenderer myParticleRenderer;
 	CVFXRenderer myVFXRenderer;

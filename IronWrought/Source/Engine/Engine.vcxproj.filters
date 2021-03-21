@@ -748,6 +748,9 @@
     <ClCompile Include="SpotLightComponent.cpp">
       <Filter>GameObject and Component\Component</Filter>
     </ClCompile>
+    <ClCompile Include="LightRenderer.cpp">
+      <Filter>Renderers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1368,6 +1371,9 @@
     </ClInclude>
     <ClInclude Include="SpotLightComponent.h">
       <Filter>GameObject and Component\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="LightRenderer.h">
+      <Filter>Renderers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -33,6 +33,7 @@ CRenderManager::~CRenderManager()
 bool CRenderManager::Init(CDirectXFramework* aFramework, CWindowHandler* aWindowHandler)
 {
 	ENGINE_ERROR_BOOL_MESSAGE(myForwardRenderer.Init(aFramework), "Failed to Init Forward Renderer.");
+	ENGINE_ERROR_BOOL_MESSAGE(myLightRenderer.Init(aFramework), "Failed to Init Light Renderer.");
 	ENGINE_ERROR_BOOL_MESSAGE(myDeferredRenderer.Init(aFramework), "Failed to Init Deferred Renderer.");
 	ENGINE_ERROR_BOOL_MESSAGE(myFullscreenRenderer.Init(aFramework), "Failed to Init Fullscreen Renderer.");
 	ENGINE_ERROR_BOOL_MESSAGE(myFullscreenTextureFactory.Init(aFramework), "Failed to Init Fullscreen Texture Factory.");
@@ -198,14 +199,14 @@ void CRenderManager::Render(CScene& aScene)
 	std::vector<CSpotLight*> onlySpotLights;
 	onlySpotLights = aScene.CullSpotLights(&maincamera->GameObject());
 
-	myDeferredRenderer.Render(maincamera, environmentlight);
+	myLightRenderer.Render(maincamera, environmentlight);
 
 	myRenderStateManager.SetRasterizerState(CRenderStateManager::RasterizerStates::RASTERIZERSTATE_FRONTFACECULLING);
-	myDeferredRenderer.Render(maincamera, onlyPointLights);
-	myDeferredRenderer.Render(maincamera, onlySpotLights);
+	myLightRenderer.Render(maincamera, onlyPointLights);
+	myLightRenderer.Render(maincamera, onlySpotLights);
 	myRenderStateManager.SetRasterizerState(CRenderStateManager::RasterizerStates::RASTERIZERSTATE_DEFAULT);
 
-	myDeferredRenderer.RenderVolumetricLight(maincamera, environmentlight);
+	myLightRenderer.RenderVolumetric(maincamera, environmentlight);
 
 	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_DISABLE);
 	myDeferredLightingTexture.SetAsActiveTarget(&myIntermediateDepth);
