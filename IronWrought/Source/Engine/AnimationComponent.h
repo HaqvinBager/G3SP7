@@ -1,7 +1,7 @@
 #pragma once
 #include "Behaviour.h"
-#include "StringID.hpp"
-#include "ModelMath.h"
+//#include "StringID.hpp"
+//#include "ModelMath.h"
 #include "assimp/matrix4x4.h"
 
 class CAnimationController;

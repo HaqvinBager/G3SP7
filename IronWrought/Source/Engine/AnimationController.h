@@ -13,6 +13,7 @@
 #include "IronMath.h"
 
 #include "Animator.h"
+#include "BlendTree.h"
 
 //#define ANIMATION_DURATION_IN_MILLISECONDS// AS of 2021 02 23 is not used
 
@@ -79,10 +80,7 @@ struct MeshEntry
 	unsigned int myBaseIndex;
 	unsigned int myMaterialIndex;
 };
-//
-//struct SBlendTree {
-//	std::vector<int> myMotionIndexes;
-//};
+
 
 class CAnimationController
 {
@@ -94,34 +92,52 @@ public:
 
 	//Create Init Function?
 
+	
+
 	bool ImportRig(const std::string& anFBXFilePath = "");// Todo: handle in factory
-	bool ImportAnimation(const std::string& fileName);
+	bool ImportAnimation(const std::string& anFBXFilePath);
 	bool InitFromScene(const aiScene* pScene);
 	void LoadBones(uint aMeshIndex, const aiMesh* aMesh);
 
 	// Update functions
 	void ReadNodeHeirarchy(
-		  const aiScene* aScene
-		, float anAnimationTime
-		, const aiNode* aNode
-		, const aiMatrix4x4& aParentTransform);
+		  const aiScene*		aScene
+		, float					anAnimationTime
+		, const aiNode*			aNode
+		, const aiMatrix4x4&	aParentTransform);
 
 	void ReadNodeHeirarchy(
-		  const aiScene* aFromScene
-		, const aiScene* aToScene
-		, float aTickFrom
-		, float aTickTo
-		, const aiNode* aNodeFrom
-		, const aiNode* aNodeTo
-		, const aiMatrix4x4& aParentTransform);
+		  const aiScene*		aFromScene
+		, const aiScene*		aToScene
+		, float					aTickFrom
+		, float					aTickTo
+		, const aiNode*			aNodeFrom
+		, const aiNode*			aNodeTo
+		, const aiMatrix4x4&	aParentTransform);
+
+	void ReadNodeHeirarchy(
+		  //float aTick
+		  const std::vector<float>&	someBlendingValues
+		, const std::vector<float>&	someTicks
+		, const aiScene**			someScenes
+		, const aiNode*				aNode
+	//	, const uint				aDepth
+		, const aiMatrix4x4&		aParentTransform);
+
+		//, const aiScene* aToScene
+		//, float aTickTo
+		//, const aiNode* aNodeTo
 
 	void SetBoneTransforms(std::array<aiMatrix4x4, 64>& aTransformsVector);
+	void SetBoneTransforms(const std::vector<float>& someBlendingTimes, const std::vector<float>& someTicks, std::array<aiMatrix4x4, 64>& aTransformsVector);
 	void UpdateAnimationTimes(std::array<SlimMatrix44, 64>& someBones);
 	
 	const int AnimationCount() const;
 	const int Animation0Index() const { return static_cast<int>(myAnimIndex0); }
 	const int Animation1Index() const { return static_cast<int>(myAnimIndex1); }
 	
+	const int AnimationIndex(const std::string& aMotionName);
+	const float AnimationTPS(const std::string& aMotionName);
 	const float AnimationTPS(int anIndex) const;
 	const float AnimationDurationInTicks(int anIndex) const;
 	const float AnimationDurationInSeconds(int anIndex) const;
@@ -132,11 +148,19 @@ public:
 	void SetAnimationIndexTick1(const float aTick) { myTicks1 = aTick; }
 	void SetBlendingTime(const float aBlendValue) { myBlendingTime = aBlendValue; }
 
-private:
-	bool AnimationIndexWithinRange(int anIndex) const;
-	void UpdateAnimationTimeFrames();
+	CBlendTree* AddBlendTree(const char* aName);
+	std::vector<CBlendTree>& GetBlendTrees() { return myBlendTrees; }
+
+	std::vector<std::string> GetMotionNames();
 
 private:
+	bool AnimationIndexWithinRange(int anIndex) const;
+	void SaveMotionToMap(const aiScene* aScene, const std::string& aFilePath);
+
+private:
+
+	std::vector<float> myTicks;
+
 	float myTicks0;
 	float myTicks1;
 
@@ -157,13 +181,15 @@ private:
 	aiVector3D myRotation;
 
 	// Holds the animations that we play. Each animation modifies bonetransforms depending on animation time.
+	std::map<std::string, const aiScene*> mySceneMap;
 	std::vector<const aiScene*>			myScenes;// was std::vector<const aiScene*>
 	aiMatrix4x4							myGlobalInverseTransform;
 	std::map<std::string, uint>			myBoneMapping;
 	std::vector<MeshEntry>				myEntries;
 	std::vector<BoneInfoAnim>			myBoneInfo;
 	std::vector<VertexBoneDataAnim>		myMass;
-	std::vector<std::string>			myAnimationClipNames;
+	std::vector<std::string>			myMotionPaths;
+	std::vector<CBlendTree>				myBlendTrees;
 
 
 public:
@@ -173,9 +199,9 @@ public:
 		return myAnimIndex0;
 	}
 
-	std::vector<std::string>& GetAnimationClipNames() 
+	std::vector<std::string>& GetMotionPaths() 
 	{
-		return myAnimationClipNames;
+		return myMotionPaths;
 	}
 
 	struct SerializedObject {

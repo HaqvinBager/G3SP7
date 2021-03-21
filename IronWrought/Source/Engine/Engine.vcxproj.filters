@@ -527,9 +527,6 @@
     <ClCompile Include="..\Includes\ImGui\Core\imgui_impl_win32.cpp">
       <Filter>Imgui\Imgui Implementations</Filter>
     </ClCompile>
-    <ClCompile Include="..\Includes\ImGui\Core\imgui.cpp">
-      <Filter>Imgui\Core</Filter>
-    </ClCompile>
     <ClCompile Include="..\Includes\ImGui\Core\imgui_demo.cpp">
       <Filter>Imgui\Core</Filter>
     </ClCompile>
@@ -756,6 +753,12 @@
     </ClCompile>
     <ClCompile Include="Animator.cpp">
       <Filter>Imgui\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="BlendTree.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Includes\ImGui\Core\imgui.cpp">
+      <Filter>Imgui\Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1145,9 +1148,6 @@
     <ClInclude Include="..\Includes\ImGui\Core\imgui_impl_win32.h">
       <Filter>Imgui\Imgui Implementations</Filter>
     </ClInclude>
-    <ClInclude Include="..\Includes\ImGui\Core\imgui.h">
-      <Filter>Imgui\Core</Filter>
-    </ClInclude>
     <ClInclude Include="..\Includes\ImGui\Core\imgui_internal.h">
       <Filter>Imgui\Core</Filter>
     </ClInclude>
@@ -1404,6 +1404,12 @@
     </ClInclude>
     <ClInclude Include="ImGuiHelper.h">
       <Filter>Imgui\Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="BlendTree.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Includes\ImGui\Core\imgui.h">
+      <Filter>Imgui\Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

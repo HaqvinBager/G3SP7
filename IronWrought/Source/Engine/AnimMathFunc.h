@@ -56,7 +56,7 @@ T Interpolate(const T* keys, const uint size, float tick)
 		keys[aStartKey],
 		keys[aEndKey],
 		timeBetweenKeys);
-
+	//interpolatedKey.mValue.Normalize();
 	return interpolatedKey;
 }
 

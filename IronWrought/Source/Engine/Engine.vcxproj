@@ -192,6 +192,7 @@
     <ClInclude Include="AudioChannel.h" />
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Behaviour.h" />
+    <ClInclude Include="BlendTree.h" />
     <ClInclude Include="CameraSetting.h" />
     <ClInclude Include="Animator.h" />
     <ClInclude Include="CCurveWindow.h" />
@@ -404,6 +405,7 @@
     <ClCompile Include="AudioChannel.cpp" />
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="Animator.cpp" />
+    <ClCompile Include="BlendTree.cpp" />
     <ClCompile Include="CCurveWindow.cpp" />
     <ClCompile Include="NodeTypeAudioPlayResearcherEvent.cpp" />
     <ClCompile Include="NodeTypeAudioPlayResearcherReactionExplosives.cpp" />
