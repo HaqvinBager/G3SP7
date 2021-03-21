@@ -131,7 +131,16 @@ void CInGameState::TEMP_Sponza(CScene* aScene)
 	spotLight->myTransform->Position({ 0.0f, 1.0f, -2.0f });
 	Vector3 color = { 1.0f, 1.0f, 1.0f };
 	Vector3 direction = { 0.0f, -1.0f, 0.0f };
-	spotLight->AddComponent<CSpotLightComponent>(*spotLight, color, 6.0f, direction, 2.0f, 0.01f);
+	spotLight->AddComponent<CSpotLightComponent>(*spotLight, color, 6.0f, direction, 2.0f, 1.0f);
 	mySpotlight = spotLight;
 	aScene->AddInstance(spotLight->GetComponent<CSpotLightComponent>()->GetSpotLight());
+
+	CGameObject* pointLight = new CGameObject(13314);
+	pointLight->myTransform->Position({ 0.0f, 1.0f, 2.0f });
+	pointLight->AddComponent<CPointLightComponent>(*pointLight, 2.0f, color, 10.0f);
+	auto pl = pointLight->GetComponent<CPointLightComponent>()->GetPointLight();
+	pl->SetIntensity(10.0f);
+	pl->SetPosition({ 0.0f, 1.0f, 2.0f });
+	pl->SetColor({ 1.0f, 1.0f, 1.0f });
+	aScene->AddInstance(pointLight->GetComponent<CPointLightComponent>()->GetPointLight());
 }

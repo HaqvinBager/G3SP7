@@ -10,12 +10,13 @@ CPointLight::~CPointLight() {
 bool CPointLight::Init() {
 	myPosition = { 0.0f, 0.0f, 0.0f };
 	myColor = { 0.0f, 0.0f, 0.0f };
-
+	myToWorld.Translation(myPosition);
 	return true;
 }
 
 void CPointLight::SetPosition(SM::Vector3 aPosition) {
 	myPosition = aPosition;
+	myToWorld.Translation(myPosition);
 }
 
 void CPointLight::SetColor(SM::Vector3 aColor) {
@@ -30,6 +31,11 @@ void CPointLight::SetRange(float aRange) {
 
 void CPointLight::SetIntensity(float aIntensity) {
 	myIntensity = aIntensity;
+}
+
+const Matrix& CPointLight::GetWorldMatrix() const
+{
+	return myToWorld;
 }
 
 const SM::Vector3& CPointLight::GetPosition() const {

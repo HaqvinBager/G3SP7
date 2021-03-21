@@ -71,15 +71,21 @@ private:
 
 	struct SPointLightBufferData 
 	{
+		DirectX::SimpleMath::Matrix myToWorldSpace;
 		DirectX::SimpleMath::Vector4 myColorAndIntensity;
 		DirectX::SimpleMath::Vector4 myPositionAndRange;
 	} myPointLightBufferData;
 
 	struct SSpotLightBufferData
 	{
+		DirectX::SimpleMath::Matrix myToWorldSpace;
+		DirectX::SimpleMath::Matrix myToViewSpace;
+		DirectX::SimpleMath::Matrix myToProjectionSpace;
 		DirectX::SimpleMath::Vector4 myColorAndIntensity;
 		DirectX::SimpleMath::Vector4 myPositionAndRange;
 		DirectX::SimpleMath::Vector4 myDirectionAndAngleExponent;
+		DirectX::SimpleMath::Vector4 myDirectionNormal1;
+		DirectX::SimpleMath::Vector4 myDirectionNormal2;
 	} mySpotLightBufferData;
 
 	struct SBoneBufferData {

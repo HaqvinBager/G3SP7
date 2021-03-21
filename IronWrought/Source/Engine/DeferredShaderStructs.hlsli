@@ -84,6 +84,7 @@ cbuffer LightBuffer : register(b2)
 
 cbuffer PointLightBuffer : register(b3)
 {
+    float4x4 myToWorld;
     float4 myColorAndIntensity;
     float4 myPositionAndRange;
 }

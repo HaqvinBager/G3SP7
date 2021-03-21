@@ -24,21 +24,26 @@ cbuffer SpotLightFrameBuffer : register(b0)
 {
     float4x4 spotLightToCamera;
     float4x4 spotLightToWorldFromCamera;
-    float4x4 spotLightToProjection;
+    float4x4 spotLightToProjectionFromCamera;
     float4x4 spotLightToCameraFromProjection;
     float4 spotLightCameraPosition;
 }
 
 cbuffer SpotLightObjectBuffer : register(b1)
 {
-    float4x4 spotLightToWorld;
+    float4x4 spotLightTransform;
     unsigned int spotLightMyNumberOfDetailNormals;
     unsigned int spotLightMyNumberOfTextureSets;
 }
 
 cbuffer SpotLightValueBuffer : register(b3)
 {
+    float4x4 spotLightToWorld;
+    float4x4 spotLightToView;
+    float4x4 spotLightToProjection;
     float4 spotLightColorAndIntensity;
     float4 spotLightPositionAndRange;
     float4 spotLightDirectionAndAngleExponent;
+    float4 spotLightDirectionNormal1;
+    float4 spotLightDirectionNormal2;
 }

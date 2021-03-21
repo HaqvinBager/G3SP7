@@ -199,8 +199,12 @@ void CRenderManager::Render(CScene& aScene)
 	onlySpotLights = aScene.CullSpotLights(&maincamera->GameObject());
 
 	myDeferredRenderer.Render(maincamera, environmentlight);
+
+	//myRenderStateManager.SetRasterizerState(CRenderStateManager::RasterizerStates::RASTERIZERSTATE_NOFACECULLING);
+	myRenderStateManager.SetRasterizerState(CRenderStateManager::RasterizerStates::RASTERIZERSTATE_FRONTFACECULLING);
 	myDeferredRenderer.Render(maincamera, onlyPointLights);
 	myDeferredRenderer.Render(maincamera, onlySpotLights);
+	myRenderStateManager.SetRasterizerState(CRenderStateManager::RasterizerStates::RASTERIZERSTATE_DEFAULT);
 
 	myDeferredRenderer.RenderVolumetricLight(maincamera, environmentlight);
 

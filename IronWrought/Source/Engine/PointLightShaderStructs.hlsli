@@ -32,13 +32,14 @@ cbuffer PointLightFrameBuffer : register(b0)
 
 cbuffer PointLightObjectBuffer : register(b1)
 {
-    float4x4 pointLightToWorld;
+    float4x4 pointLightTransform;
     unsigned int pointLightMyNumberOfDetailNormals;
     unsigned int pointLightMyNumberOfTextureSets;
 }
 
 cbuffer PointLightValueBuffer : register(b3)
 {
+    float4x4 pointLightToWorld;
     float4 pointLightColorAndIntensity;
     float4 pointLightPositionAndRange;
 }

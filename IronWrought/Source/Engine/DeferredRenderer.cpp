@@ -420,6 +420,7 @@ void CDeferredRenderer::Render(CCameraComponent* aCamera, std::vector<CPointLigh
 		//Update pointlightbufferdata and fill pointlightbuffer
 		const SM::Vector3& position = currentInstance->GetPosition();
 		const SM::Vector3& color = currentInstance->GetColor();
+		myPointLightBufferData.myToWorldSpace = currentInstance->GetWorldMatrix();
 		myPointLightBufferData.myPositionAndRange = { position.x, position.y, position.z, currentInstance->GetRange() };
 		myPointLightBufferData.myColorAndIntensity = { color.x, color.y, color.z, currentInstance->GetIntensity() };
 
@@ -478,9 +479,14 @@ void CDeferredRenderer::Render(CCameraComponent* aCamera, std::vector<CSpotLight
 		const SM::Vector3& position = currentInstance->GetPosition();
 		const SM::Vector3& color = currentInstance->GetColor();
 		const Vector3& direction = currentInstance->GetDirection();
+		mySpotLightBufferData.myToWorldSpace = currentInstance->GetWorldMatrix();
+		mySpotLightBufferData.myToViewSpace = currentInstance->GetViewMatrix();
+		mySpotLightBufferData.myToProjectionSpace = currentInstance->GetProjectionMatrix();
 		mySpotLightBufferData.myPositionAndRange = { position.x, position.y, position.z, currentInstance->GetRange() };
 		mySpotLightBufferData.myColorAndIntensity = { color.x, color.y, color.z, currentInstance->GetIntensity() };
 		mySpotLightBufferData.myDirectionAndAngleExponent = { direction.x, direction.y, direction.z, currentInstance->GetAngleExponent() };
+		mySpotLightBufferData.myDirectionNormal1 = currentInstance->GetDirectionNormal1();
+		mySpotLightBufferData.myDirectionNormal2 = currentInstance->GetDirectionNormal2();
 
 		BindBuffer(mySpotLightBuffer, mySpotLightBufferData, "Spot Light Buffer");
 		myContext->PSSetConstantBuffers(3, 1, &mySpotLightBuffer);
