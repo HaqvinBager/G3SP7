@@ -29,6 +29,7 @@ CDeferredRenderer::CDeferredRenderer()
 	, myPointLightBuffer(nullptr)
 	, mySpotLightBuffer(nullptr)
 	, myPointLightVertexBuffer(nullptr)
+	, myPointLightIndexBuffer(nullptr)
 	, mySpotLightVertexBuffer(nullptr)
 	, myFullscreenShader(nullptr)
 	, myModelVertexShader(nullptr)
@@ -51,9 +52,15 @@ CDeferredRenderer::CDeferredRenderer()
 	, myRenderPassGBuffer(nullptr)
 	, myCurrentRenderPassShader(nullptr)
 	, myVertexPaintInputLayout(nullptr)
+	, myPointLightInputLayout(nullptr)
 	, myRenderPassIndex(9)
 	, myBoneBuffer(nullptr)
 	, myBoneBufferData()
+	, myPointLightNumberOfVertices(0)
+	, myPointLightNumberOfIndices(0)
+	, myPointLightStride(0)
+	, myPointLightOffset(0)
+
 {}
 
 CDeferredRenderer::~CDeferredRenderer()
@@ -91,11 +98,87 @@ bool CDeferredRenderer::Init(CDirectXFramework* aFramework)
 	bufferDescription.ByteWidth = static_cast<UINT>(sizeof(SBoneBufferData) + (16 - (sizeof(SBoneBufferData) % 16)));
 	ENGINE_HR_BOOL_MESSAGE(device->CreateBuffer(&bufferDescription, nullptr, &myBoneBuffer), "Bone Buffer could not be created.");
 
-	struct PointLightVertex
+	//Vertex Setup
+	struct SpotLightVertex
 	{
 		float x, y, z, w;
 	} vertex[1] = { 0.0f, 0.0f, 0.0f, 1.0f };
 
+	struct PointLightVertex
+	{
+		float x, y, z, w;
+	} vertices[24] = {
+		// X      Y      Z      W 
+		{ -1.0f, -1.0f, -1.0f,  1.0f },
+		{  1.0f, -1.0f, -1.0f,  1.0f },
+		{ -1.0f,  1.0f, -1.0f,  1.0f },
+		{  1.0f,  1.0f, -1.0f,  1.0f },
+		{ -1.0f, -1.0f,  1.0f,  1.0f },
+		{  1.0f, -1.0f,  1.0f,  1.0f },
+		{ -1.0f,  1.0f,  1.0f,  1.0f },
+		{  1.0f,  1.0f,  1.0f,  1.0f },
+		// X      Y      Z      W 
+		{ -1.0f, -1.0f, -1.0f,  1.0f },
+		{ -1.0f,  1.0f, -1.0f,  1.0f },
+		{ -1.0f, -1.0f,  1.0f,  1.0f },
+		{ -1.0f,  1.0f,  1.0f,  1.0f },
+		{  1.0f, -1.0f, -1.0f,  1.0f },
+		{  1.0f,  1.0f, -1.0f,  1.0f },
+		{  1.0f, -1.0f,  1.0f,  1.0f },
+		{  1.0f,  1.0f,  1.0f,  1.0f },
+		// X      Y      Z      W 
+		{ -1.0f, -1.0f, -1.0f,  1.0f },
+		{  1.0f, -1.0f, -1.0f,  1.0f },
+		{ -1.0f, -1.0f,  1.0f,  1.0f },
+		{  1.0f, -1.0f,  1.0f,  1.0f },
+		{ -1.0f,  1.0f, -1.0f,  1.0f },
+		{  1.0f,  1.0f, -1.0f,  1.0f },
+		{ -1.0f,  1.0f,  1.0f,  1.0f },
+		{  1.0f,  1.0f,  1.0f,  1.0f }
+	};
+	//Index Setup
+	unsigned int indices[36] = {
+		0,2,1,
+		2,3,1,
+		4,5,7,
+		4,7,6,
+		8,10,9,
+		10,11,9,
+		12,13,15,
+		12,15,14,
+		16,17,18,
+		18,17,19,
+		20,23,21,
+		20,22,23
+	};
+
+	// Point Light
+	D3D11_BUFFER_DESC pointLightVertexBufferDesc = { 0 };
+	pointLightVertexBufferDesc.ByteWidth = sizeof(vertices);
+	pointLightVertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	pointLightVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
+	D3D11_SUBRESOURCE_DATA pointLightSubVertexResourceData = { 0 };
+	pointLightSubVertexResourceData.pSysMem = vertices;
+
+	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateBuffer(&pointLightVertexBufferDesc, &pointLightSubVertexResourceData, &myPointLightVertexBuffer), "Point Light Vertex Buffer could not be created.");
+
+	D3D11_BUFFER_DESC pointLightIndexBufferDesc = { 0 };
+	pointLightIndexBufferDesc.ByteWidth = sizeof(indices);
+	pointLightIndexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	pointLightIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+
+	D3D11_SUBRESOURCE_DATA pointLightIndexSubresourceData = { 0 };
+	pointLightIndexSubresourceData.pSysMem = indices;
+
+	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateBuffer(&pointLightIndexBufferDesc, &pointLightIndexSubresourceData, &myPointLightIndexBuffer), "Point Light Index Buffer could not be created.");
+
+	myPointLightNumberOfVertices = static_cast<UINT>(sizeof(vertices) / sizeof(PointLightVertex));
+	myPointLightNumberOfIndices = static_cast<UINT>(sizeof(indices) / sizeof(UINT));
+	myPointLightStride = sizeof(PointLightVertex);
+	myPointLightOffset = 0;
+
+	// Spot Light
 	D3D11_BUFFER_DESC vertexBufferDesc = { 0 };
 	vertexBufferDesc.ByteWidth = sizeof(Vector4);
 	vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
@@ -104,7 +187,6 @@ bool CDeferredRenderer::Init(CDirectXFramework* aFramework)
 	D3D11_SUBRESOURCE_DATA subVertexResourceData = { 0 };
 	subVertexResourceData.pSysMem = vertex;
 
-	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateBuffer(&vertexBufferDesc, &subVertexResourceData, &myPointLightVertexBuffer), "Point Light Vertex Buffer could not be created.");
 	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateBuffer(&vertexBufferDesc, &subVertexResourceData, &mySpotLightVertexBuffer), "Spot Light Vertex Buffer could not be created.");
 
 	std::string vsData;
@@ -406,9 +488,15 @@ void CDeferredRenderer::Render(CCameraComponent* aCamera, std::vector<CPointLigh
 	myContext->GSSetConstantBuffers(0, 1, &myFrameBuffer);
 	myContext->PSSetConstantBuffers(0, 1, &myFrameBuffer);
 
+	//myContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+	myContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	myContext->IASetInputLayout(myPointLightInputLayout);
+	myContext->IASetVertexBuffers(0, 1, &myPointLightVertexBuffer, &myPointLightStride, &myPointLightOffset);
+	myContext->IASetIndexBuffer(myPointLightIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+
 	Matrix transform = {};
-	UINT stride = sizeof(Vector4);
-	UINT offset = 0;
+	//UINT stride = sizeof(Vector4);
+	//UINT offset = 0;
 
 	for (CPointLight* currentInstance : aPointLightList) {
 		transform.Translation(currentInstance->GetPosition());
@@ -425,21 +513,18 @@ void CDeferredRenderer::Render(CCameraComponent* aCamera, std::vector<CPointLigh
 		myPointLightBufferData.myColorAndIntensity = { color.x, color.y, color.z, currentInstance->GetIntensity() };
 
 		BindBuffer(myPointLightBuffer, myPointLightBufferData, "Point Light Buffer");
+		myContext->VSSetConstantBuffers(3, 1, &myPointLightBuffer);
 		myContext->PSSetConstantBuffers(3, 1, &myPointLightBuffer);
-		myContext->GSSetConstantBuffers(3, 1, &myPointLightBuffer);
-
-		myContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
-		myContext->IASetInputLayout(myPointLightInputLayout);
-		myContext->IASetVertexBuffers(0, 1, &myPointLightVertexBuffer, &stride, &offset);
-		myContext->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0);
+		//myContext->GSSetConstantBuffers(3, 1, &myPointLightBuffer);
 
 		myContext->VSSetShader(myPointLightVertexShader, nullptr, 0);
-		myContext->GSSetShader(myPointLightGeometryShader, nullptr, 0);
+		//myContext->GSSetShader(myPointLightGeometryShader, nullptr, 0);
 
 		myContext->PSSetShader(myPointLightShader, nullptr, 0);
 		myContext->PSSetSamplers(0, 1, &mySamplerState);
 
-		myContext->Draw(1, 0);
+		//myContext->Draw(1, 0);
+		myContext->DrawIndexed(myPointLightNumberOfIndices, 0, 0);
 		CRenderManager::myNumberOfDrawCallsThisFrame++;
 	}
 

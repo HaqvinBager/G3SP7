@@ -107,6 +107,7 @@ private:
 	ID3D11Buffer* myBoneBuffer;
 
 	ID3D11Buffer* myPointLightVertexBuffer;
+	ID3D11Buffer* myPointLightIndexBuffer;
 	ID3D11Buffer* mySpotLightVertexBuffer;
 
 	ID3D11InputLayout* myVertexPaintInputLayout;
@@ -140,5 +141,10 @@ private:
 	ID3D11PixelShader* myCurrentGBufferPixelShader;
 	ID3D11PixelShader* myRenderPassGBuffer;
 	unsigned short myRenderPassIndex;
+
+	UINT myPointLightNumberOfVertices;
+	UINT myPointLightNumberOfIndices;
+	UINT myPointLightStride;
+	UINT myPointLightOffset;
 };
 

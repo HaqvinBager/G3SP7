@@ -1,13 +1,17 @@
 struct PointLightVertexInput
 {
     float4 myPosition : POSITION;
-    //float myRange: RANGE;
+};
+
+struct PointLightVertexToPixel
+{
+    float4 myPosition : SV_POSITION;
+    float3 myUV : UV;
 };
 
 struct PointLightVertexToGeometry
 {
     float4 myPosition : POSITION;
-    //float myRange : RANGE;
 };
 
 struct PointLightGeometryToPixel

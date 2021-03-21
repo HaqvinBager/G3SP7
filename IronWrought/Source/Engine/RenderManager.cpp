@@ -200,7 +200,6 @@ void CRenderManager::Render(CScene& aScene)
 
 	myDeferredRenderer.Render(maincamera, environmentlight);
 
-	//myRenderStateManager.SetRasterizerState(CRenderStateManager::RasterizerStates::RASTERIZERSTATE_NOFACECULLING);
 	myRenderStateManager.SetRasterizerState(CRenderStateManager::RasterizerStates::RASTERIZERSTATE_FRONTFACECULLING);
 	myDeferredRenderer.Render(maincamera, onlyPointLights);
 	myDeferredRenderer.Render(maincamera, onlySpotLights);
