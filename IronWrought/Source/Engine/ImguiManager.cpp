@@ -58,6 +58,7 @@ CImguiManager::CImguiManager() : myGraphManagerIsFullscreen(false), myIsEnabled(
 
 	myWindows.emplace_back(std::make_unique<ImGuiWindow::CLoadScene>("Load Scene", true));
 	myWindows.emplace_back(std::make_unique <ImGuiWindow::CCameraSetting>("Camera Settings"));
+	myWindows.emplace_back(std::make_unique <ImGuiWindow::CAssetCustomizationWindow>("Color Tints"));
 	//myWindows.emplace_back(std::make_unique <ImGuiWindow::CCurveWindow>("Curve Editor"));
 
 	CMainSingleton::PostMaster().Subscribe(EMessageType::CursorHideAndLock, this);
@@ -86,17 +87,17 @@ void CImguiManager::Update()
 				myScriptsStatus = "Scripts Off";
 		}
 
-		//for (const auto& window : myWindows)
-		//	window->OnMainMenuGUI();
+		for (const auto& window : myWindows)
+			window->OnMainMenuGUI();
 							
 		ImGui::EndMainMenuBar();
 	}
 
-	//for (const auto& window : myWindows) {
-	//	if (window->Enable() && !window->MainMenuBarChild()) {
-	//		window->OnInspectorGUI();
-	//	}
-	//}
+	for (const auto& window : myWindows) {
+		if (window->Enable() && !window->MainMenuBarChild()) {
+			window->OnInspectorGUI();
+		}
+	}
 	
 	DebugWindow();
 	myGraphManager->Update();

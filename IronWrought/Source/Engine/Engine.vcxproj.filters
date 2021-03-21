@@ -715,7 +715,7 @@
     <ClCompile Include="ModelHelperFunctions.cpp">
       <Filter>Model</Filter>
     </ClCompile>
-    <ClCompile Include="ColorTintsWindow.cpp">
+    <ClCompile Include="AssetCustomizationWindow.cpp">
       <Filter>Imgui\Windows</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1315,7 +1315,7 @@
     <ClInclude Include="ModelHelperFunctions.h">
       <Filter>Model</Filter>
     </ClInclude>
-    <ClInclude Include="ColorTintsWindow.h">
+    <ClInclude Include="AssetCustomizationWindow.h">
       <Filter>Imgui\Windows</Filter>
     </ClInclude>
   </ItemGroup>
