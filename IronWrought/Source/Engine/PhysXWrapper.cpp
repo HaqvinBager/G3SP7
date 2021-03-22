@@ -244,7 +244,7 @@ PxControllerManager* CPhysXWrapper::GetControllerManager()
 void CPhysXWrapper::Cooking(std::vector<CGameObject*> gameObjectsToCook, CScene* aScene)
 {
 	for (int i = 0; i < gameObjectsToCook.size(); ++i) {
-		if (gameObjectsToCook[i]->GetComponent<CModelComponent>() && !gameObjectsToCook[i]->GetComponent<CPlayerControllerComponent>()) {
+		/*if (gameObjectsToCook[i]->GetComponent<CModelComponent>() && !gameObjectsToCook[i]->GetComponent<CPlayerControllerComponent>()) {
 			std::vector<PxVec3> verts(gameObjectsToCook[i]->GetComponent<CModelComponent>()->GetMyModel()->GetModelData().myMeshFilter.myVertecies.size());
 			for (auto y = 0; y < gameObjectsToCook[i]->GetComponent<CModelComponent>()->GetMyModel()->GetModelData().myMeshFilter.myVertecies.size(); ++y) {
 				Vector3 vec = gameObjectsToCook[i]->GetComponent<CModelComponent>()->GetMyModel()->GetModelData().myMeshFilter.myVertecies[y];
@@ -287,7 +287,10 @@ void CPhysXWrapper::Cooking(std::vector<CGameObject*> gameObjectsToCook, CScene*
 			aScene->PXScene()->addActor(*actor);
 
 		}
-		else if (gameObjectsToCook[i]->GetComponent<CInstancedModelComponent>() && !gameObjectsToCook[i]->GetComponent<CPlayerControllerComponent>()) {
+		else*/
+		if (gameObjectsToCook[i]->GetComponent<CInstancedModelComponent>() && 
+			!gameObjectsToCook[i]->GetComponent<CPlayerControllerComponent>()) {
+			
 			for (auto z = 0; z < gameObjectsToCook[i]->GetComponent<CInstancedModelComponent>()->GetInstancedTransforms().size(); ++z) {
 				std::vector<PxVec3> verts(gameObjectsToCook[i]->GetComponent<CInstancedModelComponent>()->GetModel()->GetModelInstanceData().myMeshFilter.myVertecies.size());
 				for (auto y = 0; y < gameObjectsToCook[i]->GetComponent<CInstancedModelComponent>()->GetModel()->GetModelInstanceData().myMeshFilter.myVertecies.size(); ++y) {
