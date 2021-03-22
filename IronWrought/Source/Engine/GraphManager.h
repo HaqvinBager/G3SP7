@@ -21,7 +21,7 @@ public:
 	void Load();
 
 	void ReTriggerUpdatingTrees();
-	
+
 	void PreFrame(float aDeltaTime);
 	void ConstructEditorTreeAndConnectLinks();
 	void PostFrame();
@@ -39,7 +39,7 @@ public:
 
 	void ToggleShouldRenderGraph();
 	bool ToggleShouldRunScripts();
-	bool ShouldRenderGraph() { return myShouldRenderGraph; }
+	bool ShouldRenderGraph() { return myRenderGraph; }
 
 	std::vector<CGameObject*> GetCurrentGameObject();
 	std::vector<CGameObject*> GetCurrentGameObjectChildren();
@@ -47,7 +47,7 @@ public:
 private:
 	ImTextureID HeaderTextureID();
 	void WillBeCyclic(CNodeInstance* aFirst, CNodeInstance* aSecond, bool& aIsCyclic, CNodeInstance* aBase);
-	
+
 	CNodeInstance* GetNodeFromPinID(unsigned int anID);
 	CNodeInstance* GetNodeFromNodeID(unsigned int anID);
 	void DrawTypeSpecificPin(struct SPin& aPin, CNodeInstance* aNodeInstance);
@@ -55,11 +55,7 @@ private:
 	void CreateNewDataNode();
 	void LoadDataNodesFromFile();
 
-	std::unordered_map<std::string, std::vector<CNodeInstance*>> myGraphs;
-	std::unordered_map<std::string, std::vector<BluePrintInstance>> myGameObjectIDsMap;
-	std::vector<std::string> myKeys;
-	std::vector<int> myFlowsToBeShown;
-
+private:
 	struct SEditorLinkInfo
 	{
 		ed::LinkId myID;
@@ -90,24 +86,46 @@ private:
 		//void Undo();
 	};
 
+private:
+	struct SGraph
+	{
+		std::vector<CNodeInstance*> myNodeInstances;
+		std::vector<BluePrintInstance> myBluePrintInstances;
+		ImVector<SEditorLinkInfo> myLinks;
+		unsigned int myNextLinkIdCounter = 100;
+		std::string myFolderPath;
+	};
+
+	std::vector<SGraph> myGraphs;
+	SGraph* myCurrentGraph;
+	BluePrintInstance myCurrentBluePrintInstance;
+
+	//std::unordered_map<std::string, std::vector<CNodeInstance*>> myGraphs;
+	//std::unordered_map<std::string, std::vector<BluePrintInstance>> myGameObjectIDsMap;
+	//std::vector<std::string> myKeys;
+	//std::string myCurrentPath;
+	//std::string myCurrentKey;
+
+	std::vector<int> myFlowsToBeShown;
+	std::vector<std::string> myInstantiableVariables;
+
 	std::stack<EditorCommand> myUndoCommands;
 	std::stack<EditorCommand> myRedoCommands;
-	ImVector<SEditorLinkInfo> myLinks;
-	std::vector<std::string> myInstantiableVariables;
+
+
 	//std::unordered_map<std::string, CNodeData*> myVariableNodeDataMap;
-	bool myIsEnteringNodeName = false;
-	bool myHasSetPosition = false;
 	std::string myNewVariableType;
-	int myNextLinkIdCounter = 100;
-	bool myLikeToSave = false;
-	bool myLikeToShowFlow = false;
+
 	char* myMenuSeachField = nullptr;
-	bool mySetSearchFokus = true;
-	bool myShouldPushCommand = true;
+
+	bool myEnteringNodeName = false;
+	bool mySetPosition = false;
+	bool mySave = false;
+	bool myShowFlow = false;
+	bool mySearchFokus = true;
+	bool myPushCommand = true;
+	bool myRenderGraph;
+	bool myRunScripts;
+
 	ImTextureID myHeaderTextureID;
-	bool myShouldRenderGraph;
-	bool myScriptShouldRun;
-	std::string myCurrentPath;
-	std::string myCurrentKey;
-	BluePrintInstance myCurrentBluePrintInstance;
 };
