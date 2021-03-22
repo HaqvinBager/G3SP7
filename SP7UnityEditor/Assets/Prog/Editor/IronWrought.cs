@@ -26,7 +26,7 @@ public static class IronWrought
                 EditorApplication.isPlaying = false;
 
             SLauncherData data = setting.GetLauncherData(setting.launchMode);
-            Exporter.ExportScene();
+            Exporter.Export();
 
             ProcessStartInfo info = new ProcessStartInfo(data.myExePath)
             {

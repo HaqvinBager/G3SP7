@@ -39,14 +39,14 @@ public class Exporter
     [MenuItem("GameObject/BluePrint/Add Patrol Point", false, 0)]
     static void Test()
     {
-        GameObject parent = Selection.gameObjects[0];
-
-        GameObject obj = new GameObject("Patrol");
-        obj.transform.parent = parent.transform;
+        PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<Object>("Assets/Prefabs/PatrolPoint.prefab"), Selection.activeTransform);
+        //GameObject parent = Selection.gameObjects[0];
+        //GameObject obj = new GameObject("Patrol");
+        //obj.transform.parent = parent.transform;
     }
 
     [MenuItem("Export/Export Scene")]
-    public static void ExportScene()
+    public static void Export()
     {
         List<GameObject> allScenesActiveObjects = GetAllOpenedSceneActiveObjects();
         for (int i = 0; i < SceneManager.sceneCount; ++i)

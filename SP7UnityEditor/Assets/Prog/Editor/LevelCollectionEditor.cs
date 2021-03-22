@@ -8,80 +8,74 @@ using System.IO;
 [CustomEditor(typeof(LevelCollection))]
 public class LevelCollectionEditor : Editor
 {
-   
 
-    //[MenuItem("Export/Connect Scenes")]
-    //public static void ConnectScenes()
-    //{
-    //    List<string> sceneFolders = new List<string>(Directory.EnumerateDirectories(Application.dataPath + "/Scenes/"));
-    //    foreach (var sceneFolder in sceneFolders)
-    //    {
-    //        string sceneName = sceneFolder.Substring(sceneFolder.LastIndexOf('/'), sceneFolder.Length - sceneFolder.LastIndexOf('/'));
-    //        sceneName = sceneName.Substring(1, sceneName.Length - 1);
-            
-    //        string collectionAssetPath = sceneFolder + "\\" + sceneName + "_Scenes.asset";
-    //        collectionAssetPath = collectionAssetPath.Substring(collectionAssetPath.LastIndexOf("Assets/"),  collectionAssetPath.Length - collectionAssetPath.LastIndexOf("Assets/"));
+    [MenuItem("Export/Create Missing LevelCollections", true)]
+    static bool Validate()
+    {
+        List<string> sceneFolders = new List<string>(Directory.EnumerateDirectories(Application.dataPath + "/Scenes/"));
+        foreach (var sceneFolder in sceneFolders)
+        {
+            string sceneName = sceneFolder.Substring(sceneFolder.LastIndexOf('/'), sceneFolder.Length - sceneFolder.LastIndexOf('/'));
+            sceneName = sceneName.Substring(1, sceneName.Length - 1);
 
-    //        LevelCollection collection = AssetDatabase.LoadAssetAtPath<LevelCollection>(collectionAssetPath);
-    //        if(collection == null)
-    //        {
-    //            collection = ScriptableObject.CreateInstance<LevelCollection>();
-    //            AssetDatabase.CreateAsset(collection, collectionAssetPath);
-    //            AssetDatabase.SaveAssets();
-    //            collection.Ping();
-    //        }
+            string collectionAssetPath = sceneFolder + "\\" + sceneName + "_Scenes.asset";
+            collectionAssetPath = collectionAssetPath.Substring(collectionAssetPath.LastIndexOf("Assets/"), collectionAssetPath.Length - collectionAssetPath.LastIndexOf("Assets/"));
 
+            LevelCollection collection = AssetDatabase.LoadAssetAtPath<LevelCollection>(collectionAssetPath);
+            if (collection == null)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 
-    //        List<string> missingScenes = new List<string>();
-    //        List<string> filePathsInFolder = new List<string>(Directory.EnumerateFiles(sceneFolder, "*.unity"));
-    //        foreach (var assetPath in filePathsInFolder){
-    //            string baseName = assetPath.Substring(assetPath.LastIndexOf('\\'), assetPath.Length - assetPath.LastIndexOf('\\'));
-    //            baseName = baseName.Substring(1, baseName.Length - 1);             
-    //            string unityAssetPath = assetPath.Substring(assetPath.LastIndexOf('\\'), assetPath.Length - assetPath.LastIndexOf('\\'));
-    //            unityAssetPath = unityAssetPath.Substring(1, baseName.Length - 1);
+    [MenuItem("Export/Create Missing LevelCollections", false)]
+    static void ConnectScenes()
+    {
+        List<string> sceneFolders = new List<string>(Directory.EnumerateDirectories(Application.dataPath + "/Scenes/"));
+        foreach (var sceneFolder in sceneFolders)
+        {
+            string sceneName = sceneFolder.Substring(sceneFolder.LastIndexOf('/'), sceneFolder.Length - sceneFolder.LastIndexOf('/'));
+            sceneName = sceneName.Substring(1, sceneName.Length - 1);
 
-    //            if(!collection.myScenes.Exists(e => e.ScenePath.Contains(unityAssetPath)))
-    //            {
-    //                missingScenes.Add(assetPath);
-    //                Debug.Log("Found: " + assetPath);
-    //            }
-    //        }
-    //    }
-    //    AssetDatabase.Refresh();
-    //    //string[] directories = Directory.GetDirectories(Application.persistentDataPath + "/Assets/);
-    //    //List<string> sceneFolders = new List<string>();
-    //    //foreach (string file in AssetDatabase.GetAllAssetPaths())
-    //    //{
-    //    //    if (file.Contains("Assets/Scenes/"))
-    //    //    {
-    //    //    }
-    //    //}
-    //}
+            string collectionAssetPath = sceneFolder + "\\" + sceneName + "_Scenes.asset";
+            collectionAssetPath = collectionAssetPath.Substring(collectionAssetPath.LastIndexOf("Assets/"), collectionAssetPath.Length - collectionAssetPath.LastIndexOf("Assets/"));
 
-    Object obj = null;
+            LevelCollection collection = AssetDatabase.LoadAssetAtPath<LevelCollection>(collectionAssetPath);
+            if (collection == null)
+            {
+                collection = ScriptableObject.CreateInstance<LevelCollection>();
+                AssetDatabase.CreateAsset(collection, collectionAssetPath);
+                AssetDatabase.SaveAssets();
+                collection.Ping();
+            }
+        }
+        AssetDatabase.Refresh();
+    }
+
+    //Object obj = null;
 
     public override void OnInspectorGUI()
     {
         base.OnInspectorGUI();
 
+
         serializedObject.Update();
+        LevelCollection collection = (LevelCollection)target;
 
-        obj = EditorGUILayout.ObjectField("Scene Asset", obj, typeof(SceneAsset), false);    
-        if (GUILayout.Button("Add Scene"))
+        Color originalColor = GUI.backgroundColor;
+        EditorGUILayout.BeginHorizontal();
+        GUI.backgroundColor = Color.yellow;
+        if (GUILayout.Button("Open Level"))
         {
-            SceneAsset sceneAsset = obj as SceneAsset;
-            RegisterScene(obj);
+            OpenScenes();
         }
+        GUI.backgroundColor = originalColor;
 
-        if (GUILayout.Button("Open Scenes"))
-        {
-            LevelCollection levelCollection = (LevelCollection)target;
-            EditorSceneManager.OpenScene(levelCollection.myScenes[0].ScenePath, OpenSceneMode.Single);
-            for (int i = 1; i < levelCollection.myScenes.Count; ++i)
-                EditorSceneManager.OpenScene(levelCollection.myScenes[i].ScenePath, OpenSceneMode.Additive);            
-        }
-
-        if(GUILayout.Button("Connect Scenes"))
+        GUI.backgroundColor = GUI.backgroundColor = collection.myScenes.Count <= 0 ? Color.green : Color.Lerp(Color.cyan, Color.white, 0.25f);
+        //GUI.contentColor = Color.white;
+        if (GUILayout.Button("Connect Scenes"))
         {
             string sceneFolder = AssetDatabase.GetAssetPath(target);
             sceneFolder = sceneFolder.Substring(0, sceneFolder.LastIndexOf('/'));
@@ -89,7 +83,7 @@ public class LevelCollectionEditor : Editor
             List<string> missingScenes = new List<string>();
             List<string> filePathsInFolder = new List<string>(Directory.EnumerateFiles(sceneFolder, "*.unity"));
 
-            LevelCollection collection = (LevelCollection)target;
+          
 
             foreach (var assetPath in filePathsInFolder)
             {
@@ -102,19 +96,31 @@ public class LevelCollectionEditor : Editor
                 {
                     SceneAsset sceneAsset = AssetDatabase.LoadAssetAtPath<SceneAsset>(assetPath);
                     RegisterScene(sceneAsset);
-                    //missingScenes.Add(assetPath);
-                    Debug.Log("Want to Register: " + assetPath);
                 }
-            }        
+            }
         }
+        GUI.backgroundColor = originalColor;
+        EditorGUILayout.EndHorizontal();
 
+
+
+        GUI.backgroundColor = collection.myScenes.Count > 0 ? Color.green : Color.red;
         if (GUILayout.Button("Export"))
         {
-
-
+            OpenScenes();
+            Exporter.Export();
         }
+        GUI.backgroundColor = originalColor;
 
         serializedObject.ApplyModifiedProperties();
+    }
+
+    private void OpenScenes()
+    {
+        LevelCollection levelCollection = (LevelCollection)target;
+        EditorSceneManager.OpenScene(levelCollection.myScenes[0].ScenePath, OpenSceneMode.Single);
+        for (int i = 1; i < levelCollection.myScenes.Count; ++i)
+            EditorSceneManager.OpenScene(levelCollection.myScenes[i].ScenePath, OpenSceneMode.Additive);
     }
 
     private void RegisterScene(Object obj)
