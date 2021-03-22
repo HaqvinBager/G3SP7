@@ -66,6 +66,7 @@
 #include "NodeTypeVector3Split.h"
 #include "NodeTypeVector3Join.h"
 #include "NodeTypeVector3Cross.h"
+#include "NodeTypeStartSphereOnTriggerEnter.h"
 #include "Scene.h"
 #include "Engine.h"
 #include "NodeDataManager.h"
@@ -133,6 +134,8 @@ void CNodeTypeCollector::PopulateTypes()
 	RegisterType<CNodeTypeVector3Split>("Vec3 Split");
 	RegisterType<CNodeTypeVector3Join>("Vec3 Join");
 	RegisterType<CNodeTypeVector3Cross>("Vec3 Cross");
+	RegisterType<CNodeTypeStartSphereOnTriggerEnter>("Sphere On Trigger Enter");
+
 }
 
 void CNodeTypeCollector::RegisterNewDataType(const std::string& aNodeName, unsigned int aType)
