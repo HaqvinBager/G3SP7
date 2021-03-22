@@ -201,6 +201,7 @@
     <ClInclude Include="NodeTypeGameObjectGetPlayerPosition.h" />
     <ClInclude Include="NodeTypeGameObjectMoveToPosition.h" />
     <ClInclude Include="NodeTypeStartSphereOnTriggerStay.h" />
+    <ClInclude Include="NodeTypeStartSphereOnTriggerEnter.h" />
     <ClInclude Include="NodeTypeVector3Add.h" />
     <ClInclude Include="NodeTypeVector3Cross.h" />
     <ClInclude Include="NodeTypeVector3Join.h" />
@@ -419,6 +420,7 @@
     <ClCompile Include="NodeTypeGameObjectGetPlayerPosition.cpp" />
     <ClCompile Include="NodeTypeGameObjectMoveToPosition.cpp" />
     <ClCompile Include="NodeTypeStartSphereOnTriggerStay.cpp" />
+    <ClCompile Include="NodeTypeStartSphereOnTriggerEnter.cpp" />
     <ClCompile Include="NodeTypeVector3Add.cpp" />
     <ClCompile Include="NodeTypeVector3Cross.cpp" />
     <ClCompile Include="NodeTypeVector3Join.cpp" />
