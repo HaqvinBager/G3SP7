@@ -21,7 +21,7 @@ public struct TransformCollection
 
 public class ExportTransform
 {
-    public static void Export(Scene aScene, List<int> validInstanceIDs)
+    public static TransformCollection Export(string aSceneName, List<int> validInstanceIDs)
     {
         TransformCollection transformCollection = new TransformCollection();
         transformCollection.transforms = new List<TransformLink>();
@@ -54,6 +54,7 @@ public class ExportTransform
                 transformCollection.transforms.Add(link);
             }        
         }
-        Json.ExportToJson(transformCollection, aScene.name);
+        return transformCollection;
+        //Json.ExportToJson(transformCollection, aScene.name);
     }
 }

@@ -23,7 +23,7 @@ public struct PointLightCollection
 }
 public class ExportPointlights 
 {
-    public static void ExportPointlight(Scene aScene)
+    public static PointLightCollection ExportPointlight(string aSceneName)
     {
         Light[] allLights = GameObject.FindObjectsOfType<Light>();
         List<PointLight> pointlights = new List<PointLight>();
@@ -49,7 +49,8 @@ public class ExportPointlights
         PointLightCollection lightCollection = new PointLightCollection();
         lightCollection.lights = pointlights;
 
-        Json.ExportToJson(lightCollection, aScene.name);
+        return lightCollection;
+        //Json.ExportToJson(lightCollection, aScene.name);
         
     }
 }

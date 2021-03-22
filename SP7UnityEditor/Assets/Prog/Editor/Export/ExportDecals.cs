@@ -27,10 +27,10 @@ public struct DecalCollection
 
 public class ExportDecals
 {
-    public static void Export(Scene aScene)
+    public static DecalCollection Export(string aSceneName)
     {
-        DecalCollection decalList = new DecalCollection();
-        decalList.links = new List<Decal>();
+        DecalCollection decalCollection = new DecalCollection();
+        decalCollection.links = new List<Decal>();
 
         Renderer[] renderers = GameObject.FindObjectsOfType<Renderer>();
 
@@ -54,11 +54,12 @@ public class ExportDecals
                     Decal aDecal = new Decal();
                     aDecal.materialName = ExtractMaterialName(decal.sharedMaterials);
                     aDecal.instanceID = prefabParent.transform.GetInstanceID();
-                    decalList.links.Add(aDecal);
+                    decalCollection.links.Add(aDecal);
                 }
             }
-        }        
-        Json.ExportToJson(decalList, aScene.name);
+        }
+        return decalCollection;
+        //Json.ExportToJson(decalList, aScene.name);
     }
 
     static string ExtractMaterialName(Material[] materials)

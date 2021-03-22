@@ -6,14 +6,14 @@ using UnityEngine.SceneManagement;
 
 public class ExportResource 
 {
-    public static void Export(Scene aScene)
+    public static void Export(string aSceneName)
     {
-        ExportModelAssets(aScene);
+        ExportModelAssets(aSceneName);
 
     }
 
 
-    private static void ExportModelAssets(Scene aScene)
+    private static void ExportModelAssets(string aSceneName)
     {
         string[] allAssetPaths = AssetDatabase.GetAllAssetPaths();
         Assets assets = new Assets();
@@ -36,9 +36,10 @@ public class ExportResource
                     }
                     else
                     {
-                        
+                        //Add Other types of Resources
+                        //Textures
+                        //Crazy references to values or something
                     }
-
                 }
             }
         }

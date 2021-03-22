@@ -50,36 +50,41 @@ public class Exporter
     {
         List<GameObject> allScenesActiveObjects = GetAllOpenedSceneActiveObjects();
         for (int i = 0; i < SceneManager.sceneCount; ++i)
+        {       
             DeactivateAndExportScene(i, allScenesActiveObjects);
+        }
 
         foreach (var gameObject in allScenesActiveObjects)
             gameObject.SetActive(true);
     }
 
-    private static void ExportAScene(Scene aScene)
+    private static void ExportAScene(string aSceneName)
     {
-        ExportResource.Export(aScene);
-        List<int> validExportIds = ExportInstanceID.Export(aScene);
-        ExportTransform.Export(aScene, validExportIds);
-        ExportModel.Export(aScene, validExportIds);
-        ExportInstancedModel.Export(aScene);
-        ExportVertexPaint.ExportVertexPainting(aScene, validExportIds);
-        ExportBluePrint.Export(aScene);
-        ExportPointlights.ExportPointlight(aScene);
-        ExportDecals.Export(aScene);
-        ExportPlayer(aScene);
+        ExportResource.Export(aSceneName);
+   
+        InstanceIDCollection instanceIDs = ExportInstanceID.Export(aSceneName);
+        Json.AddToExport(instanceIDs);
+        Json.AddToExport(ExportTransform.Export(aSceneName, instanceIDs.Ids));
+        Json.AddToExport(ExportModel.Export(aSceneName, instanceIDs.Ids));
+        Json.AddToExport(ExportVertexPaint.Export(aSceneName, instanceIDs.Ids));
+        Json.AddToExport(ExportPointlights.ExportPointlight(aSceneName));
+        Json.AddToExport(ExportDecals.Export(aSceneName));
+        Json.AddToExport(ExportPlayer(aSceneName));
+        Json.EndExport(aSceneName);
+
         AssetDatabase.Refresh();
     }
 
-    private static void ExportPlayer(Scene aScene)
+    private static Player ExportPlayer(string aSceneName)
     {
+        Player data = new Player();
         PlayerSpawnPosition player = GameObject.FindObjectOfType<PlayerSpawnPosition>();
         if(player != null)
         {
-            Player data = new Player();
             data.instanceID = player.transform.GetInstanceID();
-            Json.ExportToJson(data, aScene.name);
+            //Json.ExportToJson(data, aScene.name);
         }
+        return data;
     }
 
     private static void DeactivateAndExportScene(int aSceneIndex, List<GameObject> allScenesActiveObjects)
@@ -95,7 +100,7 @@ public class Exporter
             }
         }
 
-        ExportAScene(SceneManager.GetSceneAt(aSceneIndex));
+        ExportAScene(SceneManager.GetSceneAt(aSceneIndex).name);
 
         foreach (var gameobject in activeobjects)
         {

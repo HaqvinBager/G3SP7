@@ -6,24 +6,24 @@ using UnityEngine.SceneManagement;
 
 
 [System.Serializable]
-class ModelLink
+public class ModelLink
 {
     public int instanceID;
     public int assetID;
 }
 
 [System.Serializable]
-class ModelCollection
+public class ModelCollection
 {
     public List<ModelLink> modelLinks;
 }
 
 public class ExportModel
 {
-    public static void Export(Scene aScene, List<int> validInstanceIds)
+    public static ModelCollection Export(string aSceneName, List<int> validInstanceIds)
     {
-        ModelCollection fbxLinks = new ModelCollection();
-        fbxLinks.modelLinks = new List<ModelLink>();
+        ModelCollection modelCollection = new ModelCollection();
+        modelCollection.modelLinks = new List<ModelLink>();
 
         Renderer[] allrenderers = GameObject.FindObjectsOfType<Renderer>();
 
@@ -41,8 +41,8 @@ public class ExportModel
                 link.assetID = modelAsset.transform.GetInstanceID();
                 link.instanceID = renderer.transform.parent.GetInstanceID();
 
-                if(!fbxLinks.modelLinks.Exists( e => e.instanceID == link.instanceID))
-                    fbxLinks.modelLinks.Add(link);
+                if(!modelCollection.modelLinks.Exists( e => e.instanceID == link.instanceID))
+                    modelCollection.modelLinks.Add(link);
 
                 continue;
             } 
@@ -70,9 +70,9 @@ public class ExportModel
                                 link.assetID = modelAsset.transform.GetInstanceID();
                                 link.instanceID = validPrefabParent.transform.GetInstanceID();
 
-                                if(!fbxLinks.modelLinks.Exists(e => e.instanceID == link.instanceID))
+                                if(!modelCollection.modelLinks.Exists(e => e.instanceID == link.instanceID))
                                 {
-                                    fbxLinks.modelLinks.Add(link);
+                                    modelCollection.modelLinks.Add(link);
                                 }
                             }
                         }
@@ -82,12 +82,13 @@ public class ExportModel
                         ModelLink link = new ModelLink();
                         link.assetID = modelAsset.transform.GetInstanceID();
                         link.instanceID = prefabParent.transform.GetInstanceID();
-                        fbxLinks.modelLinks.Add(link);
+                        modelCollection.modelLinks.Add(link);
                     }
                 }
             }           
         }
-        Json.ExportToJson(fbxLinks, aScene.name);
+        // Json.ExportToJson(fbxLinks, aScene.name);
+        return modelCollection;
     }
 
     public static bool GetNearestPrefabInstance<T>(T aInstance, out Transform outNearestPrefabInstance, List<int> validInstanceIDs) where T : Component
