@@ -781,6 +781,7 @@
     <ClCompile Include="NodeTypeGameObjectGetPlayerPosition.cpp">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClCompile>
+    <ClCompile Include="NodeTypeStartSphereOnTriggerStay.cpp" />
     <ClCompile Include="NodeTypeStartSphereOnTriggerEnter.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -1453,6 +1454,7 @@
     <ClInclude Include="NodeTypeGameObjectGetPlayerPosition.h">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClInclude>
+    <ClInclude Include="NodeTypeStartSphereOnTriggerStay.h" />
     <ClInclude Include="NodeTypeStartSphereOnTriggerEnter.h" />
   </ItemGroup>
   <ItemGroup>

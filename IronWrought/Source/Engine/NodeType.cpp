@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "NodeType.h"
 #include "NodeTypeStartDefault.h"
+#include "NodeTypeStartSphereOnTriggerStay.h"
 #include "NodeTypeStartKeyboardInput.h"
 #include "NodeTypeDebugPrint.h"
 #include "NodeInstance.h"
@@ -81,6 +82,7 @@ unsigned int CUID::myGlobalUID = 0;
 void CNodeTypeCollector::PopulateTypes()
 {
 	RegisterType<CNodeTypeStartDefault>("Default Start");
+	RegisterType<CNodeTypeStartSphereOnTriggerStay>("Sphere On Trigger Stay");
 	RegisterType<CNodeTypeStartKeyboardInput>("Keyboard Input Start");
 	RegisterType<CNodeTypeDebugPrint>("Print Message");
 	RegisterType<CNodeTypeMathAdd>("Add");
