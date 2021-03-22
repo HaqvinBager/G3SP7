@@ -254,4 +254,5 @@ void CSceneManager::AddPlayer(CScene& aScene, const std::string& aJsonFileName)
 	aScene.AddInstance(model);
 	aScene.AddInstance(camera);
 	aScene.MainCamera(camera->GetComponent<CCameraComponent>());
+	aScene.Player(player);
 }
