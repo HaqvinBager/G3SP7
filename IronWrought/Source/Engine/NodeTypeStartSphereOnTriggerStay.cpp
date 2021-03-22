@@ -2,7 +2,8 @@
 #include "NodeTypeStartSphereOnTriggerStay.h"
 #include "NodeType.h"
 #include "NodeInstance.h"
-
+#include "Engine.h"
+#include "Scene.h"
 
 CNodeTypeStartSphereOnTriggerStay::CNodeTypeStartSphereOnTriggerStay()
 {
@@ -14,7 +15,7 @@ int CNodeTypeStartSphereOnTriggerStay::OnEnter(class CNodeInstance* aTriggeringN
 {
 	std::vector<CGameObject*> gameObject = aTriggeringNodeInstance->GetCurrentGameObject();
 	Vector3 position = gameObject[1]->myTransform->Position();
-	Vector3 playerPosition;
+	Vector3 playerPosition = CEngine::GetInstance()->GetActiveScene().Player()->myTransform->Position();
 
 	SPin::EPinType outType;
 	NodeDataPtr someData = nullptr;
@@ -24,14 +25,10 @@ int CNodeTypeStartSphereOnTriggerStay::OnEnter(class CNodeInstance* aTriggeringN
 	float radius = NodeData::Get<float>(someData);
 	radius *= radius;
 	float distance = Vector3::DistanceSquared(playerPosition, position);
-		aTriggeringNodeInstance->myShouldTriggerAgain = true;
+	aTriggeringNodeInstance->myShouldTriggerAgain = true;
 
 	if (distance < radius)
-	{
 		return 1;
-	}
 	else
-	{
 		return -1;
-	}
 }
