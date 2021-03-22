@@ -28,9 +28,17 @@ int CNodeTypeStartSphereOnTriggerEnter::OnEnter(CNodeInstance* aTriggeringNodeIn
 	float radiusSquared = radius * radius;
 	
 	bool trigger = distanceSquared <= radiusSquared;
-	aTriggeringNodeInstance->myShouldTriggerAgain = !trigger;
-	if (trigger)
+	if (trigger && aTriggeringNodeInstance->myShouldTriggerAgain)
+	{	
+		aTriggeringNodeInstance->myShouldTriggerAgain = false;
 		return 1;
+	}
 	else
+	{
+		if (!trigger && !aTriggeringNodeInstance->myShouldTriggerAgain)
+		{
+			aTriggeringNodeInstance->myShouldTriggerAgain = true;
+		}
 		return -1;
+	}
 }
