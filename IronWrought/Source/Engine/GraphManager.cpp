@@ -116,7 +116,8 @@ void CGraphManager::Load()
 		}
 	}
 
-	myCurrentGraph = &myGraphs[0];
+	if (myGraphs.size() > 0)
+		myCurrentGraph = &myGraphs[0];
 	CNodeTypeCollector::PopulateTypes();
 	myHeaderTextureID = nullptr;
 	ed::Config config;
@@ -445,14 +446,17 @@ void CGraphManager::ShowFlow(int aLinkID)
 
 void CGraphManager::Update()
 {
-	CGraphNodeTimerManager::Get()->Update();
-
-	PreFrame(CTimer::Dt());
-	if (myRenderGraph)
+	if (myGraphs.size() > 0)
 	{
-		ConstructEditorTreeAndConnectLinks();
-		PostFrame();
-		ImGui::End();
+		CGraphNodeTimerManager::Get()->Update();
+
+		PreFrame(CTimer::Dt());
+		if (myRenderGraph)
+		{
+			ConstructEditorTreeAndConnectLinks();
+			PostFrame();
+			ImGui::End();
+		}
 	}
 }
 
@@ -1491,6 +1495,7 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 				cats["New Node Type"].push_back(nullptr);
 			}
 
+			//Fix so it actually shows search results #Haqbun
 			ImGui::PushItemWidth(100.0f);
 			ImGui::InputText("##edit", (char*)myMenuSeachField, 127);
 			if (mySearchFokus)
