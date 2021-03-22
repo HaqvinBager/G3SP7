@@ -60,8 +60,10 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneName)
 		AddModelComponents(*scene, aSceneName + "_ModelCollection.json");
 		AddPointLights(*scene, aSceneName + "_PointLightCollection.json");
 		AddDecalComponents(*scene, aSceneName + "_DecalCollection.json");
-		AddPlayer(*scene, aSceneName + "_Player.json");
+		
 	}
+	// Should be in the if case above. Later. When some bugs are fixed.
+		AddPlayer(*scene, aSceneName + "_Player.json");
 	CEngine::GetInstance()->GetPhysx().Cooking(scene->ActiveGameObjects(), scene);
 	return scene;
 }
@@ -117,9 +119,31 @@ void CSceneManager::AddModelComponents(CScene& aScene, const std::string& aJsonF
 
 	const auto& modelArray = doc.GetObjectW()["modelLinks"].GetArray();
 	for (const auto& m : modelArray) {
-		int id = m["instanceID"].GetInt();
-		CGameObject* gameObject = aScene.FindObjectWithID(id);
-		gameObject->AddComponent<CModelComponent>(*gameObject, ASSETPATH(CJsonReader::Get()->GetAssetPath(m["assetID"].GetInt())));
+		const int instanceId = m["instanceID"].GetInt();
+		CGameObject* gameObject = aScene.FindObjectWithID(instanceId);
+		if (!gameObject)
+			continue;
+
+		const int assetId = m["assetID"].GetInt();
+#ifdef _DEBUG
+		if (CJsonReader::Get()->HasAssetPath(assetId))
+		{
+			SetConsoleColor(CONSOLE_GREEN);
+			std::cout << aJsonFileName << " " << " has AssetID: " << assetId << ". " << __FUNCTION__ << "()" << std::endl;
+			SetConsoleColor(CONSOLE_WHITE);
+			gameObject->AddComponent<CModelComponent>(*gameObject, ASSETPATH(CJsonReader::Get()->GetAssetPath(assetId)));
+		}
+		else
+		{
+			SetConsoleColor(CONSOLE_RED);
+			std::cout << aJsonFileName << " " << "does not have AssetID: " << assetId << ". " << __FUNCTION__  << "()" << std::endl;
+			SetConsoleColor(CONSOLE_WHITE);
+		}
+#else
+		if (CJsonReader::Get()->HasAssetPath(assetId))
+			gameObject->AddComponent<CModelComponent>(*gameObject, ASSETPATH(CJsonReader::Get()->GetAssetPath(assetId)));
+#endif
+
 	}
 }
 
@@ -152,9 +176,11 @@ void CSceneManager::AddInstancedModelComponents(CScene& aScene, const std::strin
 								 t["rotation"]["z"].GetFloat() });
 			instancedModelTransforms.emplace_back(transform.GetLocalMatrix());
 		}
-
-		gameObject->AddComponent<CInstancedModelComponent>(*gameObject, ASSETPATH(CJsonReader::Get()->GetAssetPath(assetID)), instancedModelTransforms);
-		aScene.AddInstance(gameObject);
+		if (CJsonReader::Get()->HasAssetPath(assetID))
+		{
+			gameObject->AddComponent<CInstancedModelComponent>(*gameObject, ASSETPATH(CJsonReader::Get()->GetAssetPath(assetID)), instancedModelTransforms);
+			aScene.AddInstance(gameObject);
+		}
 	}
 }
 

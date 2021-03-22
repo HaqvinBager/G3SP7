@@ -96,13 +96,13 @@ void CAnimationComponent::BlendLerpBetween(int anAnimationIndex0, int anAnimatio
 	myShouldUseLerp = true;
 }
 
-void CAnimationComponent::BlendToAnimation(unsigned int anAnimationIndex, float aBlendDuration, bool anUpdateBoth, bool aTemporary, float aTime)
+void CAnimationComponent::BlendToAnimation(unsigned int anAnimationIndex, float aBlendDuration, bool anUpdateBoth, bool aTemporary, float aTimeMultiplier)
 {
 	unsigned int size = static_cast<unsigned int>(myController->GetNrOfAnimations());
 	unsigned int index = anAnimationIndex >= size ? size - 1 : anAnimationIndex;
 
 	myAnimationBlend.myFirst = index;
-	myController->BlendToAnimation(index, anUpdateBoth, aBlendDuration, aTemporary, aTime);
+	myController->BlendToAnimation(index, anUpdateBoth, aBlendDuration, aTemporary, aTimeMultiplier);
 	myShouldUseLerp = false;
 }
 

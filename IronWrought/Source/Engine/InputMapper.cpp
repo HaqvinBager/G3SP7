@@ -20,9 +20,9 @@ CInputMapper::~CInputMapper()
 
 bool CInputMapper::Init()
 {
-	MapEvent(IInputObserver::EInputAction::MouseLeftPressed, IInputObserver::EInputEvent::MoveClick);
-	MapEvent(IInputObserver::EInputAction::MouseLeftDown, IInputObserver::EInputEvent::MoveDown);
-	MapEvent(IInputObserver::EInputAction::MouseRight, IInputObserver::EInputEvent::AttackClick);
+	//MapEvent(IInputObserver::EInputAction::MouseLeftPressed, IInputObserver::EInputEvent::);
+	MapEvent(IInputObserver::EInputAction::MouseLeftDown, IInputObserver::EInputEvent::Push);
+	MapEvent(IInputObserver::EInputAction::MouseRightDown, IInputObserver::EInputEvent::Pull);
 	MapEvent(IInputObserver::EInputAction::MouseMiddle, IInputObserver::EInputEvent::MiddleMouseMove);
 	MapEvent(IInputObserver::EInputAction::KeyShiftDown, IInputObserver::EInputEvent::StandStill);
 	MapEvent(IInputObserver::EInputAction::KeyShiftRelease, IInputObserver::EInputEvent::Moving);
@@ -33,6 +33,8 @@ bool CInputMapper::Init()
 	MapEvent(IInputObserver::EInputAction::KeyEscape, IInputObserver::EInputEvent::PauseGame);
 	MapEvent(IInputObserver::EInputAction::KeySpace, IInputObserver::EInputEvent::Jump);
 	MapEvent(IInputObserver::EInputAction::CTRL, IInputObserver::EInputEvent::Crouch);
+	MapEvent(IInputObserver::EInputAction::KeyF5, IInputObserver::EInputEvent::ResetEntities);
+	MapEvent(IInputObserver::EInputAction::KeyF8, IInputObserver::EInputEvent::SetResetPointEntities);
 
 
 	if (this == nullptr)
@@ -100,6 +102,14 @@ void CInputMapper::UpdateKeyboardInput()
 	{
 		TranslateActionToEvent(IInputObserver::EInputAction::CTRL);
 	}
+	if (myInput->IsKeyPressed(VK_F5))
+	{
+		TranslateActionToEvent(IInputObserver::EInputAction::KeyF5);
+	}
+	if (myInput->IsKeyPressed(VK_F8))
+	{
+		TranslateActionToEvent(IInputObserver::EInputAction::KeyF8);
+	}
 }
 
 void CInputMapper::UpdateMouseInput()
@@ -125,9 +135,9 @@ void CInputMapper::UpdateMouseInput()
 	//{
 	//	TranslateActionToEvent(IInputObserver::EInputAction::MouseLeft);
 	//}
-	if (myInput->IsMousePressed(Input::EMouseButton::Right))
+	if (myInput->IsMouseDown(Input::EMouseButton::Right))
 	{
-		TranslateActionToEvent(IInputObserver::EInputAction::MouseRight);
+		TranslateActionToEvent(IInputObserver::EInputAction::MouseRightDown);
 	}
 }
 

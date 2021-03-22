@@ -194,7 +194,17 @@
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Behaviour.h" />
     <ClInclude Include="CameraSetting.h" />
-    <ClInclude Include="CurveWindow.h" />
+    <ClInclude Include="CCurveWindow.h" />
+    <ClInclude Include="Interop.h" />
+    <ClInclude Include="NodeTypeActionPatrol.h" />
+    <ClInclude Include="NodeTypeFloatDecision.h" />
+    <ClInclude Include="NodeTypeGameObjectGetChildPosition.h" />
+    <ClInclude Include="NodeTypeGameObjectGetPlayerPosition.h" />
+    <ClInclude Include="NodeTypeGameObjectMoveToPosition.h" />
+    <ClInclude Include="NodeTypeVector3Add.h" />
+    <ClInclude Include="NodeTypeVector3Cross.h" />
+    <ClInclude Include="NodeTypeVector3Join.h" />
+    <ClInclude Include="NodeTypeVector3Split.h" />
     <ClInclude Include="FlipACoinDecision.h" />
     <ClInclude Include="JsonWriter.h" />
     <ClInclude Include="NodeDataManager.h" />
@@ -262,8 +272,8 @@
     <ClInclude Include="NodeTypeMathAtan2.h" />
     <ClInclude Include="NodeTypeMathCeil.h" />
     <ClInclude Include="NodeTypeMathCos.h" />
-    <ClInclude Include="NodeTypeMathDistance.h" />
-    <ClInclude Include="NodeTypeMathDot.h" />
+    <ClInclude Include="NodeTypeVector3Distance.h" />
+    <ClInclude Include="NodeTypeVector3Dot.h" />
     <ClInclude Include="NodeTypeMathFloor.h" />
     <ClInclude Include="NodeTypeMathLerp.h" />
     <ClInclude Include="NodeTypeMathMax.h" />
@@ -304,12 +314,14 @@
     <ClInclude Include="NodeTypes.h" />
     <ClInclude Include="NodeTypeTimeTimer.h" />
     <ClInclude Include="NodeTypeVariableSetVector3.h" />
+    <ClInclude Include="NodeTypeVector3Sub.h" />
     <ClInclude Include="NodeTypeVFXPlayVFX.h" />
     <ClInclude Include="NodeTypeVFXStopVFX.h" />
     <ClInclude Include="NodeTypeVolumeTrigger.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="PerlinNoise.h" />
     <ClInclude Include="PhysXWrapper.h" />
+    <ClInclude Include="PlayerAnimationController.h" />
     <ClInclude Include="PointLightComponent.h" />
     <ClInclude Include="PostMaster.h" />
     <ClInclude Include="Debug.h" />
@@ -403,8 +415,20 @@
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="AudioChannel.cpp" />
     <ClCompile Include="AudioManager.cpp" />
+<<<<<<< HEAD
     <ClCompile Include="CurveWindow.cpp" />
     <ClCompile Include="JsonWriter.cpp" />
+=======
+    <ClCompile Include="CCurveWindow.cpp" />
+    <ClCompile Include="NodeTypeActionPatrol.cpp" />
+    <ClCompile Include="NodeTypeGameObjectGetChildPosition.cpp" />
+    <ClCompile Include="NodeTypeGameObjectGetPlayerPosition.cpp" />
+    <ClCompile Include="NodeTypeGameObjectMoveToPosition.cpp" />
+    <ClCompile Include="NodeTypeVector3Add.cpp" />
+    <ClCompile Include="NodeTypeVector3Cross.cpp" />
+    <ClCompile Include="NodeTypeVector3Join.cpp" />
+    <ClCompile Include="NodeTypeVector3Split.cpp" />
+>>>>>>> master
     <ClCompile Include="NodeTypeAudioPlayResearcherEvent.cpp" />
     <ClCompile Include="NodeTypeAudioPlayResearcherReactionExplosives.cpp" />
     <ClCompile Include="NodeTypeAudioPlayRobotPatrolling.cpp" />
@@ -449,8 +473,10 @@
     <ClCompile Include="NodeTypeVariableSetFloat.cpp" />
     <ClCompile Include="NodeTypeVariableSetInt.cpp" />
     <ClCompile Include="NodeTypeVariableSetVector3.cpp" />
+    <ClCompile Include="NodeTypeVector3Sub.cpp" />
     <ClCompile Include="NodeTypeVFXPlayVFX.cpp" />
     <ClCompile Include="NodeTypeVFXStopVFX.cpp" />
+    <ClCompile Include="PlayerAnimationController.cpp" />
     <ClCompile Include="ShadowRenderer.cpp" />
     <ClCompile Include="Decal.cpp" />
     <ClCompile Include="DecalComponent.cpp" />
@@ -473,8 +499,8 @@
     <ClCompile Include="NodeTypeMathAtan2.cpp" />
     <ClCompile Include="NodeTypeMathCeil.cpp" />
     <ClCompile Include="NodeTypeMathCos.cpp" />
-    <ClCompile Include="NodeTypeMathDistance.cpp" />
-    <ClCompile Include="NodeTypeMathDot.cpp" />
+    <ClCompile Include="NodeTypeVector3Distance.cpp" />
+    <ClCompile Include="NodeTypeVector3Dot.cpp" />
     <ClCompile Include="NodeTypeMathFloor.cpp" />
     <ClCompile Include="NodeTypeMathLerp.cpp" />
     <ClCompile Include="NodeTypeMathMax.cpp" />

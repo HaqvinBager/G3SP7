@@ -1,6 +1,6 @@
 #pragma once
 #include "NodeTypes.h"
-
+#include <unordered_map>
 //class CNodeData;
 
 class CUID
@@ -91,12 +91,12 @@ struct SPin
 		myPinType = aType;
 	}
 
-	SPin(const SPin& p2)
+	SPin(const SPin& aPinToCopy)
 	{
-		myText = p2.myText;
-		myVariableType = p2.myVariableType;
-		myPinType = p2.myPinType;
-		myData = p2.myData;
+		myText = aPinToCopy.myText;
+		myVariableType = aPinToCopy.myVariableType;
+		myPinType = aPinToCopy.myPinType;
+		myData = aPinToCopy.myData;
 		//myUID.SetUID(p2.myUID.AsInt()); // Cant do this here, copy constructor should create new UID and it will if we dont set it here
 	}
 
@@ -157,16 +157,24 @@ protected:
 		}
 	}
 	virtual int OnEnter(class CNodeInstance* aTriggeringNodeInstance) = 0;
-	void GetDataOnPin(CNodeInstance* aTriggeringNodeInstance, unsigned int aPinIndex, SPin::EPinType& outType, void*& someData, size_t& outSize);
+	void GetDataOnPin(CNodeInstance* aTriggeringNodeInstance, unsigned int aPinIndex, SPin::EPinType& anOutType, void*& someData, size_t& anOutSize);
 	std::vector<SPin> myPins;
 	std::string myNodeName = "N/A";
 	std::string myNodeDataKey = "";
 };
 
+struct SNodeTypeData
+{
+	CNodeType* myTypes[128];
+	unsigned short myTypeCounter;
+};
+
 class CNodeTypeCollector
 {
 public:
+
 	static void PopulateTypes();
+
 	static CNodeType* GetNodeTypeFromID(unsigned int aClassID)
 	{
 		return myTypes[aClassID]; // 1:1 to nodetype enum
@@ -177,10 +185,10 @@ public:
 	}
 	static unsigned short GetNodeTypeCount()
 	{
-		return 	myTypeCounter; // 1:1 to nodetype enum
+		return myTypeCounter; // 1:1 to nodetype enum
 	}
 	template <class T>
-	static void RegisterType(std::string aNodeName)
+	static void RegisterType(const std::string& aNodeName)
 	{
 		myTypes[myTypeCounter] = new T;
 		myTypes[myTypeCounter]->myID = myTypeCounter;
@@ -188,7 +196,7 @@ public:
 		myTypeCounter++;
 	}
 	template <class T>
-	static void RegisterDataType(std::string aNodeName, std::string aNodeDataKey)
+	static void RegisterDataType(const std::string& aNodeName, const std::string& aNodeDataKey)
 	{
 		myTypes[myTypeCounter] = new T;
 		myTypes[myTypeCounter]->myID = myTypeCounter;
@@ -197,8 +205,33 @@ public:
 		myTypeCounter++;
 	}
 
-	static void RegisterNewDataType(std::string aNodeName, unsigned int aType);
+	static void RegisterNewDataType(const std::string& aNodeName, unsigned int aType);
+
 	static CNodeType* myTypes[128];
 	static unsigned short myTypeCounter;
-	static unsigned short myTypeCount;
+
+public:
+	static CNodeType* GetChildNodeTypeFromID(std::string aKey, unsigned int aClassID)
+	{
+		return myChildNodeTypesMap[aKey].myTypes[aClassID]; // 1:1 to nodetype enum
+	}
+	static CNodeType** GetAllChildNodeTypes(std::string aKey)
+	{
+		return myChildNodeTypesMap[aKey].myTypes; // 1:1 to nodetype enum
+	}
+	static unsigned short GetChildNodeTypeCount(std::string aKey)
+	{
+		return myChildNodeTypesMap[aKey].myTypeCounter; // 1:1 to nodetype enum
+	}
+	template <class T>
+	static void RegisterChildType(std::string aKey, const std::string& aNodeName)
+	{
+		myChildNodeTypesMap[aKey].myTypes[myChildNodeTypesMap[aKey].myTypeCounter] = new T;
+		myChildNodeTypesMap[aKey].myTypes[myChildNodeTypesMap[aKey].myTypeCounter]->myID = myChildNodeTypesMap[aKey].myTypeCounter;
+		myChildNodeTypesMap[aKey].myTypes[myChildNodeTypesMap[aKey].myTypeCounter]->NodeName(aNodeName);
+		myChildNodeTypesMap[aKey].myTypeCounter++;
+	}
+
+	static void RegisterChildNodeTypes(std::string aKey, const unsigned int aNumberOfChildren);
+	static std::unordered_map<std::string, SNodeTypeData> myChildNodeTypesMap;
 };

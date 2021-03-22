@@ -320,7 +320,7 @@ void* CFBXLoaderCustom::LoadModelInternal(CLoaderModel* someInput)
 	}
 	else
 	{
-		scene = aiImportFile(model->myModelPath.c_str(), aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_ConvertToLeftHanded);
+		scene = aiImportFile(model->myModelPath.c_str(), aiProcessPreset_TargetRealtime_MaxQuality_AllMaterials | aiProcess_ConvertToLeftHanded);
 	}
 	
 	//aiSetImportPropertyFloat(aiprops, AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, GlobalScale);
@@ -353,7 +353,7 @@ void* CFBXLoaderCustom::LoadModelInternal(CLoaderModel* someInput)
 			mesh->myIndexes.insert(mesh->myIndexes.end(), std::make_move_iterator(&fbxMesh->mFaces[i].mIndices[0]), std::make_move_iterator(&fbxMesh->mFaces[i].mIndices[fbxMesh->mFaces[i].mNumIndices]));
 		}
 	}
-	// CHange to support multiple animations
+	// Change to support multiple animations
 	if (scene->mNumAnimations > 0)
 	{
 		model->myAnimationDuration = (float)scene->mAnimations[0]->mDuration;
