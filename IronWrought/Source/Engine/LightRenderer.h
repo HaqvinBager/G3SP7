@@ -21,6 +21,8 @@ public:
 	void Render(CCameraComponent* aCamera, std::vector<CSpotLight*>& aSpotLightList);
 
 	void RenderVolumetric(CCameraComponent* aCamera, CEnvironmentLight* anEnvironmentLight);
+	void RenderVolumetric(CCameraComponent* aCamera, std::vector<CPointLight*>& aPointLightList);
+	void RenderVolumetric(CCameraComponent* aCamera, std::vector<CSpotLight*>& aSpotLightList);
 
 private:
 	template<class T>
@@ -97,6 +99,7 @@ private:
 	ID3D11PixelShader* myPointLightShader;
 	ID3D11PixelShader* mySpotLightShader;
 	ID3D11PixelShader* myDirectionalVolumetricLightShader;
+	ID3D11PixelShader* mySpotVolumetricLightShader;
 
 	ID3D11SamplerState* mySamplerState;
 	ID3D11SamplerState* myShadowSampler;

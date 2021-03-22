@@ -73,7 +73,8 @@ void CInGameState::Stop()
 
 void CInGameState::Update()
 {
-	mySpotlight->GetComponent<CSpotLightComponent>()->GetSpotLight()->SetWideness(abs(sinf(CTimer::Time())));
+	//mySpotlight->GetComponent<CSpotLightComponent>()->GetSpotLight()->SetWideness(abs(sinf(CTimer::Time())));
+	//mySpotlight->GetComponent<CSpotLightComponent>()->GetSpotLight()->SetPosition({ 0.0f, abs(sinf(CTimer::Time())), 0.0f });
 
 	CEngine::GetInstance()->GetPhysx().Simulate();
 	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
@@ -128,10 +129,10 @@ void CInGameState::TEMP_Sponza(CScene* aScene)
 	aScene->AddInstance(sponza);
 
 	CGameObject* spotLight = new CGameObject(13414);
-	spotLight->myTransform->Position({ 0.0f, 1.0f, -2.0f });
+	spotLight->myTransform->Position({ 0.0f, 1.0f, 0.0f });
 	Vector3 color = { 1.0f, 1.0f, 1.0f };
 	Vector3 direction = { 0.0f, -1.0f, 0.0f };
-	spotLight->AddComponent<CSpotLightComponent>(*spotLight, color, 6.0f, direction, 2.0f, 1.0f);
+	spotLight->AddComponent<CSpotLightComponent>(*spotLight, color, 6.0f, direction, 1.2f, 1.0f);
 	mySpotlight = spotLight;
 	aScene->AddInstance(spotLight->GetComponent<CSpotLightComponent>()->GetSpotLight());
 
