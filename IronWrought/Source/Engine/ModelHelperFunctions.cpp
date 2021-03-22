@@ -10,7 +10,8 @@
 #include "rapidjson/stringbuffer.h"
 #include <time.h>
 
-#define TINTED_MODEL_DATA_PATH "Assets/TintedModels/Data/"
+#define TINTED_MODEL_DATA_PATH ASSETPATH("Assets/Graphics/TintedModels/Data/")
+//#define TINTED_MODEL_DATA_PATH "Assets/TintedModels/Data/"
 #define TINTED_MODEL_MAX_NR_OF_TINTS 4
 
 bool CModelHelperFunctions::LoadTintsToModelComponent(CModelComponent* aModelComponent, const std::string& aTintDataPath)
@@ -26,7 +27,75 @@ bool CModelHelperFunctions::LoadTintsToModelComponent(CModelComponent* aModelCom
     for (short i = 0; i < static_cast<short>(tintsArray.Size()); ++i)
     {
         GenericObject tintRGB = tintsArray[i].GetObjectW();
-        //if (tintRGB.HasMember("Texture"))
+        //if (tintRGB.HasMember("Texture")) // THE FUTURE? :)
+        //    // read the texture instead
+        //else
+        //    //tints[i] = Vector3(tintRGB["Red"].GetFloat(), tintRGB["Green"].GetFloat(), tintRGB["Blue"].GetFloat());
+        tints[i] = Vector3(tintRGB["Red"].GetFloat(), tintRGB["Green"].GetFloat(), tintRGB["Blue"].GetFloat());
+    }
+    return aModelComponent->SetTints(tints);
+}
+
+bool CModelHelperFunctions::LoadTintsToModelComponent(CModelComponent* aModelComponent, const std::string& aTintDataPath, std::string& anOutModelPath)
+{
+    using namespace rapidjson;
+    Document document = CJsonReader::Get()->LoadDocument(aTintDataPath);
+
+    anOutModelPath = document["Model path"].GetString();
+
+    assert(document["Tints"].IsArray() && std::string("Tints is not an array in: " + aTintDataPath).c_str());
+    if (!document["Tints"].IsArray())
+        return false;
+    GenericArray tintsArray = document["Tints"].GetArray();
+    std::vector<Vector3> tints(tintsArray.Size());
+    for (short i = 0; i < static_cast<short>(tintsArray.Size()); ++i)
+    {
+        GenericObject tintRGB = tintsArray[i].GetObjectW();
+        //if (tintRGB.HasMember("Texture")) // THE FUTURE?
+        //    // read the texture instead
+        //else
+        //    //tints[i] = Vector3(tintRGB["Red"].GetFloat(), tintRGB["Green"].GetFloat(), tintRGB["Blue"].GetFloat());
+        tints[i] = Vector3(tintRGB["Red"].GetFloat(), tintRGB["Green"].GetFloat(), tintRGB["Blue"].GetFloat());
+    }
+    return aModelComponent->SetTints(tints);
+}
+
+bool CModelHelperFunctions::LoadTintsToModelComponent(CModelComponent* aModelComponent, rapidjson::Document& aDocument)
+{
+    using namespace rapidjson;
+    assert(aDocument["Tints"].IsArray() && std::string("rapidjson::Document is missing Tints array!.").c_str());
+    if (!aDocument["Tints"].IsArray())
+        return false;
+
+    GenericArray tintsArray = aDocument["Tints"].GetArray();
+    std::vector<Vector3> tints(tintsArray.Size());
+    for (short i = 0; i < static_cast<short>(tintsArray.Size()); ++i)
+    {
+        GenericObject tintRGB = tintsArray[i].GetObjectW();
+        //if (tintRGB.HasMember("Texture")) // THE FUTURE?
+        //    // read the texture instead
+        //else
+        //    //tints[i] = Vector3(tintRGB["Red"].GetFloat(), tintRGB["Green"].GetFloat(), tintRGB["Blue"].GetFloat());
+        tints[i] = Vector3(tintRGB["Red"].GetFloat(), tintRGB["Green"].GetFloat(), tintRGB["Blue"].GetFloat());
+    }
+    return aModelComponent->SetTints(tints);
+}
+
+bool CModelHelperFunctions::LoadTintsToModelComponent(CModelComponent* aModelComponent, rapidjson::Document& aDocument, std::string& anOutModelPath)
+{
+    using namespace rapidjson;
+    assert(aDocument["Tints"].IsArray() && std::string("rapidjson::Document is missing Tints array!.").c_str());
+    if (!aDocument["Tints"].IsArray())
+        return false;
+
+    anOutModelPath = aDocument["Model path"].GetString();
+
+    GenericArray tintsArray = aDocument["Tints"].GetArray();
+    std::vector<Vector3> tints(tintsArray.Size());
+    for (short i = 0; i < static_cast<short>(tintsArray.Size()); ++i)
+    {
+        GenericObject tintRGB = tintsArray[i].GetObjectW();
+        //if (tintRGB.HasMember("Texture")) // THE FUTURE?
         //    // read the texture instead
         //else
         //    //tints[i] = Vector3(tintRGB["Red"].GetFloat(), tintRGB["Green"].GetFloat(), tintRGB["Blue"].GetFloat());
@@ -79,6 +148,7 @@ bool CModelHelperFunctions::SaveTintsFromModelComponent(CModelComponent* aModelC
         {
             for (short i = 0; i < TINTED_MODEL_MAX_NR_OF_TINTS; ++i)
             {
+                // Could be made into a Serialize function in CModelComponent
                 prettyWriter.StartObject();
                 {
                     prettyWriter.Key(tintKeys[i].c_str()); 
@@ -115,6 +185,16 @@ bool CModelHelperFunctions::LoadTintsToModelComponent(CGameObject* aGameObject, 
     return LoadTintsToModelComponent(modelComp, aTintDataPath);
 }
 
+bool CModelHelperFunctions::LoadTintsToModelComponent(CGameObject* aGameObject, const std::string& aTintDataPath, std::string& anOutModelPath)
+{
+    CModelComponent* modelComp = aGameObject->GetComponent<CModelComponent>();
+    assert(modelComp != nullptr && "GameObject has no CModelComponent!");
+    if (!modelComp)
+        return false;
+
+    return LoadTintsToModelComponent(modelComp, aTintDataPath, anOutModelPath);
+}
+
 bool CModelHelperFunctions::SaveTintsFromModelComponent(CGameObject* aGameObject, const std::string& aModelPath, const std::string& aTintDataPath)
 {
     CModelComponent* modelComp = aGameObject->GetComponent<CModelComponent>();
@@ -130,6 +210,21 @@ CGameObject* CModelHelperFunctions::CreateGameObjectWithTintedModel(const int an
     CGameObject* go = new CGameObject(anInstanceId);
     LoadTintsToModelComponent(go->AddComponent<CModelComponent>(*go, aModelPath), aTintDataPath);
     return go;
+}
+
+bool CModelHelperFunctions::AddModelComponentWithTintsFromData(CGameObject* aGameObject, const std::string& aTintDataPath)
+{
+    using namespace rapidjson;
+    Document document = CJsonReader::Get()->LoadDocument(aTintDataPath);
+    return LoadTintsToModelComponent(aGameObject->AddComponent<CModelComponent>(*aGameObject, document["Model path"].GetString()), document);
+}
+
+bool CModelHelperFunctions::AddModelComponentWithTintsFromData(CGameObject* aGameObject, const std::string& aTintDataPath, std::string& anOutModelPath)
+{
+    using namespace rapidjson;
+    Document document = CJsonReader::Get()->LoadDocument(aTintDataPath);
+    anOutModelPath = document["Model path"].GetString();
+    return LoadTintsToModelComponent(aGameObject->AddComponent<CModelComponent>(*aGameObject, document["Model path"].GetString()), document);
 }
 
 

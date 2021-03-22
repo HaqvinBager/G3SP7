@@ -4,6 +4,10 @@
 class CGameObject;
 namespace ImGuiWindow
 {
+	namespace TintedModelVariables
+	{
+		constexpr int JSONNameBufferSize = 256;
+	}
 	class CAssetCustomizationWindow : public CWindow
 	{
 	public:
@@ -29,10 +33,14 @@ namespace ImGuiWindow
 		float myPrimaryTint[3];
 		float mySecondaryTint[3];
 		float myTertiaryTint[3];
-		float myAccentTintTint[3];
+		float myAccentTint[3];
 
 		CGameObject* myGameObject;
+		std::string mySelectedFBX;
+		std::string mySelectedJSON;
+		char myJSONFileName[TintedModelVariables::JSONNameBufferSize];
 		std::vector<SAssetInfo> myFBXAssetPaths;
+		std::vector<SAssetInfo> myJSONPaths;
 
 		bool myShowOpenAssetWindow;
 		bool myShowOpenCustomizationWindow;

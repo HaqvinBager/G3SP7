@@ -69,7 +69,7 @@ void CInGameState::Start()
 	for (int i = 0; i < nrOfModels; ++i)
 	{
 		CGameObject* go = new CGameObject(123123);
-		models.push_back(go->AddComponent<CModelComponent>(*go, ASSETPATH("Assets/Graphics/TintModels/Pokeball/pokeball.fbx")));
+		models.push_back(go->AddComponent<CModelComponent>(*go, ASSETPATH("Assets/Graphics/TintedModels/Pokeball/pokeball.fbx")));
 		go->myTransform->Position({ minX, -3.0f, 0.0f });
 		minX += offsetX;
 		scene->AddInstance(go);

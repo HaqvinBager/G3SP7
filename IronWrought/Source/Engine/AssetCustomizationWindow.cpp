@@ -19,7 +19,9 @@ ImGuiWindow::CAssetCustomizationWindow::CAssetCustomizationWindow(const char* aN
 	ZeroMemory(myPrimaryTint, 3);
 	ZeroMemory(mySecondaryTint, 3);
 	ZeroMemory(myTertiaryTint, 3);
-	ZeroMemory(myAccentTintTint, 3);
+	ZeroMemory(myAccentTint, 3);
+
+	ZeroMemory(myJSONFileName, TintedModelVariables::JSONNameBufferSize);
 }
 
 ImGuiWindow::CAssetCustomizationWindow::~CAssetCustomizationWindow()
@@ -44,8 +46,8 @@ void ImGuiWindow::CAssetCustomizationWindow::OnInspectorGUI()
 			if (ImGui::BeginMenu("File"))
 			{
 				if (ImGui::MenuItem("Open Asset..", "Ctrl+O")) { myShowOpenAssetWindow = true; }
-				if (ImGui::MenuItem("Open Customization File", "Ctrl+L")) { OpenCustomizationFile(); }
-				if (ImGui::MenuItem("Save Customization", "Ctrl+S")) { SaveCustomizationFile(); }
+				if (ImGui::MenuItem("Open Customization File", "Ctrl+L")) { myShowOpenCustomizationWindow = true; }
+				if (ImGui::MenuItem("Save Customization", "Ctrl+S")) { myShowSaveCustomizationWindow = true; }
 				ImGui::EndMenu();
 			}
 			ImGui::EndMenuBar();
@@ -54,34 +56,41 @@ void ImGuiWindow::CAssetCustomizationWindow::OnInspectorGUI()
 		ImGui::ColorEdit3(": Color 1, Primary", myPrimaryTint);
 		ImGui::ColorEdit3(": Color 2, Secondary", mySecondaryTint);
 		ImGui::ColorEdit3(": Color 3, Tertiary", myTertiaryTint);
-		ImGui::ColorEdit3(": Color 4, Accents", myAccentTintTint);
+		ImGui::ColorEdit3(": Color 4, Accents", myAccentTint);
 		if (myGameObject->GetComponent<CModelComponent>())
 		{
 			auto& model = *myGameObject->GetComponent<CModelComponent>();
 			model.Tint1(Vector3(myPrimaryTint));
 			model.Tint2(Vector3(mySecondaryTint));
 			model.Tint3(Vector3(myTertiaryTint));
-			model.Tint4(Vector3(myAccentTintTint));
+			model.Tint4(Vector3(myAccentTint));
 		}
 
 		if (myShowOpenAssetWindow)
 			OpenAsset();
+
+		if (myShowOpenCustomizationWindow)
+			OpenCustomizationFile();
+
+		if (myShowSaveCustomizationWindow)
+			SaveCustomizationFile();
 	}
 	ImGui::End();
 }
 
 void ImGuiWindow::CAssetCustomizationWindow::OnDisable()
-{}
+{
+	myFBXAssetPaths.clear();
+	myJSONPaths.clear();
+}
 
 void ImGuiWindow::CAssetCustomizationWindow::OpenAsset()
 {
-	// Open ImGui window with browser for Assets/
-	// Double click lets you load FBX
-	// Finds textures
-	myShowOpenAssetWindow = GetPathsByExtension(ASSETPATH("Assets/Graphics/"), ".fbx", myFBXAssetPaths, !myFBXAssetPaths.empty());
+	const std::string path = ASSETPATH("Assets/Graphics/");
+	myShowOpenAssetWindow = GetPathsByExtension(path, ".fbx", myFBXAssetPaths, !myFBXAssetPaths.empty());
 	ImGui::Begin("Open FBX Asset", &myShowOpenAssetWindow);
 	{
-		ImGui::TextColored(ImVec4(1,1,1,1), "FBXses");
+		ImGui::TextColored(ImVec4(1,1,1,1), path.c_str());
 		ImGui::BeginChild("Scrolling");
 		for (size_t i = 0; i < myFBXAssetPaths.size(); ++i)
 		{
@@ -97,9 +106,10 @@ void ImGuiWindow::CAssetCustomizationWindow::OpenAsset()
 				{
 					myGameObject->GetComponent<CModelComponent>()->SetModel(myFBXAssetPaths[i].myPath);
 				}
+				mySelectedFBX = std::move(myFBXAssetPaths[i].myPath);
 				myShowOpenAssetWindow = false;
+				myFBXAssetPaths.clear();
 			}
-
 		}
 		ImGui::EndChild();
 	}
@@ -108,14 +118,71 @@ void ImGuiWindow::CAssetCustomizationWindow::OpenAsset()
 
 void ImGuiWindow::CAssetCustomizationWindow::OpenCustomizationFile()
 {
-	// Open ImGui with browser for TintedModelData/
-	// Double click lets you load data from selected json.
+	const std::string path = ASSETPATH("Assets/Graphics/TintedModels/Data/");
+	myShowOpenCustomizationWindow = GetPathsByExtension(path, ".json", myJSONPaths, !myJSONPaths.empty());
+	ImGui::Begin("Open FBX Asset", &myShowOpenCustomizationWindow);
+	{
+		ImGui::TextColored(ImVec4(1,1,1,1), path.c_str());
+		ImGui::BeginChild("Scrolling");
+		for (size_t i = 0; i < myJSONPaths.size(); ++i)
+		{
+			bool selected = false;
+			ImGui::Selectable(myJSONPaths[i].myDisplayName.c_str(), &selected);
+			if (selected)
+			{
+				if(myGameObject->GetComponent<CModelComponent>())
+					CModelHelperFunctions::LoadTintsToModelComponent(myGameObject, myJSONPaths[i].myPath, mySelectedFBX);
+				else
+				{
+					CModelHelperFunctions::AddModelComponentWithTintsFromData(myGameObject, myJSONPaths[i].myPath, mySelectedFBX);
+				}
+
+				CModelComponent* model = myGameObject->GetComponent<CModelComponent>();
+				Vector4 primary		= model->Tint1();
+				Vector4 secondary	= model->Tint2();
+				Vector4 tertiary	= model->Tint3();
+				Vector4 accents		= model->Tint4();
+				myPrimaryTint[0]   = primary.x;		myPrimaryTint[1]   = primary.y;		myPrimaryTint[2]   = primary.z;
+				mySecondaryTint[0] = secondary.x;	mySecondaryTint[1] = secondary.y;	mySecondaryTint[2] = secondary.z;
+				myTertiaryTint[0]  = tertiary.x;	myTertiaryTint[1]  = tertiary.y;	myTertiaryTint[2]  = tertiary.z;
+				myAccentTint[0]	   = accents.x;		myAccentTint[1]    = accents.y;		myAccentTint[2]    = accents.z;
+
+				mySelectedJSON = std::move(myJSONPaths[i].myPath);
+				myShowOpenCustomizationWindow = false;
+				myJSONPaths.clear();
+			}
+		}
+		ImGui::EndChild();
+	}
+	ImGui::End();
 }
 
 void ImGuiWindow::CAssetCustomizationWindow::SaveCustomizationFile()
 {
 	// ImGui window where you can enter the name of the file.
 	// Saves colors and model to name_of_file.json, in TintedModelData/
+	const std::string path = ASSETPATH("Assets/Graphics/TintedModels/Data/");
+	ImGui::Begin("Open FBX Asset", &myShowSaveCustomizationWindow);
+	{
+		ImGui::TextColored(ImVec4(1,1,1,1), path.c_str());
+		ImGui::Spacing();
+
+		ImGui::InputText("", myJSONFileName, TintedModelVariables::JSONNameBufferSize);
+		if (ImGui::Button("Save"))
+		{
+			if (strlen(myJSONFileName) > 0)
+			{
+				CModelHelperFunctions::SaveTintsFromModelComponent(myGameObject, mySelectedFBX, std::string(path + myJSONFileName + ".json"));
+			}
+			else
+			{
+				CModelHelperFunctions::SaveTintsFromModelComponent(myGameObject, mySelectedFBX);
+			}
+			myShowSaveCustomizationWindow = false;
+			ZeroMemory(myJSONFileName, TintedModelVariables::JSONNameBufferSize);
+		}
+	}
+	ImGui::End();
 }
 
 const std::string CutToFileNameOnly(const std::string& aString)

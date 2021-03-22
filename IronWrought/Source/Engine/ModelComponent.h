@@ -26,13 +26,22 @@ public:
 	bool SetTints(std::vector<Vector3>& aVectorWithTints);
 	const std::vector<Vector3>& GetTints();
 
+	// Primary tint.
 	void Tint1(const Vector3& aTint);
+	// Secondary tint.
 	void Tint2(const Vector3& aTint);
+	// Tertiary tint.
 	void Tint3(const Vector3& aTint);
+	// Accents tint.
 	void Tint4(const Vector3& aTint);
+
+	// Primary tint.
 	Vector4 Tint1() const;
+	// Secondary tint.
 	Vector4 Tint2() const;
+	// Tertiary tint.
 	Vector4 Tint3() const;
+	// Accents tint.
 	Vector4 Tint4() const;
 
 	void HasTintMap(const bool aHasTintMap);
