@@ -11,6 +11,8 @@ public:
 	CVFXSystemComponent(CGameObject& aParent, const std::string& aVFXDataPath);
 	~CVFXSystemComponent() override;
 
+	void Init(const std::string& aVFXDataPath);
+
 	void Awake() override;
 	void Start() override;
 	void Update() override;

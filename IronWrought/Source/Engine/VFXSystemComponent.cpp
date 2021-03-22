@@ -22,9 +22,21 @@ CVFXSystemComponent::CVFXSystemComponent(CGameObject& aParent, const std::string
 {
 	myEnabled = true;
 
+	Init(aVFXDataPath);
+}
+
+CVFXSystemComponent::~CVFXSystemComponent()
+{
+	myEffects.clear();
+}
+
+void CVFXSystemComponent::Init(const std::string& aVFXDataPath)
+{
 	rapidjson::Document document = CJsonReader::Get()->LoadDocument(aVFXDataPath);
 	ENGINE_BOOL_POPUP(!CJsonReader::HasParseError(document), "Invalid Json document: %s", aVFXDataPath.c_str());
 	ENGINE_BOOL_POPUP(document.HasMember("VFXEffects"), "VFX Json: %s is not structured correctly! Please compare to VFXSystem_ToLoad.json", aVFXDataPath.c_str());
+
+	myEffects.clear();
 
 	for (unsigned int j = 0; j < document["VFXEffects"].Size(); ++j)
 	{
@@ -52,15 +64,15 @@ CVFXSystemComponent::CVFXSystemComponent(CGameObject& aParent, const std::string
 
 			Matrix t;
 			t = Matrix::CreateFromYawPitchRoll
-			( DirectX::XMConvertToRadians(doc["VFXMeshes"][i]["Rotation Y"].GetFloat())
-			 , DirectX::XMConvertToRadians(doc["VFXMeshes"][i]["Rotation X"].GetFloat())
-			 , DirectX::XMConvertToRadians(doc["VFXMeshes"][i]["Rotation Z"].GetFloat())
+			(DirectX::XMConvertToRadians(doc["VFXMeshes"][i]["Rotation Y"].GetFloat())
+				, DirectX::XMConvertToRadians(doc["VFXMeshes"][i]["Rotation X"].GetFloat())
+				, DirectX::XMConvertToRadians(doc["VFXMeshes"][i]["Rotation Z"].GetFloat())
 			);
 
 			t *= Matrix::CreateScale
-			 ( doc["VFXMeshes"][i]["Scale X"].GetFloat()
-			 , doc["VFXMeshes"][i]["Scale Y"].GetFloat()
-			 , doc["VFXMeshes"][i]["Scale Z"].GetFloat()
+			(doc["VFXMeshes"][i]["Scale X"].GetFloat()
+				, doc["VFXMeshes"][i]["Scale Y"].GetFloat()
+				, doc["VFXMeshes"][i]["Scale Z"].GetFloat()
 			);
 
 			t.Translation
@@ -104,9 +116,9 @@ CVFXSystemComponent::CVFXSystemComponent(CGameObject& aParent, const std::string
 
 			Matrix t;
 			t = Matrix::CreateFromYawPitchRoll
-			 ( DirectX::XMConvertToRadians(doc["ParticleSystems"][i]["Rotation Y"].GetFloat())
-			 , DirectX::XMConvertToRadians(doc["ParticleSystems"][i]["Rotation X"].GetFloat())
-			 , DirectX::XMConvertToRadians(doc["ParticleSystems"][i]["Rotation Z"].GetFloat())
+			(DirectX::XMConvertToRadians(doc["ParticleSystems"][i]["Rotation Y"].GetFloat())
+				, DirectX::XMConvertToRadians(doc["ParticleSystems"][i]["Rotation X"].GetFloat())
+				, DirectX::XMConvertToRadians(doc["ParticleSystems"][i]["Rotation Z"].GetFloat())
 			);
 
 			t *= Matrix::CreateScale(doc["ParticleSystems"][i]["Scale"].GetFloat());
@@ -147,7 +159,7 @@ CVFXSystemComponent::CVFXSystemComponent(CGameObject& aParent, const std::string
 
 		effect->myParticleEmitters = CParticleEmitterFactory::GetInstance()->GetParticleSet(particlePaths);
 		ENGINE_BOOL_POPUP(!effect->myParticleEmitters.empty(), "No Particle data found.");
-	
+
 		for (unsigned int i = 0; i < effect->myParticleEmitters.size(); ++i) {
 
 			effect->myParticleVertices.emplace_back(std::vector<CParticleEmitter::SParticleVertex>());
@@ -159,11 +171,6 @@ CVFXSystemComponent::CVFXSystemComponent(CGameObject& aParent, const std::string
 			}
 		}
 	}
-}
-
-CVFXSystemComponent::~CVFXSystemComponent()
-{
-	myEffects.clear();
 }
 
 void CVFXSystemComponent::Awake()

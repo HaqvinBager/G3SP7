@@ -1,17 +1,25 @@
 #pragma once
 #include "Window.h"
-//#include "rapidjson/filewritestream.h"
 #include "SerializerUtility.h"
 
 namespace IronWroughtImGui {
 
-	struct SVFXSerializable
+	struct STabWindow
 	{
 		std::string myName = "";
+		unsigned int myTabIndex = 0;
+	};
+
+	struct SVFXSerializable
+	{
+		char myName[64];
 
 		//std::vector<CVFXBase*>	myVFXBases;
 		//std::vector<Matrix>		myVFXTransforms;
 		//std::vector<Matrix>		myVFXTransformsOriginal;
+		std::vector<Vector3>	myVFXParentOffsets;
+		std::vector<Vector3>	myVFXRotationAroundParent;
+		std::vector<float>		myVFXScale;
 		std::vector<Vector3>	myVFXAngularSpeeds;
 		std::vector<float>		myVFXDelays;
 		std::vector<float>		myVFXDurations;
@@ -23,6 +31,9 @@ namespace IronWroughtImGui {
 		//std::vector<CParticleEmitter*> myParticleEmitters;
 		//std::vector<Matrix>	 myEmitterTransforms;
 		//std::vector<Matrix>	 myEmitterTransformsOriginal;
+		std::vector<Vector3> myEmitterParentOffsets;
+		std::vector<Vector3> myEmitterRotationsAroundParent;
+		std::vector<float>	 myEmitterScale;
 		std::vector<Vector3> myEmitterAngularSpeeds;
 		//std::vector<std::vector<CParticleEmitter::SParticleVertex>> myParticleVertices;
 		//std::vector<std::queue<CParticleEmitter::SParticleVertex>>	myParticlePools;
@@ -37,12 +48,10 @@ namespace IronWroughtImGui {
 
 		void Serialize(rapidjson::PrettyWriter<rapidjson::StringBuffer>& aWriter)
 		{
-			aWriter.Key("VFXEffects");
-			aWriter.StartArray();
 			aWriter.StartObject();
 
 			aWriter.Key("Name");
-			aWriter.String(myName.c_str());
+			aWriter.String(myName);
 
 			aWriter.Key("VFXMeshes");
 			aWriter.StartArray();
@@ -55,31 +64,31 @@ namespace IronWroughtImGui {
 			aWriter.Key("Path");
 			aWriter.String("Assets/Graphics/VFX/JSON/Data/ParticleData_Pull.json");
 			aWriter.Key("Offset X");
-			aWriter.Double(0.0);
+			aWriter.Double(myEmitterParentOffsets[0].x);
 			aWriter.Key("Offset Y");
-			aWriter.Double(0.65);
+			aWriter.Double(myEmitterParentOffsets[0].y);
 			aWriter.Key("Offset Z");
-			aWriter.Double(2.7);
+			aWriter.Double(myEmitterParentOffsets[0].z);
 			aWriter.Key("Rotation X");
-			aWriter.Double(0.0);
+			aWriter.Double(myEmitterRotationsAroundParent[0].x);
 			aWriter.Key("Rotation Y");
-			aWriter.Double(0.0);
+			aWriter.Double(myEmitterRotationsAroundParent[0].y);
 			aWriter.Key("Rotation Z");
-			aWriter.Double(0.0);
+			aWriter.Double(myEmitterRotationsAroundParent[0].z);
 			aWriter.Key("Scale");
-			aWriter.Double(1.0);
+			aWriter.Double(myEmitterScale[0]);
 			aWriter.Key("Rotate X per second");
-			aWriter.Double(0.0);
+			aWriter.Double(myEmitterAngularSpeeds[0].x);
 			aWriter.Key("Rotate Y per second");
-			aWriter.Double(0.0);
+			aWriter.Double(myEmitterAngularSpeeds[0].x);
 			aWriter.Key("Rotate Z per second");
-			aWriter.Double(0.0);
+			aWriter.Double(myEmitterAngularSpeeds[0].x);
 			aWriter.Key("Orbit");
-			aWriter.Bool(true);
+			aWriter.Bool(myEmitterShouldOrbit[0]);
 			aWriter.Key("Delay");
-			aWriter.Double(0.0);
+			aWriter.Double(myEmitterBaseDelays[0]);
 			aWriter.Key("Duration");
-			aWriter.Double(4.0);
+			aWriter.Double(myEmitterDurations[0]);
 
 			Serializer<std::vector<Vector2>> ser;
 			ser.Serialize("SizeCurve", myParticleSizeCurves[0], aWriter);
@@ -88,30 +97,6 @@ namespace IronWroughtImGui {
 			aWriter.EndArray();
 
 			aWriter.EndObject();
-			aWriter.EndArray(); // VFXEffects
-		}
-	};
-
-	struct SParticleSystemData
-	{
-		std::vector<Vector2> mySizeCurve;
-
-		void Serialize(rapidjson::PrettyWriter<rapidjson::StringBuffer>& aWriter)
-		{
-			//aWriter.StartObject();
-			aWriter.Key("SizeCurve");
-			aWriter.StartArray();
-			for (unsigned int i = 0; i < mySizeCurve.size(); ++i)
-			{
-				aWriter.StartObject();
-				aWriter.Key("x");
-				aWriter.Double(mySizeCurve[i].x);
-				aWriter.Key("y");
-				aWriter.Double(mySizeCurve[i].y);
-				aWriter.EndObject();
-			}
-			aWriter.EndArray(static_cast<rapidjson::SizeType>(mySizeCurve.size()));
-			//aWriter.EndObject(1);
 		}
 	};
 
@@ -127,9 +112,13 @@ namespace IronWroughtImGui {
 		void SaveToFile();
 
 	private:
-		//void Save(const char* aJsonFile, const char* aVariableName, const std::vector<ImVec2>& somePoints);
 
 		std::unordered_map<std::string, std::vector<Vector2>> myPointsMap;
+		std::vector<SVFXSerializable> myEffects;
+		unsigned int myCurrentEffectIndex = 0;
+		unsigned int myCurrentTabIndex = 0;
+		float myColor[4] = {1.0f, 1.0f, 1.0f, 1.0f};
+		char myCurrentEffectNameBuffer[64];
 	};
 }
 

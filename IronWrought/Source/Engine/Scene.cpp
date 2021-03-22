@@ -63,6 +63,8 @@ CScene::~CScene()
 	delete myEnvironmentLight;
 	myEnvironmentLight = nullptr;
 
+	myVFXTester = nullptr;
+
 	this->ClearGameObjects();
 	this->ClearPointLights();
 

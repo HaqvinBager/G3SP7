@@ -24,7 +24,6 @@
 #include <TextFactory.h>
 #include <TextInstance.h>
 
-CGameObject* gVFX = nullptr;
 void TEMP_VFX(CScene* aScene);
 void TEMP_DeferredRenderingTests(CScene* aScene);
 
@@ -65,18 +64,19 @@ void CInGameState::Stop()
 
 void CInGameState::Update()
 {
-	if (gVFX)
+	CGameObject* vfx = IRONWROUGHT->GetActiveScene().GetVFXTester();
+	if (vfx)
 	{
-		if (gVFX->GetComponent<CVFXSystemComponent>())
+		if (vfx->GetComponent<CVFXSystemComponent>())
 		{
 			if (INPUT->IsKeyPressed('O'))
 			{
-				gVFX->GetComponent<CVFXSystemComponent>()->DisableEffect(0);
-				gVFX->GetComponent<CVFXSystemComponent>()->EnableEffect(0);
+				vfx->GetComponent<CVFXSystemComponent>()->DisableEffect(0);
+				vfx->GetComponent<CVFXSystemComponent>()->EnableEffect(0);
 			}
 			if (INPUT->IsKeyPressed('P'))
 			{
-				gVFX->GetComponent<CVFXSystemComponent>()->DisableEffect(0);
+				vfx->GetComponent<CVFXSystemComponent>()->DisableEffect(0);
 			}
 			//if (INPUT->IsKeyPressed('K'))
 			//{
@@ -285,6 +285,6 @@ void TEMP_VFX(CScene* aScene)
 	CGameObject* abilityObject = new CGameObject(id++);
 	abilityObject->AddComponent<CVFXSystemComponent>(*abilityObject, ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystem_ToLoad.json"));
 
-	gVFX = abilityObject;
 	aScene->AddInstance(abilityObject);
+	aScene->SetVFXTester(abilityObject);
 }

@@ -1,1 +1,44 @@
-{"Name":0.10000000149011612,"hej":0.10000000149011612}
+{
+  "VFXEffects": [
+    {
+      "Name": "Pull",
+      "VFXMeshes": [],
+      "ParticleSystems": [
+        {
+          "Path": "Assets/Graphics/VFX/JSON/Data/ParticleData_Pull.json",
+          "Offset X": 0.0,
+          "Offset Y": 0.0,
+          "Offset Z": 0.0,
+          "Rotation X": 0.0,
+          "Rotation Y": 0.0,
+          "Rotation Z": 0.0,
+          "Scale": 1.0,
+          "Rotate X per second": 118.0,
+          "Rotate Y per second": 118.0,
+          "Rotate Z per second": 118.0,
+          "Orbit": true,
+          "Delay": 0.0,
+          "Duration": 5.0,
+          "SizeCurve": [
+            {
+              "x": 1.0,
+              "y": 1.0
+            },
+            {
+              "x": 0.25,
+              "y": 0.25
+            },
+            {
+              "x": 0.75,
+              "y": 0.75
+            },
+            {
+              "x": 1.0,
+              "y": 1.0
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

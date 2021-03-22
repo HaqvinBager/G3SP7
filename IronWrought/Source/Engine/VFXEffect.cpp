@@ -133,6 +133,7 @@ void SVFXEffect::Enable()
 	for (unsigned int i = 0; i < myParticleEmitters.size(); ++i) {
 		myEmitterDelays[i] = myEmitterBaseDelays[i];
 		myEmitterDurations[i] = myEmitterBaseDurations[i];
+		myEmitterTimers[i] = 0.0f;
 	}
 }
 
