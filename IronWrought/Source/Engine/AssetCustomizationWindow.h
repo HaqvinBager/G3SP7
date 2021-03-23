@@ -23,8 +23,8 @@ namespace ImGuiWindow
 			std::string myPath;
 			std::string myDisplayName;
 		};
-		void OpenAsset();
-		void OpenCustomizationFile();
+		void LoadAsset();
+		void LoadCustomizationFile();
 		void SaveCustomizationFile();
 
 		bool GetPathsByExtension(const std::string& aPath, const std::string& aFileExtesion,std::vector<SAssetInfo>& anOutVector, const bool aShouldClearVector = true);
@@ -42,9 +42,9 @@ namespace ImGuiWindow
 		std::vector<SAssetInfo> myFBXAssetPaths;
 		std::vector<SAssetInfo> myJSONPaths;
 
-		bool myShowOpenAssetWindow;
-		bool myShowOpenCustomizationWindow;
-		bool myShowSaveCustomizationWindow;
+		bool myShowLoadAsset;
+		bool myShowLoadCustomizationFile;
+		bool myShowSaveCustomizationFile;
 	};
 }
 

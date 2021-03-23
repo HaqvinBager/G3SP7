@@ -12,9 +12,9 @@
 ImGuiWindow::CAssetCustomizationWindow::CAssetCustomizationWindow(const char* aName)
 	: CWindow(aName)
 	, myGameObject(nullptr)
-	, myShowOpenAssetWindow(false)
-	, myShowOpenCustomizationWindow(false)
-	, myShowSaveCustomizationWindow(false)
+	, myShowLoadAsset(false)
+	, myShowLoadCustomizationFile(false)
+	, myShowSaveCustomizationFile(false)
 {
 	ZeroMemory(myPrimaryTint, 3);
 	ZeroMemory(mySecondaryTint, 3);
@@ -45,9 +45,9 @@ void ImGuiWindow::CAssetCustomizationWindow::OnInspectorGUI()
 		{
 			if (ImGui::BeginMenu("File"))
 			{
-				if (ImGui::MenuItem("Open Asset..", "Ctrl+O")) { myShowOpenAssetWindow = true; }
-				if (ImGui::MenuItem("Open Customization File", "Ctrl+L")) { myShowOpenCustomizationWindow = true; }
-				if (ImGui::MenuItem("Save Customization", "Ctrl+S")) { myShowSaveCustomizationWindow = true; }
+				if (ImGui::MenuItem("Open Asset..", "Ctrl+O")) { myShowLoadAsset = true; }
+				if (ImGui::MenuItem("Open Customization File", "Ctrl+L")) { myShowLoadCustomizationFile = true; }
+				if (ImGui::MenuItem("Save Customization", "Ctrl+S")) { myShowSaveCustomizationFile = true; }
 				ImGui::EndMenu();
 			}
 			ImGui::EndMenuBar();
@@ -66,13 +66,13 @@ void ImGuiWindow::CAssetCustomizationWindow::OnInspectorGUI()
 			model.Tint4(Vector3(myAccentTint));
 		}
 
-		if (myShowOpenAssetWindow)
-			OpenAsset();
+		if (myShowLoadAsset)
+			LoadAsset();
 
-		if (myShowOpenCustomizationWindow)
-			OpenCustomizationFile();
+		if (myShowLoadCustomizationFile)
+			LoadCustomizationFile();
 
-		if (myShowSaveCustomizationWindow)
+		if (myShowSaveCustomizationFile)
 			SaveCustomizationFile();
 	}
 	ImGui::End();
@@ -82,13 +82,16 @@ void ImGuiWindow::CAssetCustomizationWindow::OnDisable()
 {
 	myFBXAssetPaths.clear();
 	myJSONPaths.clear();
+	myShowLoadAsset = false;
+	myShowLoadCustomizationFile = false;
+	myShowSaveCustomizationFile = false;
 }
 
-void ImGuiWindow::CAssetCustomizationWindow::OpenAsset()
+void ImGuiWindow::CAssetCustomizationWindow::LoadAsset()
 {
 	const std::string path = ASSETPATH("Assets/Graphics/");
-	myShowOpenAssetWindow = GetPathsByExtension(path, ".fbx", myFBXAssetPaths, !myFBXAssetPaths.empty());
-	ImGui::Begin("Open FBX Asset", &myShowOpenAssetWindow);
+	myShowLoadAsset = GetPathsByExtension(path, ".fbx", myFBXAssetPaths, !myFBXAssetPaths.empty());
+	ImGui::Begin("Load FBX Asset.", &myShowLoadAsset);
 	{
 		ImGui::TextColored(ImVec4(1,1,1,1), path.c_str());
 		ImGui::BeginChild("Scrolling");
@@ -99,15 +102,12 @@ void ImGuiWindow::CAssetCustomizationWindow::OpenAsset()
 			if (selected)
 			{
 				if (!myGameObject->GetComponent<CModelComponent>())
-				{
 					myGameObject->AddComponent<CModelComponent>(*myGameObject, myFBXAssetPaths[i].myPath);
-				}
 				else
-				{
 					myGameObject->GetComponent<CModelComponent>()->SetModel(myFBXAssetPaths[i].myPath);
-				}
+
 				mySelectedFBX = std::move(myFBXAssetPaths[i].myPath);
-				myShowOpenAssetWindow = false;
+				myShowLoadAsset = false;
 				myFBXAssetPaths.clear();
 			}
 		}
@@ -116,11 +116,11 @@ void ImGuiWindow::CAssetCustomizationWindow::OpenAsset()
 	ImGui::End();
 }
 
-void ImGuiWindow::CAssetCustomizationWindow::OpenCustomizationFile()
+void ImGuiWindow::CAssetCustomizationWindow::LoadCustomizationFile()
 {
 	const std::string path = ASSETPATH("Assets/Graphics/TintedModels/Data/");
-	myShowOpenCustomizationWindow = GetPathsByExtension(path, ".json", myJSONPaths, !myJSONPaths.empty());
-	ImGui::Begin("Open FBX Asset", &myShowOpenCustomizationWindow);
+	myShowLoadCustomizationFile = GetPathsByExtension(path, ".json", myJSONPaths, !myJSONPaths.empty());
+	ImGui::Begin("Load JSON Data.", &myShowLoadCustomizationFile);
 	{
 		ImGui::TextColored(ImVec4(1,1,1,1), path.c_str());
 		ImGui::BeginChild("Scrolling");
@@ -131,11 +131,9 @@ void ImGuiWindow::CAssetCustomizationWindow::OpenCustomizationFile()
 			if (selected)
 			{
 				if(myGameObject->GetComponent<CModelComponent>())
-					CModelHelperFunctions::LoadTintsToModelComponent(myGameObject, myJSONPaths[i].myPath, mySelectedFBX);
+					ModelHelperFunctions::LoadTintsToModelComponent(myGameObject, myJSONPaths[i].myPath, mySelectedFBX);
 				else
-				{
-					CModelHelperFunctions::AddModelComponentWithTintsFromData(myGameObject, myJSONPaths[i].myPath, mySelectedFBX);
-				}
+					ModelHelperFunctions::AddModelComponentWithTintsFromData(myGameObject, myJSONPaths[i].myPath, mySelectedFBX);
 
 				CModelComponent* model = myGameObject->GetComponent<CModelComponent>();
 				Vector4 primary		= model->Tint1();
@@ -148,7 +146,7 @@ void ImGuiWindow::CAssetCustomizationWindow::OpenCustomizationFile()
 				myAccentTint[0]	   = accents.x;		myAccentTint[1]    = accents.y;		myAccentTint[2]    = accents.z;
 
 				mySelectedJSON = std::move(myJSONPaths[i].myPath);
-				myShowOpenCustomizationWindow = false;
+				myShowLoadCustomizationFile = false;
 				myJSONPaths.clear();
 			}
 		}
@@ -159,10 +157,8 @@ void ImGuiWindow::CAssetCustomizationWindow::OpenCustomizationFile()
 
 void ImGuiWindow::CAssetCustomizationWindow::SaveCustomizationFile()
 {
-	// ImGui window where you can enter the name of the file.
-	// Saves colors and model to name_of_file.json, in TintedModelData/
 	const std::string path = ASSETPATH("Assets/Graphics/TintedModels/Data/");
-	ImGui::Begin("Open FBX Asset", &myShowSaveCustomizationWindow);
+	ImGui::Begin("Save JSON Data.", &myShowSaveCustomizationFile);
 	{
 		ImGui::TextColored(ImVec4(1,1,1,1), path.c_str());
 		ImGui::Spacing();
@@ -171,14 +167,11 @@ void ImGuiWindow::CAssetCustomizationWindow::SaveCustomizationFile()
 		if (ImGui::Button("Save"))
 		{
 			if (strlen(myJSONFileName) > 0)
-			{
-				CModelHelperFunctions::SaveTintsFromModelComponent(myGameObject, mySelectedFBX, std::string(path + myJSONFileName + ".json"));
-			}
+				ModelHelperFunctions::SaveTintsFromModelComponent(myGameObject, mySelectedFBX, std::string(path + myJSONFileName + ".json"));
 			else
-			{
-				CModelHelperFunctions::SaveTintsFromModelComponent(myGameObject, mySelectedFBX);
-			}
-			myShowSaveCustomizationWindow = false;
+				ModelHelperFunctions::SaveTintsFromModelComponent(myGameObject, mySelectedFBX);
+
+			myShowSaveCustomizationFile = false;
 			ZeroMemory(myJSONFileName, TintedModelVariables::JSONNameBufferSize);
 		}
 	}
