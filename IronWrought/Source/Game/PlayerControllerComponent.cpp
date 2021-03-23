@@ -115,7 +115,12 @@ void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
 	/*CCameraControllerComponent* cameraController = CEngine::GetInstance()->GetActiveScene().FindFirstObjectWithComponent<CCameraControllerComponent>();*/
 #ifdef _DEBUG
 	if (myCamera->IsFreeCamMode() || myCamera->IsCursorUnlocked())
+	{
+		if (aEvent == EInputEvent::SetResetPointEntities)
+			myRespawnPosition = myCamera->GameObject().myTransform->Position();
+
 		return;
+	}
 #endif
 
 	if (myMovement.x != 0.0f || myMovement.z != 0.0f)
