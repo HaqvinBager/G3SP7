@@ -137,7 +137,8 @@ public class Exporter
         Json.AddToExport(ExportPointlights.ExportPointlight(aSceneName));
         Json.AddToExport(ExportDecals.Export(aSceneName));
         Json.AddToExport(ExportPlayer(aSceneName));
-        Json.AddToExport(ExportBluePrint.Export(aSceneName), true);
+        Json.AddToExport(ExportBluePrint.Export(aSceneName));
+        Json.AddToExport(ExportInstancedModel.Export(aSceneName), true);
 
         //Json.EndExport(aSceneName, "");
     }

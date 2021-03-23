@@ -194,7 +194,7 @@
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Behaviour.h" />
     <ClInclude Include="CameraSetting.h" />
-    <ClInclude Include="CCurveWindow.h" />
+    <ClInclude Include="CurveWindow.h" />
     <ClInclude Include="Interop.h" />
     <ClInclude Include="NodeTypeActionPatrol.h" />
     <ClInclude Include="NodeTypeFloatDecision.h" />
@@ -415,11 +415,8 @@
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="AudioChannel.cpp" />
     <ClCompile Include="AudioManager.cpp" />
-<<<<<<< HEAD
-    <ClCompile Include="CurveWindow.cpp" />
     <ClCompile Include="JsonWriter.cpp" />
-=======
-    <ClCompile Include="CCurveWindow.cpp" />
+    <ClCompile Include="CurveWindow.cpp" />
     <ClCompile Include="NodeTypeActionPatrol.cpp" />
     <ClCompile Include="NodeTypeGameObjectGetChildPosition.cpp" />
     <ClCompile Include="NodeTypeGameObjectGetPlayerPosition.cpp" />
@@ -428,7 +425,6 @@
     <ClCompile Include="NodeTypeVector3Cross.cpp" />
     <ClCompile Include="NodeTypeVector3Join.cpp" />
     <ClCompile Include="NodeTypeVector3Split.cpp" />
->>>>>>> master
     <ClCompile Include="NodeTypeAudioPlayResearcherEvent.cpp" />
     <ClCompile Include="NodeTypeAudioPlayResearcherReactionExplosives.cpp" />
     <ClCompile Include="NodeTypeAudioPlayRobotPatrolling.cpp" />

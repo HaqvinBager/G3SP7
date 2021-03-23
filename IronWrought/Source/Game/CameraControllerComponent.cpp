@@ -123,8 +123,14 @@ void CCameraControllerComponent::UpdatePlayerFirstPerson()
 	float dx = static_cast<float>(Input::GetInstance()->MouseRawDeltaX());
 	float dy = static_cast<float>(Input::GetInstance()->MouseRawDeltaY());
 
+	float myOldYaw = myYaw;
+	float myOldPitch = myPitch;
+
 	myYaw	= WrapAngle(myYaw + (dx * myMouseRotationSpeed * dt));
 	myPitch = std::clamp(myPitch + (dy * myMouseRotationSpeed * dt), ToDegrees(-PI / 2.0f), ToDegrees(PI / 2.0f));
+
+	myYaw = Lerp(myOldYaw, myYaw, 0.6f);
+	myPitch = Lerp(myOldPitch, myPitch, 0.6f);
 
 	GameObject().myTransform->Rotation({ myPitch, myYaw, 0});
 

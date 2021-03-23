@@ -746,9 +746,6 @@
     <ClCompile Include="JsonWriter.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
-    <ClCompile Include="CurveWindow.cpp">
-      <Filter>Imgui\Windows</Filter>
-    </ClCompile>
     <ClCompile Include="PlayerAnimationController.cpp" />
     <ClCompile Include="NodeTypeVector3Add.cpp">
       <Filter>Imgui\Node Editor\Nodes\Vector3</Filter>
@@ -783,6 +780,9 @@
     </ClCompile>
     <ClCompile Include="NodeTypeGameObjectGetPlayerPosition.cpp">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
+    </ClCompile>
+    <ClCompile Include="CurveWindow.cpp">
+      <Filter>Imgui\Windows</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1412,19 +1412,16 @@
       <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
     </ClInclude>
     <ClInclude Include="..\Includes\ImGui\Core\widget_curve.h">
-    <Filter>Imgui\Widgets</Filter>
+      <Filter>Imgui\Widgets</Filter>
     </ClInclude>
     <ClInclude Include="..\Includes\ImGui\Core\curve_v122.hpp">
-    <Filter>Imgui\Widgets</Filter>
+      <Filter>Imgui\Widgets</Filter>
     </ClInclude>
     <ClInclude Include="JsonWriter.h">
-    <Filter>Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="CurveWindow.h">
-    <Filter>Imgui\Windows</Filter>
+      <Filter>Utility</Filter>
     </ClInclude>
     <ClInclude Include="SerializerUtility.h">
-    <Filter>Utility</Filter>
+      <Filter>Utility</Filter>
     </ClInclude>
     <ClInclude Include="PlayerAnimationController.h" />
     <ClInclude Include="NodeTypeVector3Add.h">
@@ -1463,6 +1460,9 @@
     </ClInclude>
     <ClInclude Include="NodeTypeGameObjectGetPlayerPosition.h">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
+    </ClInclude>
+    <ClInclude Include="CurveWindow.h">
+      <Filter>Imgui\Windows</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -7,7 +7,6 @@
 #include "EnviromentLightComponent.h"
 #include "ModelComponent.h"
 
-#include "JsonReader.h"
 #include "PointLightComponent.h"
 #include "DecalComponent.h"
 #include "Engine.h"
@@ -50,53 +49,89 @@ CScene* CSceneManager::CreateEmpty()
 	return emptyScene;
 }
 
-CScene* CSceneManager::CreateScene(const std::string& aSceneName)
+CScene* CSceneManager::CreateScene(const std::string& aSceneJson)
 {
 	CScene* scene = CreateEmpty();
 
-	AddInstancedModelComponents(*scene, aSceneName + "_InstanceModelCollection.json");
-	if (AddGameObjects(*scene, aSceneName + "_InstanceIDCollection.json")) {
-		SetTransforms(*scene, aSceneName + "_TransformCollection.json");
-		AddModelComponents(*scene, aSceneName + "_ModelCollection.json");
-		AddPointLights(*scene, aSceneName + "_PointLightCollection.json");
-		AddDecalComponents(*scene, aSceneName + "_DecalCollection.json");
-		
+	const auto doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + aSceneJson));
+	if(doc.HasParseError())
+		return nullptr;
+
+	const auto& scenes = doc.GetObjectW()["Scenes"].GetArray();
+	for (const auto& sceneData : scenes)
+	{	
+		if (AddGameObjects(*scene, sceneData["Ids"].GetArray()))
+		{
+			SetTransforms(*scene, sceneData["transforms"].GetArray());
+			AddModelComponents(*scene, sceneData["models"].GetArray());
+			AddPointLights(*scene, sceneData["lights"].GetArray());
+			AddDecalComponents(*scene, sceneData["decals"].GetArray());
+			AddInstancedModelComponents(*scene, sceneData["instancedModels"].GetArray());	
+		}
 	}
+
+	AddPlayer(*scene);
+
+	//AddPlayer(*scene, );
+	//{
+	//	const auto& ids = scene["Ids"].GetArray();
+	//	ids;
+	//}
+
+
+
+
+
+
+
+	//AddInstancedModelComponents(*scene, aSceneJson + "_InstanceModelCollection.json");
+	//if (AddGameObjects(*scene, aSceneJson + "_InstanceIDCollection.json")) {
+	//	SetTransforms(*scene, aSceneJson + "_TransformCollection.json");
+	//	AddModelComponents(*scene, aSceneJson + "_ModelCollection.json");
+	//	AddPointLights(*scene, aSceneJson + "_PointLightCollection.json");
+	//	AddDecalComponents(*scene, aSceneJson + "_DecalCollection.json");
+	//}
 	// Should be in the if case above. Later. When some bugs are fixed.
-		AddPlayer(*scene, aSceneName + "_Player.json");
+	//AddPlayer(*scene, aSceneJson + "_Player.json");
 	CEngine::GetInstance()->GetPhysx().Cooking(scene->ActiveGameObjects(), scene);
 	return scene;
 }
 
-
-
-bool CSceneManager::AddGameObjects(CScene& aScene, const std::string& aJsonFileName)
+bool CSceneManager::AddGameObjects(CScene& aScene, RapidArray someData)
 {
-	const auto& doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + aJsonFileName));
-	if (!CJsonReader::IsValid(doc, { "Ids" }))
+	if (someData.Size() == 0)
 		return false;
 
-	const auto& idArray = doc.GetObjectW()["Ids"].GetArray();
-
-	if (idArray.Size() == 0)
-		return false;
-
-	for (const auto& id : idArray) {
-		int instanceID = id.GetInt();
+	for (const auto& jsonID : someData)
+	{
+		int instanceID = jsonID.GetInt();
 		aScene.AddInstance(new CGameObject(instanceID));
 	}
 	return true;
 }
 
-void CSceneManager::SetTransforms(CScene& aScene, const std::string& aJsonFileName)
+
+//bool CSceneManager::AddGameObjects(CScene& aScene, const std::string& aJsonFileName)
+//{
+//	const auto& doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + aJsonFileName));
+//	if (!CJsonReader::IsValid(doc, { "Ids" }))
+//		return false;
+//
+//	const auto& idArray = doc.GetObjectW()["Ids"].GetArray();
+//
+//	if (idArray.Size() == 0)
+//		return false;
+//
+//	for (const auto& id : idArray) {
+//		int instanceID = id.GetInt();
+//		aScene.AddInstance(new CGameObject(instanceID));
+//	}
+//	return true;
+//}
+
+void CSceneManager::SetTransforms(CScene& aScene, RapidArray someData)
 {
-	const auto& doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + aJsonFileName));
-
-	if (!CJsonReader::IsValid(doc, { "transforms" }))
-		return;
-
-	const auto& transformArray = doc["transforms"].GetArray();
-	for (const auto& t : transformArray) {
+	for (const auto& t : someData) {
 		int id = t["instanceID"].GetInt();
 		CTransformComponent* transform = aScene.FindObjectWithID(id)->myTransform;
 		transform->Scale({ t["scale"]["x"].GetFloat(),
@@ -111,51 +146,30 @@ void CSceneManager::SetTransforms(CScene& aScene, const std::string& aJsonFileNa
 	}
 }
 
-void CSceneManager::AddModelComponents(CScene& aScene, const std::string& aJsonFileName)
+void CSceneManager::AddModelComponents(CScene& aScene, RapidArray someData)
 {
-	const auto& doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + aJsonFileName));
-	if (!CJsonReader::IsValid(doc, { "modelLinks" }))
-		return;
 
-	const auto& modelArray = doc.GetObjectW()["modelLinks"].GetArray();
-	for (const auto& m : modelArray) {
+	for (const auto& m : someData) {
 		const int instanceId = m["instanceID"].GetInt();
 		CGameObject* gameObject = aScene.FindObjectWithID(instanceId);
 		if (!gameObject)
 			continue;
 
 		const int assetId = m["assetID"].GetInt();
-#ifdef _DEBUG
 		if (CJsonReader::Get()->HasAssetPath(assetId))
-		{
-			SetConsoleColor(CONSOLE_GREEN);
-			std::cout << aJsonFileName << " " << " has AssetID: " << assetId << ". " << __FUNCTION__ << "()" << std::endl;
-			SetConsoleColor(CONSOLE_WHITE);
-			gameObject->AddComponent<CModelComponent>(*gameObject, ASSETPATH(CJsonReader::Get()->GetAssetPath(assetId)));
-		}
-		else
-		{
-			SetConsoleColor(CONSOLE_RED);
-			std::cout << aJsonFileName << " " << "does not have AssetID: " << assetId << ". " << __FUNCTION__  << "()" << std::endl;
-			SetConsoleColor(CONSOLE_WHITE);
-		}
-#else
-		if (CJsonReader::Get()->HasAssetPath(assetId))
-			gameObject->AddComponent<CModelComponent>(*gameObject, ASSETPATH(CJsonReader::Get()->GetAssetPath(assetId)));
-#endif
-
+			gameObject->AddComponent<CModelComponent>(*gameObject, ASSETPATH(CJsonReader::Get()->GetAssetPath(assetId)));	
 	}
 }
 
-void CSceneManager::AddInstancedModelComponents(CScene& aScene, const std::string& aJsonFileName)
+void CSceneManager::AddInstancedModelComponents(CScene& aScene, RapidArray someData)
 {
-	const auto& doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + aJsonFileName));
+	//const auto& doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + aJsonFileName));
 
-	if (!CJsonReader::IsValid(doc, { "instancedModels" }))
-		return;
+	//if (!CJsonReader::IsValid(doc, { "instancedModels" }))
+	//	return;
 
-	const auto& instancedModelArray = doc.GetObjectW()["instancedModels"].GetArray();
-	for (const auto& i : instancedModelArray) {
+	//const auto& instancedModelArray = doc.GetObjectW()["instancedModels"].GetArray();
+	for (const auto& i : someData) {
 		int assetID = i["assetID"].GetInt();
 		CGameObject* gameObject = new CGameObject(assetID);
 		gameObject->IsStatic(true);
@@ -184,18 +198,15 @@ void CSceneManager::AddInstancedModelComponents(CScene& aScene, const std::strin
 	}
 }
 
-void CSceneManager::AddPointLights(CScene& aScene, const std::string& aJsonFileName)
+void CSceneManager::AddPointLights(CScene& aScene, RapidArray someData)
 {
-	const auto& doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + aJsonFileName));
-
-	if (!CJsonReader::IsValid(doc, { "lights" }))
-		return;
-
-	const auto& pointLightArray = doc["lights"].GetArray();
-	for (const auto& pointLight : pointLightArray) {
+	for (const auto& pointLight : someData) {
 		const auto& id = pointLight["instanceID"].GetInt();
 
 		CGameObject* gameObject = aScene.FindObjectWithID(id);
+		if (gameObject == nullptr)
+			continue;
+
 		CPointLightComponent* pointLightComponent = gameObject->AddComponent<CPointLightComponent>(
 			*gameObject,
 			pointLight["range"].GetFloat(),
@@ -203,41 +214,36 @@ void CSceneManager::AddPointLights(CScene& aScene, const std::string& aJsonFileN
 			pointLight["g"].GetFloat(),
 			pointLight["b"].GetFloat()),
 			pointLight["intensity"].GetFloat());
-
 		aScene.AddInstance(pointLightComponent->GetPointLight());
 	}
 }
 
-void CSceneManager::AddDecalComponents(CScene& aScene, const std::string& aJsonFileName)
+void CSceneManager::AddDecalComponents(CScene& aScene, RapidArray someData)
 {
-	const auto& doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + aJsonFileName));
-	if (!CJsonReader::IsValid(doc, { "links" }))
-		return;
-
-	const auto& idArray = doc.GetObjectW()["links"].GetArray();
-
-	if (idArray.Size() == 0)
-		return;
-
-	for (const auto& decal : idArray) {
+	for (const auto& decal : someData) {
 		CGameObject* gameObject = aScene.FindObjectWithID(decal["instanceID"].GetInt());
 		gameObject->AddComponent<CDecalComponent>(*gameObject, decal["materialName"].GetString());
 	}
 }
 
-void CSceneManager::AddPlayer(CScene& aScene, const std::string& aJsonFileName)
+void CSceneManager::AddPlayer(CScene& aScene/*, RapidObject someData*/)
 {
-	CGameObject* player = nullptr;
-	const auto& doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + aJsonFileName));
-	if (CJsonReader::IsValid(doc, { "instanceID" })) 
+	/*CGameObject* player = nullptr;
+	if (!someData.HasMember("instanceID"))
+		return;
+
+	const int instanceID = someData["instanceID"].GetInt();
+	if (instanceID == 0)
+	{*/
+	/*}
+	else
 	{
-		const int instanceID = doc["instanceID"].GetInt();
 		player = aScene.FindObjectWithID(instanceID);
-	}
-	else 
-	{
-		player = new CGameObject(87);
-	}
+	}*/
+
+	CGameObject* player = new CGameObject(87);
+	//if (player == nullptr)
+	//	return;
 
 	CGameObject* camera = CCameraControllerComponent::CreatePlayerFirstPersonCamera(player);//new CGameObject(96);
 	CGameObject* model = new CGameObject(88);

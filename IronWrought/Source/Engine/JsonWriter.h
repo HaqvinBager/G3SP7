@@ -7,7 +7,7 @@
 #include <fstream>
 #include <filesystem>
 
-using RapidObject = const rapidjson::Value::Object&;
+//using RapidObject = const rapidjson::Value::Object&;
 using rapidjson::IStreamWrapper;
 using rapidjson::Document;
 using rapidjson::FileWriteStream;

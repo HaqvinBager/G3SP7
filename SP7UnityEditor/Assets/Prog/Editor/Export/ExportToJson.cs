@@ -74,7 +74,7 @@ public static class Json
         myCurrentExportJson.Append("\n}");
 
 
-        string savePath = System.IO.Directory.GetCurrentDirectory() + "\\Assets\\Generated\\" + aFolder + "\\";
+        string savePath = System.IO.Directory.GetCurrentDirectory() + "\\Assets\\Generated\\";
         if (!System.IO.Directory.Exists(savePath))
             System.IO.Directory.CreateDirectory(savePath);
 

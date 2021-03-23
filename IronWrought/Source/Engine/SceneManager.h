@@ -1,5 +1,6 @@
 #pragma once
 #include "Scene.h"
+#include "JsonReader.h"
 
 class CSceneManager
 {
@@ -10,12 +11,17 @@ public:
 	static CScene* CreateScene(const std::string& aSceneName);
 
 private:
-	static bool AddGameObjects(CScene& aScene, const std::string& aJsonFileName);
-	static void SetTransforms(CScene& aScene, const std::string& aJsonFileName);
-	static void AddModelComponents(CScene& aScene, const std::string& aJsonFileName);
-	static void AddInstancedModelComponents(CScene& aScene, const std::string& aJsonFileName);
-	static void AddPointLights(CScene& aScene, const std::string& aJsonFileName);
-	static void AddDecalComponents(CScene& aScene, const std::string& aJsonFileName);
-	static void AddPlayer(CScene& aScene, const std::string& aJsonFileName);
+	
+	//static bool AddGameObjects(CScene& aScene, rapidjson::GenericObject<false, rapidjson::Value>& aSceneObjectaJsonFileName);
+
+	static bool AddGameObjects(CScene& aScene, RapidArray someData);
+	static void SetTransforms(CScene& aScene, RapidArray someData);
+	static void AddModelComponents(CScene& aScene, RapidArray someData);
+
+	//static bool AddGameObjects(CScene& aScene, const std::string& aJsonFileName);
+	static void AddInstancedModelComponents(CScene& aScene, RapidArray someData);
+	static void AddPointLights(CScene& aScene, RapidArray someData);
+	static void AddDecalComponents(CScene& aScene, RapidArray someData);
+	static void AddPlayer(CScene& aScene);
 };
 

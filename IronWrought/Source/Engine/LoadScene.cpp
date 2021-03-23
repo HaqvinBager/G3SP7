@@ -26,10 +26,10 @@ void IronWroughtImGui::CLoadScene::OnEnable()
 {
 	std::vector<std::string> generatedJsonFiles = CFolderUtility::GetFileNamesInFolder(ASSETPATH ("Assets/Generated"), ".json"/*, "Level"*/);
 	for (auto& file : generatedJsonFiles) {
-		auto endIndex = file.find_last_of('_');
-		std::string sceneName = file.substr(0, endIndex);
-		if (std::find(myScenes.begin(), myScenes.end(), sceneName) == myScenes.end()) {
-			myScenes.emplace_back(sceneName);
+		//auto endIndex = file.find_last_of('_');
+		//std::string sceneName = file.substr(0, endIndex);
+		if (std::find(myScenes.begin(), myScenes.end(), file.c_str()) == myScenes.end()) {
+			myScenes.emplace_back(file.c_str());
 		}
 	}
 	myScenes.push_back("Empty");
