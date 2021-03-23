@@ -200,6 +200,7 @@
     <ClInclude Include="NodeTypeGameObjectGetChildPosition.h" />
     <ClInclude Include="NodeTypeGameObjectGetPlayerPosition.h" />
     <ClInclude Include="NodeTypeGameObjectMoveToPosition.h" />
+    <ClInclude Include="NodeTypePlayerGetPosition.h" />
     <ClInclude Include="NodeTypeStartSphereOnTriggerExit.h" />
     <ClInclude Include="NodeTypeStartSphereOnTriggerStay.h" />
     <ClInclude Include="NodeTypeStartSphereOnTriggerEnter.h" />
@@ -420,6 +421,7 @@
     <ClCompile Include="NodeTypeGameObjectGetChildPosition.cpp" />
     <ClCompile Include="NodeTypeGameObjectGetPlayerPosition.cpp" />
     <ClCompile Include="NodeTypeGameObjectMoveToPosition.cpp" />
+    <ClCompile Include="NodeTypePlayerGetPosition.cpp" />
     <ClCompile Include="NodeTypeStartSphereOnTriggerExit.cpp" />
     <ClCompile Include="NodeTypeStartSphereOnTriggerStay.cpp" />
     <ClCompile Include="NodeTypeStartSphereOnTriggerEnter.cpp" />
