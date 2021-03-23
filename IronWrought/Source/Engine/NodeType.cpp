@@ -68,6 +68,7 @@
 #include "NodeTypeVector3Join.h"
 #include "NodeTypeVector3Cross.h"
 #include "NodeTypeStartSphereOnTriggerEnter.h"
+#include "NodeTypeStartSphereOnTriggerExit.h"
 #include "Scene.h"
 #include "Engine.h"
 #include "NodeDataManager.h"
@@ -137,6 +138,7 @@ void CNodeTypeCollector::PopulateTypes()
 	RegisterType<CNodeTypeVector3Join>("Vec3 Join");
 	RegisterType<CNodeTypeVector3Cross>("Vec3 Cross");
 	RegisterType<CNodeTypeStartSphereOnTriggerEnter>("Sphere On Trigger Enter");
+	RegisterType<CNodeTypeStartSphereOnTriggerExit>("Sphere On Trigger Exit");
 
 }
 

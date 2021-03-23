@@ -8,4 +8,3 @@ public:
 	std::string GetNodeTypeCategory() override { return "Start"; }
 	bool IsStartNode() override { return true; }
 };
-
