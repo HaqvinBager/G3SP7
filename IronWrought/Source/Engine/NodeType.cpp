@@ -70,6 +70,7 @@
 #include "NodeTypeStartSphereOnTriggerEnter.h"
 #include "NodeTypeStartSphereOnTriggerExit.h"
 #include "NodeTypePlayerGetPosition.h"
+#include "NodeTypeEnemySpawn.h"
 #include "Scene.h"
 #include "Engine.h"
 #include "NodeDataManager.h"
@@ -141,6 +142,7 @@ void CNodeTypeCollector::PopulateTypes()
 	RegisterType<CNodeTypeStartSphereOnTriggerEnter>("Sphere On Trigger Enter");
 	RegisterType<CNodeTypeStartSphereOnTriggerExit>("Sphere On Trigger Exit");
 	RegisterType<CNodeTypePlayerGetPosition>("Player Get Position");
+	//RegisterType<CNodeTypeEnemySpawn>("Spawn Enemies"); // Enabled only when testing, not ready for use yet. 23/3 Aki
 }
 
 void CNodeTypeCollector::RegisterNewDataType(const std::string& aNodeName, unsigned int aType)

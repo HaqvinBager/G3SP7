@@ -196,6 +196,7 @@
     <ClInclude Include="CCurveWindow.h" />
     <ClInclude Include="Interop.h" />
     <ClInclude Include="NodeTypeActionPatrol.h" />
+    <ClInclude Include="NodeTypeEnemySpawn.h" />
     <ClInclude Include="NodeTypeFloatDecision.h" />
     <ClInclude Include="NodeTypeGameObjectGetChildPosition.h" />
     <ClInclude Include="NodeTypeGameObjectGetPlayerPosition.h" />
@@ -418,6 +419,7 @@
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="CCurveWindow.cpp" />
     <ClCompile Include="NodeTypeActionPatrol.cpp" />
+    <ClCompile Include="NodeTypeEnemySpawn.cpp" />
     <ClCompile Include="NodeTypeGameObjectGetChildPosition.cpp" />
     <ClCompile Include="NodeTypeGameObjectGetPlayerPosition.cpp" />
     <ClCompile Include="NodeTypeGameObjectMoveToPosition.cpp" />

@@ -156,6 +156,14 @@ protected:
 			aPin.myData = new T;
 		}
 	}
+	template <class T>
+	void DeclareDataOnPinIfNecessary(SPin& aPin, const T aValue)
+	{
+		if (!aPin.myData)
+		{
+			aPin.myData = new T(aValue);
+		}
+	}
 	virtual int OnEnter(class CNodeInstance* aTriggeringNodeInstance) = 0;
 	void GetDataOnPin(CNodeInstance* aTriggeringNodeInstance, unsigned int aPinIndex, SPin::EPinType& anOutType, void*& someData, size_t& anOutSize);
 	std::vector<SPin> myPins;

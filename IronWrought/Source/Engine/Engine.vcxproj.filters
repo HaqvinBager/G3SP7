@@ -793,6 +793,7 @@
     <ClCompile Include="NodeTypePlayerGetPosition.cpp">
       <Filter>Imgui\Node Editor\Nodes\Player</Filter>
     </ClCompile>
+    <ClCompile Include="NodeTypeEnemySpawn.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1476,6 +1477,7 @@
     <ClInclude Include="NodeTypePlayerGetPosition.h">
       <Filter>Imgui\Node Editor\Nodes\Player</Filter>
     </ClInclude>
+    <ClInclude Include="NodeTypeEnemySpawn.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">
