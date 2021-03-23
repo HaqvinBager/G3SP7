@@ -126,8 +126,8 @@ void CGraphManager::Load()
 	config.SettingsFile = simple.c_str();
 	g_Context = ed::CreateEditor(&config);
 	LoadDataNodesFromFile();
-	myMenuSeachField = new char[127];
-	memset(&myMenuSeachField[0], 0, sizeof(myMenuSeachField));
+	myMenuSearchField = new char[127];
+	memset(&myMenuSearchField[0], 0, sizeof(myMenuSearchField));
 	LoadTreeFromFile();
 
 
@@ -1114,55 +1114,6 @@ bool ArePinTypesCompatible(SPin& aFirst, SPin& aSecond)
 	return true;
 }
 
-
-struct SDistBestResult
-{
-	size_t myScore;
-	CNodeType* ourInstance;
-};
-
-struct less_than_key
-{
-	inline bool operator() (const SDistBestResult& struct1, const SDistBestResult& struct2)
-	{
-		return (struct1.myScore < struct2.myScore);
-	}
-};
-
-template<typename T>
-size_t uiLevenshteinDistance(const T& source, const T& target)
-{
-	if (source.size() > target.size()) {
-		return uiLevenshteinDistance(target, source);
-	}
-
-	using TSizeType = typename T::size_type;
-	const TSizeType min_size = source.size(), max_size = target.size();
-	std::vector<TSizeType> lev_dist(min_size + 1);
-
-	for (TSizeType i = 0; i <= min_size; ++i) {
-		lev_dist[i] = i;
-	}
-
-	for (TSizeType j = 1; j <= max_size; ++j) {
-		TSizeType previous_diagonal = lev_dist[0], previous_diagonal_save;
-		++lev_dist[0];
-
-		for (TSizeType i = 1; i <= min_size; ++i) {
-			previous_diagonal_save = lev_dist[i];
-			if (source[i - 1] == target[j - 1]) {
-				lev_dist[i] = previous_diagonal;
-			}
-			else {
-				lev_dist[i] = min(min(lev_dist[i - 1], lev_dist[i]), previous_diagonal) + 1;
-			}
-			previous_diagonal = previous_diagonal_save;
-		}
-	}
-
-	return lev_dist[min_size];
-}
-
 void CGraphManager::ConstructEditorTreeAndConnectLinks()
 {
 	for (auto& nodeInstance : myCurrentGraph->myNodeInstances)
@@ -1497,7 +1448,7 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 
 			//Fix so it actually shows search results #Haqbun
 			ImGui::PushItemWidth(100.0f);
-			ImGui::InputText("##edit", (char*)myMenuSeachField, 127);
+			ImGui::InputText("##edit", (char*)myMenuSearchField, 127);
 			if (mySearchFokus)
 			{
 				ImGui::SetKeyboardFocusHere(0);
@@ -1505,29 +1456,28 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 			mySearchFokus = false;
 			ImGui::PopItemWidth();
 
-			if (myMenuSeachField[0] != '\0')
+			if (myMenuSearchField[0] != '\0')
 			{
-
-				std::vector<SDistBestResult> distanceResults;
+				std::vector<CNodeType*> found;
 				for (int i = 0; i < noOfTypes; i++)
 				{
-					distanceResults.push_back(SDistBestResult());
-					SDistBestResult& dist = distanceResults.back();
-					dist.ourInstance = types[i];
-					dist.myScore = uiLevenshteinDistance<std::string>(types[i]->NodeName(), myMenuSeachField);
+					std::string first = types[i]->NodeName();
+					std::transform(first.begin(), first.end(), first.begin(), [](unsigned char c){ return static_cast<unsigned char>(std::tolower(c)); });
+					std::string second = myMenuSearchField;
+					std::transform(second.begin(), second.end(), second.begin(), [](unsigned char c){ return static_cast<unsigned char>(std::tolower(c)); });
+
+ 					if (first.find(second) != std::string::npos)
+						found.push_back(types[i]);
 				}
-
-				std::sort(distanceResults.begin(), distanceResults.end(), less_than_key());
-
-				int firstCost = static_cast<int>(distanceResults[0].myScore);
-				for (int i = 0; i < distanceResults.size(); i++)
+				
+				for (int i = 0; i < found.size(); i++)
 				{
 					CNodeInstance* node = nullptr;
-					if (ImGui::MenuItem(distanceResults[i].ourInstance->NodeName().c_str()))
+					if (ImGui::MenuItem(found[i]->NodeName().c_str()))
 					{
 						node = new CNodeInstance(this);
 
-						node->myNodeType = distanceResults[i].ourInstance;
+						node->myNodeType = found[i];
 						node->ConstructUniquePins();
 						ed::SetNodePosition(node->myUID.AsInt(), newNodePostion);
 						node->myHasSetEditorPosition = true;
@@ -1541,13 +1491,7 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 							myUndoCommands.push({ ECommandAction::ECreate, node, nullptr, {0,0,0}, node->myUID.AsInt() });
 						}
 					}
-					int distance = static_cast<int>(distanceResults[i].myScore) - firstCost;
-					if (distance > 3)
-					{
-						break;
-					}
 				}
-
 			}
 			else
 			{
@@ -1612,7 +1556,7 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 		else
 		{
 			mySearchFokus = true;
-			memset(&myMenuSeachField[0], 0, sizeof(myMenuSeachField));
+			memset(&myMenuSearchField[0], 0, sizeof(myMenuSearchField));
 		}
 
 		ImGui::PopStyleVar();

@@ -117,7 +117,7 @@ private:
 	//std::unordered_map<std::string, CNodeData*> myVariableNodeDataMap;
 	std::string myNewVariableType;
 
-	char* myMenuSeachField = nullptr;
+	char* myMenuSearchField = nullptr;
 
 	bool myEnteringNodeName = false;
 	bool mySetPosition = false;
