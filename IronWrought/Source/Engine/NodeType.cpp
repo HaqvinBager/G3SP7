@@ -68,6 +68,8 @@
 #include "NodeTypeVector3Join.h"
 #include "NodeTypeVector3Cross.h"
 #include "NodeTypeStartSphereOnTriggerEnter.h"
+#include "NodeTypeStartSphereOnTriggerExit.h"
+#include "NodeTypePlayerGetPosition.h"
 #include "Scene.h"
 #include "Engine.h"
 #include "NodeDataManager.h"
@@ -137,7 +139,8 @@ void CNodeTypeCollector::PopulateTypes()
 	RegisterType<CNodeTypeVector3Join>("Vec3 Join");
 	RegisterType<CNodeTypeVector3Cross>("Vec3 Cross");
 	RegisterType<CNodeTypeStartSphereOnTriggerEnter>("Sphere On Trigger Enter");
-
+	RegisterType<CNodeTypeStartSphereOnTriggerExit>("Sphere On Trigger Exit");
+	RegisterType<CNodeTypePlayerGetPosition>("Player Get Position");
 }
 
 void CNodeTypeCollector::RegisterNewDataType(const std::string& aNodeName, unsigned int aType)
@@ -186,7 +189,7 @@ void CNodeTypeCollector::RegisterChildNodeTypes(std::string aKey, const unsigned
 	for (unsigned int i = 0; i < aNumberOfChildren; ++i)
 	{
 		index = i + 2;
-		name = "Get " + aKey + " Child " + std::to_string(index - 2) + " Position";
+		name = "Get " + aKey + " Child " + std::to_string(index - 1) + " Position";
 		RegisterChildType<CNodeTypeGameObjectGetChildPosition>(aKey, name);
 		CNodeDataManager::Get()->SetData(name, CNodeDataManager::EDataType::EInt, index);
 	}
