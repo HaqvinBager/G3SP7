@@ -265,10 +265,10 @@ SPin::EPinType LoadPinData(NodeDataPtr& someDataToCopy, rapidjson::Value& someDa
 
 void CGraphManager::LoadTreeFromFile()
 {
+	CUID::myAllUIDs.clear();
+	CUID::myGlobalUID = 0;
 	for (auto& graph : myGraphs)
 	{
-		CUID::myAllUIDs.clear();
-		CUID::myGlobalUID = 0;
 		Document document;
 		{
 			std::string path = graph.myFolderPath + "/nodeinstances.json";
@@ -289,7 +289,7 @@ void CGraphManager::LoadTreeFromFile()
 					CNodeInstance* object = new CNodeInstance(this, false);
 					int nodeType = nodeInstance["NodeType"].GetInt();
 					int UID = nodeInstance["UID"].GetInt();
-					object->myUID = UID;
+					object->myUID.SetUID(UID);
 					object->myNodeType = CNodeTypeCollector::GetNodeTypeFromID(nodeType);
 
 

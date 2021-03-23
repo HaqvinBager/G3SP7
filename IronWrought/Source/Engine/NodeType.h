@@ -52,6 +52,8 @@ public:
 	void SetUID(unsigned int aID)
 	{
 		myID = aID;
+		myAllUIDs.push_back(myID);
+		myGlobalUID = myID;
 	}
 
 	static std::vector<unsigned int> myAllUIDs;
