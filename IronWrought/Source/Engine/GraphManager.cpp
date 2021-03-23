@@ -93,6 +93,7 @@ void CGraphManager::Load()
 					myGraphs.back().myBluePrintInstances.emplace_back(bpInstance);
 					unsigned int aSize = static_cast<unsigned int>(myGraphs.back().myBluePrintInstances.back().childrenIDs.size()) - 1;
 					CNodeTypeCollector::RegisterChildNodeTypes(key, aSize);
+					myGraphs.back().myChildrenKey = key;
 				}
 
 				std::string folder = "Imgui/NodeScripts/" + key;
@@ -1469,13 +1470,12 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 
 		if (ImGui::BeginPopup("Create New Node"))
 		{
-
 			auto newNodePostion = openPopupPosition;
 			CNodeType** types = CNodeTypeCollector::GetAllNodeTypes();
 			unsigned short noOfTypes = CNodeTypeCollector::GetNodeTypeCount();
 
-			CNodeType** childTypes = CNodeTypeCollector::GetAllChildNodeTypes(myCurrentGraph->myFolderPath);
-			unsigned short noOfChildTypes = CNodeTypeCollector::GetChildNodeTypeCount(myCurrentGraph->myFolderPath);
+			CNodeType** childTypes = CNodeTypeCollector::GetAllChildNodeTypes(myCurrentGraph->myChildrenKey);
+			unsigned short noOfChildTypes = CNodeTypeCollector::GetChildNodeTypeCount(myCurrentGraph->myChildrenKey);
 
 			std::map< std::string, std::vector<CNodeType*>> cats;
 			static bool noVariablesCreated = true;
