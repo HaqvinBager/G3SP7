@@ -82,6 +82,13 @@ std::unordered_map<std::string, SNodeTypeData> CNodeTypeCollector::myChildNodeTy
 std::vector<unsigned int> CUID::myAllUIDs;
 unsigned int CUID::myGlobalUID = 0;
 
+/*
+	REMINDER:	I think a reason why there is a crash when loading scripts, sometimes, is due to how we register CNodeTypes!
+				I think if we change the order in which they are added the script does not know what to do when loaded.
+				I.e if we create a new CNodeType we shouldn't add it anywhere in the RegisterType<> list, but always last.
+	// Aki 23/3
+*/
+
 void CNodeTypeCollector::PopulateTypes()
 {
 	RegisterType<CNodeTypeStartDefault>("Default Start");
