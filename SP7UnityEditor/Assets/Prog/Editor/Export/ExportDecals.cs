@@ -16,7 +16,7 @@ public struct Decal
 [System.Serializable]
 public struct DecalCollection
 {
-    public List<Decal> links;
+    public List<Decal> decals;
 }
 
 //static bool IsDecalMaterial(Material material)
@@ -30,7 +30,7 @@ public class ExportDecals
     public static DecalCollection Export(string aSceneName)
     {
         DecalCollection decalCollection = new DecalCollection();
-        decalCollection.links = new List<Decal>();
+        decalCollection.decals = new List<Decal>();
 
         Renderer[] renderers = GameObject.FindObjectsOfType<Renderer>();
 
@@ -54,7 +54,7 @@ public class ExportDecals
                     Decal aDecal = new Decal();
                     aDecal.materialName = ExtractMaterialName(decal.sharedMaterials);
                     aDecal.instanceID = prefabParent.transform.GetInstanceID();
-                    decalCollection.links.Add(aDecal);
+                    decalCollection.decals.Add(aDecal);
                 }
             }
         }

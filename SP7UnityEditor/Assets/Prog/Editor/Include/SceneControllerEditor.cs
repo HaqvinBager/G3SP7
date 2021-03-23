@@ -77,12 +77,12 @@ public class SceneReferencePropertyDrawer : PropertyDrawer
                 GetScenePathProperty(property).stringValue = string.Empty;
         }
         position.y += paddedLine;
-
-        if (buildScene.assetGUID.Empty() == false)
-        {
+       
+        //if (buildScene.assetGUID.Empty() == false)
+        //{
             // Draw the Build Settings Info of the selected Scene
-            DrawSceneInfoGUI(position, buildScene, sceneControlID + 1);
-        }
+            //DrawSceneInfoGUI(position, buildScene, sceneControlID + 1);
+        //}
 
         EditorGUI.EndProperty();
     }
@@ -142,8 +142,8 @@ public class SceneReferencePropertyDrawer : PropertyDrawer
             iconRect.width = iconContent.image.width + padSize;
             labelRect.width -= iconRect.width;
             labelRect.x += iconRect.width;
-            EditorGUI.PrefixLabel(iconRect, sceneControlID, iconContent);
-            EditorGUI.PrefixLabel(labelRect, sceneControlID, labelContent);
+            //EditorGUI.PrefixLabel(iconRect, sceneControlID, iconContent);
+            //EditorGUI.PrefixLabel(labelRect, sceneControlID, labelContent);
         }
 
         // Right context buttons

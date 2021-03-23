@@ -2,60 +2,88 @@
 using System.Text;
 using UnityEditor;
 
-/*
+
+[System.Serializable]
+public struct SceneName
 {
-"Scene" : "aSceneName",
-
-
- 
- 
-*/
+    public string name;
+}
 
 
 public static class Json
 {
     static string mySceneName = "";
+    static string myFolderName = "";
     static StringBuilder myCurrentExportJson = new StringBuilder();
 
-    public static void BeginExport(string aSceneName)
+    public static void BeginExport(string baseSceneName)
     {
         myCurrentExportJson.Clear();
         myCurrentExportJson.AppendLine("{");
-        myCurrentExportJson.Append("\"Scene\" : ");
-        myCurrentExportJson.AppendLine("\"" + aSceneName + "\",");
-        mySceneName = aSceneName;
+        myCurrentExportJson.Append("\"Scenes\" : [\n");
+        //myCurrentExportJson.AppendLine("\"" + aSceneName  + "\"" + " : " + "\"" + aSceneName + "\",");
+
+        //myCurrentExportJson.AppendLine("\"" + aSceneName + "\",");
+        mySceneName = baseSceneName;
     }
 
-    public static void AddToExport<T>(T data/*, string aSceneName*/)
+    public static void BeginScene(string aSceneName)
     {
-        StringBuilder localBuilder = new StringBuilder();
-        localBuilder.Append(JsonUtility.ToJson(data));
-
-        //localBuilder.Remove(0, 1);
-        localBuilder.Insert(0, "\"" + data.GetType().Name + "\"" + " : ");
-
-        //localBuilder.Remove(localBuilder.Length - 1, 1);
-        //localBuilder.Insert(localBuilder.Length - 1, "\n},");
-
-        myCurrentExportJson.AppendLine(localBuilder.ToString());
-        myCurrentExportJson.Append(',');
-        localBuilder.Clear();
+        myCurrentExportJson.AppendLine("{");
+        //myCurrentExportJson.AppendLine("\"Name\"" + " : \"" + aSceneName + "\",");
     }
 
-    public static void EndExport(string aSceneName)
+    public static void EndScene()
     {
-        if (myCurrentExportJson[myCurrentExportJson.Length - 1] == ',')
-            myCurrentExportJson.Remove(myCurrentExportJson.Length - 1, 1);
+        myCurrentExportJson.AppendLine("},");
+    }
 
-        myCurrentExportJson.Append("\n}");
+    public static void AddToExport<T>(T data, bool endObject = false)
+    {
+        string jsonData = string.Empty;
+        jsonData = JsonUtility.ToJson(data);
+        Debug.Log(jsonData);
+        int removeFirst = jsonData.IndexOf('{');
+        jsonData = jsonData.Remove(removeFirst, 1);
 
+        int removeLast = jsonData.LastIndexOf('}');
+        jsonData = jsonData.Remove(removeLast, 1);
+
+        if(jsonData[jsonData.Length - 1] == ',')
+        {
+            jsonData.Remove(jsonData.Length - 1, 1);
+        }
+        myCurrentExportJson.Append(jsonData);
+        if(!endObject)
+            myCurrentExportJson.Append(",");      
+    }
+
+    public static void Save(string name, StringBuilder aBuilder)
+    {
         string savePath = System.IO.Directory.GetCurrentDirectory() + "\\Assets\\Generated\\";
         if (!System.IO.Directory.Exists(savePath))
             System.IO.Directory.CreateDirectory(savePath);
 
-        savePath += aSceneName + ".json";
-        System.IO.File.WriteAllText(savePath, myCurrentExportJson.ToString());
+        System.IO.File.WriteAllText(savePath + name + ".json", aBuilder.ToString());
+    }
+
+    public static void EndExport(string aFolder, string aJsonFileName)
+    {
+        myCurrentExportJson.Remove(myCurrentExportJson.Length - 3, 1);/// = ' ';
+        myCurrentExportJson.Append("\n]");
+        myCurrentExportJson.Append("\n}");
+
+
+        string savePath = System.IO.Directory.GetCurrentDirectory() + "\\Assets\\Generated\\" + aFolder + "\\";
+        if (!System.IO.Directory.Exists(savePath))
+            System.IO.Directory.CreateDirectory(savePath);
+
+        //savePath += aSceneName + ".json";
+        savePath += aJsonFileName + ".json";
+        System.IO.File.WriteAllText(savePath , myCurrentExportJson.ToString());
         myCurrentExportJson.Clear();
+
+        AssetDatabase.Refresh();
     }
 
 

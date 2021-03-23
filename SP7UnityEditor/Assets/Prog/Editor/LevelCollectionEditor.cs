@@ -73,17 +73,17 @@ public class LevelCollectionEditor : Editor
         }
         GUI.backgroundColor = originalColor;
 
-        GUI.backgroundColor = GUI.backgroundColor = collection.myScenes.Count <= 0 ? Color.green : Color.Lerp(Color.cyan, Color.white, 0.25f);
-        //GUI.contentColor = Color.white;
+        GUI.backgroundColor = GUI.backgroundColor = collection.myScenes.Count <= 0 ? Color.green : Color.Lerp(Color.cyan, Color.white, 0.25f);     
         if (GUILayout.Button("Connect Scenes"))
         {
             string sceneFolder = AssetDatabase.GetAssetPath(target);
             sceneFolder = sceneFolder.Substring(0, sceneFolder.LastIndexOf('/'));
-
-            List<string> missingScenes = new List<string>();
             List<string> filePathsInFolder = new List<string>(Directory.EnumerateFiles(sceneFolder, "*.unity"));
 
-          
+            serializedObject.Update();
+            var myScenes = serializedObject.FindProperty("myScenes");
+            myScenes.ClearArray();
+            serializedObject.ApplyModifiedProperties();
 
             foreach (var assetPath in filePathsInFolder)
             {

@@ -46,23 +46,23 @@ public class ExportResource
         Json.ExportToJson(assets, "Resource");
     }
 
-    public static void ExportBluePrintPrefabs(Scene aScene)
-    {
-        BluePrintPrefabs collection = new BluePrintPrefabs();
-        collection.blueprintPrefabs = new List<BluePrintAsset>();
-        var prefabs = ExportBluePrint.LoadBluePrintPrefabGameObjects();
-        foreach (var prefab in prefabs)
-        {
-            BluePrintAsset link = new BluePrintAsset();
-            link.id = prefab.transform.GetInstanceID();
-            link.type = prefab.name;
-            link.childCount = prefab.transform.childCount;
+    //public static void ExportBluePrintPrefabs(Scene aScene)
+    //{
+    //    BluePrintPrefabs collection = new BluePrintPrefabs();
+    //    collection.blueprintPrefabs = new List<BluePrintAsset>();
+    //    var prefabs = ExportBluePrint.LoadBluePrintPrefabGameObjects();
+    //    foreach (var prefab in prefabs)
+    //    {
+    //        BluePrintAsset link = new BluePrintAsset();
+    //        link.id = prefab.transform.GetInstanceID();
+    //        link.type = prefab.name;
+    //        link.childCount = prefab.transform.childCount;
 
-            collection.blueprintPrefabs.Add(link);
-        }
+    //        collection.blueprintPrefabs.Add(link);
+    //    }
 
-        Json.ExportToJson(collection, "Resource");
-    }
+    //    Json.ExportToJson(collection, "Resource");
+    //}
 
 
 }

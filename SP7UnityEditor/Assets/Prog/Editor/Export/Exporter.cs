@@ -17,9 +17,15 @@ public struct Assets
 }
 
 [System.Serializable]
-public struct Player
+public struct PlayerID
 {
     public int instanceID;
+}
+
+[System.Serializable]
+public struct Player
+{
+    public PlayerID player;
 }
 
 public class Exporter
@@ -48,43 +54,33 @@ public class Exporter
     [MenuItem("Export/Export Scene")]
     public static void Export()
     {
+        ExportResource.Export("Resources");
+
+        string sceneName = SceneManager.GetActiveScene().name;
+        string baseSceneName = sceneName.Substring(0, sceneName.LastIndexOf('-') + 2);
+        Json.BeginExport(baseSceneName);
+
+        //for(int i = 0; i < SceneManager.sceneCount; ++i)
+        //{
+        //    Json.BeginScene(SceneManager.GetSceneAt(i).name);
+        //    ExportAScene(SceneManager.GetSceneAt(i).name);
+        //    Json.EndScene();
+        //}
+
+     
+        //return;
+
         List<GameObject> allScenesActiveObjects = GetAllOpenedSceneActiveObjects();
         for (int i = 0; i < SceneManager.sceneCount; ++i)
-        {       
+        {
+            Json.BeginScene(SceneManager.GetSceneAt(i).name);
             DeactivateAndExportScene(i, allScenesActiveObjects);
+            Json.EndScene();
         }
 
+        Json.EndExport(baseSceneName, baseSceneName);   
         foreach (var gameObject in allScenesActiveObjects)
             gameObject.SetActive(true);
-    }
-
-    private static void ExportAScene(string aSceneName)
-    {
-        ExportResource.Export(aSceneName);
-   
-        InstanceIDCollection instanceIDs = ExportInstanceID.Export(aSceneName);
-        Json.AddToExport(instanceIDs);
-        Json.AddToExport(ExportTransform.Export(aSceneName, instanceIDs.Ids));
-        Json.AddToExport(ExportModel.Export(aSceneName, instanceIDs.Ids));
-        Json.AddToExport(ExportVertexPaint.Export(aSceneName, instanceIDs.Ids));
-        Json.AddToExport(ExportPointlights.ExportPointlight(aSceneName));
-        Json.AddToExport(ExportDecals.Export(aSceneName));
-        Json.AddToExport(ExportPlayer(aSceneName));
-        Json.EndExport(aSceneName);
-
-        AssetDatabase.Refresh();
-    }
-
-    private static Player ExportPlayer(string aSceneName)
-    {
-        Player data = new Player();
-        PlayerSpawnPosition player = GameObject.FindObjectOfType<PlayerSpawnPosition>();
-        if(player != null)
-        {
-            data.instanceID = player.transform.GetInstanceID();
-            //Json.ExportToJson(data, aScene.name);
-        }
-        return data;
     }
 
     private static void DeactivateAndExportScene(int aSceneIndex, List<GameObject> allScenesActiveObjects)
@@ -99,14 +95,66 @@ public class Exporter
                 gameobject.SetActive(true);
             }
         }
-
+    
         ExportAScene(SceneManager.GetSceneAt(aSceneIndex).name);
+      //  Json.EndExport(SceneManager.GetSceneAt(aSceneIndex).name, "LevelData_" + SceneManager.GetSceneAt(aSceneIndex).name);
 
         foreach (var gameobject in activeobjects)
         {
             gameobject.SetActive(false);
         }
+
+        AssetDatabase.Refresh();
     }
+
+    private static void ExportAScene(string aSceneName)
+    {
+
+       //if (!aSceneName.Contains("Script") || !aSceneName.Contains("Lights"))
+       //     return;
+
+       // ModelCollection modelCollection = new ModelCollection();
+       // modelCollection.modelLinks = new List<ModelLink>();
+       // modelCollection.modelLinks.Add(new ModelLink { assetID = 100, instanceID = 1 });
+       // //modelCollection.modelLinks.Add(new ModelLink { assetID = 101, instanceID = 2 });
+       //// modelCollection.modelLinks.Add(new ModelLink { assetID = 102, instanceID = 3 });
+       // Json.AddToExport(modelCollection);
+
+       // Player player = new Player();
+       // player.instanceID = 51252;
+       // Json.AddToExport(player, true);
+
+        //Json.AddToExport(test, );
+
+        //Next Step is to make sure that we only write the correct data to the correct Scene_Json.json! 
+        //Or maybe just leave it be tbh! This might just be a good enough of a solution!
+        //Especially if we put these multiple .json files in a folder!
+        InstanceIDCollection instanceIDs = ExportInstanceID.Export(aSceneName);
+        Json.AddToExport(instanceIDs);
+        Json.AddToExport(ExportTransform.Export(aSceneName, instanceIDs.Ids));
+        Json.AddToExport(ExportModel.Export(aSceneName, instanceIDs.Ids));
+        Json.AddToExport(ExportVertexPaint.Export(aSceneName, instanceIDs.Ids));
+        Json.AddToExport(ExportPointlights.ExportPointlight(aSceneName));
+        Json.AddToExport(ExportDecals.Export(aSceneName));
+        Json.AddToExport(ExportPlayer(aSceneName));
+        Json.AddToExport(ExportBluePrint.Export(aSceneName), true);
+
+        //Json.EndExport(aSceneName, "");
+    }
+
+    private static Player ExportPlayer(string aSceneName)
+    {
+        Player data = new Player();
+        PlayerSpawnPosition player = GameObject.FindObjectOfType<PlayerSpawnPosition>();
+        if(player != null)
+        {
+            data.player.instanceID = player.transform.GetInstanceID();
+            //Json.ExportToJson(data, aScene.name);
+        }
+        return data;
+    }
+
+
 
     private static List<GameObject> GetAllOpenedSceneActiveObjects()
     {
@@ -127,98 +175,4 @@ public class Exporter
 
         return allScenesActiveObjects;
     }
-
-
-    [MenuItem("Update Events")]
-    public static void UpdateEvents()
-    {
-        
-
-
-
-
-    }
 }
-
-
-//List<GameObject> alreadyExportedRenderers =
-//ExportBlueprints.ExportBluePrint(aScene);
-//ExportPointlights.ExportPointlight(aScene);
-//ExportFbx.Export(aScene);
-
-//Renderer[] allrenderers = GameObject.FindObjectsOfType<Renderer>();
-//Dictionary<string, List<STransform>> fbxPathGameObjectMap = new Dictionary<string, List<STransform>>();
-//List<string> fbxpaths = new List<string>();
-
-//for (int i = 0; i < allrenderers.Length; ++i)
-//{
-//    if (alreadyExportedRenderers.Contains(allrenderers[i].gameObject))
-//        continue;
-
-//    string fbxPath = AssetDatabase.GetAssetPath(PrefabUtility.GetCorrespondingObjectFromOriginalSource(allrenderers[i].GetComponent<MeshFilter>().sharedMesh));
-//    if (!fbxPathGameObjectMap.ContainsKey(fbxPath))
-//        fbxPathGameObjectMap.Add(fbxPath, new List<STransform>());
-
-//    STransform transform = new STransform();
-
-//    GameObject prefabParent = PrefabUtility.GetOutermostPrefabInstanceRoot(allrenderers[i]);
-//    prefabParent.Ping();
-
-
-//    transform.instanceID = prefabParent.transform.GetInstanceID();
-//    //allrenderers[i].transform.GetInstanceID();
-//    transform.position = allrenderers[i].transform.position;
-//    transform.rotation = allrenderers[i].transform.ConvertToIronWroughtRotation();
-//    transform.scale = allrenderers[i].transform.localScale;
-//    fbxPathGameObjectMap[fbxPath].Add(transform);
-
-//    if (!fbxpaths.Contains(fbxPath))
-//    {
-//        fbxpaths.Add(fbxPath);
-//    }
-//}
-
-//List<SInstancedGameObject> instancedGameObjects = new List<SInstancedGameObject>();
-//for (int i = 0; i < fbxpaths.Count; ++i)
-//{
-//    SInstancedGameObject instancedGameObject = new SInstancedGameObject();
-//    instancedGameObject.count = fbxPathGameObjectMap[fbxpaths[i]].Count;
-//    instancedGameObject.transforms = fbxPathGameObjectMap[fbxpaths[i]].ToArray();
-//    instancedGameObject.model.fbxPath = fbxpaths[i];
-//    instancedGameObjects.Add(instancedGameObject);
-//}
-
-//List<SGameObject> gameObjects = new List<SGameObject>();
-//foreach (var vertexPaintedObject in alreadyExportedRenderers)
-//{
-//    //Få tag i original-FBXen som användes till denna Vertex-paintade gameobject
-//    //string fbxPath = AssetDatabase.GetAssetPath(
-//    //    PrefabUtility.GetCorrespondingObjectFromOriginalSource(
-//    //         renderer.GetComponent<PolybrushMesh>().m_OriginalMeshObject));
-
-//    if (vertexPaintedObject.TryGetComponent(out PolybrushFBX polyBrushFBX))
-//    {
-//        SGameObject gameObject = new SGameObject();
-//        string fbxPath = AssetDatabase.GUIDToAssetPath(polyBrushFBX.originalFBXGUID);
-//        gameObject.model.fbxPath = fbxPath;
-
-//        GameObject prefabParent = PrefabUtility.GetOutermostPrefabInstanceRoot(vertexPaintedObject);
-
-//        gameObject.transform.instanceID = prefabParent.transform.GetInstanceID();
-//        gameObject.transform.position = vertexPaintedObject.transform.ConvertToIronWroughtPosition();
-//        gameObject.transform.rotation = vertexPaintedObject.transform.ConvertToIronWroughtRotation();
-//        gameObject.transform.scale = vertexPaintedObject.transform.ConvertToIronWroughtScale();
-//        gameObjects.Add(gameObject);
-//    }
-//}
-
-//SScene sceneObject = new SScene();
-//sceneObject.instancedGameobjects = instancedGameObjects.ToArray();
-//sceneObject.modelGameObjects = gameObjects.ToArray();
-//string jsonGameObject = JsonUtility.ToJson(sceneObject);
-//string savePath = System.IO.Directory.GetCurrentDirectory() + "\\Assets\\Generated\\";
-//if (!System.IO.Directory.Exists(savePath))
-//    System.IO.Directory.CreateDirectory(savePath);
-//savePath += aScene.name + ".json";
-//System.IO.File.WriteAllText(savePath, jsonGameObject);
-//AssetDatabase.Refresh();

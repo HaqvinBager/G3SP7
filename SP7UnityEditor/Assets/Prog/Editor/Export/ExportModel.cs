@@ -15,7 +15,7 @@ public class ModelLink
 [System.Serializable]
 public class ModelCollection
 {
-    public List<ModelLink> modelLinks;
+    public List<ModelLink> models;
 }
 
 public class ExportModel
@@ -23,7 +23,7 @@ public class ExportModel
     public static ModelCollection Export(string aSceneName, List<int> validInstanceIds)
     {
         ModelCollection modelCollection = new ModelCollection();
-        modelCollection.modelLinks = new List<ModelLink>();
+        modelCollection.models = new List<ModelLink>();
 
         Renderer[] allrenderers = GameObject.FindObjectsOfType<Renderer>();
 
@@ -41,8 +41,8 @@ public class ExportModel
                 link.assetID = modelAsset.transform.GetInstanceID();
                 link.instanceID = renderer.transform.parent.GetInstanceID();
 
-                if(!modelCollection.modelLinks.Exists( e => e.instanceID == link.instanceID))
-                    modelCollection.modelLinks.Add(link);
+                if(!modelCollection.models.Exists( e => e.instanceID == link.instanceID))
+                    modelCollection.models.Add(link);
 
                 continue;
             } 
@@ -70,9 +70,9 @@ public class ExportModel
                                 link.assetID = modelAsset.transform.GetInstanceID();
                                 link.instanceID = validPrefabParent.transform.GetInstanceID();
 
-                                if(!modelCollection.modelLinks.Exists(e => e.instanceID == link.instanceID))
+                                if(!modelCollection.models.Exists(e => e.instanceID == link.instanceID))
                                 {
-                                    modelCollection.modelLinks.Add(link);
+                                    modelCollection.models.Add(link);
                                 }
                             }
                         }
@@ -82,7 +82,7 @@ public class ExportModel
                         ModelLink link = new ModelLink();
                         link.assetID = modelAsset.transform.GetInstanceID();
                         link.instanceID = prefabParent.transform.GetInstanceID();
-                        modelCollection.modelLinks.Add(link);
+                        modelCollection.models.Add(link);
                     }
                 }
             }           

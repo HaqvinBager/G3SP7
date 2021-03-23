@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 [System.Serializable]
 public class VertexColorCollection
 {
-    public VertexLink[] links;
+    public VertexLink[] vertexColors;
 }
 
 [System.Serializable]
@@ -171,7 +171,7 @@ public class ExportVertexPaint : Editor
 
         // Json
         VertexColorCollection collection = new VertexColorCollection();
-        collection.links = vertexLinks.ToArray();
+        collection.vertexColors = vertexLinks.ToArray();
         return collection;
         //Json.ExportToJson(collection, aScene.name);
         //string jsonString = JsonUtility.ToJson(collection);
