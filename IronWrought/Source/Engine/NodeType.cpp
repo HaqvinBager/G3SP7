@@ -191,7 +191,7 @@ void CNodeTypeCollector::RegisterChildNodeTypes(std::string aKey, const unsigned
 	for (unsigned int i = 0; i < aNumberOfChildren; ++i)
 	{
 		index = i + 2;
-		name = "Get " + aKey + " Child " + std::to_string(index - 2) + " Position";
+		name = "Get " + aKey + " Child " + std::to_string(index - 1) + " Position";
 		RegisterChildType<CNodeTypeGameObjectGetChildPosition>(aKey, name);
 		CNodeDataManager::Get()->SetData(name, CNodeDataManager::EDataType::EInt, index);
 	}

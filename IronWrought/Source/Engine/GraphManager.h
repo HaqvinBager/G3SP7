@@ -94,6 +94,7 @@ private:
 		ImVector<SEditorLinkInfo> myLinks;
 		unsigned int myNextLinkIdCounter = 100;
 		std::string myFolderPath;
+		std::string myChildrenKey;
 	};
 
 	std::vector<SGraph> myGraphs;
