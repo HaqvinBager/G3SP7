@@ -441,6 +441,7 @@ void CLightRenderer::RenderVolumetric(CCameraComponent* aCamera, std::vector<CSp
 		const SM::Vector3& position = currentInstance->GetPosition();
 		const SM::Vector3& color = currentInstance->GetColor();
 		const Vector3& direction = currentInstance->GetDirection();
+
 		mySpotLightBufferData.myToWorldSpace = currentInstance->GetWorldMatrix();
 		mySpotLightBufferData.myToViewSpace = currentInstance->GetViewMatrix();
 		mySpotLightBufferData.myToProjectionSpace = currentInstance->GetProjectionMatrix();
@@ -449,6 +450,11 @@ void CLightRenderer::RenderVolumetric(CCameraComponent* aCamera, std::vector<CSp
 		mySpotLightBufferData.myDirectionAndAngleExponent = { direction.x, direction.y, direction.z, currentInstance->GetAngleExponent() };
 		mySpotLightBufferData.myDirectionNormal1 = currentInstance->GetDirectionNormal1();
 		mySpotLightBufferData.myDirectionNormal2 = currentInstance->GetDirectionNormal2();
+		
+		mySpotLightBufferData.myUpLeftCorner = currentInstance->GetUpLeftCorner();
+		mySpotLightBufferData.myUpRightCorner = currentInstance->GetUpRightCorner();
+		mySpotLightBufferData.myDownLeftCorner = currentInstance->GetDownLeftCorner();
+		mySpotLightBufferData.myDownRightCorner = currentInstance->GetDownRightCorner();
 
 		BindBuffer(mySpotLightBuffer, mySpotLightBufferData, "Spot Light Buffer");
 		myContext->PSSetConstantBuffers(3, 1, &mySpotLightBuffer);

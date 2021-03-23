@@ -6,7 +6,7 @@
 
 // RAYMARCHING
 #define TAU 0.0001
-#define PHI 100000.0
+#define PHI 1000000.0
 
 #define PI_RCP 0.31830988618379067153776752674503
 
@@ -35,6 +35,82 @@ float3 GBuffer_Normal(float2 uv)
 {
     float3 normal = normalTextureGBuffer.Sample(defaultSampler, uv).rgb;
     return normal;
+}
+
+// https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/ray-triangle-intersection-geometric-solution
+#define KEPSILON 0.001f
+bool FindIntersectionTriangleRay(float3 anOrigin, float3 aDirection, float3 v0, float3 v1, float3 v2, inout float3 P)
+{
+    // compute plane's normal
+    float3 v0v1 = v1 - v0;
+    float3 v0v2 = v2 - v0;
+    // no need to normalize
+    float3 N = cross(v0v1, v0v2); // N 
+    float area2 = length(N);
+ 
+    // Step 1: finding P
+ 
+    // check if ray and plane are parallel ?
+    float NdotRayDirection = dot(N, aDirection);
+    if (abs(NdotRayDirection) < KEPSILON) // almost 0 
+        return false; // they are parallel so they don't intersect ! 
+ 
+    // compute d parameter using equation 2
+    float d = dot(N, v0);
+ 
+    // compute t (equation 3)
+    float t = (dot(N, anOrigin) + d) / NdotRayDirection;
+    // check if the triangle is in behind the ray
+    if (t < 0)
+        return false; // the triangle is behind 
+ 
+    // compute the intersection point using equation 1
+    P = anOrigin + t * aDirection;
+ 
+    // Step 2: inside-outside test
+    float3 C; // vector perpendicular to triangle's plane 
+ 
+    // edge 0
+    float3 edge0 = v1 - v0;
+    float3 vp0 = P - v0;
+    C = cross(edge0, vp0);
+    if (dot(N, C) < 0)
+        return false; // P is on the right side 
+ 
+    // edge 1
+    float3 edge1 = v2 - v1;
+    float3 vp1 = P - v1;
+    C = cross(edge1, vp1);
+    if (dot(N, C) < 0)
+        return false; // P is on the right side 
+ 
+    // edge 2
+    float3 edge2 = v0 - v2;
+    float3 vp2 = P - v2;
+    C = cross(edge2, vp2);
+    if (dot(N, C) < 0)
+        return false; // P is on the right side; 
+ 
+    return true; // this ray hits the triangle 
+}
+
+bool FindIntersectionPoint(float3 anOrigin, float3 aDirection, inout float3 anIntersectionPoint)
+{
+    bool returnValue = false;
+    returnValue = FindIntersectionTriangleRay(anOrigin, aDirection, spotLightPositionAndRange.xyz, myDownLeftCorner.xyz, myDownRightCorner.xyz, anIntersectionPoint);
+    if (returnValue)
+        return true;
+    
+    returnValue = FindIntersectionTriangleRay(anOrigin, aDirection, spotLightPositionAndRange.xyz, myDownRightCorner.xyz, myUpRightCorner.xyz, anIntersectionPoint);
+    if (returnValue)
+        return true;
+    
+    returnValue = FindIntersectionTriangleRay(anOrigin, aDirection, spotLightPositionAndRange.xyz, myUpRightCorner.xyz, myUpLeftCorner.xyz, anIntersectionPoint);
+    if (returnValue)
+        return true;
+    
+    returnValue = FindIntersectionTriangleRay(anOrigin, aDirection, spotLightPositionAndRange.xyz, myUpLeftCorner.xyz, myDownLeftCorner.xyz, anIntersectionPoint);
+    return returnValue;
 }
 
 //float3 SampleShadowPos(float3 projectionPos)
@@ -102,8 +178,8 @@ void ExecuteRaymarching(inout float3 rayPositionLightVS, float3 invViewDirLightV
     float angleAttenuation = pow(max(dot(spotLightDirectionAndAngleExponent.xyz, -toLight), 0.0f), spotLightDirectionAndAngleExponent.w);
     //float attenuation = angleAttenuation * linearAttenuation * physicalAttenuation;
     //float attenuation = physicalAttenuation;
-    //float attenuation = linearAttenuation;
-    float attenuation = angleAttenuation;
+    float attenuation = linearAttenuation;
+    //float attenuation = angleAttenuation;
     //float attenuation = 1.0f;
     
     // ... and add it to the total contribution of the ray
@@ -119,14 +195,20 @@ SpotLightPixelOutput main(SpotLightGeometryToPixel input)
     float raymarchDistanceLimit = 99999.0f;
     
     // ...
-    float2 screenUV = (input.myUV.xy / input.myUV.z) * 0.5f + 0.5f;
-    float3 worldPosition = PixelShader_WorldPosition(screenUV).rgb;
+    //float2 screenUV = (input.myUV.xy / input.myUV.z) * 0.5f + 0.5f;
+    float3 worldPosition = input.myWorldPosition/*PixelShader_WorldPosition(screenUV).rgb*/;
     float3 camPos = spotLightCameraPosition.xyz;
     
     // For marching in world space in parallel
     float3 rayPositionWorld = worldPosition;
     float3 invViewDirWorld = normalize(camPos - worldPosition);
     // ..
+    
+    float3 cameraRayIntersection;
+    if (FindIntersectionPoint(camPos, -invViewDirWorld, cameraRayIntersection))
+    {
+        camPos = cameraRayIntersection;
+    }
     
     float3 lightPos = spotLightTransform._41_42_43;
     worldPosition -= lightPos.xyz;

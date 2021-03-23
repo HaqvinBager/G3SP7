@@ -8,11 +8,11 @@ void main(
 {
     const float3 offset[8] =
     {
-        { 0.0f, 0.0f, 0.0f },
+        { 0.0f, 0.0f, -1.0f },
         { -1.0f, 1.0f, 1.0f },
         { 1.0f, 1.0f, 1.0f },
         { 1.0f, -1.0f, 1.0f },
-        { 0.0f, 0.0f, 0.0f },
+        { 0.0f, 0.0f, -1.0f },
         { -1.0f, -1.0f, 1.0f },
         { -1.0f, 1.0f, 1.0f },
         { 1.0f, -1.0f, 1.0f }
@@ -28,9 +28,12 @@ void main(
         //vertex.myPosition.z += offset[index].z * spotLightPositionAndRange.w;
         //vertex.myPosition.xy += offset[index].xy * (1.0f / spotLightDirectionAndAngleExponent.w);
         vertex.myPosition.xyz += offset[index].z * spotLightDirectionAndAngleExponent.xyz * spotLightPositionAndRange.w;
-        vertex.myPosition.xyz += offset[index].x * spotLightDirectionNormal1.xyz * ( /*2.71828182846f*/1.0f /*/ spotLightDirectionAndAngleExponent.w*/);
-        vertex.myPosition.xyz += offset[index].y * spotLightDirectionNormal2.xyz * ( /*2.71828182846f*/1.0f /*/ spotLightDirectionAndAngleExponent.w*/);
+        vertex.myPosition.xyz += offset[index].x * spotLightDirectionNormal1.xyz * ( /*2.71828182846f*/3.0f / spotLightDirectionAndAngleExponent.w);
+        vertex.myPosition.xyz += offset[index].y * spotLightDirectionNormal2.xyz * ( /*2.71828182846f*/3.0f / spotLightDirectionAndAngleExponent.w);
+        //vertex.myPosition.xyz += offset[index].x * spotLightDirectionNormal1.xyz * ( /*2.71828182846f*/pow(2.0f, spotLightDirectionAndAngleExponent.w));
+        //vertex.myPosition.xyz += offset[index].y * spotLightDirectionNormal2.xyz * ( /*2.71828182846f*/pow(2.0f, spotLightDirectionAndAngleExponent.w));
         vertex.myPosition = mul(spotLightToWorld, vertex.myPosition);
+        vertex.myWorldPosition = vertex.myPosition;
         vertex.myPosition = mul(spotLightToCamera, vertex.myPosition);
         vertex.myPosition = mul(spotLightToProjectionFromCamera, vertex.myPosition);
         vertex.myUV = vertex.myPosition.xyw;

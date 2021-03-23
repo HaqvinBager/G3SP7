@@ -73,6 +73,10 @@ private:
 		DirectX::SimpleMath::Vector4 myDirectionAndAngleExponent;
 		DirectX::SimpleMath::Vector4 myDirectionNormal1;
 		DirectX::SimpleMath::Vector4 myDirectionNormal2;
+		DirectX::SimpleMath::Vector4 myUpLeftCorner;
+		DirectX::SimpleMath::Vector4 myUpRightCorner;
+		DirectX::SimpleMath::Vector4 myDownLeftCorner;
+		DirectX::SimpleMath::Vector4 myDownRightCorner;
 	} mySpotLightBufferData;
 
 private:

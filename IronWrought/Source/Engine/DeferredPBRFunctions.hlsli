@@ -145,6 +145,7 @@ float3 EvaluateSpotLight(float3 diffuseColor, float3 specularColor, float3 norma
     finalColor *= linearAttenuation * physicalAttenuation;
     
     finalColor *= pow(max(dot(lightDir, -toLight), 0.0f), angleExponent);
+    //finalColor *= saturate((dot(lightDir, -toLight) - 1.0f) / (0.2f - 1.0f));
     
     return saturate(finalColor);
 }

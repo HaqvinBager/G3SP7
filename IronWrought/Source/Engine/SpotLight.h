@@ -12,6 +12,10 @@ public:
 	const Vector3& GetDirection() const;
 	const Vector4& GetDirectionNormal1() const;
 	const Vector4& GetDirectionNormal2() const;
+	const Vector4& GetUpLeftCorner() const;
+	const Vector4& GetUpRightCorner() const;
+	const Vector4& GetDownLeftCorner() const;
+	const Vector4& GetDownRightCorner() const;
 	const float GetIntensity() const;
 	const float GetRange() const;
 	const float GetAngleExponent() const;
@@ -38,6 +42,10 @@ private:
 	Matrix myToProjectionMatrix;
 	Vector4 myDirectionNormal1;
 	Vector4 myDirectionNormal2;
+	Vector4 myUpLeftCorner;
+	Vector4 myUpRightCorner;
+	Vector4 myDownLeftCorner;
+	Vector4 myDownRightCorner;
 	Vector3 myPosition;
 	Vector3 myColor;
 	Vector3 myDirection;

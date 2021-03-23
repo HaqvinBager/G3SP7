@@ -49,6 +49,26 @@ const Vector4& CSpotLight::GetDirectionNormal2() const
     return myDirectionNormal2;
 }
 
+const Vector4& CSpotLight::GetUpLeftCorner() const
+{
+    return myUpLeftCorner;
+}
+
+const Vector4& CSpotLight::GetUpRightCorner() const
+{
+    return myUpRightCorner;
+}
+
+const Vector4& CSpotLight::GetDownLeftCorner() const
+{
+    return myDownLeftCorner;
+}
+
+const Vector4& CSpotLight::GetDownRightCorner() const
+{
+    return myDownRightCorner;
+}
+
 const float CSpotLight::GetIntensity() const
 {
     return myIntensity;
@@ -132,6 +152,28 @@ void CSpotLight::UpdateWorld()
 
     myDirectionNormal1 = { normal.x, normal.y, normal.z, 0.0f };
     myDirectionNormal2 = { cross.x, cross.y, cross.z, 0.0f };
+
+    Vector3 pos = { 0.0f, 0.0f, 0.0f };
+    pos = myPosition + myDirection * myRange;
+    myUpLeftCorner = { pos.x, pos.y, pos.z, 1.0f };
+    myUpLeftCorner += -3.0f * myDirectionNormal1;
+    myUpLeftCorner += 3.0f * myDirectionNormal2;
+    myUpLeftCorner.w = 1.0f;
+
+    myUpRightCorner = { pos.x, pos.y, pos.z, 1.0f };
+    myUpRightCorner += 3.0f * myDirectionNormal1;
+    myUpRightCorner += 3.0f * myDirectionNormal2;
+    myUpRightCorner.w = 1.0f;
+
+    myDownLeftCorner = { pos.x, pos.y, pos.z, 1.0f };
+    myDownLeftCorner += -3.0f * myDirectionNormal1;
+    myDownLeftCorner += -3.0f * myDirectionNormal2;
+    myDownLeftCorner.w = 1.0f;
+
+    myDownRightCorner = { pos.x, pos.y, pos.z, 1.0f };
+    myDownRightCorner += 3.0f * myDirectionNormal1;
+    myDownRightCorner += -3.0f * myDirectionNormal2;
+    myDownRightCorner.w = 1.0f;
 
     myToWorldMatrix.Translation(myPosition);
 }

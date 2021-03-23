@@ -6,12 +6,12 @@ struct SpotLightVertexInput
 struct SpotLightVertexToGeometry
 {
     float4 myPosition : POSITION;
-    //float myRange : RANGE;
 };
 
 struct SpotLightGeometryToPixel
 {
     float4 myPosition : SV_POSITION;
+    float4 myWorldPosition : WORLDPOSITION;
     float3 myUV : UV;
 };
 
@@ -46,4 +46,8 @@ cbuffer SpotLightValueBuffer : register(b3)
     float4 spotLightDirectionAndAngleExponent;
     float4 spotLightDirectionNormal1;
     float4 spotLightDirectionNormal2;
+    float4 myUpLeftCorner;
+    float4 myUpRightCorner;
+    float4 myDownLeftCorner;
+    float4 myDownRightCorner;
 }
