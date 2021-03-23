@@ -1,10 +1,11 @@
 #pragma once
 #include "NodeType.h"
-class CNodeTypeStartSphereOnTriggerEnter : public CNodeType
+class CNodeTypeStartSphereOnTriggerExit : public CNodeType
 {
 public:
-	CNodeTypeStartSphereOnTriggerEnter();
+	CNodeTypeStartSphereOnTriggerExit();
 	int OnEnter(class CNodeInstance* aTriggeringNodeInstance) override;
 	std::string GetNodeTypeCategory() override { return "Start"; }
 	bool IsStartNode() override { return true; }
 };
+

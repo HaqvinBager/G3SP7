@@ -783,6 +783,7 @@
     </ClCompile>
     <ClCompile Include="NodeTypeStartSphereOnTriggerStay.cpp" />
     <ClCompile Include="NodeTypeStartSphereOnTriggerEnter.cpp" />
+    <ClCompile Include="NodeTypeStartSphereOnTriggerExit.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1456,6 +1457,7 @@
     </ClInclude>
     <ClInclude Include="NodeTypeStartSphereOnTriggerStay.h" />
     <ClInclude Include="NodeTypeStartSphereOnTriggerEnter.h" />
+    <ClInclude Include="NodeTypeStartSphereOnTriggerExit.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">
