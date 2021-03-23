@@ -185,6 +185,7 @@ void CVFXMeshFactory::ReadJsonValues(std::string aFilePath, CVFXBase::SVFXBaseDa
     using namespace rapidjson;
 
     Document document = CJsonReader::Get()->LoadDocument(aFilePath);
+    ENGINE_BOOL_POPUP(!CJsonReader::HasParseError(document), "Invalid Json document: %s", aFilePath.c_str());
 
     someVFXBaseData.scrollSpeed1 = { document["Scroll Speed 1 X"].GetFloat(), document["Scroll Speed 1 Y"].GetFloat() };
     someVFXBaseData.scrollSpeed2 = { document["Scroll Speed 2 X"].GetFloat(), document["Scroll Speed 2 Y"].GetFloat() };

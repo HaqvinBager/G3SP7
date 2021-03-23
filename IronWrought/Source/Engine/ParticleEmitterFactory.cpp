@@ -183,6 +183,7 @@ void CParticleEmitterFactory::ReadJsonValues(std::string aFilePath, CParticleEmi
     //std::ifstream inputStream(aFilePath);
     //IStreamWrapper inputWrapper(inputStream);
     Document document = CJsonReader::Get()->LoadDocument(aFilePath);
+    ENGINE_BOOL_POPUP(!CJsonReader::HasParseError(document), "Invalid Json document: %s", aFilePath.c_str());
     //document.ParseStream(inputWrapper);
 
     someParticleData.myNumberOfParticles =          document["Max Number Of Particles"].GetInt();

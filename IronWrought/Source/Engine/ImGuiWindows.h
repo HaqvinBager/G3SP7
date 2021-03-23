@@ -2,4 +2,4 @@
 #include "Window.h"
 #include "LoadScene.h"
 #include "CameraSetting.h"
-#include "CurveWindow.h"
+#include "VFXEditorWindow.h"

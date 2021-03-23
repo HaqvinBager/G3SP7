@@ -754,7 +754,7 @@
     <ClCompile Include="JsonWriter.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
-    <ClCompile Include="CurveWindow.cpp">
+    <ClCompile Include="VFXEditorWindow.cpp">
       <Filter>Imgui\Windows</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1399,11 +1399,11 @@
     <ClInclude Include="JsonWriter.h">
       <Filter>Utility</Filter>
     </ClInclude>
-    <ClInclude Include="CurveWindow.h">
-      <Filter>Imgui\Windows</Filter>
-    </ClInclude>
     <ClInclude Include="SerializerUtility.h">
       <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="VFXEditorWindow.h">
+      <Filter>Imgui\Windows</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
