@@ -781,8 +781,18 @@
     <ClCompile Include="NodeTypeGameObjectGetPlayerPosition.cpp">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClCompile>
-    <ClCompile Include="NodeTypeStartSphereOnTriggerStay.cpp" />
-    <ClCompile Include="NodeTypeStartSphereOnTriggerEnter.cpp" />
+    <ClCompile Include="NodeTypeStartSphereOnTriggerExit.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Start</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeStartSphereOnTriggerEnter.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Start</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeStartSphereOnTriggerStay.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Start</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypePlayerGetPosition.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1454,8 +1464,18 @@
     <ClInclude Include="NodeTypeGameObjectGetPlayerPosition.h">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClInclude>
-    <ClInclude Include="NodeTypeStartSphereOnTriggerStay.h" />
-    <ClInclude Include="NodeTypeStartSphereOnTriggerEnter.h" />
+    <ClInclude Include="NodeTypeStartSphereOnTriggerExit.h">
+      <Filter>Imgui\Node Editor\Nodes\Start</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeStartSphereOnTriggerEnter.h">
+      <Filter>Imgui\Node Editor\Nodes\Start</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeStartSphereOnTriggerStay.h">
+      <Filter>Imgui\Node Editor\Nodes\Start</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypePlayerGetPosition.h">
+      <Filter>Imgui\Node Editor\Nodes\Player</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">
@@ -1748,6 +1768,9 @@
     </Filter>
     <Filter Include="Imgui\Node Editor\Nodes\Vector3">
       <UniqueIdentifier>{b2a5782d-6f96-49a0-90de-269313d3f11b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Nodes\Player">
+      <UniqueIdentifier>{b9f40423-9f39-4bc1-bd31-92f4e33a1488}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
