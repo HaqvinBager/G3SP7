@@ -284,7 +284,7 @@ void TEMP_VFX(CScene* aScene)
 	static int id = 500;
 	CGameObject* abilityObject = new CGameObject(id++);
 	abilityObject->AddComponent<CVFXSystemComponent>(*abilityObject, ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystem_ToLoad.json"));
-
+	gVFX = nullptr;
 	gVFX = abilityObject;
 	aScene->AddInstance(abilityObject);
 }
