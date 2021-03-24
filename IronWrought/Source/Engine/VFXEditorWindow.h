@@ -7,10 +7,41 @@ typedef rapidjson::PrettyWriter<rapidjson::StringBuffer> rapidJsonWriter;
 
 namespace IronWroughtImGui {
 
-	struct STabWindow
+	enum class EVFXEditorMenu
 	{
-		std::string myName = "";
-		unsigned int myTabIndex = 0;
+		MainMenu,
+		VFXMeshView,
+		ParticleEmitterView
+	};
+
+	struct SCurveData
+	{
+		SCurveData()
+		{
+			myPoints[0] = { 0.0f, 0.0f };
+			myPoints[1] = { 0.33f, 0.3f };
+			myPoints[2] = { 0.66f, 0.66f };
+			myPoints[3] = { 1.0f, 1.0f };
+			myShouldShowWindow = false;
+			std::string defaultLabel = "Curve";
+			ZeroMemory(myLabel, 32);
+			memcpy(&myLabel[0], defaultLabel.c_str(), strlen(defaultLabel.c_str()));
+		}
+
+		SCurveData(SCurveData& anOther)
+		{
+			myPoints[0] = anOther.myPoints[0];
+			myPoints[1] = anOther.myPoints[1];
+			myPoints[2] = anOther.myPoints[2];
+			myPoints[3] = anOther.myPoints[3];
+			myShouldShowWindow = anOther.myShouldShowWindow;
+			ZeroMemory(myLabel, 32);
+			memcpy(&myLabel[0], anOther.myLabel, strlen(anOther.myLabel));
+		}
+
+		ImVec2 myPoints[4];
+		char myLabel[32];
+		bool myShouldShowWindow;
 	};
 
 	struct SVFXMeshData
@@ -116,7 +147,7 @@ namespace IronWroughtImGui {
 
 	struct SParticleEmitterData
 	{
-		unsigned int myMaxNumberOfParticles;
+		int myMaxNumberOfParticles;
 		float mySpawnRate;
 		float myLifetime;
 		float myDefaultSpeed;
@@ -135,6 +166,10 @@ namespace IronWroughtImGui {
 		Vector3 mySpawnDirectionRandomizeFrom;
 		Vector3 mySpawnDirectionRandomizeTo;
 		char myTexturePath[64];
+
+		SCurveData myColorCurve;
+		SCurveData mySizeCurve;
+		SCurveData myDirectionCurve;
 
 		void Init(const std::string& aPath)
 		{
@@ -170,6 +205,45 @@ namespace IronWroughtImGui {
 			ZeroMemory(myTexturePath, 64);
 			std::string path = document["Texture Path"].GetString();
 			memcpy(&myTexturePath[0], path.c_str(), strlen(path.c_str()));
+
+			if (document.HasMember("Color Curve"))
+			{
+				const auto& colorCurveArray = document["Color Curve"].GetArray();
+				for (unsigned int i = 0; i < static_cast<unsigned int>(colorCurveArray.Size()); ++i)
+				{
+					myColorCurve.myPoints[i].x = colorCurveArray[i]["x"].GetFloat();
+					myColorCurve.myPoints[i].y = colorCurveArray[i]["y"].GetFloat();
+				}
+				ZeroMemory(myColorCurve.myLabel, 32);
+				std::string label = "Color Curve";
+				memcpy(&myColorCurve.myLabel[0], label.c_str(), strlen(label.c_str()));
+			}
+
+			if (document.HasMember("Size Curve"))
+			{
+				const auto& sizeCurveArray = document["Size Curve"].GetArray();
+				for (unsigned int i = 0; i < static_cast<unsigned int>(sizeCurveArray.Size()); ++i)
+				{
+					mySizeCurve.myPoints[i].x = sizeCurveArray[i]["x"].GetFloat();
+					mySizeCurve.myPoints[i].y = sizeCurveArray[i]["y"].GetFloat();
+				}
+				ZeroMemory(mySizeCurve.myLabel, 32);
+				std::string label = "Size Curve";
+				memcpy(&mySizeCurve.myLabel[0], label.c_str(), strlen(label.c_str()));
+			}
+
+			if (document.HasMember("Direction Curve"))
+			{
+				const auto& directionCurveArray = document["Direction Curve"].GetArray();
+				for (unsigned int i = 0; i < static_cast<unsigned int>(directionCurveArray.Size()); ++i)
+				{
+					myDirectionCurve.myPoints[i].x = directionCurveArray[i]["x"].GetFloat();
+					myDirectionCurve.myPoints[i].y = directionCurveArray[i]["y"].GetFloat();
+				}
+				ZeroMemory(myDirectionCurve.myLabel, 32);
+				std::string label = "Direction Curve";
+				memcpy(&myDirectionCurve.myLabel[0], label.c_str(), strlen(label.c_str()));
+			}
 		}
 
 		void Serialize(rapidJsonWriter& aWriter)
@@ -260,6 +334,11 @@ namespace IronWroughtImGui {
 
 			aWriter.Key("Texture Path");
 			aWriter.String(myTexturePath);
+
+			Serializer<ImVec2*> curveSerializer;
+			curveSerializer.Serialize("Color Curve", myColorCurve.myPoints, aWriter);
+			curveSerializer.Serialize("Size Curve", mySizeCurve.myPoints, aWriter);
+			curveSerializer.Serialize("Direction Curve", myDirectionCurve.myPoints, aWriter);
 
 			aWriter.EndObject();
 		}
@@ -431,8 +510,10 @@ namespace IronWroughtImGui {
 	private:
 		std::unordered_map<std::string, std::vector<Vector2>> myPointsMap;
 		std::vector<SVFXSerializable> myEffects;
+		EVFXEditorMenu myCurrentMenu;
 		SVFXMeshData* myMeshData;
 		SParticleEmitterData* myEmitterData;
+		SCurveData myCurrentCurveData;
 		unsigned int myCurrentEffectIndex = 0;
 		unsigned int myCurrentTabIndex = 0;
 		float myColor[4] = {1.0f, 1.0f, 1.0f, 1.0f};

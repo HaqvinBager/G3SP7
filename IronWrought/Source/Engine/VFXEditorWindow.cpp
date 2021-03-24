@@ -16,12 +16,18 @@
 
 IronWroughtImGui::CVFXEditorWindow::CVFXEditorWindow(const char* aName)
 	: CWindow(aName)
+	, myCurrentMenu(EVFXEditorMenu::MainMenu)
 {
 	myPointsMap["First Curve"] = { {1.0f, 1.0f}, {0.25f, 0.25f}, {0.75f, 0.75f}, {1.0f, 1.0f} };
 
 	std::string saveDestination = "Assets/Graphics/VFX/JSON/VFXSystemTester.json";
 	ZeroMemory(mySaveDestination, 256);
 	memcpy(&mySaveDestination[0], saveDestination.c_str(), strlen(saveDestination.c_str()));
+
+	myMeshData = new SVFXMeshData();
+	myEmitterData = new SParticleEmitterData();
+
+	myCurrentCurveData = SCurveData();
 
 	AddEffect(0);
 
@@ -42,6 +48,11 @@ IronWroughtImGui::CVFXEditorWindow::CVFXEditorWindow(const char* aName)
 }
 IronWroughtImGui::CVFXEditorWindow::~CVFXEditorWindow()
 {
+	delete myMeshData;
+	myMeshData = nullptr;
+
+	delete myEmitterData;
+	myEmitterData = nullptr;
 }
 
 void IronWroughtImGui::CVFXEditorWindow::OnEnable()
@@ -53,22 +64,24 @@ void IronWroughtImGui::CVFXEditorWindow::OnInspectorGUI()
 	ImGui::Begin(Name(), Open());
 	//for (auto& keyValue : myPointsMap)
 	//{
-	//	//std::vector<ImVec2> vec = keyValue.second;
-	//	//ImGui::IronCurve(keyValue.first.c_str(), keyValue.second.data());
+	//	std::vector<ImVec2> vec = keyValue.second;
+	//	ImGui::IronCurve(keyValue.first.c_str(), keyValue.second.data());
 	//	
 	//}
 
-	if (!myMeshData && !myEmitterData)
+	switch (myCurrentMenu)
 	{
+	case IronWroughtImGui::EVFXEditorMenu::MainMenu:
 		ShowMainMenu();
-	}
-	else if (myMeshData)
-	{
+		break;
+	case IronWroughtImGui::EVFXEditorMenu::VFXMeshView:
 		ShowVFXMeshWindow();
-	}
-	else if (myEmitterData)
-	{
+		break;
+	case IronWroughtImGui::EVFXEditorMenu::ParticleEmitterView:
 		ShowParticleEffectWindow();
+		break;
+	default:
+		break;
 	}
 
 	ImGui::End();
@@ -101,7 +114,7 @@ void IronWroughtImGui::CVFXEditorWindow::SaveToFile()
 
 	of.close();
 
-	CGameObject* vfx = IRONWROUGHT->GetActiveScene().GetVFXTester();
+	CGameObject* vfx = CEngine::GetInstance()->GetActiveScene().GetVFXTester();
 	vfx->GetComponent<CVFXSystemComponent>()->Init(ASSETPATH(mySaveDestination));
 	vfx->GetComponent<CVFXSystemComponent>()->EnableEffect(0);
 }
@@ -329,16 +342,142 @@ void IronWroughtImGui::CVFXEditorWindow::ShowVFXMeshWindow()
 
 	if (ImGui::Button("Back to VFX Effect"))
 	{
-		delete myMeshData;
-		myMeshData = nullptr;
+		myCurrentMenu = EVFXEditorMenu::MainMenu;
 	}
 }
 
 void IronWroughtImGui::CVFXEditorWindow::ShowParticleEffectWindow()
 {
 	ImGui::TextColored({ 1.0f, 0.0f, 1.0f, 1.0f }, "Particle Emitter File");
+
+	ImGui::Dummy(ImVec2(0.0f, 10.0f));
+	ImGui::InputText("Texture Path", myEmitterData->myTexturePath, 64);
 	ImGui::Spacing();
 
+	ImGui::DragInt("Max Number Of Particles", &myEmitterData->myMaxNumberOfParticles, 0.1f, 1, 200);
+	ImGui::DragFloat("Spawn Rate (Particles / Second)", &myEmitterData->mySpawnRate, 0.1f, 0.1f, 200.0f, "%.1f");
+	ImGui::DragFloat("Base Lifetime", &myEmitterData->myLifetime, 0.01f, 0.01f, 10.0f, "%.2f");
+	ImGui::DragFloat("Base Speed", &myEmitterData->myDefaultSpeed, 0.01f, 0.01f, 20.0f, "%.2f");
+
+	ImGui::Dummy(ImVec2(0.0f, 10.0f));
+	ImGui::Text("Interpolator Ranges");
+
+	float imguiVector4[4];
+	memcpy(&imguiVector4[0], &myEmitterData->myStartColor, sizeof(Vector4));
+	ImGui::ColorEdit4("Start Color", &imguiVector4[0]);
+	memcpy(&myEmitterData->myStartColor, &imguiVector4[0], sizeof(Vector4));
+
+	memcpy(&imguiVector4[0], &myEmitterData->myEndColor, sizeof(Vector4));
+	ImGui::ColorEdit4("End Color", &imguiVector4[0]);
+	memcpy(&myEmitterData->myEndColor, &imguiVector4[0], sizeof(Vector4));
+
+	ImGui::DragFloat("Start Uniform Size ", &myEmitterData->myUniformStartSize, 0.01f, 0.01f, 20.0f, "%.2f");
+	ImGui::DragFloat("End Uniform Size ", &myEmitterData->myUniformStartSize, 0.01f, 0.01f, 20.0f, "%.2f");
+
+	float imguiVector3[3];
+	memcpy(&imguiVector3[0], &myEmitterData->myStartDirection, sizeof(Vector3));
+	ImGui::InputFloat3("Start Direction", &imguiVector3[0]);
+	memcpy(&myEmitterData->myStartDirection, &imguiVector3[0], sizeof(Vector3));
+
+	memcpy(&imguiVector3[0], &myEmitterData->myEndDirection, sizeof(Vector3));
+	ImGui::InputFloat3("End Direction", &imguiVector3[0]);
+	memcpy(&myEmitterData->myEndDirection, &imguiVector3[0], sizeof(Vector3));
+
+	ImGui::Dummy(ImVec2(0.0f, 10.0f));
+	ImGui::Text("Offset Randomization");
+
+	ImGui::DragFloat("Lifetime Randomize Offset From", &myEmitterData->myLifetimeRandomizeFrom, 0.01f, -10.0f, myEmitterData->myLifetimeRandomizeTo, "%.2f");
+	ImGui::DragFloat("Lifetime Randomize Offset To", &myEmitterData->myLifetimeRandomizeTo, 0.01f, myEmitterData->myLifetimeRandomizeFrom, 10.0f, "%.2f");
+
+	ImGui::DragFloat("Speed Randomize Offset From", &myEmitterData->mySpeedRandomizeFrom, 0.01f, -10.0f, myEmitterData->mySpeedRandomizeTo, "%.2f");
+	ImGui::DragFloat("Speed Randomize Offset To", &myEmitterData->mySpeedRandomizeTo, 0.01f, myEmitterData->mySpeedRandomizeFrom, 10.0f, "%.2f");
+
+	memcpy(&imguiVector3[0], &myEmitterData->mySpawnPositionOffsetRandomizeFrom, sizeof(Vector3));
+	ImGui::DragFloat3("Offset Spawn Position Randomize From", &imguiVector3[0], 0.1f, -10.0f, 10.0f, "%.1f");
+	memcpy(&myEmitterData->mySpawnPositionOffsetRandomizeFrom, &imguiVector3[0], sizeof(Vector3));
+
+	memcpy(&imguiVector3[0], &myEmitterData->mySpawnPositionOffsetRandomizeTo, sizeof(Vector3));
+	ImGui::DragFloat3("Offset Spawn Position Randomize To", &imguiVector3[0], 0.1f, -10.0f, 10.0f, "%.1f");
+	memcpy(&myEmitterData->mySpawnPositionOffsetRandomizeTo, &imguiVector3[0], sizeof(Vector3));
+
+	memcpy(&imguiVector3[0], &myEmitterData->mySpawnDirectionRandomizeFrom, sizeof(Vector3));
+	ImGui::DragFloat3("Spawn Direction Randomize From", &imguiVector3[0], 0.1f, -10.0f, 10.0f, "%.1f");
+	memcpy(&myEmitterData->mySpawnDirectionRandomizeFrom, &imguiVector3[0], sizeof(Vector3));
+
+	memcpy(&imguiVector3[0], &myEmitterData->mySpawnDirectionRandomizeTo, sizeof(Vector3));
+	ImGui::DragFloat3("Spawn Direction Randomize To", &imguiVector3[0], 0.1f, -10.0f, 10.0f, "%.1f");
+	memcpy(&myEmitterData->mySpawnDirectionRandomizeTo, &imguiVector3[0], sizeof(Vector3));
+
+	ImGui::Dummy(ImVec2(0.0f, 10.0f));
+	ImGui::Text("Curves");
+
+	// Curves
+
+	if (ImGui::Button("Edit Color Curve"))
+	{
+		myCurrentCurveData = myEmitterData->myColorCurve;
+		myCurrentCurveData.myShouldShowWindow = true;
+	}
+	ImGui::Spacing();
+
+	if (ImGui::Button("Edit Size Curve"))
+	{
+		myCurrentCurveData = myEmitterData->mySizeCurve;
+		myCurrentCurveData.myShouldShowWindow = true;
+	}
+	ImGui::Spacing();
+
+	if (ImGui::Button("Edit Direction Curve"))
+	{
+		myCurrentCurveData = myEmitterData->myDirectionCurve;
+		myCurrentCurveData.myShouldShowWindow = true;
+	}
+
+	if (myCurrentCurveData.myShouldShowWindow)
+	{
+		ImGui::Begin("Curve Editor", Open());
+		
+		ImGui::IronCurve(myCurrentCurveData.myLabel, myCurrentCurveData.myPoints);
+		
+		if (ImGui::Button("Save Curve"))
+		{
+			myCurrentCurveData.myShouldShowWindow = false;
+			std::string currentLabel = myCurrentCurveData.myLabel;
+
+			if (currentLabel.find("Color Curve") != std::string::npos)
+			{
+				myEmitterData->myColorCurve = myCurrentCurveData;
+			}
+			else if (currentLabel.find("Size Curve") != std::string::npos)
+			{
+				myEmitterData->mySizeCurve = myCurrentCurveData;
+			}
+			else if (currentLabel.find("Direction Curve") != std::string::npos)
+			{
+				myEmitterData->myDirectionCurve = myCurrentCurveData;
+			}
+
+			rapidjson::StringBuffer s;
+			rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(s);
+			writer.SetIndent(' ', 2);
+
+			myEmitterData->Serialize(writer);
+
+			std::ofstream of(ASSETPATH(myParticleEmitterDataDestination));
+			of << s.GetString();
+
+			of.close();
+
+			CGameObject* vfx = IRONWROUGHT->GetActiveScene().GetVFXTester();
+			vfx->GetComponent<CVFXSystemComponent>()->Init(ASSETPATH(mySaveDestination));
+			vfx->GetComponent<CVFXSystemComponent>()->EnableEffect(0);
+		}
+
+		ImGui::End();
+	}
+
+	ImGui::Dummy(ImVec2(0.0f, 20.0f));
+	ImGui::InputText("Save As", myParticleEmitterDataDestination, 256);
 	if (ImGui::Button("Save"))
 	{
 		rapidjson::StringBuffer s;
@@ -356,18 +495,20 @@ void IronWroughtImGui::CVFXEditorWindow::ShowParticleEffectWindow()
 		vfx->GetComponent<CVFXSystemComponent>()->Init(ASSETPATH(mySaveDestination));
 		vfx->GetComponent<CVFXSystemComponent>()->EnableEffect(0);
 	}
+	ImGui::Dummy(ImVec2(0.0f, 20.0f));
+
+	if (ImGui::Button("Back to VFX Effect"))
+	{
+		myCurrentMenu = EVFXEditorMenu::MainMenu;
+	}
 }
 
 void IronWroughtImGui::CVFXEditorWindow::OpenVFXMeshWindow(const std::string& aPath)
 {
 	if (myMeshData)
-	{
-		delete myMeshData;
-		myMeshData = nullptr;
-	}
+		myMeshData->Init(aPath);
 
-	myMeshData = new SVFXMeshData;
-	myMeshData->Init(aPath);
+	myCurrentMenu = EVFXEditorMenu::VFXMeshView;
 
 	ZeroMemory(myVFXMeshDataDestination, 256);
 	memcpy(&myVFXMeshDataDestination[0], aPath.c_str(), strlen(aPath.c_str()));
@@ -376,13 +517,9 @@ void IronWroughtImGui::CVFXEditorWindow::OpenVFXMeshWindow(const std::string& aP
 void IronWroughtImGui::CVFXEditorWindow::OpenParticleEffectWindow(const std::string& aPath)
 {
 	if (myEmitterData)
-	{
-		delete myEmitterData;
-		myEmitterData = nullptr;
-	}
+		myEmitterData->Init(aPath);
 
-	myEmitterData = new SParticleEmitterData;
-	myEmitterData->Init(aPath);
+	myCurrentMenu = EVFXEditorMenu::ParticleEmitterView;
 
 	ZeroMemory(myParticleEmitterDataDestination, 256);
 	memcpy(&myParticleEmitterDataDestination[0], aPath.c_str(), strlen(aPath.c_str()));
