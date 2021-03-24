@@ -16,6 +16,7 @@ class CImguiManager : public IObserver
 public:
 	CImguiManager();
 	~CImguiManager();
+	void Init(CGraphManager* aGraphManager);
 	void Update();
 	void DebugWindow();
 

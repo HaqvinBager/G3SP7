@@ -56,6 +56,12 @@ public:
 		myGlobalUID = myID;
 	}
 
+	static void ClearUIDS()
+	{
+		myGlobalUID = 0;
+		myAllUIDs.clear();
+	}
+
 	static std::vector<unsigned int> myAllUIDs;
 	static unsigned int myGlobalUID;
 private:

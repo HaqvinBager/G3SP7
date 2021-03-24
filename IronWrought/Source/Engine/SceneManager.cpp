@@ -257,9 +257,10 @@ CSceneFactory* CSceneFactory::Get()
 	return ourInstance;
 }
 
-void CSceneFactory::LoadSceneAsync(const std::string& aSceneName, std::function<void()> onComplete)
+void CSceneFactory::LoadSceneAsync(const std::string& aSceneName, std::function<void(std::string)> onComplete)
 {
 	myOnComplete = onComplete;
+	myLastSceneName = aSceneName;
 	myFuture = std::async(std::launch::async, &CSceneManager::CreateScene, aSceneName);
 }
 
@@ -267,9 +268,9 @@ void CSceneFactory::Update()
 {
 	if (myFuture._Is_ready())
 	{
-		myOnComplete();
 		CScene* loadedScene = myFuture.get();
 		CEngine::GetInstance()->AddScene(CStateStack::EState::InGame, loadedScene);
 		CEngine::GetInstance()->SetActiveScene(CStateStack::EState::InGame);
+		myOnComplete(myLastSceneName);
 	}
 }

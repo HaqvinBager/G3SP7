@@ -18,8 +18,8 @@ public:
 	static void Create() { ourInstance = new CNodeDataManager(); }
 	static CNodeDataManager* Get() { return ourInstance; }
 
-	void SetFolderPath(std::string aFolderPath) { myCurrentFolderPath = aFolderPath; }
-	std::string GetFolderPath() { return myCurrentFolderPath; }
+	static void SetFolderPath(std::string aFolderPath) { ourInstance->myCurrentFolderPath = aFolderPath; }
+	static std::string GetFolderPath() { return ourInstance->myCurrentFolderPath; }
 
 	void ClearStoredData();
 

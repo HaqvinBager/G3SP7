@@ -16,7 +16,7 @@ namespace IronWroughtImGui {
 		bool OnMainMenuGUI() override;
 		void OnDisable() override;
 
-		void OnComplete();
+		void OnComplete(std::string aSceneThatHasBeenSuccessfullyLoaded);
 
 	private:
 		enum class EState {
