@@ -31,6 +31,7 @@ class CVFXMeshFactory;
 class CLineFactory;
 class CAudioManager;
 class CPhysXWrapper;
+class CSceneFactory;
 
 class CEngine
 {
@@ -42,6 +43,7 @@ class CEngine
 	friend class CLineFactory;
 	friend class CDecalFactory;
 	friend class CMaterialHandler;
+	friend class CSceneFactory;
 
 public:
 	CEngine();
@@ -102,6 +104,7 @@ private:
 	CInputMapper* myInputMapper;
 	CMainSingleton* myMainSingleton;
 	CAudioManager* myAudioManager;
+	CSceneFactory* mySceneFactory;
 
 	bool myRenderSceneActive = false;
 };

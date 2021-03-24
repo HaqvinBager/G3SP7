@@ -70,29 +70,7 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneJson)
 		}
 	}
 
-	AddPlayer(*scene);
-
-	//AddPlayer(*scene, );
-	//{
-	//	const auto& ids = scene["Ids"].GetArray();
-	//	ids;
-	//}
-
-
-
-
-
-
-
-	//AddInstancedModelComponents(*scene, aSceneJson + "_InstanceModelCollection.json");
-	//if (AddGameObjects(*scene, aSceneJson + "_InstanceIDCollection.json")) {
-	//	SetTransforms(*scene, aSceneJson + "_TransformCollection.json");
-	//	AddModelComponents(*scene, aSceneJson + "_ModelCollection.json");
-	//	AddPointLights(*scene, aSceneJson + "_PointLightCollection.json");
-	//	AddDecalComponents(*scene, aSceneJson + "_DecalCollection.json");
-	//}
-	// Should be in the if case above. Later. When some bugs are fixed.
-	//AddPlayer(*scene, aSceneJson + "_Player.json");
+	AddPlayer(*scene); //This add play does not read data from unity. (Yet..!) /Axel 2021-03-24
 	CEngine::GetInstance()->GetPhysx().Cooking(scene->ActiveGameObjects(), scene);
 	return scene;
 }
@@ -260,4 +238,37 @@ void CSceneManager::AddPlayer(CScene& aScene/*, RapidObject someData*/)
 	aScene.AddInstance(model);
 	aScene.AddInstance(camera);
 	aScene.MainCamera(camera->GetComponent<CCameraComponent>());
+}
+
+CSceneFactory* CSceneFactory::ourInstance = nullptr;
+CSceneFactory::CSceneFactory()
+{
+	ourInstance = this;
+}
+
+CSceneFactory::~CSceneFactory()
+{
+	ourInstance = nullptr;
+}
+
+CSceneFactory* CSceneFactory::Get()
+{
+	return ourInstance;
+}
+
+void CSceneFactory::LoadSceneAsync(const std::string& aSceneName, std::function<void()> onComplete)
+{
+	myOnComplete = onComplete;
+	myFuture = std::async(std::launch::async, &CSceneManager::CreateScene, aSceneName);
+}
+
+void CSceneFactory::Update()
+{
+	if (myFuture._Is_ready())
+	{
+		myOnComplete();
+		CScene* loadedScene = myFuture.get();
+		CEngine::GetInstance()->AddScene(CStateStack::EState::InGame, loadedScene);
+		CEngine::GetInstance()->SetActiveScene(CStateStack::EState::InGame);
+	}
 }
