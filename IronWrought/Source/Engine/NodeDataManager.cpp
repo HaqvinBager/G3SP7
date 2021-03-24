@@ -19,6 +19,9 @@ CNodeDataManager::~CNodeDataManager()
 
 void CNodeDataManager::ClearStoredData()
 {
+	SaveDataTypesToJson();
+	myNodeDataMap.clear();
+	myNodeDataTypeMap.clear();
 }
 
 //void CNodeDataManager::SetData(const std::string aNodeDataKey, EDataType aDataType, void* aValue)
@@ -162,6 +165,6 @@ void CNodeDataManager::SaveDataTypesToJson()
 	writer1.EndArray();
 	writer1.EndObject();
 
-	std::ofstream of("Imgui/NodeScripts/CustomDataNodes.json");
+	std::ofstream of(myCurrentFolderPath + "CustomDataNodes.json");
 	of << s.GetString();
 }
