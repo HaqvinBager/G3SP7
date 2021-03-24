@@ -29,8 +29,11 @@ void IronWroughtImGui::CLoadScene::OnEnable()
 	for (auto& file : generatedJsonFiles) {
 		//auto endIndex = file.find_last_of('_');
 		//std::string sceneName = file.substr(0, endIndex);
-		if (std::find(myScenes.begin(), myScenes.end(), file.c_str()) == myScenes.end()) {
-			myScenes.emplace_back(file.c_str());
+		if (file.find("Bin") == std::string::npos)
+		{
+			if (std::find(myScenes.begin(), myScenes.end(), file.c_str()) == myScenes.end()) {
+				myScenes.emplace_back(file.c_str());
+			}
 		}
 	}
 	myScenes.push_back("Empty");
