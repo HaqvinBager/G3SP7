@@ -6,6 +6,7 @@ class CDirectXFramework;
 class CEnvironmentLight;
 class CPointLight;
 class CSpotLight;
+class CBoxLight;
 class CCameraComponent;
 
 class CLightRenderer
@@ -19,10 +20,12 @@ public:
 	void Render(CCameraComponent* aCamera, CEnvironmentLight* anEnvironmentLight);
 	void Render(CCameraComponent* aCamera, std::vector<CPointLight*>& aPointLightList);
 	void Render(CCameraComponent* aCamera, std::vector<CSpotLight*>& aSpotLightList);
+	void Render(CCameraComponent* aCamera, std::vector<CBoxLight*>& aBoxLightList);
 
 	void RenderVolumetric(CCameraComponent* aCamera, CEnvironmentLight* anEnvironmentLight);
 	void RenderVolumetric(CCameraComponent* aCamera, std::vector<CPointLight*>& aPointLightList);
 	void RenderVolumetric(CCameraComponent* aCamera, std::vector<CSpotLight*>& aSpotLightList);
+	void RenderVolumetric(CCameraComponent* aCamera, std::vector<CBoxLight*>& aBoxLightList);
 
 private:
 	template<class T>
@@ -40,44 +43,54 @@ private:
 private:
 	struct SFrameBufferData
 	{
-		DirectX::SimpleMath::Matrix myToCameraSpace;
-		DirectX::SimpleMath::Matrix myToWorldFromCamera;
-		DirectX::SimpleMath::Matrix myToProjectionSpace;
-		DirectX::SimpleMath::Matrix myToCameraFromProjection;
-		DirectX::SimpleMath::Vector4 myCameraPosition;
+		Matrix myToCameraSpace;
+		Matrix myToWorldFromCamera;
+		Matrix myToProjectionSpace;
+		Matrix myToCameraFromProjection;
+		Vector4 myCameraPosition;
 	} myFrameBufferData;
 
 	struct SDirectionalLightBufferData
 	{
-		DirectX::SimpleMath::Matrix myToDirectionalLightView;
-		DirectX::SimpleMath::Matrix myToDirectionalLightProjection;
-		DirectX::SimpleMath::Vector4 myDirectionalLightPosition;
-		DirectX::SimpleMath::Vector4 myDirectionalLightDirection;
-		DirectX::SimpleMath::Vector4 myDirectionalLightColor;
+		Matrix myToDirectionalLightView;
+		Matrix myToDirectionalLightProjection;
+		Vector4 myDirectionalLightPosition;
+		Vector4 myDirectionalLightDirection;
+		Vector4 myDirectionalLightColor;
 	} myDirectionalLightBufferData;
 
 	struct SPointLightBufferData
 	{
-		DirectX::SimpleMath::Matrix myToWorldSpace;
-		DirectX::SimpleMath::Vector4 myColorAndIntensity;
-		DirectX::SimpleMath::Vector4 myPositionAndRange;
+		Matrix myToWorldSpace;
+		Vector4 myColorAndIntensity;
+		Vector4 myPositionAndRange;
 	} myPointLightBufferData;
 
 	struct SSpotLightBufferData
 	{
-		DirectX::SimpleMath::Matrix myToWorldSpace;
-		DirectX::SimpleMath::Matrix myToViewSpace;
-		DirectX::SimpleMath::Matrix myToProjectionSpace;
-		DirectX::SimpleMath::Vector4 myColorAndIntensity;
-		DirectX::SimpleMath::Vector4 myPositionAndRange;
-		DirectX::SimpleMath::Vector4 myDirectionAndAngleExponent;
-		DirectX::SimpleMath::Vector4 myDirectionNormal1;
-		DirectX::SimpleMath::Vector4 myDirectionNormal2;
-		DirectX::SimpleMath::Vector4 myUpLeftCorner;
-		DirectX::SimpleMath::Vector4 myUpRightCorner;
-		DirectX::SimpleMath::Vector4 myDownLeftCorner;
-		DirectX::SimpleMath::Vector4 myDownRightCorner;
+		Matrix myToWorldSpace;
+		Matrix myToViewSpace;
+		Matrix myToProjectionSpace;
+		Vector4 myColorAndIntensity;
+		Vector4 myPositionAndRange;
+		Vector4 myDirectionAndAngleExponent;
+		Vector4 myDirectionNormal1;
+		Vector4 myDirectionNormal2;
+		Vector4 myUpLeftCorner;
+		Vector4 myUpRightCorner;
+		Vector4 myDownLeftCorner;
+		Vector4 myDownRightCorner;
 	} mySpotLightBufferData;
+
+	struct SBoxLightBufferData
+	{
+		Matrix myToWorldSpace;
+		Matrix myToViewSpace;
+		Matrix myToProjectionSpace;
+		Vector4 myColorAndIntensity;
+		Vector4 myPositionAndRange;
+		Vector4 myDirection;
+	} myBoxLightBufferData;
 
 private:
 	ID3D11DeviceContext* myContext;
@@ -86,24 +99,31 @@ private:
 	ID3D11Buffer* myLightBuffer;
 	ID3D11Buffer* myPointLightBuffer;
 	ID3D11Buffer* mySpotLightBuffer;
+	ID3D11Buffer* myBoxLightBuffer;
 
 	ID3D11Buffer* myPointLightVertexBuffer;
 	ID3D11Buffer* myPointLightIndexBuffer;
 	ID3D11Buffer* mySpotLightVertexBuffer;
+	ID3D11Buffer* myBoxLightVertexBuffer;
+	ID3D11Buffer* myBoxLightIndexBuffer;
 
 	ID3D11InputLayout* myInputLayout;
 
 	ID3D11VertexShader* myFullscreenShader;
 	ID3D11VertexShader* myPointLightVertexShader;
 	ID3D11VertexShader* mySpotLightVertexShader;
-	
+	ID3D11VertexShader* myBoxLightVertexShader;
+
 	ID3D11GeometryShader* mySpotLightGeometryShader;
 
 	ID3D11PixelShader* myEnvironmentLightShader;
 	ID3D11PixelShader* myPointLightShader;
 	ID3D11PixelShader* mySpotLightShader;
+	ID3D11PixelShader* myBoxLightShader;
 	ID3D11PixelShader* myDirectionalVolumetricLightShader;
+	ID3D11PixelShader* myPointVolumetricLightShader;
 	ID3D11PixelShader* mySpotVolumetricLightShader;
+	ID3D11PixelShader* myBoxLightVolumetricLightShader;
 
 	ID3D11SamplerState* mySamplerState;
 	ID3D11SamplerState* myShadowSampler;

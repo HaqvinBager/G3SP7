@@ -8,6 +8,7 @@
 #include "EnvironmentLight.h"
 #include "PointLight.h"
 #include "SpotLight.h"
+#include "BoxLight.h"
 
 #include "GameObject.h"
 #include "CameraComponent.h"
@@ -18,18 +19,25 @@ CLightRenderer::CLightRenderer()
 	, myLightBuffer(nullptr)
 	, myPointLightBuffer(nullptr)
 	, mySpotLightBuffer(nullptr)
+	, myBoxLightBuffer(nullptr)
 	, myPointLightVertexBuffer(nullptr)
 	, myPointLightIndexBuffer(nullptr)
 	, mySpotLightVertexBuffer(nullptr)
+	, myBoxLightVertexBuffer(nullptr)
+	, myBoxLightIndexBuffer(nullptr)
 	, myFullscreenShader(nullptr)
 	, myPointLightVertexShader(nullptr)
 	, mySpotLightVertexShader(nullptr)
 	, mySpotLightGeometryShader(nullptr)
+	, myBoxLightVertexShader(nullptr)
 	, myEnvironmentLightShader(nullptr)
 	, myPointLightShader(nullptr)
 	, mySpotLightShader(nullptr)
+	, myBoxLightShader(nullptr)
 	, myDirectionalVolumetricLightShader(nullptr)
+	, myPointVolumetricLightShader(nullptr)
 	, mySpotVolumetricLightShader(nullptr)
+	, myBoxLightVolumetricLightShader(nullptr)
 	, mySamplerState(nullptr)
 	, myShadowSampler(nullptr)
 	, myInputLayout(nullptr)
@@ -69,14 +77,46 @@ bool CLightRenderer::Init(CDirectXFramework* aFramework)
 	bufferDescription.ByteWidth = sizeof(SSpotLightBufferData);
 	ENGINE_HR_MESSAGE(device->CreateBuffer(&bufferDescription, nullptr, &mySpotLightBuffer), "Spot Light Buffer could not be created.");
 
+	bufferDescription.ByteWidth = sizeof(SBoxLightBufferData);
+	ENGINE_HR_MESSAGE(device->CreateBuffer(&bufferDescription, nullptr, &myBoxLightBuffer), "Box Light Buffer could not be created.");
+
 	//Vertex Setup
 	struct Vertex
 	{
 		float x, y, z, w;
 	};
 
-	Vertex spotLightVertex[1] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	Vertex pointLightVertices[24] = {
+		// X      Y      Z      W 
+		{ -1.0f, -1.0f, -1.0f,  1.0f },
+		{  1.0f, -1.0f, -1.0f,  1.0f },
+		{ -1.0f,  1.0f, -1.0f,  1.0f },
+		{  1.0f,  1.0f, -1.0f,  1.0f },
+		{ -1.0f, -1.0f,  1.0f,  1.0f },
+		{  1.0f, -1.0f,  1.0f,  1.0f },
+		{ -1.0f,  1.0f,  1.0f,  1.0f },
+		{  1.0f,  1.0f,  1.0f,  1.0f },
+		// X      Y      Z      W 
+		{ -1.0f, -1.0f, -1.0f,  1.0f },
+		{ -1.0f,  1.0f, -1.0f,  1.0f },
+		{ -1.0f, -1.0f,  1.0f,  1.0f },
+		{ -1.0f,  1.0f,  1.0f,  1.0f },
+		{  1.0f, -1.0f, -1.0f,  1.0f },
+		{  1.0f,  1.0f, -1.0f,  1.0f },
+		{  1.0f, -1.0f,  1.0f,  1.0f },
+		{  1.0f,  1.0f,  1.0f,  1.0f },
+		// X      Y      Z      W 
+		{ -1.0f, -1.0f, -1.0f,  1.0f },
+		{  1.0f, -1.0f, -1.0f,  1.0f },
+		{ -1.0f, -1.0f,  1.0f,  1.0f },
+		{  1.0f, -1.0f,  1.0f,  1.0f },
+		{ -1.0f,  1.0f, -1.0f,  1.0f },
+		{  1.0f,  1.0f, -1.0f,  1.0f },
+		{ -1.0f,  1.0f,  1.0f,  1.0f },
+		{  1.0f,  1.0f,  1.0f,  1.0f }
+	};
+	Vertex spotLightVertex[1] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	Vertex boxLightVertices[24] = {
 		// X      Y      Z      W 
 		{ -1.0f, -1.0f, -1.0f,  1.0f },
 		{  1.0f, -1.0f, -1.0f,  1.0f },
@@ -121,8 +161,23 @@ bool CLightRenderer::Init(CDirectXFramework* aFramework)
 		20,23,21,
 		20,22,23
 	};
+	unsigned int boxLightIndices[36] = {
+		0,2,1,
+		2,3,1,
+		4,5,7,
+		4,7,6,
+		8,10,9,
+		10,11,9,
+		12,13,15,
+		12,15,14,
+		16,17,18,
+		18,17,19,
+		20,23,21,
+		20,22,23
+	};
 
 	// Point Light
+#pragma region Point Light
 	D3D11_BUFFER_DESC pointLightVertexBufferDesc = { 0 };
 	pointLightVertexBufferDesc.ByteWidth = sizeof(pointLightVertices);
 	pointLightVertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
@@ -147,8 +202,10 @@ bool CLightRenderer::Init(CDirectXFramework* aFramework)
 	myPointLightNumberOfIndices = static_cast<UINT>(sizeof(pointLightIndices) / sizeof(UINT));
 	myPointLightStride = sizeof(Vertex);
 	myPointLightOffset = 0;
+#pragma endregion
 
 	// Spot Light
+#pragma region Spot Light
 	D3D11_BUFFER_DESC vertexBufferDesc = { 0 };
 	vertexBufferDesc.ByteWidth = sizeof(Vertex);
 	vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
@@ -158,6 +215,30 @@ bool CLightRenderer::Init(CDirectXFramework* aFramework)
 	subVertexResourceData.pSysMem = spotLightVertex;
 
 	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateBuffer(&vertexBufferDesc, &subVertexResourceData, &mySpotLightVertexBuffer), "Spot Light Vertex Buffer could not be created.");
+#pragma endregion
+
+	// Box Light
+#pragma region Box Light
+	D3D11_BUFFER_DESC boxLightVertexBufferDesc = { 0 };
+	boxLightVertexBufferDesc.ByteWidth = sizeof(boxLightVertices);
+	boxLightVertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	boxLightVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
+	D3D11_SUBRESOURCE_DATA boxLightSubVertexResourceData = { 0 };
+	boxLightSubVertexResourceData.pSysMem = boxLightVertices;
+
+	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateBuffer(&boxLightVertexBufferDesc, &boxLightSubVertexResourceData, &myBoxLightVertexBuffer), "Box Light Vertex Buffer could not be created.");
+
+	D3D11_BUFFER_DESC boxLightIndexBufferDesc = { 0 };
+	boxLightIndexBufferDesc.ByteWidth = sizeof(boxLightIndices);
+	boxLightIndexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	boxLightIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+
+	D3D11_SUBRESOURCE_DATA boxLightIndexSubresourceData = { 0 };
+	boxLightIndexSubresourceData.pSysMem = boxLightIndices;
+
+	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateBuffer(&boxLightIndexBufferDesc, &boxLightIndexSubresourceData, &myBoxLightIndexBuffer), "Box Light Index Buffer could not be created.");
+#pragma endregion
 
 	std::string vsData;
 	Graphics::CreateVertexShader("Shaders/DeferredVertexShader.cso", aFramework, &myFullscreenShader, vsData);
@@ -165,8 +246,11 @@ bool CLightRenderer::Init(CDirectXFramework* aFramework)
 	Graphics::CreatePixelShader("Shaders/DeferredLightEnvironmentShader.cso", aFramework, &myEnvironmentLightShader);
 	Graphics::CreatePixelShader("Shaders/DeferredLightPointShader.cso", aFramework, &myPointLightShader);
 	Graphics::CreatePixelShader("Shaders/DeferredLightSpotShader.cso", aFramework, &mySpotLightShader);
+	Graphics::CreatePixelShader("Shaders/DeferredLightBoxShader.cso", aFramework, &myBoxLightShader);
 	Graphics::CreatePixelShader("Shaders/DirectionalVolumetricLightPixelShader.cso", aFramework, &myDirectionalVolumetricLightShader);
+	Graphics::CreatePixelShader("Shaders/PointVolumetricLightPixelShader.cso", aFramework, &myPointVolumetricLightShader);
 	Graphics::CreatePixelShader("Shaders/SpotVolumetricLightPixelShader.cso", aFramework, &mySpotVolumetricLightShader);
+	Graphics::CreatePixelShader("Shaders/BoxVolumetricLightPixelShader.cso", aFramework, &myBoxLightVolumetricLightShader);
 
 	// Point light 
 	Graphics::CreateVertexShader("Shaders/PointLightVertexShader.cso", aFramework, &myPointLightVertexShader, vsData);
@@ -179,6 +263,9 @@ bool CLightRenderer::Init(CDirectXFramework* aFramework)
 	// Spot light
 	Graphics::CreateGeometryShader("Shaders/SpotLightGeometryShader.cso", aFramework, &mySpotLightGeometryShader);
 	Graphics::CreateVertexShader("Shaders/SpotLightVertexShader.cso", aFramework, &mySpotLightVertexShader, vsData);
+
+	// Box light
+	Graphics::CreateVertexShader("Shaders/BoxLightVertexShader.cso", aFramework, &myBoxLightVertexShader, vsData);
 
 	// Samplers
 	D3D11_SAMPLER_DESC samplerDesc = {};
@@ -320,7 +407,7 @@ void CLightRenderer::Render(CCameraComponent* aCamera, std::vector<CSpotLight*>&
 		myContext->GSSetConstantBuffers(3, 1, &mySpotLightBuffer);
 
 		myContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
-		myContext->IASetInputLayout(myInputLayout);								
+		myContext->IASetInputLayout(myInputLayout);
 		myContext->IASetVertexBuffers(0, 1, &myPointLightVertexBuffer, &stride, &offset);
 		myContext->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0);
 
@@ -335,6 +422,11 @@ void CLightRenderer::Render(CCameraComponent* aCamera, std::vector<CSpotLight*>&
 	}
 
 	myContext->GSSetShader(nullptr, nullptr, 0);
+}
+
+void CLightRenderer::Render(CCameraComponent* /*aCamera*/, std::vector<CBoxLight*>& /*aBoxLightList*/)
+{
+
 }
 
 void CLightRenderer::RenderVolumetric(CCameraComponent* aCamera, CEnvironmentLight* anEnvironmentLight)
@@ -410,7 +502,7 @@ void CLightRenderer::RenderVolumetric(CCameraComponent* aCamera, std::vector<CPo
 
 		myContext->VSSetShader(myPointLightVertexShader, nullptr, 0);
 
-		myContext->PSSetShader(myPointLightShader, nullptr, 0);
+		myContext->PSSetShader(myPointVolumetricLightShader, nullptr, 0);
 		myContext->PSSetSamplers(0, 1, &mySamplerState);
 
 		myContext->DrawIndexed(myPointLightNumberOfIndices, 0, 0);
@@ -450,7 +542,7 @@ void CLightRenderer::RenderVolumetric(CCameraComponent* aCamera, std::vector<CSp
 		mySpotLightBufferData.myDirectionAndAngleExponent = { direction.x, direction.y, direction.z, currentInstance->GetAngleExponent() };
 		mySpotLightBufferData.myDirectionNormal1 = currentInstance->GetDirectionNormal1();
 		mySpotLightBufferData.myDirectionNormal2 = currentInstance->GetDirectionNormal2();
-		
+
 		mySpotLightBufferData.myUpLeftCorner = currentInstance->GetUpLeftCorner();
 		mySpotLightBufferData.myUpRightCorner = currentInstance->GetUpRightCorner();
 		mySpotLightBufferData.myDownLeftCorner = currentInstance->GetDownLeftCorner();
@@ -476,4 +568,9 @@ void CLightRenderer::RenderVolumetric(CCameraComponent* aCamera, std::vector<CSp
 	}
 
 	myContext->GSSetShader(nullptr, nullptr, 0);
+}
+
+void CLightRenderer::RenderVolumetric(CCameraComponent* /*aCamera*/, std::vector<CBoxLight*>& /*aBoxLightList*/)
+{
+
 }

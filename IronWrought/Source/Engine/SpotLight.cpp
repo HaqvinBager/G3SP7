@@ -21,6 +21,7 @@ bool CSpotLight::Init()
     UpdateWorld();
     UpdateView();
     UpdateProjection();
+
     return true;
 }
 

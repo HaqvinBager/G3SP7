@@ -4,6 +4,7 @@
 #include "EnvironmentLight.h"
 #include "PointLight.h"
 #include "SpotLight.h"
+#include "BoxLight.h"
 
 CLightFactory* CLightFactory::ourInstance = nullptr;
 CLightFactory* CLightFactory::GetInstance()

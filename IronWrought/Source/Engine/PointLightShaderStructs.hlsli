@@ -6,6 +6,7 @@ struct PointLightVertexInput
 struct PointLightVertexToPixel
 {
     float4 myPosition : SV_POSITION;
+    float4 myWorldPosition : WORLD_POSITION;
     float3 myUV : UV;
 };
 

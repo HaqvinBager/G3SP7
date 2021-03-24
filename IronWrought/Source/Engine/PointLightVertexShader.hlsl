@@ -16,6 +16,7 @@ PointLightVertexToPixel main(PointLightVertexInput input)
     output.myPosition = input.myPosition;
     output.myPosition.xyz *= pointLightPositionAndRange.w;
     output.myPosition = mul(pointLightToWorld, output.myPosition);
+    output.myWorldPosition = output.myPosition;
     output.myPosition = mul(pointLightToCamera, output.myPosition);
     output.myPosition = mul(pointLightToProjection, output.myPosition);
     output.myUV = output.myPosition.xyw;
