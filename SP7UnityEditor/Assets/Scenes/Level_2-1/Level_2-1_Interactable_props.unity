@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -280,6 +280,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: EN_P_foodset1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2440622402627407865, guid: 6fedf39ee61835045af5203552bc82e6,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2945889484823087428, guid: 6fedf39ee61835045af5203552bc82e6,
         type: 3}
@@ -1830,6 +1835,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: EN_P_foodset1 (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 2440622402627407865, guid: 6fedf39ee61835045af5203552bc82e6,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2945889484823087428, guid: 6fedf39ee61835045af5203552bc82e6,
         type: 3}
       propertyPath: m_RootOrder
@@ -2737,6 +2747,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: EN_P_foodset1 (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2440622402627407865, guid: 6fedf39ee61835045af5203552bc82e6,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2945889484823087428, guid: 6fedf39ee61835045af5203552bc82e6,
         type: 3}
@@ -4601,12 +4616,12 @@ PrefabInstance:
     - target: {fileID: 5626157510132706648, guid: abaa46c8570ff21429e293ece7f2ca13,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -15.75
+      value: -15.5
       objectReference: {fileID: 0}
     - target: {fileID: 5626157510132706648, guid: abaa46c8570ff21429e293ece7f2ca13,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 158.25
+      value: 158.5
       objectReference: {fileID: 0}
     - target: {fileID: 5626157510132706648, guid: abaa46c8570ff21429e293ece7f2ca13,
         type: 3}
@@ -7690,6 +7705,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: EN_P_foodset1 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2440622402627407865, guid: 6fedf39ee61835045af5203552bc82e6,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2945889484823087428, guid: 6fedf39ee61835045af5203552bc82e6,
         type: 3}
