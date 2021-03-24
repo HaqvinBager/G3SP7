@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using System.IO;
+using UnityEngine.SceneManagement;
 
 [CustomEditor(typeof(LevelCollection))]
 public class LevelCollectionEditor : Editor
@@ -54,26 +55,49 @@ public class LevelCollectionEditor : Editor
         AssetDatabase.Refresh();
     }
 
-    //Object obj = null;
 
     public override void OnInspectorGUI()
     {
-        base.OnInspectorGUI();
-
-
         serializedObject.Update();
+        if (this != null)
+            base.OnInspectorGUI();
+    
         LevelCollection collection = (LevelCollection)target;
-
         Color originalColor = GUI.backgroundColor;
+
         EditorGUILayout.BeginHorizontal();
+            OpenScenes(originalColor);
+            ConnectScenes(collection, originalColor);
+        EditorGUILayout.EndHorizontal();
+            ExportScenes(collection);
+
+        GUI.backgroundColor = originalColor;
+        serializedObject.ApplyModifiedProperties();
+    }
+
+    private void ExportScenes(LevelCollection collection)
+    {
+        GUI.backgroundColor = collection.myScenes.Count > 0 ? Color.green : Color.red;
+        if (GUILayout.Button("Export"))
+        {
+            OpenScenes();
+            Exporter.Export();
+        }
+    }
+
+    private void OpenScenes(Color originalColor)
+    {
         GUI.backgroundColor = Color.yellow;
         if (GUILayout.Button("Open Level"))
         {
             OpenScenes();
         }
         GUI.backgroundColor = originalColor;
+    }
 
-        GUI.backgroundColor = GUI.backgroundColor = collection.myScenes.Count <= 0 ? Color.green : Color.Lerp(Color.cyan, Color.white, 0.25f);     
+    private void ConnectScenes(LevelCollection collection, Color originalColor)
+    {
+        GUI.backgroundColor = GUI.backgroundColor = collection.myScenes.Count <= 0 ? Color.green : Color.Lerp(Color.cyan, Color.white, 0.25f);
         if (GUILayout.Button("Connect Scenes"))
         {
             string sceneFolder = AssetDatabase.GetAssetPath(target);
@@ -100,19 +124,6 @@ public class LevelCollectionEditor : Editor
             }
         }
         GUI.backgroundColor = originalColor;
-        EditorGUILayout.EndHorizontal();
-
-
-
-        GUI.backgroundColor = collection.myScenes.Count > 0 ? Color.green : Color.red;
-        if (GUILayout.Button("Export"))
-        {
-            OpenScenes();
-            Exporter.Export();
-        }
-        GUI.backgroundColor = originalColor;
-
-        serializedObject.ApplyModifiedProperties();
     }
 
     private void OpenScenes()

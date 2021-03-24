@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEditor.SceneManagement;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -77,11 +78,24 @@ public class SceneReferencePropertyDrawer : PropertyDrawer
                 GetScenePathProperty(property).stringValue = string.Empty;
         }
         position.y += paddedLine;
-       
-        //if (buildScene.assetGUID.Empty() == false)
+
+
+        //Button inside each-scene-element inspector!
+        //bool loadScene = false;
+        //string scenePath = string.Empty;
+        //// Right context buttons
+        //Rect buttonRect = DrawUtils.GetFieldRect(position);
+        //buttonRect.width = (buttonRect.width) / 3;
+        ////string tooltipMsg = "";
+        //using (new EditorGUI.DisabledScope())
         //{
-            // Draw the Build Settings Info of the selected Scene
-            //DrawSceneInfoGUI(position, buildScene, sceneControlID + 1);
+        //    buttonRect.width *= 2;
+        //    if(DrawUtils.ButtonHelper(buttonRect, "Open", "Open Scene", EditorStyles.miniButtonLeft))
+        //    {
+        //        scenePath = GetScenePathProperty(property).stringValue;
+        //        loadScene = true;
+        //        //Debug.Log("Open Scene: " + GetScenePathProperty(property).stringValue);
+        //    }
         //}
 
         EditorGUI.EndProperty();
