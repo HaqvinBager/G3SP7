@@ -15,6 +15,7 @@ ImGuiWindow::CAssetCustomizationWindow::CAssetCustomizationWindow(const char* aN
 	, myShowLoadAsset(false)
 	, myShowLoadCustomizationFile(false)
 	, myShowSaveCustomizationFile(false)
+	, myReplaceFBX(true)
 {
 	ZeroMemory(myPrimaryTint, 3);
 	ZeroMemory(mySecondaryTint, 3);
@@ -74,6 +75,8 @@ void ImGuiWindow::CAssetCustomizationWindow::OnInspectorGUI()
 
 		if (myShowSaveCustomizationFile)
 			SaveCustomizationFile();
+
+		ImGui::SetWindowSize(Name(), ImVec2(0, 0));
 	}
 	ImGui::End();
 }
@@ -91,10 +94,13 @@ void ImGuiWindow::CAssetCustomizationWindow::LoadAsset()
 {
 	const std::string path = ASSETPATH("Assets/Graphics/");
 	myShowLoadAsset = GetPathsByExtension(path, ".fbx", myFBXAssetPaths, !myFBXAssetPaths.empty());
-	ImGui::Begin("Load FBX Asset.", &myShowLoadAsset);
+	ImGui::Begin("Load FBX Asset.", &myShowLoadAsset, ImGuiWindowFlags_NoCollapse);
 	{
-		ImGui::TextColored(ImVec4(1,1,1,1), path.c_str());
-		ImGui::BeginChild("Scrolling");
+		ImGui::TextColored(ImVec4(1,1,1,1), std::string("Folder: " + path).c_str());
+		ImGui::BeginChild("Scrolling", ImVec2(250.f,400.f), false, ImGuiWindowFlags_NoScrollWithMouse);
+		//int start = 0;
+		//int end = static_cast<int>(myFBXAssetPaths.size());
+		/*ImGui::CalcListClipping(end, 2.0f, &start, &end);*/
 		for (size_t i = 0; i < myFBXAssetPaths.size(); ++i)
 		{
 			bool selected = false;
@@ -120,18 +126,24 @@ void ImGuiWindow::CAssetCustomizationWindow::LoadCustomizationFile()
 {
 	const std::string path = ASSETPATH("Assets/Graphics/TintedModels/Data/");
 	myShowLoadCustomizationFile = GetPathsByExtension(path, ".json", myJSONPaths, !myJSONPaths.empty());
-	ImGui::Begin("Load JSON Data.", &myShowLoadCustomizationFile);
+	ImGui::Begin("Load JSON Data.", &myShowLoadCustomizationFile, ImGuiWindowFlags_NoCollapse);
 	{
-		ImGui::TextColored(ImVec4(1,1,1,1), path.c_str());
-		ImGui::BeginChild("Scrolling");
+		ImGui::TextColored(ImVec4(1,1,1,1), std::string("Folder: " + path).c_str());
+		ImGui::Checkbox(": Use FBX from customization file", &myReplaceFBX);
+		ImGui::BeginChild("Scrolling", ImVec2(250.f,400.f), false,  ImGuiWindowFlags_NoScrollWithMouse);
 		for (size_t i = 0; i < myJSONPaths.size(); ++i)
 		{
 			bool selected = false;
 			ImGui::Selectable(myJSONPaths[i].myDisplayName.c_str(), &selected);
 			if (selected)
 			{
-				if(myGameObject->GetComponent<CModelComponent>())
-					ModelHelperFunctions::LoadTintsToModelComponent(myGameObject, myJSONPaths[i].myPath, mySelectedFBX);
+				if (myGameObject->GetComponent<CModelComponent>())
+				{
+					if (myReplaceFBX)
+						ModelHelperFunctions::ReplaceModelAndLoadTints(myGameObject, myJSONPaths[i].myPath, mySelectedFBX);
+					else 
+						ModelHelperFunctions::LoadTintsToModelComponent(myGameObject, myJSONPaths[i].myPath, mySelectedFBX);
+				}
 				else
 					ModelHelperFunctions::AddModelComponentWithTintsFromData(myGameObject, myJSONPaths[i].myPath, mySelectedFBX);
 
@@ -158,9 +170,9 @@ void ImGuiWindow::CAssetCustomizationWindow::LoadCustomizationFile()
 void ImGuiWindow::CAssetCustomizationWindow::SaveCustomizationFile()
 {
 	const std::string path = ASSETPATH("Assets/Graphics/TintedModels/Data/");
-	ImGui::Begin("Save JSON Data.", &myShowSaveCustomizationFile);
+	ImGui::Begin("Save JSON Data.", &myShowSaveCustomizationFile, ImGuiWindowFlags_NoCollapse);
 	{
-		ImGui::TextColored(ImVec4(1,1,1,1), path.c_str());
+		ImGui::TextColored(ImVec4(1,1,1,1), std::string("Folder: " + path).c_str());
 		ImGui::Spacing();
 
 		ImGui::InputText("", myJSONFileName, TintedModelVariables::JSONNameBufferSize);

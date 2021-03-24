@@ -159,6 +159,32 @@ namespace ModelHelperFunctions
         return LoadTintsToModelComponent(modelComp, aTintDataPath, anOutModelPath);
     }
 
+    bool ReplaceModelAndLoadTints(CGameObject* aGameObject, const std::string& aTintDataPath)
+    {
+        CModelComponent* modelComp = aGameObject->GetComponent<CModelComponent>();
+        assert(modelComp != nullptr && "GameObject has no CModelComponent!");
+        if (!modelComp)
+            return false;
+        
+        std::string newModelPath = "";
+        bool returnValue = LoadTintsToModelComponent(modelComp, aTintDataPath, newModelPath);
+
+        modelComp->SetModel(newModelPath);
+        return returnValue;
+    }
+    bool ReplaceModelAndLoadTints(CGameObject* aGameObject, const std::string& aTintDataPath, std::string& anOutModelPath)
+    {
+        CModelComponent* modelComp = aGameObject->GetComponent<CModelComponent>();
+        assert(modelComp != nullptr && "GameObject has no CModelComponent!");
+        if (!modelComp)
+            return false;
+
+        bool returnValue = LoadTintsToModelComponent(modelComp, aTintDataPath, anOutModelPath);
+
+        modelComp->SetModel(anOutModelPath);
+        return returnValue;
+    }
+
     bool SaveTintsFromModelComponent(CGameObject* aGameObject, const std::string& aModelPath, const std::string& aTintDataPath)
     {
         CModelComponent* modelComp = aGameObject->GetComponent<CModelComponent>();

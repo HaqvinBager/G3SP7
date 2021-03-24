@@ -45,6 +45,7 @@ namespace ImGuiWindow
 		bool myShowLoadAsset;
 		bool myShowLoadCustomizationFile;
 		bool myShowSaveCustomizationFile;
+		bool myReplaceFBX;
 	};
 }
 

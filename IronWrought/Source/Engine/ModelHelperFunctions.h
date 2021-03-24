@@ -14,9 +14,15 @@ namespace ModelHelperFunctions
 	// Load using CGameObject
 	bool LoadTintsToModelComponent(CGameObject* aGameObject, const std::string& aTintDataPath);
 	bool LoadTintsToModelComponent(CGameObject* aGameObject, const std::string& aTintDataPath, std::string& anOutModelPath);
+
+	bool ReplaceModelAndLoadTints(CGameObject* aGameObject, const std::string& aTintDataPath);
+	bool ReplaceModelAndLoadTints(CGameObject* aGameObject, const std::string& aTintDataPath, std::string& anOutModelPath);
+
 	bool SaveTintsFromModelComponent(CModelComponent* aModelComponent, const std::string& aModelPath, const std::string& aTintDataPath = "");
 	bool SaveTintsFromModelComponent(CGameObject* aGameObject, const std::string& aModelPath, const std::string& aTintDataPath = "");
+
 	CGameObject* CreateGameObjectWithTintedModel(const int anInstanceId, const std::string& aModelPath, const std::string& aTintDataPath);
+
 	bool AddModelComponentWithTintsFromData(CGameObject* aGameObject, const std::string& aTintDataPath);
 	bool AddModelComponentWithTintsFromData(CGameObject* aGameObject, const std::string& aTintDataPath, std::string& anOutModelPath);
 
