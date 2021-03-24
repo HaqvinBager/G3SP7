@@ -54,7 +54,7 @@ CImguiManager::CImguiManager() : myGraphManagerIsFullscreen(false), myIsEnabled(
 	ImGui::CreateContext(&myFontAtlas);
 
 	myGraphManager = new CGraphManager();
-	myGraphManager->Load();
+	myGraphManager->Load("");
 
 	myWindows.emplace_back(std::make_unique<IronWroughtImGui::CLoadScene>("Load Scene", true));
 	myWindows.emplace_back(std::make_unique <IronWroughtImGui::CCameraSetting>("Camera Settings"));
