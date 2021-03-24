@@ -2,18 +2,16 @@
 using System.Text;
 using UnityEditor;
 
-
 [System.Serializable]
 public struct SceneName
 {
     public string name;
 }
 
-
 public static class Json
 {
     static string mySceneName = "";
-    static string myFolderName = "";
+    //static string myFolderName = "";
     static StringBuilder myCurrentExportJson = new StringBuilder();
 
     public static void BeginExport(string baseSceneName)
@@ -21,16 +19,12 @@ public static class Json
         myCurrentExportJson.Clear();
         myCurrentExportJson.AppendLine("{");
         myCurrentExportJson.Append("\"Scenes\" : [\n");
-        //myCurrentExportJson.AppendLine("\"" + aSceneName  + "\"" + " : " + "\"" + aSceneName + "\",");
-
-        //myCurrentExportJson.AppendLine("\"" + aSceneName + "\",");
         mySceneName = baseSceneName;
     }
 
     public static void BeginScene(string aSceneName)
     {
         myCurrentExportJson.AppendLine("{");
-        //myCurrentExportJson.AppendLine("\"Name\"" + " : \"" + aSceneName + "\",");
     }
 
     public static void EndScene()
@@ -40,9 +34,9 @@ public static class Json
 
     public static void AddToExport<T>(T data, bool endObject = false)
     {
+    
         string jsonData = string.Empty;
         jsonData = JsonUtility.ToJson(data);
-        Debug.Log(jsonData);
         int removeFirst = jsonData.IndexOf('{');
         jsonData = jsonData.Remove(removeFirst, 1);
 
@@ -121,33 +115,89 @@ public static class Json
         if (PrefabUtility.GetPrefabAssetType(objectWithInstanceID) != PrefabAssetType.Regular &&
             PrefabUtility.GetPrefabAssetType(objectWithInstanceID) != PrefabAssetType.Variant)
             return false;
-
-        //switch (prefabAssetType)
-        //{
-        //    case PrefabAssetType.Regular:
-        //        if (objectWithInstanceID.name.Contains("BP_"))
-        //        {
-
-        //        }
-        //        break;
-        //    case PrefabAssetType.Variant:
-        //        if (objectWithInstanceID.name.Contains("BP_"))
-        //        {
-
-        //        }
-        //        break;
-        //    case PrefabAssetType.Model:
-
-        //        break;
-        //    case PrefabAssetType.NotAPrefab:
-
-        //        break;
-        //    case PrefabAssetType.MissingAsset:
-
-        //        break;
-        //}
         return true;
     }
-
-
 }
+
+
+//HOW THIS WORKS
+//Using JsonUtility.ToJson will always add 
+/*  
+ *  how does AddToExport<T>(T data, bool endObject = false) Work? =))
+ *  
+ * { <-Start Object 
+ * 
+ * } <- EndObject
+ *
+ * We want to remove these so that we can Add this object to the main-json we are creating (See Export.cs)
+ * Before Remove First and Remove Last have been Applied
+ *
+ * This is how the string "jsonData" Looks like when we send in a TData struct with two floats (U, V) to JsonUtility.ToJson(<TData>);
+ *  { 
+ *    "TData" : {
+ *          "U" : 0.55
+ *          "V" : 0.25
+ *    }
+ *  } 
+ * 
+ * The object Above would sadly Not fit inside the greater object as shown below
+ * Because we want to add "TData" as a "member" inside the "Level_1_Layout" we are currently saving to.
+ * 
+ * {
+ *  "Scenes" : [
+ *      "Level_1_Layout" : {
+ *       {                          <-- This And 
+ *          "TData" : {
+ *              "U" : 0.55,
+ *              "V" : 0.25
+ *          }
+ *       }                          <-- this Causes the break
+ *     }
+ *  ]
+ * }
+ * 
+ * The Result we want in this case is the following: 
+ * {
+ *      "Scenes" : 
+ *      [
+ *          "Level_1_Layout" : {    
+ *              "TData" : {   <-- This object now fits inside the "Level_1_Layout" Object (which is conceptually the current object we are writing to)
+ *                  "U" : 0.55,
+ *                  "V" : 0.25
+ *              }
+ *          }
+ *      ]
+ * }
+ * 
+ * An Example of how this looks like when we add More scenes (eg. Level_1_Layout + Level_1_Lights)
+ * {
+ *      "Scenes" : 
+ *      [
+ *          "Level_1_Layout" : {    
+ *              "ModelCollection" : [   <-- any random Data Structure For example ModelLink (See ExportModel.cs))
+ *                  {
+ *                      "InstanceID" : 25153,
+ *                      "assetID" : 100   
+ *                  },
+ *                  {
+ *                      "InstanceID" : -55131,
+ *                      "assetID" : 101
+ *                  }
+ *              ]
+ *              
+ *          },
+ *         "Level_1_Lights" : {
+ *              "Lights" : [          <-- any random Data Structure For example ModelLink (See ExportPointLights.cs))
+ *                  {
+ *                      "instanceID": 2551,
+ *                      "range" : 100.0,
+ *                      "r" : 0.1,
+ *                      "g" : 1.0,
+ *                      "b" : 0.5
+ *                      "intensity" : 10.5
+ *                  }
+ *              ]
+ *         }
+ *      ]
+ * }
+ */
