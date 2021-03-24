@@ -70,6 +70,7 @@
 #include "NodeTypeStartSphereOnTriggerEnter.h"
 #include "NodeTypeStartSphereOnTriggerExit.h"
 #include "NodeTypePlayerGetPosition.h"
+#include "NodeTypeEnemySpawn.h"
 #include "Scene.h"
 #include "Engine.h"
 #include "NodeDataManager.h"
@@ -80,6 +81,13 @@ std::unordered_map<std::string, SNodeTypeData> CNodeTypeCollector::myChildNodeTy
 
 std::vector<unsigned int> CUID::myAllUIDs;
 unsigned int CUID::myGlobalUID = 0;
+
+/*
+	REMINDER:	I think a reason why there is a crash when loading scripts, sometimes, is due to how we register CNodeTypes!
+				I think if we change the order in which they are added the script does not know what to do when loaded.
+				I.e if we create a new CNodeType we shouldn't add it anywhere in the RegisterType<> list, but always last.
+	// Aki 23/3
+*/
 
 void CNodeTypeCollector::PopulateTypes()
 {
@@ -141,6 +149,7 @@ void CNodeTypeCollector::PopulateTypes()
 	RegisterType<CNodeTypeStartSphereOnTriggerEnter>("Sphere On Trigger Enter");
 	RegisterType<CNodeTypeStartSphereOnTriggerExit>("Sphere On Trigger Exit");
 	RegisterType<CNodeTypePlayerGetPosition>("Player Get Position");
+	//RegisterType<CNodeTypeEnemySpawn>("Spawn Enemies"); // Enabled only when testing, not ready for use yet. 23/3 Aki
 }
 
 void CNodeTypeCollector::RegisterNewDataType(const std::string& aNodeName, unsigned int aType)
@@ -189,7 +198,7 @@ void CNodeTypeCollector::RegisterChildNodeTypes(std::string aKey, const unsigned
 	for (unsigned int i = 0; i < aNumberOfChildren; ++i)
 	{
 		index = i + 2;
-		name = "Get " + aKey + " Child " + std::to_string(index - 2) + " Position";
+		name = "Get " + aKey + " Child " + std::to_string(index - 1) + " Position";
 		RegisterChildType<CNodeTypeGameObjectGetChildPosition>(aKey, name);
 		CNodeDataManager::Get()->SetData(name, CNodeDataManager::EDataType::EInt, index);
 	}

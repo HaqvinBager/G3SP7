@@ -13,14 +13,14 @@ public struct STransform
 }
 
 [System.Serializable]
-class InstancedModel
+public class InstancedModel
 {
     public int assetID;
     public List<STransform> transforms;
 }
 
 [System.Serializable]
-class InstanceModelCollection
+public class InstanceModelCollection
 {
     public List<InstancedModel> instancedModels;
 }
@@ -28,7 +28,7 @@ class InstanceModelCollection
 
 public class ExportInstancedModel
 {
-    public static void Export(Scene aScene)
+    public static InstanceModelCollection Export(string aSceneName)
     {
         InstanceModelCollection collection = new InstanceModelCollection();
         collection.instancedModels = new List<InstancedModel>();
@@ -62,6 +62,7 @@ public class ExportInstancedModel
             }
 
         }
-        Json.ExportToJson(collection, aScene.name);
+        //Json.ExportToJson(collection, aScene.name);
+        return collection;
     }
 }

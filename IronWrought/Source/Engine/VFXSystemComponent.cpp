@@ -84,7 +84,7 @@ CVFXSystemComponent::CVFXSystemComponent(CGameObject& aParent, const std::string
 		}
 
 		effect->myVFXBases = CVFXMeshFactory::GetInstance()->GetVFXBaseSet(vfxPaths);
-		ENGINE_BOOL_POPUP(!effect->myVFXBases.empty(), "No VFX data found.");
+		//ENGINE_BOOL_POPUP(!effect->myVFXBases.empty(), "No VFX data found.");
 
 		std::vector<std::string> particlePaths;
 		ENGINE_BOOL_POPUP(doc.HasMember("ParticleSystems"), "VFX Json: %s is not structured correctly! Please compare to VFXSystem_ToLoad.json", aVFXDataPath.c_str());
@@ -98,6 +98,7 @@ CVFXSystemComponent::CVFXSystemComponent(CGameObject& aParent, const std::string
 		effect->myEmitterBaseDelays.resize(size);
 		effect->myEmitterBaseDurations.resize(size);
 		effect->myEmitterTimers.resize(size, 0.0f);
+		effect->myParticleSizeCurves.resize(size);
 		for (unsigned int i = 0; i < doc["ParticleSystems"].Size(); ++i) {
 			particlePaths.emplace_back(ASSETPATH(doc["ParticleSystems"][i]["Path"].GetString()));
 
@@ -129,6 +130,19 @@ CVFXSystemComponent::CVFXSystemComponent(CGameObject& aParent, const std::string
 
 			effect->myEmitterBaseDelays[i] = doc["ParticleSystems"][i]["Delay"].GetFloat();
 			effect->myEmitterBaseDurations[i] = doc["ParticleSystems"][i]["Duration"].GetFloat();
+
+			if (doc["ParticleSystems"][i].HasMember("SizeCurve"))
+			{
+				const auto& sizeCurveArray = doc["ParticleSystems"][i]["SizeCurve"].GetArray();
+				unsigned int curveIndex = 0;
+				effect->myParticleSizeCurves[i].resize(sizeCurveArray.Size());
+				for (const auto& point : sizeCurveArray)
+				{
+					effect->myParticleSizeCurves[i][curveIndex].x = point["x"].GetFloat();
+					effect->myParticleSizeCurves[i][curveIndex].y = point["y"].GetFloat();
+					curveIndex++;
+				}
+			}
 		}
 
 		effect->myParticleEmitters = CParticleEmitterFactory::GetInstance()->GetParticleSet(particlePaths);

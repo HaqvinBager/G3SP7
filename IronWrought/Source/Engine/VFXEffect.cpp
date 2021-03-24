@@ -8,7 +8,7 @@ void SVFXEffect::SpawnParticles(unsigned int anIndex, DirectX::SimpleMath::Vecto
 	if (myEmitterTimers[anIndex] > (1.0f / someParticleData.mySpawnRate) && (myParticleVertices[anIndex].size() < someParticleData.myNumberOfParticles)) {
 		myParticleVertices[anIndex].emplace_back(myParticlePools[anIndex].front());
 		myParticlePools[anIndex].pop();
-		myParticleVertices[anIndex].back().myLifeTime = someParticleData.myParticleLifetime + Random(someParticleData.myLifetimeLowerBound, someParticleData.myLifetimeUpperBound);
+		myParticleVertices[anIndex].back().myLifeTime = /*someParticleData.myParticleLifetime*/0.0f + Random(someParticleData.myLifetimeLowerBound, someParticleData.myLifetimeUpperBound);
 		myParticleVertices[anIndex].back().myPosition =
 		{ ((Random(someParticleData.myOffsetLowerBound.x, someParticleData.myOffsetUpperBound.x)) * (1.0f))
 			, ((Random(someParticleData.myOffsetLowerBound.y, someParticleData.myOffsetUpperBound.y)) * (1.0f))
@@ -32,21 +32,22 @@ void SVFXEffect::UpdateParticles(unsigned int anIndex, DirectX::SimpleMath::Vect
 	std::vector<unsigned int> indicesOfParticlesToRemove;
 	for (UINT i = 0; i < myParticleVertices[anIndex].size(); ++i)
 	{
-		float quotient = myParticleVertices[anIndex][i].myLifeTime / particleData.myParticleLifetime;
 
+		float quotient = myParticleVertices[anIndex][i].myLifeTime / particleData.myParticleLifetime;		
 		myParticleVertices[anIndex][i].myColor = Vector4::Lerp
 		(
 			particleData.myParticleEndColor,
 			particleData.myParticleStartColor,
 			quotient
 		);
-
+	
 		myParticleVertices[anIndex][i].mySize = Vector2::Lerp
 		(
-			{ particleData.myParticleEndSize * aScale, particleData.myParticleEndSize * aScale },
 			{ particleData.myParticleStartSize * aScale, particleData.myParticleStartSize * aScale },
-			quotient
+			{ particleData.myParticleEndSize * aScale, particleData.myParticleEndSize * aScale },
+			CalculateInterpolator(myParticleSizeCurves[anIndex], quotient)
 		);
+		
 
 		myParticleVertices[anIndex][i].myMovement = Vector4::Lerp
 		(
@@ -73,9 +74,11 @@ void SVFXEffect::UpdateParticles(unsigned int anIndex, DirectX::SimpleMath::Vect
 		Vector4 newPosition = direction * particleData.myParticleSpeed * CTimer::Dt() + myParticleVertices[anIndex][i].myPosition;
 		myParticleVertices[anIndex][i].myPosition = newPosition;
 
-		if ((myParticleVertices[anIndex][i].myLifeTime -= CTimer::Dt()) < 0.0f) {
+		if ((myParticleVertices[anIndex][i].myLifeTime += CTimer::Dt()) > particleData.myParticleLifetime) {
 			indicesOfParticlesToRemove.emplace_back(i);
 		}
+
+
 	}
 
 	std::sort(indicesOfParticlesToRemove.begin(), indicesOfParticlesToRemove.end(), [](UINT a, UINT b) { return a > b; });
@@ -84,6 +87,23 @@ void SVFXEffect::UpdateParticles(unsigned int anIndex, DirectX::SimpleMath::Vect
 		myParticlePools[anIndex].push(myParticleVertices[anIndex].back());
 		myParticleVertices[anIndex].pop_back();
 	}
+}
+
+const float SVFXEffect::CalculateInterpolator(const std::vector<Vector2>& somePoints, const float t) const
+{
+	unsigned int pointIndex = static_cast<unsigned int>(somePoints.size() - 1);
+	for (unsigned int j = 1; j < somePoints.size() - 1; ++j)
+	{
+		if (t < somePoints[j].x &&
+			t > somePoints[j - 1].x)
+		{
+			pointIndex = j;
+			break;
+		}
+	}
+
+	float val = Remap(somePoints[pointIndex - 1].x, somePoints[pointIndex].x, 0.0f, 1.0f, t);
+	return Lerp(somePoints[pointIndex - 1].y, somePoints[pointIndex].y, val);
 }
 
 void SVFXEffect::ResetParticles()

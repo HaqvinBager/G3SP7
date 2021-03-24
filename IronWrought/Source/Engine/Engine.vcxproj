@@ -168,6 +168,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Includes\ImGui\Core\curve_v122.hpp" />
     <ClInclude Include="..\Includes\ImGui\Core\imconfig.h" />
     <ClInclude Include="..\Includes\ImGui\Core\imgui.h" />
     <ClInclude Include="..\Includes\ImGui\Core\imgui_impl_dx11.h" />
@@ -193,9 +194,10 @@
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Behaviour.h" />
     <ClInclude Include="CameraSetting.h" />
-    <ClInclude Include="CCurveWindow.h" />
+    <ClInclude Include="CurveWindow.h" />
     <ClInclude Include="Interop.h" />
     <ClInclude Include="NodeTypeActionPatrol.h" />
+    <ClInclude Include="NodeTypeEnemySpawn.h" />
     <ClInclude Include="NodeTypeFloatDecision.h" />
     <ClInclude Include="NodeTypeGameObjectGetChildPosition.h" />
     <ClInclude Include="NodeTypeGameObjectGetPlayerPosition.h" />
@@ -209,6 +211,7 @@
     <ClInclude Include="NodeTypeVector3Join.h" />
     <ClInclude Include="NodeTypeVector3Split.h" />
     <ClInclude Include="FlipACoinDecision.h" />
+    <ClInclude Include="JsonWriter.h" />
     <ClInclude Include="NodeDataManager.h" />
     <ClInclude Include="NodeTypeAudioPlayResearcherEvent.h" />
     <ClInclude Include="NodeTypeAudioPlayResearcherReactionExplosives.h" />
@@ -336,6 +339,7 @@
     <ClInclude Include="RigidBodyComponent.h" />
     <ClInclude Include="RigidDynamicBody.h" />
     <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="SerializerUtility.h" />
     <ClInclude Include="ShadowRenderer.h" />
     <ClInclude Include="StackWalker.h" />
     <ClInclude Include="State.h" />
@@ -416,8 +420,10 @@
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="AudioChannel.cpp" />
     <ClCompile Include="AudioManager.cpp" />
-    <ClCompile Include="CCurveWindow.cpp" />
+    <ClCompile Include="JsonWriter.cpp" />
+    <ClCompile Include="CurveWindow.cpp" />
     <ClCompile Include="NodeTypeActionPatrol.cpp" />
+    <ClCompile Include="NodeTypeEnemySpawn.cpp" />
     <ClCompile Include="NodeTypeGameObjectGetChildPosition.cpp" />
     <ClCompile Include="NodeTypeGameObjectGetPlayerPosition.cpp" />
     <ClCompile Include="NodeTypeGameObjectMoveToPosition.cpp" />

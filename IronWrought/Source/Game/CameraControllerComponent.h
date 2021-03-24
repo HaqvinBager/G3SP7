@@ -28,6 +28,10 @@ public:
 	const bool IsCursorUnlocked() const { return (myCameraMode == ECameraMode::UnlockCursor); }
 
 public:
+	float Lerp(float a, float b, float t)
+	{
+		return a + t * (b - a);
+	}
 	// Creates a camera and sets parent-child relationship with proper offsets.
 	static CGameObject* CreatePlayerFirstPersonCamera(CGameObject* aParentObject);
 

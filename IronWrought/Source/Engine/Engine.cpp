@@ -42,6 +42,7 @@
 #include "MaterialHandler.h"
 #include "StateStack.h"
 #include "PhysXWrapper.h"
+#include "SceneManager.h"
 
 #pragma comment(lib, "runtimeobject.lib")
 #pragma comment(lib, "d3d11.lib")
@@ -74,6 +75,7 @@ CEngine::CEngine(): myRenderSceneActive(true)
 	//myActiveScene = 0; //muc bad
 	myActiveState = CStateStack::EState::InGame;
 	myPhysxWrapper = new CPhysXWrapper();
+	mySceneFactory = new CSceneFactory();
 	//myDialogueSystem = new CDialogueSystem();
 }
 
@@ -136,6 +138,9 @@ CEngine::~CEngine()
 	delete myPhysxWrapper;
 	myPhysxWrapper = nullptr;
 
+	delete mySceneFactory;
+	mySceneFactory = nullptr;
+
 	ourInstance = nullptr;
 }
 
@@ -183,6 +188,7 @@ float CEngine::BeginFrame()
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 	myAudioManager->Update();
+	CSceneFactory::Get()->Update();
 	CMainSingleton::DialogueSystem().Update();
 
 	return CTimer::Mark();
@@ -298,6 +304,7 @@ void CEngine::SetActiveScene(const CStateStack::EState aState)
 		gameObject->Start();
 	}
 
+	CTimer::Mark();
 	CEngine::GetInstance()->GetActiveScene().MainCamera()->Fade(true);
 }
 

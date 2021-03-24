@@ -65,30 +65,30 @@ void CInGameState::Stop()
 
 void CInGameState::Update()
 {
-	if (gVFX)
-	{
-		if (gVFX->GetComponent<CVFXSystemComponent>())
-		{
-			if (INPUT->IsKeyPressed('O'))
-			{
-				gVFX->GetComponent<CVFXSystemComponent>()->DisableEffect(0);
-				gVFX->GetComponent<CVFXSystemComponent>()->EnableEffect(0);
-			}
-			if (INPUT->IsKeyPressed('P'))
-			{
-				gVFX->GetComponent<CVFXSystemComponent>()->DisableEffect(0);
-			}
-			//if (INPUT->IsKeyPressed('K'))
-			//{
-			//	gVFX->GetComponent<CVFXSystemComponent>()->DisableEffect(1);
-			//	gVFX->GetComponent<CVFXSystemComponent>()->EnableEffect(1);
-			//}
-			//if (INPUT->IsKeyPressed('L'))
-			//{
-			//	gVFX->GetComponent<CVFXSystemComponent>()->DisableEffect(1);
-			//}
-		}
-	}
+	//if (gVFX)
+	//{
+	//	if (gVFX->GetComponent<CVFXSystemComponent>())
+	//	{
+	//		if (INPUT->IsKeyPressed('O'))
+	//		{
+	//			gVFX->GetComponent<CVFXSystemComponent>()->DisableEffect(0);
+	//			gVFX->GetComponent<CVFXSystemComponent>()->EnableEffect(0);
+	//		}
+	//		if (INPUT->IsKeyPressed('P'))
+	//		{
+	//			gVFX->GetComponent<CVFXSystemComponent>()->DisableEffect(0);
+	//		}
+	//		//if (INPUT->IsKeyPressed('K'))
+	//		//{
+	//		//	gVFX->GetComponent<CVFXSystemComponent>()->DisableEffect(1);
+	//		//	gVFX->GetComponent<CVFXSystemComponent>()->EnableEffect(1);
+	//		//}
+	//		//if (INPUT->IsKeyPressed('L'))
+	//		//{
+	//		//	gVFX->GetComponent<CVFXSystemComponent>()->DisableEffect(1);
+	//		//}
+	//	}
+	//}
 
 	CEngine::GetInstance()->GetPhysx().Simulate();
 	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
@@ -284,7 +284,7 @@ void TEMP_VFX(CScene* aScene)
 	static int id = 500;
 	CGameObject* abilityObject = new CGameObject(id++);
 	abilityObject->AddComponent<CVFXSystemComponent>(*abilityObject, ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystem_ToLoad.json"));
-
+	gVFX = nullptr;
 	gVFX = abilityObject;
 	aScene->AddInstance(abilityObject);
 }

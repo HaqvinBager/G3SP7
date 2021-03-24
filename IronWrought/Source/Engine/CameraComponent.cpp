@@ -28,7 +28,7 @@ CCameraComponent::CCameraComponent(CGameObject& aParent, const float aFoV/*, flo
 	
 	myFadingPlane = nullptr;
 	myFadeTimer = 1.0f;
-	myFadeSpeed = 0.75f;
+	myFadeSpeed = 2.75f;
 	myFadingIn = true;
 	myFadingPlaneActive = false;
 }

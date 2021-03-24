@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 [System.Serializable]
 public class VertexColorCollection
 {
-    public VertexLink[] links;
+    public VertexLink[] vertexColors;
 }
 
 [System.Serializable]
@@ -77,7 +77,7 @@ public class ExportVertexPaint : Editor
     }
 
     //[MenuItem("Export/Export Vertex Painting")]
-    public static List<GameObject> ExportVertexPainting(Scene aScene, List<int> validExportIds)
+    public static VertexColorCollection Export(string aSceneName, List<int> validExportIds)
     {
         List<GameObject> exportedVertexPaintObjects = new List<GameObject>();
         List<VertexLink> vertexLinks = new List<VertexLink>();
@@ -171,8 +171,9 @@ public class ExportVertexPaint : Editor
 
         // Json
         VertexColorCollection collection = new VertexColorCollection();
-        collection.links = vertexLinks.ToArray();
-        Json.ExportToJson(collection, aScene.name);
+        collection.vertexColors = vertexLinks.ToArray();
+        return collection;
+        //Json.ExportToJson(collection, aScene.name);
         //string jsonString = JsonUtility.ToJson(collection);
 
         //if (!File.Exists("Assets\\Generated"))
@@ -184,7 +185,7 @@ public class ExportVertexPaint : Editor
 
         //File.WriteAllText(savePath, jsonString);
 
-        return exportedVertexPaintObjects;
+      //  return exportedVertexPaintObjects;
     }
 
     static List<string> GetAllExportedPolyBrushMeshPaths()

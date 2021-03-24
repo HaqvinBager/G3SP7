@@ -6,6 +6,8 @@
 #include <unordered_map>
 #include <vector>
 
+using RapidArray = rapidjson::GenericArray<true, rapidjson::Value>;
+using RapidObject = rapidjson::GenericObject<true, rapidjson::Value>;
 struct SDirectory {
 	std::string myFileName;
 	std::vector<std::string> myFiles;

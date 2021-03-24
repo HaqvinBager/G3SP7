@@ -15,7 +15,6 @@ CNodeTypeStartSphereOnTriggerEnter::CNodeTypeStartSphereOnTriggerEnter()
 
 int CNodeTypeStartSphereOnTriggerEnter::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 {
-
 	SPin::EPinType outType;
 	NodeDataPtr someData = nullptr;
 	size_t outSize = 0;
