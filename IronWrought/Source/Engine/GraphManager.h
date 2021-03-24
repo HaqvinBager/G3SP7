@@ -18,8 +18,8 @@ class CGraphManager
 {
 public:
 	~CGraphManager();
-	void Load();
-
+	void Load(const std::string& aSceneName);
+	void Clear();
 	void ReTriggerUpdatingTrees();
 
 	void PreFrame(float aDeltaTime);

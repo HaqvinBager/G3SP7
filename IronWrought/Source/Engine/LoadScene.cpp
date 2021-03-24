@@ -64,6 +64,9 @@ bool IronWroughtImGui::CLoadScene::OnMainMenuGUI()
 				CScene* newScene;
 				if (scene == "Empty")
 				{
+					std::string jsonPath = ASSETPATH("Assets/Generated/" + scene);
+					jsonPath;
+
 					newScene = CSceneManager::CreateEmpty();
 					CEngine::GetInstance()->AddScene(CStateStack::EState::InGame, newScene);
 					CEngine::GetInstance()->SetActiveScene(CStateStack::EState::InGame);

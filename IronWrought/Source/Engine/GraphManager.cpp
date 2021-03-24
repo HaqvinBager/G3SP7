@@ -40,7 +40,7 @@ CGraphManager::~CGraphManager()
 }
 
 
-void CGraphManager::Load()
+void CGraphManager::Load(const std::string& /*aSceneName*/)
 {
 	//Global = Kan alltid n�s om programmet k�r
 	//Scene = Data som relaterar till Just denna Scen, kan alltid n�s n�r Scene �r ig�ng
@@ -133,6 +133,11 @@ void CGraphManager::Load()
 
 	myRenderGraph = false;
 	myRunScripts = false;
+}
+
+void CGraphManager::Clear()
+{
+
 }
 
 void CGraphManager::ReTriggerUpdatingTrees()
