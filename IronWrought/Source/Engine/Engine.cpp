@@ -315,6 +315,7 @@ void CEngine::SetActiveScene(const CStateStack::EState aState)
 
 	CTimer::Mark();
 	CEngine::GetInstance()->GetActiveScene().MainCamera()->Fade(true);
+	
 }
 
 CScene& CEngine::GetActiveScene()
