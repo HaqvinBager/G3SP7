@@ -39,46 +39,75 @@ CGraphManager::~CGraphManager()
 	ed::DestroyEditor(g_Context);
 }
 
+void CGraphManager::SGraph::Clear()
+{
+	for(size_t i = 0; i < myNodeInstances.size(); ++i)
+	{
+		delete myNodeInstances[i];
+		myNodeInstances[i] = nullptr;
+	}
+	myNodeInstances.clear();
+	myBluePrintInstances.clear();
+}
 
-void CGraphManager::Load(const std::string& /*aSceneName*/)
+void CGraphManager::Load(const std::string& aSceneName)
 {
 	//Global = Kan alltid n�s om programmet k�r
 	//Scene = Data som relaterar till Just denna Scen, kan alltid n�s n�r Scene �r ig�ng
 	//Script = Data som relaterar till just detta script
 
 	if (!CNodeDataManager::Get())
+	{
 		CNodeDataManager::Create();
-	myInstantiableVariables.push_back("Float");
-	myInstantiableVariables.push_back("Int");
-	myInstantiableVariables.push_back("Bool");
-	myInstantiableVariables.push_back("Start");
-	myInstantiableVariables.push_back("Vector 3");
-
+		myInstantiableVariables.push_back("Float");
+		myInstantiableVariables.push_back("Int");
+		myInstantiableVariables.push_back("Bool");
+		myInstantiableVariables.push_back("Start");
+		myInstantiableVariables.push_back("Vector 3");
+	}
+	
+	const std::string sceneJson = ASSETPATH("Assets/Generated/" + aSceneName);
 	CGraphNodeTimerManager::Create();
-	for (const auto& blueprintLinksJsonPath : CFolderUtility::GetFileNamesInFolder(ASSETPATH("Assets/Generated"), "BluePrintLinks")) {
-		const auto doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + blueprintLinksJsonPath));
-		if (doc.HasParseError())
-			continue;
+	const auto doc = CJsonReader::Get()->LoadDocument(sceneJson);
+	if (doc.HasParseError())
+		return;
 
-		auto jsonObject = doc.GetObjectW();
-		if (jsonObject.HasMember("links"))
+	size_t lastSlash = aSceneName.find_last_of(".");
+	std::string sceneName = aSceneName.substr(0, lastSlash);
+
+	// Create Scene folder.
+	const std::string sceneFolder = "Imgui/NodeScripts/"+ sceneName + "/";
+	//Om denna Blueprint redan finns ska vi bara spara undan den som nyckel
+	if (!std::filesystem::exists(sceneFolder))
+	{
+		if (!std::filesystem::create_directory(sceneFolder.c_str()))
 		{
-			for (const auto& jsonLink : jsonObject["links"].GetArray())
+			ENGINE_BOOL_POPUP("Failed to create Directory: %s", sceneFolder.c_str());
+			return;
+		}
+	}
+	// !Create Scene folder.
+
+	for (auto& scene : doc["Scenes"].GetArray())
+	{
+		if (scene.HasMember("bluePrints"))
+		{
+			const auto& bluePrints = scene["bluePrints"].GetArray();
+			for (auto& bluePrint : bluePrints)
 			{
+				if (!bluePrint.HasMember("type"))
+					continue;
+				if (!bluePrint.HasMember("instances"))
+					continue;
+				if (!(bluePrint["instances"].GetArray().Size() > 0))
+					continue;
 
-				if (!jsonLink.HasMember("type"))
-					continue;
-				if (!jsonLink.HasMember("instances"))
-					continue;
-				if (!(jsonLink["instances"].GetArray().Size() > 0))
-					continue;
-
-				std::string key = jsonLink["type"].GetString();
+				std::string key = bluePrint["type"].GetString();
 				SGraph graph;
 				myGraphs.push_back(graph);
 				//myKeys.push_back(key);
 
-				for (const auto& jsonGameObjectID : jsonLink["instances"].GetArray())
+				for (const auto& jsonGameObjectID : bluePrint["instances"].GetArray())
 				{
 					if (!jsonGameObjectID.HasMember("instanceID") && jsonGameObjectID.HasMember("childrenInstanceIDs"))
 					{
@@ -96,15 +125,16 @@ void CGraphManager::Load(const std::string& /*aSceneName*/)
 					myGraphs.back().myChildrenKey = key;
 				}
 
-				std::string folder = "Imgui/NodeScripts/" + key;
-				myGraphs.back().myFolderPath = folder;
+				// Create script folder
+				std::string scriptFolder = sceneFolder + "/" + key + "/";
+				myGraphs.back().myFolderPath = scriptFolder;
 				//Om denna Blueprint redan finns ska vi bara spara undan den som nyckel
-				if (std::filesystem::exists(folder))
+				if (std::filesystem::exists(scriptFolder))
 					continue;
 
-				if (!std::filesystem::create_directory(folder.c_str()))
+				if (!std::filesystem::create_directory(scriptFolder.c_str()))
 				{
-					ENGINE_BOOL_POPUP("Failed to create Directory: %s", folder.c_str());
+					ENGINE_BOOL_POPUP("Failed to create Directory: %s", scriptFolder.c_str());
 					continue;
 				}
 				else
@@ -113,9 +143,12 @@ void CGraphManager::Load(const std::string& /*aSceneName*/)
 					myCurrentGraph = &myGraphs.back();
 					SaveTreeToFile();
 				}
+				// !Create Blueprint folder
 			}
 		}
 	}
+
+	CNodeDataManager::Get()->SetFolderPath(std::move(sceneFolder));
 
 	if (myGraphs.size() > 0)
 		myCurrentGraph = &myGraphs[0];
@@ -137,7 +170,19 @@ void CGraphManager::Load(const std::string& /*aSceneName*/)
 
 void CGraphManager::Clear()
 {
+	if (myGraphs.size() <= 0)
+		return;
 
+	SaveTreeToFile();
+	CUID::ClearUIDS();
+	for (auto& sGraph : myGraphs)
+	{
+		sGraph.Clear();
+	}
+	myGraphs.clear();
+	myCurrentGraph = nullptr; 
+	//myCurrentBluePrintInstance;
+	CNodeDataManager::Get()->ClearStoredData();
 }
 
 void CGraphManager::ReTriggerUpdatingTrees()

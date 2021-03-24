@@ -64,17 +64,14 @@ bool IronWroughtImGui::CLoadScene::OnMainMenuGUI()
 				CScene* newScene;
 				if (scene == "Empty")
 				{
-					std::string jsonPath = ASSETPATH("Assets/Generated/" + scene);
-					jsonPath;
-
 					newScene = CSceneManager::CreateEmpty();
 					CEngine::GetInstance()->AddScene(CStateStack::EState::InGame, newScene);
 					CEngine::GetInstance()->SetActiveScene(CStateStack::EState::InGame);
-					OnComplete();
+					OnComplete("Empty");
 				}
 				else
 				{
-					CSceneFactory::Get()->LoadSceneAsync(scene, [this]() { CLoadScene::OnComplete(); });
+					CSceneFactory::Get()->LoadSceneAsync(scene, [this](std::string aJson) { CLoadScene::OnComplete(aJson); });
 				}
 			}
 			index++;
@@ -94,9 +91,13 @@ void IronWroughtImGui::CLoadScene::OnDisable()
 {
 }
 
-void IronWroughtImGui::CLoadScene::OnComplete()
+void IronWroughtImGui::CLoadScene::OnComplete(std::string aSceneThatHasBeenSuccessfullyLoaded)
 {
-	std::cout << "Scene Load Complete!" << std::endl;
+	SetConsoleColor(CONSOLE_DAQUA);
+	std::cout << "Scene Load Complete!" << aSceneThatHasBeenSuccessfullyLoaded << std::endl;
+	SetConsoleColor(CONSOLE_WHITE);
+
+	CEngine::GetInstance()->LoadGraph(aSceneThatHasBeenSuccessfullyLoaded);
 	CMainSingleton::PostMaster().Send({ "LoadScene", nullptr });
 	myScenes.clear();
 	OnEnable();

@@ -12,6 +12,9 @@ CNodeInstance::CNodeInstance(CGraphManager* aGraphManager, bool aCreateNewUID)
 	myEditorPosition[1] = 0.0f;	*/
 }
 
+CNodeInstance::~CNodeInstance()
+{}
+
 
 bool IsOutput(std::vector<SPin>& somePins, unsigned int anID)
 {

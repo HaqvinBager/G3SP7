@@ -95,6 +95,8 @@ private:
 		unsigned int myNextLinkIdCounter = 100;
 		std::string myFolderPath;
 		std::string myChildrenKey;
+
+		void Clear();
 	};
 
 	std::vector<SGraph> myGraphs;
