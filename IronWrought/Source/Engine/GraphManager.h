@@ -94,6 +94,7 @@ private:
 		ImVector<SEditorLinkInfo> myLinks;
 		unsigned int myNextLinkIdCounter = 100;
 		std::string myFolderPath;
+		std::string myChildrenKey;
 	};
 
 	std::vector<SGraph> myGraphs;
@@ -116,7 +117,7 @@ private:
 	//std::unordered_map<std::string, CNodeData*> myVariableNodeDataMap;
 	std::string myNewVariableType;
 
-	char* myMenuSeachField = nullptr;
+	char* myMenuSearchField = nullptr;
 
 	bool myEnteringNodeName = false;
 	bool mySetPosition = false;

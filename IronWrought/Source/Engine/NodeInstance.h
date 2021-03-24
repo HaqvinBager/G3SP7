@@ -166,7 +166,7 @@ public:
 	void VisualUpdate(float aDeltaTime);
 	float myEditorPosition[2];
 	bool myHasSetEditorPosition = false;
-	bool myShouldTriggerAgain = false;
+	bool myShouldTriggerAgain = true;
 	std::unordered_map<std::string, std::any> myMetaData;
 	std::vector<SNodeInstanceLink> myLinks;
 	std::vector<SPin> myPins;

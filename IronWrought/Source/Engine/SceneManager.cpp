@@ -238,6 +238,7 @@ void CSceneManager::AddPlayer(CScene& aScene/*, RapidObject someData*/)
 	aScene.AddInstance(model);
 	aScene.AddInstance(camera);
 	aScene.MainCamera(camera->GetComponent<CCameraComponent>());
+	aScene.Player(player);
 }
 
 CSceneFactory* CSceneFactory::ourInstance = nullptr;

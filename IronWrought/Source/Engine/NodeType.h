@@ -52,6 +52,8 @@ public:
 	void SetUID(unsigned int aID)
 	{
 		myID = aID;
+		myAllUIDs.push_back(myID);
+		myGlobalUID = myID;
 	}
 
 	static std::vector<unsigned int> myAllUIDs;
@@ -154,6 +156,14 @@ protected:
 		if (!aPin.myData)
 		{
 			aPin.myData = new T;
+		}
+	}
+	template <class T>
+	void DeclareDataOnPinIfNecessary(SPin& aPin, const T aValue)
+	{
+		if (!aPin.myData)
+		{
+			aPin.myData = new T(aValue);
 		}
 	}
 	virtual int OnEnter(class CNodeInstance* aTriggeringNodeInstance) = 0;

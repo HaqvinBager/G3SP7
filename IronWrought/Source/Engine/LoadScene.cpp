@@ -64,18 +64,12 @@ bool IronWroughtImGui::CLoadScene::OnMainMenuGUI()
 					newScene = CSceneManager::CreateEmpty();
 					CEngine::GetInstance()->AddScene(CStateStack::EState::InGame, newScene);
 					CEngine::GetInstance()->SetActiveScene(CStateStack::EState::InGame);
+					OnComplete();
 				}
 				else
 				{
 					CSceneFactory::Get()->LoadSceneAsync(scene, [this]() { CLoadScene::OnComplete(); });
-					//newScene = CSceneManager::CreateScene(scene);
 				}
-				
-				//CEngine::GetInstance()->AddScene(CStateStack::EState::InGame, newScene);
-				//CEngine::GetInstance()->SetActiveScene(CStateStack::EState::InGame);
-
-
-
 			}
 			index++;
 		}
@@ -96,9 +90,7 @@ void IronWroughtImGui::CLoadScene::OnDisable()
 
 void IronWroughtImGui::CLoadScene::OnComplete()
 {
-	std::cout << "Complete omfg!" << std::endl;
-	//CCameraComponent* newCamera = CEngine::GetInstance()->GetActiveScene().FindFirstObjectWithComponent<CCameraComponent>();
-	//newCamera->GameObject().myTransform->Position(camPos);
+	std::cout << "Scene Load Complete!" << std::endl;
 	CMainSingleton::PostMaster().Send({ "LoadScene", nullptr });
 	myScenes.clear();
 	OnEnable();
