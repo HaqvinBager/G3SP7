@@ -372,7 +372,7 @@ void IronWroughtImGui::CVFXEditorWindow::ShowParticleEffectWindow()
 	memcpy(&myEmitterData->myEndColor, &imguiVector4[0], sizeof(Vector4));
 
 	ImGui::DragFloat("Start Uniform Size ", &myEmitterData->myUniformStartSize, 0.01f, 0.01f, 20.0f, "%.2f");
-	ImGui::DragFloat("End Uniform Size ", &myEmitterData->myUniformStartSize, 0.01f, 0.01f, 20.0f, "%.2f");
+	ImGui::DragFloat("End Uniform Size ", &myEmitterData->myUniformEndSize, 0.01f, 0.01f, 20.0f, "%.2f");
 
 	float imguiVector3[3];
 	memcpy(&imguiVector3[0], &myEmitterData->myStartDirection, sizeof(Vector3));

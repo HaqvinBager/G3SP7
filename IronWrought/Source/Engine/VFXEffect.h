@@ -32,7 +32,7 @@ struct SVFXEffect {
 	std::vector<float> myEmitterTimers;
 	std::vector<bool>  myEmitterShouldOrbit;
 	
-	std::vector<std::vector<Vector2>> myParticleSizeCurves;
+	
 
 	bool myIsEnabled;
 

@@ -212,4 +212,43 @@ void CParticleEmitterFactory::ReadJsonValues(std::string aFilePath, CParticleEmi
     someParticleData.myDirectionLowerBound =      { document["Spawn Direction X Randomize From"].GetFloat(), document["Spawn Direction Y Randomize From"].GetFloat(), document["Spawn Direction Z Randomize From"].GetFloat() };
     someParticleData.myDirectionUpperBound =      { document["Spawn Direction X Randomize To"].GetFloat(), document["Spawn Direction Y Randomize To"].GetFloat(), document["Spawn Direction Z Randomize To"].GetFloat() };
     someParticleData.myTexturePath =                ASSETPATH(document["Texture Path"].GetString());
+
+    if (document.HasMember("Color Curve"))
+    {
+        const auto& colorCurveArray = document["Color Curve"].GetArray();
+        unsigned int curveIndex = 0;
+        someParticleData.myColorCurve.resize(colorCurveArray.Size());
+        for (const auto& point : colorCurveArray)
+        {
+            someParticleData.myColorCurve[curveIndex].x = point["x"].GetFloat();
+            someParticleData.myColorCurve[curveIndex].y = point["y"].GetFloat();
+            curveIndex++;
+        }
+    }
+
+    if (document.HasMember("Size Curve"))
+    {
+        const auto& sizeCurveArray = document["Size Curve"].GetArray();
+        unsigned int curveIndex = 0;
+        someParticleData.mySizeCurve.resize(sizeCurveArray.Size());
+        for (const auto& point : sizeCurveArray)
+        {
+            someParticleData.mySizeCurve[curveIndex].x = point["x"].GetFloat();
+            someParticleData.mySizeCurve[curveIndex].y = point["y"].GetFloat();
+            curveIndex++;
+        }
+    }
+
+    if (document.HasMember("Direction Curve"))
+    {
+        const auto& directionCurveArray = document["Direction Curve"].GetArray();
+        unsigned int curveIndex = 0;
+        someParticleData.myDirectionCurve.resize(directionCurveArray.Size());
+        for (const auto& point : directionCurveArray)
+        {
+            someParticleData.myDirectionCurve[curveIndex].x = point["x"].GetFloat();
+            someParticleData.myDirectionCurve[curveIndex].y = point["y"].GetFloat();
+            curveIndex++;
+        }
+    }
 }
