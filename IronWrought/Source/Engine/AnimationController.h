@@ -148,76 +148,17 @@ public:
 
 	void ImportSkeleton(const std::string& aSkeletonFBXPath);
 
-
-
 	bool ImportRig(const std::string& anFBXFilePath = "");// Todo: handle in factory
 	bool ImportAnimation(const std::string& anFBXFilePath);
 	bool InitFromScene(const aiScene* pScene);
 	void LoadBones(uint aMeshIndex, const aiMesh* aMesh);
 
-	// Update functions
-	void ReadNodeHeirarchy(
-		const aiScene* aScene
-		, float					anAnimationTime
-		, const aiNode* aNode
-		, const aiMatrix4x4& aParentTransform);
-
-	//void ReadNodeHeirarchy(
-	//	const aiScene*			aScene
-	//	, float					anAnimationTime
-	//	, const aiNode*			aNode
-	//	, const aiMatrix4x4&	aParentTransform
-	//	, std::vector<AnimatedBone> someBones);
+	void SetBoneTransforms(int animIndex0, std::array<aiMatrix4x4, 64>& outTransforms);	
+	void ReadNodeHeirarchy(const aiScene* aScene, float tick, const aiNode* aNode, std::vector<aiMatrix4x4>& outJointPoses);
+	void CalculateWorldTransforms(std::array<aiMatrix4x4, 64>& outTransforms, std::vector<aiMatrix4x4>::const_iterator& aNodeTransformationIterator, const aiNode* aParentNode, const aiMatrix4x4& aParentTransform);
 
 
-	void SetBoneTransforms(int animIndex0, int animIndex1, float aBlend, std::array<aiMatrix4x4, 64>& outTransforms);
-	void SetBoneTransforms(int animIndex0, std::array<aiMatrix4x4, 64>& outTransforms);
-	
-	
-	void ReadNodeHeirarchy(
-		  const aiScene* aScene
-		, float tick
-		, const aiNode* aNode
-		//, const aiMatrix4x4& aParentTransform
-		, std::vector<BoneInfoAnim>& outJointPoses
-		);
 
-
-	void ReadNodeHeirarchy(
-		const aiScene* aScene
-		, float tick
-		, const aiNode* aNode
-		, const aiMatrix4x4& aParentTransform
-		, std::vector<BoneInfoAnim>& outJointPoses
-	);
-
-	void CalculateWorldTransforms(std::array<aiMatrix4x4, 64>& outTransforms, const aiNode* aParentNode);
-
-	void ReadNodeHeirarchy(
-		const aiScene* aFromScene
-		, const aiScene* aToScene
-		, float					aTickFrom
-		, float					aTickTo
-		, const aiNode* aNodeFrom
-		, const aiNode* aNodeTo
-		, const aiMatrix4x4& aParentTransform);
-
-	void ReadNodeHeirarchy(
-		//float aTick
-		const std::vector<float>& someBlendingValues
-		, const std::vector<float>& someTicks
-		, const aiScene** someScenes
-		, const aiNode* aNode
-		//	, const uint				aDepth
-		, const aiMatrix4x4& aParentTransform);
-
-	//, const aiScene* aToScene
-	//, float aTickTo
-	//, const aiNode* aNodeTo
-
-
-	void SetBoneTransforms(std::array<aiMatrix4x4, 64>& aTransformsVector);
-	void SetBoneTransforms(const std::vector<float>& someBlendingTimes, const std::vector<float>& someTicks, std::array<aiMatrix4x4, 64>& aTransformsVector);
 	void UpdateAnimationTimes(std::array<SlimMatrix44, 64>& someBones);
 
 	const int AnimationCount() const;
@@ -246,7 +187,7 @@ private:
 	void SaveMotionToMap(const aiScene* aScene, const std::string& aFilePath);
 
 	aiMatrix4x4 BlendMatrix(const aiMatrix4x4& aMatrixA, const aiMatrix4x4& aMatrixB, float aBlend) const;
-	//void CountChildren(const aiNode* aNode, int& count, int& childIndex);
+	unsigned int CountChildren(const aiNode* aNode);
 
 	//unsigned int CountChildren(const aiNode* aNode);
 
