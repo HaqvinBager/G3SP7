@@ -406,7 +406,6 @@ namespace IronWroughtImGui {
 		bool myShouldOrbit = true;
 		float myDelay = 0.0f;
 		float myDuration = 5.0f;
-		std::vector<Vector2> mySizeCurve = { {0.0f, 0.0f}, {0.33f, 0.33f}, {0.66f, 0.66f}, {1.0f, 1.0f} };
 
 		void Serialize(rapidJsonWriter& aWriter)
 		{
@@ -440,9 +439,6 @@ namespace IronWroughtImGui {
 			aWriter.Double(myDelay);
 			aWriter.Key("Duration");
 			aWriter.Double(myDuration);
-
-			Serializer<std::vector<Vector2>> ser;
-			ser.Serialize("SizeCurve", mySizeCurve, aWriter);
 
 			aWriter.EndObject();
 		}

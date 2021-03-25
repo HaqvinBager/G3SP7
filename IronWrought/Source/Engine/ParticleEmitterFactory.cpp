@@ -135,7 +135,9 @@ CParticleEmitter* CParticleEmitterFactory::LoadParticle(std::string aFilePath)
 
     particleEmitter->Init(particleData);
 
-    myParticleEmitters.emplace(aFilePath, particleEmitter);
+    if (myParticleEmitters.find(aFilePath) == myParticleEmitters.end())
+        myParticleEmitters.emplace(aFilePath, particleEmitter);
+    
     return particleEmitter;
 }
 
@@ -172,6 +174,16 @@ std::vector<CParticleEmitter*> CParticleEmitterFactory::GetParticleSet(std::vect
     for (unsigned int i = 0; i < someFilePaths.size(); ++i)
     {
         bases.emplace_back(GetParticle(someFilePaths[i]));
+    }
+    return std::move(bases);
+}
+
+std::vector<CParticleEmitter*> CParticleEmitterFactory::ReloadParticleSet(std::vector<std::string> someFilePaths)
+{
+    std::vector<CParticleEmitter*> bases;
+    for (unsigned int i = 0; i < someFilePaths.size(); ++i)
+    {
+        bases.emplace_back(LoadParticle(someFilePaths[i]));
     }
     return std::move(bases);
 }

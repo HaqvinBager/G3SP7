@@ -95,7 +95,8 @@ void CVFXSystemComponent::Init(const std::string& aVFXDataPath)
 			effect->myVFXBaseDurations[i] = doc["VFXMeshes"][i]["Duration"].GetFloat();
 		}
 
-		effect->myVFXBases = CVFXMeshFactory::GetInstance()->GetVFXBaseSet(vfxPaths);
+		effect->myVFXBases = CVFXMeshFactory::GetInstance()->ReloadVFXBaseSet(vfxPaths);
+
 		//ENGINE_BOOL_POPUP(!effect->myVFXBases.empty(), "No VFX data found.");
 
 		std::vector<std::string> particlePaths;
@@ -143,7 +144,8 @@ void CVFXSystemComponent::Init(const std::string& aVFXDataPath)
 			effect->myEmitterBaseDurations[i] = doc["ParticleSystems"][i]["Duration"].GetFloat();
 		}
 
-		effect->myParticleEmitters = CParticleEmitterFactory::GetInstance()->GetParticleSet(particlePaths);
+		effect->myParticleEmitters = CParticleEmitterFactory::GetInstance()->ReloadParticleSet(particlePaths);
+
 		ENGINE_BOOL_POPUP(!effect->myParticleEmitters.empty(), "No Particle data found.");
 
 		for (unsigned int i = 0; i < effect->myParticleEmitters.size(); ++i) {
