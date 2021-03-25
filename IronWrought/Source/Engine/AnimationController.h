@@ -59,9 +59,63 @@ struct VertexBoneDataAnim
 
 struct BoneInfoAnim
 {
+	aiVector3D myPosition;
+	aiQuaternion myRotation;
+	aiVector3D myScale;
+
+	aiMatrix4x4 myNodeTransformation;
+	aiMatrix4x4 myParentTransform;
 	aiMatrix4x4 myBoneOffset;
 	aiMatrix4x4 myFinalTransformation;
 };
+//aiVector3D myScale;
+
+//Attempting Hype
+struct Joint {
+	Joint(aiMatrix4x4& aTransformation, const char* aName, int aParentIndex)
+	{
+		myInverseBindPose = aTransformation;
+		myName = aName;
+		myParentIndex = static_cast<INT8>(aParentIndex);
+	}
+
+	aiMatrix4x4 myInverseBindPose;
+	const char* myName;
+	INT8 myParentIndex;
+};
+
+struct Skeleton {
+	//UINT8 jointCount;
+	std::vector<Joint> myJoints;
+};
+
+struct JointPose
+{
+	aiQuatKey myRotKey;
+	aiVectorKey myPosKey;
+	aiVectorKey myScaleKey;
+};
+
+struct SkeletonPose {
+	~SkeletonPose() { mySkeleton = nullptr; }
+
+	Skeleton* mySkeleton;
+	std::vector<JointPose> myLocalJointPoses;
+	std::vector<aiMatrix4x4> myGlobalTransformations;
+};
+
+struct AnimationSample {
+	std::vector<JointPose> myJointPoses;
+};
+
+struct AnimationClip {
+	Skeleton* mySkeleton;
+	float myFPS;
+	float myTickCount;
+	std::vector<AnimationSample> mySamples;
+	bool myIsLooping;
+};
+//Attempting Hype END
 
 #define INVALID_MATERIAL 0xFFFFFFFF;
 
@@ -92,7 +146,9 @@ public:
 
 	//Create Init Function?
 
-	
+	void ImportSkeleton(const std::string& aSkeletonFBXPath);
+
+
 
 	bool ImportRig(const std::string& anFBXFilePath = "");// Todo: handle in factory
 	bool ImportAnimation(const std::string& anFBXFilePath);
@@ -101,41 +157,73 @@ public:
 
 	// Update functions
 	void ReadNodeHeirarchy(
-		  const aiScene*		aScene
+		const aiScene* aScene
 		, float					anAnimationTime
-		, const aiNode*			aNode
-		, const aiMatrix4x4&	aParentTransform);
+		, const aiNode* aNode
+		, const aiMatrix4x4& aParentTransform);
+
+	//void ReadNodeHeirarchy(
+	//	const aiScene*			aScene
+	//	, float					anAnimationTime
+	//	, const aiNode*			aNode
+	//	, const aiMatrix4x4&	aParentTransform
+	//	, std::vector<AnimatedBone> someBones);
+
+
+	void SetBoneTransforms(int animIndex0, int animIndex1, float aBlend, std::array<aiMatrix4x4, 64>& outTransforms);
+	void SetBoneTransforms(int animIndex0, std::array<aiMatrix4x4, 64>& outTransforms);
+	
+	
+	void ReadNodeHeirarchy(
+		  const aiScene* aScene
+		, float tick
+		, const aiNode* aNode
+		//, const aiMatrix4x4& aParentTransform
+		, std::vector<BoneInfoAnim>& outJointPoses
+		);
+
 
 	void ReadNodeHeirarchy(
-		  const aiScene*		aFromScene
-		, const aiScene*		aToScene
+		const aiScene* aScene
+		, float tick
+		, const aiNode* aNode
+		, const aiMatrix4x4& aParentTransform
+		, std::vector<BoneInfoAnim>& outJointPoses
+	);
+
+	void CalculateWorldTransforms(std::array<aiMatrix4x4, 64>& outTransforms, const aiNode* aParentNode);
+
+	void ReadNodeHeirarchy(
+		const aiScene* aFromScene
+		, const aiScene* aToScene
 		, float					aTickFrom
 		, float					aTickTo
-		, const aiNode*			aNodeFrom
-		, const aiNode*			aNodeTo
-		, const aiMatrix4x4&	aParentTransform);
+		, const aiNode* aNodeFrom
+		, const aiNode* aNodeTo
+		, const aiMatrix4x4& aParentTransform);
 
 	void ReadNodeHeirarchy(
-		  //float aTick
-		  const std::vector<float>&	someBlendingValues
-		, const std::vector<float>&	someTicks
-		, const aiScene**			someScenes
-		, const aiNode*				aNode
-	//	, const uint				aDepth
-		, const aiMatrix4x4&		aParentTransform);
+		//float aTick
+		const std::vector<float>& someBlendingValues
+		, const std::vector<float>& someTicks
+		, const aiScene** someScenes
+		, const aiNode* aNode
+		//	, const uint				aDepth
+		, const aiMatrix4x4& aParentTransform);
 
-		//, const aiScene* aToScene
-		//, float aTickTo
-		//, const aiNode* aNodeTo
+	//, const aiScene* aToScene
+	//, float aTickTo
+	//, const aiNode* aNodeTo
+
 
 	void SetBoneTransforms(std::array<aiMatrix4x4, 64>& aTransformsVector);
 	void SetBoneTransforms(const std::vector<float>& someBlendingTimes, const std::vector<float>& someTicks, std::array<aiMatrix4x4, 64>& aTransformsVector);
 	void UpdateAnimationTimes(std::array<SlimMatrix44, 64>& someBones);
-	
+
 	const int AnimationCount() const;
 	const int Animation0Index() const { return static_cast<int>(myAnimIndex0); }
 	const int Animation1Index() const { return static_cast<int>(myAnimIndex1); }
-	
+
 	const int AnimationIndex(const std::string& aMotionName);
 	const float AnimationTPS(const std::string& aMotionName);
 	const float AnimationTPS(int anIndex) const;
@@ -157,7 +245,16 @@ private:
 	bool AnimationIndexWithinRange(int anIndex) const;
 	void SaveMotionToMap(const aiScene* aScene, const std::string& aFilePath);
 
+	aiMatrix4x4 BlendMatrix(const aiMatrix4x4& aMatrixA, const aiMatrix4x4& aMatrixB, float aBlend) const;
+	//void CountChildren(const aiNode* aNode, int& count, int& childIndex);
+
+	//unsigned int CountChildren(const aiNode* aNode);
+
 private:
+
+	std::unique_ptr<Skeleton> mySkeleton;
+	std::unique_ptr<SkeletonPose> mySkeletonPose;
+
 
 	std::vector<float> myTicks;
 
@@ -199,7 +296,7 @@ public:
 		return myAnimIndex0;
 	}
 
-	std::vector<std::string>& GetMotionPaths() 
+	std::vector<std::string>& GetMotionPaths()
 	{
 		return myMotionPaths;
 	}

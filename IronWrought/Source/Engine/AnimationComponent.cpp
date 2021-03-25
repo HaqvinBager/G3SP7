@@ -11,6 +11,9 @@ CAnimationComponent::CAnimationComponent(CGameObject& aParent, const std::string
 	: CBehaviour(aParent)
 {
 	myController = new CAnimationController();
+
+	//myController->ImportSkeleton(aModelFilePath);
+
 	myController->ImportRig(aModelFilePath);
 	for (std::string s : someAnimationPaths)
 	{

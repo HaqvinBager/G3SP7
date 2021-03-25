@@ -3,29 +3,11 @@
 #include "Timer.h"
 #include <AssImp\anim.h>
 #include <math.h>
+#include "EngineException.h"
+#include <filesystem>
 
 
-//constexpr float f_milliseconds = 1000.0f;
-#ifdef _DEBUG
-//#define ALLOW_PRINT
-#endif
-#include <iomanip>
-void TEMP_PrintMatrix4x4_2decimals(const aiMatrix4x4& aMatrix, const std::string& aMsg = "")
-{
-	aMatrix; aMsg;
-#ifdef ALLOW_PRINT
-	// https://stackoverflow.com/questions/5907031/printing-the-correct-number-of-decimal-points-with-cout
-	std::cout << std::fixed;
-	std::cout << std::setprecision(2);
 
-	std::cout << aMsg << std::endl;
-	std::cout << aMatrix.a1 << " | " << aMatrix.a2 << " | " << aMatrix.a3 << " | " << aMatrix.a4 << std::endl;
-	std::cout << aMatrix.b1 << " | " << aMatrix.b2 << " | " << aMatrix.b3 << " | " << aMatrix.b4 << std::endl;
-	std::cout << aMatrix.c1 << " | " << aMatrix.c2 << " | " << aMatrix.c3 << " | " << aMatrix.c4 << std::endl;
-	std::cout << aMatrix.d1 << " | " << aMatrix.d2 << " | " << aMatrix.d3 << " | " << aMatrix.d4 << std::endl;
-	std::cout << "------" << std::endl;
-#endif
-}
 
 CAnimationController::CAnimationController()
 	: myNumOfBones(0)
@@ -52,6 +34,101 @@ CAnimationController::~CAnimationController()
 	myScenes.clear();
 }
 
+void CAnimationController::ImportSkeleton(const std::string& aSkeletonFBXPath)
+{
+	ENGINE_BOOL_POPUP(aSkeletonFBXPath.length(), "Imported Skeleton path was empty");
+
+	// Check if file exists
+	std::ifstream fIn(aSkeletonFBXPath.c_str());
+	ENGINE_BOOL_POPUP(!fIn.fail(), "Failed to read Imported Skeleton %s", aSkeletonFBXPath.c_str());
+	fIn.close();
+	Assimp::Importer importer = {};
+	importer.ReadFile(aSkeletonFBXPath.c_str(), aiProcessPreset_TargetRealtime_Quality | aiProcess_ConvertToLeftHanded);	
+
+//Next Step is to Follow the Book proper!
+//Best idea is probably to make sure that i understand how the Import Really works It's at least more than 1 step
+	//1 -> Load Assimp::aiScene*
+	//2 -> Init Bones 
+	//3 -> seems like it's here the vertex-id's are corrolated to each bone!
+	//Maybe i don't need to refactor the import things!
+	//Only reason to do so is if the book-implementation requires it! : )
+		 //Remember -> The book can bring me all the way to Inverse Kinematics! Hopefully...!
+
+
+
+	/*const aiScene* scene = importer.GetScene();
+	const aiNode* rootNode = scene->mRootNode;*/
+	
+
+
+	//unsigned int boneCount = scene->mMeshes[0]->mNumBones;
+	//mySkeleton = std::make_unique<Skeleton>();
+	//mySkeleton->myJoints.reserve(boneCount);
+	//std::unordered_map<size_t, unsigned int> boneIDMap;
+	//for (unsigned int i = 0; i < boneCount; ++i)
+	//{
+	//	size_t hash = std::hash<const char*>()(scene->mMeshes[0]->mBones[i]->mName.C_Str());
+	//	boneIDMap[hash] = i;
+
+
+	//	aiBone* bone = scene->mMeshes[0]->mBones[i];
+	//	size_t aiNodeHash = std::hash<const char*>()(rootNode->FindNode(bone->mName)->mParent->mName.C_Str());
+
+	//	Joint joint = Joint(bone->mOffsetMatrix.Inverse(), bone->mName.C_Str(), boneIDMap[aiNodeHash]);
+	//	mySkeleton->myJoints.push_back(joint);
+	//}
+
+
+
+
+
+	//mySkeleton->myJoints.push_back(Joint(rootNode->mTransformation, 0));
+	//for (unsigned int i = 1; i < boneCount; ++i)
+	//{	
+	//	mySkeleton->myJoints.push_back(Joint(
+	//		scene->mMeshes[0]->mBones[i]->mOffsetMatrix
+	//	, scene->mMeshes[0]->mBones[i]->mName
+	//	, ))
+	//
+	//	mySkeleton->myJoints.push_back(Joint(rootNode->mChildren[i], i));
+	//}
+
+	/*mySkeletonPose = std::make_unique<SkeletonPose>();
+	mySkeletonPose->mySkeleton = mySkeleton.get();
+	mySkeletonPose->myLocalJointPoses.reserve(boneCount);
+
+	for (unsigned int i = 0; i < boneCount; ++i)
+	{
+		mySkeletonPose->myLocalJointPoses[i].myRotKey = scene->mAnimations[0]->mChannels[0]->mRotationKeys[i];
+		mySkeletonPose->myLocalJointPoses[i].myRotKey = scene->mAnimations[0]->mChannels[0]->mRotationKeys[i];
+		mySkeletonPose->myLocalJointPoses[i].myRotKey = scene->mAnimations[0]->mChannels[0]->mRotationKeys[i];
+	}
+
+
+	size_t lastSlashIndex = aSkeletonFBXPath.find_last_of('/');
+	std::string animFolder = aSkeletonFBXPath.substr(0, lastSlashIndex) + "/Animations/";
+
+	for (const auto& file : std::filesystem::directory_iterator(animFolder))
+	{
+		if (file.path().has_extension())
+		{
+			if (file.path().extension() == ".fbx")
+			{
+				const std::string animationClipPath = file.path().string();
+				const aiScene* animationScene = importer.ReadFile(animationClipPath.c_str(), aiProcessPreset_TargetRealtime_Quality | aiProcess_ConvertToLeftHanded);
+				animationScene;
+
+
+			}
+		}
+
+	}*/
+
+
+
+
+}
+
 bool CAnimationController::ImportRig(const std::string& anFBXFilePath/*, const std::vector<std::string>& someAnimationPaths*/)
 {
 	if (anFBXFilePath.length() <= 0)
@@ -71,12 +148,27 @@ bool CAnimationController::ImportRig(const std::string& anFBXFilePath/*, const s
 
 	myAnimIndex0 = static_cast<int>(myScenes.size());
 
-	Assimp::Importer importer;
-	const aiScene* scene = nullptr;
+	Assimp::Importer importer;	
 	if (importer.ReadFile(anFBXFilePath, aiProcessPreset_TargetRealtime_Quality | aiProcess_ConvertToLeftHanded))
 	{
-		scene = myScenes.emplace_back(importer.GetOrphanedScene());
+		myScenes.emplace_back(importer.GetOrphanedScene());
 		SaveMotionToMap(myScenes.back(), anFBXFilePath);
+
+		//aiScene* scene = importer.GetOrphanedScene();
+		//scene = myScenes.emplace_back(importer.GetOrphanedScene());
+		//mySkeleton = std::make_unique<Skeleton>();
+		//mySkeleton->jointCount = scene->mRootNode->mNumChildren;
+		//auto jointCount = scene->mRootNode->mNumChildren;
+		//mySkeleton->myJoints.resize(jointCount);
+		//mySkeleton->myJoints[0].myInverseBindPose = scene->mRootNode->mTransformation;
+		//mySkeleton->myJoints[0].myName = scene->mRootNode->mName.C_Str();
+		//mySkeleton->myJoints[0].myParentIndex = 0;
+		//for (unsigned int i = 0; i < jointCount; ++i)
+		//{
+		//	mySkeleton->myJoints[i].myInverseBindPose = scene->mRootNode->mChildren[i]->mTransformation;
+		//	mySkeleton->myJoints[i].myName = scene->mRootNode->mChildren[i]->mName.C_Str();
+		//	mySkeleton->myJoints[i].myParentIndex = i;
+		//}
 	}
 	else
 	{
@@ -153,7 +245,7 @@ bool CAnimationController::InitFromScene(const aiScene* pScene)
 	myMass.resize(NumVertices);
 
 	for (uint i = 0; i < pScene->mNumMeshes; ++i)
-	{
+	{	
 		LoadBones(i, pScene->mMeshes[i]);
 	}
 	return true;
@@ -177,8 +269,13 @@ void CAnimationController::LoadBones(uint aMeshIndex, const aiMesh* aMesh)
 			BoneIndex = myBoneMapping[BoneName];
 		}
 
-		myBoneMapping[BoneName] = BoneIndex;
-		myBoneInfo[BoneIndex].myBoneOffset = aMesh->mBones[i]->mOffsetMatrix;
+		myBoneMapping[BoneName] = BoneIndex;	
+		aiMatrix4x4 matrix = aMesh->mBones[i]->mOffsetMatrix;
+		matrix.Decompose(
+			  myBoneInfo[BoneIndex].myPosition
+			, myBoneInfo[BoneIndex].myRotation
+			, myBoneInfo[BoneIndex].myScale);
+		myBoneInfo[BoneIndex].myBoneOffset = matrix;
 
 		for (uint j = 0; j < aMesh->mBones[i]->mNumWeights; j++)// Mass for physics?
 		{
@@ -189,6 +286,176 @@ void CAnimationController::LoadBones(uint aMeshIndex, const aiMesh* aMesh)
 	}
 }
 
+void CAnimationController::SetBoneTransforms(int animIndex0, int animIndex1, float aBlend, std::array<aiMatrix4x4, 64>& outTransforms)
+{
+	std::vector<BoneInfoAnim> jointPoses0;
+	{
+		aiMatrix4x4 identity;
+		InitIdentityM4(identity);
+		jointPoses0.resize(myBoneInfo.size());
+		ReadNodeHeirarchy(
+			myScenes[animIndex0]
+			, myTicks0
+			, myScenes[animIndex0]->mRootNode
+			, identity
+			, jointPoses0);
+	}
+	std::vector<BoneInfoAnim> jointPoses1;
+	{
+		aiMatrix4x4 identity;
+		InitIdentityM4(identity);
+		jointPoses1.resize(myBoneInfo.size());
+		ReadNodeHeirarchy(
+			  myScenes[animIndex1]
+			, myTicks1
+			, myScenes[animIndex1]->mRootNode
+			, identity
+			, jointPoses1);
+	}
+	std::vector<BoneInfoAnim> blendedPoses;
+	blendedPoses.resize(jointPoses0.size());
+	for (int i = 0; i < jointPoses0.size(); ++i)
+	{
+		aiVector3D pos0		= jointPoses0[i].myPosition;
+		aiQuaternion rot0	= jointPoses0[i].myRotation;
+		aiVector3D scale0	= jointPoses0[i].myScale;
+
+		aiVector3D pos1		= jointPoses1[i].myPosition;
+		aiQuaternion rot1	= jointPoses1[i].myRotation;
+		aiVector3D scale1	= jointPoses1[i].myScale;
+	
+		Assimp::Interpolator<aiVector3D>()(blendedPoses[i].myScale, scale0, scale1, aBlend);
+		Assimp::Interpolator<aiQuaternion>()(blendedPoses[i].myRotation, rot0, rot1, aBlend);
+		Assimp::Interpolator<aiVector3D>()(blendedPoses[i].myPosition, pos0, pos1, aBlend);
+	}
+
+	for (uint i = 0; i < myNumOfBones; i++)
+	{
+		aiMatrix4x4 scalingM = {};
+		aiMatrix4x4::Scaling(blendedPoses[i].myScale, scalingM);
+		
+		aiMatrix4x4 translationM = {};
+		aiMatrix4x4::Translation(blendedPoses[i].myPosition, translationM);
+		
+		aiMatrix4x4 rotationM;
+		InitM4FromM3(rotationM, blendedPoses[i].myRotation.GetMatrix());
+
+	}
+}
+
+void CAnimationController::SetBoneTransforms(int animIndex0, std::array<aiMatrix4x4, 64>& outTransforms)
+{
+	aiMatrix4x4 identity0;
+	InitIdentityM4(identity0);
+	std::vector<BoneInfoAnim> jointPoses0;
+	jointPoses0.resize(myBoneInfo.size());
+	ReadNodeHeirarchy(
+		myScenes[animIndex0]
+		, myTicks0
+		, myScenes[animIndex0]->mRootNode
+		, identity0
+		, jointPoses0);
+
+	aiMatrix4x4 identity1;
+	InitIdentityM4(identity1);
+	std::vector<BoneInfoAnim> jointPoses1;
+	jointPoses1.resize(myBoneInfo.size());
+	ReadNodeHeirarchy(
+		  myScenes[myAnimIndex1]
+		, myTicks1
+		, myScenes[myAnimIndex1]->mRootNode	
+		, identity1
+		, jointPoses1);
+
+	for (uint i = 0; i < myNumOfBones; i++)
+	{
+		aiMatrix4x4 offsetA = jointPoses0[i].myBoneOffset;
+		aiMatrix4x4 offsetB = jointPoses1[i].myBoneOffset;
+		aiMatrix4x4 offset = BlendMatrix(offsetA, offsetB, myBlendingTime);
+
+		aiMatrix4x4 parentA = jointPoses0[i].myParentTransform;
+		aiMatrix4x4 parentB = jointPoses1[i].myParentTransform;
+		aiMatrix4x4 parent = BlendMatrix(parentA, parentB, myBlendingTime);
+
+		aiMatrix4x4 nodeTransformationA = jointPoses0[i].myNodeTransformation;
+		aiMatrix4x4 nodeTransformationB = jointPoses1[i].myNodeTransformation;
+		aiMatrix4x4 nodeTransformation = parent * BlendMatrix(nodeTransformationA, nodeTransformationB, myBlendingTime);
+
+		outTransforms[i] = nodeTransformation; 
+		/*myGlobalInverseTransform **/  /** offset*/;
+		//aiMatrix4x4 parent = BlendMatrix(parentA, parentB, myBlendingTime);
+		/*parent * */
+			////myGlobalInverseTransform * nodeTransformation * offset; ///jointPoses0[i].myFinalTransformation;
+	}
+
+	for (uint i = 0; i < myNumOfBones; ++i)
+	{
+		outTransforms[i] = myGlobalInverseTransform * outTransforms[i] * myBoneInfo[i].myBoneOffset;
+	}
+
+	//CalculateWorldTransforms(outTransforms, myScenes[animIndex0]->mRootNode);
+}
+
+
+/*
+		aiVector3D scaleStart, scaleEnd, scaleResult;
+		aiQuaternion rotationStart, rotationEnd, rotationResult;
+		aiVector3D posStart, posEnd, posResult;
+		matrixA.Decompose(scaleStart, rotationStart, posStart);
+		matrixB.Decompose(scaleEnd, rotationEnd, posEnd);
+
+		Assimp::Interpolator<aiVector3D>()(posResult, posStart, posEnd, myBlendingTime);
+		aiQuaternion::Interpolate(rotationResult, rotationStart, rotationEnd, myBlendingTime);
+		Assimp::Interpolator<aiVector3D>()(scaleResult, scaleStart, scaleEnd, myBlendingTime);
+		rotationResult.Normalize();
+
+		aiMatrix4x4 scaleM;
+		aiMatrix4x4::Scaling(scaleResult, scaleM);
+
+		aiMatrix4x4 rotM;
+		InitM4FromM3(rotM, rotationResult.GetMatrix());
+
+		aiMatrix4x4 TranslationM;
+		aiMatrix4x4::Translation(posResult, TranslationM);
+
+		aiMatrix4x4 nodeTransformation = TranslationM * rotM * scaleM;
+
+		aiMatrix4x4 offsetA = jointPoses0[i].myBoneOffset;
+		aiMatrix4x4 offsetB = jointPoses1[i].myBoneOffset;
+
+		aiVector3D offsetScaleA, offsetScaleB, offsetScale;
+		aiQuaternion offsetRotationA, offsetRotationB, offsetRotation;
+		aiVector3D offsetPositionA, offsetPositionB, offsetPosition;
+
+		offsetA.Decompose(offsetScaleA, offsetRotationA, offsetPositionA);
+		offsetB.Decompose(offsetScaleB, offsetRotationB, offsetPositionB);
+
+		Assimp::Interpolator<aiVector3D>()(offsetScale, offsetScaleA, offsetScaleB, myBlendingTime);
+		aiQuaternion::Interpolate(offsetRotation, offsetRotationA, offsetRotationB, myBlendingTime);
+		Assimp::Interpolator<aiVector3D>()(offsetPosition, offsetPositionA, offsetPositionB, myBlendingTime);
+		offsetRotation.Normalize();
+
+		aiMatrix4x4 offsetScaleM;
+		aiMatrix4x4::Scaling(offsetScale, offsetScaleM);
+
+		aiMatrix4x4 offsetRotationM;
+		InitM4FromM3(offsetRotationM, offsetRotation.GetMatrix());
+
+		aiMatrix4x4 offsetTranslationM;
+		aiMatrix4x4::Translation(posResult, offsetTranslationM);
+
+		aiMatrix4x4 offsetMatrix = offsetTranslationM * offsetRotationM * offsetScaleM;
+		
+
+		outTransforms[i] = myGlobalInverseTransform * nodeTransformation * offsetMatrix;*///jointPoses0[i].myFinalTransformation;
+	/*	aiMatrix4x4 GlobalTransformation = jointPoses0[i].myParentTransform * TranslationM * rotM * scaleM ;
+		jointPoses0[i].myFinalTransformation = myGlobalInverseTransform * GlobalTransformation * jointPoses0[i].myBoneOffset;*/
+	
+
+	//for(int i = 0; i < jointPoses0.size(); ++i)
+	//	outTransforms[i] = jointPoses0[i].myFinalTransformation;
+
+
 void CAnimationController::SetBoneTransforms(std::array<aiMatrix4x4, 64>& aTransformsVector)
 {
 	aiMatrix4x4 Identity;
@@ -197,15 +464,21 @@ void CAnimationController::SetBoneTransforms(std::array<aiMatrix4x4, 64>& aTrans
 	if (myAnimIndex0 == myAnimIndex1)
 	{
 		ReadNodeHeirarchy(
-			myScenes[myAnimIndex0]
+			  myScenes[myAnimIndex0]
 			, myTicks0
 			, myScenes[myAnimIndex0]->mRootNode
 			, Identity);
 	}
 	else
 	{
+		//ReadNodeHeirarchy(
+		//	  myScenes[myAnimIndex0]
+		//	, myTicks0
+		//	, myScenes[myAnimIndex0]->mRootNode
+		//	, Identity);
+
 		ReadNodeHeirarchy(
-			myScenes[myAnimIndex0]
+			 myScenes[myAnimIndex0]
 			, myScenes[myAnimIndex1]
 			, myTicks0
 			, myTicks1
@@ -248,7 +521,7 @@ void CAnimationController::SetBoneTransforms(
 }
 
 void CAnimationController::ReadNodeHeirarchy(
-	const aiScene* aScene
+	  const aiScene* aScene
 	, float tick
 	, const aiNode* aNode
 	, const aiMatrix4x4& aParentTransform)
@@ -283,7 +556,130 @@ void CAnimationController::ReadNodeHeirarchy(
 }
 
 void CAnimationController::ReadNodeHeirarchy(
-	const aiScene* aFromScene
+	  const aiScene* aScene
+	, float tick
+	, const aiNode* aNode
+	//, const aiMatrix4x4& aParentTransform
+	, std::vector<BoneInfoAnim>& outJointPoses)
+{
+	aiMatrix4x4 NodeTransformation(aNode->mTransformation);
+	const aiNodeAnim* nodeAnimation = FindNodeAnim(aScene->mAnimations[0], aNode->mName.data);
+	aiVector3D pos;
+	aiQuaternion rot;
+	aiVector3D scale;
+
+	if (nodeAnimation)
+	{
+		aiMatrix4x4 ScalingM;
+		scale = CalculateInterpolation(nodeAnimation->mScalingKeys, nodeAnimation->mNumScalingKeys, tick).mValue;
+		aiMatrix4x4::Scaling(scale, ScalingM);
+
+		aiMatrix4x4 RotationM;
+		rot = CalculateInterpolation(nodeAnimation->mRotationKeys, nodeAnimation->mNumRotationKeys, tick).mValue;
+		InitM4FromM3(RotationM, rot.GetMatrix());
+
+		aiMatrix4x4 TranslationM;
+		pos = CalculateInterpolation(nodeAnimation->mPositionKeys, nodeAnimation->mNumPositionKeys, tick).mValue;
+		aiMatrix4x4::Translation(pos, TranslationM);
+
+		// Combine the above transformations	
+		NodeTransformation = TranslationM * RotationM * ScalingM;
+	}
+
+	//aiMatrix4x4 GlobalTransformation = aParentTransform * NodeTransformation;
+	if (myBoneMapping.find(aNode->mName.data) != myBoneMapping.end())
+	{
+		uint BoneIndex = myBoneMapping[aNode->mName.data];
+		outJointPoses[BoneIndex].myNodeTransformation = NodeTransformation;
+		outJointPoses[BoneIndex].myBoneOffset = myBoneInfo[BoneIndex].myBoneOffset;
+		outJointPoses[BoneIndex].myParentTransform = aNode->mParent->mTransformation;
+	}
+
+	for (uint i = 0; i < aNode->mNumChildren; i++)
+		ReadNodeHeirarchy(aScene, tick, aNode->mChildren[i], outJointPoses);
+}
+
+void CAnimationController::ReadNodeHeirarchy(const aiScene* aScene, float tick, const aiNode* aNode, const aiMatrix4x4& aParentTransform, std::vector<BoneInfoAnim>& outJointPoses)
+{
+	aiMatrix4x4 NodeTransformation(aNode->mTransformation);
+	const aiNodeAnim* nodeAnimation = FindNodeAnim(aScene->mAnimations[0], aNode->mName.data);
+	aiVector3D pos;
+	aiQuaternion rot;
+	aiVector3D scale;
+
+	if (nodeAnimation)
+	{
+		aiMatrix4x4 ScalingM;
+		scale = CalculateInterpolation(nodeAnimation->mScalingKeys, nodeAnimation->mNumScalingKeys, tick).mValue;
+		aiMatrix4x4::Scaling(scale, ScalingM);
+
+		aiMatrix4x4 RotationM;
+		rot = CalculateInterpolation(nodeAnimation->mRotationKeys, nodeAnimation->mNumRotationKeys, tick).mValue;
+		InitM4FromM3(RotationM, rot.GetMatrix());
+
+		aiMatrix4x4 TranslationM;
+		pos = CalculateInterpolation(nodeAnimation->mPositionKeys, nodeAnimation->mNumPositionKeys, tick).mValue;
+		aiMatrix4x4::Translation(pos, TranslationM);
+
+		// Combine the above transformations	
+		NodeTransformation = TranslationM * RotationM * ScalingM;
+	}
+
+	aiMatrix4x4 GlobalTransformation = aParentTransform * NodeTransformation;
+	if (myBoneMapping.find(aNode->mName.data) != myBoneMapping.end())
+	{
+		uint BoneIndex = myBoneMapping[aNode->mName.data];
+		outJointPoses[BoneIndex].myBoneOffset = myBoneInfo[BoneIndex].myBoneOffset;
+		outJointPoses[BoneIndex].myNodeTransformation = NodeTransformation;
+		outJointPoses[BoneIndex].myParentTransform = aParentTransform;
+	}
+
+	for (uint i = 0; i < aNode->mNumChildren; i++)
+		ReadNodeHeirarchy(aScene, tick, aNode->mChildren[i], GlobalTransformation, outJointPoses);
+}
+
+void CAnimationController::CalculateWorldTransforms(std::array<aiMatrix4x4, 64>& outTransforms, const aiNode* aNode)
+{
+	//for (unsigned int i = 0; i < aNode->mNumChildren; ++i)
+	//	CalculateWorldTransforms(outTransforms, aNode->mChildren[i]);
+
+	//if (aNode->mParent != nullptr)
+	//{
+	//	uint boneIndex = myBoneMapping[aNode->mName.data];
+	//	aiMatrix4x4 GlobalTransformation = aNode->mParent->mTransformation * outTransforms[boneIndex];
+	//	outTransforms[boneIndex] = myGlobalInverseTransform * GlobalTransformation * myBoneInfo[boneIndex].myBoneOffset;
+	//	//outTransforms[boneIndex] = myGlobalInverseTransform * aNode->mParent->mTransformation * outTransforms[boneIndex] * myBoneInfo[boneIndex].myBoneOffset;
+	//}
+
+	//if (myBoneMapping.find(aNode->mName.data) != myBoneMapping.end())
+	//{
+	//	uint boneIndex = myBoneMapping[aNode->mName.data];
+	//	aiMatrix4x4 GlobalTransformation = aNode->mParent->mTransformation * outTransforms[boneIndex];
+	//	outTransforms[boneIndex] = myGlobalInverseTransform * GlobalTransformation * myBoneInfo[boneIndex].myBoneOffset;
+	//}
+
+	//for (unsigned int i = 1; i < 64; ++i)
+	//{
+	//	aiMatrix4x4 GlobalTransformation = aNode->mParent->mTransformation * outTransforms[i];
+	//	outTransforms[i] = myGlobalInverseTransform * GlobalTransformation * myBoneInfo[i].myBoneOffset;
+	//}
+
+	//if (myBoneMapping.find(aNode->mName.data) != myBoneMapping.end())
+	//{
+	//	uint boneIndex = myBoneMapping[aNode->mName.data];
+	//	aiMatrix4x4 GlobalTransformation = aNode->mParent->mTransformation * outTransforms[boneIndex];
+	//	outTransforms[boneIndex] = myGlobalInverseTransform * GlobalTransformation * myBoneInfo[boneIndex].myBoneOffset;
+	//		//myGlobalInverseTransform * outTransforms[boneIndex] * aNode->mParent->mTransformation * myBoneInfo[boneIndex].myBoneOffset; /** myBoneInfo[boneIndex].myBoneOffset*/
+	//	//std::cout << aNode->mName.C_Str() << " --> " << aNode->mParent->mName.C_Str() << std::endl;
+	//}
+
+	//for(unsigned int i = 0; i < aNode->mNumChildren; ++i)
+	//	CalculateWorldTransforms(outTransforms, aNode->mChildren[i]);
+}
+
+
+void CAnimationController::ReadNodeHeirarchy(
+	  const aiScene* aFromScene
 	, const aiScene* aToScene
 	, float aTickFrom
 	, float aTickTo
@@ -333,6 +729,7 @@ void CAnimationController::ReadNodeHeirarchy(
 	{
 		uint BoneIndex = myBoneMapping[aNodeFrom->mName.data];
 		myBoneInfo[BoneIndex].myFinalTransformation = myGlobalInverseTransform * GlobalTransformation * myBoneInfo[BoneIndex].myBoneOffset;
+		//Add the lerped-positional data here as well! And save it to a "outBoneInfo" instead of myBoneInfo!!!
 	}
 
 	uint n = min(aNodeFrom->mNumChildren, aNodeTo->mNumChildren);
@@ -351,62 +748,74 @@ void CAnimationController::ReadNodeHeirarchy(
 	if (aNode == nullptr)//someBlendingValues.size())
 		return;
 
-	aiMatrix4x4 NodeTransformation0 = aNode->mTransformation;
-	aiVectorKey scaleKeyResult = {};//= CalculateInterpolation(pNodeAnim0->mScalingKeys, pNodeAnim0->mNumScalingKeys, someTicks[0]);
-	aiQuatKey rotationKeyResult = {};//= CalculateInterpolation(pNodeAnim0->mRotationKeys, pNodeAnim0->mNumRotationKeys, someTicks[0]);
-	aiVectorKey positionKeyResult = {};//= CalculateInterpolation(pNodeAnim0->mPositionKeys, pNodeAnim0->mNumPositionKeys, someTicks[0]);
-
-	size_t one = 1;
 	size_t size = someBlendingValues.size();
-	for (int i = 1; i < size; ++i)
-	{
-		//aiMatrix4x4 nodeTransform(someNodes[i - one]->mTransformation);
-		const aiNodeAnim* anim = FindNodeAnim(someScenes[i - one]->mAnimations[0], aNode->mName.data);
-		if (anim == nullptr)
-			continue;
-		
+	aiMatrix4x4 NodeTransformation0 = aNode->mTransformation;
+	
+	const aiNodeAnim* anim0 = FindNodeAnim(someScenes[0]->mAnimations[0], aNode->mName.data);
+	if (anim0 != nullptr)
+	{	
+		aiVectorKey scaleKeyResult = CalculateInterpolation(anim0->mScalingKeys, anim0->mNumScalingKeys, someTicks[0]);
+		aiQuatKey rotationKeyResult = CalculateInterpolation(anim0->mRotationKeys, anim0->mNumRotationKeys, someTicks[0]);
+		aiVectorKey positionKeyResult = CalculateInterpolation(anim0->mPositionKeys, anim0->mNumPositionKeys, someTicks[0]);
 
-		if (someTicks[i - one] < someTicks[i] || someTicks[i] < someTicks[i - 1])
+		//size_t one = 1;
+		//size_t size = someBlendingValues.size();
+		for (int i = 1; i < size; ++i)
 		{
+			//aiMatrix4x4 nodeTransform(someNodes[i - one]->mTransformation);
+			const aiNodeAnim* anim = FindNodeAnim(someScenes[i]->mAnimations[0], aNode->mName.data);
+			if (anim == nullptr)
+				continue;
 
+			//aiVectorKey scaleKey = CalculateInterpolation(anim->mScalingKeys, anim->mNumScalingKeys, someTicks[i - one]);
+			aiVectorKey nextScaleKey = CalculateInterpolation(anim->mScalingKeys, anim->mNumScalingKeys, someTicks[i]);
+			aiVector3D scale = {};
+			Assimp::Interpolator<aiVectorKey>()(
+				scale
+				, scaleKeyResult
+				, nextScaleKey
+				, someBlendingValues[i]);
+			aiMatrix4x4 scaleM = {};
+			scaleKeyResult.mValue = scale;
+			//aiMatrix4x4::Scaling(scale, scaleM);
+
+
+			//aiQuatKey rotationKey = CalculateInterpolation(anim->mRotationKeys, anim->mNumRotationKeys, someTicks[i - one]);
+			aiQuatKey nextRotationKey = CalculateInterpolation(anim->mRotationKeys, anim->mNumRotationKeys, someTicks[i]);
+			aiQuaternion rotation = {};
+			Assimp::Interpolator<aiQuatKey>()(
+				rotation
+				, rotationKeyResult
+				, nextRotationKey
+				, someBlendingValues[i]);
+			//aiMatrix4x4 rotationM = {};
+			//InitM4FromM3(rotationM, rotation.GetMatrix());
+			rotationKeyResult.mValue = rotation;
+
+			//aiVectorKey positionKey = CalculateInterpolation(anim->mPositionKeys, anim->mNumPositionKeys, someTicks[i - one]);
+			aiVectorKey nextPositionKey = CalculateInterpolation(anim->mPositionKeys, anim->mNumPositionKeys, someTicks[i]);
+			aiVector3D position = {};
+			Assimp::Interpolator<aiVectorKey>()(
+				position
+				, positionKeyResult
+				, nextPositionKey
+				, someBlendingValues[i]);
+			//aiMatrix4x4 translationM = {};
+			//aiMatrix4x4::Translation(position, translationM);
+			positionKeyResult.mValue = position;
 		}
-
-		aiVectorKey scaleKey = CalculateInterpolation(anim->mScalingKeys, anim->mNumScalingKeys, someTicks[i - one]);
-		aiVectorKey nextScaleKey = CalculateInterpolation(anim->mScalingKeys, anim->mNumScalingKeys, someTicks[i]);
-		aiVector3D scale = {};
-		Assimp::Interpolator<aiVectorKey>()(
-			scale
-			, scaleKey
-			, nextScaleKey
-			, someBlendingValues[i]);
 		aiMatrix4x4 scaleM = {};
-		aiMatrix4x4::Scaling(scale, scaleM);
+		aiMatrix4x4::Scaling(scaleKeyResult.mValue, scaleM);
 
-
-		aiQuatKey rotationKey = CalculateInterpolation(anim->mRotationKeys, anim->mNumRotationKeys, someTicks[i - one]);
-		aiQuatKey nextRotationKey = CalculateInterpolation(anim->mRotationKeys, anim->mNumRotationKeys, someTicks[i]);
-		aiQuaternion rotation = {};
-		Assimp::Interpolator<aiQuatKey>()(
-			rotation
-			, rotationKey
-			, nextRotationKey
-			, someBlendingValues[i]);
 		aiMatrix4x4 rotationM = {};
-		InitM4FromM3(rotationM, rotation.GetMatrix());
+		InitM4FromM3(rotationM, rotationKeyResult.mValue.GetMatrix());
 
-		aiVectorKey positionKey = CalculateInterpolation(anim->mPositionKeys, anim->mNumPositionKeys, someTicks[i - one]);
-		aiVectorKey nextPositionKey = CalculateInterpolation(anim->mPositionKeys, anim->mNumPositionKeys, someTicks[i]);
-		aiVector3D position = {};
-		Assimp::Interpolator<aiVectorKey>()(
-			position
-			, positionKey
-			, nextPositionKey
-			, someBlendingValues[i]);
 		aiMatrix4x4 translationM = {};
-		aiMatrix4x4::Translation(position, translationM);
+		aiMatrix4x4::Translation(positionKeyResult.mValue, translationM);
+
 		NodeTransformation0 = translationM * rotationM * scaleM;
 	}
-
+		
 	aiMatrix4x4 GlobalTransformation = aParentTransform * NodeTransformation0;
 
 	if (myBoneMapping.find(aNode->mName.data) != myBoneMapping.end())
@@ -443,34 +852,6 @@ void CAnimationController::ReadNodeHeirarchy(
 	//		, someTicks
 	//		, someScenes
 	//		, aNode->mChildren[n - 1]
-	///*		, aDepth + 1*/
-	//		, GlobalTransformation);
-	//}
-
-
-	//for (uint i = 0; i < n; ++i)
-	//{
-	//	const auto childNodeTest = someNodes[i]->mChildren;
-	//	const aiNode** childNode = someNodes[i]->mChildren;
-	//
-	//	//std::vector<const aiNode*> nodes = {};
-	//	//for (auto i = 0; i < myScenes.size(); ++i)
-	//	//	nodes.push_back(myScenes[i]->mRootNode);
-	//
-	//	ReadNodeHeirarchy(
-	//		someBlendingValues, 
-	//		someTicks, 
-	//		someScenes, 
-	//		childNodeTest,
-	//		GlobalTransformation);
-	//}
-
-	//uint n = min(aNodeFrom->mNumChildren, aNodeTo->mNumChildren);
-
-	/*uint n = min(aNodeFrom->mNumChildren, aNodeTo->mNumChildren);
-	for (uint i = 0; i < n; i++)
-		ReadNodeHeirarchy(someScenes, someTicks, aNodeFrom->mChildren[i], aNodeTo->mChildren[i], GlobalTransformation);*/
-
 
 
 void CAnimationController::UpdateAnimationTimes(std::array<SlimMatrix44, 64>& someBones)
@@ -537,3 +918,139 @@ void CAnimationController::SaveMotionToMap(const aiScene* aScene, const std::str
 	mySceneMap[animName] = aScene;
 	myTicks.push_back(0.0f);
 }
+
+aiMatrix4x4 CAnimationController::BlendMatrix(const aiMatrix4x4& aMatrixA, const aiMatrix4x4& aMatrixB, float aBlend) const
+{
+	aiVector3D scaleStart, scaleEnd, scaleResult;
+	aiQuaternion rotationStart, rotationEnd, rotationResult;
+	aiVector3D posStart, posEnd, posResult;
+	aMatrixA.Decompose(scaleStart, rotationStart, posStart);
+	aMatrixB.Decompose(scaleEnd, rotationEnd, posEnd);
+
+	Assimp::Interpolator<aiVector3D>()(posResult, posStart, posEnd, aBlend);
+	aiQuaternion::Interpolate(rotationResult, rotationStart, rotationEnd, aBlend);
+	Assimp::Interpolator<aiVector3D>()(scaleResult, scaleStart, scaleEnd, aBlend);
+	rotationResult.Normalize();
+
+	aiMatrix4x4 scaleM;
+	aiMatrix4x4::Scaling(scaleResult, scaleM);
+
+	aiMatrix4x4 rotM;
+	InitM4FromM3(rotM, rotationResult.GetMatrix());
+
+	aiMatrix4x4 TranslationM;
+	aiMatrix4x4::Translation(posResult, TranslationM);
+
+	aiMatrix4x4 transformation = TranslationM * rotM * scaleM;
+	return transformation;
+}
+
+//constexpr float f_milliseconds = 1000.0f;
+#ifdef _DEBUG
+//#define ALLOW_PRINT
+#endif
+#include <iomanip>
+void TEMP_PrintMatrix4x4_2decimals(const aiMatrix4x4& aMatrix, const std::string& aMsg = "")
+{
+	aMatrix; aMsg;
+#ifdef ALLOW_PRINT
+	// https://stackoverflow.com/questions/5907031/printing-the-correct-number-of-decimal-points-with-cout
+	std::cout << std::fixed;
+	std::cout << std::setprecision(2);
+
+	std::cout << aMsg << std::endl;
+	std::cout << aMatrix.a1 << " | " << aMatrix.a2 << " | " << aMatrix.a3 << " | " << aMatrix.a4 << std::endl;
+	std::cout << aMatrix.b1 << " | " << aMatrix.b2 << " | " << aMatrix.b3 << " | " << aMatrix.b4 << std::endl;
+	std::cout << aMatrix.c1 << " | " << aMatrix.c2 << " | " << aMatrix.c3 << " | " << aMatrix.c4 << std::endl;
+	std::cout << aMatrix.d1 << " | " << aMatrix.d2 << " | " << aMatrix.d3 << " | " << aMatrix.d4 << std::endl;
+	std::cout << "------" << std::endl;
+#endif
+}
+
+///*		, aDepth + 1*/
+//		, GlobalTransformation);
+//}
+
+
+//for (uint i = 0; i < n; ++i)
+//{
+//	const auto childNodeTest = someNodes[i]->mChildren;
+//	const aiNode** childNode = someNodes[i]->mChildren;
+//
+//	//std::vector<const aiNode*> nodes = {};
+//	//for (auto i = 0; i < myScenes.size(); ++i)
+//	//	nodes.push_back(myScenes[i]->mRootNode);
+//
+//	ReadNodeHeirarchy(
+//		someBlendingValues, 
+//		someTicks, 
+//		someScenes, 
+//		childNodeTest,
+//		GlobalTransformation);
+//}
+
+//uint n = min(aNodeFrom->mNumChildren, aNodeTo->mNumChildren);
+
+/*uint n = min(aNodeFrom->mNumChildren, aNodeTo->mNumChildren);
+for (uint i = 0; i < n; i++)
+	ReadNodeHeirarchy(someScenes, someTicks, aNodeFrom->mChildren[i], aNodeTo->mChildren[i], GlobalTransformation);*/
+
+
+
+//void CAnimationController::CountChildren(const aiNode* aNode, int& count, int& childIndex)
+//{
+//	if (aNode->mNumChildren == 0)
+//		return CountChildren(aNode->mParent, count, ++childIndex);
+//
+//	count += aNode->mNumChildren;
+//	return CountChildren(aNode->mChildren[childIndex], count, childIndex);
+//}
+//	//if (aNode->mNumChildren < childIndex)
+	//{
+	//	return CountChildren(aNode->mParent, count, ++childIndex);
+	//}
+//	else
+	//{
+	//}
+
+
+	//for (int i = aNode->mNumChildren; i != 0; --i)
+	//{
+	//	count += aNode->mNumChildren;
+	//	return CountChildren(aNode->mChildren[i - 1], count);
+	//}
+
+
+//unsigned int CAnimationController::CountChildren(const aiNode* aNode)
+//{
+//	uint childCount = aNode->mNumChildren;
+//	for (uint i = 0; i < childCount; i++)
+//	{
+//		return 1 + CountChildren(aNode->mChildren[i]);
+//	}
+//	
+//	//return 1;
+//}
+
+
+
+	//for (unsigned int i = 0; i < aNode->mNumChildren; ++i)
+	//{
+	//	const aiNode* child = aNode->mChildren[i];
+	//}
+
+
+	//if (aNode->mNumChildren == 0)
+	//{
+	//	return 1;
+	//}
+
+//ReadNodeHeirarchy(aFromScene, aToScene, aTickFrom, aTickTo, aNodeFrom->mChildren[i], aNodeTo->mChildren[i], GlobalTransformation);
+
+	//for(int i = 0; i < static_cast<int>(aNode->mNumChildren); ++i)
+	//	return 1 + CountChildren(aNode->mChildren[0]);
+
+
+
+	//return CountChildren(aNode->mChildren[) + aNode->
+
