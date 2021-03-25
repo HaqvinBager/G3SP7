@@ -1,7 +1,6 @@
 #pragma once
 #include <imgui.h>
 
-
 namespace IronWroughtImGui {
 	class CWindow
 	{

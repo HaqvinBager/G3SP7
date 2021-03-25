@@ -70,8 +70,8 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneJson)
 		}
 	}
 
-	AddPlayer(*scene); //This add play does not read data from unity. (Yet..!) /Axel 2021-03-24
 	CEngine::GetInstance()->GetPhysx().Cooking(scene->ActiveGameObjects(), scene);
+	AddPlayer(*scene); //This add play does not read data from unity. (Yet..!) /Axel 2021-03-24
 	return scene;
 }
 

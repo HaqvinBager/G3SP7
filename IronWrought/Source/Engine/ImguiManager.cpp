@@ -59,6 +59,7 @@ CImguiManager::CImguiManager() : myGraphManagerIsFullscreen(false), myIsEnabled(
 	myWindows.emplace_back(std::make_unique<IronWroughtImGui::CLoadScene>("Load Scene", true));
 	myWindows.emplace_back(std::make_unique <IronWroughtImGui::CCameraSetting>("Camera Settings"));
 	myWindows.emplace_back(std::make_unique <IronWroughtImGui::CCurveWindow>("Curve Editor"));
+	myWindows.emplace_back(std::make_unique <IronWroughtImGui::CPlayerControlWindow>("Player"));
 
 	CMainSingleton::PostMaster().Subscribe(EMessageType::CursorHideAndLock, this);
 	CMainSingleton::PostMaster().Subscribe(EMessageType::CursorShowAndUnlock, this);
