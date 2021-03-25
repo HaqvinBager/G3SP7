@@ -193,6 +193,12 @@ void IronWroughtImGui::CVFXEditorWindow::ShowMainMenu()
 			{
 				mySelectedIndex = index;
 
+				if (myEffectFilePaths[mySelectedIndex].find("Empty") != std::string::npos)
+				{
+					ImGui::End();
+					return;
+				}
+
 				std::string saveDestination = "Assets/Graphics/VFX/JSON/VFXSystem_";
 				saveDestination.append(myEffectFilePaths[mySelectedIndex] + ".json");
 				ZeroMemory(mySaveDestination, 256);
