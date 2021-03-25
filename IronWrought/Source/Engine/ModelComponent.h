@@ -8,7 +8,11 @@ class CModelComponent : public CBehaviour
 {
 public:
 	CModelComponent(CGameObject& aParent, const std::string& aFBXPath);
+	//CModelComponent(CGameObject& aParent, const std::string& aFBXPath, const int aVertexColorsID);
 	~CModelComponent() override;
+
+
+	void InitVertexPaint(const int aVertexColorsID, const std::vector<std::string>& someMaterials);
 
 	void Awake() override;
 	void Start() override;

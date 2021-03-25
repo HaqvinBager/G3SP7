@@ -91,88 +91,57 @@ void CMaterialHandler::ReleaseMaterial(const std::string& aMaterialName)
 	}
 }
 
-SVertexPaintData CMaterialHandler::RequestVertexColorID(int aGameObjectID, const std::string& aFbxModelPath)
+SVertexPaintData CMaterialHandler::RequestVertexColorID(const int aVertexColorsID, const std::string& aFbxModelPath, const std::vector<std::string>& someMatrials)
 {
-	std::vector<std::string> jsonPaths = CFolderUtility::GetFileNamesInFolder(myVertexLinksPath, ".json", "ColorCollection");
-	SVertexPaintColorData colorData{ {}, {}, 0 };
-	std::vector<std::string> materialNames;
-	for (auto& jsonPath : jsonPaths)
+	const std::string& vertexColorsPath = CJsonReader::Get()->GetAssetPath(aVertexColorsID);
+	SVertexPaintColorData colorData = CBinReader::LoadVertexColorData(ASSETPATH(vertexColorsPath));
+
+	std::vector<Vector3>& fbxVertexPositions = CModelFactory::GetInstance()->GetVertexPositions(aFbxModelPath);
+	std::unordered_map<Vector3, Vector3, CMaterialHandler::VectorHasher, VertexPositionComparer> vertexPositionToColorMap;
+
+	const float epsilon = 0.001f;
+	for (const auto& ourFBXVertexPosition : fbxVertexPositions)
 	{
-		rapidjson::Document vertexLinks = CJsonReader::Get()->LoadDocument(myVertexLinksPath + jsonPath);
-
-		if (vertexLinks.HasMember("links"))
-		{
-			if (vertexLinks["links"].IsArray())
-			{
-				auto linksArray = vertexLinks["links"].GetArray();
-				
-				if (linksArray.Empty())
-					continue;
-
-				if (!linksArray[0].HasMember("myTransformIDs"))
-					continue;
-				
-				for (unsigned int i = 0; i < linksArray.Size(); ++i)
-				{
-					for (const auto& gameObjectID : linksArray[i]["myTransformIDs"].GetArray())
-					{
-						if (gameObjectID.GetInt() == aGameObjectID)
-						{
-							colorData = CBinReader::LoadVertexColorData(ASSETPATH(linksArray[i]["colorsPath"].GetString()));
-
-							std::vector<Vector3>& fbxVertexPositions = CModelFactory::GetInstance()->GetVertexPositions(aFbxModelPath);					
-							std::unordered_map<Vector3, Vector3, CMaterialHandler::VectorHasher, VertexPositionComparer> vertexPositionToColorMap;
-
-							const float epsilon = 0.001f;
-							for (const auto& ourFBXVertexPosition : fbxVertexPositions) {
-								vertexPositionToColorMap[ourFBXVertexPosition] = { .0f, .0f, .0f };								
-							}
-
-							for (unsigned int j = 0; j < colorData.myVertexPositions.size(); ++j) {						
-								vertexPositionToColorMap[{ -colorData.myVertexPositions[j].x, colorData.myVertexPositions[j].y, -colorData.myVertexPositions[j].z}] = colorData.myColors[j];						
-							}
-
-							std::vector<Vector3> rgbColorData = {};
-							for (auto& ourFBXVertexPositionValue : fbxVertexPositions) {
-								rgbColorData.push_back(vertexPositionToColorMap[ourFBXVertexPositionValue]);
-							}
-
-
-							if (myVertexColorBuffers.find(colorData.myVertexMeshID) == myVertexColorBuffers.end())
-							{
-								D3D11_BUFFER_DESC vertexColorBufferDesc;
-								vertexColorBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-								vertexColorBufferDesc.ByteWidth = sizeof(rgbColorData[0]) * static_cast<UINT>(rgbColorData.size());
-
-								vertexColorBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-								vertexColorBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-								vertexColorBufferDesc.MiscFlags = 0;
-								vertexColorBufferDesc.StructureByteStride = 0;
-								D3D11_SUBRESOURCE_DATA subResourceData = { 0 };
-								subResourceData.pSysMem = rgbColorData.data();
-
-								ID3D11Buffer* vertexColorBuffer;
-								ENGINE_HR_MESSAGE(CEngine::GetInstance()->myFramework->GetDevice()->CreateBuffer(&vertexColorBufferDesc, &subResourceData, &vertexColorBuffer), "Vertex Color Buffer could not be created.");
-
-								myVertexColorBuffers.emplace(colorData.myVertexMeshID, std::move(vertexColorBuffer));
-								myVertexColorReferences.emplace(colorData.myVertexMeshID, 0);
-							}
-
-							myVertexColorReferences[colorData.myVertexMeshID] += 1;
-
-							for (const auto& materialName : linksArray[i]["myMaterialNames"].GetArray())
-							{
-								RequestMaterial(materialName.GetString());
-								materialNames.emplace_back(materialName.GetString());
-							}
-						}
-					}
-				}
-			}
-		}
-
+		vertexPositionToColorMap[ourFBXVertexPosition] = { .0f, .0f, .0f };
 	}
-	return { materialNames, static_cast<unsigned int>(colorData.myVertexMeshID) };
+
+	for (unsigned int j = 0; j < colorData.myVertexPositions.size(); ++j)
+	{
+		vertexPositionToColorMap[{ -colorData.myVertexPositions[j].x, colorData.myVertexPositions[j].y, -colorData.myVertexPositions[j].z}] = colorData.myColors[j];
+	}
+
+	std::vector<Vector3> rgbColorData = {};
+	for (auto& ourFBXVertexPositionValue : fbxVertexPositions)
+	{
+		rgbColorData.push_back(vertexPositionToColorMap[ourFBXVertexPositionValue]);
+	}
+
+	if (myVertexColorBuffers.find(colorData.myVertexMeshID) == myVertexColorBuffers.end())
+	{
+		D3D11_BUFFER_DESC vertexColorBufferDesc;
+		vertexColorBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+		vertexColorBufferDesc.ByteWidth = sizeof(rgbColorData[0]) * static_cast<UINT>(rgbColorData.size());
+
+		vertexColorBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		vertexColorBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		vertexColorBufferDesc.MiscFlags = 0;
+		vertexColorBufferDesc.StructureByteStride = 0;
+		D3D11_SUBRESOURCE_DATA subResourceData = { 0 };
+		subResourceData.pSysMem = rgbColorData.data();
+
+		ID3D11Buffer* vertexColorBuffer;
+		ENGINE_HR_MESSAGE(CEngine::GetInstance()->myFramework->GetDevice()->CreateBuffer(&vertexColorBufferDesc, &subResourceData, &vertexColorBuffer), "Vertex Color Buffer could not be created.");
+
+		myVertexColorBuffers.emplace(colorData.myVertexMeshID, std::move(vertexColorBuffer));
+		myVertexColorReferences.emplace(colorData.myVertexMeshID, 0);
+	}
+	myVertexColorReferences[colorData.myVertexMeshID] += 1;
+
+	for (const auto& materialName : someMatrials)
+	{
+		RequestMaterial(materialName);
+	}
+	return { someMatrials, colorData.myVertexMeshID };
 }
 
 std::vector<DirectX::SimpleMath::Vector3>& CMaterialHandler::GetVertexColors(unsigned int aVertexColorID)

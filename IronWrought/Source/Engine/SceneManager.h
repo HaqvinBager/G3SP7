@@ -14,6 +14,8 @@ private:
 	static bool AddGameObjects(CScene& aScene, RapidArray someData);
 	static void SetTransforms(CScene& aScene, RapidArray someData);
 	static void AddModelComponents(CScene& aScene, RapidArray someData);
+	static void SetVertexPaintedColors(CScene& aScene, RapidArray someData);
+
 	static void AddInstancedModelComponents(CScene& aScene, RapidArray someData);
 	static void AddPointLights(CScene& aScene, RapidArray someData);
 	static void AddDecalComponents(CScene& aScene, RapidArray someData);

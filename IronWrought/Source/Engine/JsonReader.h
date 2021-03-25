@@ -35,7 +35,8 @@ public:
 
 private:
 	std::vector<SDirectory> myDirectories;
-	std::unordered_map<int, std::string> myModelAssetMap;
+	std::unordered_map<int, std::string> myPathsMap;
+	std::unordered_map<int, std::string> myVertexColorsMap;
 
 
 };
