@@ -135,7 +135,9 @@ CParticleEmitter* CParticleEmitterFactory::LoadParticle(std::string aFilePath)
 
     particleEmitter->Init(particleData);
 
-    myParticleEmitters.emplace(aFilePath, particleEmitter);
+    if (myParticleEmitters.find(aFilePath) == myParticleEmitters.end())
+        myParticleEmitters.emplace(aFilePath, particleEmitter);
+    
     return particleEmitter;
 }
 
@@ -176,6 +178,16 @@ std::vector<CParticleEmitter*> CParticleEmitterFactory::GetParticleSet(std::vect
     return std::move(bases);
 }
 
+std::vector<CParticleEmitter*> CParticleEmitterFactory::ReloadParticleSet(std::vector<std::string> someFilePaths)
+{
+    std::vector<CParticleEmitter*> bases;
+    for (unsigned int i = 0; i < someFilePaths.size(); ++i)
+    {
+        bases.emplace_back(LoadParticle(someFilePaths[i]));
+    }
+    return std::move(bases);
+}
+
 void CParticleEmitterFactory::ReadJsonValues(std::string aFilePath, CParticleEmitter::SParticleData& someParticleData)
 {
     using namespace rapidjson;
@@ -183,6 +195,7 @@ void CParticleEmitterFactory::ReadJsonValues(std::string aFilePath, CParticleEmi
     //std::ifstream inputStream(aFilePath);
     //IStreamWrapper inputWrapper(inputStream);
     Document document = CJsonReader::Get()->LoadDocument(aFilePath);
+    ENGINE_BOOL_POPUP(!CJsonReader::HasParseError(document), "Invalid Json document: %s", aFilePath.c_str());
     //document.ParseStream(inputWrapper);
 
     someParticleData.myNumberOfParticles =          document["Max Number Of Particles"].GetInt();
@@ -211,4 +224,43 @@ void CParticleEmitterFactory::ReadJsonValues(std::string aFilePath, CParticleEmi
     someParticleData.myDirectionLowerBound =      { document["Spawn Direction X Randomize From"].GetFloat(), document["Spawn Direction Y Randomize From"].GetFloat(), document["Spawn Direction Z Randomize From"].GetFloat() };
     someParticleData.myDirectionUpperBound =      { document["Spawn Direction X Randomize To"].GetFloat(), document["Spawn Direction Y Randomize To"].GetFloat(), document["Spawn Direction Z Randomize To"].GetFloat() };
     someParticleData.myTexturePath =                ASSETPATH(document["Texture Path"].GetString());
+
+    if (document.HasMember("Color Curve"))
+    {
+        const auto& colorCurveArray = document["Color Curve"].GetArray();
+        unsigned int curveIndex = 0;
+        someParticleData.myColorCurve.resize(colorCurveArray.Size());
+        for (const auto& point : colorCurveArray)
+        {
+            someParticleData.myColorCurve[curveIndex].x = point["x"].GetFloat();
+            someParticleData.myColorCurve[curveIndex].y = point["y"].GetFloat();
+            curveIndex++;
+        }
+    }
+
+    if (document.HasMember("Size Curve"))
+    {
+        const auto& sizeCurveArray = document["Size Curve"].GetArray();
+        unsigned int curveIndex = 0;
+        someParticleData.mySizeCurve.resize(sizeCurveArray.Size());
+        for (const auto& point : sizeCurveArray)
+        {
+            someParticleData.mySizeCurve[curveIndex].x = point["x"].GetFloat();
+            someParticleData.mySizeCurve[curveIndex].y = point["y"].GetFloat();
+            curveIndex++;
+        }
+    }
+
+    if (document.HasMember("Direction Curve"))
+    {
+        const auto& directionCurveArray = document["Direction Curve"].GetArray();
+        unsigned int curveIndex = 0;
+        someParticleData.myDirectionCurve.resize(directionCurveArray.Size());
+        for (const auto& point : directionCurveArray)
+        {
+            someParticleData.myDirectionCurve[curveIndex].x = point["x"].GetFloat();
+            someParticleData.myDirectionCurve[curveIndex].y = point["y"].GetFloat();
+            curveIndex++;
+        }
+    }
 }

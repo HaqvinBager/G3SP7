@@ -9,7 +9,7 @@ class CPlayerAnimationController;
 class CPlayerControllerComponent : public CComponent, public IInputObserver
 {
 public:
-	CPlayerControllerComponent(CGameObject& gameObject, const float aWalkSpeed = 0.03f, const float aCrouchSpeed = 0.015f);
+	CPlayerControllerComponent(CGameObject& gameObject, const float aWalkSpeed = 0.06f, const float aCrouchSpeed = 0.03f);
 	~CPlayerControllerComponent() override;
 
 	void Awake() override;
@@ -26,6 +26,15 @@ public:
 
 	CCharacterController* GetCharacterController();
 
+	const float WalkSpeed() const { return myWalkSpeed; }
+	void WalkSpeed(const float aSpeed) { myWalkSpeed = aSpeed; }
+	const float CrouchSpeed() const { return myCrouchSpeed; }
+	void CrouchSpeed(const float aSpeed) { myCrouchSpeed = aSpeed; }
+	const float JumpHeight() const { return myJumpHeight; }
+	void JumpHeight(const float aHeight) { myJumpHeight = aHeight; }
+	const float FallSpeed() const { return myFallSpeed; }
+	void FallSpeed(const float aSpeed) { myFallSpeed = aSpeed; }
+
 private:
 	CCharacterController* myController;
 	CPlayerAnimationController* myAnimationComponentController;
@@ -41,8 +50,10 @@ private:
 	bool myHasJumped;
 
 	bool myIsCrouching;
-	const float myWalkSpeed;
-	const float myCrouchSpeed;
+	float myWalkSpeed;
+	float myCrouchSpeed;
+	float myJumpHeight;
+	float myFallSpeed;
 
 	// 0.6f is player width from GDD
 	const float myColliderRadius = 0.6f * 0.5f;

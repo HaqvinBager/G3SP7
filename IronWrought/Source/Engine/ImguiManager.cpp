@@ -43,7 +43,7 @@ static ImFont* ImGui_LoadFont(ImFontAtlas& atlas, const char* name, float size, 
 }
 ImFontAtlas myFontAtlas;
 
-CImguiManager::CImguiManager() : myGraphManagerIsFullscreen(false), myIsEnabled(false), myScriptsStatus("Scripts Off")
+CImguiManager::CImguiManager() : myGraphManagerIsFullscreen(false), myIsEnabled(false), myScriptsStatus("Scripts Off"), myGraphManager(nullptr)
 {
 	ImGui::DebugCheckVersionAndDataLayout("1.80 WIP", sizeof(ImGuiIO), sizeof(ImGuiStyle), sizeof(ImVec2), sizeof(ImVec4), sizeof(ImDrawVert), sizeof(unsigned int));
 	ImGui::CreateContext();
@@ -53,12 +53,13 @@ CImguiManager::CImguiManager() : myGraphManagerIsFullscreen(false), myIsEnabled(
 
 	ImGui::CreateContext(&myFontAtlas);
 
-	myGraphManager = new CGraphManager();
-	myGraphManager->Load("");
+	//myGraphManager = new CGraphManager();
+	//myGraphManager->Load("");
 
 	myWindows.emplace_back(std::make_unique<IronWroughtImGui::CLoadScene>("Load Scene", true));
 	myWindows.emplace_back(std::make_unique <IronWroughtImGui::CCameraSetting>("Camera Settings"));
-	myWindows.emplace_back(std::make_unique <IronWroughtImGui::CCurveWindow>("Curve Editor"));
+	myWindows.emplace_back(std::make_unique <IronWroughtImGui::CVFXEditorWindow>("VFX Editor"));
+	myWindows.emplace_back(std::make_unique <IronWroughtImGui::CPlayerControlWindow>("Player"));
 
 	CMainSingleton::PostMaster().Subscribe(EMessageType::CursorHideAndLock, this);
 	CMainSingleton::PostMaster().Subscribe(EMessageType::CursorShowAndUnlock, this);
@@ -68,7 +69,13 @@ CImguiManager::~CImguiManager()
 {
 	//delete myGraphManager;
 	//myGraphManager = nullptr;
+	myGraphManager = nullptr;
 	ImGui::DestroyContext();
+}
+
+void CImguiManager::Init(CGraphManager* aGraphManager)
+{
+	myGraphManager = aGraphManager;
 }
 
 void CImguiManager::Update()

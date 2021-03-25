@@ -33,6 +33,7 @@ class CNodeInstance
 {
 public:
 	CNodeInstance(CGraphManager* aGraphManager, bool aCreateNewUID = true);
+	~CNodeInstance();
 	CUID myUID;
 	class CNodeType* myNodeType;
 	void Enter();

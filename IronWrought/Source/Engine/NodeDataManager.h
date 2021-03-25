@@ -17,6 +17,10 @@ public:
 	~CNodeDataManager();
 	static void Create() { ourInstance = new CNodeDataManager(); }
 	static CNodeDataManager* Get() { return ourInstance; }
+
+	static void SetFolderPath(std::string aFolderPath) { ourInstance->myCurrentFolderPath = aFolderPath; }
+	static std::string GetFolderPath() { return ourInstance->myCurrentFolderPath; }
+
 	void ClearStoredData();
 
 	template <typename T>
@@ -26,15 +30,15 @@ public:
 		auto it = myNodeDataMap.find(aNodeDataKey);
 		if (it == myNodeDataMap.end())
 		{
-				myNodeDataMap[aNodeDataKey] = new T(aValue);
-				myNodeDataTypeMap[aNodeDataKey] = aDataType;
+			myNodeDataMap[aNodeDataKey] = new T(aValue);
+			myNodeDataTypeMap[aNodeDataKey] = aDataType;
 		}
 		else
 		{
 			*(reinterpret_cast<T*>((*it).second)) = aValue;
 		}
 	}
-	
+
 	template <typename T>
 	T GetData(const std::string aNodeDataKey)
 	{
@@ -47,5 +51,6 @@ public:
 private:
 	std::unordered_map<std::string, void*> myNodeDataMap;
 	std::unordered_map<std::string, EDataType> myNodeDataTypeMap;
+	std::string myCurrentFolderPath;
 	static CNodeDataManager* ourInstance;
 };

@@ -146,6 +146,21 @@ private:
 	CGameObject* myPlayer;
 //POINTERS END
 
+// VFX EDITOR START
+public:
+	void SetVFXTester(CGameObject* aGameObject)
+	{
+		myVFXTester = aGameObject;
+	}
+	CGameObject* GetVFXTester() const
+	{
+		return myVFXTester;
+	}
+private:
+	CGameObject* myVFXTester = nullptr;
+// VFX EDITOR END
+
+
 	bool myIsReadyToRender;
 #ifdef  _DEBUG
 private:

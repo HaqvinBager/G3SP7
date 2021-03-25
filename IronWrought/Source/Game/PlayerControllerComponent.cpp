@@ -28,6 +28,8 @@ CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, 
 	, myCanJump(true)
 	, myHasJumped(false)
 	, myIsJumping(false)
+	, myJumpHeight(0.035f)
+	, myFallSpeed(0.098f)
 	, myMovement( Vector3(0.0f, -0.098f, 0.0f ))
 {
 	INPUT_MAPPER->AddObserver(EInputEvent::MoveForward,		this);
@@ -89,18 +91,18 @@ void CPlayerControllerComponent::Update()
 	
 	if (myHasJumped == true)
 	{
-		myMovement.y = 0.035f;
+		myMovement.y = myJumpHeight;
 		myHasJumped = false;
 	}
 
-	if (myMovement.y >= -1)
+	if (myMovement.y >= -0.1f)
 	{
-		myMovement.y -= 0.1f * CTimer::Dt();
+		myMovement.y -= myFallSpeed * CTimer::Dt();
 	}
 	
 	if (myIsJumping == false)
 	{
-		myMovement.y = -0.098f;
+		myMovement.y = myMovement.y >-0.0f ? myMovement.y - myFallSpeed : myMovement.y;
 	}
 
 	GameObject().myTransform->Position(myController->GetPosition());

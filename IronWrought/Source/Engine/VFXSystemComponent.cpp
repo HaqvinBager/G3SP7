@@ -22,9 +22,21 @@ CVFXSystemComponent::CVFXSystemComponent(CGameObject& aParent, const std::string
 {
 	myEnabled = true;
 
+	Init(aVFXDataPath);
+}
+
+CVFXSystemComponent::~CVFXSystemComponent()
+{
+	myEffects.clear();
+}
+
+void CVFXSystemComponent::Init(const std::string& aVFXDataPath)
+{
 	rapidjson::Document document = CJsonReader::Get()->LoadDocument(aVFXDataPath);
 	ENGINE_BOOL_POPUP(!CJsonReader::HasParseError(document), "Invalid Json document: %s", aVFXDataPath.c_str());
 	ENGINE_BOOL_POPUP(document.HasMember("VFXEffects"), "VFX Json: %s is not structured correctly! Please compare to VFXSystem_ToLoad.json", aVFXDataPath.c_str());
+
+	myEffects.clear();
 
 	for (unsigned int j = 0; j < document["VFXEffects"].Size(); ++j)
 	{
@@ -52,15 +64,15 @@ CVFXSystemComponent::CVFXSystemComponent(CGameObject& aParent, const std::string
 
 			Matrix t;
 			t = Matrix::CreateFromYawPitchRoll
-			( DirectX::XMConvertToRadians(doc["VFXMeshes"][i]["Rotation Y"].GetFloat())
-			 , DirectX::XMConvertToRadians(doc["VFXMeshes"][i]["Rotation X"].GetFloat())
-			 , DirectX::XMConvertToRadians(doc["VFXMeshes"][i]["Rotation Z"].GetFloat())
+			(DirectX::XMConvertToRadians(doc["VFXMeshes"][i]["Rotation Y"].GetFloat())
+				, DirectX::XMConvertToRadians(doc["VFXMeshes"][i]["Rotation X"].GetFloat())
+				, DirectX::XMConvertToRadians(doc["VFXMeshes"][i]["Rotation Z"].GetFloat())
 			);
 
 			t *= Matrix::CreateScale
-			 ( doc["VFXMeshes"][i]["Scale X"].GetFloat()
-			 , doc["VFXMeshes"][i]["Scale Y"].GetFloat()
-			 , doc["VFXMeshes"][i]["Scale Z"].GetFloat()
+			(doc["VFXMeshes"][i]["Scale X"].GetFloat()
+				, doc["VFXMeshes"][i]["Scale Y"].GetFloat()
+				, doc["VFXMeshes"][i]["Scale Z"].GetFloat()
 			);
 
 			t.Translation
@@ -83,7 +95,8 @@ CVFXSystemComponent::CVFXSystemComponent(CGameObject& aParent, const std::string
 			effect->myVFXBaseDurations[i] = doc["VFXMeshes"][i]["Duration"].GetFloat();
 		}
 
-		effect->myVFXBases = CVFXMeshFactory::GetInstance()->GetVFXBaseSet(vfxPaths);
+		effect->myVFXBases = CVFXMeshFactory::GetInstance()->ReloadVFXBaseSet(vfxPaths);
+
 		//ENGINE_BOOL_POPUP(!effect->myVFXBases.empty(), "No VFX data found.");
 
 		std::vector<std::string> particlePaths;
@@ -98,15 +111,14 @@ CVFXSystemComponent::CVFXSystemComponent(CGameObject& aParent, const std::string
 		effect->myEmitterBaseDelays.resize(size);
 		effect->myEmitterBaseDurations.resize(size);
 		effect->myEmitterTimers.resize(size, 0.0f);
-		effect->myParticleSizeCurves.resize(size);
 		for (unsigned int i = 0; i < doc["ParticleSystems"].Size(); ++i) {
 			particlePaths.emplace_back(ASSETPATH(doc["ParticleSystems"][i]["Path"].GetString()));
 
 			Matrix t;
 			t = Matrix::CreateFromYawPitchRoll
-			 ( DirectX::XMConvertToRadians(doc["ParticleSystems"][i]["Rotation Y"].GetFloat())
-			 , DirectX::XMConvertToRadians(doc["ParticleSystems"][i]["Rotation X"].GetFloat())
-			 , DirectX::XMConvertToRadians(doc["ParticleSystems"][i]["Rotation Z"].GetFloat())
+			(DirectX::XMConvertToRadians(doc["ParticleSystems"][i]["Rotation Y"].GetFloat())
+				, DirectX::XMConvertToRadians(doc["ParticleSystems"][i]["Rotation X"].GetFloat())
+				, DirectX::XMConvertToRadians(doc["ParticleSystems"][i]["Rotation Z"].GetFloat())
 			);
 
 			t *= Matrix::CreateScale(doc["ParticleSystems"][i]["Scale"].GetFloat());
@@ -130,24 +142,12 @@ CVFXSystemComponent::CVFXSystemComponent(CGameObject& aParent, const std::string
 
 			effect->myEmitterBaseDelays[i] = doc["ParticleSystems"][i]["Delay"].GetFloat();
 			effect->myEmitterBaseDurations[i] = doc["ParticleSystems"][i]["Duration"].GetFloat();
-
-			if (doc["ParticleSystems"][i].HasMember("SizeCurve"))
-			{
-				const auto& sizeCurveArray = doc["ParticleSystems"][i]["SizeCurve"].GetArray();
-				unsigned int curveIndex = 0;
-				effect->myParticleSizeCurves[i].resize(sizeCurveArray.Size());
-				for (const auto& point : sizeCurveArray)
-				{
-					effect->myParticleSizeCurves[i][curveIndex].x = point["x"].GetFloat();
-					effect->myParticleSizeCurves[i][curveIndex].y = point["y"].GetFloat();
-					curveIndex++;
-				}
-			}
 		}
 
-		effect->myParticleEmitters = CParticleEmitterFactory::GetInstance()->GetParticleSet(particlePaths);
+		effect->myParticleEmitters = CParticleEmitterFactory::GetInstance()->ReloadParticleSet(particlePaths);
+
 		ENGINE_BOOL_POPUP(!effect->myParticleEmitters.empty(), "No Particle data found.");
-	
+
 		for (unsigned int i = 0; i < effect->myParticleEmitters.size(); ++i) {
 
 			effect->myParticleVertices.emplace_back(std::vector<CParticleEmitter::SParticleVertex>());
@@ -159,11 +159,6 @@ CVFXSystemComponent::CVFXSystemComponent(CGameObject& aParent, const std::string
 			}
 		}
 	}
-}
-
-CVFXSystemComponent::~CVFXSystemComponent()
-{
-	myEffects.clear();
 }
 
 void CVFXSystemComponent::Awake()

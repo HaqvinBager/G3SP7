@@ -28,7 +28,7 @@ class CSceneFactory {
 	friend class CEngine;
 public:
 	static CSceneFactory* Get();
-	void LoadSceneAsync(const std::string& aSceneName, std::function<void()> onComplete);
+	void LoadSceneAsync(const std::string& aSceneName, std::function<void(std::string)> onComplete);
 	void Update();
 
 private:
@@ -38,7 +38,8 @@ private:
 
 private:
 	std::future<CScene*> myFuture;
-	std::function<void()> myOnComplete;
+	std::function<void(std::string)> myOnComplete;
+	std::string myLastSceneName;
 };
 
 
