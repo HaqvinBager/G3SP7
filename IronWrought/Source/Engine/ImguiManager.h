@@ -2,6 +2,8 @@
 #include <vector>
 #include <string>
 
+#include "Observer.h"
+
 class CGraphManager;
 struct ImFontAtlas;
 
@@ -9,13 +11,17 @@ namespace IronWroughtImGui {
 	class CWindow;
 }
 
-class CImguiManager
+class CImguiManager : public IObserver
 {
 public:
 	CImguiManager();
 	~CImguiManager();
+	void Init(CGraphManager* aGraphManager);
 	void Update();
 	void DebugWindow();
+
+public://Inherited
+	void Receive(const SMessage& aMessage) override;
 
 private:
 	std::vector<std::unique_ptr<IronWroughtImGui::CWindow>> myWindows;

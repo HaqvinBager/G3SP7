@@ -106,7 +106,7 @@ public:
 #endif
 // ! Update functions
 
-	void BlendToAnimation(uint anAnimationIndex, bool anUpdateBoth = true, float aBlendDuration = 0.3f, bool aTemporary = false, float aTime = 0.0f);
+	void BlendToAnimation(uint anAnimationIndex, bool anUpdateBoth = true, float aBlendDuration = 0.3f, bool aTemporary = false, float aTimeMultiplier = 1.0f);
 	bool SetBlendTime(float aTime);
 	uint GetMaxIndex();
 	bool IsDoneBlending();

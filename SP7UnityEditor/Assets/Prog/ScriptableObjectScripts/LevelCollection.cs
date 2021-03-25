@@ -6,4 +6,7 @@ using UnityEngine;
 public class LevelCollection : ScriptableObject
 {
     public List<SceneReference> myScenes = new List<SceneReference>();
+
+    //public SceneReference transitionStart = new SceneReference();
+    //public SceneReference transitionEnd = new SceneReference();
 }

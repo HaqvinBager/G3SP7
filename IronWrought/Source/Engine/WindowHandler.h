@@ -34,6 +34,9 @@ public:
 	const bool CursorLocked() const;
 	void LockCursor(bool aShouldLock);
 
+	void HideAndLockCursor();
+	void ShowAndUnlockCursor();
+
 private:
 	bool Init(CWindowHandler::SWindowData someWindowData);
 	void SetInternalResolution();

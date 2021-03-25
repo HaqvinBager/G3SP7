@@ -25,8 +25,13 @@ public:
 	void SetCameraMoveSpeed(float aCameraMoveSpeed);
 	void SetCameraMode(const ECameraMode& aCameraMode) { myCameraMode = aCameraMode; }
 	const bool IsFreeCamMode() const { return (myCameraMode == ECameraMode::FreeCam); }
+	const bool IsCursorUnlocked() const { return (myCameraMode == ECameraMode::UnlockCursor); }
 
 public:
+	float Lerp(float a, float b, float t)
+	{
+		return a + t * (b - a);
+	}
 	// Creates a camera and sets parent-child relationship with proper offsets.
 	static CGameObject* CreatePlayerFirstPersonCamera(CGameObject* aParentObject);
 
@@ -37,6 +42,7 @@ private:
 
 	const char myToggleFreeCam;
 	ECameraMode myCameraMode;
+	ECameraMode myPrevCameraMode;
 	float myCameraMoveSpeed;
 	CCameraComponent* myCamera;
 	DirectX::SimpleMath::Vector3 myOffset;

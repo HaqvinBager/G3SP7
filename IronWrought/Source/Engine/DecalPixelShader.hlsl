@@ -57,7 +57,6 @@ GBufferOutput main(VertexToPixel input)
     if (length(material))
     {
         float3 normal = PixelShader_Normal(decalUV);
-        normal.x = 0.0f;
         float3x3 tangentSpaceMatrix = float3x3(normalize(input.myTangent.xyz), normalize(input.myBitangent.xyz), normalize(input.myNormal.xyz));
         normal = mul(normal.xyz, tangentSpaceMatrix);
         normal = normalize(normal);

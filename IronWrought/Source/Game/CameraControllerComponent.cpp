@@ -15,6 +15,7 @@ CCameraControllerComponent::CCameraControllerComponent(CGameObject& aGameObject,
 	myCameraMoveSpeed(aCameraMoveSpeed),
 	myCamera(nullptr),
 	myCameraMode(aCameraMode),
+	myPrevCameraMode(aCameraMode),
 	myToggleFreeCam(aToggleFreeCam),
 	myOffset(aOffset),
 	myMouseRotationSpeed(120.0f),
@@ -30,6 +31,7 @@ CCameraControllerComponent::~CCameraControllerComponent()
 void CCameraControllerComponent::Awake()
 {
 	myCamera = CEngine::GetInstance()->GetActiveScene().MainCamera();
+	CEngine::GetInstance()->GetWindowHandler()->HideAndLockCursor();
 }
 
 void CCameraControllerComponent::Start()
@@ -39,13 +41,24 @@ void CCameraControllerComponent::Start()
 
 void CCameraControllerComponent::Update()
 {
-#ifdef  _DEBUG
+#ifdef  _DEBUG	
 	// TEMPORARY
 	if (Input::GetInstance()->IsKeyPressed(VK_F1))
 	{
-		bool showCursor = CEngine::GetInstance()->GetWindowHandler()->CursorLocked();
-		CEngine::GetInstance()->GetWindowHandler()->LockCursor(!showCursor);
-		myCameraMode = (myCameraMode == ECameraMode::UnlockCursor) ? ECameraMode::FreeCam : ECameraMode::UnlockCursor;
+		if (myCameraMode != ECameraMode::UnlockCursor)
+		{
+			myPrevCameraMode = myCameraMode;
+			myCameraMode = ECameraMode::UnlockCursor;
+		}
+		else
+		{
+			myCameraMode = myPrevCameraMode;
+		}
+		
+		if (myCameraMode == ECameraMode::UnlockCursor)
+			CEngine::GetInstance()->GetWindowHandler()->ShowAndUnlockCursor();
+		else
+			CEngine::GetInstance()->GetWindowHandler()->HideAndLockCursor();
 	}
 	// ! TEMPORARY
 
@@ -58,15 +71,24 @@ void CCameraControllerComponent::Update()
 			GameObject().myTransform->Position(myPositionBeforeFreeCam);
 	}
 #endif
-	if (myCameraMode == ECameraMode::MenuCam) {
+	switch (myCameraMode)
+	{
+		case ECameraMode::MenuCam: 
+			break;
 
-	} else if (myCameraMode == ECameraMode::FreeCam) {
-		UpdateFreeCam();
-	} else if(myCameraMode == ECameraMode::UnlockCursor){
-	} else {
-		UpdatePlayerFirstPerson();
+		case ECameraMode::FreeCam: 
+			UpdateFreeCam();
+			break;
+
+		case ECameraMode::PlayerFirstPerson: 
+			UpdatePlayerFirstPerson();
+			break;
+
+		case ECameraMode::UnlockCursor:
+			break;
+
+		default:break;
 	}
-
 }
 
 CGameObject* CCameraControllerComponent::CreatePlayerFirstPersonCamera(CGameObject* aParentObject)
@@ -101,25 +123,16 @@ void CCameraControllerComponent::UpdatePlayerFirstPerson()
 	float dx = static_cast<float>(Input::GetInstance()->MouseRawDeltaX());
 	float dy = static_cast<float>(Input::GetInstance()->MouseRawDeltaY());
 
+	float myOldYaw = myYaw;
+	float myOldPitch = myPitch;
+
 	myYaw	= WrapAngle(myYaw + (dx * myMouseRotationSpeed * dt));
 	myPitch = std::clamp(myPitch + (dy * myMouseRotationSpeed * dt), ToDegrees(-PI / 2.0f), ToDegrees(PI / 2.0f));
 
+	myYaw = Lerp(myOldYaw, myYaw, 0.6f);
+	myPitch = Lerp(myOldPitch, myPitch, 0.6f);
+
 	GameObject().myTransform->Rotation({ myPitch, myYaw, 0});
-	//GameObject().myTransform->GetParent()->Rotation({ 0, myYaw, 0 });
-	//GameObject().myTransform->GetParent()->CopyRotation(GameObject().myTransform->GetLocalMatrix());
-
-	//GameObject().myTransform->GetParent()->Transform(GameObject().myTransform->GetLocalMatrix());
-	//GameObject().myTransform->GetParent()->Transform().Forward(GameObject().myTransform->Transform().Forward());
-
-	//Vector3 translation;
-	//Vector3 scale;
-	//Quaternion quat;
-	//Matrix transform = GameObject().myTransform->Transform();
-	//transform.Decompose(scale, quat, translation);
-	//
-	//CPlayerControllerComponent* playerController = GameObject().myTransform->GetParent()->GameObject().GetComponent<CPlayerControllerComponent>();
-	//physx::PxRigidDynamic* actor = playerController->GetCharacterController()->GetController().getActor();
-	//actor->setGlobalPose({ actor->getGlobalPose().p, {quat.x, quat.y, quat.z, quat.w} });
 
 	if (CEngine::GetInstance()->GetWindowHandler()->CursorLocked()) {
 		auto screenDimensions = CEngine::GetInstance()->GetWindowHandler()->GetResolution();

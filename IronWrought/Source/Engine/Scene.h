@@ -23,6 +23,8 @@ class CModel;
 class IAIBehavior;
 class CInstancedModelComponent;
 
+class CPlayerControllerComponent;
+
 typedef std::pair<unsigned int, std::array<CPointLight*, LIGHTCOUNT>> LightPair;
 
 class CScene {
@@ -42,6 +44,7 @@ public:
 public:
 //SETTERS START
 	void MainCamera(CCameraComponent* aMainCamera);
+	void Player(CGameObject* aPlayerObject);
 	bool EnvironmentLight(CEnvironmentLight* anEnvironmentLight);
 	void ShouldRenderLineInstance(const bool aShouldRender);
 	void UpdateCanvas();
@@ -59,6 +62,8 @@ public:
 public:
 //GETTERS START
 	CCameraComponent* MainCamera();
+	CGameObject* Player();
+	CPlayerControllerComponent* PlayerController();
 	CEnvironmentLight* EnvironmentLight();
 	SNavMesh* NavMesh();
 	PxScene* PXScene();
@@ -138,6 +143,7 @@ private:
 	CCameraComponent* myMainCamera;
 	PxScene* myPXScene;
 	CCanvas* myCanvas;
+	CGameObject* myPlayer;
 //POINTERS END
 
 // VFX EDITOR START

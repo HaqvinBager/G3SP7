@@ -64,32 +64,6 @@ void CInGameState::Stop()
 
 void CInGameState::Update()
 {
-	CGameObject* vfx = IRONWROUGHT->GetActiveScene().GetVFXTester();
-	if (vfx)
-	{
-		if (vfx->GetComponent<CVFXSystemComponent>())
-		{
-			if (INPUT->IsKeyPressed('O'))
-			{
-				vfx->GetComponent<CVFXSystemComponent>()->DisableEffect(0);
-				vfx->GetComponent<CVFXSystemComponent>()->EnableEffect(0);
-			}
-			if (INPUT->IsKeyPressed('P'))
-			{
-				vfx->GetComponent<CVFXSystemComponent>()->DisableEffect(0);
-			}
-			//if (INPUT->IsKeyPressed('K'))
-			//{
-			//	gVFX->GetComponent<CVFXSystemComponent>()->DisableEffect(1);
-			//	gVFX->GetComponent<CVFXSystemComponent>()->EnableEffect(1);
-			//}
-			//if (INPUT->IsKeyPressed('L'))
-			//{
-			//	gVFX->GetComponent<CVFXSystemComponent>()->DisableEffect(1);
-			//}
-		}
-	}
-
 	CEngine::GetInstance()->GetPhysx().Simulate();
 	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
 	{
@@ -284,7 +258,6 @@ void TEMP_VFX(CScene* aScene)
 	static int id = 500;
 	CGameObject* abilityObject = new CGameObject(id++);
 	abilityObject->AddComponent<CVFXSystemComponent>(*abilityObject, ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystem_ToLoad.json"));
-
 	aScene->AddInstance(abilityObject);
 	aScene->SetVFXTester(abilityObject);
 }

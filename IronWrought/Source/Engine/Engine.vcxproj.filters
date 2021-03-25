@@ -473,12 +473,6 @@
     <ClCompile Include="NodeTypeMathCos.cpp">
       <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClCompile>
-    <ClCompile Include="NodeTypeMathDistance.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="NodeTypeMathDot.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
-    </ClCompile>
     <ClCompile Include="NodeTypeMathFloor.cpp">
       <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClCompile>
@@ -700,8 +694,6 @@
     <ClCompile Include="NodeTypeGameObjectGetRotation.cpp">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClCompile>
-    <ClCompile Include="NodeTypeMathGreater.cpp">
-    </ClCompile>
     <ClCompile Include="CameraSetting.cpp">
       <Filter>Imgui\Windows</Filter>
     </ClCompile>
@@ -754,7 +746,58 @@
     <ClCompile Include="JsonWriter.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
+    <ClCompile Include="PlayerAnimationController.cpp" />
+    <ClCompile Include="NodeTypeVector3Add.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Vector3</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeVector3Join.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Vector3</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeVector3Split.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Vector3</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeVector3Distance.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Vector3</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeVector3Dot.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Vector3</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeMathGreater.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeVector3Cross.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Vector3</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeVector3Sub.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Vector3</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeGameObjectMoveToPosition.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeActionPatrol.cpp" />
+    <ClCompile Include="NodeTypeGameObjectGetChildPosition.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeGameObjectGetPlayerPosition.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
+    </ClCompile>
     <ClCompile Include="VFXEditorWindow.cpp">
+      <Filter>Imgui\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeStartSphereOnTriggerExit.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Start</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeStartSphereOnTriggerEnter.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Start</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeStartSphereOnTriggerStay.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Start</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypePlayerGetPosition.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeEnemySpawn.cpp" />
+    <ClCompile Include="PlayerControlWindow.cpp">
       <Filter>Imgui\Windows</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1100,12 +1143,6 @@
     <ClInclude Include="NodeTypeMathCos.h">
       <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClInclude>
-    <ClInclude Include="NodeTypeMathDistance.h">
-      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="NodeTypeMathDot.h">
-      <Filter>Imgui\Node Editor\Nodes\Math</Filter>
-    </ClInclude>
     <ClInclude Include="NodeTypeMathFloor.h">
       <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClInclude>
@@ -1402,6 +1439,60 @@
     <ClInclude Include="SerializerUtility.h">
       <Filter>Utility</Filter>
     </ClInclude>
+    <ClInclude Include="PlayerAnimationController.h" />
+    <ClInclude Include="NodeTypeVector3Add.h">
+      <Filter>Imgui\Node Editor\Nodes\Vector3</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeVector3Join.h">
+      <Filter>Imgui\Node Editor\Nodes\Vector3</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeVector3Split.h">
+      <Filter>Imgui\Node Editor\Nodes\Vector3</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeVector3Distance.h">
+      <Filter>Imgui\Node Editor\Nodes\Vector3</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeVector3Dot.h">
+      <Filter>Imgui\Node Editor\Nodes\Vector3</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeVector3Cross.h">
+      <Filter>Imgui\Node Editor\Nodes\Vector3</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeVector3Sub.h">
+      <Filter>Imgui\Node Editor\Nodes\Vector3</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeFloatDecision.h">
+      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeGameObjectMoveToPosition.h">
+      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeActionPatrol.h" />
+    <ClInclude Include="Interop.h">
+      <Filter>Imgui\Blueprints</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeGameObjectGetChildPosition.h">
+      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeGameObjectGetPlayerPosition.h">
+      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeStartSphereOnTriggerExit.h">
+      <Filter>Imgui\Node Editor\Nodes\Start</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeStartSphereOnTriggerEnter.h">
+      <Filter>Imgui\Node Editor\Nodes\Start</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeStartSphereOnTriggerStay.h">
+      <Filter>Imgui\Node Editor\Nodes\Start</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypePlayerGetPosition.h">
+      <Filter>Imgui\Node Editor\Nodes\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeEnemySpawn.h" />
+    <ClInclude Include="PlayerControlWindow.h">
+      <Filter>Imgui\Windows</Filter>
+    </ClInclude>
     <ClInclude Include="VFXEditorWindow.h">
       <Filter>Imgui\Windows</Filter>
     </ClInclude>
@@ -1694,6 +1785,12 @@
     </Filter>
     <Filter Include="Imgui\Widgets">
       <UniqueIdentifier>{8a53a5f2-4ecd-4d71-abbe-c564d545b6e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Nodes\Vector3">
+      <UniqueIdentifier>{b2a5782d-6f96-49a0-90de-269313d3f11b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Nodes\Player">
+      <UniqueIdentifier>{b9f40423-9f39-4bc1-bd31-92f4e33a1488}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

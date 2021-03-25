@@ -3,6 +3,8 @@
 #include "JsonReader.h"
 #include "imgui_impl_win32.h"
 
+#include "PostMaster.h"
+
 IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 LRESULT CWindowHandler::WinProc(_In_ HWND hwnd, _In_ UINT uMsg, _In_ WPARAM wParam, _In_ LPARAM lParam)
@@ -165,6 +167,22 @@ void CWindowHandler::LockCursor(bool aShouldLock)
         while (::ShowCursor(TRUE) < 0);
     }
     aShouldLock ? SetCapture(myWindowHandle) : SetCapture(nullptr);
+}
+
+void CWindowHandler::HideAndLockCursor()
+{
+    while (::ShowCursor(FALSE) >= 0);
+    SetCapture(myWindowHandle);
+    myCursorIsLocked = true;
+    CMainSingleton::PostMaster().Send({ EMessageType::CursorHideAndLock, nullptr });
+}
+
+void CWindowHandler::ShowAndUnlockCursor()
+{
+    while (::ShowCursor(TRUE) < 0);
+    SetCapture(nullptr);
+    myCursorIsLocked = false;
+    CMainSingleton::PostMaster().Send({ EMessageType::CursorShowAndUnlock, nullptr });
 }
 
 void CWindowHandler::SetInternalResolution()

@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine.SceneManagement;
 
 [System.Serializable]
-struct InstanceIDCollection
+public struct InstanceIDCollection
 {
     public string sceneName;
     public List<int> Ids; 
@@ -12,7 +12,7 @@ struct InstanceIDCollection
 
 public class ExportInstanceID 
 {
-    public static List<int> Export(Scene aScene)
+    public static InstanceIDCollection /*List<int>*/ Export(string aSceneName)
     {
         Transform[] transforms = GameObject.FindObjectsOfType<Transform>();
         InstanceIDCollection sceneIDCollection = new InstanceIDCollection();
@@ -42,12 +42,12 @@ public class ExportInstanceID
             }    
         }
 
-        sceneIDCollection.sceneName = aScene.name;
+        sceneIDCollection.sceneName = aSceneName;
 
         //Denna tar in "Collection" Structen och skapar en json med rätt namn
         //Kolla i Generated Foldern hur den ser ut när ni är färdiga!
-        Json.ExportToJson(sceneIDCollection, aScene.name);
-
-        return sceneIDCollection.Ids;
+        //Json.ExportToJson(sceneIDCollection, aScene.name);
+        return sceneIDCollection;
+        //return sceneIDCollection.Ids;
     }
 }

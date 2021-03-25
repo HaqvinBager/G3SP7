@@ -6,6 +6,8 @@
 #include <unordered_map>
 #include <vector>
 
+using RapidArray = rapidjson::GenericArray<true, rapidjson::Value>;
+using RapidObject = rapidjson::GenericObject<true, rapidjson::Value>;
 struct SDirectory {
 	std::string myFileName;
 	std::vector<std::string> myFiles;
@@ -27,6 +29,7 @@ public:
 	static bool HasParseError(const rapidjson::Document& aDoc);
 
 	void Init();
+	const bool HasAssetPath(const int anAssetID) const;
 	const std::string& GetAssetPath(const int anAssetID) const;
 
 

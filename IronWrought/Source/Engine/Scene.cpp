@@ -25,6 +25,7 @@
 #include "Engine.h"
 #include "Camera.h"
 #include "CameraComponent.h"
+#include <PlayerControllerComponent.h>
 
 #include "CollisionManager.h"
 
@@ -39,6 +40,7 @@ CScene::CScene(const unsigned int aGameObjectCount)
 	, myNavMesh(nullptr)
 	, myNavMeshGrid(nullptr)
 	, myPXScene(nullptr)
+	, myPlayer(nullptr)
 {
 	myGameObjects.reserve(aGameObjectCount);
 	myPXScene = CEngine::GetInstance()->GetPhysx().CreatePXScene(this);
@@ -64,6 +66,7 @@ CScene::~CScene()
 	myEnvironmentLight = nullptr;
 
 	myVFXTester = nullptr;
+	myPlayer = nullptr;
 
 	this->ClearGameObjects();
 	this->ClearPointLights();
@@ -129,6 +132,10 @@ void CScene::MainCamera(CCameraComponent* aMainCamera)
 {
 	myMainCamera = aMainCamera;
 }
+void CScene::Player(CGameObject* aPlayerObject)
+{
+	myPlayer = aPlayerObject;
+}
 
 bool CScene::EnvironmentLight(CEnvironmentLight* anEnvironmentLight)
 {
@@ -149,6 +156,16 @@ void CScene::ShouldRenderLineInstance(const bool aShouldRender)
 CCameraComponent* CScene::MainCamera()
 {
 	return myMainCamera;
+}
+CGameObject* CScene::Player()
+{
+	return myPlayer;
+}
+CPlayerControllerComponent* CScene::PlayerController()
+{
+	if (myPlayer)
+		return myPlayer->GetComponent<CPlayerControllerComponent>();
+	return nullptr;
 }
 
 CEnvironmentLight* CScene::EnvironmentLight()
