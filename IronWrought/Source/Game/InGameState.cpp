@@ -8,6 +8,7 @@
 #include "CameraControllerComponent.h"
 #include "EnviromentLightComponent.h"
 #include "SpotLightComponent.h"
+#include "BoxLightComponent.h"
 #include "TransformComponent.h"
 #include "InstancedModelComponent.h"
 #include "RigidBodyComponent.h"
@@ -16,6 +17,7 @@
 
 #include "EnvironmentLight.h"
 #include "SpotLight.h"
+#include "BoxLight.h"
 #include "Timer.h"
 #include "Engine.h"
 #include "PostMaster.h"
@@ -145,4 +147,11 @@ void CInGameState::TEMP_Sponza(CScene* aScene)
 	pl->SetPosition({ 0.0f, 1.0f, 2.0f });
 	pl->SetColor(pointColor);
 	aScene->AddInstance(pointLight->GetComponent<CPointLightComponent>()->GetPointLight());
+
+	CGameObject* boxLight = new CGameObject(414111);
+	boxLight->myTransform->Position({ -2.0f, 0.0f, 0.0f });
+	Vector3 boxColor = { 1.0f, 1.0f, 1.0f };
+	Vector3 boxDirection = { 0.0f, -1.0f, 0.0f };
+	boxLight->AddComponent<CBoxLightComponent>(*boxLight, boxDirection, boxColor, 10.0f, 1.0f);
+	aScene->AddInstance(boxLight->GetComponent<CBoxLightComponent>()->GetBoxLight());
 }

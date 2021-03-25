@@ -13,6 +13,7 @@ public:
 	const Vector3& GetPosition() const;
 	const Vector3& GetColor() const;
 	const Vector3& GetDirection() const;
+	//const Vector2& GetWidthAndHeight() const;
 	const float GetIntensity() const;
 	const float GetRange() const;
 

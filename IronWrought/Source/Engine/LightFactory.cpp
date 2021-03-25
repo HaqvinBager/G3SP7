@@ -21,14 +21,14 @@ CEnvironmentLight* CLightFactory::CreateEnvironmentLight(std::string aCubeMapPat
 	CEnvironmentLight* light = new CEnvironmentLight();
     ENGINE_ERROR_BOOL_MESSAGE(light->Init(myEngine->myFramework, aCubeMapPath), "Environment Light could not be initialized.");
     
-    return light;
+    return std::move(light);
 }
 
 CPointLight* CLightFactory::CreatePointLight() {
     CPointLight* pointLight = new CPointLight();
     ENGINE_ERROR_BOOL_MESSAGE(pointLight->Init(), "Point Light could not be initialized.");
 
-    return pointLight;
+    return std::move(pointLight);
 }
 
 CSpotLight* CLightFactory::CreateSpotLight()
@@ -36,7 +36,15 @@ CSpotLight* CLightFactory::CreateSpotLight()
     CSpotLight* spotLight = new CSpotLight();
     ENGINE_ERROR_BOOL_MESSAGE(spotLight->Init(), "Spot Light could not be initialized.");
     
-    return spotLight;
+    return std::move(spotLight);
+}
+
+CBoxLight* CLightFactory::CreateBoxLight()
+{
+    CBoxLight* boxLight = new CBoxLight();
+    ENGINE_ERROR_BOOL_MESSAGE(boxLight->Init(), "Box Light could not be initialized.");
+    
+    return std::move(boxLight);
 }
 
 CLightFactory::CLightFactory()

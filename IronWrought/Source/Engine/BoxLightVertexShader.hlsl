@@ -4,7 +4,7 @@ BoxLightVertexToPixel main(BoxLightVertexInput input)
 {   
     BoxLightVertexToPixel output;
     output.myPosition = input.myPosition;
-    output.myPosition.xyz *= boxLightPositionAndRange.w;
+    //output.myPosition.xyz *= boxLightPositionAndRange.w;
     output.myPosition = mul(toBoxLightWorld, output.myPosition);
     output.myWorldPosition = output.myPosition;
     output.myPosition = mul(boxLightToCamera, output.myPosition);

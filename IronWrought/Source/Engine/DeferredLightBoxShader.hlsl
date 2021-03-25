@@ -29,7 +29,11 @@ PixelOutput main(BoxLightVertexToPixel input)
     float3 specularColor = lerp((float3) 0.04, albedo, metalness);
     float3 diffuseColor = lerp((float3) 0.00, albedo, 1 - metalness);
     
-    float3 directionalLight = EvaluateDirectionalLight(diffuseColor, specularColor, normal, perceptualRoughness, boxLightColorAndIntensity.rgb * boxLightColorAndIntensity.a, boxLightDirection.xyz, toEye.xyz);
+    //float3 directionalLight = EvaluateDirectionalLight(diffuseColor, specularColor, normal, perceptualRoughness, boxLightColorAndIntensity.rgb * boxLightColorAndIntensity.a, boxLightDirection.xyz, toEye.xyz);
+    float3 toLight = boxLightPositionAndRange.xyz - worldPosition.xyz;
+    float lightDistance = length(toLight);
+    toLight = normalize(toLight);
+    float3 directionalLight = EvaluateBoxLight(diffuseColor, specularColor, normal, perceptualRoughness, boxLightColorAndIntensity.rgb * boxLightColorAndIntensity.w, boxLightPositionAndRange.w, toLight, lightDistance, toEye, boxLightDirection.xyz);
     float3 radiance = directionalLight * (1.0f - ShadowFactor(worldPosition, boxLightPositionAndRange.xyz, toBoxLightView, toBoxLightProjection));
 
     output.myColor.rgb = radiance;

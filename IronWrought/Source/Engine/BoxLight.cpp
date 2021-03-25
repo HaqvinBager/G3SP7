@@ -41,6 +41,11 @@ const Vector3& CBoxLight::GetDirection() const
     return myDirection;
 }
 
+//const Vector2& CBoxLight::GetWidthAndHeight() const
+//{
+//    return { myWidth, myHeight };
+//}
+
 const float CBoxLight::GetIntensity() const
 {
     return myIntensity;

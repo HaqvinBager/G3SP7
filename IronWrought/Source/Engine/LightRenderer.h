@@ -90,6 +90,8 @@ private:
 		Vector4 myColorAndIntensity;
 		Vector4 myPositionAndRange;
 		Vector4 myDirection;
+		//Vector2 myWidthAndHeight;
+		//Vector2 myPadding;
 	} myBoxLightBufferData;
 
 private:

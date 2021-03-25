@@ -118,32 +118,32 @@ bool CLightRenderer::Init(CDirectXFramework* aFramework)
 	Vertex spotLightVertex[1] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	Vertex boxLightVertices[24] = {
 		// X      Y      Z      W 
-		{ -1.0f, -1.0f, -1.0f,  1.0f },
-		{  1.0f, -1.0f, -1.0f,  1.0f },
-		{ -1.0f,  1.0f, -1.0f,  1.0f },
-		{  1.0f,  1.0f, -1.0f,  1.0f },
-		{ -1.0f, -1.0f,  1.0f,  1.0f },
-		{  1.0f, -1.0f,  1.0f,  1.0f },
-		{ -1.0f,  1.0f,  1.0f,  1.0f },
-		{  1.0f,  1.0f,  1.0f,  1.0f },
+		{ -0.5f, -0.5f,  0.0f,  1.0f },
+		{  0.5f, -0.5f,  0.0f,  1.0f },
+		{ -0.5f,  0.5f,  0.0f,  1.0f },
+		{  0.5f,  0.5f,  0.0f,  1.0f },
+		{ -0.5f, -0.5f,  1.0f,  1.0f },
+		{  0.5f, -0.5f,  1.0f,  1.0f },
+		{ -0.5f,  0.5f,  1.0f,  1.0f },
+		{  0.5f,  0.5f,  1.0f,  1.0f },
 		// X      Y      Z      W 
-		{ -1.0f, -1.0f, -1.0f,  1.0f },
-		{ -1.0f,  1.0f, -1.0f,  1.0f },
-		{ -1.0f, -1.0f,  1.0f,  1.0f },
-		{ -1.0f,  1.0f,  1.0f,  1.0f },
-		{  1.0f, -1.0f, -1.0f,  1.0f },
-		{  1.0f,  1.0f, -1.0f,  1.0f },
-		{  1.0f, -1.0f,  1.0f,  1.0f },
-		{  1.0f,  1.0f,  1.0f,  1.0f },
+		{ -0.5f, -0.5f,  0.0f,  1.0f },
+		{ -0.5f,  0.5f,  0.0f,  1.0f },
+		{ -0.5f, -0.5f,  1.0f,  1.0f },
+		{ -0.5f,  0.5f,  1.0f,  1.0f },
+		{  0.5f, -0.5f,  0.0f,  1.0f },
+		{  0.5f,  0.5f,  0.0f,  1.0f },
+		{  0.5f, -0.5f,  1.0f,  1.0f },
+		{  0.5f,  0.5f,  1.0f,  1.0f },
 		// X      Y      Z      W 
-		{ -1.0f, -1.0f, -1.0f,  1.0f },
-		{  1.0f, -1.0f, -1.0f,  1.0f },
-		{ -1.0f, -1.0f,  1.0f,  1.0f },
-		{  1.0f, -1.0f,  1.0f,  1.0f },
-		{ -1.0f,  1.0f, -1.0f,  1.0f },
-		{  1.0f,  1.0f, -1.0f,  1.0f },
-		{ -1.0f,  1.0f,  1.0f,  1.0f },
-		{  1.0f,  1.0f,  1.0f,  1.0f }
+		{ -0.5f, -0.5f,  0.0f,  1.0f },
+		{  0.5f, -0.5f,  0.0f,  1.0f },
+		{ -0.5f, -0.5f,  1.0f,  1.0f },
+		{  0.5f, -0.5f,  1.0f,  1.0f },
+		{ -0.5f,  0.5f,  0.0f,  1.0f },
+		{  0.5f,  0.5f,  0.0f,  1.0f },
+		{ -0.5f,  0.5f,  1.0f,  1.0f },
+		{  0.5f,  0.5f,  1.0f,  1.0f }
 	};
 
 	//Index Setup
@@ -424,9 +424,50 @@ void CLightRenderer::Render(CCameraComponent* aCamera, std::vector<CSpotLight*>&
 	myContext->GSSetShader(nullptr, nullptr, 0);
 }
 
-void CLightRenderer::Render(CCameraComponent* /*aCamera*/, std::vector<CBoxLight*>& /*aBoxLightList*/)
+void CLightRenderer::Render(CCameraComponent* aCamera, std::vector<CBoxLight*>& aBoxLightList)
 {
+	if (aBoxLightList.empty())
+		return;
 
+	SM::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
+	myFrameBufferData.myCameraPosition = SM::Vector4{ cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f };
+	myFrameBufferData.myToCameraSpace = cameraMatrix.Invert();
+	myFrameBufferData.myToWorldFromCamera = cameraMatrix;
+	myFrameBufferData.myToProjectionSpace = aCamera->GetProjection();
+	myFrameBufferData.myToCameraFromProjection = aCamera->GetProjection().Invert();
+	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
+	myContext->VSSetConstantBuffers(0, 1, &myFrameBuffer);
+	myContext->PSSetConstantBuffers(0, 1, &myFrameBuffer);
+
+	myContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	myContext->IASetInputLayout(myInputLayout);
+	myContext->IASetVertexBuffers(0, 1, &myBoxLightVertexBuffer, &myPointLightStride, &myPointLightOffset);
+	myContext->IASetIndexBuffer(myBoxLightIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+
+	for (CBoxLight* currentInstance : aBoxLightList) {
+		const Vector3& position = currentInstance->GetPosition();
+		const Vector3& color = currentInstance->GetColor();
+		const Vector3& direction = currentInstance->GetDirection();
+		myBoxLightBufferData.myToWorldSpace = currentInstance->GetWorldMatrix();
+		myBoxLightBufferData.myToViewSpace = currentInstance->GetViewMatrix();
+		myBoxLightBufferData.myToProjectionSpace = currentInstance->GetProjectionMatrix();
+		myBoxLightBufferData.myColorAndIntensity = { color.x, color.y, color.z, currentInstance->GetIntensity() };
+		myBoxLightBufferData.myPositionAndRange = { position.x, position.y, position.z, currentInstance->GetRange() };
+		myBoxLightBufferData.myDirection = { direction.x, direction.y, direction.z, 0.0f };
+		//myBoxLightBufferData.myWidthAndHeight = 
+
+		BindBuffer(myBoxLightBuffer, myBoxLightBufferData, "Box Light Buffer");
+		myContext->VSSetConstantBuffers(3, 1, &myBoxLightBuffer);
+		myContext->PSSetConstantBuffers(3, 1, &myBoxLightBuffer);
+
+		myContext->VSSetShader(myBoxLightVertexShader, nullptr, 0);
+
+		myContext->PSSetShader(myBoxLightShader, nullptr, 0);
+		myContext->PSSetSamplers(0, 1, &mySamplerState);
+
+		myContext->DrawIndexed(myPointLightNumberOfIndices, 0, 0);
+		CRenderManager::myNumberOfDrawCallsThisFrame++;
+	}
 }
 
 void CLightRenderer::RenderVolumetric(CCameraComponent* aCamera, CEnvironmentLight* anEnvironmentLight)

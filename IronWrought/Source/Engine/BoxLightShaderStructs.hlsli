@@ -32,4 +32,6 @@ cbuffer BoxLightObjectBuffer : register(b3)
     float4 boxLightColorAndIntensity;
     float4 boxLightPositionAndRange;
     float4 boxLightDirection;
+    //float2 boxLightWidthAndHeight;
+    //float2 boxLightPadding;
 }

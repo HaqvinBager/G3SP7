@@ -23,6 +23,7 @@
 #include "EnvironmentLight.h"
 #include "PointLight.h"
 #include "SpotLight.h"
+#include "BoxLight.h"
 
 #include "Camera.h"
 #include "CameraComponent.h"
@@ -74,6 +75,7 @@ CScene::~CScene()
 	this->ClearGameObjects();
 	this->ClearPointLights();
 	this->ClearSpotLights();
+	this->ClearBoxLights();
 
 #ifdef _DEBUG
 	myGrid = nullptr;
@@ -214,6 +216,12 @@ std::vector<CSpotLight*> CScene::CullSpotLights(CGameObject* /*aGameObject*/)
 {
 	return mySpotLights;
 }
+
+std::vector<CBoxLight*> CScene::CullBoxLights(CGameObject* /*aGameObject*/)
+{
+	return myBoxLights;
+}
+
 
 std::pair<unsigned int, std::array<CPointLight*, LIGHTCOUNT>> CScene::CullLights(CGameObject* aGameObject)
 {
@@ -359,13 +367,19 @@ CGameObject* CScene::FindObjectWithID(const int aGameObjectInstanceID)
 //POPULATE SCENE START
 bool CScene::AddInstance(CPointLight* aPointLight)
 {
-	myPointLights.emplace_back(aPointLight);
+	myPointLights.push_back(aPointLight);
 	return true;
 }
 
 bool CScene::AddInstance(CSpotLight* aSpotLight)
 {
-	mySpotLights.emplace_back(aSpotLight);
+	mySpotLights.push_back(aSpotLight);
+	return true;
+}
+
+bool CScene::AddInstance(CBoxLight* aBoxLight)
+{
+	myBoxLights.push_back(aBoxLight);
 	return true;
 }
 
@@ -472,6 +486,18 @@ bool CScene::RemoveInstance(CSpotLight* aSpotLight)
 	return true;
 }
 
+bool CScene::RemoveInstance(CBoxLight* aBoxLight)
+{
+	for (int i = 0; i < myBoxLights.size(); ++i)
+	{
+		if (aBoxLight == myBoxLights[i])
+		{
+			myBoxLights.erase(myBoxLights.begin() + i);
+		}
+	}
+	return true;
+}
+
 bool CScene::RemoveInstance(CAnimatedUIElement* anAnimatedUIElement)
 {
 	for (int i = 0; i < myAnimatedUIElements.size(); ++i)
@@ -512,7 +538,24 @@ bool CScene::ClearPointLights()
 
 bool CScene::ClearSpotLights()
 {
-	return false;
+	for (auto& p : mySpotLights)
+	{
+		delete p;
+		p = nullptr;
+	}
+	mySpotLights.clear();
+	return true;
+}
+
+bool CScene::ClearBoxLights()
+{
+	for (auto& p : myBoxLights)
+	{
+		delete p;
+		p = nullptr;
+	}
+	myBoxLights.clear();
+	return true;
 }
 
 bool CScene::ClearLineInstances()

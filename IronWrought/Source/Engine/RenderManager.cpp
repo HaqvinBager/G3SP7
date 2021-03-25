@@ -198,6 +198,8 @@ void CRenderManager::Render(CScene& aScene)
 	onlyPointLights = aScene.CullPointLights(&maincamera->GameObject());
 	std::vector<CSpotLight*> onlySpotLights;
 	onlySpotLights = aScene.CullSpotLights(&maincamera->GameObject());
+	std::vector<CBoxLight*> onlyBoxLights;
+	onlyBoxLights = aScene.CullBoxLights(&maincamera->GameObject());
 
 	myLightRenderer.Render(maincamera, environmentlight);
 
@@ -205,7 +207,8 @@ void CRenderManager::Render(CScene& aScene)
 	myLightRenderer.Render(maincamera, onlyPointLights);
 	myLightRenderer.Render(maincamera, onlySpotLights);
 	myLightRenderer.RenderVolumetric(maincamera, onlyPointLights);
-	//myLightRenderer.RenderVolumetric(maincamera, onlySpotLights);
+	myLightRenderer.Render(maincamera, onlyBoxLights);
+	myLightRenderer.RenderVolumetric(maincamera, onlySpotLights);
 	myRenderStateManager.SetRasterizerState(CRenderStateManager::RasterizerStates::RASTERIZERSTATE_DEFAULT);
 	myLightRenderer.RenderVolumetric(maincamera, environmentlight);
 
