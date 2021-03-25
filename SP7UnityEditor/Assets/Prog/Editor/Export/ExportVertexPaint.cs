@@ -23,6 +23,29 @@ public class ExportVertexPaint : Editor
     static string targetPath = "Assets\\Generated\\VertexColors\\";
     static string polybrushMesh = "PolybrushMesh";
 
+    [MenuItem("Tools/Select Paintable %k")]
+    public static void SelectPaintable()
+    {
+        var objects = Selection.objects;
+
+        List<GameObject> paintableObjects = new List<GameObject>();
+        foreach(var obj in objects)
+        {
+            GameObject gameObject = obj as GameObject;
+            if (gameObject.TryGetComponent(out MeshRenderer renderer))
+            {
+                if (renderer.sharedMaterials.Length == 1)
+                {
+                    paintableObjects.Add(gameObject);
+                }
+            }
+        }
+
+        Selection.activeGameObject = paintableObjects[0];
+        //Selection.
+        //Selection.objects = objects;
+    }
+
     [MenuItem("Tools/Enable VertexPaint on Selected", true)]
     public static bool IsValid()
     {
@@ -101,21 +124,22 @@ public class ExportVertexPaint : Editor
             int startIndex = meshName.LastIndexOf(polybrushMesh) + polybrushMesh.Length;
             int endIndex = meshName.Length;
             string polyMeshID = meshName.Substring(startIndex, endIndex - startIndex);
-            string filePath = targetPath + "VertexColors_" + polyMeshID + "_Bin.bin";
+            string materialName = polyBrushObject.GetComponent<MeshRenderer>().sharedMaterial.name;
+            string filePath = targetPath + "VertexColors_" + polyBrushObject.GetInstanceID().ToString() + "_Bin.bin";
 
             Object binAsset = null;
             if (polyBrushObject.TryGetComponent(out MeshFilter meshFilter))
             {
                 Mesh exportedMeshObject = meshFilter.sharedMesh;
-                if (int.TryParse(polyMeshID, out int polyMeshIDNumber))
-                {
+                //if (int.TryParse(polyMeshID, out int polyMeshIDNumber))
+                //{
                     if (!Directory.Exists(targetPath))
                         Directory.CreateDirectory(targetPath);
 
                     FileStream file = new FileStream(filePath, FileMode.Create);
                     BinaryWriter bin = new BinaryWriter(file);
 
-                    bin.Write(polyMeshIDNumber);
+                    bin.Write(polyBrushObject.GetInstanceID());
                     bin.Write(exportedMeshObject.colors.Length);
 
                     Vector3[] colorsRGB = new Vector3[exportedMeshObject.colors.Length];
@@ -131,9 +155,11 @@ public class ExportVertexPaint : Editor
                     bin.Write(vertexPositions.Length);
                     bin.Write(vertexPositions);
                     bin.Close();
+                    AssetDatabase.Refresh();
+                    //file.Close();
 
                     binAsset = AssetDatabase.LoadAssetAtPath<Object>(filePath);
-                }
+                //}
             }
             else
             {
