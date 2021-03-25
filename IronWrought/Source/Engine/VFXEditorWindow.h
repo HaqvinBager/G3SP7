@@ -493,26 +493,30 @@ namespace IronWroughtImGui {
 		void OnDisable() override;
 
 	private:
-		void SaveToFile();
 		void ShowMainMenu();
-		void AddEffect(unsigned int anIndex);
-		void ShowVFXMeshTransformData(SVFXMeshTransformData& someData, unsigned int anIndex);
 		void ShowParticleEmitterTransformData(SParticleEmitterTransformData& someData, unsigned int anIndex);
+		void ShowVFXMeshTransformData(SVFXMeshTransformData& someData, unsigned int anIndex);
 		void ShowVFXMeshWindow();
 		void ShowParticleEffectWindow();
+		
 		void OpenVFXMeshWindow(const std::string& aPath);
 		void OpenParticleEffectWindow(const std::string& aPath);
+		
+		void AddEffect(unsigned int anIndex);
+		
+		void SaveToFile();
+		void LoadFile(std::string aFilePath);
 
 	private:
-		std::unordered_map<std::string, std::vector<Vector2>> myPointsMap;
 		std::vector<SVFXSerializable> myEffects;
+		std::vector<std::string> myEffectFilePaths;
 		EVFXEditorMenu myCurrentMenu;
 		SVFXMeshData* myMeshData;
 		SParticleEmitterData* myEmitterData;
 		SCurveData myCurrentCurveData;
 		unsigned int myCurrentEffectIndex = 0;
 		unsigned int myCurrentTabIndex = 0;
-		float myColor[4] = {1.0f, 1.0f, 1.0f, 1.0f};
+		unsigned int mySelectedIndex = 0;
 		char mySaveDestination[256];
 		char myVFXMeshDataDestination[256];
 		char myParticleEmitterDataDestination[256];

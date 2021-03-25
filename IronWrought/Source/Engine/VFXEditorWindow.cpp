@@ -4,6 +4,7 @@
 #include <curve_v122.hpp>
 #include "JsonReader.h"
 #include "JsonWriter.h"
+#include "FolderUtility.h"
 
 #include "Engine.h"
 #include "Scene.h"
@@ -18,9 +19,7 @@ IronWroughtImGui::CVFXEditorWindow::CVFXEditorWindow(const char* aName)
 	: CWindow(aName)
 	, myCurrentMenu(EVFXEditorMenu::MainMenu)
 {
-	myPointsMap["First Curve"] = { {1.0f, 1.0f}, {0.25f, 0.25f}, {0.75f, 0.75f}, {1.0f, 1.0f} };
-
-	std::string saveDestination = "Assets/Graphics/VFX/JSON/VFXSystemTester.json";
+	std::string saveDestination = "Assets/Graphics/VFX/JSON/VFXSystem_Tester.json";
 	ZeroMemory(mySaveDestination, 256);
 	memcpy(&mySaveDestination[0], saveDestination.c_str(), strlen(saveDestination.c_str()));
 
@@ -57,17 +56,21 @@ IronWroughtImGui::CVFXEditorWindow::~CVFXEditorWindow()
 
 void IronWroughtImGui::CVFXEditorWindow::OnEnable()
 {
+	std::vector<std::string> generatedJsonFiles = CFolderUtility::GetFileNamesInFolder(ASSETPATH("Assets/Graphics/VFX/JSON/"), ".json", ".json");
+	for (auto& file : generatedJsonFiles) {
+		auto startIndex = file.find_first_of('_') + 1;
+		std::string filePath = file.substr(startIndex, file.length() - 15);
+
+		if (std::find(myEffectFilePaths.begin(), myEffectFilePaths.end(), filePath) == myEffectFilePaths.end()) {
+			myEffectFilePaths.push_back(filePath);
+		}
+	}
+	myEffectFilePaths.push_back("Empty");
 }
 
 void IronWroughtImGui::CVFXEditorWindow::OnInspectorGUI()
 {
 	ImGui::Begin(Name(), Open());
-	//for (auto& keyValue : myPointsMap)
-	//{
-	//	std::vector<ImVec2> vec = keyValue.second;
-	//	ImGui::IronCurve(keyValue.first.c_str(), keyValue.second.data());
-	//	
-	//}
 
 	switch (myCurrentMenu)
 	{
@@ -119,8 +122,97 @@ void IronWroughtImGui::CVFXEditorWindow::SaveToFile()
 	vfx->GetComponent<CVFXSystemComponent>()->EnableEffect(0);
 }
 
+void IronWroughtImGui::CVFXEditorWindow::LoadFile(std::string aFilePath)
+{
+	rapidjson::Document document = CJsonReader::Get()->LoadDocument(ASSETPATH(aFilePath));
+	ENGINE_BOOL_POPUP(!CJsonReader::HasParseError(document), "Invalid Json document: %s", aFilePath.c_str());
+
+	auto effectsArray = document["VFXEffects"].GetArray();
+
+	myEffects.clear();
+	myCurrentEffectIndex = 0;
+
+	for (unsigned int i = 0; i < static_cast<unsigned int>(effectsArray.Size()); ++i)
+	{
+		myEffects.push_back(SVFXSerializable());
+
+		std::string effectName = effectsArray[i]["Name"].GetString();
+		ZeroMemory(myEffects.back().myName, 64);
+		memcpy(&myEffects.back().myName[0], effectName.c_str(), strlen(effectName.c_str()));
+
+		auto meshArray = effectsArray[i]["VFXMeshes"].GetArray();
+		for (unsigned int j = 0; j < static_cast<unsigned int>(meshArray.Size()); ++j)
+		{
+			myEffects.back().myVFXMeshes.push_back(SVFXMeshTransformData());
+
+			auto& vfxMesh = myEffects.back().myVFXMeshes.back();
+			
+			std::string path = meshArray[j]["Path"].GetString();
+			ZeroMemory(vfxMesh.myPath, 128);
+			memcpy(&vfxMesh.myPath[0], path.c_str(), strlen(path.c_str()));
+
+			vfxMesh.myOffsetFromParent = { meshArray[j]["Offset X"].GetFloat(), meshArray[j]["Offset Y"].GetFloat(), meshArray[j]["Offset Z"].GetFloat() };
+			vfxMesh.myRotationAroundParent = { meshArray[j]["Rotation X"].GetFloat(), meshArray[j]["Rotation Y"].GetFloat(), meshArray[j]["Rotation Z"].GetFloat() };
+			vfxMesh.myScale = { meshArray[j]["Scale X"].GetFloat(), meshArray[j]["Scale Y"].GetFloat(), meshArray[j]["Scale Z"].GetFloat() };
+			vfxMesh.myAngularSpeeds = { meshArray[j]["Rotate X per second"].GetFloat(), meshArray[j]["Rotate Y per second"].GetFloat(), meshArray[j]["Rotate Z per second"].GetFloat() };
+			vfxMesh.myShouldOrbit = meshArray[j]["Orbit"].GetBool();
+			vfxMesh.myDelay = meshArray[j]["Delay"].GetFloat();
+			vfxMesh.myDuration = meshArray[j]["Duration"].GetFloat();
+		}
+
+		auto emitterArray = effectsArray[i]["ParticleSystems"].GetArray();
+		for (unsigned int k = 0; k < static_cast<unsigned int>(emitterArray.Size()); ++k)
+		{
+			myEffects.back().myParticleEmitters.push_back(SParticleEmitterTransformData());
+
+			auto& emitter = myEffects.back().myParticleEmitters.back();
+
+			std::string path = emitterArray[k]["Path"].GetString();
+			ZeroMemory(emitter.myPath, 128);
+			memcpy(&emitter.myPath[0], path.c_str(), strlen(path.c_str()));
+
+			emitter.myOffsetFromParent = { emitterArray[k]["Offset X"].GetFloat(), emitterArray[k]["Offset Y"].GetFloat(), emitterArray[k]["Offset Z"].GetFloat() };
+			emitter.myRotationAroundParent = { emitterArray[k]["Rotation X"].GetFloat(), emitterArray[k]["Rotation Y"].GetFloat(), emitterArray[k]["Rotation Z"].GetFloat() };
+			emitter.myUniformScale = emitterArray[k]["Scale"].GetFloat();
+			emitter.myAngularSpeeds = { emitterArray[k]["Rotate X per second"].GetFloat(), emitterArray[k]["Rotate Y per second"].GetFloat(), emitterArray[k]["Rotate Z per second"].GetFloat() };
+			emitter.myShouldOrbit = emitterArray[k]["Orbit"].GetBool();
+			emitter.myDelay = emitterArray[k]["Delay"].GetFloat();
+			emitter.myDuration = emitterArray[k]["Duration"].GetFloat();
+		}
+	}
+}
+
 void IronWroughtImGui::CVFXEditorWindow::ShowMainMenu()
 {
+	if (ImGui::BeginCombo("Load Effect", "VFXSystem_Tester.json", ImGuiComboFlags_NoPreview)) 
+	{
+		unsigned int index = 0;
+		for (const auto& filePath : myEffectFilePaths) 
+		{
+			if (ImGui::Selectable(filePath.c_str(), mySelectedIndex == index)) 
+			{
+				mySelectedIndex = index;
+
+				std::string saveDestination = "Assets/Graphics/VFX/JSON/VFXSystem_";
+				saveDestination.append(myEffectFilePaths[mySelectedIndex] + ".json");
+				ZeroMemory(mySaveDestination, 256);
+				memcpy(&mySaveDestination[0], saveDestination.c_str(), strlen(saveDestination.c_str()));
+				
+				LoadFile(mySaveDestination);
+
+				CGameObject* vfx = CEngine::GetInstance()->GetActiveScene().GetVFXTester();
+				vfx->GetComponent<CVFXSystemComponent>()->Init(ASSETPATH(mySaveDestination));
+				vfx->GetComponent<CVFXSystemComponent>()->EnableEffect(0);
+			}
+			index++;
+		}
+		ImGui::EndCombo();
+	}
+	ImGui::Spacing();
+	ImGui::Spacing();
+	ImGui::Spacing();
+	ImGui::Spacing();
+
 	for (unsigned int i = 0; i < myEffects.size(); ++i)
 	{
 		ImGui::SameLine(0.0f, 20.0f);
