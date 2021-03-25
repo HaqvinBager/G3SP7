@@ -18,6 +18,10 @@ public:
 	//	return filePath;
 	//}
 
+	static bool FileExists(const std::string& aFile)
+	{
+		return std::filesystem::exists(aFile);
+	}
 
 	static std::vector<std::string> GetFileNamesInFolder(const std::string& aFolder, const std::string& anExtension = "", const std::string& aContains = "")
 	{

@@ -4,7 +4,7 @@
 class CGameObject;
 namespace ImGuiWindow
 {
-	namespace TintedModelVariables
+	namespace AssetCustomizationWindow
 	{
 		constexpr int JSONNameBufferSize = 256;
 	}
@@ -26,6 +26,7 @@ namespace ImGuiWindow
 		void LoadAsset();
 		void LoadCustomizationFile();
 		void SaveCustomizationFile();
+		void SaveCustomFileExists();
 
 		bool GetPathsByExtension(const std::string& aPath, const std::string& aFileExtesion,std::vector<SAssetInfo>& anOutVector, const bool aShouldClearVector = true);
 
@@ -38,7 +39,7 @@ namespace ImGuiWindow
 		CGameObject* myGameObject;
 		std::string mySelectedFBX;
 		std::string mySelectedJSON;
-		char myJSONFileName[TintedModelVariables::JSONNameBufferSize];
+		char myJSONFileName[AssetCustomizationWindow::JSONNameBufferSize];
 		std::vector<SAssetInfo> myFBXAssetPaths;
 		std::vector<SAssetInfo> myJSONPaths;
 

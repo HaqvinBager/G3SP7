@@ -22,7 +22,7 @@ ImGuiWindow::CAssetCustomizationWindow::CAssetCustomizationWindow(const char* aN
 	ZeroMemory(myTertiaryTint, 3);
 	ZeroMemory(myAccentTint, 3);
 
-	ZeroMemory(myJSONFileName, TintedModelVariables::JSONNameBufferSize);
+	ZeroMemory(myJSONFileName, AssetCustomizationWindow::JSONNameBufferSize);
 }
 
 ImGuiWindow::CAssetCustomizationWindow::~CAssetCustomizationWindow()
@@ -37,7 +37,7 @@ void ImGuiWindow::CAssetCustomizationWindow::OnEnable()
 	myGameObject = new CGameObject(98789);
 	IRONWROUGHT_ACTIVE_SCENE.AddInstance(myGameObject);
 }
-
+bool g_myShowPopUp = false;
 void ImGuiWindow::CAssetCustomizationWindow::OnInspectorGUI()
 {
 	ImGui::Begin(Name(), Open(), ImGuiWindowFlags_MenuBar);
@@ -75,6 +75,9 @@ void ImGuiWindow::CAssetCustomizationWindow::OnInspectorGUI()
 
 		if (myShowSaveCustomizationFile)
 			SaveCustomizationFile();
+
+		if (g_myShowPopUp)
+			SaveCustomFileExists();
 
 		ImGui::SetWindowSize(Name(), ImVec2(0, 0));
 	}
@@ -175,17 +178,42 @@ void ImGuiWindow::CAssetCustomizationWindow::SaveCustomizationFile()
 		ImGui::TextColored(ImVec4(1,1,1,1), std::string("Folder: " + path).c_str());
 		ImGui::Spacing();
 
-		ImGui::InputText("", myJSONFileName, TintedModelVariables::JSONNameBufferSize);
+		ImGui::InputText("", myJSONFileName, AssetCustomizationWindow::JSONNameBufferSize);
 		if (ImGui::Button("Save"))
 		{
-			if (strlen(myJSONFileName) > 0)
-				ModelHelperFunctions::SaveTintsFromModelComponent(myGameObject, mySelectedFBX, std::string(path + myJSONFileName + ".json"));
-			else
-				ModelHelperFunctions::SaveTintsFromModelComponent(myGameObject, mySelectedFBX);
+			if (myGameObject->GetComponent<CModelComponent>())
+			{
+				myShowSaveCustomizationFile = false;
+				if (strlen(myJSONFileName) > 0)
+				{
+					if (!std::filesystem::exists(std::string(path + myJSONFileName + ".json")))
+						ModelHelperFunctions::SaveTintsFromModelComponent(myGameObject, mySelectedFBX, std::string(path + myJSONFileName + ".json"));
+					else
+					{
+						g_myShowPopUp = true;
+						myShowSaveCustomizationFile = true;
+					}
+				}
+				else
+					ModelHelperFunctions::SaveTintsFromModelComponent(myGameObject, mySelectedFBX);
 
-			myShowSaveCustomizationFile = false;
-			ZeroMemory(myJSONFileName, TintedModelVariables::JSONNameBufferSize);
+				ZeroMemory(myJSONFileName, AssetCustomizationWindow::JSONNameBufferSize);
+			}
 		}
+	}
+	ImGui::End();
+}
+
+void ImGuiWindow::CAssetCustomizationWindow::SaveCustomFileExists()
+{
+	ImGui::Begin("File Exists.", &g_myShowPopUp, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar);
+	{
+		ImGui::SetWindowPos(ImVec2(0, 0));
+		ImGui::Text("Overwrite?");
+		ImGui::PushItemWidth(-100.0f);
+		ImGui::Button("Yes");
+		ImGui::Button("No");
+		ImGui::SetWindowSize("File Existst.", ImVec2(0, 0));
 	}
 	ImGui::End();
 }
