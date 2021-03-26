@@ -77,7 +77,7 @@
 
 CNodeType* CNodeTypeCollector::myTypes[128];
 unsigned short CNodeTypeCollector::myTypeCounter = 0;
-std::unordered_map<std::string, SNodeTypeData> CNodeTypeCollector::myChildNodeTypesMap;
+//std::unordered_map<std::string, SNodeTypeData> CNodeTypeCollector::myChildNodeTypesMap;
 
 std::vector<unsigned int> CUID::myAllUIDs;
 unsigned int CUID::myGlobalUID = 0;

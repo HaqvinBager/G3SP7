@@ -1494,8 +1494,8 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 			CNodeType** types = CNodeTypeCollector::GetAllNodeTypes();
 			unsigned short noOfTypes = CNodeTypeCollector::GetNodeTypeCount();
 
-			CNodeType** childTypes = CNodeTypeCollector::GetAllChildNodeTypes(myCurrentGraph->myChildrenKey);
-			unsigned short noOfChildTypes = CNodeTypeCollector::GetChildNodeTypeCount(myCurrentGraph->myChildrenKey);
+			//CNodeType** childTypes = CNodeTypeCollector::GetAllChildNodeTypes(myCurrentGraph->myChildrenKey);
+			//unsigned short noOfChildTypes = CNodeTypeCollector::GetChildNodeTypeCount(myCurrentGraph->myChildrenKey);
 
 			std::map< std::string, std::vector<CNodeType*>> cats;
 			static bool noVariablesCreated = true;
@@ -1505,10 +1505,11 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 				if (types[i]->GetNodeTypeCategory() == "New Node Type")
 					noVariablesCreated = false;
 			}
-			for (int i = 0; i < noOfChildTypes; i++)
-			{
-				cats[childTypes[i]->GetNodeTypeCategory()].push_back(childTypes[i]);
-			}
+
+			//for (int i = 0; i < noOfChildTypes; i++)
+			//{
+			//	cats[childTypes[i]->GetNodeTypeCategory()].push_back(childTypes[i]);
+			//}
 
 			if (noVariablesCreated)
 			{
