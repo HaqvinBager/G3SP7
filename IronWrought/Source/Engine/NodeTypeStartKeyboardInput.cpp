@@ -8,6 +8,7 @@ CNodeTypeStartKeyboardInput::CNodeTypeStartKeyboardInput()
 {
 	myPins.push_back(SPin("Key", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EString));
 	myPins.push_back(SPin("", SPin::EPinTypeInOut::EPinTypeInOut_OUT));
+	//DeclareDataOnPinIfNecessary<const char*>(myPins[0]);
 }
 
 int CNodeTypeStartKeyboardInput::OnEnter(class CNodeInstance* aTriggeringNodeInstance)

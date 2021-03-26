@@ -85,7 +85,7 @@ bool CAnimationController::ImportRig(const std::string& anFBXFilePath)
 
 		if (myAnimations[myAnim0Index]->mNumAnimations <= 0)
 		{
-			ENGINE_ERROR_BOOL_MESSAGE(false , std::string("No animation found in SK file, cannot play index 0. File: " + anFBXFilePath + ". Bone data found, other animations can be played.").c_str());
+			//ENGINE_ERROR_BOOL_MESSAGE(false , std::string("No animation found in SK file, cannot play index 0. File: " + anFBXFilePath + ". Bone data found, other animations can be played.").c_str());
 			return false;
 		}
 	}

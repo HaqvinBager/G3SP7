@@ -77,7 +77,7 @@
 
 CNodeType* CNodeTypeCollector::myTypes[128];
 unsigned short CNodeTypeCollector::myTypeCounter = 0;
-std::unordered_map<std::string, SNodeTypeData> CNodeTypeCollector::myChildNodeTypesMap;
+//std::unordered_map<std::string, SNodeTypeData> CNodeTypeCollector::myChildNodeTypesMap;
 
 std::vector<unsigned int> CUID::myAllUIDs;
 unsigned int CUID::myGlobalUID = 0;
@@ -193,13 +193,13 @@ void CNodeTypeCollector::RegisterNewDataType(const std::string& aNodeName, unsig
 
 void CNodeTypeCollector::RegisterChildNodeTypes(std::string aKey, const unsigned int aNumberOfChildren)
 {
-	std::string name;
-	int index;
+	std::string name = "";
+	int index = 0;
 	for (unsigned int i = 0; i < aNumberOfChildren; ++i)
 	{
 		index = i + 2;
 		name = "Get " + aKey + " Child " + std::to_string(index - 1) + " Position";
-		RegisterChildType<CNodeTypeGameObjectGetChildPosition>(aKey, name);
+		RegisterType<CNodeTypeGameObjectGetChildPosition>(name);
 		CNodeDataManager::Get()->SetData(name, CNodeDataManager::EDataType::EInt, index);
 	}
 }

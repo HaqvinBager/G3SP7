@@ -7,6 +7,9 @@ CNodeTypeVector3Dot::CNodeTypeVector3Dot()
 	myPins.push_back(SPin("Pos1", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EVector3));
 	myPins.push_back(SPin("Pos2", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EVector3));
 	myPins.push_back(SPin("OUT", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EFloat));
+	DeclareDataOnPinIfNecessary<Vector3>(myPins[0], Vector3(1.0f,1.0f,1.0f));
+	DeclareDataOnPinIfNecessary<Vector3>(myPins[1], Vector3(1.0f,1.0f,1.0f));
+	DeclareDataOnPinIfNecessary<float>(myPins[2], 1.0f);
 }
 
 int CNodeTypeVector3Dot::OnEnter(CNodeInstance* aTriggeringNodeInstance)

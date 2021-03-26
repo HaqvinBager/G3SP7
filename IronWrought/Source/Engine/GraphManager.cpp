@@ -76,13 +76,13 @@ void CGraphManager::Load(const std::string& aSceneName)
 	std::string sceneName = aSceneName.substr(0, lastSlash);
 
 	// Create Scene folder.
-	const std::string sceneFolder = "Imgui/NodeScripts/" + sceneName + "/";
+	mySceneFolder = "Imgui/NodeScripts/" + sceneName + "/";
 	//Om denna Blueprint redan finns ska vi bara spara undan den som nyckel
-	if (!std::filesystem::exists(sceneFolder))
+	if (!std::filesystem::exists(mySceneFolder))
 	{
-		if (!std::filesystem::create_directory(sceneFolder.c_str()))
+		if (!std::filesystem::create_directory(mySceneFolder.c_str()))
 		{
-			ENGINE_BOOL_POPUP("Failed to create Directory: %s", sceneFolder.c_str());
+			ENGINE_BOOL_POPUP("Failed to create Directory: %s", mySceneFolder.c_str());
 			return;
 		}
 	}
@@ -125,7 +125,7 @@ void CGraphManager::Load(const std::string& aSceneName)
 					myGraphs.back().myChildrenKey = key;
 				}
 
-				std::string scriptFolder = sceneFolder + key + "/";
+				std::string scriptFolder = mySceneFolder + key + "/";
 				myGraphs.back().myFolderPath = scriptFolder;
 				if (std::filesystem::exists(scriptFolder))
 					continue;
@@ -144,7 +144,7 @@ void CGraphManager::Load(const std::string& aSceneName)
 		}
 	}
 
-	CNodeDataManager::Get()->SetFolderPath(sceneFolder);
+	CNodeDataManager::Get()->SetFolderPath(mySceneFolder);
 
 	if (myGraphs.size() > 0)
 		myCurrentGraph = &myGraphs[0];
@@ -207,61 +207,59 @@ void CGraphManager::ReTriggerUpdatingTrees()
 
 void CGraphManager::SaveTreeToFile()
 {
-	for (const auto& graph : myGraphs)
+
 	{
+		rapidjson::StringBuffer s;
+		rapidjson::PrettyWriter<rapidjson::StringBuffer> writer1(s);
+
+		writer1.StartObject();
+		writer1.Key("UID_MAX");
+
+		writer1.StartObject();
+		writer1.Key("Num");
+		writer1.Int(CUID::myGlobalUID);
+		writer1.EndObject();
+
+		writer1.Key("NodeInstances");
+		writer1.StartArray();
+		for (auto& nodeInstance : myCurrentGraph->myNodeInstances)
 		{
-			rapidjson::StringBuffer s;
-			rapidjson::PrettyWriter<rapidjson::StringBuffer> writer1(s);
-
-			writer1.StartObject();
-			writer1.Key("UID_MAX");
-
-			writer1.StartObject();
-			writer1.Key("Num");
-			writer1.Int(CUID::myGlobalUID);
-			writer1.EndObject();
-
-			writer1.Key("NodeInstances");
-			writer1.StartArray();
-			for (auto& nodeInstance : graph.myNodeInstances)
-			{
-				nodeInstance->Serialize(writer1);
-			}
-			writer1.EndArray();
-			writer1.EndObject();
-
-
-
-			std::ofstream of(graph.myFolderPath + "/nodeinstances.json");
-			of << s.GetString();
+			nodeInstance->Serialize(writer1);
 		}
-		//Links
+		writer1.EndArray();
+		writer1.EndObject();
+
+
+
+		std::ofstream of(myCurrentGraph->myFolderPath + "/nodeinstances.json");
+		of << s.GetString();
+	}
+	//Links
+	{
+		rapidjson::StringBuffer s;
+		rapidjson::PrettyWriter<rapidjson::StringBuffer> writer1(s);
+
+		writer1.StartObject();
+		writer1.Key("Links");
+		writer1.StartArray();
+		for (auto& link : myCurrentGraph->myLinks)
 		{
-			rapidjson::StringBuffer s;
-			rapidjson::PrettyWriter<rapidjson::StringBuffer> writer1(s);
-
 			writer1.StartObject();
-			writer1.Key("Links");
-			writer1.StartArray();
-			for (auto& link : graph.myLinks)
-			{
-				writer1.StartObject();
-				writer1.Key("ID");
-				writer1.Int(static_cast<int>(link.myID.Get()));
-				writer1.Key("Input");
-				writer1.Int(static_cast<int>(link.myInputID.Get()));
-				writer1.Key("Output");
-				writer1.Int(static_cast<int>(link.myOutputID.Get()));
-				writer1.EndObject();
-
-			}
-			writer1.EndArray();
+			writer1.Key("ID");
+			writer1.Int(static_cast<int>(link.myID.Get()));
+			writer1.Key("Input");
+			writer1.Int(static_cast<int>(link.myInputID.Get()));
+			writer1.Key("Output");
+			writer1.Int(static_cast<int>(link.myOutputID.Get()));
 			writer1.EndObject();
 
-
-			std::ofstream of(graph.myFolderPath + "/links.json");
-			of << s.GetString();
 		}
+		writer1.EndArray();
+		writer1.EndObject();
+
+
+		std::ofstream of(myCurrentGraph->myFolderPath + "/links.json");
+		of << s.GetString();
 	}
 }
 
@@ -388,7 +386,8 @@ void CGraphManager::LoadTreeFromFile()
 			}
 		}
 	}
-	myCurrentGraph = &myGraphs[0];
+	if (myGraphs.size() > 0)
+		myCurrentGraph = &myGraphs[0];
 }
 
 void CGraphManager::SaveNodesToClipboard()
@@ -549,14 +548,22 @@ ImColor GetIconColor(SPin::EPinType type)
 	switch (type)
 	{
 	default:
-	case SPin::EPinType::EFlow:     return ImColor(255, 255, 255);
-	case SPin::EPinType::EBool:     return ImColor(220, 48, 48);
-	case SPin::EPinType::EInt:      return ImColor(68, 201, 156);
-	case SPin::EPinType::EFloat:    return ImColor(147, 226, 74);
-	case SPin::EPinType::EString:   return ImColor(124, 21, 153);
-	case SPin::EPinType::EVector3:   return ImColor(255, 166, 0);
-	case SPin::EPinType::EStringListIndexed: return ImColor(0, 255, 0);
-	case SPin::EPinType::EUnknown:   return ImColor(255, 0, 0);
+	case SPin::EPinType::EFlow:
+		return ImColor(255, 255, 255);
+	case SPin::EPinType::EBool:
+		return ImColor(220, 48, 48);
+	case SPin::EPinType::EInt:
+		return ImColor(68, 201, 156);
+	case SPin::EPinType::EFloat:
+		return ImColor(147, 226, 74);
+	case SPin::EPinType::EString:
+		return ImColor(124, 21, 153);
+	case SPin::EPinType::EVector3:
+		return ImColor(255, 166, 0);
+	case SPin::EPinType::EStringListIndexed:
+		return ImColor(0, 255, 0);
+	case SPin::EPinType::EUnknown:
+		return ImColor(255, 0, 0);
 	}
 };
 
@@ -567,14 +574,30 @@ void DrawPinIcon(const SPin& pin, bool connected, int alpha)
 	color.Value.w = alpha / 255.0f;
 	switch (pin.myVariableType)
 	{
-	case SPin::EPinType::EFlow:     iconType = IconType::Flow;   break;
-	case SPin::EPinType::EBool:     iconType = IconType::Circle; break;
-	case SPin::EPinType::EInt:      iconType = IconType::Circle; break;
-	case SPin::EPinType::EFloat:    iconType = IconType::Circle; break;
-	case SPin::EPinType::EString:   iconType = IconType::Circle; break;
-	case SPin::EPinType::EVector3:   iconType = IconType::Circle; break;
-	case SPin::EPinType::EStringListIndexed: iconType = IconType::Circle; break;
-	case SPin::EPinType::EUnknown:  iconType = IconType::Circle; break;
+	case SPin::EPinType::EFlow:
+		iconType = IconType::Flow;
+		break;
+	case SPin::EPinType::EBool:
+		iconType = IconType::Circle;
+		break;
+	case SPin::EPinType::EInt:
+		iconType = IconType::Circle;
+		break;
+	case SPin::EPinType::EFloat:
+		iconType = IconType::Circle;
+		break;
+	case SPin::EPinType::EString:
+		iconType = IconType::Circle;
+		break;
+	case SPin::EPinType::EVector3:
+		iconType = IconType::Circle;
+		break;
+	case SPin::EPinType::EStringListIndexed:
+		iconType = IconType::Circle;
+		break;
+	case SPin::EPinType::EUnknown:
+		iconType = IconType::Circle;
+		break;
 	default:
 		return;
 	}
@@ -989,7 +1012,7 @@ void CGraphManager::LoadDataNodesFromFile()
 {
 	Document document;
 	{
-		std::string path = "Imgui/NodeScripts/CustomDataNodes.json";
+		std::string path = mySceneFolder + "CustomDataNodes.json";
 		document = CJsonReader::Get()->LoadDocument(path);
 		if (CJsonReader::IsValid(document, { "Custom Data" }))
 		{
@@ -1471,8 +1494,8 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 			CNodeType** types = CNodeTypeCollector::GetAllNodeTypes();
 			unsigned short noOfTypes = CNodeTypeCollector::GetNodeTypeCount();
 
-			CNodeType** childTypes = CNodeTypeCollector::GetAllChildNodeTypes(myCurrentGraph->myChildrenKey);
-			unsigned short noOfChildTypes = CNodeTypeCollector::GetChildNodeTypeCount(myCurrentGraph->myChildrenKey);
+			//CNodeType** childTypes = CNodeTypeCollector::GetAllChildNodeTypes(myCurrentGraph->myChildrenKey);
+			//unsigned short noOfChildTypes = CNodeTypeCollector::GetChildNodeTypeCount(myCurrentGraph->myChildrenKey);
 
 			std::map< std::string, std::vector<CNodeType*>> cats;
 			static bool noVariablesCreated = true;
@@ -1482,10 +1505,11 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 				if (types[i]->GetNodeTypeCategory() == "New Node Type")
 					noVariablesCreated = false;
 			}
-			for (int i = 0; i < noOfChildTypes; i++)
-			{
-				cats[childTypes[i]->GetNodeTypeCategory()].push_back(childTypes[i]);
-			}
+
+			//for (int i = 0; i < noOfChildTypes; i++)
+			//{
+			//	cats[childTypes[i]->GetNodeTypeCategory()].push_back(childTypes[i]);
+			//}
 
 			if (noVariablesCreated)
 			{

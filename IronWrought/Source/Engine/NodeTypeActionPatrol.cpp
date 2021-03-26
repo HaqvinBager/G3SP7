@@ -9,6 +9,8 @@ CNodeTypeActionPatrol::CNodeTypeActionPatrol()
 {
 	myPins.push_back(SPin("Value", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EString));	//0
 	myPins.push_back(SPin("ID", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EInt));		//1
+	DeclareDataOnPinIfNecessary<std::string>(myPins[0], "");
+	DeclareDataOnPinIfNecessary<int>(myPins[1], 0);
 }
 
 int CNodeTypeActionPatrol::OnEnter(CNodeInstance* /*aTriggeringNodeInstance*/)

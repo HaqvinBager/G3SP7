@@ -9,6 +9,8 @@ CNodeTypeVariableSetInt::CNodeTypeVariableSetInt()
 	myPins.push_back(SPin("", SPin::EPinTypeInOut::EPinTypeInOut_OUT));
 	myPins.push_back(SPin("Val", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EInt));
 	myPins.push_back(SPin("", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EInt));
+	DeclareDataOnPinIfNecessary<int>(myPins[2], 0);
+	DeclareDataOnPinIfNecessary<int>(myPins[3], 0);
 }
 
 int CNodeTypeVariableSetInt::OnEnter(CNodeInstance* aTriggeringNodeInstance)

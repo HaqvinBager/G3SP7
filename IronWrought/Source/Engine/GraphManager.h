@@ -129,6 +129,6 @@ private:
 	bool myPushCommand = true;
 	bool myRenderGraph;
 	bool myRunScripts;
-
+	std::string mySceneFolder;
 	ImTextureID myHeaderTextureID;
 };

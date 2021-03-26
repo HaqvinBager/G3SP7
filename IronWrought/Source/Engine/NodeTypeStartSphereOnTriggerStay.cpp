@@ -9,6 +9,7 @@ CNodeTypeStartSphereOnTriggerStay::CNodeTypeStartSphereOnTriggerStay()
 {
 	myPins.push_back(SPin("Radius", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));
 	myPins.push_back(SPin("", SPin::EPinTypeInOut::EPinTypeInOut_OUT));
+	DeclareDataOnPinIfNecessary<float>(myPins[0], 0.0f);
 }
 
 int CNodeTypeStartSphereOnTriggerStay::OnEnter(class CNodeInstance* aTriggeringNodeInstance)
