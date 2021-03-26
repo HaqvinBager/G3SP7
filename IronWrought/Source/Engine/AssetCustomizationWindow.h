@@ -26,9 +26,11 @@ namespace ImGuiWindow
 		void LoadAsset();
 		void LoadCustomizationFile();
 		void SaveCustomizationFile();
-		void SaveCustomFileExists();
+		void SaveOverwriteFile();
 
 		bool GetPathsByExtension(const std::string& aPath, const std::string& aFileExtesion,std::vector<SAssetInfo>& anOutVector, const bool aShouldClearVector = true);
+
+		void SaveJSON(const std::string& aCustomPath = "");
 
 	private:
 		float myPrimaryTint[3];
@@ -37,8 +39,8 @@ namespace ImGuiWindow
 		float myAccentTint[3];
 
 		CGameObject* myGameObject;
-		std::string mySelectedFBX;
-		std::string mySelectedJSON;
+		SAssetInfo mySelectedFBX;
+		SAssetInfo mySelectedJSON;
 		char myJSONFileName[AssetCustomizationWindow::JSONNameBufferSize];
 		std::vector<SAssetInfo> myFBXAssetPaths;
 		std::vector<SAssetInfo> myJSONPaths;
@@ -46,6 +48,7 @@ namespace ImGuiWindow
 		bool myShowLoadAsset;
 		bool myShowLoadCustomizationFile;
 		bool myShowSaveCustomizationFile;
+		bool myShowOverwriteCustomizationFile;
 		bool myReplaceFBX;
 	};
 }

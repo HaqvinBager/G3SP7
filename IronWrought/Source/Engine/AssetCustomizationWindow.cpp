@@ -8,6 +8,18 @@
 #include "ModelHelperFunctions.h"
 
 #include <filesystem>
+const std::string CutToFileNameOnly(const std::string& aString)
+{
+	size_t lastSlashIndex = aString.find_last_of("\\/");
+	return aString.substr(lastSlashIndex + 1, aString.length() - lastSlashIndex + 1);
+}
+const std::string CutFileEnding(const std::string& aString)
+{
+	size_t lastSlashIndex = aString.find_last_of(".");
+	return aString.substr(0, lastSlashIndex);
+}
+
+#define COLOR_TEXT_LABEL ImVec4(1.0f, 1.0f, 1.0f, 0.75f)
 
 ImGuiWindow::CAssetCustomizationWindow::CAssetCustomizationWindow(const char* aName)
 	: CWindow(aName)
@@ -15,6 +27,7 @@ ImGuiWindow::CAssetCustomizationWindow::CAssetCustomizationWindow(const char* aN
 	, myShowLoadAsset(false)
 	, myShowLoadCustomizationFile(false)
 	, myShowSaveCustomizationFile(false)
+	, myShowOverwriteCustomizationFile(false)
 	, myReplaceFBX(true)
 {
 	ZeroMemory(myPrimaryTint, 3);
@@ -48,7 +61,14 @@ void ImGuiWindow::CAssetCustomizationWindow::OnInspectorGUI()
 			{
 				if (ImGui::MenuItem("Open Asset..", "Ctrl+O")) { myShowLoadAsset = true; }
 				if (ImGui::MenuItem("Open Customization File", "Ctrl+L")) { myShowLoadCustomizationFile = true; }
-				if (ImGui::MenuItem("Save Customization", "Ctrl+S")) { myShowSaveCustomizationFile = true; }
+				if (ImGui::MenuItem("Save Customization", "Ctrl+S")) { 
+					myShowSaveCustomizationFile = true; 
+					if (mySelectedJSON.myDisplayName.length() > 0)
+					{
+						std::string fileName = CutFileEnding(mySelectedJSON.myDisplayName);
+						memcpy(myJSONFileName, &fileName[0], AssetCustomizationWindow::JSONNameBufferSize);
+					}
+				}
 				ImGui::EndMenu();
 			}
 			ImGui::EndMenuBar();
@@ -67,6 +87,13 @@ void ImGuiWindow::CAssetCustomizationWindow::OnInspectorGUI()
 			model.Tint4(Vector3(myAccentTint));
 		}
 
+		ImGui::Spacing();
+		ImGui::TextColored(COLOR_TEXT_LABEL, "Current FBX:"); ImGui::SameLine();
+		ImGui::Text(mySelectedFBX.myDisplayName.c_str());
+		ImGui::Spacing();
+		ImGui::TextColored(COLOR_TEXT_LABEL, "Current JSON:"); ImGui::SameLine();
+		ImGui::Text(mySelectedJSON.myDisplayName.c_str());
+
 		if (myShowLoadAsset)
 			LoadAsset();
 
@@ -76,10 +103,10 @@ void ImGuiWindow::CAssetCustomizationWindow::OnInspectorGUI()
 		if (myShowSaveCustomizationFile)
 			SaveCustomizationFile();
 
-		if (g_myShowPopUp)
-			SaveCustomFileExists();
+		if (myShowOverwriteCustomizationFile)
+			SaveOverwriteFile();
 
-		ImGui::SetWindowSize(Name(), ImVec2(0, 0));
+		ImGui::SetWindowSize(Name(), ImVec2(0, 0));// Prohibits resize and sets size to fit all items. Magic.
 	}
 	ImGui::End();
 }
@@ -91,6 +118,7 @@ void ImGuiWindow::CAssetCustomizationWindow::OnDisable()
 	myShowLoadAsset = false;
 	myShowLoadCustomizationFile = false;
 	myShowSaveCustomizationFile = false;
+	myShowOverwriteCustomizationFile = false;
 }
 
 void ImGuiWindow::CAssetCustomizationWindow::LoadAsset()
@@ -99,11 +127,8 @@ void ImGuiWindow::CAssetCustomizationWindow::LoadAsset()
 	myShowLoadAsset = GetPathsByExtension(path, ".fbx", myFBXAssetPaths, !myFBXAssetPaths.empty());
 	ImGui::Begin("Load FBX Asset.", &myShowLoadAsset, ImGuiWindowFlags_NoCollapse);
 	{
-		ImGui::TextColored(ImVec4(1,1,1,1), std::string("Folder: " + path).c_str());
+		ImGui::TextColored(COLOR_TEXT_LABEL, std::string("Folder: " + path).c_str());
 		ImGui::BeginChild("Scrolling", ImVec2(250.f,400.f), false, ImGuiWindowFlags_NoScrollWithMouse);
-		//int start = 0;
-		//int end = static_cast<int>(myFBXAssetPaths.size());
-		/*ImGui::CalcListClipping(end, 2.0f, &start, &end);*/
 		for (size_t i = 0; i < myFBXAssetPaths.size(); ++i)
 		{
 			bool selected = false;
@@ -115,7 +140,7 @@ void ImGuiWindow::CAssetCustomizationWindow::LoadAsset()
 				else
 					myGameObject->GetComponent<CModelComponent>()->SetModel(myFBXAssetPaths[i].myPath);
 
-				mySelectedFBX = std::move(myFBXAssetPaths[i].myPath);
+				mySelectedFBX = std::move(myFBXAssetPaths[i]);
 				myShowLoadAsset = false;
 				myFBXAssetPaths.clear();
 			}
@@ -131,7 +156,7 @@ void ImGuiWindow::CAssetCustomizationWindow::LoadCustomizationFile()
 	myShowLoadCustomizationFile = GetPathsByExtension(path, ".json", myJSONPaths, !myJSONPaths.empty());
 	ImGui::Begin("Load JSON Data.", &myShowLoadCustomizationFile, ImGuiWindowFlags_NoCollapse);
 	{
-		ImGui::TextColored(ImVec4(1,1,1,1), std::string("Folder: " + path).c_str());
+		ImGui::TextColored(COLOR_TEXT_LABEL, std::string("Folder: " + path).c_str());
 		ImGui::Checkbox(": Use FBX from customization file", &myReplaceFBX);
 		ImGui::BeginChild("Scrolling", ImVec2(250.f,400.f), false,  ImGuiWindowFlags_NoScrollWithMouse);
 		for (size_t i = 0; i < myJSONPaths.size(); ++i)
@@ -143,12 +168,12 @@ void ImGuiWindow::CAssetCustomizationWindow::LoadCustomizationFile()
 				if (myGameObject->GetComponent<CModelComponent>())
 				{
 					if (myReplaceFBX)
-						ModelHelperFunctions::ReplaceModelAndLoadTints(myGameObject, myJSONPaths[i].myPath, mySelectedFBX);
+						ModelHelperFunctions::ReplaceModelAndLoadTints(myGameObject, myJSONPaths[i].myPath, mySelectedFBX.myPath);
 					else 
-						ModelHelperFunctions::LoadTintsToModelComponent(myGameObject, myJSONPaths[i].myPath, mySelectedFBX);
+						ModelHelperFunctions::LoadTintsToModelComponent(myGameObject, myJSONPaths[i].myPath, mySelectedFBX.myPath);
 				}
 				else
-					ModelHelperFunctions::AddModelComponentWithTintsFromData(myGameObject, myJSONPaths[i].myPath, mySelectedFBX);
+					ModelHelperFunctions::AddModelComponentWithTintsFromData(myGameObject, myJSONPaths[i].myPath, mySelectedFBX.myPath);
 
 				CModelComponent* model = myGameObject->GetComponent<CModelComponent>();
 				Vector4 primary		= model->Tint1();
@@ -160,7 +185,8 @@ void ImGuiWindow::CAssetCustomizationWindow::LoadCustomizationFile()
 				myTertiaryTint[0]  = tertiary.x;	myTertiaryTint[1]  = tertiary.y;	myTertiaryTint[2]  = tertiary.z;
 				myAccentTint[0]	   = accents.x;		myAccentTint[1]    = accents.y;		myAccentTint[2]    = accents.z;
 
-				mySelectedJSON = std::move(myJSONPaths[i].myPath);
+				mySelectedJSON = std::move(myJSONPaths[i]);
+				mySelectedFBX.myDisplayName = CutToFileNameOnly(mySelectedFBX.myPath);
 				myShowLoadCustomizationFile = false;
 				myJSONPaths.clear();
 			}
@@ -175,7 +201,7 @@ void ImGuiWindow::CAssetCustomizationWindow::SaveCustomizationFile()
 	const std::string path = ASSETPATH("Assets/Graphics/TintedModels/Data/");
 	ImGui::Begin("Save JSON Data.", &myShowSaveCustomizationFile, ImGuiWindowFlags_NoCollapse);
 	{
-		ImGui::TextColored(ImVec4(1,1,1,1), std::string("Folder: " + path).c_str());
+		ImGui::TextColored(COLOR_TEXT_LABEL, std::string("Folder: " + path).c_str());
 		ImGui::Spacing();
 
 		ImGui::InputText("", myJSONFileName, AssetCustomizationWindow::JSONNameBufferSize);
@@ -183,46 +209,53 @@ void ImGuiWindow::CAssetCustomizationWindow::SaveCustomizationFile()
 		{
 			if (myGameObject->GetComponent<CModelComponent>())
 			{
-				myShowSaveCustomizationFile = false;
 				if (strlen(myJSONFileName) > 0)
 				{
 					if (!std::filesystem::exists(std::string(path + myJSONFileName + ".json")))
-						ModelHelperFunctions::SaveTintsFromModelComponent(myGameObject, mySelectedFBX, std::string(path + myJSONFileName + ".json"));
+					{
+						SaveJSON();
+						myShowSaveCustomizationFile = false;
+					}
 					else
 					{
-						g_myShowPopUp = true;
-						myShowSaveCustomizationFile = true;
+						Vector2 resolution = IRONWROUGHT->GetResolution() * 0.5f;
+						ImGui::SetNextWindowPos(ImVec2(resolution.x - 100, resolution.y));
+						ImGui::SetNextWindowFocus();
+						myShowOverwriteCustomizationFile = true;
 					}
 				}
 				else
-					ModelHelperFunctions::SaveTintsFromModelComponent(myGameObject, mySelectedFBX);
-
-				ZeroMemory(myJSONFileName, AssetCustomizationWindow::JSONNameBufferSize);
+					ModelHelperFunctions::SaveTintsFromModelComponent(myGameObject, mySelectedFBX.myPath);
 			}
 		}
 	}
 	ImGui::End();
 }
 
-void ImGuiWindow::CAssetCustomizationWindow::SaveCustomFileExists()
+void ImGuiWindow::CAssetCustomizationWindow::SaveOverwriteFile()
 {
-	ImGui::Begin("File Exists.", &g_myShowPopUp, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar);
+	ImGui::Begin("File Exists.", &myShowOverwriteCustomizationFile, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
 	{
-		ImGui::SetWindowPos(ImVec2(0, 0));
-		ImGui::Text("Overwrite?");
-		ImGui::PushItemWidth(-100.0f);
-		ImGui::Button("Yes");
-		ImGui::Button("No");
-		ImGui::SetWindowSize("File Existst.", ImVec2(0, 0));
+		ImGui::SetWindowSize("File Exists.", ImVec2(200, 0));
+		ImGui::TextColored(COLOR_TEXT_LABEL, "Overwrite exisitng file?");
+		const float width	= ImGui::GetWindowWidth() * 0.33f;
+		const float cursorX = ImGui::GetWindowWidth() * 0.49f - width;
+		ImGui::SetCursorPosX(cursorX);
+		
+		if (ImGui::Button("Yes", ImVec2(width, 0.0f))) 
+		{
+			SaveJSON();
+			myShowSaveCustomizationFile = false;
+			myShowOverwriteCustomizationFile = false;
+		} 
+		ImGui::SameLine();
+
+		if (ImGui::Button("No", ImVec2(width, 0.0f)))
+			myShowOverwriteCustomizationFile = false;
 	}
 	ImGui::End();
 }
 
-const std::string CutToFileNameOnly(const std::string& aString)
-{
-	size_t lastSlashIndex = aString.find_last_of("\\/");
-	return aString.substr(lastSlashIndex + 1, aString.length() - lastSlashIndex + 1);
-}
 bool ImGuiWindow::CAssetCustomizationWindow::GetPathsByExtension(const std::string& aPath, const std::string& aFileExtesion, std::vector<SAssetInfo>& anOutVector, const bool aShouldClearVector)
 {
 	if (aShouldClearVector)
@@ -250,4 +283,20 @@ bool ImGuiWindow::CAssetCustomizationWindow::GetPathsByExtension(const std::stri
 		}
 	}
 	return true;
+}
+
+void ImGuiWindow::CAssetCustomizationWindow::SaveJSON(const std::string& aCustomPath)
+{
+	std::string jsonPath;
+	if (aCustomPath.length() > 0)
+		jsonPath = (aCustomPath + myJSONFileName + ".json");
+	else
+		jsonPath = (ASSETPATH("Assets/Graphics/TintedModels/Data/") + myJSONFileName + ".json");
+
+	ModelHelperFunctions::SaveTintsFromModelComponent(myGameObject, mySelectedFBX.myPath, jsonPath);
+
+	mySelectedJSON.myPath = jsonPath;
+	mySelectedJSON.myDisplayName = myJSONFileName;
+
+	ZeroMemory(myJSONFileName, AssetCustomizationWindow::JSONNameBufferSize);
 }

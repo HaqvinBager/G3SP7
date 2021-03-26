@@ -326,3 +326,8 @@ void CEngine::ClearModelFactory()
 {
 	myModelFactory->ClearFactory();
 }
+
+const DirectX::SimpleMath::Vector2 CEngine::GetResolution()
+{
+	return myWindowHandler->GetResolution();
+}

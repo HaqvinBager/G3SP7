@@ -74,6 +74,8 @@ public:
 	void RemoveScene(CStateStack::EState aState);
 	void ClearModelFactory();
 
+	const DirectX::SimpleMath::Vector2 GetResolution();
+
 private:
 	static CEngine* ourInstance;
 	
