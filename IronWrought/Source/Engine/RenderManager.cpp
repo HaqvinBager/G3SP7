@@ -206,9 +206,10 @@ void CRenderManager::Render(CScene& aScene)
 	myRenderStateManager.SetRasterizerState(CRenderStateManager::RasterizerStates::RASTERIZERSTATE_FRONTFACECULLING);
 	myLightRenderer.Render(maincamera, onlyPointLights);
 	myLightRenderer.Render(maincamera, onlySpotLights);
-	myLightRenderer.RenderVolumetric(maincamera, onlyPointLights);
 	myLightRenderer.Render(maincamera, onlyBoxLights);
-	myLightRenderer.RenderVolumetric(maincamera, onlySpotLights);
+	myLightRenderer.RenderVolumetric(maincamera, onlyPointLights);
+	//myLightRenderer.RenderVolumetric(maincamera, onlySpotLights);
+	myLightRenderer.RenderVolumetric(maincamera, onlyBoxLights);
 	myRenderStateManager.SetRasterizerState(CRenderStateManager::RasterizerStates::RASTERIZERSTATE_DEFAULT);
 	myLightRenderer.RenderVolumetric(maincamera, environmentlight);
 

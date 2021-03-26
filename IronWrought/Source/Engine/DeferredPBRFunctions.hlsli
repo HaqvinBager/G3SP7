@@ -173,10 +173,10 @@ float3 EvaluateBoxLight(float3 diffuseColor, float3 specularColor, float3 normal
     float3 finalColor = 0.0f;
     finalColor += intensityScaledColor * ((cDiff * (1.0f - cSpec) + cSpec) * PI);
     
-    //finalColor *= linearAttenuation /** physicalAttenuation*/;
+    finalColor *= linearAttenuation * physicalAttenuation;
     //float3 dirToLight = dot(lightDir, -toLight);
     //finalColor *= saturate(dirToLight);
-    //finalColor *= lambert;
+    finalColor *= lambert;
     
     return saturate(finalColor);
 }

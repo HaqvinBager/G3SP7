@@ -87,11 +87,14 @@ private:
 		Matrix myToWorldSpace;
 		Matrix myToViewSpace;
 		Matrix myToProjectionSpace;
+		Matrix myToObjectSpace;
 		Vector4 myColorAndIntensity;
 		Vector4 myPositionAndRange;
 		Vector4 myDirection;
-		//Vector2 myWidthAndHeight;
-		//Vector2 myPadding;
+		Vector4 myDirectionNormal1;
+		Vector4 myDirectionNormal2;
+		Vector2 myWidthAndHeight;
+		Vector2 myPadding;
 	} myBoxLightBufferData;
 
 private:

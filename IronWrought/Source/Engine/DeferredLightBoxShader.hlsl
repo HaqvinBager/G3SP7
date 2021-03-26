@@ -15,7 +15,26 @@ PixelOutput main(BoxLightVertexToPixel input)
         return output;
     }
     
-    float3 worldPosition = PixelShader_WorldPosition(screenUV).rgb;
+    float3 worldPosition = /*input.myWorldPosition*/PixelShader_WorldPosition(screenUV).rgb;
+    
+    
+    //float3 clipSpace = input.myClipSpacePosition;
+    //clipSpace.y *= -1.0f;
+    //float2 screenSpaceUV = (clipSpace.xy / clipSpace.z) * 0.5f + 0.5f;
+    
+    float z = depthTexture.Sample(defaultSampler, screenUV).r;
+    float x = screenUV.x * 2.0f - 1;
+    float y = (1 - screenUV.y) * 2.0f - 1;
+    float4 projectedPos = float4(x, y, z, 1.0f);
+    float4 viewSpacePos = mul(toCameraFromProjection, projectedPos);
+    viewSpacePos /= viewSpacePos.w;
+    float4 worldPosFromDepth = mul(toWorldFromCamera, viewSpacePos);
+    
+    float4 objectPosition = mul(toBoxLightObject, worldPosFromDepth);
+    
+    clip(0.5f - abs(objectPosition.xy));
+    clip(1.0f - abs(objectPosition.z));
+    
     float3 toEye = normalize(cameraPosition.xyz - worldPosition.xyz);
     float3 albedo = GBuffer_Albedo(screenUV).rgb;
     albedo = GammaToLinear(albedo);
@@ -29,7 +48,6 @@ PixelOutput main(BoxLightVertexToPixel input)
     float3 specularColor = lerp((float3) 0.04, albedo, metalness);
     float3 diffuseColor = lerp((float3) 0.00, albedo, 1 - metalness);
     
-    //float3 directionalLight = EvaluateDirectionalLight(diffuseColor, specularColor, normal, perceptualRoughness, boxLightColorAndIntensity.rgb * boxLightColorAndIntensity.a, boxLightDirection.xyz, toEye.xyz);
     float3 toLight = boxLightPositionAndRange.xyz - worldPosition.xyz;
     float lightDistance = length(toLight);
     toLight = normalize(toLight);

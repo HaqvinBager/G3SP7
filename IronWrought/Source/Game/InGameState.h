@@ -34,4 +34,5 @@ private:
 	CGameObject* myCamera;
 	CGameObject* myDecal;
 	CGameObject* mySpotlight;
+	CGameObject* myBoxLight;
 };

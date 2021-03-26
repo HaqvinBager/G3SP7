@@ -7,6 +7,7 @@ struct BoxLightVertexToPixel
 {
     float4 myPosition : SV_POSITION;
     float4 myWorldPosition : WORLD_POSITION;
+    float3 myClipSpacePosition : CLIP_SPACE_POSITION;
     float3 myUV : UV;
 };
 
@@ -29,9 +30,12 @@ cbuffer BoxLightObjectBuffer : register(b3)
     float4x4 toBoxLightWorld;
     float4x4 toBoxLightView;
     float4x4 toBoxLightProjection;
+    float4x4 toBoxLightObject;
     float4 boxLightColorAndIntensity;
     float4 boxLightPositionAndRange;
     float4 boxLightDirection;
-    //float2 boxLightWidthAndHeight;
-    //float2 boxLightPadding;
+    float4 boxLightDirectionNormal1;
+    float4 boxLightDirectionNormal2;
+    float2 boxLightWidthAndHeight;
+    float2 boxLightPadding;
 }

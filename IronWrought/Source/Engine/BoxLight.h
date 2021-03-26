@@ -13,7 +13,10 @@ public:
 	const Vector3& GetPosition() const;
 	const Vector3& GetColor() const;
 	const Vector3& GetDirection() const;
-	//const Vector2& GetWidthAndHeight() const;
+	const Vector4& GetDirectionNormal1() const;
+	const Vector4& GetDirectionNormal2() const;
+	const float GetWidth() const;
+	const float GetHeight() const;
 	const float GetIntensity() const;
 	const float GetRange() const;
 
@@ -29,6 +32,9 @@ public:
 	void SetWidth(float aWidth);
 	void SetHeight(float aHeight);
 	void SetArea(Vector2 aWidthAndHeight);
+
+	void SetRotation(Vector3 aRotation);
+	void Rotate(Vector3 aRotation);
 
 private:
 	void UpdateWorld();
@@ -48,6 +54,7 @@ private:
 	Vector3 myPosition;
 	Vector3 myColor;
 	Vector3 myDirection;
+	Vector3 myEulerAngles;
 	float myIntensity;
 	float myRange; // Range acts as depth of the light volume
 	float myWidth;

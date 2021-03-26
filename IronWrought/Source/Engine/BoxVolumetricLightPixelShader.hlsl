@@ -1,4 +1,5 @@
-#include "FullscreenShaderStructs.hlsli"
+//#include "FullscreenShaderStructs.hlsli"
+#include "BoxLightShaderStructs.hlsli"
 #include "MathHelpers.hlsli"
 
 #define NUM_SAMPLES 128
@@ -6,7 +7,7 @@
 
 // RAYMARCHING
 #define TAU 0.0001
-#define PHI /*10000000.0*/5000000.0
+#define PHI /*10000000.0*/100000.0
 
 #define PI_RCP 0.31830988618379067153776752674503
 
@@ -19,15 +20,16 @@ cbuffer FrameBuffer : register(b0)
     float4 cameraPosition;
 }
 
-cbuffer LightBuffer : register(b1)
-{
-    float4x4 toDirectionalLightView;
-    float4x4 toDirectionalLightProjection;
-    float4 directionalLightPosition; // For shadow calculations
-    float4 toDirectionalLight;
-    float4 directionalLightColor;
-}
+//cbuffer LightBuffer : register(b1)
+//{
+//    float4x4 toDirectionalLightView;
+//    float4x4 toDirectionalLightProjection;
+//    float4 directionalLightPosition; // For shadow calculations
+//    float4 toDirectionalLight;
+//    float4 directionalLightColor;
+//}
 
+sampler defaultSampler : register(s0);
 sampler shadowSampler : register(s1);
 Texture2D depthTexture : register(t21);
 Texture2D shadowDepthTexture : register(t22);
@@ -80,15 +82,19 @@ float3 SampleShadowPos(float3 projectionPos)
 
 float3 ShadowFactor(float3 viewPos)
 {
-    float4 projectionPos = mul(toDirectionalLightProjection, viewPos);
+    float4 projectionPos = mul(toBoxLightProjection, viewPos);
     return SampleShadowPos(projectionPos.xyz);
 }
 
-void ExecuteRaymarching(inout float3 rayPositionLightVS, float3 invViewDirLightVS, float stepSize, float l, inout float3 VLI)
+void ExecuteRaymarching(inout float3 rayPositionLightVS, float3 invViewDirLightVS, inout float3 rayPositionWorld, float3 invViewDirWorld, float stepSize, float l, inout float3 VLI)
 {
     rayPositionLightVS.xyz += stepSize * invViewDirLightVS.xyz;
 
-    float3 shadowTerm = ShadowFactor(rayPositionLightVS.xyz).xxx;
+    // March in world space in parallel
+    rayPositionWorld += stepSize * invViewDirWorld;
+    //..
+    
+    float3 shadowTerm = /*ShadowFactor(rayPositionLightVS.xyz).xxx*/1.0f;
     
     // Distance to the current position on the ray in light view-space
     float d = length(rayPositionLightVS.xyz);
@@ -97,27 +103,39 @@ void ExecuteRaymarching(inout float3 rayPositionLightVS, float3 invViewDirLightV
     // Calculate the final light contribution for the sample on the ray...
     float3 intens = TAU * (shadowTerm * (PHI * 0.25 * PI_RCP) * dRcp * dRcp) * exp(-d * TAU) * exp(-l * TAU) * stepSize;
     
+    float3 toLight = boxLightPositionAndRange.xyz - rayPositionWorld.xyz;
+    float lightDistance = length(toLight);
+    float linearAttenuation = lightDistance / boxLightPositionAndRange.w;
+    linearAttenuation = 1.0f - linearAttenuation;
+    linearAttenuation = saturate(linearAttenuation);
+    float physicalAttenuation = saturate(1.0f / (lightDistance * lightDistance));
+    float attenuation = /*lambert **/ linearAttenuation * physicalAttenuation;
+    
+    
     // ... and add it to the total contribution of the ray
-    VLI += intens;
+    VLI += intens * attenuation;
 }
 
 // !RAYMARCHING
 
-PixelOutput main(VertexToPixel input)
+BoxLightPixelOutput main(BoxLightVertexToPixel input)
 {
-    PixelOutput output;
+    BoxLightPixelOutput output;
     
-    float raymarchDistanceLimit = 99999.0f;
+    float raymarchDistanceLimit = 2.0f * boxLightPositionAndRange.w;
     
     // ...
-    float3 worldPosition = PixelShader_WorldPosition(input.myUV).rgb;
+    float3 worldPosition = input.myWorldPosition;
     float3 camPos = cameraPosition.xyz;
     
-    worldPosition -= directionalLightPosition.xyz;
-    float3 positionLightVS = mul(toDirectionalLightView, worldPosition);
+    float3 rayPositionWorld = worldPosition;
+    float3 invViewDirWorld = normalize(camPos - worldPosition);
+    
+    worldPosition -= boxLightPositionAndRange.xyz;
+    float3 positionLightVS = mul(toBoxLightView, worldPosition);
    
-    camPos -= directionalLightPosition.xyz;
-    float3 cameraPositionLightVS = mul(toDirectionalLightView, camPos);
+    camPos -= boxLightPositionAndRange.xyz;
+    float3 cameraPositionLightVS = mul(toBoxLightView, camPos);
     
     // Reduce noisyness by truncating the starting position
     //float raymarchDistance = trunc(clamp(length(cameraPositionLightVS.xyz - positionLightVS.xyz), 0.0f, raymarchDistanceLimit));
@@ -135,10 +153,10 @@ PixelOutput main(VertexToPixel input)
     [loop]
     for (float l = raymarchDistance; l > stepSize; l -= stepSize)
     {
-        ExecuteRaymarching(rayPositionLightVS, invViewDirLightVS.xyz, stepSize, l, VLI);
+        ExecuteRaymarching(rayPositionLightVS, invViewDirLightVS.xyz, rayPositionWorld, invViewDirWorld, stepSize, l, VLI);
     }
     
-    output.myColor.rgb = directionalLightColor.rgb * VLI;
+    output.myColor.rgb = boxLightColorAndIntensity.rgb * VLI;
     output.myColor.a = 1.0f;
     return output;
 }

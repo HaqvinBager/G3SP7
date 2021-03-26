@@ -41,10 +41,25 @@ const Vector3& CBoxLight::GetDirection() const
     return myDirection;
 }
 
-//const Vector2& CBoxLight::GetWidthAndHeight() const
-//{
-//    return { myWidth, myHeight };
-//}
+const Vector4& CBoxLight::GetDirectionNormal1() const
+{
+    return myDirectionNormal1;
+}
+
+const Vector4& CBoxLight::GetDirectionNormal2() const
+{
+    return myDirectionNormal2;
+}
+
+const float CBoxLight::GetWidth() const
+{
+    return myWidth;
+}
+
+const float CBoxLight::GetHeight() const
+{
+    return myHeight;
+}
 
 const float CBoxLight::GetIntensity() const
 {
@@ -130,34 +145,80 @@ void CBoxLight::SetArea(Vector2 aWidthAndHeight)
     UpdateProjection();
 }
 
+void CBoxLight::SetRotation(Vector3 aRotation)
+{
+    myEulerAngles = aRotation;
+
+    //Vector3 tempTranslation = myToWorldMatrix.Translation();
+
+    Matrix tempRotation = Matrix::CreateFromYawPitchRoll(
+        DirectX::XMConvertToRadians(aRotation.y),
+        DirectX::XMConvertToRadians(aRotation.x),
+        DirectX::XMConvertToRadians(aRotation.z)
+    );
+
+    myToWorldMatrix = tempRotation;
+    myToWorldMatrix *= Matrix::CreateScale({myWidth, myHeight, myRange});
+    myToWorldMatrix.Translation(myPosition);
+}
+
+void CBoxLight::Rotate(Vector3 aRotation)
+{
+    myEulerAngles += aRotation;
+
+    myEulerAngles.x = fmodf(myEulerAngles.x, 360.0f);
+    myEulerAngles.y = fmodf(myEulerAngles.y, 360.0f);
+    myEulerAngles.z = fmodf(myEulerAngles.z, 360.0f);
+
+    if (myEulerAngles.x < 0.0f)
+        myEulerAngles.x += 360.0f;
+    if (myEulerAngles.y < 0.0f)
+        myEulerAngles.y += 360.0f;
+    if (myEulerAngles.z < 0.0f)
+        myEulerAngles.z += 360.0f;
+
+    //Vector3 tempTranslation = myToWorldMatrix.Translation();
+    Matrix tempRotation = Matrix::CreateFromYawPitchRoll(aRotation.y, aRotation.x, aRotation.z);
+    myToWorldMatrix *= tempRotation;
+    myToWorldMatrix.Translation(myPosition);
+}
+
 void CBoxLight::UpdateWorld()
 {
-    Matrix scale = Matrix::CreateScale(myWidth, myHeight, myRange);
+    //Matrix scale = Matrix::CreateScale(myWidth, myHeight, myRange);
 
-    const float s = std::sqrt(myDirection.x * myDirection.x + myDirection.y * myDirection.y + myDirection.z * myDirection.z);
-    const float g = std::copysign(s, myDirection.z);  // note s instead of 1
-    const float h = myDirection.z + g;
-    Vector3 normal = Vector3(g * h - myDirection.x * myDirection.x, -myDirection.x * myDirection.y, -myDirection.x * h);
-    normal.Normalize();
-    Vector3 cross = myDirection.Cross(normal);
-    cross.Normalize();
+    //const float s = std::sqrt(myDirection.x * myDirection.x + myDirection.y * myDirection.y + myDirection.z * myDirection.z);
+    //const float g = std::copysign(s, myDirection.z);  // note s instead of 1
+    //const float h = myDirection.z + g;
+    //Vector3 normal = Vector3(g * h - myDirection.x * myDirection.x, -myDirection.x * myDirection.y, -myDirection.x * h);
+    //normal.Normalize();
+    //Vector3 cross = myDirection.Cross(normal);
+    //cross.Normalize();
 
-    myToWorldMatrix._11 = normal.x;
-    myToWorldMatrix._21 = normal.y;
-    myToWorldMatrix._31 = normal.z;
+    //myToWorldMatrix._11 = normal.x;
+    //myToWorldMatrix._21 = normal.y;
+    //myToWorldMatrix._31 = normal.z;
 
-    myToWorldMatrix._12 = cross.x;
-    myToWorldMatrix._22 = cross.y;
-    myToWorldMatrix._32 = cross.z;
+    //myToWorldMatrix._12 = cross.x;
+    //myToWorldMatrix._22 = cross.y;
+    //myToWorldMatrix._32 = cross.z;
 
-    myToWorldMatrix._13 = myDirection.x;
-    myToWorldMatrix._23 = myDirection.y;
-    myToWorldMatrix._33 = myDirection.z;
+    //myToWorldMatrix._13 = myDirection.x;
+    //myToWorldMatrix._23 = myDirection.y;
+    //myToWorldMatrix._33 = myDirection.z;
 
-    myToWorldMatrix.Translation({ 0.0f, 0.0f, 0.0f });
-    myToWorldMatrix *= scale;
+    SetRotation(myEulerAngles);
 
-    myToWorldMatrix.Translation(myPosition);
+    //myToWorldMatrix.Translation({ 0.0f, 0.0f, 0.0f });
+    //myToWorldMatrix *= scale;
+
+    //myToWorldMatrix.Translation(myPosition);
+
+    //myDirectionNormal1 = { normal.x, normal.y, normal.z, 0.0f };
+    //myDirectionNormal2 = { cross.x, cross.y, cross.z, 0.0f };
+    myDirection = myToWorldMatrix.Forward();
+    myDirectionNormal1 = { myToWorldMatrix.Right().x, myToWorldMatrix.Right().y, myToWorldMatrix.Right().z, 0.0f };
+    myDirectionNormal2 = { myToWorldMatrix.Up().x, myToWorldMatrix.Up().y, myToWorldMatrix.Up().z, 0.0f };
 
     //Vector3 z = myDirection;
     //Vector3 x = Vector3::Up.Cross(z);
