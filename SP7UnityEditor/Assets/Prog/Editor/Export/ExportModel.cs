@@ -33,29 +33,37 @@ public class ExportModel
             if (renderer.sharedMaterial.shader.name.Contains("Decal"))
                 continue;
 
-            if (renderer.TryGetComponent(out PolybrushFBX polyBrushFbx))
+            bool isLiterallyVertexPainted = false;
+            if(renderer.TryGetComponent(out MeshFilter filter))
             {
-                string assetPath = AssetDatabase.GUIDToAssetPath(polyBrushFbx.originalFBXGUID);
-                GameObject modelAsset = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
+                isLiterallyVertexPainted = filter.sharedMesh.name.Contains("PolybrushMesh");
+            }
 
-                ModelLink link = new ModelLink();
-                link.assetID = modelAsset.transform.GetInstanceID();
-                link.instanceID = renderer.transform.parent.GetInstanceID();
+            if (isLiterallyVertexPainted)
+            {
+                if (renderer.TryGetComponent(out PolybrushFBX polyBrushFbx))
+                {
+                    string assetPath = AssetDatabase.GUIDToAssetPath(polyBrushFbx.originalFBXGUID);
+                    GameObject modelAsset = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
 
-                string materialName = renderer.sharedMaterial.name;
+                    ModelLink link = new ModelLink();
+                    link.assetID = modelAsset.transform.GetInstanceID();
+                    link.instanceID = renderer.transform.parent.GetInstanceID();
 
-                string meshName = renderer.GetComponent<MeshFilter>().sharedMesh.name;
-                meshName = meshName.Substring(meshName.LastIndexOf('h'), meshName.Length - meshName.LastIndexOf('h'));
-                meshName = meshName.Substring(1, meshName.Length - 1);
-                //link.vertexColorID = AssetDatabase.LoadAssetAtPath<Object>("Assets/Generated/VertexColors/VertexColors_" + meshName.ToString() + "_Bin.bin").GetInstanceID();
-                link.vertexColorID = AssetDatabase.LoadAssetAtPath<Object>("Assets/Generated/VertexColors/VertexColors_" + polyBrushFbx.GetInstanceID().ToString() + "_Bin.bin").GetInstanceID();
+                    string materialName = renderer.sharedMaterial.name;
+                    string meshName = renderer.GetComponent<MeshFilter>().sharedMesh.name;
+                    meshName = meshName.Substring(meshName.LastIndexOf('h'), meshName.Length - meshName.LastIndexOf('h'));
+                    meshName = meshName.Substring(1, meshName.Length - 1);
+                    //link.vertexColorID = AssetDatabase.LoadAssetAtPath<Object>("Assets/Generated/VertexColors/VertexColors_" + meshName.ToString() + "_Bin.bin").GetInstanceID();
+                    link.vertexColorID = AssetDatabase.LoadAssetAtPath<Object>("Assets/Generated/VertexColors/VertexColors_" + polyBrushFbx.GetInstanceID().ToString() + "_Bin.bin").GetInstanceID();
 
 
-                if (!modelCollection.models.Exists( e => e.instanceID == link.instanceID))
-                    modelCollection.models.Add(link);
+                    if (!modelCollection.models.Exists(e => e.instanceID == link.instanceID))
+                        modelCollection.models.Add(link);
 
-                continue;
-            } 
+                    continue;
+                }
+            }      
             else if(Json.TryIsValidExport(renderer, out GameObject prefabParent))
             {
                 if (renderer.TryGetComponent(out MeshFilter meshFilter))
