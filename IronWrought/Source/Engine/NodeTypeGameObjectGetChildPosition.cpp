@@ -9,6 +9,7 @@
 CNodeTypeGameObjectGetChildPosition::CNodeTypeGameObjectGetChildPosition()
 {
 	myPins.push_back(SPin("Pos", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EVector3)); //0
+	DeclareDataOnPinIfNecessary<Vector3>(myPins[0], Vector3(1.0f, 1.0f, 1.0f));
 }
 
 int CNodeTypeGameObjectGetChildPosition::OnEnter(CNodeInstance* aTriggeringNodeInstance)

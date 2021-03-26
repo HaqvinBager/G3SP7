@@ -6,6 +6,7 @@
 CNodeTypeVariableGetFloat::CNodeTypeVariableGetFloat()
 {
 	myPins.push_back(SPin("OUT", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EFloat));
+	DeclareDataOnPinIfNecessary<float>(myPins[0], 0.0f);
 }
 
 int CNodeTypeVariableGetFloat::OnEnter(CNodeInstance* aTriggeringNodeInstance)

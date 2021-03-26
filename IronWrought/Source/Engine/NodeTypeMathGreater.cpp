@@ -7,6 +7,9 @@ CNodeTypeMathGreater::CNodeTypeMathGreater()
 	myPins.push_back(SPin("Val1", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));	//0
 	myPins.push_back(SPin("Val2", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));	//1
 	myPins.push_back(SPin("OUT", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EBool));	//2
+	DeclareDataOnPinIfNecessary<float>(myPins[0], 0.0f);
+	DeclareDataOnPinIfNecessary<float>(myPins[1], 0.0f);
+	DeclareDataOnPinIfNecessary<bool>(myPins[2], false);
 }
 
 int CNodeTypeMathGreater::OnEnter(CNodeInstance* aTriggeringNodeInstance)

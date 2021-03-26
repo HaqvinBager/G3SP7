@@ -6,6 +6,7 @@
 CNodeTypeVariableGetBool::CNodeTypeVariableGetBool()
 {
 	myPins.push_back(SPin("OUT", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EBool));
+	DeclareDataOnPinIfNecessary<bool>(myPins[0], false);
 }
 
 int CNodeTypeVariableGetBool::OnEnter(CNodeInstance* aTriggeringNodeInstance)

@@ -9,6 +9,7 @@ CNodeTypeUtilitiesBranching::CNodeTypeUtilitiesBranching()
 	myPins.push_back(SPin("True", SPin::EPinTypeInOut::EPinTypeInOut_OUT));							//1
 	myPins.push_back(SPin("False", SPin::EPinTypeInOut::EPinTypeInOut_OUT));							//2
 	myPins.push_back(SPin("Val", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EBool));		//3
+	DeclareDataOnPinIfNecessary<bool>(myPins[3], false);
 }
 
 int CNodeTypeUtilitiesBranching::OnEnter(CNodeInstance* aTriggeringNodeInstance)

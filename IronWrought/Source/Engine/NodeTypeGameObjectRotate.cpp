@@ -12,6 +12,7 @@ CNodeTypeGameObjectRotate::CNodeTypeGameObjectRotate()
 	myPins.push_back(SPin("Rot", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EVector3));	//2
 	//myPins.push_back(SPin("Yaw", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));	//3
 	//myPins.push_back(SPin("Roll", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));	//4
+	DeclareDataOnPinIfNecessary<Vector3>(myPins[2], Vector3(0.f, 0.f, 0.f));
 }
 
 int CNodeTypeGameObjectRotate::OnEnter(CNodeInstance* aTriggeringNodeInstance)
