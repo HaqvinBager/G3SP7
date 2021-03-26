@@ -16,6 +16,7 @@ CNodeTypeEnemySpawn::CNodeTypeEnemySpawn()
 {
 	myPins.push_back(SPin("", SPin::EPinTypeInOut::EPinTypeInOut_IN));//0
 	myPins.push_back(SPin("Nr of enemies: ", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EInt));//1
+	DeclareDataOnPinIfNecessary<int>(myPins[1], 0);
 
 	//DeclareDataOnPinIfNecessary<int>(myPins[1], 1.0f);
 }

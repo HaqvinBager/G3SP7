@@ -6,6 +6,8 @@ CNodeTypeTimeDeltaTotal::CNodeTypeTimeDeltaTotal()
 {
     myPins.emplace_back(SPin("Delta Time", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EFloat)); //0
     myPins.emplace_back(SPin("Total Time", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EFloat)); //1
+    DeclareDataOnPinIfNecessary<float>(myPins[0], 0.0f);
+    DeclareDataOnPinIfNecessary<float>(myPins[1], 0.0f);
 }
 
 int CNodeTypeTimeDeltaTotal::OnEnter(CNodeInstance* aTriggeringNodeInstance)
