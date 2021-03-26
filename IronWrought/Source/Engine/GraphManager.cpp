@@ -76,13 +76,13 @@ void CGraphManager::Load(const std::string& aSceneName)
 	std::string sceneName = aSceneName.substr(0, lastSlash);
 
 	// Create Scene folder.
-	const std::string sceneFolder = "Imgui/NodeScripts/" + sceneName + "/";
+	mySceneFolder = "Imgui/NodeScripts/" + sceneName + "/";
 	//Om denna Blueprint redan finns ska vi bara spara undan den som nyckel
-	if (!std::filesystem::exists(sceneFolder))
+	if (!std::filesystem::exists(mySceneFolder))
 	{
-		if (!std::filesystem::create_directory(sceneFolder.c_str()))
+		if (!std::filesystem::create_directory(mySceneFolder.c_str()))
 		{
-			ENGINE_BOOL_POPUP("Failed to create Directory: %s", sceneFolder.c_str());
+			ENGINE_BOOL_POPUP("Failed to create Directory: %s", mySceneFolder.c_str());
 			return;
 		}
 	}
@@ -125,7 +125,7 @@ void CGraphManager::Load(const std::string& aSceneName)
 					myGraphs.back().myChildrenKey = key;
 				}
 
-				std::string scriptFolder = sceneFolder + key + "/";
+				std::string scriptFolder = mySceneFolder + key + "/";
 				myGraphs.back().myFolderPath = scriptFolder;
 				if (std::filesystem::exists(scriptFolder))
 					continue;
@@ -144,7 +144,7 @@ void CGraphManager::Load(const std::string& aSceneName)
 		}
 	}
 
-	CNodeDataManager::Get()->SetFolderPath(sceneFolder);
+	CNodeDataManager::Get()->SetFolderPath(mySceneFolder);
 
 	if (myGraphs.size() > 0)
 		myCurrentGraph = &myGraphs[0];
@@ -990,7 +990,7 @@ void CGraphManager::LoadDataNodesFromFile()
 {
 	Document document;
 	{
-		std::string path = "Imgui/NodeScripts/CustomDataNodes.json";
+		std::string path = mySceneFolder + "CustomDataNodes.json";
 		document = CJsonReader::Get()->LoadDocument(path);
 		if (CJsonReader::IsValid(document, { "Custom Data" }))
 		{
