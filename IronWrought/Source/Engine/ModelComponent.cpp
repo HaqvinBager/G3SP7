@@ -5,6 +5,7 @@
 #include "Model.h"
 #include "MaterialHandler.h"
 #include "Model.h"
+#include <BinReader.h>
 
 CModelComponent::CModelComponent(CGameObject& aParent, const std::string& aFBXPath) : CBehaviour(aParent) {
 	myModel = CModelFactory::GetInstance()->GetModel(aFBXPath);
@@ -31,9 +32,9 @@ CModelComponent::~CModelComponent()
 	}
 }
 
-void CModelComponent::InitVertexPaint(const int aVertexColorsID, const std::vector<std::string>& someMaterials)
+void CModelComponent::InitVertexPaint(std::vector<SVertexPaintColorData>::const_iterator& it, const std::vector<std::string>& someMaterials)
 {
-	SVertexPaintData vertexPaintData = CMainSingleton::MaterialHandler().RequestVertexColorID(aVertexColorsID, myModelPath, someMaterials);
+	SVertexPaintData vertexPaintData = CMainSingleton::MaterialHandler().RequestVertexColorID(it, myModelPath, someMaterials);
 	myVertexPaintColorID = vertexPaintData.myVertexColorID;
 	myVertexPaintMaterialNames = vertexPaintData.myRGBMaterialNames;
 }

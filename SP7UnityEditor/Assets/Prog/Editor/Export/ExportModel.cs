@@ -55,8 +55,7 @@ public class ExportModel
                     meshName = meshName.Substring(meshName.LastIndexOf('h'), meshName.Length - meshName.LastIndexOf('h'));
                     meshName = meshName.Substring(1, meshName.Length - 1);
                     //link.vertexColorID = AssetDatabase.LoadAssetAtPath<Object>("Assets/Generated/VertexColors/VertexColors_" + meshName.ToString() + "_Bin.bin").GetInstanceID();
-                    link.vertexColorID = AssetDatabase.LoadAssetAtPath<Object>("Assets/Generated/VertexColors/VertexColors_" + polyBrushFbx.GetInstanceID().ToString() + "_Bin.bin").GetInstanceID();
-
+                    link.vertexColorID = filter.sharedMesh.GetInstanceID();//AssetDatabase.LoadAssetAtPath<Object>("Assets/Generated/" + aSceneName + "/VertexColors_" + polyBrushFbx.GetInstanceID().ToString() + "_Bin.bin").GetInstanceID();
 
                     if (!modelCollection.models.Exists(e => e.instanceID == link.instanceID))
                         modelCollection.models.Add(link);

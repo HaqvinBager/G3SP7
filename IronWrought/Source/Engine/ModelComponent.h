@@ -3,6 +3,7 @@
 
 class CGameObject;
 class CModel;
+struct SVertexPaintColorData;
 
 class CModelComponent : public CBehaviour
 {
@@ -12,7 +13,7 @@ public:
 	~CModelComponent() override;
 
 
-	void InitVertexPaint(const int aVertexColorsID, const std::vector<std::string>& someMaterials);
+	void InitVertexPaint(std::vector<SVertexPaintColorData>::const_iterator& it, const std::vector<std::string>& someMaterials);
 
 	void Awake() override;
 	void Start() override;

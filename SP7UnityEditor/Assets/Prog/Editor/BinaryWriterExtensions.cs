@@ -72,4 +72,23 @@ public static class BinaryWriterExtensions
         aBinWriter.Write(aData.rotation.eulerAngles);
         aBinWriter.Write(aData.localScale);
     }
+
+    public static void Write(this BinaryWriter aBinWriter, int aID, Mesh aMesh)
+    {
+        aBinWriter.Write(aID);
+        aBinWriter.Write(aMesh.colors.Length);
+
+        Vector3[] colorsRGB = new Vector3[aMesh.colors.Length];
+        for (int i = aMesh.colors.Length - 1; i > -1; --i)
+        {
+            colorsRGB[i].x = aMesh.colors[i].r;
+            colorsRGB[i].y = aMesh.colors[i].g;
+            colorsRGB[i].z = aMesh.colors[i].b;
+        }
+        aBinWriter.Write(colorsRGB);
+
+        Vector3[] vertexPositions = aMesh.vertices;
+        aBinWriter.Write(vertexPositions.Length);
+        aBinWriter.Write(vertexPositions);
+    }
 }

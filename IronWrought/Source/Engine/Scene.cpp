@@ -52,10 +52,10 @@ CScene::CScene(const unsigned int aGameObjectCount)
 	}
 
 #ifdef _DEBUG
-	myShouldRenderLineInstance = true;
-	myGrid = new CLineInstance();
-	myGrid->Init(CLineFactory::GetInstance()->CreateGrid({ 0.1f, 0.5f, 1.0f, 1.0f }));
-	this->AddInstance(myGrid);
+	myShouldRenderLineInstance = false;
+	//myGrid = new CLineInstance();
+	//myGrid->Init(CLineFactory::GetInstance()->CreateGrid({ 0.1f, 0.5f, 1.0f, 1.0f }));
+	//this->AddInstance(myGrid);
 #endif
 }
 
@@ -243,13 +243,7 @@ std::pair<unsigned int, std::array<CPointLight*, LIGHTCOUNT>> CScene::CullLights
 const std::vector<CLineInstance*>& CScene::CullLineInstances() const
 {
 #ifdef _DEBUG
-	if (myShouldRenderLineInstance)
-		return myLineInstances;
-	else
-	{
-		std::vector<CLineInstance*> temp;
-		return std::move(temp);
-	}
+	return myLineInstances;
 #else
 	return myLineInstances;
 #endif

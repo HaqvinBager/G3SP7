@@ -13,7 +13,6 @@ struct SDirectory {
 	std::vector<std::string> myFiles;
 };
 
-
 class CJsonReader
 {
 public:
@@ -28,15 +27,14 @@ public:
 	static bool IsValid(const rapidjson::Document& aDoc, const std::vector<std::string>& someMembers);
 	static bool HasParseError(const rapidjson::Document& aDoc);
 
+public:
 	void Init();
 	const bool HasAssetPath(const int anAssetID) const;
 	const std::string& GetAssetPath(const int anAssetID) const;
 
-
 private:
-	std::vector<SDirectory> myDirectories;
+	//std::vector<SDirectory> myDirectories;
 	std::unordered_map<int, std::string> myPathsMap;
 	std::unordered_map<int, std::string> myVertexColorsMap;
-
 
 };

@@ -47,6 +47,7 @@ public:
 	void Player(CGameObject* aPlayerObject);
 	bool EnvironmentLight(CEnvironmentLight* anEnvironmentLight);
 	void ShouldRenderLineInstance(const bool aShouldRender);
+	bool ShouldRenderLineInstance() { return myShouldRenderLineInstance; }
 	void UpdateCanvas();
 //SETTERS END
 public:
