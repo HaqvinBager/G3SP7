@@ -92,9 +92,9 @@ private:
 		std::vector<CNodeInstance*> myNodeInstances;
 		std::vector<BluePrintInstance> myBluePrintInstances;
 		ImVector<SEditorLinkInfo> myLinks;
-		unsigned int myNextLinkIdCounter = 100;
 		std::string myFolderPath;
 		std::string myChildrenKey;
+		unsigned int myNextLinkIdCounter = 100;
 
 		void Clear();
 	};

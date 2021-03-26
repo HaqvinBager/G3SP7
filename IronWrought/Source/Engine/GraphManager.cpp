@@ -41,7 +41,7 @@ CGraphManager::~CGraphManager()
 
 void CGraphManager::SGraph::Clear()
 {
-	for(size_t i = 0; i < myNodeInstances.size(); ++i)
+	for (size_t i = 0; i < myNodeInstances.size(); ++i)
 	{
 		delete myNodeInstances[i];
 		myNodeInstances[i] = nullptr;
@@ -65,7 +65,7 @@ void CGraphManager::Load(const std::string& aSceneName)
 		myInstantiableVariables.push_back("Start");
 		myInstantiableVariables.push_back("Vector 3");
 	}
-	
+
 	const std::string sceneJson = ASSETPATH("Assets/Generated/" + aSceneName);
 	CGraphNodeTimerManager::Create();
 	const auto doc = CJsonReader::Get()->LoadDocument(sceneJson);
@@ -76,7 +76,7 @@ void CGraphManager::Load(const std::string& aSceneName)
 	std::string sceneName = aSceneName.substr(0, lastSlash);
 
 	// Create Scene folder.
-	const std::string sceneFolder = "Imgui/NodeScripts/"+ sceneName + "/";
+	const std::string sceneFolder = "Imgui/NodeScripts/" + sceneName + "/";
 	//Om denna Blueprint redan finns ska vi bara spara undan den som nyckel
 	if (!std::filesystem::exists(sceneFolder))
 	{
@@ -125,10 +125,8 @@ void CGraphManager::Load(const std::string& aSceneName)
 					myGraphs.back().myChildrenKey = key;
 				}
 
-				// Create script folder
-				std::string scriptFolder = sceneFolder + "/" + key + "/";
+				std::string scriptFolder = sceneFolder + key + "/";
 				myGraphs.back().myFolderPath = scriptFolder;
-				//Om denna Blueprint redan finns ska vi bara spara undan den som nyckel
 				if (std::filesystem::exists(scriptFolder))
 					continue;
 
@@ -139,16 +137,14 @@ void CGraphManager::Load(const std::string& aSceneName)
 				}
 				else
 				{
-					//myCurrentPath = folder + "/" + key;
 					myCurrentGraph = &myGraphs.back();
 					SaveTreeToFile();
 				}
-				// !Create Blueprint folder
 			}
 		}
 	}
 
-	CNodeDataManager::Get()->SetFolderPath(std::move(sceneFolder));
+	CNodeDataManager::Get()->SetFolderPath(sceneFolder);
 
 	if (myGraphs.size() > 0)
 		myCurrentGraph = &myGraphs[0];
@@ -162,7 +158,6 @@ void CGraphManager::Load(const std::string& aSceneName)
 	myMenuSearchField = new char[127];
 	memset(&myMenuSearchField[0], 0, sizeof(myMenuSearchField));
 	LoadTreeFromFile();
-
 
 	myRenderGraph = false;
 	myRunScripts = false;
@@ -180,7 +175,7 @@ void CGraphManager::Clear()
 		sGraph.Clear();
 	}
 	myGraphs.clear();
-	myCurrentGraph = nullptr; 
+	myCurrentGraph = nullptr;
 	//myCurrentBluePrintInstance;
 	CNodeDataManager::Get()->ClearStoredData();
 }
@@ -212,62 +207,65 @@ void CGraphManager::ReTriggerUpdatingTrees()
 
 void CGraphManager::SaveTreeToFile()
 {
+	for (const auto& graph : myGraphs)
 	{
-		rapidjson::StringBuffer s;
-		rapidjson::PrettyWriter<rapidjson::StringBuffer> writer1(s);
-
-		writer1.StartObject();
-		writer1.Key("UID_MAX");
-
-		writer1.StartObject();
-		writer1.Key("Num");
-		writer1.Int(CUID::myGlobalUID);
-		writer1.EndObject();
-
-		writer1.Key("NodeInstances");
-		writer1.StartArray();
-		for (auto& nodeInstance : myCurrentGraph->myNodeInstances)
 		{
-			nodeInstance->Serialize(writer1);
-		}
-		writer1.EndArray();
-		writer1.EndObject();
+			rapidjson::StringBuffer s;
+			rapidjson::PrettyWriter<rapidjson::StringBuffer> writer1(s);
 
-
-
-		std::ofstream of(myCurrentGraph->myFolderPath + "/nodeinstances.json");
-		of << s.GetString();
-	}
-	//Links
-	{
-		rapidjson::StringBuffer s;
-		rapidjson::PrettyWriter<rapidjson::StringBuffer> writer1(s);
-
-		writer1.StartObject();
-		writer1.Key("Links");
-		writer1.StartArray();
-		for (auto& link : myCurrentGraph->myLinks)
-		{
 			writer1.StartObject();
-			writer1.Key("ID");
-			writer1.Int(static_cast<int>(link.myID.Get()));
-			writer1.Key("Input");
-			writer1.Int(static_cast<int>(link.myInputID.Get()));
-			writer1.Key("Output");
-			writer1.Int(static_cast<int>(link.myOutputID.Get()));
+			writer1.Key("UID_MAX");
+
+			writer1.StartObject();
+			writer1.Key("Num");
+			writer1.Int(CUID::myGlobalUID);
 			writer1.EndObject();
 
+			writer1.Key("NodeInstances");
+			writer1.StartArray();
+			for (auto& nodeInstance : graph.myNodeInstances)
+			{
+				nodeInstance->Serialize(writer1);
+			}
+			writer1.EndArray();
+			writer1.EndObject();
+
+
+
+			std::ofstream of(graph.myFolderPath + "/nodeinstances.json");
+			of << s.GetString();
 		}
-		writer1.EndArray();
-		writer1.EndObject();
+		//Links
+		{
+			rapidjson::StringBuffer s;
+			rapidjson::PrettyWriter<rapidjson::StringBuffer> writer1(s);
+
+			writer1.StartObject();
+			writer1.Key("Links");
+			writer1.StartArray();
+			for (auto& link : graph.myLinks)
+			{
+				writer1.StartObject();
+				writer1.Key("ID");
+				writer1.Int(static_cast<int>(link.myID.Get()));
+				writer1.Key("Input");
+				writer1.Int(static_cast<int>(link.myInputID.Get()));
+				writer1.Key("Output");
+				writer1.Int(static_cast<int>(link.myOutputID.Get()));
+				writer1.EndObject();
+
+			}
+			writer1.EndArray();
+			writer1.EndObject();
 
 
-		std::ofstream of(myCurrentGraph->myFolderPath + "/links.json");
-		of << s.GetString();
+			std::ofstream of(graph.myFolderPath + "/links.json");
+			of << s.GetString();
+		}
 	}
 }
 
-SPin::EPinType LoadPinData(NodeDataPtr& someDataToCopy, rapidjson::Value& someData, Type /*aDataType*/)
+SPin::EPinType LoadPinData(NodeDataPtr& someDataToCopy, rapidjson::Value& someData)
 {
 	if (someData.IsBool())
 	{
@@ -319,9 +317,10 @@ void CGraphManager::LoadTreeFromFile()
 	CUID::myGlobalUID = 0;
 	for (auto& graph : myGraphs)
 	{
+		myCurrentGraph = &graph;
 		Document document;
 		{
-			std::string path = graph.myFolderPath + "/nodeinstances.json";
+			std::string path = graph.myFolderPath + "nodeinstances.json";
 
 			document = CJsonReader::Get()->LoadDocument(path);
 			if (document.HasMember("UID_MAX"))
@@ -352,7 +351,7 @@ void CGraphManager::LoadTreeFromFile()
 					{
 						int index = nodeInstance["Pins"][j]["Index"].GetInt();
 						object->myPins[index].myUID.SetUID(nodeInstance["Pins"][j]["UID"].GetInt());
-						SPin::EPinType newType = LoadPinData(object->myPins[index].myData, nodeInstance["Pins"][j]["DATA"], nodeInstance["Pins"][j]["DATA"].GetType());
+						SPin::EPinType newType = LoadPinData(object->myPins[index].myData, nodeInstance["Pins"][j]["DATA"]);
 						if (object->myPins[index].myVariableType == SPin::EPinType::EUnknown)
 						{
 							object->ChangePinTypes(newType);
@@ -363,7 +362,7 @@ void CGraphManager::LoadTreeFromFile()
 			}
 		}
 		{
-			document = CJsonReader::Get()->LoadDocument(graph.myFolderPath + "/links.json");
+			document = CJsonReader::Get()->LoadDocument(graph.myFolderPath + "links.json");
 			if (document.HasMember("Links"))
 			{
 				auto links = document["Links"].GetArray();
@@ -389,6 +388,7 @@ void CGraphManager::LoadTreeFromFile()
 			}
 		}
 	}
+	myCurrentGraph = &myGraphs[0];
 }
 
 void CGraphManager::SaveNodesToClipboard()
@@ -474,7 +474,7 @@ void CGraphManager::LoadNodesFromClipboard()
 		{
 			int index = nodeInstance["Pins"][j]["Index"].GetInt();
 			object->myPins[index].myUID.SetUID(CUID().AsInt());
-			SPin::EPinType newType = LoadPinData(object->myPins[index].myData, nodeInstance["Pins"][j]["DATA"], nodeInstance["Pins"][j]["DATA"].GetType());
+			SPin::EPinType newType = LoadPinData(object->myPins[index].myData, nodeInstance["Pins"][j]["DATA"]);
 			if (object->myPins[index].myVariableType == SPin::EPinType::EUnknown)
 			{
 				object->ChangePinTypes(newType);
@@ -1082,7 +1082,6 @@ void CGraphManager::WillBeCyclic(CNodeInstance* aFirst, CNodeInstance* /*aSecond
 	}
 }
 
-#include "Input.h"
 void CGraphManager::PreFrame(float aDeltaTime)
 {
 	static float timer = 0;
@@ -1372,7 +1371,6 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 											myCurrentGraph->myLinks.push_back({ ed::LinkId(linkId), inputPinId, outputPinId });
 										}
 
-										std::cout << "push add link command!" << std::endl;
 										myUndoCommands.push({ ECommandAction::EAddLink, firstNode, secondNode, myCurrentGraph->myLinks.back(), 0 });
 
 										mySave = true;
@@ -1412,7 +1410,6 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 
 							if (myPushCommand)
 							{
-								std::cout << "push remove link action!" << std::endl;
 								myUndoCommands.push({ ECommandAction::ERemoveLink, firstNode, secondNode, link, 0 });
 							}
 
@@ -1439,7 +1436,6 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 							(*it)->myNodeType->ClearNodeInstanceFromMap((*it));
 							if (myPushCommand)
 							{
-								std::cout << "Push delete command!" << std::endl;
 								mySave = true;
 								myUndoCommands.push({ ECommandAction::EDelete, (*it), nullptr,  {0,0,0}, (*it)->myUID.AsInt() });
 							}
@@ -1512,14 +1508,14 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 				for (int i = 0; i < noOfTypes; i++)
 				{
 					std::string first = types[i]->NodeName();
-					std::transform(first.begin(), first.end(), first.begin(), [](unsigned char c){ return static_cast<unsigned char>(std::tolower(c)); });
+					std::transform(first.begin(), first.end(), first.begin(), [](unsigned char c) { return static_cast<unsigned char>(std::tolower(c)); });
 					std::string second = myMenuSearchField;
-					std::transform(second.begin(), second.end(), second.begin(), [](unsigned char c){ return static_cast<unsigned char>(std::tolower(c)); });
+					std::transform(second.begin(), second.end(), second.begin(), [](unsigned char c) { return static_cast<unsigned char>(std::tolower(c)); });
 
- 					if (first.find(second) != std::string::npos)
+					if (first.find(second) != std::string::npos)
 						found.push_back(types[i]);
 				}
-				
+
 				for (int i = 0; i < found.size(); i++)
 				{
 					CNodeInstance* node = nullptr;
@@ -1536,7 +1532,6 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 
 						if (myPushCommand)
 						{
-							std::cout << "Push create command!" << std::endl;
 							mySave = true;
 							myUndoCommands.push({ ECommandAction::ECreate, node, nullptr, {0,0,0}, node->myUID.AsInt() });
 						}
@@ -1589,7 +1584,6 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 
 								if (myPushCommand)
 								{
-									std::cout << "Push create command!" << std::endl;
 									mySave = true;
 									myUndoCommands.push({ ECommandAction::ECreate, node, nullptr, {0,0,0}, node->myUID.AsInt() });
 								}
@@ -1668,9 +1662,7 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 					default:
 						break;
 					}
-					std::cout << "undo!" << std::endl;
 					myUndoCommands.pop();
-					std::cout << "Push redo command!" << std::endl;
 					mySave = true;
 					myRedoCommands.push(inverseCommand);
 				}
@@ -1718,9 +1710,7 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 					default:
 						break;
 					}
-					std::cout << "redo!" << std::endl;
 					myRedoCommands.pop();
-					std::cout << "Push undo command!" << std::endl;
 					mySave = true;
 					myUndoCommands.push(inverseCommand);
 				}
