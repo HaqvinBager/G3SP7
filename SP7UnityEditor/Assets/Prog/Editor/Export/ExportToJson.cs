@@ -18,6 +18,7 @@ public static class Json
     {
         myCurrentExportJson.Clear();
         myCurrentExportJson.AppendLine("{");
+        myCurrentExportJson.AppendLine("\"Root\" : \"" + baseSceneName + "\",");
         myCurrentExportJson.Append("\"Scenes\" : [\n");
         mySceneName = baseSceneName;
     }
@@ -68,7 +69,7 @@ public static class Json
         myCurrentExportJson.Append("\n}");
 
 
-        string savePath = System.IO.Directory.GetCurrentDirectory() + "\\Assets\\Generated\\";
+        string savePath = System.IO.Directory.GetCurrentDirectory() + "\\Assets\\Generated\\" + aFolder + "\\";
         if (!System.IO.Directory.Exists(savePath))
             System.IO.Directory.CreateDirectory(savePath);
 

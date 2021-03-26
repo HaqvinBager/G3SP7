@@ -3,7 +3,7 @@
 #include <map>
 
 class CDirectXFramework;
-
+struct SVertexPaintColorData;
 typedef std::array<ID3D11ShaderResourceView*, 3> material;
 
 struct SVertexPaintData
@@ -23,7 +23,7 @@ public:
 	std::array<ID3D11ShaderResourceView*, 9> GetVertexPaintMaterials(const std::vector<std::string>& someMaterialNames);
 	void ReleaseMaterial(const std::string& aMaterialName);
 
-	SVertexPaintData RequestVertexColorID(const int aVertexColorsID, const std::string& aFbxModelPath, const std::vector<std::string>& someMatrials);
+	SVertexPaintData RequestVertexColorID(std::vector<SVertexPaintColorData>::const_iterator& it, const std::string& aFbxModelPath, const std::vector<std::string>& someMatrials);
 	std::vector<DirectX::SimpleMath::Vector3>& GetVertexColors(unsigned int aVertexColorID);
 	ID3D11Buffer* GetVertexColorBuffer(unsigned int aVertexColorID);
 	void ReleaseVertexColors(unsigned int aVertexColorID);

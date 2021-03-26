@@ -2,6 +2,7 @@
 #include "Scene.h"
 #include "JsonReader.h"
 
+struct SVertexPaintCollection;
 class CSceneManager
 {
 public:
@@ -14,7 +15,7 @@ private:
 	static bool AddGameObjects(CScene& aScene, RapidArray someData);
 	static void SetTransforms(CScene& aScene, RapidArray someData);
 	static void AddModelComponents(CScene& aScene, RapidArray someData);
-	static void SetVertexPaintedColors(CScene& aScene, RapidArray someData);
+	static void SetVertexPaintedColors(CScene& aScene, RapidArray someData, const SVertexPaintCollection& vertexColorData);
 
 	static void AddInstancedModelComponents(CScene& aScene, RapidArray someData);
 	static void AddPointLights(CScene& aScene, RapidArray someData);

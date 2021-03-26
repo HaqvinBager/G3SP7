@@ -7,12 +7,20 @@ struct SVertexPaintColorData {
 	int myVertexMeshID;
 };
 
+struct SVertexPaintCollection {
+	std::vector<SVertexPaintColorData> myData;
+
+	//std::map<int, SVertexPaintColorData> myVertexColorMap;
+	//std::vector<SVertexPaintColorData> myCollection;
+};
+
 class CBinReader
 {
 public:
 	CBinReader();
 	~CBinReader();
 
+	static SVertexPaintCollection LoadVertexPaintCollection(const std::string& aSceneName);
 	static SVertexPaintColorData LoadVertexColorData(const std::string& aBinFilePath);
 
 private:

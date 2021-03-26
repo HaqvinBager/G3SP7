@@ -8,6 +8,7 @@
 #include "GraphicsHelpers.h"
 #include <unordered_map>
 #include "FolderUtility.h"
+#include <BinReader.h>
 
 std::array<ID3D11ShaderResourceView*, 3> CMaterialHandler::RequestMaterial(const std::string& aMaterialName)
 {
@@ -91,11 +92,11 @@ void CMaterialHandler::ReleaseMaterial(const std::string& aMaterialName)
 	}
 }
 
-SVertexPaintData CMaterialHandler::RequestVertexColorID(const int aVertexColorsID, const std::string& aFbxModelPath, const std::vector<std::string>& someMatrials)
+SVertexPaintData CMaterialHandler::RequestVertexColorID(std::vector<SVertexPaintColorData>::const_iterator& it, const std::string& aFbxModelPath, const std::vector<std::string>& someMatrials)
 {
-	const std::string& vertexColorsPath = CJsonReader::Get()->GetAssetPath(aVertexColorsID);
-	SVertexPaintColorData colorData = CBinReader::LoadVertexColorData(ASSETPATH(vertexColorsPath));
-
+	//const std::string& vertexColorsPath = CJsonReader::Get()->GetAssetPath(aVertexColorsID);
+	//SVertexPaintColorData colorData = CBinReader::LoadVertexColorData(aVertexColorsID);
+	SVertexPaintColorData colorData = *it;
 	std::vector<Vector3>& fbxVertexPositions = CModelFactory::GetInstance()->GetVertexPositions(aFbxModelPath);
 	std::unordered_map<Vector3, Vector3, CMaterialHandler::VectorHasher, VertexPositionComparer> vertexPositionToColorMap;
 

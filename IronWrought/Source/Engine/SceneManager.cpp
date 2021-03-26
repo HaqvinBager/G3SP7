@@ -13,6 +13,7 @@
 #include "Scene.h"
 //#include <iostream>
 
+#include <BinReader.h>
 #include <PlayerControllerComponent.h>
 #include "animationLoader.h"
 #include "AnimationComponent.h"
@@ -53,9 +54,14 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneJson)
 {
 	CScene* scene = CreateEmpty();
 
-	const auto doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + aSceneJson));
+	const auto doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + aSceneJson + "/" + aSceneJson + ".json"));
 	if(doc.HasParseError())
 		return nullptr;
+
+	if (!doc.HasMember("Root"))
+		return nullptr;
+
+ 	SVertexPaintCollection vertexPaintData = CBinReader::LoadVertexPaintCollection(doc["Root"].GetString());
 
 	const auto& scenes = doc.GetObjectW()["Scenes"].GetArray();
 	for (const auto& sceneData : scenes)
@@ -64,7 +70,7 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneJson)
 		{
 			SetTransforms(*scene, sceneData["transforms"].GetArray());
 			AddModelComponents(*scene, sceneData["models"].GetArray());
-			SetVertexPaintedColors(*scene, sceneData["vertexColors"].GetArray());
+			SetVertexPaintedColors(*scene, sceneData["vertexColors"].GetArray(), vertexPaintData);
 			AddPointLights(*scene, sceneData["lights"].GetArray());
 			AddDecalComponents(*scene, sceneData["decals"].GetArray());
 			AddInstancedModelComponents(*scene, sceneData["instancedModels"].GetArray());	
@@ -123,22 +129,28 @@ void CSceneManager::AddModelComponents(CScene& aScene, RapidArray someData)
 	}
 }
 
-void CSceneManager::SetVertexPaintedColors(CScene& aScene, RapidArray someData)
+void CSceneManager::SetVertexPaintedColors(CScene& aScene, RapidArray someData, const SVertexPaintCollection& vertexColorData)
 {
 	for (const auto& i : someData)
 	{
 		std::vector<std::string> materials;
 		materials.reserve(3);
-		for (const auto& material : i["myMaterialNames"].GetArray())
+		for (const auto& material : i["materialNames"].GetArray())
 		{
 			materials.push_back(material.GetString());
 		}
 
-		int vertexColorID = i["assetID"].GetInt();
-		for (const auto& gameObjectID : i["myTransformIDs"].GetArray())
+		int vertexColorID = i["vertexColorsID"].GetInt();
+		for (const auto& gameObjectID : i["instanceIDs"].GetArray())
 		{
 			CGameObject* gameObject = aScene.FindObjectWithID(gameObjectID.GetInt());
-			gameObject->GetComponent<CModelComponent>()->InitVertexPaint(vertexColorID, materials);
+			for (auto it = vertexColorData.myData.begin(); it != vertexColorData.myData.end(); ++it)
+			{
+				if ((*it).myVertexMeshID == vertexColorID)
+				{
+					gameObject->GetComponent<CModelComponent>()->InitVertexPaint(it, materials);
+				}
+			}
 		}
 	}
 }
@@ -267,6 +279,12 @@ void CSceneFactory::Update()
 	if (myFuture._Is_ready())
 	{
 		CScene* loadedScene = myFuture.get();
+		if (loadedScene == nullptr)
+		{
+			ENGINE_ERROR_MESSAGE("Failed to Load Scene %s", myLastSceneName.c_str());
+			return;
+		}
+		
 		CEngine::GetInstance()->AddScene(CStateStack::EState::InGame, loadedScene);
 		CEngine::GetInstance()->SetActiveScene(CStateStack::EState::InGame);
 		myOnComplete(myLastSceneName);

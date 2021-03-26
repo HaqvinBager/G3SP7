@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEditor;
+using System.IO;
 
 
 [System.Serializable]
@@ -42,9 +43,11 @@ public class Exporter
     public static void Export()
     {
 
-        string sceneName = SceneManager.GetActiveScene().name;
-        string baseSceneName = sceneName.Substring(0, sceneName.LastIndexOf('-') + 2);
-        Json.BeginExport(baseSceneName);
+        //string sceneName = SceneManager.GetActiveScene().name;
+       // string baseSceneName = sceneName.Substring(0, sceneName.LastIndexOf('_') + 2);
+        DirectoryInfo parentDirectory = Directory.GetParent(SceneManager.GetActiveScene().path);
+        Json.BeginExport(parentDirectory.Name);
+
         List<GameObject> allScenesActiveObjects = GetAllOpenedSceneActiveObjects();
         for (int i = 0; i < SceneManager.sceneCount; ++i)
         {
@@ -53,7 +56,8 @@ public class Exporter
             Json.EndScene();
         }
 
-        Json.EndExport(baseSceneName, baseSceneName);   
+        Json.EndExport(parentDirectory.Name, parentDirectory.Name);   
+
         foreach (var gameObject in allScenesActiveObjects)
             gameObject.SetActive(true);
 
