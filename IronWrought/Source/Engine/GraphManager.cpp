@@ -388,7 +388,8 @@ void CGraphManager::LoadTreeFromFile()
 			}
 		}
 	}
-	myCurrentGraph = &myGraphs[0];
+	if(myGraphs.size() > 0)
+		myCurrentGraph = &myGraphs[0];
 }
 
 void CGraphManager::SaveNodesToClipboard()
