@@ -16,7 +16,7 @@ CNodeTypeGameObjectMoveToPosition::CNodeTypeGameObjectMoveToPosition()
 
 int CNodeTypeGameObjectMoveToPosition::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 {
-	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject()[1];
+	std::vector<CGameObject*> gameObjects = aTriggeringNodeInstance->GetCurrentGameObject();
 
 	SPin::EPinType outType;
 	NodeDataPtr someData = nullptr;
@@ -33,7 +33,7 @@ int CNodeTypeGameObjectMoveToPosition::OnEnter(CNodeInstance* aTriggeringNodeIns
 	GetDataOnPin(aTriggeringNodeInstance, 4, outType, someData, outSize);
 	float speed = NodeData::Get<float>(someData);
 
-	Vector3 currentPosition = aTriggeringNodeInstance->GetCurrentGameObject()[1]->myTransform->Position();
+	Vector3 currentPosition = gameObjects[1]->myTransform->Position();
 	Vector3 direction = { (postion.x - currentPosition.x), (postion.y - currentPosition.y), (postion.z - currentPosition.z) };
 
 	if ((direction.x < 0.01f && direction.x > -0.01f))
@@ -62,7 +62,7 @@ int CNodeTypeGameObjectMoveToPosition::OnEnter(CNodeInstance* aTriggeringNodeIns
 		direction.Normalize();
 		direction *= CTimer::Dt() * speed;
 
-		gameObject->myTransform->Move({ direction.x,  direction.y, direction.z });
+		gameObjects[1]->myTransform->Move({ direction.x,  direction.y, direction.z });
 	}
 
 

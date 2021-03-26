@@ -227,27 +227,27 @@ public:
 	static unsigned short myTypeCounter;
 
 public:
-	//static CNodeType* GetChildNodeTypeFromID(std::string aKey, unsigned int aClassID)
-	//{
-	//	return myChildNodeTypesMap[aKey].myTypes[aClassID]; // 1:1 to nodetype enum
-	//}
-	//static CNodeType** GetAllChildNodeTypes(std::string aKey)
-	//{
-	//	return myChildNodeTypesMap[aKey].myTypes; // 1:1 to nodetype enum
-	//}
-	//static unsigned short GetChildNodeTypeCount(std::string aKey)
-	//{
-	//	return myChildNodeTypesMap[aKey].myTypeCounter; // 1:1 to nodetype enum
-	//}
-	//template <class T>
-	//static void RegisterChildType(std::string aKey, const std::string& aNodeName)
-	//{
-	//	myChildNodeTypesMap[aKey].myTypes[myChildNodeTypesMap[aKey].myTypeCounter] = new T;
-	//	myChildNodeTypesMap[aKey].myTypes[myChildNodeTypesMap[aKey].myTypeCounter]->myID = myChildNodeTypesMap[aKey].myTypeCounter;
-	//	myChildNodeTypesMap[aKey].myTypes[myChildNodeTypesMap[aKey].myTypeCounter]->NodeName(aNodeName);
-	//	myChildNodeTypesMap[aKey].myTypeCounter++;
-	//}
+	static CNodeType* GetChildNodeTypeFromID(std::string aKey, unsigned int aClassID)
+	{
+		return myChildNodeTypesMap[aKey].myTypes[aClassID]; // 1:1 to nodetype enum
+	}
+	static CNodeType** GetAllChildNodeTypes(std::string aKey)
+	{
+		return myChildNodeTypesMap[aKey].myTypes; // 1:1 to nodetype enum
+	}
+	static unsigned short GetChildNodeTypeCount(std::string aKey)
+	{
+		return myChildNodeTypesMap[aKey].myTypeCounter; // 1:1 to nodetype enum
+	}
+	template <class T>
+	static void RegisterChildType(std::string aKey, const std::string& aNodeName)
+	{
+		myChildNodeTypesMap[aKey].myTypes[myChildNodeTypesMap[aKey].myTypeCounter] = new T;
+		myChildNodeTypesMap[aKey].myTypes[myChildNodeTypesMap[aKey].myTypeCounter]->myID = myChildNodeTypesMap[aKey].myTypeCounter;
+		myChildNodeTypesMap[aKey].myTypes[myChildNodeTypesMap[aKey].myTypeCounter]->NodeName(aNodeName);
+		myChildNodeTypesMap[aKey].myTypeCounter++;
+	}
 
 	static void RegisterChildNodeTypes(std::string aKey, const unsigned int aNumberOfChildren);
-	//static std::unordered_map<std::string, SNodeTypeData> myChildNodeTypesMap;
+	static std::unordered_map<std::string, SNodeTypeData> myChildNodeTypesMap;
 };
