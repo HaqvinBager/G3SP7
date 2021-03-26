@@ -10,6 +10,7 @@ CNodeTypeGameObjectGetRotation::CNodeTypeGameObjectGetRotation()
 	myPins.push_back(SPin("Pos", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EVector3)); //0
 	//myPins.push_back(SPin("Y", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EFloat)); //1
 	//myPins.push_back(SPin("Z", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EFloat)); //2
+	DeclareDataOnPinIfNecessary<Vector3>(myPins[0], Vector3(0.f, 0.f, 0.f));
 }
 
 int CNodeTypeGameObjectGetRotation::OnEnter(CNodeInstance* aTriggeringNodeInstance)

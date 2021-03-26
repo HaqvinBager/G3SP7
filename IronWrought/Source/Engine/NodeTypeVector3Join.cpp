@@ -8,6 +8,10 @@ CNodeTypeVector3Join::CNodeTypeVector3Join()
 	myPins.push_back(SPin("Y", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));			//1
 	myPins.push_back(SPin("Z", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));			//2
 	myPins.push_back(SPin("Vec3", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EVector3));	//3
+	DeclareDataOnPinIfNecessary<float>(myPins[0], 1.0f);
+	DeclareDataOnPinIfNecessary<float>(myPins[1], 1.0f);
+	DeclareDataOnPinIfNecessary<float>(myPins[2], 1.0f);
+	DeclareDataOnPinIfNecessary<Vector3>(myPins[3], Vector3(1.0f,1.0f,1.0f));
 }
 
 int CNodeTypeVector3Join::OnEnter(CNodeInstance* aTriggeringNodeInstance)

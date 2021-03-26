@@ -12,6 +12,9 @@ CNodeTypeGameObjectMoveToPosition::CNodeTypeGameObjectMoveToPosition()
 	myPins.push_back(SPin("Pos", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EVector3));		//2
 	myPins.push_back(SPin("Is at Pos", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EBool));	//3
 	myPins.push_back(SPin("Speed", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));		//4
+	DeclareDataOnPinIfNecessary<Vector3>(myPins[2], Vector3(0.f, 0.f, 0.f));
+	DeclareDataOnPinIfNecessary<bool>(myPins[3], false);
+	DeclareDataOnPinIfNecessary<float>(myPins[4], 0.0f);
 }
 
 int CNodeTypeGameObjectMoveToPosition::OnEnter(CNodeInstance* aTriggeringNodeInstance)

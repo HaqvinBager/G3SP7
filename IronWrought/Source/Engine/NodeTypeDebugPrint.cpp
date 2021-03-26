@@ -8,6 +8,7 @@ CNodeTypeDebugPrint::CNodeTypeDebugPrint()
 	myPins.push_back(SPin("IN", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFlow));	// Pin Index 0, this is an input
 	myPins.push_back(SPin("Message", SPin::EPinTypeInOut::EPinTypeInOut_IN,SPin::EPinType::EString)); // Pin Index 1, this is an input
 	myPins.push_back(SPin("OUT", SPin::EPinTypeInOut::EPinTypeInOut_OUT)); // Pin Index 2, this is an output
+	//DeclareDataOnPinIfNecessary<const char*>(myPins[1]);
 }
 
 int CNodeTypeDebugPrint::OnEnter(class CNodeInstance* aTriggeringNodeInstance)

@@ -14,6 +14,9 @@ CNodeTypeTimeTimer::CNodeTypeTimeTimer()
 	myPins.push_back(SPin("Looping", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EBool)); //3
 	myPins.push_back(SPin("OnRing", SPin::EPinTypeInOut::EPinTypeInOut_OUT)); //4
 
+	DeclareDataOnPinIfNecessary<float>(myPins[2], 0.0f);
+	DeclareDataOnPinIfNecessary<bool>(myPins[3], false);
+
 	myState.myDuration = 0.0f;
 	myState.myShouldLoop = false;
 	myState.myTimerUID = -1001;
