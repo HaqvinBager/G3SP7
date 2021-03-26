@@ -64,14 +64,15 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneJson)
 		{
 			SetTransforms(*scene, sceneData["transforms"].GetArray());
 			AddModelComponents(*scene, sceneData["models"].GetArray());
+			SetVertexPaintedColors(*scene, sceneData["vertexColors"].GetArray());
 			AddPointLights(*scene, sceneData["lights"].GetArray());
 			AddDecalComponents(*scene, sceneData["decals"].GetArray());
 			AddInstancedModelComponents(*scene, sceneData["instancedModels"].GetArray());	
 		}
 	}
 
-	AddPlayer(*scene); //This add play does not read data from unity. (Yet..!) /Axel 2021-03-24
 	CEngine::GetInstance()->GetPhysx().Cooking(scene->ActiveGameObjects(), scene);
+	AddPlayer(*scene); //This add play does not read data from unity. (Yet..!) /Axel 2021-03-24
 	return scene;
 }
 
@@ -87,25 +88,6 @@ bool CSceneManager::AddGameObjects(CScene& aScene, RapidArray someData)
 	}
 	return true;
 }
-
-
-//bool CSceneManager::AddGameObjects(CScene& aScene, const std::string& aJsonFileName)
-//{
-//	const auto& doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + aJsonFileName));
-//	if (!CJsonReader::IsValid(doc, { "Ids" }))
-//		return false;
-//
-//	const auto& idArray = doc.GetObjectW()["Ids"].GetArray();
-//
-//	if (idArray.Size() == 0)
-//		return false;
-//
-//	for (const auto& id : idArray) {
-//		int instanceID = id.GetInt();
-//		aScene.AddInstance(new CGameObject(instanceID));
-//	}
-//	return true;
-//}
 
 void CSceneManager::SetTransforms(CScene& aScene, RapidArray someData)
 {
@@ -135,18 +117,34 @@ void CSceneManager::AddModelComponents(CScene& aScene, RapidArray someData)
 
 		const int assetId = m["assetID"].GetInt();
 		if (CJsonReader::Get()->HasAssetPath(assetId))
+		{
 			gameObject->AddComponent<CModelComponent>(*gameObject, ASSETPATH(CJsonReader::Get()->GetAssetPath(assetId)));	
+		}
+	}
+}
+
+void CSceneManager::SetVertexPaintedColors(CScene& aScene, RapidArray someData)
+{
+	for (const auto& i : someData)
+	{
+		std::vector<std::string> materials;
+		materials.reserve(3);
+		for (const auto& material : i["myMaterialNames"].GetArray())
+		{
+			materials.push_back(material.GetString());
+		}
+
+		int vertexColorID = i["assetID"].GetInt();
+		for (const auto& gameObjectID : i["myTransformIDs"].GetArray())
+		{
+			CGameObject* gameObject = aScene.FindObjectWithID(gameObjectID.GetInt());
+			gameObject->GetComponent<CModelComponent>()->InitVertexPaint(vertexColorID, materials);
+		}
 	}
 }
 
 void CSceneManager::AddInstancedModelComponents(CScene& aScene, RapidArray someData)
 {
-	//const auto& doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + aJsonFileName));
-
-	//if (!CJsonReader::IsValid(doc, { "instancedModels" }))
-	//	return;
-
-	//const auto& instancedModelArray = doc.GetObjectW()["instancedModels"].GetArray();
 	for (const auto& i : someData) {
 		int assetID = i["assetID"].GetInt();
 		CGameObject* gameObject = new CGameObject(assetID);

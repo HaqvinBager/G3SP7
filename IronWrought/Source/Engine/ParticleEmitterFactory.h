@@ -16,6 +16,7 @@ public:
 	CParticleEmitter* GetParticle(std::string aFilePath);
 
 	std::vector<CParticleEmitter*> GetParticleSet(std::vector<std::string> someFilePaths);
+	std::vector<CParticleEmitter*> ReloadParticleSet(std::vector<std::string> someFilePaths);
 
 public:
 	static CParticleEmitterFactory* GetInstance();

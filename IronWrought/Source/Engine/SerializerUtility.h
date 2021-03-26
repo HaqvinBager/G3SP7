@@ -1,5 +1,6 @@
 #pragma once
 #include <rapidjson\prettywriter.h>
+#include <imgui.h>
 
 template<class T>
 struct Serializer {
@@ -63,6 +64,23 @@ struct Serializer<std::vector<Vector2>> {
             aWriter.StartObject();
             aWriter.Key("x"); aWriter.Double(value.x);
             aWriter.Key("y"); aWriter.Double(value.y);
+            aWriter.EndObject();
+        }
+        aWriter.EndArray();
+    }
+};
+
+template<>
+struct Serializer<ImVec2*> {
+    void Serialize(const char* aKey, ImVec2* someValues, rapidjson::PrettyWriter<rapidjson::StringBuffer>& aWriter)
+    {
+        aWriter.Key(aKey);
+        aWriter.StartArray();
+        for (unsigned int i = 0; i < 4; ++i)
+        {
+            aWriter.StartObject();
+            aWriter.Key("x"); aWriter.Double(someValues[i].x);
+            aWriter.Key("y"); aWriter.Double(someValues[i].y);
             aWriter.EndObject();
         }
         aWriter.EndArray();

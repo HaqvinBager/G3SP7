@@ -136,7 +136,8 @@ CVFXBase* CVFXMeshFactory::LoadVFXBase(std::string aFilePath)
 
     vfxBase->Init(vfxBaseData);
 
-    myVFXBaseMap.emplace(aFilePath, vfxBase);
+    if (myVFXBaseMap.find(aFilePath) == myVFXBaseMap.end())
+        myVFXBaseMap.emplace(aFilePath, vfxBase);
 
     return vfxBase;
 }
@@ -158,6 +159,16 @@ std::vector<CVFXBase*> CVFXMeshFactory::GetVFXBaseSet(std::vector<std::string> s
     for (unsigned int i = 0; i < someFilePaths.size(); ++i)
     {
         bases.emplace_back(GetVFXBase(someFilePaths[i]));
+    }
+    return std::move(bases);
+}
+
+std::vector<CVFXBase*> CVFXMeshFactory::ReloadVFXBaseSet(std::vector<std::string> someFilePaths)
+{
+    std::vector<CVFXBase*> bases;
+    for (unsigned int i = 0; i < someFilePaths.size(); ++i)
+    {
+        bases.emplace_back(LoadVFXBase(someFilePaths[i]));
     }
     return std::move(bases);
 }
@@ -185,6 +196,7 @@ void CVFXMeshFactory::ReadJsonValues(std::string aFilePath, CVFXBase::SVFXBaseDa
     using namespace rapidjson;
 
     Document document = CJsonReader::Get()->LoadDocument(aFilePath);
+    ENGINE_BOOL_POPUP(!CJsonReader::HasParseError(document), "Invalid Json document: %s", aFilePath.c_str());
 
     someVFXBaseData.scrollSpeed1 = { document["Scroll Speed 1 X"].GetFloat(), document["Scroll Speed 1 Y"].GetFloat() };
     someVFXBaseData.scrollSpeed2 = { document["Scroll Speed 2 X"].GetFloat(), document["Scroll Speed 2 Y"].GetFloat() };

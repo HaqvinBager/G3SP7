@@ -10,6 +10,7 @@ public class ModelLink
 {
     public int instanceID;
     public int assetID;
+    public int vertexColorID;
 }
 
 [System.Serializable]
@@ -41,7 +42,16 @@ public class ExportModel
                 link.assetID = modelAsset.transform.GetInstanceID();
                 link.instanceID = renderer.transform.parent.GetInstanceID();
 
-                if(!modelCollection.models.Exists( e => e.instanceID == link.instanceID))
+                string materialName = renderer.sharedMaterial.name;
+
+                string meshName = renderer.GetComponent<MeshFilter>().sharedMesh.name;
+                meshName = meshName.Substring(meshName.LastIndexOf('h'), meshName.Length - meshName.LastIndexOf('h'));
+                meshName = meshName.Substring(1, meshName.Length - 1);
+                //link.vertexColorID = AssetDatabase.LoadAssetAtPath<Object>("Assets/Generated/VertexColors/VertexColors_" + meshName.ToString() + "_Bin.bin").GetInstanceID();
+                link.vertexColorID = AssetDatabase.LoadAssetAtPath<Object>("Assets/Generated/VertexColors/VertexColors_" + polyBrushFbx.GetInstanceID().ToString() + "_Bin.bin").GetInstanceID();
+
+
+                if (!modelCollection.models.Exists( e => e.instanceID == link.instanceID))
                     modelCollection.models.Add(link);
 
                 continue;

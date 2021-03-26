@@ -16,6 +16,7 @@ public:
 	static CVFXMeshFactory* GetInstance();
 
 	std::vector<CVFXBase*> GetVFXBaseSet(std::vector<std::string> someFilePaths);
+	std::vector<CVFXBase*> ReloadVFXBaseSet(std::vector<std::string> someFilePaths);
 
 private:
 	CVFXMeshFactory();

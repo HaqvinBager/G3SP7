@@ -4,12 +4,32 @@ using UnityEngine;
 using UnityEditor;
 using UnityEngine.SceneManagement;
 
+[System.Serializable]
+public struct ModelAsset
+{
+    public int id;
+    public string path;
+}
+
+[System.Serializable]
+public struct VertexColorAsset
+{
+    public int id;
+    public string path;
+}
+
+[System.Serializable]
+public struct Assets
+{
+    public List<ModelAsset> models;
+    public List<VertexColorAsset> vertexColors;
+}
+
 public class ExportResource 
 {
     public static void Export(string aSceneName)
     {
         ExportModelAssets(aSceneName);
-
     }
 
 
@@ -18,6 +38,8 @@ public class ExportResource
         string[] allAssetPaths = AssetDatabase.GetAllAssetPaths();
         Assets assets = new Assets();
         assets.models = new List<ModelAsset>();
+        assets.vertexColors = new List<VertexColorAsset>();
+
         foreach (string assetPath in allAssetPaths)
         {
             if (assetPath.Contains("Graphics"))
@@ -28,7 +50,6 @@ public class ExportResource
                     if (PrefabUtility.GetPrefabAssetType(asset) == PrefabAssetType.Model)
                     {
                         GameObject gameObject = asset as GameObject;
-
                         ModelAsset modelAsset = new ModelAsset();
                         modelAsset.id = gameObject.transform.GetInstanceID();
                         modelAsset.path = assetPath;
@@ -41,6 +62,15 @@ public class ExportResource
                         //Crazy references to values or something
                     }
                 }
+            }
+            else if (assetPath.Contains("Generated/VertexColors/"))
+            {
+                Object asset = AssetDatabase.LoadAssetAtPath<Object>(assetPath);
+                VertexColorAsset vertexColorAsset = new VertexColorAsset();
+                vertexColorAsset.id = asset.GetInstanceID();
+                vertexColorAsset.path = assetPath;
+
+                assets.vertexColors.Add(vertexColorAsset);
             }
         }
         Json.ExportToJson(assets, "Resource");

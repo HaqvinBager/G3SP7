@@ -781,7 +781,7 @@
     <ClCompile Include="NodeTypeGameObjectGetPlayerPosition.cpp">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClCompile>
-    <ClCompile Include="CurveWindow.cpp">
+    <ClCompile Include="VFXEditorWindow.cpp">
       <Filter>Imgui\Windows</Filter>
     </ClCompile>
     <ClCompile Include="NodeTypeStartSphereOnTriggerExit.cpp">
@@ -797,6 +797,9 @@
       <Filter>Imgui\Node Editor\Nodes\Player</Filter>
     </ClCompile>
     <ClCompile Include="NodeTypeEnemySpawn.cpp" />
+    <ClCompile Include="PlayerControlWindow.cpp">
+      <Filter>Imgui\Windows</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1474,9 +1477,6 @@
     <ClInclude Include="NodeTypeGameObjectGetPlayerPosition.h">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClInclude>
-    <ClInclude Include="CurveWindow.h">
-      <Filter>Imgui\Windows</Filter>
-    </ClInclude>
     <ClInclude Include="NodeTypeStartSphereOnTriggerExit.h">
       <Filter>Imgui\Node Editor\Nodes\Start</Filter>
     </ClInclude>
@@ -1490,6 +1490,12 @@
       <Filter>Imgui\Node Editor\Nodes\Player</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeEnemySpawn.h" />
+    <ClInclude Include="PlayerControlWindow.h">
+      <Filter>Imgui\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="VFXEditorWindow.h">
+      <Filter>Imgui\Windows</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">

@@ -194,7 +194,7 @@
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Behaviour.h" />
     <ClInclude Include="CameraSetting.h" />
-    <ClInclude Include="CurveWindow.h" />
+    <ClInclude Include="VFXEditorWindow.h" />
     <ClInclude Include="Interop.h" />
     <ClInclude Include="NodeTypeActionPatrol.h" />
     <ClInclude Include="NodeTypeEnemySpawn.h" />
@@ -327,6 +327,7 @@
     <ClInclude Include="PerlinNoise.h" />
     <ClInclude Include="PhysXWrapper.h" />
     <ClInclude Include="PlayerAnimationController.h" />
+    <ClInclude Include="PlayerControlWindow.h" />
     <ClInclude Include="PointLightComponent.h" />
     <ClInclude Include="PostMaster.h" />
     <ClInclude Include="Debug.h" />
@@ -420,8 +421,8 @@
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="AudioChannel.cpp" />
     <ClCompile Include="AudioManager.cpp" />
+    <ClCompile Include="VFXEditorWindow.cpp" />
     <ClCompile Include="JsonWriter.cpp" />
-    <ClCompile Include="CurveWindow.cpp" />
     <ClCompile Include="NodeTypeActionPatrol.cpp" />
     <ClCompile Include="NodeTypeEnemySpawn.cpp" />
     <ClCompile Include="NodeTypeGameObjectGetChildPosition.cpp" />
@@ -483,6 +484,7 @@
     <ClCompile Include="NodeTypeVFXPlayVFX.cpp" />
     <ClCompile Include="NodeTypeVFXStopVFX.cpp" />
     <ClCompile Include="PlayerAnimationController.cpp" />
+    <ClCompile Include="PlayerControlWindow.cpp" />
     <ClCompile Include="ShadowRenderer.cpp" />
     <ClCompile Include="Decal.cpp" />
     <ClCompile Include="DecalComponent.cpp" />

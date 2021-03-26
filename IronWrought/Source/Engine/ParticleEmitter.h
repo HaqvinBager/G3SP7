@@ -51,6 +51,10 @@ public:
 		DirectX::SimpleMath::Vector3 myOffsetUpperBound = DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f);
 		DirectX::SimpleMath::Vector3 myDirectionLowerBound = DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f);
 		DirectX::SimpleMath::Vector3 myDirectionUpperBound = DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f);
+
+		std::vector<Vector2> myColorCurve;
+		std::vector<Vector2> mySizeCurve;
+		std::vector<Vector2> myDirectionCurve;
 	};
 
 public:

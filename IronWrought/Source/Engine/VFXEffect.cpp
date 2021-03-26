@@ -32,36 +32,71 @@ void SVFXEffect::UpdateParticles(unsigned int anIndex, DirectX::SimpleMath::Vect
 	std::vector<unsigned int> indicesOfParticlesToRemove;
 	for (UINT i = 0; i < myParticleVertices[anIndex].size(); ++i)
 	{
-
 		float quotient = myParticleVertices[anIndex][i].myLifeTime / particleData.myParticleLifetime;		
-		myParticleVertices[anIndex][i].myColor = Vector4::Lerp
-		(
-			particleData.myParticleEndColor,
-			particleData.myParticleStartColor,
-			quotient
-		);
 	
-		myParticleVertices[anIndex][i].mySize = Vector2::Lerp
-		(
-			{ particleData.myParticleStartSize * aScale, particleData.myParticleStartSize * aScale },
-			{ particleData.myParticleEndSize * aScale, particleData.myParticleEndSize * aScale },
-			CalculateInterpolator(myParticleSizeCurves[anIndex], quotient)
-		);
+		if (particleData.myColorCurve.empty())
+		{
+			myParticleVertices[anIndex][i].myColor = Vector4::Lerp
+			(
+				particleData.myParticleStartColor,
+				particleData.myParticleEndColor,
+				quotient
+			);
+		}
+		else 
+		{
+			myParticleVertices[anIndex][i].myColor = Vector4::Lerp
+			(
+				particleData.myParticleStartColor,
+				particleData.myParticleEndColor,
+				CalculateInterpolator(particleData.myColorCurve, quotient)
+			);
+		}
+	
+		if (particleData.mySizeCurve.empty())
+		{
+			myParticleVertices[anIndex][i].mySize = Vector2::Lerp
+			(
+				{ particleData.myParticleStartSize * aScale, particleData.myParticleStartSize * aScale },
+				{ particleData.myParticleEndSize * aScale, particleData.myParticleEndSize * aScale },
+				quotient
+			);
+		}
+		else 
+		{
+			myParticleVertices[anIndex][i].mySize = Vector2::Lerp
+			(
+				{ particleData.myParticleStartSize * aScale, particleData.myParticleStartSize * aScale },
+				{ particleData.myParticleEndSize * aScale, particleData.myParticleEndSize * aScale },
+				CalculateInterpolator(particleData.mySizeCurve, quotient)
+			);
+		}
 		
-
-		myParticleVertices[anIndex][i].myMovement = Vector4::Lerp
-		(
-			particleData.myParticleEndDirection,
-			particleData.myParticleStartDirection,
-			quotient
-		);
-
-		Vector4 direction = Vector4::Lerp
-		(
-			myParticleVertices[anIndex][i].myEndMovement,
-			myParticleVertices[anIndex][i].myStartMovement,
-			quotient
-		);
+		//myParticleVertices[anIndex][i].myMovement = Vector4::Lerp
+		//(
+		//	particleData.myParticleStartDirection,
+		//	particleData.myParticleEndDirection,
+		//	CalculateInterpolator(particleData.myDirectionCurve, quotient)
+		//);
+		Vector4 direction = { 0.0f, 0.0f, 0.0f, 0.0f };
+		if (particleData.myDirectionCurve.empty())
+		{
+			direction = Vector4::Lerp
+			(
+				myParticleVertices[anIndex][i].myStartMovement,
+				myParticleVertices[anIndex][i].myEndMovement,
+				quotient
+			);
+		}
+		else 
+		{
+			direction = Vector4::Lerp
+			(
+				myParticleVertices[anIndex][i].myStartMovement,
+				myParticleVertices[anIndex][i].myEndMovement,
+				CalculateInterpolator(particleData.myDirectionCurve, quotient)
+			);
+		}
 
 		myParticleVertices[anIndex][i].mySquaredDistanceToCamera = Vector3::DistanceSquared
 		(
@@ -133,6 +168,7 @@ void SVFXEffect::Enable()
 	for (unsigned int i = 0; i < myParticleEmitters.size(); ++i) {
 		myEmitterDelays[i] = myEmitterBaseDelays[i];
 		myEmitterDurations[i] = myEmitterBaseDurations[i];
+		myEmitterTimers[i] = 0.0f;
 	}
 }
 
