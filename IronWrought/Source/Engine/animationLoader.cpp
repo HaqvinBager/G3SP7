@@ -58,15 +58,15 @@ namespace AnimationLoader
 		}
 
 		std::vector<std::string> someAnimations = GetAnimationPaths(aModelPath);
+		return aGameObject->AddComponent<CAnimationComponent>(*aGameObject, aModelPath, someAnimations);;
 		// No assert or return false here: Base model is Tpose and can still be used to render the model.
 
-		CAnimationComponent* anim = aGameObject->AddComponent<CAnimationComponent>(*aGameObject, aModelPath, someAnimations);
+		//CAnimationComponent* anim = 
+		
+		//CBlendTree* blendTree = anim->GetController()->AddBlendTree("Locomotion");
+		//for (const auto& motion : anim->GetController()->GetMotionNames())
+		//	blendTree->AddMotion(motion);
 
-		CBlendTree* blendTree = anim->GetController()->AddBlendTree("Locomotion");
-		for (const auto& motion : anim->GetController()->GetMotionNames())
-			blendTree->AddMotion(motion);
-
-		return anim;
 	}
 }
 namespace AnimationLoaderInternal

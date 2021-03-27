@@ -1402,14 +1402,14 @@
     <ClInclude Include="IronMath.h">
       <Filter>Utility</Filter>
     </ClInclude>
-    <ClInclude Include="ImGuiHelper.h">
-      <Filter>Imgui\Helper</Filter>
-    </ClInclude>
     <ClInclude Include="BlendTree.h">
       <Filter>Animation</Filter>
     </ClInclude>
     <ClInclude Include="..\Includes\ImGui\Core\imgui.h">
       <Filter>Imgui\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Includes\ImGui\Core\ImGuiHelper.h">
+      <Filter>Imgui\Helper</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

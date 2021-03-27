@@ -33,10 +33,8 @@ namespace IronWroughtImGui {
 			return false;
 		}
 
-
 	protected:
 		bool* Open() { return &myIsEnabled; }
-
 
 	private:
 		const char* myName;

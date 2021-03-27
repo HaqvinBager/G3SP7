@@ -12,7 +12,7 @@
 #include "ModelMath.h"
 #include "IronMath.h"
 
-#include "Animator.h"
+//#include "Animator.h"
 #include "BlendTree.h"
 
 //#define ANIMATION_DURATION_IN_MILLISECONDS// AS of 2021 02 23 is not used
@@ -138,49 +138,54 @@ struct MeshEntry
 
 class CAnimationController
 {
-
-	//friend class IronWroughtImGui::CAnimator;
 public:
 	CAnimationController();
 	~CAnimationController();
 
-	//Create Init Function?
-
-	void ImportSkeleton(const std::string& aSkeletonFBXPath);
-
+	//Import
 	bool ImportRig(const std::string& anFBXFilePath = "");// Todo: handle in factory
 	bool ImportAnimation(const std::string& anFBXFilePath);
+	void ImportSkeleton(const std::string& aSkeletonFBXPath);
+
+	//Animate
+	void SetBoneTransforms(int animIndex0, float aTick, std::array<aiMatrix4x4, 64>& outTransforms);
+	void SetBoneTransforms(int animIndex0, int animIndex1, float aTick0, float aTick1, float blend, std::array<aiMatrix4x4, 64>& outTransforms);
+
+
+	
+	const int AnimationCount() const;
+	const float AnimationDurationInTicks(int anIndex) const;
+	const float AnimationTPS(int anIndex) const;
+	std::vector<std::string> GetMotionNames();
+	const int AnimationIndex(const std::string& aMotionName);
+
+
+	//const int Animation0Index() const { return static_cast<int>(myAnimIndex0); }
+	//const int Animation1Index() const { return static_cast<int>(myAnimIndex1); }
+
+	//const float AnimationTPS(const std::string& aMotionName);
+	//
+	//const float AnimationDurationInSeconds(int anIndex) const;
+
+	//void AnimationIndex0(int anIndex) { myAnimIndex0 = static_cast<uint>(anIndex); }
+	//void AnimationIndex1(int anIndex) { myAnimIndex1 = static_cast<uint>(anIndex); }
+	//void SetAnimationIndexTick0(const float aTick) { myTicks0 = aTick; }
+	//void SetAnimationIndexTick1(const float aTick) { myTicks1 = aTick; }
+	//void SetBlendingTime(const float aBlendValue) { myBlendingTime = aBlendValue; }
+
+	//CBlendTree* AddBlendTree(const char* aName);
+	//std::vector<CBlendTree>& GetBlendTrees() { return myBlendTrees; }
+
+
+private:
+	//Import
 	bool InitFromScene(const aiScene* pScene);
 	void LoadBones(uint aMeshIndex, const aiMesh* aMesh);
 
-	void SetBoneTransforms(int animIndex0, std::array<aiMatrix4x4, 64>& outTransforms);	
+	//Animate
 	void ReadNodeHeirarchy(const aiScene* aScene, float tick, const aiNode* aNode, std::vector<aiMatrix4x4>& outJointPoses);
 	void CalculateWorldTransforms(std::array<aiMatrix4x4, 64>& outTransforms, std::vector<aiMatrix4x4>::const_iterator& aNodeTransformationIterator, const aiNode* aParentNode, const aiMatrix4x4& aParentTransform);
 
-
-
-	void UpdateAnimationTimes(std::array<SlimMatrix44, 64>& someBones);
-
-	const int AnimationCount() const;
-	const int Animation0Index() const { return static_cast<int>(myAnimIndex0); }
-	const int Animation1Index() const { return static_cast<int>(myAnimIndex1); }
-
-	const int AnimationIndex(const std::string& aMotionName);
-	const float AnimationTPS(const std::string& aMotionName);
-	const float AnimationTPS(int anIndex) const;
-	const float AnimationDurationInTicks(int anIndex) const;
-	const float AnimationDurationInSeconds(int anIndex) const;
-
-	void AnimationIndex0(int anIndex) { myAnimIndex0 = static_cast<uint>(anIndex); }
-	void AnimationIndex1(int anIndex) { myAnimIndex1 = static_cast<uint>(anIndex); }
-	void SetAnimationIndexTick0(const float aTick) { myTicks0 = aTick; }
-	void SetAnimationIndexTick1(const float aTick) { myTicks1 = aTick; }
-	void SetBlendingTime(const float aBlendValue) { myBlendingTime = aBlendValue; }
-
-	CBlendTree* AddBlendTree(const char* aName);
-	std::vector<CBlendTree>& GetBlendTrees() { return myBlendTrees; }
-
-	std::vector<std::string> GetMotionNames();
 
 private:
 	bool AnimationIndexWithinRange(int anIndex) const;
@@ -313,3 +318,5 @@ private:
 		return Lerp(outMin, outMax, t);
 	}
 };
+
+//void UpdateAnimationTimes(std::array<SlimMatrix44, 64>& someBones);
