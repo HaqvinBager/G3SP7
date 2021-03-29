@@ -60,25 +60,31 @@ public class ExportBluePrint
 
             foreach (GameObject gameObject in allGameObjects)
             {
-                if (gameObject.name.Contains(link.type))
+                GameObject source = PrefabUtility.GetCorrespondingObjectFromSource(gameObject);
+                if(prefab == source)
                 {
-                    GameObject source = PrefabUtility.GetCorrespondingObjectFromSource(gameObject);
-                    if (source != null)
-                    {
-                        if (source.Equals(prefab))
-                        {
-                            BluePrintInstance instance = new BluePrintInstance();
-                            instance.instanceID = gameObject.transform.GetInstanceID();
+                    BluePrintInstance instance = new BluePrintInstance();
+                    instance.instanceID = gameObject.transform.GetInstanceID();
 
-                            instance.childrenInstanceIDs = new List<int>();
-                            foreach(Transform childTransform in gameObject.transform)
-                            {
-                                instance.childrenInstanceIDs.Add(childTransform.GetInstanceID());
-                            }
-                            link.instances.Add(instance);
-                        }
+                    instance.childrenInstanceIDs = new List<int>();
+                    foreach (Transform childTransform in gameObject.transform)
+                    {
+                        instance.childrenInstanceIDs.Add(childTransform.GetInstanceID());
                     }
+                    link.instances.Add(instance);
                 }
+
+
+                //if (gameObject.name.Contains(link.type))
+                //{
+                //    if (source != null)
+                //    {
+                //        if (source.Equals(prefab))
+                //        {
+                          
+                //        }
+                //    }
+                //}
             }
             if (link.instances.Count > 0)
             {
