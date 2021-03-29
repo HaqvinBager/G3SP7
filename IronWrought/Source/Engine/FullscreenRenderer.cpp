@@ -46,11 +46,15 @@ bool CFullscreenRenderer::Init(CDirectXFramework* aFramework) {
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_LUMINANCE)] = "Shaders/FullscreenPixelShader_Luminance.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_GAUSSIANHORIZONTAL)] = "Shaders/FullscreenPixelShader_GaussianBlurHorizontal.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_GAUSSIANVERTICAL)] = "Shaders/FullscreenPixelShader_GaussianBlurVertical.cso";
+	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_BILATERALHORIZONTAL)] = "Shaders/FullscreenPixelShader_BilateralHorizontal.cso";
+	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_BILATERALVERTICAL)] = "Shader/FullscreenPixelShader_BilateralVertical.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_BLOOM)] = "Shaders/FullscreenPixelShader_Bloom.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_VIGNETTE)] = "Shaders/FullscreenPixelShader_Vignette.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_TONEMAP)] = "Shaders/FullscreenPixelShader_Tonemap.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCRENSHADER_GAMMACORRECTION)] = "Shaders/FullscreenPixelShader_GammaCorrection.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCRENSHADER_GAMMACORRECTION_RENDERPASS)] = "Shaders/DeferredRenderPassFullscreenPixelShader_GammaCorrection.cso";
+	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_DOWNSAMPLE_DEPTH)] = "Shaders/FullscreenPixelShader_DepthDownSample.cso";
+	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_DEPTH_AWARE_UPSAMPLING)] = "Shaders/FullscreenPixelShader_DepthAwareUpsample.cso";
 
 	for (UINT i = 0; i < static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_COUNT); i++) {
 		std::ifstream psFile;

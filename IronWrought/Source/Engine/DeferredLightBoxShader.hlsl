@@ -33,7 +33,7 @@ PixelOutput main(BoxLightVertexToPixel input)
     float4 objectPosition = mul(toBoxLightObject, worldPosFromDepth);
     
     clip(0.5f - abs(objectPosition.xy));
-    clip(1.0f - abs(objectPosition.z));
+    clip(1.0f - /*abs*/(objectPosition.z));
     
     float3 toEye = normalize(cameraPosition.xyz - worldPosition.xyz);
     float3 albedo = GBuffer_Albedo(screenUV).rgb;

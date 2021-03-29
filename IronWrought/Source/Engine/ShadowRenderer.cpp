@@ -2,6 +2,7 @@
 #include "ShadowRenderer.h"
 #include "GameObject.h"
 #include "EnvironmentLight.h"
+#include "BoxLight.h"
 #include "Camera.h"
 #include "CameraComponent.h"
 #include "Model.h"
@@ -77,6 +78,97 @@ void CShadowRenderer::Render(CEnvironmentLight* anEnvironmentLight, std::vector<
 		BindBuffer(myObjectBuffer, myObjectBufferData, "Object Buffer");
 
 		if (gameObject->GetComponent<CAnimationComponent>() != nullptr) 
+		{
+			memcpy(myBoneBufferData.myBones, gameObject->GetComponent<CAnimationComponent>()->GetBones().data(), sizeof(Matrix) * 64);
+			BindBuffer(myBoneBuffer, myBoneBufferData, "Bone Buffer");
+
+			myContext->VSSetConstantBuffers(4, 1, &myBoneBuffer);
+			myContext->VSSetShader(myAnimationVertexShader, nullptr, 0);
+		}
+		else
+		{
+			myContext->VSSetShader(myModelVertexShader, nullptr, 0);
+		}
+
+		myContext->IASetPrimitiveTopology(modelData.myPrimitiveTopology);
+		myContext->IASetInputLayout(modelData.myInputLayout);
+		myContext->VSSetConstantBuffers(1, 1, &myObjectBuffer);
+		myContext->PSSetShader(nullptr, nullptr, 0);
+
+		// Render all meshes
+		for (unsigned int i = 0; i < modelData.myMeshes.size(); ++i)
+		{
+			myContext->IASetVertexBuffers(0, 1, &modelData.myMeshes[i].myVertexBuffer, &modelData.myMeshes[i].myStride, &modelData.myMeshes[i].myOffset);
+			myContext->IASetIndexBuffer(modelData.myMeshes[i].myIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+			myContext->DrawIndexed(modelData.myMeshes[i].myNumberOfIndices, 0, 0);
+			CRenderManager::myNumberOfDrawCallsThisFrame++;
+		}
+	}
+
+	for (auto& gameobject : aInstancedGameObjectList)
+	{
+		CInstancedModelComponent* instanceComponent = gameobject->GetComponent<CInstancedModelComponent>();
+		if (instanceComponent == nullptr)
+			continue;
+
+		CModel* model = instanceComponent->GetModel();
+		const CModel::SModelInstanceData& modelData = model->GetModelInstanceData();
+
+		BindBuffer(myObjectBuffer, myObjectBufferData, "Object Buffer");
+
+		{
+			D3D11_MAPPED_SUBRESOURCE instanceBuffer;
+			ZeroMemory(&instanceBuffer, sizeof(D3D11_MAPPED_SUBRESOURCE));
+			ENGINE_HR_MESSAGE(myContext->Map(modelData.myInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &instanceBuffer), "Instanced Buffer Could not be mapped in Shadow Renderer.");
+			memcpy(instanceBuffer.pData, &instanceComponent->GetInstancedTransforms()[0], sizeof(DirectX::SimpleMath::Matrix) * instanceComponent->GetInstancedTransforms().size());
+			myContext->Unmap(modelData.myInstanceBuffer, 0);
+		}
+
+		myContext->IASetPrimitiveTopology(modelData.myPrimitiveTopology);
+		myContext->IASetInputLayout(modelData.myInputLayout);
+		myContext->VSSetConstantBuffers(1, 1, &myObjectBuffer);
+		myContext->VSSetShader(myInstancedModelVertexShader, nullptr, 0);
+		myContext->PSSetShader(nullptr, nullptr, 0);
+
+		// Render all meshes
+		for (unsigned int i = 0; i < modelData.myMeshes.size(); ++i)
+		{
+			ID3D11Buffer* bufferPointers[2] = { modelData.myMeshes[i].myVertexBuffer, modelData.myInstanceBuffer };
+			myContext->IASetVertexBuffers(0, 2, bufferPointers, modelData.myMeshes[i].myStride, modelData.myMeshes[i].myOffset);
+			myContext->IASetIndexBuffer(modelData.myMeshes[i].myIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+			myContext->DrawIndexedInstanced(modelData.myMeshes[i].myNumberOfIndices, model->InstanceCount(), 0, 0, 0);
+			CRenderManager::myNumberOfDrawCallsThisFrame++;
+		}
+	}
+}
+
+void CShadowRenderer::Render(CBoxLight* aBoxLight, std::vector<CGameObject*>& aGameObjectList, std::vector<CGameObject*>& aInstancedGameObjectList)
+{
+	if (!aBoxLight)
+		return;
+
+	myFrameBufferData.myToCameraSpace = aBoxLight->GetViewMatrix();
+	myFrameBufferData.myToProjectionSpace = aBoxLight->GetProjectionMatrix();
+
+	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
+	myContext->VSSetConstantBuffers(0, 1, &myFrameBuffer);
+
+	for (auto& gameObject : aGameObjectList)
+	{
+		CModelComponent* modelComponent = gameObject->GetComponent<CModelComponent>();
+		if (modelComponent == nullptr)
+			continue;
+
+		if (modelComponent->GetMyModel() == nullptr)
+			continue;
+
+		CModel* model = modelComponent->GetMyModel();
+		const CModel::SModelData& modelData = model->GetModelData();
+
+		myObjectBufferData.myToWorld = gameObject->myTransform->Transform();
+		BindBuffer(myObjectBuffer, myObjectBufferData, "Object Buffer");
+
+		if (gameObject->GetComponent<CAnimationComponent>() != nullptr)
 		{
 			memcpy(myBoneBufferData.myBones, gameObject->GetComponent<CAnimationComponent>()->GetBones().data(), sizeof(Matrix) * 64);
 			BindBuffer(myBoneBuffer, myBoneBufferData, "Bone Buffer");

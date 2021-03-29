@@ -20,19 +20,158 @@ cbuffer FrameBuffer : register(b0)
     float4 cameraPosition;
 }
 
-//cbuffer LightBuffer : register(b1)
-//{
-//    float4x4 toDirectionalLightView;
-//    float4x4 toDirectionalLightProjection;
-//    float4 directionalLightPosition; // For shadow calculations
-//    float4 toDirectionalLight;
-//    float4 directionalLightColor;
-//}
-
 sampler defaultSampler : register(s0);
 sampler shadowSampler : register(s1);
 Texture2D depthTexture : register(t21);
 Texture2D shadowDepthTexture : register(t22);
+
+bool RayPlaneIntersection(float3 planeCenter, float3 planeNormal, float3 rayOrigin, float3 rayDirection, inout float t)
+{
+    float denom = dot(planeNormal, rayDirection);
+    if (/*abs*/(denom) > 0.0001f)
+    {
+        t = dot((planeCenter - rayOrigin), planeNormal) / denom;
+        if (t > 0.0001f)
+            return true;
+    }
+    return false;
+}
+
+float3 FindRayIntersection(float3 rayOrigin, float3 rayDirection)
+{
+    float3 intersection = float3(0.0f, 0.0f, 0.0f);
+    float t = 0.0f;
+    float3 halfRight = boxLightDirectionNormal1.xyz * 0.5f * boxLightWidthAndHeight.x;
+    float3 halfUp = boxLightDirectionNormal2.xyz * 0.5f * boxLightWidthAndHeight.y;
+    
+    float3 backCenter = boxLightPositionAndRange.xyz;
+    float3 frontCenter = boxLightPositionAndRange.xyz + boxLightDirection.xyz * boxLightPositionAndRange.w;
+    float3 upCenter = (boxLightPositionAndRange.xyz + boxLightDirection.xyz * 0.5f * boxLightPositionAndRange.w);
+    float3 downCenter = upCenter;
+    float3 leftCenter = upCenter;
+    float3 rightCenter = upCenter;
+    
+    upCenter += halfUp;
+    downCenter -= halfUp;
+    rightCenter += halfRight;
+    leftCenter -= halfRight;
+    
+    float3 frontUpLeft      = frontCenter + halfUp - halfRight;
+    float3 frontDownLeft    = frontCenter - halfUp - halfRight;
+    float3 frontUpRight     = frontCenter + halfUp + halfRight;
+    float3 frontDownRight   = frontCenter - halfUp + halfRight;
+    float3 backUpLeft       = backCenter  + halfUp - halfRight;
+    float3 backDownLeft     = backCenter  - halfUp - halfRight;
+    float3 backUpRight      = backCenter  + halfUp + halfRight;
+    float3 backDownRight    = backCenter  - halfUp + halfRight;
+    
+    float3 q = float3(0.0f, 0.0f, 0.0f);
+    float3 p1 = float3(0.0f, 0.0f, 0.0f);
+    float3 p2 = float3(0.0f, 0.0f, 0.0f);
+    float3 p3 = float3(0.0f, 0.0f, 0.0f);
+    float x = 0.0f;
+    float y = 0.0f;
+
+    // Back
+    if (RayPlaneIntersection(backCenter, -boxLightDirection.xyz, rayOrigin, rayDirection, t))
+    {
+        q = rayOrigin + rayDirection * t;
+        p1 = backUpLeft;
+        p2 = backUpRight;
+        p3 = backDownLeft;
+        
+        x = dot(q - p1, p2 - p1) / length(p2 - p1);
+        y = dot(q - p1, p3 - p1) / length(p3 - p1);
+        
+        if (x >= 0.0f && x <= 1.0f && y >= 0.0f && y <= 1.0f)
+        {
+            intersection = q;
+        }
+
+    }
+    // Front
+    if (RayPlaneIntersection(frontCenter, boxLightDirection.xyz, rayOrigin, rayDirection, t))
+    {
+        q = rayOrigin + rayDirection * t;
+        p1 = frontUpLeft;
+        p2 = frontUpRight;
+        p3 = frontDownLeft;
+        
+        x = dot(q - p1, p2 - p1) / length(p2 - p1);
+        y = dot(q - p1, p3 - p1) / length(p3 - p1);
+        
+        if (x >= 0.0f && x <= 1.0f && y >= 0.0f && y <= 1.0f)
+        {
+            intersection = q;
+        }
+    }
+    // Up
+    if (RayPlaneIntersection(upCenter, boxLightDirectionNormal2.xyz, rayOrigin, rayDirection, t))
+    {
+        q = rayOrigin + rayDirection * t;
+        p1 = backUpLeft;
+        p2 = backUpRight;
+        p3 = frontUpLeft;
+        
+        x = dot(q - p1, p2 - p1) / length(p2 - p1);
+        y = dot(q - p1, p3 - p1) / length(p3 - p1);
+        
+        if (x >= 0.0f && x <= 1.0f && y >= 0.0f && y <= 1.0f)
+        {
+            intersection = q;
+        }
+    }
+    // Down
+    if (RayPlaneIntersection(downCenter, -boxLightDirectionNormal2.xyz, rayOrigin, rayDirection, t))
+    {
+        q = rayOrigin + rayDirection * t;
+        p1 = frontDownLeft;
+        p2 = backDownRight;
+        p3 = backDownLeft;
+        
+        x = dot(q - p1, p2 - p1) / length(p2 - p1);
+        y = dot(q - p1, p3 - p1) / length(p3 - p1);
+        
+        if (x >= 0.0f && x <= 1.0f && y >= 0.0f && y <= 1.0f)
+        {
+            intersection = q;
+        }
+    }
+    // Right
+    if (RayPlaneIntersection(rightCenter, boxLightDirectionNormal1.xyz, rayOrigin, rayDirection, t))
+    {
+        q = rayOrigin + rayDirection * t;
+        p1 = frontUpRight;
+        p2 = backUpRight;
+        p3 = backDownRight;
+        
+        x = dot(q - p1, p2 - p1) / length(p2 - p1);
+        y = dot(q - p1, p3 - p1) / length(p3 - p1);
+        
+        if (x >= 0.0f && x <= 1.0f && y >= 0.0f && y <= 1.0f)
+        {
+            intersection = q;
+        }
+    }
+    // Left
+    if (RayPlaneIntersection(leftCenter, -boxLightDirectionNormal1.xyz, rayOrigin, rayDirection, t))
+    {
+        q = rayOrigin + rayDirection * t;
+        p1 = backUpLeft;
+        p2 = frontUpLeft;
+        p3 = backDownLeft;
+        
+        x = dot(q - p1, p2 - p1) / length(p2 - p1);
+        y = dot(q - p1, p3 - p1) / length(p3 - p1);
+        
+        if (x >= 0.0f && x <= 1.0f && y >= 0.0f && y <= 1.0f)
+        {
+            intersection = q;
+        }
+    }
+    
+    return intersection;
+}
 
 float4 PixelShader_WorldPosition(float2 uv)
 {
@@ -72,11 +211,11 @@ float3 SampleShadowPos(float3 projectionPos)
     
     if (b - a < 0.001f)
     {
-        return 1.0f;
+        return 0.0f;
     }
     else
     {
-        return 0.0f;
+        return 1.0f;
     }
 }
 
@@ -94,7 +233,8 @@ void ExecuteRaymarching(inout float3 rayPositionLightVS, float3 invViewDirLightV
     rayPositionWorld += stepSize * invViewDirWorld;
     //..
     
-    float3 shadowTerm = /*ShadowFactor(rayPositionLightVS.xyz).xxx*/1.0f;
+    //float3 shadowTerm = ShadowFactor(rayPositionLightVS.xyz).xxx;
+    float3 shadowTerm = 1.0f;
     
     // Distance to the current position on the ray in light view-space
     float d = length(rayPositionLightVS.xyz);
@@ -103,17 +243,25 @@ void ExecuteRaymarching(inout float3 rayPositionLightVS, float3 invViewDirLightV
     // Calculate the final light contribution for the sample on the ray...
     float3 intens = TAU * (shadowTerm * (PHI * 0.25 * PI_RCP) * dRcp * dRcp) * exp(-d * TAU) * exp(-l * TAU) * stepSize;
     
-    float3 toLight = boxLightPositionAndRange.xyz - rayPositionWorld.xyz;
-    float lightDistance = length(toLight);
-    float linearAttenuation = lightDistance / boxLightPositionAndRange.w;
-    linearAttenuation = 1.0f - linearAttenuation;
-    linearAttenuation = saturate(linearAttenuation);
-    float physicalAttenuation = saturate(1.0f / (lightDistance * lightDistance));
-    float attenuation = /*lambert **/ linearAttenuation * physicalAttenuation;
+    
+    // INTENSITETEN BEROR PÅ KAMERANS RIKTNING
+    float3 lightToPixel = rayPositionWorld.xyz - boxLightPositionAndRange.xyz;
+    float3 projectedOnDirection = dot(lightToPixel, boxLightDirection.xyz) * boxLightDirection.xyz;
+    float projectedDistanceAlongDirection = length(projectedOnDirection);
+    float directionalAttenuation = projectedDistanceAlongDirection / boxLightPositionAndRange.w;
+    directionalAttenuation = saturate(1.0f - directionalAttenuation);
+    float physicalProjectedAttenuation = saturate(1.0f / (projectedDistanceAlongDirection * projectedDistanceAlongDirection));
+    
+    //float lightDistance = length(toLight);
+    //float linearAttenuation = lightDistance / boxLightPositionAndRange.w;
+    //linearAttenuation = 1.0f - linearAttenuation;
+    //linearAttenuation = saturate(linearAttenuation);
+    //float physicalAttenuation = saturate(1.0f / (lightDistance * lightDistance));
+    //float attenuation = /*lambert **/ linearAttenuation * physicalAttenuation;
     
     
     // ... and add it to the total contribution of the ray
-    VLI += intens * attenuation;
+    VLI += intens * directionalAttenuation /** physicalProjectedAttenuation*/;
 }
 
 // !RAYMARCHING
@@ -121,8 +269,6 @@ void ExecuteRaymarching(inout float3 rayPositionLightVS, float3 invViewDirLightV
 BoxLightPixelOutput main(BoxLightVertexToPixel input)
 {
     BoxLightPixelOutput output;
-    
-    float raymarchDistanceLimit = 2.0f * boxLightPositionAndRange.w;
     
     // ...
     float3 worldPosition = input.myWorldPosition;
@@ -137,10 +283,15 @@ BoxLightPixelOutput main(BoxLightVertexToPixel input)
     camPos -= boxLightPositionAndRange.xyz;
     float3 cameraPositionLightVS = mul(toBoxLightView, camPos);
     
+    float raymarchDistanceLimit = 2.0f * boxLightPositionAndRange.w;
+    float3 intersection = FindRayIntersection(worldPosition, invViewDirWorld);
+    raymarchDistanceLimit = length(intersection - worldPosition);
+    
     // Reduce noisyness by truncating the starting position
     //float raymarchDistance = trunc(clamp(length(cameraPositionLightVS.xyz - positionLightVS.xyz), 0.0f, raymarchDistanceLimit));
     float4 invViewDirLightVS = float4(normalize(cameraPositionLightVS.xyz - positionLightVS.xyz), 0.0f);
-    float raymarchDistance = clamp(length(cameraPositionLightVS.xyz - positionLightVS.xyz), 0.0f, raymarchDistanceLimit);
+    //float raymarchDistance = clamp(length(cameraPositionLightVS.xyz - positionLightVS.xyz), 0.0f, raymarchDistanceLimit);
+    float raymarchDistance = raymarchDistanceLimit;
     
     // Calculate the size of each step
     float stepSize = raymarchDistance * NUM_SAMPLES_RCP;

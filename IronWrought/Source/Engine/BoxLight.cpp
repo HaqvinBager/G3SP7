@@ -157,9 +157,17 @@ void CBoxLight::SetRotation(Vector3 aRotation)
         DirectX::XMConvertToRadians(aRotation.z)
     );
 
-    myToWorldMatrix = tempRotation;
-    myToWorldMatrix *= Matrix::CreateScale({myWidth, myHeight, myRange});
+    myToWorldMatrix = Matrix::CreateScale({myWidth, myHeight, myRange});
+    myToWorldMatrix *= tempRotation;
     myToWorldMatrix.Translation(myPosition);
+
+    myDirection = -myToWorldMatrix.Forward();
+    myDirectionNormal1 = { myToWorldMatrix.Right().x, myToWorldMatrix.Right().y, myToWorldMatrix.Right().z, 0.0f };
+    myDirectionNormal2 = { myToWorldMatrix.Up().x, myToWorldMatrix.Up().y, myToWorldMatrix.Up().z, 0.0f };
+
+    myDirection.Normalize();
+    myDirectionNormal1.Normalize();
+    myDirectionNormal2.Normalize();
 }
 
 void CBoxLight::Rotate(Vector3 aRotation)
@@ -178,9 +186,22 @@ void CBoxLight::Rotate(Vector3 aRotation)
         myEulerAngles.z += 360.0f;
 
     //Vector3 tempTranslation = myToWorldMatrix.Translation();
-    Matrix tempRotation = Matrix::CreateFromYawPitchRoll(aRotation.y, aRotation.x, aRotation.z);
+    //Matrix tempRotation = Matrix::CreateFromYawPitchRoll(aRotation.y, aRotation.x, aRotation.z);
+    Matrix tempRotation = Matrix::CreateFromYawPitchRoll(
+        DirectX::XMConvertToRadians(aRotation.y),
+        DirectX::XMConvertToRadians(aRotation.x),
+        DirectX::XMConvertToRadians(aRotation.z)
+    );
     myToWorldMatrix *= tempRotation;
     myToWorldMatrix.Translation(myPosition);
+
+    myDirection = -myToWorldMatrix.Forward();
+    myDirectionNormal1 = { myToWorldMatrix.Right().x, myToWorldMatrix.Right().y, myToWorldMatrix.Right().z, 0.0f };
+    myDirectionNormal2 = { myToWorldMatrix.Up().x, myToWorldMatrix.Up().y, myToWorldMatrix.Up().z, 0.0f };
+
+    myDirection.Normalize();
+    myDirectionNormal1.Normalize();
+    myDirectionNormal2.Normalize();
 }
 
 void CBoxLight::UpdateWorld()
@@ -216,9 +237,7 @@ void CBoxLight::UpdateWorld()
 
     //myDirectionNormal1 = { normal.x, normal.y, normal.z, 0.0f };
     //myDirectionNormal2 = { cross.x, cross.y, cross.z, 0.0f };
-    myDirection = myToWorldMatrix.Forward();
-    myDirectionNormal1 = { myToWorldMatrix.Right().x, myToWorldMatrix.Right().y, myToWorldMatrix.Right().z, 0.0f };
-    myDirectionNormal2 = { myToWorldMatrix.Up().x, myToWorldMatrix.Up().y, myToWorldMatrix.Up().z, 0.0f };
+
 
     //Vector3 z = myDirection;
     //Vector3 x = Vector3::Up.Cross(z);
@@ -240,4 +259,5 @@ void CBoxLight::UpdateView()
 void CBoxLight::UpdateProjection()
 {
     myToProjectionMatrix = DirectX::XMMatrixOrthographicLH(myWidth, myHeight, 0.01f, myRange);
+    //myToProjectionMatrix = DirectX::XMMatrixOrthographicLH(myHeight, myWidth, -40.0f, 40.0f);
 }

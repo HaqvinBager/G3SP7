@@ -56,6 +56,7 @@ private:
 	CFullscreenTexture myIntermediateTexture;
 	CFullscreenTexture myIntermediateDepth;
 	CFullscreenTexture myEnvironmentShadowDepth;
+	CFullscreenTexture myBoxLightShadowDepth;
 	CFullscreenTexture myDepthCopy;
 	CFullscreenTexture myLuminanceTexture;
 	CFullscreenTexture myHalfSizeTexture;
@@ -64,6 +65,9 @@ private:
 	CFullscreenTexture myBlurTexture2;
 	CFullscreenTexture myVignetteTexture;
 	CFullscreenTexture myDeferredLightingTexture;
+	CFullscreenTexture myVolumetricAccumulationBuffer;
+	CFullscreenTexture myVolumetricBlurTexture;
+	CFullscreenTexture myDownsampledDepth;
 	CFullscreenTexture myTonemappedTexture;
 	CGBuffer myGBuffer;
 	CGBuffer myGBufferCopy;

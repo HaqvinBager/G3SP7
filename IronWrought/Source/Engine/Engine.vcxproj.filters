@@ -208,6 +208,12 @@
     <FxCompile Include="BoxVolumetricLightPixelShader.hlsl">
       <Filter>Shaders\Volumetric Light</Filter>
     </FxCompile>
+    <FxCompile Include="FullscreenPixelShader_DepthDownSample.hlsl">
+      <Filter>Shaders\Fullscreen</Filter>
+    </FxCompile>
+    <FxCompile Include="FullscreenPixelShader_DepthAwareUpsample.hlsl">
+      <Filter>Shaders\Fullscreen</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimationComponent.cpp">

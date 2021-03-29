@@ -77,7 +77,7 @@ void CInGameState::Update()
 {
 	mySpotlight->GetComponent<CSpotLightComponent>()->GetSpotLight()->SetWideness(abs(sinf(CTimer::Time())));
 	//mySpotlight->GetComponent<CSpotLightComponent>()->GetSpotLight()->SetPosition({ 0.0f, abs(sinf(CTimer::Time())), 0.0f });
-	myBoxLight->GetComponent<CBoxLightComponent>()->GetBoxLight()->Rotate({ 2.0f * CTimer::Dt(), 0.0f, 0.0f });
+	//myBoxLight->GetComponent<CBoxLightComponent>()->GetBoxLight()->Rotate({ 2.0f * CTimer::Dt(), 0.0f, 0.0f });
 
 	CEngine::GetInstance()->GetPhysx().Simulate();
 	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
@@ -150,12 +150,14 @@ void CInGameState::TEMP_Sponza(CScene* aScene)
 	aScene->AddInstance(pointLight->GetComponent<CPointLightComponent>()->GetPointLight());
 
 	CGameObject* boxLight = new CGameObject(414111);
+	//boxLight->myTransform->Position({ -2.0f, 1.0f, 0.0f });
 	boxLight->myTransform->Position({ -2.0f, 1.0f, 0.0f });
-	Vector3 boxColor = { 1.0f, 1.0f, 1.0f };
+
+	Vector3 boxColor = { 0.0f, 1.0f, 1.0f };
 	Vector3 boxDirection = { 0.0f, -1.0f, 0.0f };
-	auto component = boxLight->AddComponent<CBoxLightComponent>(*boxLight, boxDirection, boxColor, 5.0f, 2.0f);
-	component->GetBoxLight()->SetArea({ 2.0f, 0.5f });
-	//component->GetBoxLight()->SetRotation({ -90.0f, 0.0f, 0.0f });
+	auto component = boxLight->AddComponent<CBoxLightComponent>(*boxLight, boxDirection, boxColor, 15.0f, 2.0f);
+	component->GetBoxLight()->SetArea({ 0.5f, 0.5f });
+	component->GetBoxLight()->SetRotation({ 45.0f, 0.0f, 0.0f });
 	//component->GetBoxLight()->SetPosition({ -2.0f, 1.0f, 0.0f });
 	myBoxLight = boxLight;
 	aScene->AddInstance(boxLight->GetComponent<CBoxLightComponent>()->GetBoxLight());
