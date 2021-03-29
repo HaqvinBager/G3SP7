@@ -63,14 +63,16 @@ public class ExportResource
                     }
                 }
             }
-            else if (assetPath.Contains("Generated/VertexColors/"))
+            else if (assetPath.Contains("/Generated/"))
             {
-                Object asset = AssetDatabase.LoadAssetAtPath<Object>(assetPath);
-                VertexColorAsset vertexColorAsset = new VertexColorAsset();
-                vertexColorAsset.id = asset.GetInstanceID();
-                vertexColorAsset.path = assetPath;
-
-                assets.vertexColors.Add(vertexColorAsset);
+                if (assetPath.Contains("/VertexColors/"))
+                {
+                    Object asset = AssetDatabase.LoadAssetAtPath<Object>(assetPath);
+                    VertexColorAsset vertexColorAsset = new VertexColorAsset();
+                    vertexColorAsset.id = asset.GetInstanceID();
+                    vertexColorAsset.path = assetPath;
+                    assets.vertexColors.Add(vertexColorAsset);
+                }
             }
         }
         Json.ExportToJson(assets, "Resource");
