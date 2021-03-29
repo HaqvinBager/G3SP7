@@ -11,6 +11,8 @@ class CCamera;
 class CEnvironmentLight;
 class CCollisionManager;
 class CPointLight;
+class CSpotLight;
+class CBoxLight;
 class CLineInstance;
 class CCanvas;
 
@@ -23,15 +25,12 @@ class CModel;
 class IAIBehavior;
 class CInstancedModelComponent;
 
-class CPlayerControllerComponent;
-
 typedef std::pair<unsigned int, std::array<CPointLight*, LIGHTCOUNT>> LightPair;
 
 class CScene {
 	friend class CEngine;
 	friend class CInGameState;
 	friend class CMenuState;
-	friend class teststate;
 public:
 //SETUP START
 	CScene(const unsigned int aGameObjectCount = 0);
@@ -44,10 +43,8 @@ public:
 public:
 //SETTERS START
 	void MainCamera(CCameraComponent* aMainCamera);
-	void Player(CGameObject* aPlayerObject);
 	bool EnvironmentLight(CEnvironmentLight* anEnvironmentLight);
 	void ShouldRenderLineInstance(const bool aShouldRender);
-	bool ShouldRenderLineInstance() { return myShouldRenderLineInstance; }
 	void UpdateCanvas();
 //SETTERS END
 public:
@@ -63,8 +60,6 @@ public:
 public:
 //GETTERS START
 	CCameraComponent* MainCamera();
-	CGameObject* Player();
-	CPlayerControllerComponent* PlayerController();
 	CEnvironmentLight* EnvironmentLight();
 	SNavMesh* NavMesh();
 	PxScene* PXScene();
@@ -79,6 +74,8 @@ public:
 public:
 //CULLING START
 	std::vector<CPointLight*> CullPointLights(CGameObject* aGameObject);
+	std::vector<CSpotLight*> CullSpotLights(CGameObject* aGameObject);
+	std::vector<CBoxLight*> CullBoxLights(CGameObject* aGameObject);
 	std::pair<unsigned int, std::array<CPointLight*, LIGHTCOUNT>> CullLights(CGameObject* aGameObject);
 	const std::vector<CLineInstance*>& CullLineInstances() const;
 	const std::vector<SLineTime>& CullLines() const;
@@ -93,6 +90,8 @@ public:
 public:
 	//POPULATE SCENE START
 	bool AddInstance(CPointLight* aPointLight);
+	bool AddInstance(CSpotLight* aSpotLight);
+	bool AddInstance(CBoxLight* aBoxLight);
 	bool AddInstance(CLineInstance* aLineInstance);
 	bool AddInstance(CAnimatedUIElement* anAnimatedUIElement);
 	bool AddInstance(CTextInstance* aText);
@@ -105,11 +104,15 @@ public:
 public:
 //REMOVE SPECIFIC INSTANCE START
 	bool RemoveInstance(CPointLight* aPointLight);
+	bool RemoveInstance(CSpotLight* aSpotLight);
+	bool RemoveInstance(CBoxLight* aBoxLight);
 	bool RemoveInstance(CAnimatedUIElement* anAnimatedUIElement);
 	bool RemoveInstance(CGameObject* aGameObject);
 //REMOVE SPECIFIC INSTANCE END
 //CLEAR SCENE OF INSTANCES START
 	bool ClearPointLights();
+	bool ClearSpotLights();
+	bool ClearBoxLights();
 	bool ClearLineInstances();
 	bool ClearAnimatedUIElement();
 	bool ClearTextInstances();
@@ -127,6 +130,8 @@ private:
 private:
 //CONTAINERS START
 	std::vector<CPointLight*> myPointLights;
+	std::vector<CSpotLight*> mySpotLights;
+	std::vector<CBoxLight*> myBoxLights;
 	std::vector<CLineInstance*> myLineInstances;
 	std::vector<CAnimatedUIElement*> myAnimatedUIElements;
 	std::vector<CTextInstance*> myTexts;
@@ -144,23 +149,7 @@ private:
 	CCameraComponent* myMainCamera;
 	PxScene* myPXScene;
 	CCanvas* myCanvas;
-	CGameObject* myPlayer;
 //POINTERS END
-
-// VFX EDITOR START
-public:
-	void SetVFXTester(CGameObject* aGameObject)
-	{
-		myVFXTester = aGameObject;
-	}
-	CGameObject* GetVFXTester() const
-	{
-		return myVFXTester;
-	}
-private:
-	CGameObject* myVFXTester = nullptr;
-// VFX EDITOR END
-
 
 	bool myIsReadyToRender;
 #ifdef  _DEBUG

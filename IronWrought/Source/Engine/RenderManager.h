@@ -1,6 +1,7 @@
 #pragma once
 #include "ForwardRenderer.h"
 #include "DeferredRenderer.h"
+#include "LightRenderer.h"
 #include "FullscreenRenderer.h"
 #include "FullscreenTexture.h"
 #include "FullscreenTextureFactory.h"
@@ -41,6 +42,7 @@ private:
 	CRenderStateManager myRenderStateManager;
 	CForwardRenderer myForwardRenderer;
 	CDeferredRenderer myDeferredRenderer;
+	CLightRenderer myLightRenderer;
 	CFullscreenRenderer myFullscreenRenderer;
 	CParticleRenderer myParticleRenderer;
 	CVFXRenderer myVFXRenderer;
@@ -54,6 +56,7 @@ private:
 	CFullscreenTexture myIntermediateTexture;
 	CFullscreenTexture myIntermediateDepth;
 	CFullscreenTexture myEnvironmentShadowDepth;
+	CFullscreenTexture myBoxLightShadowDepth;
 	CFullscreenTexture myDepthCopy;
 	CFullscreenTexture myLuminanceTexture;
 	CFullscreenTexture myHalfSizeTexture;
@@ -62,6 +65,9 @@ private:
 	CFullscreenTexture myBlurTexture2;
 	CFullscreenTexture myVignetteTexture;
 	CFullscreenTexture myDeferredLightingTexture;
+	CFullscreenTexture myVolumetricAccumulationBuffer;
+	CFullscreenTexture myVolumetricBlurTexture;
+	CFullscreenTexture myDownsampledDepth;
 	CFullscreenTexture myTonemappedTexture;
 	CGBuffer myGBuffer;
 	CGBuffer myGBufferCopy;

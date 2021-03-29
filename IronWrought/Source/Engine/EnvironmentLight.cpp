@@ -28,9 +28,13 @@ bool CEnvironmentLight::Init(CDirectXFramework* aFramework, std::string aFilePat
 
 	ENGINE_BOOL_POPUP((cubeDescription.MiscFlags & D3D11_RESOURCE_MISC_TEXTURECUBE), "Cubemap texture could not be read as a cubemap! Is loaded as a Texture2D instead of TextureCube.")
 
-	this->SetPosition({0.0f, -2.0f, 0.0f});
-	myShadowcastSize = { 32.0f, 32.0f };
+	myDirection = { 0.0f, 1.0f, 0.0f, 0.0f };
+	myShadowmapViewMatrix = DirectX::XMMatrixLookAtLH(myPosition, myPosition - myDirection, Vector3::Up);
+
+	myShadowcastSize = /*{ 32.0f, 32.0f }*/{64.0f, 64.0f};
 	myShadowTextureSize = { 2048.0f * 4.0f, 2048.0f * 4.0f };
+
+	myShadowmapProjectionMatrix = DirectX::XMMatrixOrthographicLH(myShadowcastSize.x, myShadowcastSize.y, -40.0f, 40.0f);
 
 	return true;
 }
@@ -58,6 +62,8 @@ void CEnvironmentLight::SetDirection(DirectX::SimpleMath::Vector3 aDirection)
 	myDirection.x = aDirection.x;
 	myDirection.y = aDirection.y;
 	myDirection.z = aDirection.z;
+
+	myShadowmapViewMatrix = DirectX::XMMatrixLookAtLH(myPosition, myPosition - myDirection, Vector3::Up);
 }
 
 void CEnvironmentLight::SetColor(DirectX::SimpleMath::Vector3 aColor)
@@ -75,11 +81,20 @@ void CEnvironmentLight::SetIntensity(float anIntensity)
 void CEnvironmentLight::SetPosition(DirectX::SimpleMath::Vector3 aPosition)
 {
 	myPosition = DirectX::SimpleMath::Vector4(aPosition.x, aPosition.y, aPosition.z, 1.0f);
+
+	myShadowmapViewMatrix = DirectX::XMMatrixLookAtLH(myPosition, myPosition - myDirection, Vector3::Up);
 }
 
 DirectX::SimpleMath::Matrix CEnvironmentLight::GetShadowView() const
 {
-	return DirectX::SimpleMath::Matrix::CreateOrthographic(myShadowcastSize.x, myShadowcastSize.y, 40.0f, -40.0f);
+	return myShadowmapViewMatrix;
+	// For fog
+	//return DirectX::XMMatrixLookAtLH(GetShadowPosition(), myDirection, Vector3::Up);
+}
+
+DirectX::SimpleMath::Matrix CEnvironmentLight::GetShadowProjection() const
+{
+	return myShadowmapProjectionMatrix;
 }
 
 DirectX::SimpleMath::Vector4 CEnvironmentLight::GetShadowPosition() const

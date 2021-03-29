@@ -22,14 +22,16 @@
 
 #include "EnvironmentLight.h"
 #include "PointLight.h"
-#include "Engine.h"
+#include "SpotLight.h"
+#include "BoxLight.h"
+
 #include "Camera.h"
 #include "CameraComponent.h"
-#include <PlayerControllerComponent.h>
 
 #include "CollisionManager.h"
 
 #include "NavmeshLoader.h"
+#include "Canvas.h"
 
 #include "Debug.h"
 //SETUP START
@@ -40,10 +42,8 @@ CScene::CScene(const unsigned int aGameObjectCount)
 	, myNavMesh(nullptr)
 	, myNavMeshGrid(nullptr)
 	, myPXScene(nullptr)
-	, myPlayer(nullptr)
 {
 	myGameObjects.reserve(aGameObjectCount);
-	myPXScene = CEngine::GetInstance()->GetPhysx().CreatePXScene(this);
 
 	myModelsToOutline.resize(2);
 	for (unsigned int i = 0; i < myModelsToOutline.size(); ++i)
@@ -53,10 +53,14 @@ CScene::CScene(const unsigned int aGameObjectCount)
 
 #ifdef _DEBUG
 	myShouldRenderLineInstance = false;
-	//myGrid = new CLineInstance();
-	//myGrid->Init(CLineFactory::GetInstance()->CreateGrid({ 0.1f, 0.5f, 1.0f, 1.0f }));
-	//this->AddInstance(myGrid);
+	myGrid = new CLineInstance();
+	myGrid->Init(CLineFactory::GetInstance()->CreateGrid({ 0.1f, 0.5f, 1.0f, 1.0f }));
+	this->AddInstance(myGrid);
 #endif
+
+	//myCanvas = new CCanvas();
+	//myCanvas->Init(ASSETPATH("Assets/Graphics/UI/JSON/UI_HUD.json"), *this);
+
 }
 
 CScene::~CScene()
@@ -65,11 +69,13 @@ CScene::~CScene()
 	delete myEnvironmentLight;
 	myEnvironmentLight = nullptr;
 
-	myVFXTester = nullptr;
-	myPlayer = nullptr;
+	delete myCanvas;
+	myCanvas = nullptr;
 
 	this->ClearGameObjects();
 	this->ClearPointLights();
+	this->ClearSpotLights();
+	this->ClearBoxLights();
 
 #ifdef _DEBUG
 	myGrid = nullptr;
@@ -132,10 +138,6 @@ void CScene::MainCamera(CCameraComponent* aMainCamera)
 {
 	myMainCamera = aMainCamera;
 }
-void CScene::Player(CGameObject* aPlayerObject)
-{
-	myPlayer = aPlayerObject;
-}
 
 bool CScene::EnvironmentLight(CEnvironmentLight* anEnvironmentLight)
 {
@@ -151,21 +153,15 @@ void CScene::ShouldRenderLineInstance(const bool aShouldRender)
 	aShouldRender;
 #endif //  _DEBUG
 }
+void CScene::UpdateCanvas()
+{
+	myCanvas->Update();
+}
 //SETTERS END
 //GETTERS START
 CCameraComponent* CScene::MainCamera()
 {
 	return myMainCamera;
-}
-CGameObject* CScene::Player()
-{
-	return myPlayer;
-}
-CPlayerControllerComponent* CScene::PlayerController()
-{
-	if (myPlayer)
-		return myPlayer->GetComponent<CPlayerControllerComponent>();
-	return nullptr;
 }
 
 CEnvironmentLight* CScene::EnvironmentLight()
@@ -216,6 +212,17 @@ std::vector<CPointLight*> CScene::CullPointLights(CGameObject* /*aGameObject*/)
 	return myPointLights;
 }
 
+std::vector<CSpotLight*> CScene::CullSpotLights(CGameObject* /*aGameObject*/)
+{
+	return mySpotLights;
+}
+
+std::vector<CBoxLight*> CScene::CullBoxLights(CGameObject* /*aGameObject*/)
+{
+	return myBoxLights;
+}
+
+
 std::pair<unsigned int, std::array<CPointLight*, LIGHTCOUNT>> CScene::CullLights(CGameObject* aGameObject)
 {
 	std::pair<unsigned int, std::array<CPointLight*, LIGHTCOUNT>> pointLightPair;
@@ -243,7 +250,13 @@ std::pair<unsigned int, std::array<CPointLight*, LIGHTCOUNT>> CScene::CullLights
 const std::vector<CLineInstance*>& CScene::CullLineInstances() const
 {
 #ifdef _DEBUG
-	return myLineInstances;
+	if (myShouldRenderLineInstance)
+		return myLineInstances;
+	else
+	{
+		std::vector<CLineInstance*> temp;
+		return std::move(temp);
+	}
 #else
 	return myLineInstances;
 #endif
@@ -271,7 +284,7 @@ std::vector<CAnimatedUIElement*> CScene::CullAnimatedUI(std::vector<CSpriteInsta
 
 LightPair CScene::CullLightInstanced(CInstancedModelComponent* aModelType)
 {
-	//Sï¿½tt sï¿½ att Range tï¿½cker objektet lï¿½ngst bort
+	//Sätt så att Range täcker objektet längst bort
 	//if (myPlayer != nullptr) {
 	//	aModelType->GameObject().myTransform->Position(GetPlayer()->myTransform->Position());
 	//}
@@ -354,7 +367,19 @@ CGameObject* CScene::FindObjectWithID(const int aGameObjectInstanceID)
 //POPULATE SCENE START
 bool CScene::AddInstance(CPointLight* aPointLight)
 {
-	myPointLights.emplace_back(aPointLight);
+	myPointLights.push_back(aPointLight);
+	return true;
+}
+
+bool CScene::AddInstance(CSpotLight* aSpotLight)
+{
+	mySpotLights.push_back(aSpotLight);
+	return true;
+}
+
+bool CScene::AddInstance(CBoxLight* aBoxLight)
+{
+	myBoxLights.push_back(aBoxLight);
 	return true;
 }
 
@@ -363,7 +388,6 @@ bool CScene::AddInstance(CLineInstance* aLineInstance)
 	myLineInstances.emplace_back(aLineInstance);
 	return true;
 }
-
 
 bool CScene::AddInstance(CAnimatedUIElement* anAnimatedUIElement)
 {
@@ -389,6 +413,11 @@ bool CScene::AddInstance(CGameObject* aGameObject)
 {
 	myGameObjects.emplace_back(aGameObject);
 	myIDGameObjectMap[aGameObject->InstanceID()] = aGameObject;
+
+	for (auto& component : aGameObject->myComponents) {
+		myComponentMap[typeid(*component).hash_code()].push_back(component);
+	}
+
 	return true;
 }
 
@@ -419,6 +448,7 @@ bool CScene::AddInstance(CSpriteInstance* aSprite)
 
 	return true;
 }
+
 //PhysX
 bool CScene::AddPXScene(PxScene* aPXScene)
 {
@@ -439,6 +469,30 @@ bool CScene::RemoveInstance(CPointLight* aPointLight)
 			//std::swap(myGameObjects[i], myGameObjects[myGameObjects.size() - 1]);
 			//myGameObjects.pop_back();
 			myPointLights.erase(myPointLights.begin() + i);
+		}
+	}
+	return true;
+}
+
+bool CScene::RemoveInstance(CSpotLight* aSpotLight)
+{
+	for (int i = 0; i < mySpotLights.size(); ++i)
+	{
+		if (aSpotLight == mySpotLights[i])
+		{
+			mySpotLights.erase(mySpotLights.begin() + i);
+		}
+	}
+	return true;
+}
+
+bool CScene::RemoveInstance(CBoxLight* aBoxLight)
+{
+	for (int i = 0; i < myBoxLights.size(); ++i)
+	{
+		if (aBoxLight == myBoxLights[i])
+		{
+			myBoxLights.erase(myBoxLights.begin() + i);
 		}
 	}
 	return true;
@@ -479,6 +533,28 @@ bool CScene::ClearPointLights()
 		p = nullptr;
 	}
 	myPointLights.clear();
+	return true;
+}
+
+bool CScene::ClearSpotLights()
+{
+	for (auto& p : mySpotLights)
+	{
+		delete p;
+		p = nullptr;
+	}
+	mySpotLights.clear();
+	return true;
+}
+
+bool CScene::ClearBoxLights()
+{
+	for (auto& p : myBoxLights)
+	{
+		delete p;
+		p = nullptr;
+	}
+	myBoxLights.clear();
 	return true;
 }
 
