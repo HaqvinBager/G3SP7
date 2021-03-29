@@ -284,7 +284,7 @@ std::vector<CAnimatedUIElement*> CScene::CullAnimatedUI(std::vector<CSpriteInsta
 
 LightPair CScene::CullLightInstanced(CInstancedModelComponent* aModelType)
 {
-	//Sätt så att Range täcker objektet längst bort
+	//Sï¿½tt sï¿½ att Range tï¿½cker objektet lï¿½ngst bort
 	//if (myPlayer != nullptr) {
 	//	aModelType->GameObject().myTransform->Position(GetPlayer()->myTransform->Position());
 	//}

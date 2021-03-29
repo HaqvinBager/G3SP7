@@ -106,7 +106,7 @@ SVertexPaintData CMaterialHandler::RequestVertexColorID(std::vector<SVertexPaint
 		vertexPositionToColorMap[ourFBXVertexPosition] = { .0f, .0f, .0f };
 	}
 
-	for (unsigned int j = 0; j < colorData.myVertexPositions.size(); ++j)
+	for (unsigned int j = 0; j < colorData.myColors.size(); ++j)
 	{
 		vertexPositionToColorMap[{ -colorData.myVertexPositions[j].x, colorData.myVertexPositions[j].y, -colorData.myVertexPositions[j].z}] = colorData.myColors[j];
 	}
