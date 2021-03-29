@@ -39,7 +39,7 @@ public class ExportVertexPaint : Editor
         var objects = Selection.objects;
 
         List<GameObject> paintableObjects = new List<GameObject>();
-        foreach(var obj in objects)
+        foreach (var obj in objects)
         {
             GameObject gameObject = obj as GameObject;
             if (gameObject.TryGetComponent(out MeshRenderer renderer))
@@ -122,7 +122,7 @@ public class ExportVertexPaint : Editor
         string folderName = Directory.GetParent(SceneManager.GetActiveScene().path).Name;
 
         string path = targetPath + folderName + "\\VertexColors\\";
-        
+
         if (!Directory.Exists(path))
             Directory.CreateDirectory(path);
 
@@ -131,7 +131,7 @@ public class ExportVertexPaint : Editor
 
         //Vad är ett unikt ID För denna? Kanske Shared Mesh' ID? <-- yes
 
-     
+
         List<VertexColorData> colorData = new List<VertexColorData>();
         //AssetDatabase.LoadAssetAtPath<Object>(binFile);
 
@@ -140,52 +140,64 @@ public class ExportVertexPaint : Editor
             if (polyBrushObject.transform.parent == null)
                 continue;
 
-            string meshName = polyBrushObject.GetComponent<MeshFilter>().sharedMesh.name;
+            MeshFilter meshFilter = polyBrushObject.GetComponent<MeshFilter>();
+
+            string meshName = meshFilter.sharedMesh.name;
             if (!meshName.Contains(polybrushMesh))
             {
                 Debug.LogError("This Object has not yet been Painted on. Skipping it!", polyBrushObject.gameObject);
-                continue;
+                //continue;
             }
-                   
-            if (polyBrushObject.TryGetComponent(out MeshFilter meshFilter))
-            {           
-                VertexColorData data = new VertexColorData();
-                data.id = meshFilter.sharedMesh.GetInstanceID();
-                data.colorCount = meshFilter.sharedMesh.colors.Length;
-                data.colors = new Vector3[meshFilter.sharedMesh.colors.Length];
-                for (int i = meshFilter.sharedMesh.colors.Length - 1; i > -1; --i)
-                {
-                    data.colors[i].x = meshFilter.sharedMesh.colors[i].r;
-                    data.colors[i].y = meshFilter.sharedMesh.colors[i].g;
-                    data.colors[i].z = meshFilter.sharedMesh.colors[i].b;
 
-                }
-                data.vertexCount = meshFilter.sharedMesh.vertices.Length;
-                data.vertices = meshFilter.sharedMesh.vertices;
-                colorData.Add(data);
+            //bool isLiterallyVertexPainted = false;
+            //if (polyBrushObject.TryGetComponent(out MeshFilter filter))
+            //{
+            //    isLiterallyVertexPainted = filter.sharedMesh.name.Contains("PolybrushMesh");
+            //}
 
-                VertexLink link = collection.vertexColors.Find(e => e.vertexColorsID.Equals(meshFilter.sharedMesh.GetInstanceID()));
-                if (link == null)
-                {
-                    link = new VertexLink();
-                    link.instanceIDs = new List<int>();
-                    link.vertexColorsID = meshFilter.sharedMesh.GetInstanceID(); //binAsset.GetInstanceID();//targetPath + "VertexColors_" + polyMeshID + "_Bin.bin";
-                    link.materialNames = ExtractTexturePathsFromMaterials(polyBrushObject.GetComponent<MeshRenderer>().sharedMaterials);
-                    collection.vertexColors.Add(link);
-                }
-                link.instanceIDs.Add(polyBrushObject.transform.parent.GetInstanceID());
-            }
-            else
+            //if (isLiterallyVertexPainted)
+            //{
+            //if (polyBrushObject.TryGetComponent(out MeshFilter meshFilter))
+            //{
+            VertexColorData data = new VertexColorData();
+            data.id = meshFilter.sharedMesh.GetInstanceID();
+            data.colorCount = meshFilter.sharedMesh.colors.Length;
+            data.colors = new Vector3[meshFilter.sharedMesh.colors.Length];
+            for (int i = meshFilter.sharedMesh.colors.Length - 1; i > -1; --i)
             {
-                Debug.LogWarning("Expected to find a MeshFilter Component on " + polyBrushObject.name, polyBrushObject.gameObject);
+                data.colors[i].x = meshFilter.sharedMesh.colors[i].r;
+                data.colors[i].y = meshFilter.sharedMesh.colors[i].g;
+                data.colors[i].z = meshFilter.sharedMesh.colors[i].b;
+
             }
+            data.vertexCount = meshFilter.sharedMesh.vertices.Length;
+            data.vertices = meshFilter.sharedMesh.vertices;
+            colorData.Add(data);
+
+            VertexLink link = collection.vertexColors.Find(e => e.vertexColorsID.Equals(meshFilter.sharedMesh.GetInstanceID()));
+            if (link == null)
+            {
+                link = new VertexLink();
+                link.instanceIDs = new List<int>();
+                link.vertexColorsID = meshFilter.sharedMesh.GetInstanceID(); //binAsset.GetInstanceID();//targetPath + "VertexColors_" + polyMeshID + "_Bin.bin";
+                link.materialNames = ExtractTexturePathsFromMaterials(polyBrushObject.GetComponent<MeshRenderer>().sharedMaterials);
+                collection.vertexColors.Add(link);
+
+            }
+            link.instanceIDs.Add(polyBrushObject.transform.parent.GetInstanceID());
+            //}
+            //else
+            //{
+            //    Debug.LogWarning("Expected to find a MeshFilter Component on " + polyBrushObject.name, polyBrushObject.gameObject);
+            //}
+            //}
         }
 
         string binFile = path + aSceneName + "_VertexColors.bin";
         FileStream file = new FileStream(binFile, FileMode.Create);
         BinaryWriter writer = new BinaryWriter(file);
         writer.Write(colorData.Count);
-        for(int i = 0; i < colorData.Count; ++i)
+        for (int i = 0; i < colorData.Count; ++i)
         {
             writer.Write(colorData[i].id);
             writer.Write(colorData[i].colorCount);
@@ -195,7 +207,7 @@ public class ExportVertexPaint : Editor
         }
         writer.Close();
 
-        return collection;     
+        return collection;
     }
 
     private static string BinFileName(PolybrushFBX polyBrushObject, string meshName)
@@ -204,7 +216,7 @@ public class ExportVertexPaint : Editor
         int endIndex = meshName.Length;
         string polyMeshID = meshName.Substring(startIndex, endIndex - startIndex);
         string materialName = polyBrushObject.GetComponent<MeshRenderer>().sharedMaterial.name;
-        string binFileName =  "VertexColors_" + polyBrushObject.GetInstanceID().ToString() + "_Bin.bin";
+        string binFileName = "VertexColors_" + polyBrushObject.GetInstanceID().ToString() + "_Bin.bin";
         return binFileName;
     }
 

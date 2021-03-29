@@ -18,6 +18,8 @@ SVertexPaintCollection CBinReader::LoadVertexPaintCollection(const std::string& 
 	std::string exportPath = ASSETPATH("Assets/Generated/" + aSceneName + "/VertexColors/");
 	std::vector<std::string> binPaths = CFolderUtility::GetFileNamesInFolder(exportPath, ".bin");
 
+	if(binPaths.size() == 0)
+		return SVertexPaintCollection{ };
 
 	std::ifstream stream;
 	stream.open(ASSETPATH("Assets/Generated/" + aSceneName + "/VertexColors/" + binPaths[0]), std::ios::binary);

@@ -144,6 +144,11 @@ void CSceneManager::SetVertexPaintedColors(CScene& aScene, RapidArray someData, 
 		for (const auto& gameObjectID : i["instanceIDs"].GetArray())
 		{
 			CGameObject* gameObject = aScene.FindObjectWithID(gameObjectID.GetInt());
+			if (gameObject == nullptr) //Was not entirely sure why this would try to acces a non-existant gameObject. 
+				continue;				//I think it relates to the Model or VertexPaint Export. We don't want to add vertexColors to the export if said object was never painted on!
+
+
+
 			for (auto it = vertexColorData.myData.begin(); it != vertexColorData.myData.end(); ++it)
 			{
 				if ((*it).myVertexMeshID == vertexColorID)
