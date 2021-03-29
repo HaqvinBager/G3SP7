@@ -1,0 +1,72 @@
+#include "stdafx.h"
+#include "EnemyComponent.h"
+#include "CharacterController.h"
+#include "AIController.h"
+#include "TransformComponent.h"
+#include <Scene.h>
+#include "Engine.h"
+#include "PhysXWrapper.h"
+
+//EnemyComp
+
+CEnemyComponent::CEnemyComponent(CGameObject& aParent) : CComponent(aParent)
+{
+	myController = nullptr;
+	myCurrentState = EBehaviour::Patrol;
+	myRadius = 10.0f;
+	myDistance = 0.0f;
+	mySpeed = 0.0015f;
+	myController = CEngine::GetInstance()->GetPhysx().CreateCharacterController(GameObject().myTransform->Position(), 0.6f * 0.5f, 1.8f * 0.5f);
+}
+
+CEnemyComponent::~CEnemyComponent()
+{
+}
+
+void CEnemyComponent::Awake()
+{
+}
+
+void CEnemyComponent::Start()
+{
+	myPlayer = CEngine::GetInstance()->GetActiveScene().Player();
+	myBehaviours.push_back(new CPatrol(
+		{
+			{ 20.0f,0.0f, 0.0f },
+			{ 20.0f,0.0f, 10.0f },
+			{ 0.0f,0.0f, 0.0f }
+		}));
+
+	CSeek* seekBehaviour = new CSeek();
+	seekBehaviour->SetTarget(myPlayer->myTransform);
+	myBehaviours.push_back(seekBehaviour);
+}
+
+void CEnemyComponent::Update()//får bestämma vilket behaviour vi vill köra i denna Update()!!!
+{
+	/*myDistance = sqrt(
+		(myPlayer->myTransform->Position().x - GameObject().myTransform->Position().x) * ((myPlayer->myTransform->Position().x - GameObject().myTransform->Position().x)) +
+		((myPlayer->myTransform->Position().y - GameObject().myTransform->Position().y) * ((myPlayer->myTransform->Position().y - GameObject().myTransform->Position().y))) +
+		((myPlayer->myTransform->Position().z - GameObject().myTransform->Position().z) * ((myPlayer->myTransform->Position().z - GameObject().myTransform->Position().z))));*/
+	myDistance = Vector3::DistanceSquared(myPlayer->myTransform->Position(), GameObject().myTransform->Position());
+
+	if (myRadius * myRadius >= myDistance) {//seek
+		SetState(EBehaviour::Seek);
+	}
+	else {//patrol
+		SetState(EBehaviour::Patrol);
+	}
+	Vector3 newDirection = myBehaviours[static_cast<int>(myCurrentState)]->Update(GameObject().myTransform->Position());
+	myController->Move(newDirection, mySpeed);
+	GameObject().myTransform->Position(myController->GetPosition());
+}
+
+void CEnemyComponent::SetState(EBehaviour aState)
+{
+	myCurrentState = aState;
+}
+
+const CEnemyComponent::EBehaviour CEnemyComponent::GetState() const
+{
+	return myCurrentState;
+}
