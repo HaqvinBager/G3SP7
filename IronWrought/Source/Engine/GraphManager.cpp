@@ -66,17 +66,17 @@ void CGraphManager::Load(const std::string& aSceneName)
 		myInstantiableVariables.push_back("Vector 3");
 	}
 
-	const std::string sceneJson = ASSETPATH("Assets/Generated/" + aSceneName);
+	const std::string sceneJson = ASSETPATH("Assets/Generated/" + aSceneName + "/" + aSceneName + ".json");
 	CGraphNodeTimerManager::Create();
 	const auto doc = CJsonReader::Get()->LoadDocument(sceneJson);
 	if (doc.HasParseError())
 		return;
 
-	size_t lastSlash = aSceneName.find_last_of(".");
-	std::string sceneName = aSceneName.substr(0, lastSlash);
+	//size_t lastSlash = aSceneName.find_last_of(".");
+	//std::string sceneName = aSceneName.substr(0, lastSlash);
 
 	// Create Scene folder.
-	mySceneFolder = "Imgui/NodeScripts/" + sceneName + "/";
+	mySceneFolder = "Imgui/NodeScripts/" + aSceneName + "/";
 	//Om denna Blueprint redan finns ska vi bara spara undan den som nyckel
 	if (!std::filesystem::exists(mySceneFolder))
 	{
@@ -117,11 +117,10 @@ void CGraphManager::Load(const std::string& aSceneName)
 					bpInstance.rootID = jsonGameObjectID["instanceID"].GetInt();
 					for (const auto& childID : jsonGameObjectID["childrenInstanceIDs"].GetArray())
 					{
+						CNodeTypeCollector::RegisterChildNodeTypes(key, childID.GetInt());
 						bpInstance.childrenIDs.emplace_back(childID.GetInt());
 					}
 					myGraphs.back().myBluePrintInstances.emplace_back(bpInstance);
-					unsigned int aSize = static_cast<unsigned int>(myGraphs.back().myBluePrintInstances.back().childrenIDs.size()) - 1;
-					CNodeTypeCollector::RegisterChildNodeTypes(key, aSize);
 					myGraphs.back().myChildrenKey = key;
 				}
 
@@ -188,11 +187,11 @@ void CGraphManager::ReTriggerUpdatingTrees()
 		for (const auto& graph : myGraphs)
 		{
 			//const auto& currentGraph = myGraphs[key];
-			const auto& gameObjectIDs = graph.myBluePrintInstances;
+			const auto& bluePrintInstances = graph.myBluePrintInstances;
 
-			for (unsigned int i = 0; i < gameObjectIDs.size(); ++i)
+			for (unsigned int i = 0; i < bluePrintInstances.size(); ++i)
 			{
-				myCurrentBluePrintInstance = gameObjectIDs[i];
+				myCurrentBluePrintInstance = bluePrintInstances[i];
 				for (auto& nodeInstance : graph.myNodeInstances)
 				{
 					if (nodeInstance->myNodeType->IsStartNode())
