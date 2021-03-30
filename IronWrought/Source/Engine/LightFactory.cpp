@@ -3,6 +3,8 @@
 #include "Engine.h"
 #include "EnvironmentLight.h"
 #include "PointLight.h"
+#include "SpotLight.h"
+#include "BoxLight.h"
 
 CLightFactory* CLightFactory::ourInstance = nullptr;
 CLightFactory* CLightFactory::GetInstance()
@@ -17,21 +19,32 @@ bool CLightFactory::Init(CEngine& anEngine)
 CEnvironmentLight* CLightFactory::CreateEnvironmentLight(std::string aCubeMapPath)
 {
 	CEnvironmentLight* light = new CEnvironmentLight();
-    if (!light->Init(myEngine->myFramework, aCubeMapPath))
-    {
-        return nullptr; //TODO INIT FAILED
-    }
+    ENGINE_ERROR_BOOL_MESSAGE(light->Init(myEngine->myFramework, aCubeMapPath), "Environment Light could not be initialized.");
     
-    return light;
+    return std::move(light);
 }
 
 CPointLight* CLightFactory::CreatePointLight() {
     CPointLight* pointLight = new CPointLight();
-    if (!pointLight->Init()) {
-        return nullptr;
-    }
+    ENGINE_ERROR_BOOL_MESSAGE(pointLight->Init(), "Point Light could not be initialized.");
 
-    return pointLight;
+    return std::move(pointLight);
+}
+
+CSpotLight* CLightFactory::CreateSpotLight()
+{
+    CSpotLight* spotLight = new CSpotLight();
+    ENGINE_ERROR_BOOL_MESSAGE(spotLight->Init(), "Spot Light could not be initialized.");
+    
+    return std::move(spotLight);
+}
+
+CBoxLight* CLightFactory::CreateBoxLight()
+{
+    CBoxLight* boxLight = new CBoxLight();
+    ENGINE_ERROR_BOOL_MESSAGE(boxLight->Init(), "Box Light could not be initialized.");
+    
+    return std::move(boxLight);
 }
 
 CLightFactory::CLightFactory()
