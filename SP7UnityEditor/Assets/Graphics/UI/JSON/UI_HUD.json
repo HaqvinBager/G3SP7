@@ -2,15 +2,7 @@
   "Animated UI Elements": [
     {
       "Path": "Assets/Graphics/UI/JSON/UI_HUD_Health.json",
-      "Position X": -0.315,
-      "Position Y": -0.915,
-      "Level": 1.0,
-      "Scale X": 0.66,
-      "Scale Y": 0.66
-    },
-    {
-      "Path": "Assets/Graphics/UI/JSON/UI_HUD_Stamina.json",
-      "Position X": 0.315,
+      "Position X": 0.0,
       "Position Y": -0.915,
       "Level": 1.0,
       "Scale X": 0.66,
@@ -33,5 +25,10 @@
       "Scale Y": 0.7,
       "Scale X": 0.7
     }
-  ]
+  ],
+
+  "PostmasterEvents": {
+    "Events": [ 10 ]
+  }
+
 }

@@ -84,6 +84,8 @@ void CInGameState::Update()
 	{
 		myStateStack.PopTopAndPush(CStateStack::EState::InGame);
 	}
+
+	IRONWROUGHT->GetActiveScene().UpdateCanvas();
 }
 
 void CInGameState::ReceiveEvent(const EInputEvent aEvent)
