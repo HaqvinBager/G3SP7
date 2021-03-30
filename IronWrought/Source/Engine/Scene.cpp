@@ -2,7 +2,6 @@
 #include "Scene.h"
 
 #include <algorithm>
-#include "..\Game\AIBehavior.h"
 
 #include "Component.h"
 #include "GameObject.h"

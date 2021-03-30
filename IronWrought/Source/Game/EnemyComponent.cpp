@@ -29,6 +29,7 @@ void CEnemyComponent::Awake()
 
 void CEnemyComponent::Start()
 {
+	
 	myPlayer = CEngine::GetInstance()->GetActiveScene().Player();
 	myBehaviours.push_back(new CPatrol(
 		{
@@ -52,6 +53,10 @@ void CEnemyComponent::Update()//får bestämma vilket behaviour vi vill köra i den
 
 	if (myRadius * myRadius >= myDistance) {//seek
 		SetState(EBehaviour::Seek);
+		float attackDistance = 2.0f; //example will probably be more complicated in the future; 
+		if (myDistance <= attackDistance) {
+			SetState(EBehaviour::Attack);
+		}
 	}
 	else {//patrol
 		SetState(EBehaviour::Patrol);

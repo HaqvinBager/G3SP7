@@ -15,6 +15,7 @@
 
 #include <BinReader.h>
 #include <PlayerControllerComponent.h>
+#include <AIController.h>
 #include "animationLoader.h"
 #include "AnimationComponent.h"
 
@@ -254,6 +255,31 @@ void CSceneManager::AddPlayer(CScene& aScene/*, RapidObject someData*/)
 	aScene.AddInstance(camera);
 	aScene.MainCamera(camera->GetComponent<CCameraComponent>());
 	aScene.Player(player);
+}
+
+void CSceneManager::CreateEnemy(CScene& aScene, RapidArray someData)
+{
+	for (const auto& m : someData) {
+		const int instanceId = m["instanceID"].GetInt();
+		CGameObject* gameObject = aScene.FindObjectWithID(instanceId);
+		if (!gameObject)
+			continue;
+
+		const int assetId = m["assetID"].GetInt();
+		if (CJsonReader::Get()->HasAssetPath(assetId))
+		{
+			gameObject->AddComponent<CModelComponent>(*gameObject, ASSETPATH(CJsonReader::Get()->GetAssetPath(assetId)));
+		}
+
+		const float speed = m["Speed"].GetFloat();
+		if (CJsonReader::Get()->HasAssetPath(assetId)) {
+
+		}
+		const float radius = m["Radius"].GetFloat();
+		if (CJsonReader::Get()->HasAssetPath(assetId)) {
+
+		}
+	}
 }
 
 CSceneFactory* CSceneFactory::ourInstance = nullptr;

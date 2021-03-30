@@ -176,8 +176,6 @@
     <ClInclude Include="UnityFactory.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AIBehavior.cpp" />
-    <ClCompile Include="AIBehaviorComponent.cpp" />
     <ClCompile Include="AIController.cpp" />
     <ClCompile Include="CameraControllerComponent.cpp" />
     <ClCompile Include="CharacterControllerComponent.cpp" />

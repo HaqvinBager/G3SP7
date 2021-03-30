@@ -9,7 +9,8 @@ class CEnemyComponent : public CComponent
 public:
 	enum class EBehaviour {
 		Patrol,
-		Seek
+		Seek,
+		Attack
 	};
 
 public:
@@ -26,6 +27,7 @@ private:
 	std::vector<CAIController*> myBehaviours;
 	EBehaviour myCurrentState;
 	float mySpeed;
+	CGameObject* myEnemy;
 	CGameObject* myPlayer;
 	float myDistance;
 	float myRadius;

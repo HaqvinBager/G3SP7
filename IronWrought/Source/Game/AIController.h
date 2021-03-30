@@ -33,3 +33,14 @@ private:
 	CTransformComponent* myTarget;
 };
 
+class CAttack : public CAIController
+{
+public:
+	CAttack();
+	~CAttack()override {}
+	Vector3 Update(Vector3 aPosition) override;
+	void Attack();
+private:
+	float myDamage;
+};
+

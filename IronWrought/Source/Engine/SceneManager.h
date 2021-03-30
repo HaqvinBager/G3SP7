@@ -10,7 +10,6 @@ public:
 	~CSceneManager();
 	static CScene* CreateEmpty();
 	static CScene* CreateScene(const std::string& aSceneName);
-
 private:
 	static bool AddGameObjects(CScene& aScene, RapidArray someData);
 	static void SetTransforms(CScene& aScene, RapidArray someData);
@@ -21,6 +20,7 @@ private:
 	static void AddPointLights(CScene& aScene, RapidArray someData);
 	static void AddDecalComponents(CScene& aScene, RapidArray someData);
 	static void AddPlayer(CScene& aScene);
+	static void CreateEnemy(CScene& aScene, RapidArray someData);
 };
 
 
