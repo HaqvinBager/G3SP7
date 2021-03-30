@@ -4,6 +4,9 @@
 #include "GameObject.h"
 #include "TransformComponent.h"
 #include "Timer.h"
+#include "Scene.h"
+#include "Engine.h"
+#include "GraphManager.h"
 
 CNodeTypeGameObjectRotate::CNodeTypeGameObjectRotate()
 {
@@ -17,7 +20,7 @@ CNodeTypeGameObjectRotate::CNodeTypeGameObjectRotate()
 
 int CNodeTypeGameObjectRotate::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 {
-	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject()[1];
+	CGameObject* gameObject = IRONWROUGHT_ACTIVE_SCENE.FindObjectWithID(aTriggeringNodeInstance->GraphManager()->GetCurrentBlueprintInstanceID());
 
 	SPin::EPinType outType;
 	NodeDataPtr someData = nullptr;

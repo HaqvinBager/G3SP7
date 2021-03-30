@@ -2,6 +2,7 @@
 #include "NodeTypeGameObjectGetPosition.h"
 #include "NodeInstance.h"
 #include "Scene.h"
+#include "Engine.h"
 #include "GameObject.h"
 #include "GraphManager.h"
 
@@ -15,8 +16,8 @@ CNodeTypeGameObjectGetPosition::CNodeTypeGameObjectGetPosition()
 
 int CNodeTypeGameObjectGetPosition::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 {
-	std::vector<CGameObject*> gameObject = aTriggeringNodeInstance->GetCurrentGameObject();
-	Vector3 position = gameObject[1]->myTransform->Position();
+	CGameObject* gameObject = IRONWROUGHT_ACTIVE_SCENE.FindObjectWithID(aTriggeringNodeInstance->GraphManager()->GetCurrentBlueprintInstanceID());
+	Vector3 position = gameObject->myTransform->Position();
 
 	std::vector<SPin>& pins = aTriggeringNodeInstance->GetPins();
 	DeclareDataOnPinIfNecessary<Vector3>(pins[0]);

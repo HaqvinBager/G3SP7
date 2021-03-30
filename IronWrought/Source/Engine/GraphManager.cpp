@@ -115,13 +115,21 @@ void CGraphManager::Load(const std::string& aSceneName)
 					}
 					BluePrintInstance bpInstance;
 					bpInstance.rootID = jsonGameObjectID["instanceID"].GetInt();
+					bool firstLoop = true;
+					int counter = 1;
 					for (const auto& childID : jsonGameObjectID["childrenInstanceIDs"].GetArray())
 					{
-						CNodeTypeCollector::RegisterChildNodeTypes(key, childID.GetInt());
 						bpInstance.childrenIDs.emplace_back(childID.GetInt());
+						if (firstLoop)
+						{
+
+							firstLoop = false;
+							continue;
+						}
+						myGraphs.back().myChildrenKey = key;
+						CNodeTypeCollector::RegisterChildNodeTypes(key, counter++, childID.GetInt());
 					}
 					myGraphs.back().myBluePrintInstances.emplace_back(bpInstance);
-					myGraphs.back().myChildrenKey = key;
 				}
 
 				std::string scriptFolder = mySceneFolder + key + "/";
@@ -186,7 +194,6 @@ void CGraphManager::ReTriggerUpdatingTrees()
 	{
 		for (const auto& graph : myGraphs)
 		{
-			//const auto& currentGraph = myGraphs[key];
 			const auto& bluePrintInstances = graph.myBluePrintInstances;
 
 			for (unsigned int i = 0; i < bluePrintInstances.size(); ++i)
@@ -520,15 +527,12 @@ bool CGraphManager::ToggleShouldRunScripts()
 	return myRunScripts;
 }
 
-std::vector<CGameObject*> CGraphManager::GetCurrentGameObject()
+CGameObject* CGraphManager::GetCurrentGameObject()
 {
 	CScene& scene = CEngine::GetInstance()->GetActiveScene();
-	std::vector<CGameObject*> gameObjects = {};
-	gameObjects.push_back(scene.FindObjectWithID(myCurrentBluePrintInstance.rootID));
-	for (const auto& id : myCurrentBluePrintInstance.childrenIDs)
-		gameObjects.push_back(scene.FindObjectWithID(id));
+	CGameObject* gameObject = scene.FindObjectWithID(myCurrentBluePrintInstance.childrenIDs[0]);
 
-	return gameObjects;
+	return gameObject;
 }
 
 std::vector<CGameObject*> CGraphManager::GetCurrentGameObjectChildren()
@@ -540,6 +544,11 @@ std::vector<CGameObject*> CGraphManager::GetCurrentGameObjectChildren()
 		gameObjects.push_back(scene.FindObjectWithID(myCurrentBluePrintInstance.childrenIDs[i]));
 
 	return gameObjects;
+}
+
+const int CGraphManager::GetCurrentBlueprintInstanceID() const
+{
+	return myCurrentBluePrintInstance.childrenIDs[0];
 }
 
 ImColor GetIconColor(SPin::EPinType type)
