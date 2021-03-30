@@ -1556,6 +1556,9 @@
     <ClInclude Include="LightRenderer.h">
       <Filter>Renderers</Filter>
     </ClInclude>
+    <ClInclude Include="hasher.h">
+      <Filter>Imgui\Node Editor\Utilities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">

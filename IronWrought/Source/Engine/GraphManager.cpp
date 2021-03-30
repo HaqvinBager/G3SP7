@@ -1604,7 +1604,7 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 							CNodeType* type = category.second[i];
 							if (ImGui::MenuItem(type->NodeName().c_str()))
 							{
-								node = new CNodeInstance(this);
+								node = new CNodeInstance(this, true);
 
 								//int nodeType = i;
 								node->myNodeType = type;
