@@ -25,6 +25,7 @@
 #include "Engine.h"
 #include "Camera.h"
 #include "CameraComponent.h"
+#include <PlayerControllerComponent.h>
 
 #include "CollisionManager.h"
 
@@ -39,6 +40,7 @@ CScene::CScene(const unsigned int aGameObjectCount)
 	, myNavMesh(nullptr)
 	, myNavMeshGrid(nullptr)
 	, myPXScene(nullptr)
+	, myPlayer(nullptr)
 {
 	myGameObjects.reserve(aGameObjectCount);
 	myPXScene = CEngine::GetInstance()->GetPhysx().CreatePXScene(this);
@@ -50,10 +52,10 @@ CScene::CScene(const unsigned int aGameObjectCount)
 	}
 
 #ifdef _DEBUG
-	myShouldRenderLineInstance = true;
-	myGrid = new CLineInstance();
-	myGrid->Init(CLineFactory::GetInstance()->CreateGrid({ 0.1f, 0.5f, 1.0f, 1.0f }));
-	this->AddInstance(myGrid);
+	myShouldRenderLineInstance = false;
+	//myGrid = new CLineInstance();
+	//myGrid->Init(CLineFactory::GetInstance()->CreateGrid({ 0.1f, 0.5f, 1.0f, 1.0f }));
+	//this->AddInstance(myGrid);
 #endif
 }
 
@@ -62,6 +64,9 @@ CScene::~CScene()
 	myMainCamera = nullptr;
 	delete myEnvironmentLight;
 	myEnvironmentLight = nullptr;
+
+	myVFXTester = nullptr;
+	myPlayer = nullptr;
 
 	this->ClearGameObjects();
 	this->ClearPointLights();
@@ -127,6 +132,10 @@ void CScene::MainCamera(CCameraComponent* aMainCamera)
 {
 	myMainCamera = aMainCamera;
 }
+void CScene::Player(CGameObject* aPlayerObject)
+{
+	myPlayer = aPlayerObject;
+}
 
 bool CScene::EnvironmentLight(CEnvironmentLight* anEnvironmentLight)
 {
@@ -147,6 +156,16 @@ void CScene::ShouldRenderLineInstance(const bool aShouldRender)
 CCameraComponent* CScene::MainCamera()
 {
 	return myMainCamera;
+}
+CGameObject* CScene::Player()
+{
+	return myPlayer;
+}
+CPlayerControllerComponent* CScene::PlayerController()
+{
+	if (myPlayer)
+		return myPlayer->GetComponent<CPlayerControllerComponent>();
+	return nullptr;
 }
 
 CEnvironmentLight* CScene::EnvironmentLight()
@@ -224,13 +243,7 @@ std::pair<unsigned int, std::array<CPointLight*, LIGHTCOUNT>> CScene::CullLights
 const std::vector<CLineInstance*>& CScene::CullLineInstances() const
 {
 #ifdef _DEBUG
-	if (myShouldRenderLineInstance)
-		return myLineInstances;
-	else
-	{
-		std::vector<CLineInstance*> temp;
-		return std::move(temp);
-	}
+	return myLineInstances;
 #else
 	return myLineInstances;
 #endif
@@ -376,6 +389,10 @@ bool CScene::AddInstance(CGameObject* aGameObject)
 {
 	myGameObjects.emplace_back(aGameObject);
 	myIDGameObjectMap[aGameObject->InstanceID()] = aGameObject;
+	for (auto& component : aGameObject->myComponents)
+	{
+		myComponentMap[typeid(*component).hash_code()].push_back(component);
+	}
 	return true;
 }
 

@@ -6,11 +6,12 @@
 #include <unordered_map>
 #include <vector>
 
+using RapidArray = rapidjson::GenericArray<true, rapidjson::Value>;
+using RapidObject = rapidjson::GenericObject<true, rapidjson::Value>;
 struct SDirectory {
 	std::string myFileName;
 	std::vector<std::string> myFiles;
 };
-
 
 class CJsonReader
 {
@@ -26,13 +27,14 @@ public:
 	static bool IsValid(const rapidjson::Document& aDoc, const std::vector<std::string>& someMembers);
 	static bool HasParseError(const rapidjson::Document& aDoc);
 
+public:
 	void Init();
+	const bool HasAssetPath(const int anAssetID) const;
 	const std::string& GetAssetPath(const int anAssetID) const;
 
-
 private:
-	std::vector<SDirectory> myDirectories;
-	std::unordered_map<int, std::string> myModelAssetMap;
-
+	//std::vector<SDirectory> myDirectories;
+	std::unordered_map<int, std::string> myPathsMap;
+	std::unordered_map<int, std::string> myVertexColorsMap;
 
 };

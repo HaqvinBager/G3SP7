@@ -9,6 +9,8 @@ CNodeTypeStartDefault::CNodeTypeStartDefault()
 {
 	myPins.push_back(SPin("Updating", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EBool));
 	myPins.push_back(SPin("", SPin::EPinTypeInOut::EPinTypeInOut_OUT));
+	DeclareDataOnPinIfNecessary<bool>(myPins[0], false);
+
 }
 
 int CNodeTypeStartDefault::OnEnter(class CNodeInstance* aTriggeringNodeInstance)

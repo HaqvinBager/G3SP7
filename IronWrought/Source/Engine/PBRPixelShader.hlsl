@@ -34,6 +34,7 @@ PixelOutPut main(VertexToPixel input)
     
     float3 toEye = normalize(cameraPosition.xyz - input.myWorldPosition.xyz);
     float4 albedo = PixelShader_Color(input).myColor.rgba;
+    //albedo.rgb = GammaToLinear(albedo.rgb);
     float3 normal = PixelShader_Normal(input).myColor.xyz;
     
     if (myNumberOfDetailNormals > 0)
@@ -115,7 +116,7 @@ PixelOutPut main(VertexToPixel input)
     float3 emissive = albedo * emissivedata; // Maybe add cool multiplier?? // Aki 2021
     float3 radiance = ambience + directionallight + pointLights + emissive;
    
-    output.myColor.rgb = LinearToGamma(radiance);
+    output.myColor.rgb = /*LinearToGamma(*/radiance/*)*/;
     output.myColor.a = albedo.w;
       
     return output;

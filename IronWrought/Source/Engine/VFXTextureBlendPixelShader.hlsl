@@ -1,9 +1,11 @@
 #include "VFXShaderStructs.hlsli"
+#include "MathHelpers.hlsli"
 
 PixelOutput main(VertexToPixel input)
 {
     PixelOutput returnValue;
     float4 textureColor         = instanceTexture1.Sample(defaultSampler, (input.myUV.xy * uvScale1) + scrollSpeed1 * scrollTimer).rgba;
+    //textureColor.rgb = GammaToLinear(textureColor.rgb);
     float4 textureTwoColor      = instanceTexture2.Sample(defaultSampler, (input.myUV.xy * uvScale2) + scrollSpeed2 * scrollTimer).rgba;
     float4 textureThreeColor    = instanceTexture3.Sample(defaultSampler, (input.myUV.xy * uvScale3) + scrollSpeed3 * scrollTimer).rgba;
     float4 textureFourColor     = instanceTexture4.Sample(defaultSampler, (input.myUV.xy * uvScale4) + scrollSpeed4 * scrollTimer).rgba;
@@ -14,7 +16,6 @@ PixelOutput main(VertexToPixel input)
     textureThreeColor.a = (textureThreeColor.r + textureThreeColor.g + textureThreeColor.b) * opacityStrength;
     textureFourColor.a = (textureFourColor.r + textureFourColor.g + textureFourColor.b) * opacityStrength;
     textureColor.a = ((textureColor.a * textureTwoColor.a * 2.0f) * textureThreeColor.a * 2.0f) * textureFourColor.a * 2.0f;
-   
     //Glow
     //textureColor.r = lerp(0.7f, 1.0f, textureColor.a);
     //textureColor.g = lerp(0.0f, 1.0f, textureColor.a * 0.75f);

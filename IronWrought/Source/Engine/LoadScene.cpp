@@ -7,35 +7,44 @@
 #include "SceneManager.h"
 #include "CameraComponent.h"
 #include "FolderUtility.h"
+#include "MainSingleton.h"
+#include "PostMaster.h"
 
-ImGuiWindow::CLoadScene::CLoadScene(const char* aMenuName, const bool aIsMenuChild)
+IronWroughtImGui::CLoadScene::CLoadScene(const char* aMenuName, const bool aIsMenuChild)
 	: CWindow(aMenuName, aIsMenuChild)
 	, myState(EState::DropDownMenu)
 	, mySceneIndex(-1)
 {
 	OnEnable();
+
 }
 
-ImGuiWindow::CLoadScene::~CLoadScene()
+IronWroughtImGui::CLoadScene::~CLoadScene()
 {
 }
 
-void ImGuiWindow::CLoadScene::OnEnable()
+void IronWroughtImGui::CLoadScene::OnEnable()
 {
 	std::vector<std::string> generatedJsonFiles = CFolderUtility::GetFileNamesInFolder(ASSETPATH ("Assets/Generated"), ".json"/*, "Level"*/);
 	for (auto& file : generatedJsonFiles) {
-		auto endIndex = file.find_last_of('_');
-		std::string sceneName = file.substr(0, endIndex);
-		if (std::find(myScenes.begin(), myScenes.end(), sceneName) == myScenes.end()) {
-			myScenes.emplace_back(sceneName);
+		//auto endIndex = file.find_last_of('_');
+		//std::string sceneName = file.substr(0, endIndex);
+		if (file.find("Bin") == std::string::npos)
+		{
+			if (std::find(myScenes.begin(), myScenes.end(), file.c_str()) == myScenes.end()) {
+				myScenes.emplace_back(file.c_str());
+			}
 		}
 	}
 	myScenes.push_back("Empty");
 	myState = EState::DropDownMenu;
+
+
+
 }
 
 
-bool ImGuiWindow::CLoadScene::OnMainMenuGUI()
+bool IronWroughtImGui::CLoadScene::OnMainMenuGUI()
 {
 
 	std::string previewName;
@@ -54,19 +63,16 @@ bool ImGuiWindow::CLoadScene::OnMainMenuGUI()
 
 				CScene* newScene;
 				if (scene == "Empty")
+				{
 					newScene = CSceneManager::CreateEmpty();
-				else 
-					newScene = CSceneManager::CreateScene(scene);
-				
-				CEngine::GetInstance()->AddScene(CStateStack::EState::InGame, newScene);
-				CEngine::GetInstance()->SetActiveScene(CStateStack::EState::InGame);
-
-				CCameraComponent* newCamera = CEngine::GetInstance()->GetActiveScene().FindFirstObjectWithComponent<CCameraComponent>();
-				newCamera->GameObject().myTransform->Position(camPos);
-
-				myScenes.clear();
-				OnEnable();
-
+					CEngine::GetInstance()->AddScene(CStateStack::EState::InGame, newScene);
+					CEngine::GetInstance()->SetActiveScene(CStateStack::EState::InGame);
+					OnComplete("Empty");
+				}
+				else
+				{
+					CSceneFactory::Get()->LoadSceneAsync(scene, [this](std::string aJson) { CLoadScene::OnComplete(aJson); });
+				}
 			}
 			index++;
 		}
@@ -77,12 +83,24 @@ bool ImGuiWindow::CLoadScene::OnMainMenuGUI()
 	return true;
 }
 
-void ImGuiWindow::CLoadScene::OnInspectorGUI()
+void IronWroughtImGui::CLoadScene::OnInspectorGUI()
 {
 }
 
-void ImGuiWindow::CLoadScene::OnDisable()
+void IronWroughtImGui::CLoadScene::OnDisable()
 {
+}
+
+void IronWroughtImGui::CLoadScene::OnComplete(std::string aSceneThatHasBeenSuccessfullyLoaded)
+{
+	SetConsoleColor(CONSOLE_DAQUA);
+	std::cout << "Scene Load Complete!" << aSceneThatHasBeenSuccessfullyLoaded << std::endl;
+	SetConsoleColor(CONSOLE_WHITE);
+
+	CEngine::GetInstance()->LoadGraph(aSceneThatHasBeenSuccessfullyLoaded);
+	CMainSingleton::PostMaster().Send({ "LoadScene", nullptr });
+	myScenes.clear();
+	OnEnable();
 }
 
 

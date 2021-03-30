@@ -3,7 +3,7 @@
 #include "Engine.h"
 #include "PhysXWrapper.h"
 
-std::string globalNames[] = 
+std::string globalNames[] =
 {
 	"Biscuit",
 	"Buttercup",

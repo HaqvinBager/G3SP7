@@ -6,24 +6,25 @@ using UnityEngine.SceneManagement;
 
 
 [System.Serializable]
-class ModelLink
+public class ModelLink
 {
     public int instanceID;
     public int assetID;
+    public int vertexColorID;
 }
 
 [System.Serializable]
-class ModelCollection
+public class ModelCollection
 {
-    public List<ModelLink> modelLinks;
+    public List<ModelLink> models;
 }
 
 public class ExportModel
 {
-    public static void Export(Scene aScene, List<int> validInstanceIds)
+    public static ModelCollection Export(string aSceneName, List<int> validInstanceIds)
     {
-        ModelCollection fbxLinks = new ModelCollection();
-        fbxLinks.modelLinks = new List<ModelLink>();
+        ModelCollection modelCollection = new ModelCollection();
+        modelCollection.models = new List<ModelLink>();
 
         Renderer[] allrenderers = GameObject.FindObjectsOfType<Renderer>();
 
@@ -32,20 +33,36 @@ public class ExportModel
             if (renderer.sharedMaterial.shader.name.Contains("Decal"))
                 continue;
 
-            if (renderer.TryGetComponent(out PolybrushFBX polyBrushFbx))
+            bool isLiterallyVertexPainted = false;
+            if(renderer.TryGetComponent(out MeshFilter filter))
             {
-                string assetPath = AssetDatabase.GUIDToAssetPath(polyBrushFbx.originalFBXGUID);
-                GameObject modelAsset = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
+                isLiterallyVertexPainted = filter.sharedMesh.name.Contains("PolybrushMesh");
+            }
 
-                ModelLink link = new ModelLink();
-                link.assetID = modelAsset.transform.GetInstanceID();
-                link.instanceID = renderer.transform.parent.GetInstanceID();
+            if (isLiterallyVertexPainted)
+            {
+                if (renderer.TryGetComponent(out PolybrushFBX polyBrushFbx))
+                {
+                    string assetPath = AssetDatabase.GUIDToAssetPath(polyBrushFbx.originalFBXGUID);
+                    GameObject modelAsset = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
 
-                if(!fbxLinks.modelLinks.Exists( e => e.instanceID == link.instanceID))
-                    fbxLinks.modelLinks.Add(link);
+                    ModelLink link = new ModelLink();
+                    link.assetID = modelAsset.transform.GetInstanceID();
+                    link.instanceID = renderer.transform.parent.GetInstanceID();
 
-                continue;
-            } 
+                    string materialName = renderer.sharedMaterial.name;
+                    string meshName = renderer.GetComponent<MeshFilter>().sharedMesh.name;
+                    meshName = meshName.Substring(meshName.LastIndexOf('h'), meshName.Length - meshName.LastIndexOf('h'));
+                    meshName = meshName.Substring(1, meshName.Length - 1);
+                    //link.vertexColorID = AssetDatabase.LoadAssetAtPath<Object>("Assets/Generated/VertexColors/VertexColors_" + meshName.ToString() + "_Bin.bin").GetInstanceID();
+                    link.vertexColorID = filter.sharedMesh.GetInstanceID();//AssetDatabase.LoadAssetAtPath<Object>("Assets/Generated/" + aSceneName + "/VertexColors_" + polyBrushFbx.GetInstanceID().ToString() + "_Bin.bin").GetInstanceID();
+
+                    if (!modelCollection.models.Exists(e => e.instanceID == link.instanceID))
+                        modelCollection.models.Add(link);
+
+                    continue;
+                }
+            }      
             else if(Json.TryIsValidExport(renderer, out GameObject prefabParent))
             {
                 if (renderer.TryGetComponent(out MeshFilter meshFilter))
@@ -70,9 +87,9 @@ public class ExportModel
                                 link.assetID = modelAsset.transform.GetInstanceID();
                                 link.instanceID = validPrefabParent.transform.GetInstanceID();
 
-                                if(!fbxLinks.modelLinks.Exists(e => e.instanceID == link.instanceID))
+                                if(!modelCollection.models.Exists(e => e.instanceID == link.instanceID))
                                 {
-                                    fbxLinks.modelLinks.Add(link);
+                                    modelCollection.models.Add(link);
                                 }
                             }
                         }
@@ -82,12 +99,13 @@ public class ExportModel
                         ModelLink link = new ModelLink();
                         link.assetID = modelAsset.transform.GetInstanceID();
                         link.instanceID = prefabParent.transform.GetInstanceID();
-                        fbxLinks.modelLinks.Add(link);
+                        modelCollection.models.Add(link);
                     }
                 }
             }           
         }
-        Json.ExportToJson(fbxLinks, aScene.name);
+        // Json.ExportToJson(fbxLinks, aScene.name);
+        return modelCollection;
     }
 
     public static bool GetNearestPrefabInstance<T>(T aInstance, out Transform outNearestPrefabInstance, List<int> validInstanceIDs) where T : Component

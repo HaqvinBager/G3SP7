@@ -1,38 +1,30 @@
 #include "stdafx.h"
 #include "InGameState.h"
 
-#include "Scene.h"
+#include <GameObject.h>
+#include <TransformComponent.h>
+#include <ModelComponent.h>
+#include <DecalComponent.h>
+#include <PointLightComponent.h>
 
-#include "GameObject.h"
-#include "CameraComponent.h"
-#include "CameraControllerComponent.h"
-#include "EnviromentLightComponent.h"
-#include "TransformComponent.h"
-#include "InstancedModelComponent.h"
-#include "RigidBodyComponent.h"
-#include "ModelComponent.h"
-#include "DecalComponent.h"
-#include "CharacterControllerComponent.h"
-
-#include "EnvironmentLight.h"
-#include "Timer.h"
-#include "Engine.h"
-#include "PostMaster.h"
-#include "WindowHandler.h"
-#include "MainSingleton.h"
-#include "InputMapper.h"
-
+#include <Scene.h>
+#include <Engine.h>
+#include <PostMaster.h>
+#include <MainSingleton.h>
 #include <CollisionManager.h>
-#include "ImguiManager.h"
+#include <PointLight.h>
 
 #include <JsonReader.h>
-#include <iostream>
-#include "SceneManager.h"
-#include "FolderUtility.h"
+#include <SceneManager.h>
 
-#include "animationLoader.h"
+#include <VFXSystemComponent.h>
+#include <VFXMeshFactory.h>
+#include <ParticleEmitterFactory.h>
 
-#include "EngineDefines.h"
+#include <TextFactory.h>
+#include <TextInstance.h>
+
+void TEMP_VFX(CScene* aScene);
 void TEMP_DeferredRenderingTests(CScene* aScene);
 
 CInGameState::CInGameState(CStateStack& aStateStack, const CStateStack::EState aState)
@@ -41,33 +33,28 @@ CInGameState::CInGameState(CStateStack& aStateStack, const CStateStack::EState a
 {
 }
 
-CInGameState::~CInGameState(){}
+CInGameState::~CInGameState() {}
 
-void CInGameState::Awake(){}
 
-#include "PointLight.h"
-#include "PointLightComponent.h"
-#include "PlayerControllerComponent.h"
-
-#include "VFXSystemComponent.h"
-#include "VFXMeshFactory.h"
-#include "ParticleEmitterFactory.h"
-
-#include "TextFactory.h"
-#include "TextInstance.h"
-
-CGameObject* myVFX = nullptr;
-void TEMP_VFX(CScene* aScene);
-
-void CInGameState::Start()
+void CInGameState::Awake()
 {
 	CJsonReader::Get()->Init();
 	CScene* scene = CSceneManager::CreateEmpty();
+	TEMP_VFX(scene);
 
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);
-	myExitLevel = false;
+	CMainSingleton::PostMaster().Subscribe("LoadScene", this);
+}
 
+
+void CInGameState::Start()
+{
+
+
+	TEMP_VFX(&CEngine::GetInstance()->GetActiveScene());
+
+	myExitLevel = false;
 }
 
 void CInGameState::Stop()
@@ -77,41 +64,6 @@ void CInGameState::Stop()
 
 void CInGameState::Update()
 {
-	float speed = 10.0f;
-	if (myVFX)
-	{
-		if (myVFX->GetComponent<CVFXSystemComponent>())
-		{
-			if (Input::GetInstance()->IsKeyDown(VK_UP))
-			{
-				myVFX->myTransform->Move({0.0f, 0.0f, CTimer::Dt() * speed });
-			}
-			if (Input::GetInstance()->IsKeyDown(VK_DOWN))
-			{
-				myVFX->myTransform->Move({ 0.0f, 0.0f, -CTimer::Dt() * speed });
-			}
-			if (Input::GetInstance()->IsKeyDown(VK_LEFT))
-			{
-				myVFX->myTransform->Move({ -CTimer::Dt() * speed, 0.0f, 0.0f });
-			}
-			if (Input::GetInstance()->IsKeyDown(VK_RIGHT))
-			{
-				myVFX->myTransform->Move({ CTimer::Dt() * speed, 0.0f, 0.0f });
-			}
-
-
-			if (INPUT->IsKeyPressed('P'))
-			{
-				myVFX->GetComponent<CVFXSystemComponent>()->OnDisable();
-				myVFX->GetComponent<CVFXSystemComponent>()->OnEnable();
-			}
-		}
-	}
-	if (Input::GetInstance()->IsKeyPressed('C')) {
-		CEngine::GetInstance()->GetPhysx().Cooking(CEngine::GetInstance()->GetActiveScene().myGameObjects, &CEngine::GetInstance()->GetActiveScene());
-	}
-
-
 	CEngine::GetInstance()->GetPhysx().Simulate();
 	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
 	{
@@ -148,8 +100,13 @@ void CInGameState::ReceiveEvent(const EInputEvent aEvent)
 	}
 }
 
-void CInGameState::Receive(const SStringMessage& /*aMessage*/)
+void CInGameState::Receive(const SStringMessage& aMessage)
 {
+	const char* test = "LoadScene";
+	if (aMessage.myMessageType == test)
+	{
+		Start();
+	}
 	myExitLevel = true;
 }
 
@@ -206,7 +163,7 @@ void TEMP_DeferredRenderingTests(CScene* scene)
 		x -= 1.0f;
 
 		CGameObject* pl = new CGameObject(1789 + i);
-		pl->AddComponent<CPointLightComponent>(*pl, 15.f, SM::Vector3{ 1,1,1 }, 10.f);
+		pl->AddComponent<CPointLightComponent>(*pl, 15.f, Vector3{ 1,1,1 }, 10.f);
 		pl->myTransform->Position({ x, y, -3.0f });
 
 		int thirdRange = numPointLights / 3;
@@ -222,7 +179,7 @@ void TEMP_DeferredRenderingTests(CScene* scene)
 	for (int i = 0; i < 5; ++i)
 	{
 		CGameObject* pl = new CGameObject(9999 + i);
-		pl->AddComponent<CPointLightComponent>(*pl, 10.f, SM::Vector3{ 1,1,1 }, 10.f);
+		pl->AddComponent<CPointLightComponent>(*pl, 10.f, Vector3{ 1,1,1 }, 10.f);
 		pointLights.emplace_back(pl);
 		pl->myTransform->Position({ 0xDEAD, 0xDEAD, 0xDEAD });
 
@@ -268,17 +225,17 @@ void CInGameState::TEMP_DecalTests(CScene* aScene)
 	chest->myTransform->Rotation({ 0.0f,0,0.0f });
 	aScene->AddInstance(chest);
 
-	CGameObject* foliage = new CGameObject(13330);
-	foliage->AddComponent<CModelComponent>(*foliage, std::string(ASSETPATH("Assets/Graphics/Environmentprops/Static props/Foliage_test.fbx")));
-	foliage->GetComponent<CTransformComponent>()->Position({ 0.0f,0.0f,-1.0f });
-	foliage->myTransform->Rotation({ 0.0f,0,0.0f });
-	aScene->AddInstance(foliage);
+	//CGameObject* foliage = new CGameObject(13330);
+	//foliage->AddComponent<CModelComponent>(*foliage, std::string(ASSETPATH("Assets/Graphics/Environmentprops/Static props/Foliage_test.fbx")));
+	//foliage->GetComponent<CTransformComponent>()->Position({ 0.0f,0.0f,-1.0f });
+	//foliage->myTransform->Rotation({ 0.0f,0,0.0f });
+	//aScene->AddInstance(foliage);
 
 	CGameObject* decal = new CGameObject(20000);
-	decal->AddComponent<CDecalComponent>(*decal, "EN_DE_yellowline_2048x64");
+	decal->AddComponent<CDecalComponent>(*decal, "gradient");
 	decal->GetComponent<CDecalComponent>()->SetAlphaThreshold(0.3f);
 	decal->myTransform->Position({ 0.0f, 1.0f, 0.0f });
-	decal->myTransform->Scale({ 2.0f, 2.0f, 1.0f });
+	decal->myTransform->Scale({ 1.0f, 1.0f, 1.0f });
 	myDecal = decal;
 	aScene->AddInstance(decal);
 
@@ -301,7 +258,6 @@ void TEMP_VFX(CScene* aScene)
 	static int id = 500;
 	CGameObject* abilityObject = new CGameObject(id++);
 	abilityObject->AddComponent<CVFXSystemComponent>(*abilityObject, ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystem_ToLoad.json"));
-
-	myVFX = abilityObject;
 	aScene->AddInstance(abilityObject);
+	aScene->SetVFXTester(abilityObject);
 }

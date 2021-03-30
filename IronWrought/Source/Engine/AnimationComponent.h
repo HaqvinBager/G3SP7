@@ -9,6 +9,9 @@ class CAnimationController;
 #ifdef _DEBUG
 //#define ANIMATION_DEBUG
 #endif
+
+//#define ANIMATION_SAFE_MODE// DIDNT WORK FOR SOME FREAKING REASON, toggling it does not update the checks in AnimationComponent.cpp
+
 struct SAnimationBlend
 {
 	int myFirst = 1;
@@ -20,7 +23,11 @@ class CGameObject;
 class CAnimationComponent : public CBehaviour
 {
 public:// Component/ Behaviour inherited
-	CAnimationComponent(CGameObject& aParent, const std::string& aModelFilePath, std::vector<std::string>& someAnimationPaths);
+#ifdef _DEBUG
+	CAnimationComponent(CGameObject& aParent, const std::string& aModelFilePath, std::vector<std::string>& someAnimationPaths, bool aUseSafeMode = true);
+#else
+	CAnimationComponent(CGameObject& aParent, const std::string& aModelFilePath, std::vector<std::string>& someAnimationPaths, bool aUseSafeMode = false);
+#endif
 	~CAnimationComponent() override;
 
 	void Awake() override;
@@ -38,9 +45,11 @@ public:
 	std::array<SlimMatrix44, 64> GetBones() { return myBones; }
 
 	void BlendLerpBetween(int anAnimationIndex0, int anAnimationIndex1, float aBlendLerp);
-	void BlendToAnimation(unsigned int anAnimationIndex, float aBlendDuration = 0.3f, bool anUpdateBoth = true, bool aTemporary = false, float aTime = 0.0f);
+	void BlendToAnimation(unsigned int anAnimationIndex, float aBlendDuration = 0.3f, bool anUpdateBoth = true, bool aTemporary = false, float aTimeMultiplier = 1.0f);
 	void ToggleUseLerp(bool shouldUseLerp) { myShouldUseLerp = shouldUseLerp; }
 	void BlendLerp(float aLerpValue);
+
+	bool AllowAnimationRender();
 
 public:
 	const float GetBlendLerp() const { return myAnimationBlend.myBlendLerp; }
@@ -48,12 +57,17 @@ public:
 private:
 	void SetBonesToIdentity();
 	void UpdateBlended();
+	bool SafeModeCheck();
 
 private:
 	bool myShouldUseLerp;
 	CAnimationController* myController;
 	SAnimationBlend myAnimationBlend;
 	std::array<SlimMatrix44, 64> myBones { };
+
+	bool myUseSafeMode;
+//#ifdef ANIMATION_SAFE_MODE // Didnt work for some reason?
+	std::vector<bool> myIsSafeToPlay;
 
 
 // Used in SP6, optional to keep. Saves Id in vector using CStringID (int + _Debug::string).

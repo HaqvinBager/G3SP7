@@ -1,7 +1,7 @@
 #pragma once
 #include <imgui.h>
 
-namespace ImGuiWindow {
+namespace IronWroughtImGui {
 	class CWindow
 	{
 	public:

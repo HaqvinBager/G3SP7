@@ -43,6 +43,11 @@ enum class EMessageType
 	PlayRobotIdleSound,
 	PlayRobotPatrolling,
 	PlayRobotSearching,
+	PlayResearcherEvent,
+	PlaySFX,
+
+	CursorHideAndLock,
+	CursorShowAndUnlock,
 
 	Count
 };

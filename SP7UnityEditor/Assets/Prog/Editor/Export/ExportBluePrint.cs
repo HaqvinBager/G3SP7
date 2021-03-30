@@ -24,32 +24,32 @@ public struct BluePrintLinker
 [System.Serializable]
 public struct BluePrintCollection
 {
-    public List<BluePrintLinker> links;
+    public List<BluePrintLinker> bluePrints;
 }
 
-[System.Serializable]
-public struct BluePrintPrefabs
-{
-    public List<BluePrintAsset> blueprintPrefabs;
-}
+//[System.Serializable]
+//public struct BluePrintPrefabs
+//{
+//    public List<BluePrintAsset> blueprintPrefabs;
+//}
 
-[System.Serializable]
-public struct BluePrintAsset
-{
-    public int id;
-    public string type;
-    public int childCount;
-}
+//[System.Serializable]
+//public struct BluePrintAsset
+//{
+//    public int id;
+//    public string type;
+//    public int childCount;
+//}
 
 public class ExportBluePrint
 {
-    public static void Export(Scene aScene)
+    public static BluePrintCollection Export(string aScene)
     {
         List<GameObject> bluePrintPrefabs = LoadBluePrintPrefabGameObjects();
         GameObject[] allGameObjects = GameObject.FindObjectsOfType<GameObject>();
 
         BluePrintCollection collection = new BluePrintCollection();
-        collection.links = new List<BluePrintLinker>();
+        collection.bluePrints = new List<BluePrintLinker>();
 
         foreach (GameObject prefab in bluePrintPrefabs)
         {
@@ -60,33 +60,40 @@ public class ExportBluePrint
 
             foreach (GameObject gameObject in allGameObjects)
             {
-                if (gameObject.name.Contains(link.type))
+                GameObject source = PrefabUtility.GetCorrespondingObjectFromSource(gameObject);
+                if(prefab == source)
                 {
-                    GameObject source = PrefabUtility.GetCorrespondingObjectFromSource(gameObject);
-                    if (source != null)
-                    {
-                        if (source.Equals(prefab))
-                        {
-                            BluePrintInstance instance = new BluePrintInstance();
-                            instance.instanceID = gameObject.transform.GetInstanceID();
+                    BluePrintInstance instance = new BluePrintInstance();
+                    instance.instanceID = gameObject.transform.GetInstanceID();
 
-                            instance.childrenInstanceIDs = new List<int>();
-                            foreach(Transform childTransform in gameObject.transform)
-                            {
-                                instance.childrenInstanceIDs.Add(childTransform.GetInstanceID());
-                            }
-                            link.instances.Add(instance);
-                        }
+                    instance.childrenInstanceIDs = new List<int>();
+                    foreach (Transform childTransform in gameObject.transform)
+                    {
+                        instance.childrenInstanceIDs.Add(childTransform.GetInstanceID());
                     }
+                    link.instances.Add(instance);
                 }
+
+
+                //if (gameObject.name.Contains(link.type))
+                //{
+                //    if (source != null)
+                //    {
+                //        if (source.Equals(prefab))
+                //        {
+                          
+                //        }
+                //    }
+                //}
             }
-            //if (link.instances.Count > 0)
-            //{
-                collection.links.Add(link);
-            //}
+            if (link.instances.Count > 0)
+            {
+                collection.bluePrints.Add(link);
+            }
         }
 
-        Json.ExportToJson(collection, aScene.name);
+        return collection;
+        //Json.ExportToJson(collection, aScene.name);
     }
 
     public static List<GameObject> LoadBluePrintPrefabGameObjects()

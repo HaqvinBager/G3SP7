@@ -5,12 +5,15 @@
 #include "GraphManager.h"
 #include "BaseDecisionNode.h"
 
-CNodeInstance::CNodeInstance(CGraphManager* aGraphManager, std::string aGraphKey, bool aCreateNewUID)
-	:myGraphManager(aGraphManager), myGraphKey(aGraphKey), myUID(aCreateNewUID), myNodeType(nullptr), myEditorPosition{0.0f,0.0f}
+CNodeInstance::CNodeInstance(CGraphManager* aGraphManager, bool aCreateNewUID)
+	:myGraphManager(aGraphManager), myUID(aCreateNewUID), myNodeType(nullptr), myEditorPosition{0.0f,0.0f}
 {/*
 	myEditorPosition[0] = 0.0f;
 	myEditorPosition[1] = 0.0f;	*/
 }
+
+CNodeInstance::~CNodeInstance()
+{}
 
 
 bool IsOutput(std::vector<SPin>& somePins, unsigned int anID)
@@ -90,7 +93,7 @@ bool CNodeInstance::HasLinkBetween(unsigned int aFirstPin, unsigned int aSecondP
 	return false;
 }
 
-bool CNodeInstance::AddLinkVia(CNodeInstance* aLink, unsigned int aPinIDFromMe, unsigned int aPinIDToMe, unsigned int aLinkID)
+bool CNodeInstance::AddLinkToVia(CNodeInstance* aLink, unsigned int aPinIDFromMe, unsigned int aPinIDToMe, unsigned int aLinkID)
 {
 	if (aLink == nullptr)
 		return false;
@@ -299,9 +302,9 @@ void CNodeInstance::FetchData(SPin::EPinType& anOutType, NodeDataPtr& someData, 
 	{
 		anOutSize = dataPin.myData != nullptr ? sizeof(DirectX::SimpleMath::Vector3) : 0;
 	}
-	else if (dataPin.myVariableType == SPin::EPinType::EList)
+	else if (dataPin.myVariableType == SPin::EPinType::EStringList)
 	{
-		anOutSize = dataPin.myData != nullptr ? sizeof(0) : 0;
+		anOutSize = dataPin.myData != nullptr ? strlen(static_cast<char*>(dataPin.myData)) : 0;
 	}
 	
 	someData = dataPin.myData;

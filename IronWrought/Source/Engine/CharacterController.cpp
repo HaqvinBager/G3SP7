@@ -25,6 +25,15 @@ Vector3 CCharacterController::GetPosition() const
     const PxExtendedVec3 vec3 = myController->getPosition();
     return {(float)vec3.x, (float)vec3.y, (float)vec3.z};
 }
+void CCharacterController::SetPosition(const Vector3& aPosition)
+{
+    myController->setPosition({ aPosition.x, aPosition.y, aPosition.z });
+}
+
+UINT8 CCharacterController::Move(const Vector3& aDir, float aSpeed)
+{
+    return myController->move({ aDir.x * aSpeed, aDir.y * aSpeed, aDir.z * aSpeed }, 0, CTimer::Dt(), 0);
+}
 
 //CCharacterController::CCharacterController(PxControllerShapeType::Enum aType, const Vector3& aPos, const float& aRadius, const float& aHeight)
 //{

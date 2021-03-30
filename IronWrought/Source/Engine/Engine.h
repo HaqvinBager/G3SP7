@@ -31,6 +31,8 @@ class CVFXMeshFactory;
 class CLineFactory;
 class CAudioManager;
 class CPhysXWrapper;
+class CSceneFactory;
+class CGraphManager;
 
 class CEngine
 {
@@ -42,6 +44,7 @@ class CEngine
 	friend class CLineFactory;
 	friend class CDecalFactory;
 	friend class CMaterialHandler;
+	friend class CSceneFactory;
 
 public:
 	CEngine();
@@ -74,6 +77,8 @@ public:
 	void RemoveScene(CStateStack::EState aState);
 	void ClearModelFactory();
 
+	void LoadGraph(const std::string& aSceneName);
+
 private:
 	static CEngine* ourInstance;
 	
@@ -102,6 +107,8 @@ private:
 	CInputMapper* myInputMapper;
 	CMainSingleton* myMainSingleton;
 	CAudioManager* myAudioManager;
+	CSceneFactory* mySceneFactory;
+	CGraphManager* myGraphManager;
 
 	bool myRenderSceneActive = false;
 };

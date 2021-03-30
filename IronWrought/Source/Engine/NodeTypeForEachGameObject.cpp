@@ -12,6 +12,10 @@ CNodeTypeForEachGameObject::CNodeTypeForEachGameObject()
 	myPins.push_back(SPin("OnIter", SPin::EPinTypeInOut::EPinTypeInOut_OUT));
 	myPins.push_back(SPin("Index", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EInt));
 	myPins.push_back(SPin("ID", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EInt));
+
+	DeclareDataOnPinIfNecessary<std::string>(myPins[1], "");
+	DeclareDataOnPinIfNecessary<int>(myPins[4], 0);
+	DeclareDataOnPinIfNecessary<int>(myPins[5], 0);
 }
 
 int CNodeTypeForEachGameObject::OnEnter(CNodeInstance* aTriggeringNodeInstance)

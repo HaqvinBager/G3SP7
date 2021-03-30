@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEditor.SceneManagement;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -78,11 +79,24 @@ public class SceneReferencePropertyDrawer : PropertyDrawer
         }
         position.y += paddedLine;
 
-        if (buildScene.assetGUID.Empty() == false)
-        {
-            // Draw the Build Settings Info of the selected Scene
-            DrawSceneInfoGUI(position, buildScene, sceneControlID + 1);
-        }
+
+        //Button inside each-scene-element inspector!
+        //bool loadScene = false;
+        //string scenePath = string.Empty;
+        //// Right context buttons
+        //Rect buttonRect = DrawUtils.GetFieldRect(position);
+        //buttonRect.width = (buttonRect.width) / 3;
+        ////string tooltipMsg = "";
+        //using (new EditorGUI.DisabledScope())
+        //{
+        //    buttonRect.width *= 2;
+        //    if(DrawUtils.ButtonHelper(buttonRect, "Open", "Open Scene", EditorStyles.miniButtonLeft))
+        //    {
+        //        scenePath = GetScenePathProperty(property).stringValue;
+        //        loadScene = true;
+        //        //Debug.Log("Open Scene: " + GetScenePathProperty(property).stringValue);
+        //    }
+        //}
 
         EditorGUI.EndProperty();
     }
@@ -142,8 +156,8 @@ public class SceneReferencePropertyDrawer : PropertyDrawer
             iconRect.width = iconContent.image.width + padSize;
             labelRect.width -= iconRect.width;
             labelRect.x += iconRect.width;
-            EditorGUI.PrefixLabel(iconRect, sceneControlID, iconContent);
-            EditorGUI.PrefixLabel(labelRect, sceneControlID, labelContent);
+            //EditorGUI.PrefixLabel(iconRect, sceneControlID, iconContent);
+            //EditorGUI.PrefixLabel(labelRect, sceneControlID, labelContent);
         }
 
         // Right context buttons

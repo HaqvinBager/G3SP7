@@ -1,7 +1,9 @@
 #pragma once
 #include "Window.h"
 
-namespace ImGuiWindow {
+class CSceneFactory;
+
+namespace IronWroughtImGui {
 
 	class CLoadScene : public CWindow
 	{
@@ -14,11 +16,12 @@ namespace ImGuiWindow {
 		bool OnMainMenuGUI() override;
 		void OnDisable() override;
 
+		void OnComplete(std::string aSceneThatHasBeenSuccessfullyLoaded);
+
 	private:
 		enum class EState {
 			DropDownMenu,
 		} myState;
-
 
 		int mySceneIndex;
 		std::vector<std::string> myScenes;

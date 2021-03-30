@@ -19,6 +19,11 @@ CDecalRenderer::CDecalRenderer()
     , myIndexBuffer(nullptr)
 	, myVertexShader(nullptr)
 	, myPixelShader(nullptr)
+    
+    , myAlbedoPixelShader(nullptr)
+    , myNormalPixelShader(nullptr)
+    , myMaterialPixelShader(nullptr)
+    
     , mySamplerState(nullptr)
     , myInputLayout(nullptr)
     , myPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED)
@@ -61,33 +66,61 @@ bool CDecalRenderer::Init(CDirectXFramework* aFramework)
         float bx, by, bz, bw;
         float u, v;
     } vertices[24] = {
-        // X      Y      Z      W,    nX, nY, nZ, nW,   tX, tY, tZ, tW,    bX, bY, bZ, bW,    UV	
-        { -0.5f, -0.5f, -0.5f,  1,   -1,  0,  0,  0,    0,  0,  1,  0,     0,  1,  0,  0,     0, 0 },
-        {  0.5f, -0.5f, -0.5f,  1,    1,  0,  0,  0,    0,  0, -1,  0,     0,  1,  0,  0,     1, 0 },
-        { -0.5f,  0.5f, -0.5f,  1,   -1,  0,  0,  0,    0,  0,  1,  0,     0,  1,  0,  0,     0, 1 },
-        {  0.5f,  0.5f, -0.5f,  1,    1,  0,  0,  0,    0,  0, -1,  0,     0,  1,  0,  0,     1, 1 },
-        { -0.5f, -0.5f,  0.5f,  1,   -1,  0,  0,  0,    0,  0,  1,  0,     0,  1,  0,  0,     0, 0 },
-        {  0.5f, -0.5f,  0.5f,  1,    1,  0,  0,  0,    0,  0, -1,  0,     0,  1,  0,  0,     1, 0 },
-        { -0.5f,  0.5f,  0.5f,  1,   -1,  0,  0,  0,    0,  0,  1,  0,     0,  1,  0,  0,     0, 1 },
-        {  0.5f,  0.5f,  0.5f,  1,    1,  0,  0,  0,    0,  0, -1,  0,     0,  1,  0,  0,     1, 1 },
-        // X      Y      Z      W,    nX, nY, nZ, nW,   nX, nY, nZ, nW,    nX, nY, nZ, nW,    UV
-        { -0.5f, -0.5f, -0.5f,  1,    0, -1,  0,  0,    1,  0,  0,  0,     0,  0,  1,  0,     0, 0 },
-        { -0.5f,  0.5f, -0.5f,  1,    0,  0, -1,  0,   -1,  0,  0,  0,     0,  1,  0,  0,     1, 0 },
-        { -0.5f, -0.5f,  0.5f,  1,    0, -1,  0,  0,    1,  0,  0,  0,     0,  0,  1,  0,     0, 1 },
-        { -0.5f,  0.5f,  0.5f,  1,    0,  1,  0,  0,   -1,  0,  0,  0,     0,  0,  1,  0,     1, 1 },
-        {  0.5f, -0.5f, -0.5f,  1,    0,  0, -1,  0,   -1,  0,  0,  0,     0,  1,  0,  0,     0, 0 },
-        {  0.5f,  0.5f, -0.5f,  1,    0,  0, -1,  0,   -1,  0,  0,  0,     0,  1,  0,  0,     1, 0 },
-        {  0.5f, -0.5f,  0.5f,  1,    0, -1,  0,  0,    1,  0,  0,  0,     0,  0,  1,  0,     0, 1 },
-        {  0.5f,  0.5f,  0.5f,  1,    0,  1,  0,  0,   -1,  0,  0,  0,     0,  0,  1,  0,     1, 1 },
-        // X      Y      Z      W,    nX, nY, nZ, nW,   nX, nY, nZ, nW,    nX, nY, nZ, nW,    UV
-        { -0.5f, -0.5f, -0.5f,  1,    0,  0, -1,  0,   -1,  0,  0,  0,     0,  1,  0,  0,     0, 0 },
-        {  0.5f, -0.5f, -0.5f,  1,    0, -1,  0,  0,    1,  0,  0,  0,     0,  0,  1,  0,     1, 0 },
-        { -0.5f, -0.5f,  0.5f,  1,    0,  0,  1,  0,    1,  0,  0,  0,     0,  1,  0,  0,     0, 1 },
-        {  0.5f, -0.5f,  0.5f,  1,    0,  0,  1,  0,    1,  0,  0,  0,     0,  1,  0,  0,     1, 1 },
-        { -0.5f,  0.5f, -0.5f,  1,    0,  1,  0,  0,   -1,  0,  0,  0,     0,  0,  1,  0,     0, 0 },
-        {  0.5f,  0.5f, -0.5f,  1,    0,  1,  0,  0,   -1,  0,  0,  0,     0,  0,  1,  0,     1, 0 },
-        { -0.5f,  0.5f,  0.5f,  1,    0,  0,  1,  0,    1,  0,  0,  0,     0,  1,  0,  0,     0, 1 },
-        {  0.5f,  0.5f,  0.5f,  1,    0,  0,  1,  0,    1,  0,  0,  0,     0,  1,  0,  0,     1, 1 }
+        // Separate normals
+        //// X      Y      Z      W,    nX, nY, nZ, nW,   tX, tY, tZ, tW,    bX, bY, bZ, bW,    UV	
+        //{ -0.5f, -0.5f, -0.5f,  1,   -1,  0,  0,  0,    0,  0,  1,  0,     0,  1,  0,  0,     0, 0 },
+        //{  0.5f, -0.5f, -0.5f,  1,    1,  0,  0,  0,    0,  0, -1,  0,     0,  1,  0,  0,     1, 0 },
+        //{ -0.5f,  0.5f, -0.5f,  1,   -1,  0,  0,  0,    0,  0,  1,  0,     0,  1,  0,  0,     0, 1 },
+        //{  0.5f,  0.5f, -0.5f,  1,    1,  0,  0,  0,    0,  0, -1,  0,     0,  1,  0,  0,     1, 1 },
+        //{ -0.5f, -0.5f,  0.5f,  1,   -1,  0,  0,  0,    0,  0,  1,  0,     0,  1,  0,  0,     0, 0 },
+        //{  0.5f, -0.5f,  0.5f,  1,    1,  0,  0,  0,    0,  0, -1,  0,     0,  1,  0,  0,     1, 0 },
+        //{ -0.5f,  0.5f,  0.5f,  1,   -1,  0,  0,  0,    0,  0,  1,  0,     0,  1,  0,  0,     0, 1 },
+        //{  0.5f,  0.5f,  0.5f,  1,    1,  0,  0,  0,    0,  0, -1,  0,     0,  1,  0,  0,     1, 1 },
+        //// X      Y      Z      W,    nX, nY, nZ, nW,   nX, nY, nZ, nW,    nX, nY, nZ, nW,    UV
+        //{ -0.5f, -0.5f, -0.5f,  1,    0, -1,  0,  0,    1,  0,  0,  0,     0,  0,  1,  0,     0, 0 },
+        //{ -0.5f,  0.5f, -0.5f,  1,    0,  0, -1,  0,   -1,  0,  0,  0,     0,  1,  0,  0,     1, 0 },
+        //{ -0.5f, -0.5f,  0.5f,  1,    0, -1,  0,  0,    1,  0,  0,  0,     0,  0,  1,  0,     0, 1 },
+        //{ -0.5f,  0.5f,  0.5f,  1,    0,  1,  0,  0,   -1,  0,  0,  0,     0,  0,  1,  0,     1, 1 },
+        //{  0.5f, -0.5f, -0.5f,  1,    0,  0, -1,  0,   -1,  0,  0,  0,     0,  1,  0,  0,     0, 0 },
+        //{  0.5f,  0.5f, -0.5f,  1,    0,  0, -1,  0,   -1,  0,  0,  0,     0,  1,  0,  0,     1, 0 },
+        //{  0.5f, -0.5f,  0.5f,  1,    0, -1,  0,  0,    1,  0,  0,  0,     0,  0,  1,  0,     0, 1 },
+        //{  0.5f,  0.5f,  0.5f,  1,    0,  1,  0,  0,   -1,  0,  0,  0,     0,  0,  1,  0,     1, 1 },
+        //// X      Y      Z      W,    nX, nY, nZ, nW,   nX, nY, nZ, nW,    nX, nY, nZ, nW,    UV
+        //{ -0.5f, -0.5f, -0.5f,  1,    0,  0, -1,  0,   -1,  0,  0,  0,     0,  1,  0,  0,     0, 0 },
+        //{  0.5f, -0.5f, -0.5f,  1,    0, -1,  0,  0,    1,  0,  0,  0,     0,  0,  1,  0,     1, 0 },
+        //{ -0.5f, -0.5f,  0.5f,  1,    0,  0,  1,  0,    1,  0,  0,  0,     0,  1,  0,  0,     0, 1 },
+        //{  0.5f, -0.5f,  0.5f,  1,    0,  0,  1,  0,    1,  0,  0,  0,     0,  1,  0,  0,     1, 1 },
+        //{ -0.5f,  0.5f, -0.5f,  1,    0,  1,  0,  0,   -1,  0,  0,  0,     0,  0,  1,  0,     0, 0 },
+        //{  0.5f,  0.5f, -0.5f,  1,    0,  1,  0,  0,   -1,  0,  0,  0,     0,  0,  1,  0,     1, 0 },
+        //{ -0.5f,  0.5f,  0.5f,  1,    0,  0,  1,  0,    1,  0,  0,  0,     0,  1,  0,  0,     0, 1 },
+        //{  0.5f,  0.5f,  0.5f,  1,    0,  0,  1,  0,    1,  0,  0,  0,     0,  1,  0,  0,     1, 1 }
+                // X      Y      Z      W,    nX, nY, nZ, nW,   tX, tY, tZ, tW,    bX, bY, bZ, bW,    UV	
+        { -0.5f, -0.5f, -0.5f,  1,    0,  0, -1,  0,   1,  0,  0,  0,     0,  -1,  0,  0,     0, 0 },
+        {  0.5f, -0.5f, -0.5f,  1,    0,  0, -1,  0,   1,  0,  0,  0,     0,  -1,  0,  0,     1, 0 },
+        { -0.5f,  0.5f, -0.5f,  1,    0,  0, -1,  0,   1,  0,  0,  0,     0,  -1,  0,  0,     0, 1 },
+        {  0.5f,  0.5f, -0.5f,  1,    0,  0, -1,  0,   1,  0,  0,  0,     0,  -1,  0,  0,     1, 1 },
+        { -0.5f, -0.5f,  0.5f,  1,    0,  0, -1,  0,   1,  0,  0,  0,     0,  -1,  0,  0,     0, 0 },
+        {  0.5f, -0.5f,  0.5f,  1,    0,  0, -1,  0,   1,  0,  0,  0,     0,  -1,  0,  0,     1, 0 },
+        { -0.5f,  0.5f,  0.5f,  1,    0,  0, -1,  0,   1,  0,  0,  0,     0,  -1,  0,  0,     0, 1 },
+        {  0.5f,  0.5f,  0.5f,  1,    0,  0, -1,  0,   1,  0,  0,  0,     0,  -1,  0,  0,     1, 1 },
+
+        { -0.5f, -0.5f, -0.5f,  1,    0,  0, -1,  0,   1,  0,  0,  0,     0,  -1,  0,  0,     0, 0 },
+        { -0.5f,  0.5f, -0.5f,  1,    0,  0, -1,  0,   1,  0,  0,  0,     0,  -1,  0,  0,     1, 0 },
+        { -0.5f, -0.5f,  0.5f,  1,    0,  0, -1,  0,   1,  0,  0,  0,     0,  -1,  0,  0,     0, 1 },
+        { -0.5f,  0.5f,  0.5f,  1,    0,  0, -1,  0,   1,  0,  0,  0,     0,  -1,  0,  0,     1, 1 },
+        {  0.5f, -0.5f, -0.5f,  1,    0,  0, -1,  0,   1,  0,  0,  0,     0,  -1,  0,  0,     0, 0 },
+        {  0.5f,  0.5f, -0.5f,  1,    0,  0, -1,  0,   1,  0,  0,  0,     0,  -1,  0,  0,     1, 0 },
+        {  0.5f, -0.5f,  0.5f,  1,    0,  0, -1,  0,   1,  0,  0,  0,     0,  -1,  0,  0,     0, 1 },
+        {  0.5f,  0.5f,  0.5f,  1,    0,  0, -1,  0,   1,  0,  0,  0,     0,  -1,  0,  0,     1, 1 },
+
+        { -0.5f, -0.5f, -0.5f,  1,    0,  0, -1,  0,   1,  0,  0,  0,     0,  -1,  0,  0,     0, 0 },
+        {  0.5f, -0.5f, -0.5f,  1,    0,  0, -1,  0,   1,  0,  0,  0,     0,  -1,  0,  0,     1, 0 },
+        { -0.5f, -0.5f,  0.5f,  1,    0,  0, -1,  0,   1,  0,  0,  0,     0,  -1,  0,  0,     0, 1 },
+        {  0.5f, -0.5f,  0.5f,  1,    0,  0, -1,  0,   1,  0,  0,  0,     0,  -1,  0,  0,     1, 1 },
+        { -0.5f,  0.5f, -0.5f,  1,    0,  0, -1,  0,   1,  0,  0,  0,     0,  -1,  0,  0,     0, 0 },
+        {  0.5f,  0.5f, -0.5f,  1,    0,  0, -1,  0,   1,  0,  0,  0,     0,  -1,  0,  0,     1, 0 },
+        { -0.5f,  0.5f,  0.5f,  1,    0,  0, -1,  0,   1,  0,  0,  0,     0,  -1,  0,  0,     0, 1 },
+        {  0.5f,  0.5f,  0.5f,  1,    0,  0, -1,  0,   1,  0,  0,  0,     0,  -1,  0,  0,     1, 1 }
     };
     //Index Setup
     unsigned int indices[36] = {
@@ -133,6 +166,10 @@ bool CDecalRenderer::Init(CDirectXFramework* aFramework)
 	std::string vsData;
 	Graphics::CreateVertexShader("Shaders/DecalVertexShader.cso", aFramework, &myVertexShader, vsData);
 	Graphics::CreatePixelShader("Shaders/DecalPixelShader.cso", aFramework, &myPixelShader);
+
+	Graphics::CreatePixelShader("Shaders/Decal_AlbedoPixelShader.cso", aFramework, &myAlbedoPixelShader);
+	Graphics::CreatePixelShader("Shaders/Decal_NormalPixelShader.cso", aFramework, &myNormalPixelShader);
+	Graphics::CreatePixelShader("Shaders/Decal_MaterialPixelShader.cso", aFramework, &myMaterialPixelShader);
 
     //Sampler
     D3D11_SAMPLER_DESC samplerDesc = { };
@@ -206,8 +243,20 @@ void CDecalRenderer::Render(CCameraComponent* aCamera, std::vector<CGameObject*>
 		myContext->VSSetConstantBuffers(1, 1, &myObjectBuffer);
 		myContext->PSSetConstantBuffers(1, 1, &myObjectBuffer);
 		myContext->PSSetShaderResources(5, 3, &decalData.myMaterial[0]);
-		
-		myContext->DrawIndexed(myNumberOfIndices, 0, 0);
-		CRenderManager::myNumberOfDrawCallsThisFrame++;
+
+        myContext->PSSetShader(myAlbedoPixelShader, nullptr, 0);
+        myContext->DrawIndexed(myNumberOfIndices, 0, 0);
+        CRenderManager::myNumberOfDrawCallsThisFrame++;
+        
+        myContext->PSSetShader(myNormalPixelShader, nullptr, 0);
+        myContext->DrawIndexed(myNumberOfIndices, 0, 0);
+        CRenderManager::myNumberOfDrawCallsThisFrame++;
+        
+        myContext->PSSetShader(myMaterialPixelShader, nullptr, 0);
+        myContext->DrawIndexed(myNumberOfIndices, 0, 0);
+        CRenderManager::myNumberOfDrawCallsThisFrame++;
+
+		//myContext->DrawIndexed(myNumberOfIndices, 0, 0);
+		//CRenderManager::myNumberOfDrawCallsThisFrame++;
 	}
 }

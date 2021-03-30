@@ -7,16 +7,28 @@
 #include "AnimationController.h"
 #include "Timer.h"
 
-CAnimationComponent::CAnimationComponent(CGameObject& aParent, const std::string& aModelFilePath, std::vector<std::string>& someAnimationPaths)
+CAnimationComponent::CAnimationComponent(CGameObject& aParent, const std::string& aModelFilePath, std::vector<std::string>& someAnimationPaths, bool aUseSafeMode)
 	: CBehaviour(aParent)
 	, myShouldUseLerp(false)
 {
 	myController = new CAnimationController();
 	myController->ImportRig(aModelFilePath);
-	for (std::string s : someAnimationPaths)
+
+	myUseSafeMode = aUseSafeMode;
+	if (aUseSafeMode)
 	{
-		myController->ImportAnimation(s);
+		myIsSafeToPlay.resize(someAnimationPaths.size() + 1);
+		for (size_t i = 0; i < someAnimationPaths.size(); ++i)
+		{
+			myIsSafeToPlay[i + 1] = myController->ImportAnimation(someAnimationPaths[i]);
+		}
 	}
+	else
+		for (std::string s : someAnimationPaths)
+		{
+			myController->ImportAnimation(s);
+		}
+
 
 // Used in SP6, optional to keep. Saves Id in vector using CStringID (int + _Debug::string).
 	//myAnimationIds.reserve(someAnimationPaths.size());
@@ -72,24 +84,39 @@ void CAnimationComponent::StepAnimation(const float aStep)
 
 void CAnimationComponent::BlendLerpBetween(int anAnimationIndex0, int anAnimationIndex1, float aBlendLerp)
 {
-	myAnimationBlend.myFirst		= anAnimationIndex0;
-	myAnimationBlend.mySecond		= anAnimationIndex1;
+	int index0 = anAnimationIndex0 >= static_cast<int>(myController->GetNrOfAnimations()) ? static_cast<int>(myController->GetNrOfAnimations()) - 1 : anAnimationIndex0;
+	int index1 = anAnimationIndex1 >= static_cast<int>(myController->GetNrOfAnimations()) ? static_cast<int>(myController->GetNrOfAnimations()) - 1 : anAnimationIndex1;
+
+	myAnimationBlend.myFirst		= index0;
+	myAnimationBlend.mySecond		= index1;
 	myAnimationBlend.myBlendLerp	= aBlendLerp;
-	myController->Animation0Index(anAnimationIndex0);
-	myController->Animation1Index(anAnimationIndex1);
+	myController->Animation0Index(index0);
+	myController->Animation1Index(index1);
 	myController->SetBlendTime(aBlendLerp);
 	myShouldUseLerp = true;
 }
 
-void CAnimationComponent::BlendToAnimation(unsigned int anAnimationIndex, float aBlendDuration, bool anUpdateBoth, bool aTemporary, float aTime)
+void CAnimationComponent::BlendToAnimation(unsigned int anAnimationIndex, float aBlendDuration, bool anUpdateBoth, bool aTemporary, float aTimeMultiplier)
 {
-	myController->BlendToAnimation(anAnimationIndex, anUpdateBoth, aBlendDuration, aTemporary, aTime);
+	unsigned int size = static_cast<unsigned int>(myController->GetNrOfAnimations());
+	unsigned int index = anAnimationIndex >= size ? size - 1 : anAnimationIndex;
+
+	myAnimationBlend.myFirst = index;
+	myController->BlendToAnimation(index, anUpdateBoth, aBlendDuration, aTemporary, aTimeMultiplier);
 	myShouldUseLerp = false;
 }
 
 void CAnimationComponent::BlendLerp(float aLerpValue)
 {
 	myAnimationBlend.myBlendLerp = aLerpValue > 1.0f ? 1.0f : aLerpValue < 0.0f ? 0.0f : aLerpValue;
+}
+
+bool CAnimationComponent::AllowAnimationRender()
+{
+	if (!myUseSafeMode)
+		return true;
+
+	return SafeModeCheck();
 }
 
 void CAnimationComponent::SetBonesToIdentity()
@@ -102,6 +129,9 @@ void CAnimationComponent::SetBonesToIdentity()
 void CAnimationComponent::UpdateBlended()
 {
 	SetBonesToIdentity();
+	if (!SafeModeCheck())
+		return;
+
 	myController->UpdateAnimationTimes();
 
 	//Calling SetBlendTime here causes AnimCtrl::myBlendTime to be used for lerping.
@@ -110,5 +140,35 @@ void CAnimationComponent::UpdateBlended()
 
 	std::vector<aiMatrix4x4> trans;
 	myController->SetBoneTransforms(trans);
-	memmove(myBones.data(), &trans[0], (sizeof(float) * 16) * trans.size());//was memcpy
+	memcpy(myBones.data(), &trans[0], (sizeof(float) * 16) * trans.size());//was memcpy
+}
+
+void PrintAnimationError(const int anIndex1, const int anIndex2)
+{
+	SetConsoleColor(CONSOLE_RED);
+	std::cout << "Can't play animation with index: " << anIndex1 << " or " << anIndex2 << std::endl;
+	SetConsoleColor(CONSOLE_WHITE);
+}
+bool CAnimationComponent::SafeModeCheck()
+{
+	if (myUseSafeMode)
+	{
+		if (myShouldUseLerp)
+		{
+			if (!myIsSafeToPlay[myAnimationBlend.myFirst] || !myIsSafeToPlay[myAnimationBlend.mySecond])
+			{
+				PrintAnimationError(myAnimationBlend.myFirst, myAnimationBlend.mySecond);
+				return false;
+			}
+		}
+		else
+		{
+			if (!myIsSafeToPlay[myAnimationBlend.myFirst])
+			{
+				PrintAnimationError(myAnimationBlend.myFirst, myAnimationBlend.myFirst);
+				return false;
+			}
+		}
+	}
+	return true;
 }

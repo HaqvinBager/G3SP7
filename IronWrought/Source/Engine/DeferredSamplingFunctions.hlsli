@@ -209,7 +209,7 @@ float4 GBuffer_VertexNormal(float2 uv)
 
 float GBuffer_AmbientOcclusion(float2 uv)
 {
-    float ao = materialTextureGBuffer.Sample(defaultSampler, uv).b;
+    float ao = materialTextureGBuffer.Sample(defaultSampler, uv).a;
     return ao;
 }
 
@@ -227,7 +227,7 @@ float GBuffer_PerceptualRoughness(float2 uv)
 
 float GBuffer_Emissive(float2 uv)
 {   
-    float emissive = materialTextureGBuffer.Sample(defaultSampler, uv).a;
+    float emissive = materialTextureGBuffer.Sample(defaultSampler, uv).b;
     return emissive;
 }
 

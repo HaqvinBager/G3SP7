@@ -1,41 +1,48 @@
 {
-	"VFXMeshes": [
+	"VFXEffects": [
 		{
-			"Path": "Assets/Graphics/VFX/JSON/Data/VFXMeshData_Smallbeam.json",
-			"Offset X": 0.0,
-			"Offset Y": 0.0,
-			"Offset Z": 0.0,
-			"Rotation X": 0.5,
-			"Rotation Y": 0.0,
-			"Rotation Z": 0.0,
-			"Scale X": 1.0,
-			"Scale Y": 1.0,
-			"Scale Z": 1.0,
-			"Rotate X per second": 0.0,
-			"Rotate Y per second": 0.0,
-			"Rotate Z per second": 0.0,
-			"Orbit": true,
-			"Delay": 0.0,
-			"Duration": 5.0
-		}
-	],
+			"Name": "Glovepush",
 
-	"ParticleSystems": [
-		{
-			"Path": "Assets/Graphics/VFX/JSON/Data/ParticleData_PullSpark.json",
-			"Offset X": 0.0,
-			"Offset Y": 0.0,
-			"Offset Z": 0.0,
-			"Rotation X": 0.0,
-			"Rotation Y": 0.0,
-			"Rotation Z": 0.0,
-			"Scale": 1.0,
-			"Rotate X per second": 0.0,
-			"Rotate Y per second": 0.0,
-			"Rotate Z per second": 0.0,
-			"Orbit": false,
-			"Delay": 0.0,
-			"Duration": 5.0
+			"VFXMeshes": [
+				{
+					"Path": "Assets/Graphics/VFX/JSON/Data/VFXMeshData_Smallbeam.json",
+					"Offset X": 0.0,
+					"Offset Y": 0.0,
+					"Offset Z": 0.0,
+					"Rotation X": 0.5,
+					"Rotation Y": 0.0,
+					"Rotation Z": 0.0,
+					"Scale X": 1.0,
+					"Scale Y": 1.0,
+					"Scale Z": 1.0,
+					"Rotate X per second": 0.0,
+					"Rotate Y per second": 0.0,
+					"Rotate Z per second": 0.0,
+					"Orbit": true,
+					"Delay": 0.0,
+					"Duration": 5.0
+				}
+			],
+
+			"ParticleSystems": [
+				{
+					"Path": "Assets/Graphics/VFX/JSON/Data/ParticleData_PullSpark.json",
+					"Offset X": 0.0,
+					"Offset Y": 0.0,
+					"Offset Z": 0.0,
+					"Rotation X": 0.0,
+					"Rotation Y": 0.0,
+					"Rotation Z": 0.0,
+					"Scale": 1.0,
+					"Rotate X per second": 0.0,
+					"Rotate Y per second": 0.0,
+					"Rotate Z per second": 0.0,
+					"Orbit": false,
+					"Delay": 0.0,
+					"Duration": 5.0
+				}
+			]
+
 		}
 	]
 }

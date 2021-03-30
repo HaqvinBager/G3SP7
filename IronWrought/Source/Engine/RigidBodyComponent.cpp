@@ -18,7 +18,7 @@ CRigidBodyComponent::~CRigidBodyComponent()
 
 void CRigidBodyComponent::Awake()
 {
-	
+
 }
 
 void CRigidBodyComponent::Start()

@@ -21,6 +21,15 @@ CNodeTypeVolumeTrigger::CNodeTypeVolumeTrigger()
 	myPins.push_back(SPin("ExitingObjectID", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EInt)); //11
 	myPins.push_back(SPin("ObjectAffected", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EInt)); //12
 
+	DeclareDataOnPinIfNecessary<bool>(myPins[5], false);
+	DeclareDataOnPinIfNecessary<int>(myPins[6], 0);
+	DeclareDataOnPinIfNecessary<int>(myPins[7], 0);
+	DeclareDataOnPinIfNecessary<int>(myPins[8], 0);
+	DeclareDataOnPinIfNecessary<std::string>(myPins[9], "");
+	DeclareDataOnPinIfNecessary<int>(myPins[10], 0);
+	DeclareDataOnPinIfNecessary<int>(myPins[11], 0);
+	DeclareDataOnPinIfNecessary<int>(myPins[12], 0);
+
 	myState.myDoOnce = false;
 	myState.myListenObjectID = 0;
 	myState.myTriggerObjectID = 0;

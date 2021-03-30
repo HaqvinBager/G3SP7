@@ -85,7 +85,7 @@ bool CAnimationController::ImportRig(const std::string& anFBXFilePath)
 
 		if (myAnimations[myAnim0Index]->mNumAnimations <= 0)
 		{
-			ENGINE_ERROR_BOOL_MESSAGE(false , std::string("Animation could not be loaded: " + anFBXFilePath).c_str());
+			//ENGINE_ERROR_BOOL_MESSAGE(false , std::string("No animation found in SK file, cannot play index 0. File: " + anFBXFilePath + ". Bone data found, other animations can be played.").c_str());
 			return false;
 		}
 	}
@@ -127,7 +127,7 @@ bool CAnimationController::ImportAnimation(const std::string& fileName)
 
 	if (myAnimations[myAnim0Index]->mNumAnimations <= 0)
 	{
-		ENGINE_ERROR_BOOL_MESSAGE(false , std::string("Animation could not be loaded: " + fileName).c_str());
+		ENGINE_ERROR_BOOL_MESSAGE(false , std::string("Animation could not be loaded, file: " + fileName + ". Animation cannot be played, index: " + std::to_string(myAnim0Index)).c_str());
 		return false;
 	}
 
@@ -419,7 +419,7 @@ void CAnimationController::UpdateAnimationTimes()
 	UpdateAnimationTimeFrames();
 }
 
-void CAnimationController::BlendToAnimation(uint anAnimationIndex, bool anUpdateBoth, float aBlendDuration, bool aTemporary, float aTime)
+void CAnimationController::BlendToAnimation(uint anAnimationIndex, bool anUpdateBoth, float aBlendDuration, bool aTemporary, float aTimeMultiplier)
 {
 	if (AnimationIndexWithinRange(anAnimationIndex))
 		return;
@@ -431,7 +431,12 @@ void CAnimationController::BlendToAnimation(uint anAnimationIndex, bool anUpdate
 	myAnimationTime1 = 0.f;
 	myUpdateBoth = anUpdateBoth;
 	myTemporary = aTemporary;
-	myPlayTime = aTime;
+	if (myTemporary)
+	{
+		float ticksPerSecond = static_cast<float>(myAnimations[myAnim0Index]->mAnimations[0]->mTicksPerSecond);
+		ticksPerSecond = (ticksPerSecond != 0) ? ticksPerSecond : ANIMATED_AT_FRAMES_PER_SECOND;
+		myPlayTime = ((float)myAnimations[myAnim0Index]->mAnimations[0]->mDuration * aTimeMultiplier) / ticksPerSecond;
+	}
 }
 
 bool CAnimationController::SetBlendTime(float aTime)

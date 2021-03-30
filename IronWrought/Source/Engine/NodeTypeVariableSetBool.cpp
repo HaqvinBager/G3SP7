@@ -9,6 +9,8 @@ CNodeTypeVariableSetBool::CNodeTypeVariableSetBool()
 	myPins.push_back(SPin("", SPin::EPinTypeInOut::EPinTypeInOut_OUT));								//1
 	myPins.push_back(SPin("Val", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EBool));		//2
 	myPins.push_back(SPin("", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EBool));		//3
+	DeclareDataOnPinIfNecessary<bool>(myPins[2], false);
+	DeclareDataOnPinIfNecessary<bool>(myPins[3], false);
 }
 
 int CNodeTypeVariableSetBool::OnEnter(CNodeInstance* aTriggeringNodeInstance)

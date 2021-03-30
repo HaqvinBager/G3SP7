@@ -1,7 +1,7 @@
 #pragma once
 #include "pxPhysicsApi.h"
 #include <utility>
-	
+
 namespace physx
 {
 	class PxRigidDynamic;
@@ -20,4 +20,3 @@ public:
 private:
 	physx::PxRigidDynamic*	myBody = nullptr;
 };
-

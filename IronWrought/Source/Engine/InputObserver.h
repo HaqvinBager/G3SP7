@@ -6,7 +6,7 @@ public:
 	{
 		MouseLeftPressed,
 		MouseLeftDown,
-		MouseRight,
+		MouseRightDown,
 		MouseMiddle,
 		KeyEscape,
 		KeyEnter,
@@ -16,15 +16,18 @@ public:
 		KeyA,
 		KeyS,
 		KeyD,
-		KeySpace
+		KeySpace,
+		CTRL,
+		KeyF5,
+		KeyF8
 	};
 
 	enum class EInputEvent
 	{
 		PopState,
-		MoveClick,
+		Push,
+		Pull,
 		MoveDown,
-		AttackClick,
 		OpenMenuPress,
 		LoadLevel,
 		PauseGame,
@@ -36,7 +39,10 @@ public:
 		MoveBackward,
 		MoveLeft,
 		MoveRight,
-		Jump
+		Jump,
+		Crouch,
+		ResetEntities,
+		SetResetPointEntities
 	};
 
 public:

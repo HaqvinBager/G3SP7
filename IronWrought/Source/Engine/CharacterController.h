@@ -5,6 +5,7 @@
 namespace physx
 {
     class PxController;
+
 }
 
 class CCharacterController
@@ -14,7 +15,8 @@ public:
     physx::PxController& GetController();
 
     Vector3 GetPosition() const;
-
+    void SetPosition(const Vector3& aPosition);
+    UINT8 Move(const Vector3& aDir, float aSpeed);
 private:
     physx::PxController* myController = nullptr;
 };

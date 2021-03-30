@@ -28,7 +28,8 @@ bool CJsonReader::IsValid(const rapidjson::Document& aDoc, const std::vector<std
 	if (aDoc.HasParseError())
 		return false;
 
-	for (const auto& member : someMembers) {
+	for (const auto& member : someMembers)
+	{
 		if (!aDoc.HasMember(member.c_str()))
 			return false;
 	}
@@ -44,15 +45,25 @@ bool CJsonReader::HasParseError(const rapidjson::Document& aDoc)
 void CJsonReader::Init()
 {
 	const auto& doc = LoadDocument(ASSETPATH("Assets/Generated/Resource_Assets.json"));
-	if (!IsValid(doc, { "models" }))
+	if (!IsValid(doc, { "models", "vertexColors" }))
 		return;
 
-	for (const auto& model : doc.GetObjectW()["models"].GetArray()) {
-		myModelAssetMap[model["id"].GetInt()] = model["path"].GetString();
+	for (const auto& model : doc.GetObjectW()["models"].GetArray())
+	{
+		myPathsMap[model["id"].GetInt()] = model["path"].GetString();
+	}
+
+	for (const auto& vertexColor : doc.GetObjectW()["vertexColors"].GetArray())
+	{
+		myPathsMap[vertexColor["id"].GetInt()] = vertexColor["path"].GetString();
 	}
 }
 
+const bool CJsonReader::HasAssetPath(const int anAssetID) const
+{
+	return myPathsMap.find(anAssetID) != myPathsMap.end();
+}
 const std::string& CJsonReader::GetAssetPath(const int anAssetID) const
 {
-	return myModelAssetMap.at(anAssetID);
+	return myPathsMap.at(anAssetID);
 }

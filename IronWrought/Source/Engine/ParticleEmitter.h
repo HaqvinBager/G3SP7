@@ -39,6 +39,7 @@ public:
 		DirectX::SimpleMath::Vector4 myParticleEndColor = DirectX::SimpleMath::Vector4(0.0f, 0.0f, 0.0f, 0.0f);
 		DirectX::SimpleMath::Vector4 myParticleStartDirection = DirectX::SimpleMath::Vector4(0.0f, 0.0f, 0.0f, 0.0f);
 		DirectX::SimpleMath::Vector4 myParticleEndDirection = DirectX::SimpleMath::Vector4(0.0f, 0.0f, 0.0f, 0.0f);
+		
 		float myParticleStartSize = 0.0f;
 		float myParticleEndSize = 0.0f;
 
@@ -50,6 +51,10 @@ public:
 		DirectX::SimpleMath::Vector3 myOffsetUpperBound = DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f);
 		DirectX::SimpleMath::Vector3 myDirectionLowerBound = DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f);
 		DirectX::SimpleMath::Vector3 myDirectionUpperBound = DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f);
+
+		std::vector<Vector2> myColorCurve;
+		std::vector<Vector2> mySizeCurve;
+		std::vector<Vector2> myDirectionCurve;
 	};
 
 public:

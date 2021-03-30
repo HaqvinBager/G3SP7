@@ -168,6 +168,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Includes\ImGui\Core\curve_v122.hpp" />
     <ClInclude Include="..\Includes\ImGui\Core\imconfig.h" />
     <ClInclude Include="..\Includes\ImGui\Core\imgui.h" />
     <ClInclude Include="..\Includes\ImGui\Core\imgui_impl_dx11.h" />
@@ -176,6 +177,7 @@
     <ClInclude Include="..\Includes\ImGui\Core\imstb_rectpack.h" />
     <ClInclude Include="..\Includes\ImGui\Core\imstb_textedit.h" />
     <ClInclude Include="..\Includes\ImGui\Core\imstb_truetype.h" />
+    <ClInclude Include="..\Includes\ImGui\Core\widget_curve.h" />
     <ClInclude Include="..\Includes\ImGui\NodeEditor\crude_json.h" />
     <ClInclude Include="..\Includes\ImGui\NodeEditor\imgui_bezier_math.h" />
     <ClInclude Include="..\Includes\ImGui\NodeEditor\imgui_canvas.h" />
@@ -193,13 +195,32 @@
     <ClInclude Include="Behaviour.h" />
     <ClInclude Include="BoxColliderComponent.h" />
     <ClInclude Include="CameraSetting.h" />
+    <ClInclude Include="VFXEditorWindow.h" />
+    <ClInclude Include="Interop.h" />
+    <ClInclude Include="NodeTypeActionPatrol.h" />
+    <ClInclude Include="NodeTypeEnemySpawn.h" />
+    <ClInclude Include="NodeTypeFloatDecision.h" />
+    <ClInclude Include="NodeTypeGameObjectGetChildPosition.h" />
+    <ClInclude Include="NodeTypeGameObjectGetPlayerPosition.h" />
+    <ClInclude Include="NodeTypeGameObjectMoveToPosition.h" />
+    <ClInclude Include="NodeTypePlayerGetPosition.h" />
+    <ClInclude Include="NodeTypeStartSphereOnTriggerExit.h" />
+    <ClInclude Include="NodeTypeStartSphereOnTriggerStay.h" />
+    <ClInclude Include="NodeTypeStartSphereOnTriggerEnter.h" />
+    <ClInclude Include="NodeTypeVector3Add.h" />
+    <ClInclude Include="NodeTypeVector3Cross.h" />
+    <ClInclude Include="NodeTypeVector3Join.h" />
+    <ClInclude Include="NodeTypeVector3Split.h" />
     <ClInclude Include="FlipACoinDecision.h" />
+    <ClInclude Include="JsonWriter.h" />
     <ClInclude Include="NodeDataManager.h" />
+    <ClInclude Include="NodeTypeAudioPlayResearcherEvent.h" />
     <ClInclude Include="NodeTypeAudioPlayResearcherReactionExplosives.h" />
     <ClInclude Include="NodeTypeAudioPlayRobotPatrolling.h" />
     <ClInclude Include="NodeTypeAudioPlayRobotAttack.h" />
     <ClInclude Include="NodeTypeAudioPlayRobotDeath.h" />
     <ClInclude Include="NodeTypeAudioPlayRobotSearching.h" />
+    <ClInclude Include="NodeTypeAudioPlaySFX.h" />
     <ClInclude Include="NodeTypeAudioPlayStep.h" />
     <ClInclude Include="NodeTypeAudioPlayRobotIdle.h" />
     <ClInclude Include="NodeTypeDecisionCoinFlip.h" />
@@ -207,6 +228,7 @@
     <ClInclude Include="NodeTypeGameObjectMove.h" />
     <ClInclude Include="NodeTypeGameObjectRotate.h" />
     <ClInclude Include="NodeTypeGameObjectSetRotation.h" />
+    <ClInclude Include="NodeTypeListTest.h" />
     <ClInclude Include="NodeTypeMathGreater.h" />
     <ClInclude Include="NodeTypeStartGetCustom.h" />
     <ClInclude Include="NodeTypeStartKeyboardInput.h" />
@@ -256,8 +278,8 @@
     <ClInclude Include="NodeTypeMathAtan2.h" />
     <ClInclude Include="NodeTypeMathCeil.h" />
     <ClInclude Include="NodeTypeMathCos.h" />
-    <ClInclude Include="NodeTypeMathDistance.h" />
-    <ClInclude Include="NodeTypeMathDot.h" />
+    <ClInclude Include="NodeTypeVector3Distance.h" />
+    <ClInclude Include="NodeTypeVector3Dot.h" />
     <ClInclude Include="NodeTypeMathFloor.h" />
     <ClInclude Include="NodeTypeMathLerp.h" />
     <ClInclude Include="NodeTypeMathMax.h" />
@@ -298,10 +320,15 @@
     <ClInclude Include="NodeTypes.h" />
     <ClInclude Include="NodeTypeTimeTimer.h" />
     <ClInclude Include="NodeTypeVariableSetVector3.h" />
+    <ClInclude Include="NodeTypeVector3Sub.h" />
+    <ClInclude Include="NodeTypeVFXPlayVFX.h" />
+    <ClInclude Include="NodeTypeVFXStopVFX.h" />
     <ClInclude Include="NodeTypeVolumeTrigger.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="PerlinNoise.h" />
     <ClInclude Include="PhysXWrapper.h" />
+    <ClInclude Include="PlayerAnimationController.h" />
+    <ClInclude Include="PlayerControlWindow.h" />
     <ClInclude Include="PointLightComponent.h" />
     <ClInclude Include="PostMaster.h" />
     <ClInclude Include="Debug.h" />
@@ -314,6 +341,7 @@
     <ClInclude Include="RigidBodyComponent.h" />
     <ClInclude Include="RigidDynamicBody.h" />
     <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="SerializerUtility.h" />
     <ClInclude Include="ShadowRenderer.h" />
     <ClInclude Include="StackWalker.h" />
     <ClInclude Include="State.h" />
@@ -365,6 +393,7 @@
     <ClInclude Include="TriangleColliderComponent.h" />
     <ClInclude Include="Utility.h" />
     <ClInclude Include="VFXBase.h" />
+    <ClInclude Include="VFXEffect.h" />
     <ClInclude Include="VFXMeshFactory.h" />
     <ClInclude Include="VFXRenderer.h" />
     <ClInclude Include="VFXSystemComponent.h" />
@@ -394,11 +423,28 @@
     <ClCompile Include="AudioChannel.cpp" />
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="BoxColliderComponent.cpp" />
+    <ClCompile Include="VFXEditorWindow.cpp" />
+    <ClCompile Include="JsonWriter.cpp" />
+    <ClCompile Include="NodeTypeActionPatrol.cpp" />
+    <ClCompile Include="NodeTypeEnemySpawn.cpp" />
+    <ClCompile Include="NodeTypeGameObjectGetChildPosition.cpp" />
+    <ClCompile Include="NodeTypeGameObjectGetPlayerPosition.cpp" />
+    <ClCompile Include="NodeTypeGameObjectMoveToPosition.cpp" />
+    <ClCompile Include="NodeTypePlayerGetPosition.cpp" />
+    <ClCompile Include="NodeTypeStartSphereOnTriggerExit.cpp" />
+    <ClCompile Include="NodeTypeStartSphereOnTriggerStay.cpp" />
+    <ClCompile Include="NodeTypeStartSphereOnTriggerEnter.cpp" />
+    <ClCompile Include="NodeTypeVector3Add.cpp" />
+    <ClCompile Include="NodeTypeVector3Cross.cpp" />
+    <ClCompile Include="NodeTypeVector3Join.cpp" />
+    <ClCompile Include="NodeTypeVector3Split.cpp" />
+    <ClCompile Include="NodeTypeAudioPlayResearcherEvent.cpp" />
     <ClCompile Include="NodeTypeAudioPlayResearcherReactionExplosives.cpp" />
     <ClCompile Include="NodeTypeAudioPlayRobotPatrolling.cpp" />
     <ClCompile Include="NodeTypeAudioPlayRobotAttack.cpp" />
     <ClCompile Include="NodeTypeAudioPlayRobotDeath.cpp" />
     <ClCompile Include="NodeTypeAudioPlayRobotSearching.cpp" />
+    <ClCompile Include="NodeTypeAudioPlaySFX.cpp" />
     <ClCompile Include="NodeTypeAudioPlayStep.cpp" />
     <ClCompile Include="NodeTypeAudioPlayRobotIdle.cpp" />
     <ClCompile Include="NodeTypeGameObjectGetRotation.cpp" />
@@ -409,6 +455,7 @@
     <ClCompile Include="NodeTypeGameObjectMove.cpp" />
     <ClCompile Include="NodeTypeGameObjectRotate.cpp" />
     <ClCompile Include="NodeTypeGameObjectSetRotation.cpp" />
+    <ClCompile Include="NodeTypeListTest.cpp" />
     <ClCompile Include="NodeTypeMathGreater.cpp" />
     <ClCompile Include="NodeTypeStartGetCustom.cpp" />
     <ClCompile Include="NodeTypeStartKeyboardInput.cpp" />
@@ -435,6 +482,11 @@
     <ClCompile Include="NodeTypeVariableSetFloat.cpp" />
     <ClCompile Include="NodeTypeVariableSetInt.cpp" />
     <ClCompile Include="NodeTypeVariableSetVector3.cpp" />
+    <ClCompile Include="NodeTypeVector3Sub.cpp" />
+    <ClCompile Include="NodeTypeVFXPlayVFX.cpp" />
+    <ClCompile Include="NodeTypeVFXStopVFX.cpp" />
+    <ClCompile Include="PlayerAnimationController.cpp" />
+    <ClCompile Include="PlayerControlWindow.cpp" />
     <ClCompile Include="ShadowRenderer.cpp" />
     <ClCompile Include="Decal.cpp" />
     <ClCompile Include="DecalComponent.cpp" />
@@ -457,8 +509,8 @@
     <ClCompile Include="NodeTypeMathAtan2.cpp" />
     <ClCompile Include="NodeTypeMathCeil.cpp" />
     <ClCompile Include="NodeTypeMathCos.cpp" />
-    <ClCompile Include="NodeTypeMathDistance.cpp" />
-    <ClCompile Include="NodeTypeMathDot.cpp" />
+    <ClCompile Include="NodeTypeVector3Distance.cpp" />
+    <ClCompile Include="NodeTypeVector3Dot.cpp" />
     <ClCompile Include="NodeTypeMathFloor.cpp" />
     <ClCompile Include="NodeTypeMathLerp.cpp" />
     <ClCompile Include="NodeTypeMathMax.cpp" />
@@ -551,6 +603,7 @@
     <ClCompile Include="TransformComponent.cpp" />
     <ClCompile Include="TriangleColliderComponent.cpp" />
     <ClCompile Include="VFXBase.cpp" />
+    <ClCompile Include="VFXEffect.cpp" />
     <ClCompile Include="VFXMeshFactory.cpp" />
     <ClCompile Include="VFXRenderer.cpp" />
     <ClCompile Include="VFXSystemComponent.cpp" />
@@ -858,6 +911,16 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="SkyboxPixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="SkyboxVertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Vertex</ShaderType>
     </FxCompile>
     <FxCompile Include="SpriteGeometryShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
