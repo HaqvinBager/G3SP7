@@ -271,7 +271,11 @@ void CSceneManager::AddCollider(CScene& aScene, RapidArray someData)
 	for (const auto& c : someData) {
 		int id = c["instanceID"].GetInt();
 		CGameObject* gameObject = aScene.FindObjectWithID(id);
-		gameObject->AddComponent<CRigidBodyComponent>(*gameObject);
+
+		CRigidBodyComponent* rigidBody = gameObject->GetComponent<CRigidBodyComponent>();
+		if (rigidBody == nullptr)
+			gameObject->AddComponent<CRigidBodyComponent>(*gameObject);
+		
 		ColliderType colliderType = static_cast<ColliderType>(c["colliderType"].GetInt());
 
 		Vector3 posOffset;

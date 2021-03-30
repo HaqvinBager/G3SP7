@@ -32,7 +32,6 @@ void CRigidBodyComponent::Start()
 	PxQuat pxQuat = { quat.x, quat.y, quat.z, quat.w };
 	PxTransform pxTransform = { pos, pxQuat };
 	myDynamicRigidBody = CEngine::GetInstance()->GetPhysx().CreateDynamicRigidbody(pxTransform);
-
 	myDynamicRigidBody->GetBody().userData = (void*)GameObject().myTransform;
 }
 

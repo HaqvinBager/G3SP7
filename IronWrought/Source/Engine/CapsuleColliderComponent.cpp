@@ -25,11 +25,16 @@ void CCapsuleColliderComponent::Awake()
 
 void CCapsuleColliderComponent::Start()
 {
-	myShape = CEngine::GetInstance()->GetPhysx().GetPhysics()->createShape(physx::PxCapsuleGeometry(myRadius, myHeight / 2.f), *CEngine::GetInstance()->GetPhysx().CreateMaterial(CPhysXWrapper::materialfriction::metal), true);
-	myShape->setLocalPose({ myPositionOffset.x, myPositionOffset.y, myPositionOffset.z });
-	if (GameObject().GetComponent<CRigidBodyComponent>()) {
+	myShape = CEngine::GetInstance()->GetPhysx().GetPhysics()->createShape(physx::PxCapsuleGeometry(myRadius, myHeight * 0.5f), *CEngine::GetInstance()->GetPhysx().CreateMaterial(CPhysXWrapper::materialfriction::metal), true);
+	PxVec3 offset = { myPositionOffset.x, myPositionOffset.y, myPositionOffset.z };
+	PxTransform relativePose(offset, PxQuat(PxHalfPi, physx::PxVec3(0, 0, 1)));
+	myShape->setLocalPose(relativePose);
+	//myShape->setLocalPose(relativePose);
+
+	//myShape->setLocalPose({ offset.x, offset.y, offset.z });
+	if (GetComponent<CRigidBodyComponent>()) {
 		myDynamic = &GetComponent<CRigidBodyComponent>()->GetDynamicRigidBody()->GetBody();
-		GameObject().GetComponent<CRigidBodyComponent>()->AttachShape(myShape);
+		GetComponent<CRigidBodyComponent>()->AttachShape(myShape);
 		myStatic = nullptr;
 	}
 	else {
