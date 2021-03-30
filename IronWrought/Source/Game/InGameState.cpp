@@ -155,7 +155,7 @@ void CInGameState::TEMP_Sponza(CScene* aScene)
 
 	Vector3 boxColor = { 0.0f, 1.0f, 1.0f };
 	Vector3 boxDirection = { 0.0f, -1.0f, 0.0f };
-	auto component = boxLight->AddComponent<CBoxLightComponent>(*boxLight, boxDirection, boxColor, 15.0f, 2.0f);
+	auto component = boxLight->AddComponent<CBoxLightComponent>(*boxLight, boxDirection, boxColor, 5.0f, 2.0f);
 	component->GetBoxLight()->SetArea({ 0.5f, 0.5f });
 	component->GetBoxLight()->SetRotation({ 45.0f, 0.0f, 0.0f });
 	//component->GetBoxLight()->SetPosition({ -2.0f, 1.0f, 0.0f });
