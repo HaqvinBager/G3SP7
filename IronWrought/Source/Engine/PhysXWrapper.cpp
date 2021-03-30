@@ -339,7 +339,7 @@ void CPhysXWrapper::Cooking(const std::vector<CGameObject*>& gameObjectsToCook, 
 				actor->setGlobalPose({ pos, pxQuat });
 			}
 		}
-		else if (gameObjectsToCook[i]->GetComponent<CModelComponent>() && !gameObjectsToCook[i]->GetComponent<CPlayerControllerComponent>())
+		/*else if (gameObjectsToCook[i]->GetComponent<CModelComponent>() && !gameObjectsToCook[i]->GetComponent<CPlayerControllerComponent>())
 		{
 			std::vector<PxVec3> verts(gameObjectsToCook[i]->GetComponent<CModelComponent>()->GetMyModel()->GetModelData().myMeshFilter.myVertecies.size());
 
@@ -382,6 +382,6 @@ void CPhysXWrapper::Cooking(const std::vector<CGameObject*>& gameObjectsToCook, 
 			actor->setGlobalPose({ pos, pxQuat });
 
 			aScene->PXScene()->addActor(*actor);
-		}
+		}*/
 	}
 }

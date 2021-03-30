@@ -32,7 +32,7 @@ CRigidDynamicBody::CRigidDynamicBody(physx::PxPhysics& aPhysX, const physx::PxTr
 	//myBody->userData = &globalNames[rand() % 16];
 
 	// Locks Z since the demo only uses two axis
-	myBody->setRigidDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Z);
+	//myBody->setRigidDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Z);
 
 	// Tip! A material is not bound to a single body and can be reused
 	// Use material as a seperate resource
