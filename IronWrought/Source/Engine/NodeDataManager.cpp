@@ -20,8 +20,12 @@ CNodeDataManager::~CNodeDataManager()
 void CNodeDataManager::ClearStoredData()
 {
 	SaveDataTypesToJson();
-	myNodeDataMap.clear();
-	myNodeDataTypeMap.clear();
+	for (auto& data : myNodeData)
+	{
+		delete data.myData;
+		data.myData = nullptr;
+	}
+	myNodeData.clear();
 }
 
 //void CNodeDataManager::SetData(const std::string aNodeDataKey, EDataType aDataType, void* aValue)
@@ -96,13 +100,13 @@ void CNodeDataManager::SaveDataTypesToJson()
 	writer1.StartObject();
 	writer1.Key("Custom Data");
 	writer1.StartArray();
-	for (auto& data : myNodeDataMap)
+	for (auto& data : myNodeData)
 	{
 		writer1.StartObject();
 		writer1.Key("Data key");
-		writer1.String(data.first.c_str());
+		writer1.String(data.myNodeTypeName.c_str());
 		
-		switch (myNodeDataTypeMap[data.first])
+		switch (data.myDataType)
 		{
 		case CNodeDataManager::EDataType::EFloat:
 			writer1.Key("Type");

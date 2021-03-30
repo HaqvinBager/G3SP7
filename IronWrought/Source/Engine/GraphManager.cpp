@@ -799,105 +799,105 @@ void CGraphManager::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInstance
 		ImGui::PopID();
 		break;
 	}
-	case SPin::EPinType::EStringList:
-	{
-		if (!aPin.myData)
-		{
-			aPin.myData = new char[128];
-			static_cast<char*>(aPin.myData)[0] = '\0';
-		}
+	//case SPin::EPinType::EStringList:
+	//{
+	//	if (!aPin.myData)
+	//	{
+	//		aPin.myData = new char[128];
+	//		static_cast<char*>(aPin.myData)[0] = '\0';
+	//	}
 
-		ImGui::PushID(aPin.myUID.AsInt());
-		ImGui::PushItemWidth(100.0f);
-		if (aNodeInstance->IsPinConnected(aPin))
-		{
-			DrawPinIcon(aPin, true, 255);
-		}
-		else
-		{
-			static bool pressed = false;
-			std::vector<std::string> item = CNodeDataManager::Get()->GetData<std::vector<std::string>>(aNodeInstance->GetNodeName());
-			std::string selected = static_cast<char*>(aPin.myData);
+	//	ImGui::PushID(aPin.myUID.AsInt());
+	//	ImGui::PushItemWidth(100.0f);
+	//	if (aNodeInstance->IsPinConnected(aPin))
+	//	{
+	//		DrawPinIcon(aPin, true, 255);
+	//	}
+	//	else
+	//	{
+	//		static bool pressed = false;
+	//		std::vector<std::string> item = CNodeDataManager::Get()->GetData<std::vector<std::string>>(aNodeInstance->GetNodeName());
+	//		std::string selected = static_cast<char*>(aPin.myData);
 
-			if (pressed)
-			{
-				ImGui::SetNextWindowPos({ ImGui::GetMousePos().x + aNodeInstance->myEditorPosition[0], ImGui::GetMousePos().y + aNodeInstance->myEditorPosition[1] });
-			}
+	//		if (pressed)
+	//		{
+	//			ImGui::SetNextWindowPos({ ImGui::GetMousePos().x + aNodeInstance->myEditorPosition[0], ImGui::GetMousePos().y + aNodeInstance->myEditorPosition[1] });
+	//		}
 
-			if (!myRunScripts)
-			{
-				if (ImGui::BeginCombo("##combo", selected.c_str()))
-				{
-					pressed = true;
-					int index = -1;
-					for (int n = 0; n < item.size(); n++)
-					{
-						if (ImGui::Selectable(item[n].c_str(), index == n))
-						{
-							char* input = item[n].data();
-							selected = input;
-							size_t size = strlen(input) + 1;
-							memcpy(aPin.myData, input, size);
-						}
-					}
-					ImGui::EndCombo();
-				}
-			}
-			pressed = false;
-		}
-		ImGui::PopItemWidth();
+	//		if (!myRunScripts)
+	//		{
+	//			if (ImGui::BeginCombo("##combo", selected.c_str()))
+	//			{
+	//				pressed = true;
+	//				int index = -1;
+	//				for (int n = 0; n < item.size(); n++)
+	//				{
+	//					if (ImGui::Selectable(item[n].c_str(), index == n))
+	//					{
+	//						char* input = item[n].data();
+	//						selected = input;
+	//						size_t size = strlen(input) + 1;
+	//						memcpy(aPin.myData, input, size);
+	//					}
+	//				}
+	//				ImGui::EndCombo();
+	//			}
+	//		}
+	//		pressed = false;
+	//	}
+	//	ImGui::PopItemWidth();
 
-		ImGui::PopID();
-		break;
-	}
-	case SPin::EPinType::EStringListIndexed:
-	{
-		if (!aPin.myData)
-		{
-			aPin.myData = new char[128];
-			static_cast<char*>(aPin.myData)[0] = '\0';
-		}
+	//	ImGui::PopID();
+	//	break;
+	//}
+	//case SPin::EPinType::EStringListIndexed:
+	//{
+	//	if (!aPin.myData)
+	//	{
+	//		aPin.myData = new char[128];
+	//		static_cast<char*>(aPin.myData)[0] = '\0';
+	//	}
 
-		ImGui::PushID(aPin.myUID.AsInt());
-		ImGui::PushItemWidth(100.0f);
-		if (aNodeInstance->IsPinConnected(aPin))
-		{
-			DrawPinIcon(aPin, true, 255);
-		}
-		else
-		{
-			static bool pressed = false;
-			std::vector<std::string> item = CNodeDataManager::Get()->GetData<std::vector<std::string>>(aNodeInstance->GetNodeName());
-			int selected = *static_cast<int*>(aPin.myData);
-			if (selected < 0) selected = 0;
+	//	ImGui::PushID(aPin.myUID.AsInt());
+	//	ImGui::PushItemWidth(100.0f);
+	//	if (aNodeInstance->IsPinConnected(aPin))
+	//	{
+	//		DrawPinIcon(aPin, true, 255);
+	//	}
+	//	else
+	//	{
+	//		static bool pressed = false;
+	//		std::vector<std::string> item = CNodeDataManager::Get()->GetData<std::vector<std::string>>(aNodeInstance->GetNodeName());
+	//		int selected = *static_cast<int*>(aPin.myData);
+	//		if (selected < 0) selected = 0;
 
-			if (pressed)
-			{
-				ImGui::SetNextWindowPos({ ImGui::GetMousePos().x + aNodeInstance->myEditorPosition[0], ImGui::GetMousePos().y + aNodeInstance->myEditorPosition[1] });
-			}
-			if (!myRunScripts)
-			{
-				if (ImGui::BeginCombo("##combo", item[selected].c_str())) // The second parameter is the label previewed before opening the combo.
-				{
-					pressed = true;
-					int index = -1;
-					for (int n = 0; n < item.size(); n++)
-					{
-						if (ImGui::Selectable(item[n].c_str(), index == n))
-						{
-							memcpy(aPin.myData, &n, sizeof(int));
-						}
-					}
-					ImGui::EndCombo();
-				}
-			}
-			pressed = false;
-		}
-		ImGui::PopItemWidth();
+	//		if (pressed)
+	//		{
+	//			ImGui::SetNextWindowPos({ ImGui::GetMousePos().x + aNodeInstance->myEditorPosition[0], ImGui::GetMousePos().y + aNodeInstance->myEditorPosition[1] });
+	//		}
+	//		if (!myRunScripts)
+	//		{
+	//			if (ImGui::BeginCombo("##combo", item[selected].c_str())) // The second parameter is the label previewed before opening the combo.
+	//			{
+	//				pressed = true;
+	//				int index = -1;
+	//				for (int n = 0; n < item.size(); n++)
+	//				{
+	//					if (ImGui::Selectable(item[n].c_str(), index == n))
+	//					{
+	//						memcpy(aPin.myData, &n, sizeof(int));
+	//					}
+	//				}
+	//				ImGui::EndCombo();
+	//			}
+	//		}
+	//		pressed = false;
+	//	}
+	//	ImGui::PopItemWidth();
 
-		ImGui::PopID();
-		break;
-	}
+	//	ImGui::PopID();
+	//	break;
+	//}
 	case SPin::EPinType::EUnknown:
 	{
 		if (!myRunScripts)

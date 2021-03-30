@@ -9,8 +9,8 @@ CNodeTypeListTest::CNodeTypeListTest()
 	myPins.push_back(SPin("list", SPin::EPinTypeInOut::EPinTypeInOut_OUT));								//1
 	myPins.push_back(SPin("list", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EStringList));	//2
 	myPins.push_back(SPin("list", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EString));	//3
-	std::vector<std::string> list = {"hello\0", "henlo\0", "bye\0"};
-	CNodeDataManager::Get()->SetData("List Test", CNodeDataManager::EDataType::EStringList, list);
+	//std::vector<std::string> list = {"hello\0", "henlo\0", "bye\0"};
+	//CNodeDataManager::Get()->SetData("List Test", CNodeDataManager::EDataType::EStringList, list);
 }
 
 int CNodeTypeListTest::OnEnter(CNodeInstance* aTriggeringNodeInstance)
