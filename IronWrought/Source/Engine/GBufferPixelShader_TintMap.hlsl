@@ -18,10 +18,6 @@ GBufferOutput main(VertexModelToPixel input)
     float3 albedo = PixelShader_Albedo(vertToPixel.myUV).rgb;
     
     float4 tintMap = PixelShader_TintMap(vertToPixel.myUV).rgba;
-    //float3 color1 = float3(1, 0, 0);//* tintMap.r;// tintmask red
-    //float3 color2 = float3(0, 1, 0);//* tintMap.g;// tintmask green
-    //float3 color3 = float3(0, 0, 1);//* tintMap.b;// tintmask blue
-    //float3 color4 = float3(1, 1, 1); //* tintMap.a;// tintmask alpha
     float blendFactor = 0.65f;
     
     float emissive = PixelShader_Emissive(vertToPixel.myUV);
