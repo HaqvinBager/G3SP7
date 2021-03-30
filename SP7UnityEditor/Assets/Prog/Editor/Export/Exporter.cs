@@ -68,6 +68,7 @@ public class Exporter
         ExportPointlights.ExportPointlight(aScene);
         ExportDecals.Export(aScene);
         ExportPlayer(aScene);
+        ExportCollider.Export(aScene, validExportIds);
         AssetDatabase.Refresh();
     }
 

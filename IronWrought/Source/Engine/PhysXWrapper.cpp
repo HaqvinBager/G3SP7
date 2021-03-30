@@ -13,6 +13,7 @@
 #include "Model.h"
 #include "CharacterController.h"
 #include <PlayerControllerComponent.h>
+#include "RigidBodyComponent.h"
 
 PxFilterFlags contactReportFilterShader(PxFilterObjectAttributes attributes0, PxFilterData filterData0,
 	PxFilterObjectAttributes attributes1, PxFilterData filterData1,
@@ -64,9 +65,10 @@ CPhysXWrapper::~CPhysXWrapper()
 bool CPhysXWrapper::Init()
 {
 	PxDefaultErrorCallback errorCallback;
-
+	
 	myAllocator = new PxDefaultAllocator();
 	myFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, *myAllocator, errorCallback);
+
 	if (!myFoundation) {
 		return false;
 	}
@@ -131,12 +133,13 @@ PxScene* CPhysXWrapper::CreatePXScene(CScene* aScene)
 
 PxScene* CPhysXWrapper::GetPXScene()
 {
-	return myPXScenes[&CEngine::GetInstance()->GetActiveScene()];
+	//return myPXScenes[&CEngine::GetInstance()->GetActiveScene()];
+	return CEngine::GetInstance()->GetActiveScene().PXScene();
 }
 
-PxRaycastBuffer CPhysXWrapper::Raycast(Vector3 aOrigin, Vector3 aDirection, float /*aDistance*/)
+PxRaycastBuffer CPhysXWrapper::Raycast(Vector3 aOrigin, Vector3 aDirection, float aDistance)
 {
-	//PxScene* scene = CEngine::GetInstance()->GetActiveScene().PXScene();
+	PxScene* scene = CEngine::GetInstance()->GetActiveScene().PXScene();
 	PxVec3 origin;
 	origin.x = aOrigin.x;
 	origin.y = aOrigin.y;
@@ -149,27 +152,35 @@ PxRaycastBuffer CPhysXWrapper::Raycast(Vector3 aOrigin, Vector3 aDirection, floa
 	unitDir.y = aDirection.y;
 	unitDir.z = aDirection.z;
 
-	//PxReal maxDistance = aDistance;
+	PxReal maxDistance = aDistance;
 	PxRaycastBuffer hit;
 
-	/*scene->raycast(origin, unitDir, maxDistance, hit);
-
-		RaycastHit(hit.block.position, hit.block.normal);*/
-
-
-
+	bool status = scene->raycast(origin, unitDir, maxDistance, hit);
+	if (status) {
+		RaycastHit(hit);
+	}
 	return hit;
 }
 
-void CPhysXWrapper::RaycastHit(PxVec3 position, PxVec3 normal)
+void CPhysXWrapper::RaycastHit(PxRaycastBuffer aHit)
 {
-	std::cout << "x: " << position.x << std::endl;
-	std::cout << "y: " << position.y << std::endl;
-	std::cout << "z: " << position.z << std::endl << std::endl;
-
-
-	std::cout << normal.x << std::endl;
-
+	//TO DO
+	//Make a create rigidbodydynamic which takes in a shape
+	//Make a create rigidbodydynamic which takes in a radius and material
+	std::cout << "IN" << std::endl;
+	int& myint = (int&)aHit.getAnyHit(0).actor->userData;
+	std::cout << myint << std::endl;
+	CTransformComponent* transform = (CTransformComponent*)aHit.getAnyHit(0).actor->userData;
+	/*std::cout << "X: " << aHit.getAnyHit(0).position.x << */
+	if (transform) {
+		std::cout << "IN TRANSFORM" << std::endl;
+		transform->GameObject().GetComponent<CRigidBodyComponent>()->AddForce({transform->Transform().Up().x, transform->Transform().Up().y * 10000, transform->Transform().Up().z });
+		//PxRigidDynamic* body = (PxRigidDynamic*)aHit.getAnyHit(0).actor->userData;
+		//if (body) {
+		//	//body->addForce({0, 10, 0});
+		//	std::cout << "HIT" << std::endl;
+		//}
+	}
 }
 
 
@@ -211,9 +222,9 @@ void CPhysXWrapper::Simulate()
 	}
 }
 
-CRigidDynamicBody* CPhysXWrapper::CreateDynamicRigidbody(const Vector3& aPos)
+CRigidDynamicBody* CPhysXWrapper::CreateDynamicRigidbody(const PxTransform& aTransform)
 {
-	CRigidDynamicBody* dynamicBody = new CRigidDynamicBody(*myPhysics, aPos);
+	CRigidDynamicBody* dynamicBody = new CRigidDynamicBody(*myPhysics, aTransform);
 	GetPXScene()->addActor(dynamicBody->GetBody());
 	return dynamicBody;
 }
@@ -270,21 +281,28 @@ void CPhysXWrapper::Cooking(std::vector<CGameObject*> gameObjectsToCook, CScene*
 
 			PxTriangleMeshGeometry pMeshGeometry(pxMesh);
 
-			PxRigidStatic* actor = myPhysics->createRigidStatic({ 0.f, 0.f, 0.f });
-			PxShape* shape = myPhysics->createShape(pMeshGeometry, *myPXMaterial, true);
-			actor->attachShape(*shape);
+			if (gameObjectsToCook[i]->GetComponent<CRigidBodyComponent>()) {
+				
+				PxShape* shape = myPhysics->createShape(pMeshGeometry, *CreateMaterial(CPhysXWrapper::materialfriction::basic), true);
+				gameObjectsToCook[i]->GetComponent<CRigidBodyComponent>()->AttachShape(shape);
+			}
+			else {
+				PxRigidStatic* actor = myPhysics->createRigidStatic({ 0.f, 0.f, 0.f });
+				PxShape* shape = myPhysics->createShape(pMeshGeometry, *CreateMaterial(CPhysXWrapper::materialfriction::basic), true);
+				actor->attachShape(*shape);
 
-			DirectX::SimpleMath::Vector3 translation;
-			DirectX::SimpleMath::Vector3 scale;
-			DirectX::SimpleMath::Quaternion quat;
-			DirectX::SimpleMath::Matrix transform = gameObjectsToCook[i]->myTransform->GetLocalMatrix();
-			transform.Decompose(scale, quat, translation);
-			PxVec3 pos = { translation.x, translation.y, translation.z };
-			PxQuat pxQuat = { quat.x, quat.y, quat.z, quat.w };
+				DirectX::SimpleMath::Vector3 translation;
+				DirectX::SimpleMath::Vector3 scale;
+				DirectX::SimpleMath::Quaternion quat;
+				DirectX::SimpleMath::Matrix transform = gameObjectsToCook[i]->myTransform->GetLocalMatrix();
+				transform.Decompose(scale, quat, translation);
+				PxVec3 pos = { translation.x, translation.y, translation.z };
+				PxQuat pxQuat = { quat.x, quat.y, quat.z, quat.w };
 
-			actor->setGlobalPose({ pos, pxQuat });
+				actor->setGlobalPose({ pos, pxQuat });
 
-			aScene->PXScene()->addActor(*actor);
+				aScene->PXScene()->addActor(*actor);
+			}
 
 		}
 		else*/
@@ -318,8 +336,8 @@ void CPhysXWrapper::Cooking(std::vector<CGameObject*> gameObjectsToCook, CScene*
 				PxTriangleMeshGeometry pMeshGeometry(pxMesh);
 
 				PxRigidStatic* actor = myPhysics->createRigidStatic({ 0.f, 0.f, 0.f });
-				PxShape* shape = myPhysics->createShape(pMeshGeometry, *myPXMaterial, true);
-				actor->attachShape(*shape);
+				PxShape* instancedShape = myPhysics->createShape(pMeshGeometry, *CreateMaterial(CPhysXWrapper::materialfriction::basic), true);
+				actor->attachShape(*instancedShape);
 				aScene->PXScene()->addActor(*actor);
 
 				DirectX::SimpleMath::Vector3 translation;

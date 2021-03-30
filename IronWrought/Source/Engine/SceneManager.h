@@ -17,5 +17,6 @@ private:
 	static void AddPointLights(CScene& aScene, const std::string& aJsonFileName);
 	static void AddDecalComponents(CScene& aScene, const std::string& aJsonFileName);
 	static void AddPlayer(CScene& aScene, const std::string& aJsonFileName);
+	static void AddCollider(CScene& aScene, const std::string& aJsonFileName);
 };
 

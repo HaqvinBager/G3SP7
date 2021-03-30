@@ -36,14 +36,14 @@ public:
 
 
 	PxRaycastBuffer Raycast(Vector3 origin, Vector3 direction, float distance);
-	void RaycastHit(PxVec3 position, PxVec3 normal);
+	void RaycastHit(PxRaycastBuffer aHit);
 
 
 	PxMaterial* CreateMaterial(materialfriction amaterial);
 
 	void Simulate();
 
-	CRigidDynamicBody* CreateDynamicRigidbody(const Vector3& aPos);
+	CRigidDynamicBody* CreateDynamicRigidbody(const PxTransform& aTransform);
 
 	CCharacterController* CreateCharacterController(const Vector3& aPos, const float& aRadius, const float& aHeight);
 

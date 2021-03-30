@@ -13,6 +13,8 @@
 #include "DecalComponent.h"
 #include "Engine.h"
 #include "Scene.h"
+#include "RigidBodyComponent.h"
+#include "BoxColliderComponent.h"
 //#include <iostream>
 
 CSceneManager::CSceneManager()
@@ -58,6 +60,7 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneName)
 	if (AddGameObjects(*scene, aSceneName + "_InstanceIDCollection.json")) {
 		SetTransforms(*scene, aSceneName + "_TransformCollection.json");
 		AddModelComponents(*scene, aSceneName + "_ModelCollection.json");
+		AddCollider(*scene, aSceneName + "_ColliderCollection.json");
 		AddPointLights(*scene, aSceneName + "_PointLightCollection.json");
 		AddDecalComponents(*scene, aSceneName + "_DecalCollection.json");
 		AddPlayer(*scene, aSceneName);
@@ -120,6 +123,7 @@ void CSceneManager::AddModelComponents(CScene& aScene, const std::string& aJsonF
 		int id = m["instanceID"].GetInt();
 		CGameObject* gameObject = aScene.FindObjectWithID(id);
 		gameObject->AddComponent<CModelComponent>(*gameObject, ASSETPATH(CJsonReader::Get()->GetAssetPath(m["assetID"].GetInt())));
+		gameObject->AddComponent<CRigidBodyComponent>(*gameObject);
 	}
 }
 
@@ -154,6 +158,7 @@ void CSceneManager::AddInstancedModelComponents(CScene& aScene, const std::strin
 		}
 
 		gameObject->AddComponent<CInstancedModelComponent>(*gameObject, ASSETPATH(CJsonReader::Get()->GetAssetPath(assetID)), instancedModelTransforms);
+		gameObject->AddComponent<CRigidBodyComponent>(*gameObject);
 		aScene.AddInstance(gameObject);
 	}
 }
@@ -232,6 +237,32 @@ void CSceneManager::AddPlayer(CScene& aScene, const std::string& /*aJsonFileName
 	aScene.AddInstance(model);
 	aScene.AddInstance(camera);
 	aScene.MainCamera(camera->GetComponent<CCameraComponent>());
+}
+
+void CSceneManager::AddCollider(CScene& aScene, const std::string& aJsonFileName)
+{
+	const auto& doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + aJsonFileName));
+	if (!CJsonReader::IsValid(doc, { "colliders" }))
+		return;
+
+	const auto& colliders = doc.GetObjectW()["colliders"].GetArray();
+	for (const auto& c : colliders) {
+		int id = c["instanceID"].GetInt();
+		CGameObject* gameObject = aScene.FindObjectWithID(id);
+		gameObject->AddComponent<CRigidBodyComponent>(*gameObject);
+		if (c["colliderType"].GetInt() == 1) {
+			Vector3 posOffset;
+			posOffset.x = c["positionOffest"]["x"].GetFloat();
+			posOffset.y = c["positionOffest"]["y"].GetFloat();
+			posOffset.z = c["positionOffest"]["z"].GetFloat();
+
+			Vector3 boxSize;
+			boxSize.x = c["boxSize"]["x"].GetFloat();
+			boxSize.y = c["boxSize"]["y"].GetFloat();
+			boxSize.z = c["boxSize"]["z"].GetFloat();
+			gameObject->AddComponent<CBoxColliderComponent>(*gameObject, posOffset, boxSize);
+		}
+	}
 }
 
 

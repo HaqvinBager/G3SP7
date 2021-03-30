@@ -31,6 +31,8 @@
 #include "FolderUtility.h"
 
 #include "animationLoader.h"
+
+#include "EngineDefines.h"
 void TEMP_DeferredRenderingTests(CScene* aScene);
 
 CInGameState::CInGameState(CStateStack& aStateStack, const CStateStack::EState aState)
@@ -64,7 +66,8 @@ void CInGameState::Start()
 
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);
-	myExitLevel = false;	
+	myExitLevel = false;
+
 }
 
 void CInGameState::Stop()
@@ -104,7 +107,10 @@ void CInGameState::Update()
 			}
 		}
 	}
-	
+	if (Input::GetInstance()->IsKeyPressed('C')) {
+		CEngine::GetInstance()->GetPhysx().Cooking(CEngine::GetInstance()->GetActiveScene().myGameObjects, &CEngine::GetInstance()->GetActiveScene());
+	}
+
 
 	CEngine::GetInstance()->GetPhysx().Simulate();
 	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)

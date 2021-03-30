@@ -8,20 +8,16 @@ namespace physx
 	class PxPhysics;
 }
 
+
 class CRigidDynamicBody
 {
 public:
-							CRigidDynamicBody(physx::PxPhysics& aPhysX, const Vector3& aPosition);
-	physx::PxRigidDynamic&	GetBody();
+							CRigidDynamicBody(physx::PxPhysics& aPhysX, const physx::PxTransform& aTransform);
+	physx::PxRigidDynamic& GetBody() { return *myBody; }
 	Vector3	GetPosition() const;
 	float					GetRotation() const;
 
 private:
 	physx::PxRigidDynamic*	myBody = nullptr;
 };
-
-inline physx::PxRigidDynamic& CRigidDynamicBody::GetBody()
-{
-	return *myBody;
-}
 

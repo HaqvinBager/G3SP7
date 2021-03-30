@@ -109,8 +109,6 @@ void CPlayerControllerComponent::Jump()
 	{
 		myMovement.y = 1.0f; 
 	}*/
-
-
 }
 
 void CPlayerControllerComponent::SetControllerPosition(const Vector3& aPos)

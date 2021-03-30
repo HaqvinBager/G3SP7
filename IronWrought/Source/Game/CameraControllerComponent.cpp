@@ -7,6 +7,8 @@
 #include <algorithm>
 #include "PlayerControllerComponent.h"
 #include "CharacterController.h"
+#include "LineFactory.h"
+#include "LineInstance.h"
 
 #define PI 3.14159265f
 
@@ -60,6 +62,13 @@ void CCameraControllerComponent::Update()
 	} else if(myCameraMode == ECameraMode::UnlockCursor){
 	} else {
 		UpdatePlayerFirstPerson();
+	}
+
+	if (Input::GetInstance()->IsKeyPressed(VK_SPACE)) {
+		PxRaycastBuffer hit = CEngine::GetInstance()->GetPhysx().Raycast(CEngine::GetInstance()->GetActiveScene().MainCamera()->GameObject().myTransform->Position(), CEngine::GetInstance()->GetActiveScene().MainCamera()->GameObject().myTransform->Transform().Forward(), 100000);
+		CLineInstance* myLine = new CLineInstance();
+		myLine->Init(CLineFactory::GetInstance()->CreateLine(CEngine::GetInstance()->GetActiveScene().MainCamera()->GameObject().myTransform->Position(), { hit.getAnyHit(0).position.x, hit.getAnyHit(0).position.y, hit.getAnyHit(0).position.z }, { 0,255,0,255 }));
+		CEngine::GetInstance()->GetActiveScene().AddInstance(myLine);
 	}
 
 }

@@ -482,9 +482,6 @@
     <ClCompile Include="ImguiManager.cpp">
       <Filter>Imgui\Manager</Filter>
     </ClCompile>
-    <ClCompile Include="ImGuiLevelSelect.cpp">
-      <Filter>Imgui\Manager</Filter>
-    </ClCompile>
     <ClCompile Include="SceneManager.cpp">
       <Filter>Engine Core</Filter>
     </ClCompile>
@@ -702,9 +699,6 @@
     <ClCompile Include="CharacterController.cpp">
       <Filter>PhysX</Filter>
     </ClCompile>
-    <ClCompile Include="NodeTypeGameObjectMoveToPosition.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
-    </ClCompile>
     <ClCompile Include="NodeTypeVariableGetVector3.cpp" />
     <ClCompile Include="NodeTypeVariableSetVector3.cpp" />
     <ClCompile Include="NodeTypeAudioPlayStep.cpp">
@@ -728,6 +722,7 @@
     <ClCompile Include="NodeTypeAudioPlayResearcherReactionExplosives.cpp">
       <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
     </ClCompile>
+    <ClCompile Include="BoxColliderComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1318,9 +1313,6 @@
     <ClInclude Include="NodeTypeMathGreater.h">
       <Filter>Imgui\Node Editor\Nodes\Math</Filter>
     </ClInclude>
-    <ClInclude Include="NodeTypeGameObjectMoveToPosition.h">
-      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
-    </ClInclude>
     <ClInclude Include="NodeTypeVariableGetVector3.h" />
     <ClInclude Include="NodeTypeVariableSetVector3.h" />
     <ClInclude Include="NodeTypeAudioPlayStep.h">
@@ -1344,6 +1336,7 @@
     <ClInclude Include="NodeTypeAudioPlayResearcherReactionExplosives.h">
       <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
     </ClInclude>
+    <ClInclude Include="BoxColliderComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">
