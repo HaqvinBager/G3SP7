@@ -25,8 +25,12 @@
 #include "SpotLight.h"
 #include "BoxLight.h"
 
+#include "Engine.h"
+
 #include "Camera.h"
 #include "CameraComponent.h"
+
+#include <PlayerControllerComponent.h>
 
 #include "CollisionManager.h"
 
@@ -42,8 +46,10 @@ CScene::CScene(const unsigned int aGameObjectCount)
 	, myNavMesh(nullptr)
 	, myNavMeshGrid(nullptr)
 	, myPXScene(nullptr)
+	, myPlayer(nullptr)
 {
 	myGameObjects.reserve(aGameObjectCount);
+	myPXScene = CEngine::GetInstance()->GetPhysx().CreatePXScene(this);
 
 	myModelsToOutline.resize(2);
 	for (unsigned int i = 0; i < myModelsToOutline.size(); ++i)
@@ -53,9 +59,9 @@ CScene::CScene(const unsigned int aGameObjectCount)
 
 #ifdef _DEBUG
 	myShouldRenderLineInstance = false;
-	myGrid = new CLineInstance();
-	myGrid->Init(CLineFactory::GetInstance()->CreateGrid({ 0.1f, 0.5f, 1.0f, 1.0f }));
-	this->AddInstance(myGrid);
+	//myGrid = new CLineInstance();
+	//myGrid->Init(CLineFactory::GetInstance()->CreateGrid({ 0.1f, 0.5f, 1.0f, 1.0f }));
+	//this->AddInstance(myGrid);
 #endif
 
 	//myCanvas = new CCanvas();
@@ -71,6 +77,9 @@ CScene::~CScene()
 
 	delete myCanvas;
 	myCanvas = nullptr;
+
+	myVFXTester = nullptr;
+	myPlayer = nullptr;
 
 	this->ClearGameObjects();
 	this->ClearPointLights();
@@ -139,6 +148,11 @@ void CScene::MainCamera(CCameraComponent* aMainCamera)
 	myMainCamera = aMainCamera;
 }
 
+void CScene::Player(CGameObject* aPlayerObject)
+{
+	myPlayer = aPlayerObject;
+}
+
 bool CScene::EnvironmentLight(CEnvironmentLight* anEnvironmentLight)
 {
 	myEnvironmentLight = anEnvironmentLight;
@@ -162,6 +176,18 @@ void CScene::UpdateCanvas()
 CCameraComponent* CScene::MainCamera()
 {
 	return myMainCamera;
+}
+
+CGameObject* CScene::Player()
+{
+	return myPlayer;
+}
+
+CPlayerControllerComponent* CScene::PlayerController()
+{
+	if (myPlayer)
+		return myPlayer->GetComponent<CPlayerControllerComponent>();
+	return nullptr;
 }
 
 CEnvironmentLight* CScene::EnvironmentLight()
@@ -250,13 +276,7 @@ std::pair<unsigned int, std::array<CPointLight*, LIGHTCOUNT>> CScene::CullLights
 const std::vector<CLineInstance*>& CScene::CullLineInstances() const
 {
 #ifdef _DEBUG
-	if (myShouldRenderLineInstance)
-		return myLineInstances;
-	else
-	{
-		std::vector<CLineInstance*> temp;
-		return std::move(temp);
-	}
+	return myLineInstances;
 #else
 	return myLineInstances;
 #endif
@@ -367,19 +387,19 @@ CGameObject* CScene::FindObjectWithID(const int aGameObjectInstanceID)
 //POPULATE SCENE START
 bool CScene::AddInstance(CPointLight* aPointLight)
 {
-	myPointLights.push_back(aPointLight);
+	myPointLights.emplace_back(aPointLight);
 	return true;
 }
 
 bool CScene::AddInstance(CSpotLight* aSpotLight)
 {
-	mySpotLights.push_back(aSpotLight);
+	mySpotLights.emplace_back(aSpotLight);
 	return true;
 }
 
 bool CScene::AddInstance(CBoxLight* aBoxLight)
 {
-	myBoxLights.push_back(aBoxLight);
+	myBoxLights.emplace_back(aBoxLight);
 	return true;
 }
 

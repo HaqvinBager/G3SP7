@@ -25,6 +25,8 @@ class CModel;
 class IAIBehavior;
 class CInstancedModelComponent;
 
+class CPlayerControllerComponent;
+
 typedef std::pair<unsigned int, std::array<CPointLight*, LIGHTCOUNT>> LightPair;
 
 class CScene {
@@ -43,8 +45,10 @@ public:
 public:
 //SETTERS START
 	void MainCamera(CCameraComponent* aMainCamera);
+	void Player(CGameObject* aPlayerObject);
 	bool EnvironmentLight(CEnvironmentLight* anEnvironmentLight);
 	void ShouldRenderLineInstance(const bool aShouldRender);
+	bool ShouldRenderLineInstance() { return myShouldRenderLineInstance; }
 	void UpdateCanvas();
 //SETTERS END
 public:
@@ -60,6 +64,8 @@ public:
 public:
 //GETTERS START
 	CCameraComponent* MainCamera();
+	CGameObject* Player();
+	CPlayerControllerComponent* PlayerController();
 	CEnvironmentLight* EnvironmentLight();
 	SNavMesh* NavMesh();
 	PxScene* PXScene();
@@ -149,7 +155,22 @@ private:
 	CCameraComponent* myMainCamera;
 	PxScene* myPXScene;
 	CCanvas* myCanvas;
+	CGameObject* myPlayer;
 //POINTERS END
+
+// VFX EDITOR START
+public:
+	void SetVFXTester(CGameObject* aGameObject)
+	{
+		myVFXTester = aGameObject;
+	}
+	CGameObject* GetVFXTester() const
+	{
+		return myVFXTester;
+	}
+private:
+	CGameObject* myVFXTester = nullptr;
+// VFX EDITOR END
 
 	bool myIsReadyToRender;
 #ifdef  _DEBUG

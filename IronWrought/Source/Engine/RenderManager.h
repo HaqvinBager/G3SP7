@@ -60,7 +60,7 @@ private:
 	CFullscreenTexture myDepthCopy;
 	CFullscreenTexture myLuminanceTexture;
 	CFullscreenTexture myHalfSizeTexture;
-	CFullscreenTexture myQuaterSizeTexture;
+	CFullscreenTexture myQuarterSizeTexture;
 	CFullscreenTexture myBlurTexture1;
 	CFullscreenTexture myBlurTexture2;
 	CFullscreenTexture myVignetteTexture;

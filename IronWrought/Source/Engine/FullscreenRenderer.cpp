@@ -46,8 +46,8 @@ bool CFullscreenRenderer::Init(CDirectXFramework* aFramework) {
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_LUMINANCE)] = "Shaders/FullscreenPixelShader_Luminance.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_GAUSSIANHORIZONTAL)] = "Shaders/FullscreenPixelShader_GaussianBlurHorizontal.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_GAUSSIANVERTICAL)] = "Shaders/FullscreenPixelShader_GaussianBlurVertical.cso";
-	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_BILATERALHORIZONTAL)] = "Shaders/FullscreenPixelShader_BilateralHorizontal.cso";
-	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_BILATERALVERTICAL)] = "Shader/FullscreenPixelShader_BilateralVertical.cso";
+	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_BILATERALHORIZONTAL)] = "Shaders/FullscreenPixelShader_BilateralBlurHorizontal.cso";
+	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_BILATERALVERTICAL)] = "Shaders/FullscreenPixelShader_BilateralBlurVertical.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_BLOOM)] = "Shaders/FullscreenPixelShader_Bloom.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_VIGNETTE)] = "Shaders/FullscreenPixelShader_Vignette.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_TONEMAP)] = "Shaders/FullscreenPixelShader_Tonemap.cso";
