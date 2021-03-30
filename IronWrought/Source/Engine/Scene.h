@@ -41,6 +41,7 @@ public:
 	//static CScene* GetInstance();
 	bool Init();
 	bool InitNavMesh(std::string aPath);
+	bool InitCanvas(std::string aPath);
 //SETUP END
 public:
 //SETTERS START
