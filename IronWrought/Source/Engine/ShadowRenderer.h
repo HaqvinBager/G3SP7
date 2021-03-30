@@ -2,6 +2,7 @@
 
 class CDirectXFramework;
 class CEnvironmentLight;
+class CBoxLight;
 class CCameraComponent;
 class CGameObject;
 
@@ -13,6 +14,7 @@ public:
 
 	bool Init(CDirectXFramework* aFramework);
 	void Render(CEnvironmentLight* anEnvironmentLight, std::vector<CGameObject*>& aGameObjectList, std::vector<CGameObject*>& aInstancedGameObjectList);
+	void Render(CBoxLight* aBoxLightList, std::vector<CGameObject*>& aGameObjectList, std::vector<CGameObject*>& aInstancedGameObjectList);
 
 private:
 	template<class T>

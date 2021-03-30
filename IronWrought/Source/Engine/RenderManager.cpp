@@ -16,7 +16,8 @@
 #include "Engine.h"
 #include "Scene.h"
 
-#include "GraphicsHelpers.h"
+#include "BoxLightComponent.h"
+#include "BoxLight.h"
 
 #include <algorithm>
 
@@ -35,6 +36,7 @@ CRenderManager::~CRenderManager()
 bool CRenderManager::Init(CDirectXFramework* aFramework, CWindowHandler* aWindowHandler)
 {
 	ENGINE_ERROR_BOOL_MESSAGE(myForwardRenderer.Init(aFramework), "Failed to Init Forward Renderer.");
+	ENGINE_ERROR_BOOL_MESSAGE(myLightRenderer.Init(aFramework), "Failed to Init Light Renderer.");
 	ENGINE_ERROR_BOOL_MESSAGE(myDeferredRenderer.Init(aFramework), "Failed to Init Deferred Renderer.");
 	ENGINE_ERROR_BOOL_MESSAGE(myFullscreenRenderer.Init(aFramework), "Failed to Init Fullscreen Renderer.");
 	ENGINE_ERROR_BOOL_MESSAGE(myFullscreenTextureFactory.Init(aFramework), "Failed to Init Fullscreen Texture Factory.");
@@ -52,20 +54,24 @@ bool CRenderManager::Init(CDirectXFramework* aFramework, CWindowHandler* aWindow
 	myBackbuffer			 = myFullscreenTextureFactory.CreateTexture(backbufferTexture);
 	myIntermediateDepth		 = myFullscreenTextureFactory.CreateDepth(aWindowHandler->GetResolution(), DXGI_FORMAT_R24G8_TYPELESS);
 	myEnvironmentShadowDepth = myFullscreenTextureFactory.CreateDepth(aWindowHandler->GetResolution(), DXGI_FORMAT_R32_TYPELESS);
+	myBoxLightShadowDepth	 = myFullscreenTextureFactory.CreateDepth(aWindowHandler->GetResolution(), DXGI_FORMAT_R32_TYPELESS);
 	myDepthCopy				 = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R32_FLOAT);
+	myDownsampledDepth		 = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution() / 2.0f, DXGI_FORMAT_R32_FLOAT);
 
 	myIntermediateTexture	  = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R8G8B8A8_UNORM);
 	myLuminanceTexture		  = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R8G8B8A8_UNORM);
 	myHalfSizeTexture		  = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution() / 2.0f, DXGI_FORMAT_R8G8B8A8_UNORM);
-	myQuaterSizeTexture		  = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution() / 4.0f, DXGI_FORMAT_R8G8B8A8_UNORM);
+	myQuarterSizeTexture		  = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution() / 4.0f, DXGI_FORMAT_R8G8B8A8_UNORM);
 	myBlurTexture1			  = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R8G8B8A8_UNORM);
 	myBlurTexture2			  = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R8G8B8A8_UNORM);
 	myVignetteTexture		  = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R16G16B16A16_FLOAT);
 	myDeferredLightingTexture = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R16G16B16A16_FLOAT);
+	myVolumetricAccumulationBuffer = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution() / 2.0f, DXGI_FORMAT_R8G8B8A8_UNORM);
+	myVolumetricBlurTexture	  = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution() / 2.0f, DXGI_FORMAT_R8G8B8A8_UNORM);
 	myTonemappedTexture		  = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R16G16B16A16_FLOAT);
 	myGBuffer				  = myFullscreenTextureFactory.CreateGBuffer(aWindowHandler->GetResolution());
 	myGBufferCopy			  = myFullscreenTextureFactory.CreateGBuffer(aWindowHandler->GetResolution());
-
+	
 	return true;
 }
 
@@ -79,16 +85,20 @@ bool CRenderManager::ReInit(CDirectXFramework* aFramework, CWindowHandler* aWind
 	myBackbuffer			 = myFullscreenTextureFactory.CreateTexture(backbufferTexture);
 	myIntermediateDepth		 = myFullscreenTextureFactory.CreateDepth(aWindowHandler->GetResolution(), DXGI_FORMAT_R24G8_TYPELESS);
 	myEnvironmentShadowDepth = myFullscreenTextureFactory.CreateDepth(aWindowHandler->GetResolution(), DXGI_FORMAT_R32_TYPELESS);
+	myBoxLightShadowDepth	 = myFullscreenTextureFactory.CreateDepth(aWindowHandler->GetResolution(), DXGI_FORMAT_R32_TYPELESS);
 	myDepthCopy				 = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R32_FLOAT);
-	
+	myDownsampledDepth		 = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution() / 2.0f, DXGI_FORMAT_R32_FLOAT);
+
 	myIntermediateTexture	  = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R8G8B8A8_UNORM);
 	myLuminanceTexture		  = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R8G8B8A8_UNORM);
 	myHalfSizeTexture		  = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution() / 2.0f, DXGI_FORMAT_R8G8B8A8_UNORM);
-	myQuaterSizeTexture		  = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution() / 4.0f, DXGI_FORMAT_R8G8B8A8_UNORM);
+	myQuarterSizeTexture		  = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution() / 4.0f, DXGI_FORMAT_R8G8B8A8_UNORM);
 	myBlurTexture1			  = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R8G8B8A8_UNORM);
 	myBlurTexture2			  = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R8G8B8A8_UNORM);
 	myVignetteTexture		  = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R16G16B16A16_FLOAT);
 	myDeferredLightingTexture = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R16G16B16A16_FLOAT);
+	myVolumetricAccumulationBuffer = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution() / 2.0f, DXGI_FORMAT_R8G8B8A8_UNORM);
+	myVolumetricBlurTexture   = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution() / 2.0f, DXGI_FORMAT_R8G8B8A8_UNORM);
 	myTonemappedTexture		  = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R16G16B16A16_FLOAT);
 	myGBuffer				  = myFullscreenTextureFactory.CreateGBuffer(aWindowHandler->GetResolution());
 	myGBufferCopy             = myFullscreenTextureFactory.CreateGBuffer(aWindowHandler->GetResolution());
@@ -113,9 +123,11 @@ void CRenderManager::Render(CScene& aScene)
 	myEnvironmentShadowDepth.ClearDepth();
 	myGBuffer.ClearTextures(myClearColor);
 	myDeferredLightingTexture.ClearTexture();
+	myVolumetricAccumulationBuffer.ClearTexture();
 
 	CEnvironmentLight* environmentlight = aScene.EnvironmentLight();
 	CCameraComponent* maincamera = aScene.MainCamera();
+	//CBoxLight* boxLight = aScene.CullBoxLights(nullptr)[0]; // For BoxLight shadow mapping
 
 	std::vector<CGameObject*> gameObjects = aScene.CullGameObjects(maincamera);
 	std::vector<CGameObject*> instancedGameObjects;
@@ -175,6 +187,8 @@ void CRenderManager::Render(CScene& aScene)
 	// Shadows
 	myEnvironmentShadowDepth.SetAsDepthTarget();
 	myShadowRenderer.Render(environmentlight, gameObjects, instancedGameObjects);
+	//myBoxLightShadowDepth.SetAsDepthTarget();
+	//myShadowRenderer.Render(boxLight, gameObjects, instancedGameObjects);
 
 	// Decals
 	myDepthCopy.SetAsActiveTarget();
@@ -185,7 +199,6 @@ void CRenderManager::Render(CScene& aScene)
 	//myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_COPYGBUFFER);
 
 	myRenderStateManager.SetDepthStencilState(CRenderStateManager::DepthStencilStates::DEPTHSTENCILSTATE_ONLYREAD);
-	//myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_GBUFFERALPHABLEND);
 	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_ALPHABLEND);
 	myGBuffer.SetAsActiveTarget(&myIntermediateDepth);
 	//myGBufferCopy.SetAllAsResources();
@@ -196,17 +209,83 @@ void CRenderManager::Render(CScene& aScene)
 	myDeferredLightingTexture.SetAsActiveTarget();
 	myGBuffer.SetAllAsResources();
 	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_ADDITIVEBLEND);
-	myEnvironmentShadowDepth.SetAsResourceOnSlot(22);
 	std::vector<CPointLight*> onlyPointLights;
 	onlyPointLights = aScene.CullPointLights(&maincamera->GameObject());
+	std::vector<CSpotLight*> onlySpotLights;
+	onlySpotLights = aScene.CullSpotLights(&maincamera->GameObject());
+	std::vector<CBoxLight*> onlyBoxLights;
+	onlyBoxLights = aScene.CullBoxLights(&maincamera->GameObject());
 
-	myDeferredRenderer.Render(maincamera, environmentlight);
-	myDeferredRenderer.Render(maincamera, onlyPointLights);
+	myEnvironmentShadowDepth.SetAsResourceOnSlot(22);
+	myLightRenderer.Render(maincamera, environmentlight);
 
+	myRenderStateManager.SetRasterizerState(CRenderStateManager::RasterizerStates::RASTERIZERSTATE_NOFACECULLING);
+	myLightRenderer.Render(maincamera, onlyPointLights);
+	myLightRenderer.Render(maincamera, onlySpotLights);
+	myLightRenderer.Render(maincamera, onlyBoxLights);
+
+	// Volumetric Lighting
+	//myVolumetricAccumulationBuffer.SetAsActiveTarget();
+
+	//myLightRenderer.RenderVolumetric(maincamera, onlyPointLights);
+	//myLightRenderer.RenderVolumetric(maincamera, onlySpotLights);
+	//myBoxLightShadowDepth.SetAsResourceOnSlot(22);
+	//myLightRenderer.RenderVolumetric(maincamera, onlyBoxLights);
+	//myRenderStateManager.SetRasterizerState(CRenderStateManager::RasterizerStates::RASTERIZERSTATE_DEFAULT);
+	//myEnvironmentShadowDepth.SetAsResourceOnSlot(22);
+	//myLightRenderer.RenderVolumetric(maincamera, environmentlight);
+
+	// Downsampling and Blur
+	//myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_DISABLE);
+	//myDownsampledDepth.SetAsActiveTarget();
+	//myIntermediateDepth.SetAsResourceOnSlot(0);
+	//myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_DOWNSAMPLE_DEPTH);
+
+	//// Blur
+	//myVolumetricBlurTexture.SetAsActiveTarget();
+	//myVolumetricAccumulationBuffer.SetAsResourceOnSlot(0);
+	//myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_GAUSSIANHORIZONTAL);
+
+	//myVolumetricAccumulationBuffer.SetAsActiveTarget();
+	//myVolumetricBlurTexture.SetAsResourceOnSlot(0);
+	//myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_GAUSSIANVERTICAL);
+
+	//myVolumetricBlurTexture.SetAsActiveTarget();
+	//myVolumetricAccumulationBuffer.SetAsResourceOnSlot(0);
+	//myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_GAUSSIANHORIZONTAL);
+
+	//myVolumetricAccumulationBuffer.SetAsActiveTarget();
+	//myVolumetricBlurTexture.SetAsResourceOnSlot(0);
+	//myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_GAUSSIANVERTICAL);
+
+	//myVolumetricBlurTexture.SetAsActiveTarget();
+	//myVolumetricAccumulationBuffer.SetAsResourceOnSlot(0);
+	//myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_GAUSSIANHORIZONTAL);
+
+	//myVolumetricAccumulationBuffer.SetAsActiveTarget();
+	//myVolumetricBlurTexture.SetAsResourceOnSlot(0);
+	//myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_GAUSSIANVERTICAL);
+
+	//myVolumetricBlurTexture.SetAsActiveTarget();
+	//myVolumetricAccumulationBuffer.SetAsResourceOnSlot(0);
+	//myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_GAUSSIANHORIZONTAL);
+
+	//myVolumetricAccumulationBuffer.SetAsActiveTarget();
+	//myVolumetricBlurTexture.SetAsResourceOnSlot(0);
+	//myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_GAUSSIANVERTICAL);
+
+	// Upsampling
+	//myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_ADDITIVEBLEND);
+	//myDeferredLightingTexture.SetAsActiveTarget();
+	//myVolumetricAccumulationBuffer.SetAsResourceOnSlot(0);
+	//myDownsampledDepth.SetAsResourceOnSlot(1);
+	//myIntermediateDepth.SetAsResourceOnSlot(2);
+	//myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_DEPTH_AWARE_UPSAMPLING);
+
+	// Skybox
 	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_DISABLE);
 	myDeferredLightingTexture.SetAsActiveTarget(&myIntermediateDepth);
 
-	// Skybox
 	myRenderStateManager.SetDepthStencilState(CRenderStateManager::DepthStencilStates::DEPTHSTENCILSTATE_DEPTHFIRST);
 	myRenderStateManager.SetRasterizerState(CRenderStateManager::RasterizerStates::RASTERIZERSTATE_FRONTFACECULLING);
 	myDeferredRenderer.RenderSkybox(maincamera, environmentlight);
@@ -239,7 +318,7 @@ void CRenderManager::Render(CScene& aScene)
 	myForwardRenderer.InstancedRender(environmentlight, pointLightsInstanced, maincamera, instancedGameObjectsWithAlpha);
 	myForwardRenderer.Render(environmentlight, pointlights, maincamera, gameObjectsWithAlpha);
 
-	// VFX
+	//VFX
 	myRenderStateManager.SetDepthStencilState(CRenderStateManager::DepthStencilStates::DEPTHSTENCILSTATE_ONLYREAD);
 	myRenderStateManager.SetRasterizerState(CRenderStateManager::RasterizerStates::RASTERIZERSTATE_NOFACECULLING);
 	myVFXRenderer.Render(maincamera, gameObjects);
@@ -248,6 +327,7 @@ void CRenderManager::Render(CScene& aScene)
 	myParticleRenderer.Render(maincamera, gameObjects);
 
 	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_DISABLE);
+	//myRenderStateManager.SetDepthStencilState(CRenderStateManager::DepthStencilStates::DEPTHSTENCILSTATE_DEFAULT);
 
 	// Bloom
 	myDoFullRender ? RenderBloom() : RenderWithoutBloom();
@@ -305,7 +385,7 @@ void CRenderManager::Release()
 	myIntermediateDepth.ReleaseDepth();
 	myLuminanceTexture.ReleaseTexture();
 	myHalfSizeTexture.ReleaseTexture();
-	myQuaterSizeTexture.ReleaseTexture();
+	myQuarterSizeTexture.ReleaseTexture();
 	myBlurTexture1.ReleaseTexture();
 	myBlurTexture2.ReleaseTexture();
 	myVignetteTexture.ReleaseTexture();
@@ -329,12 +409,12 @@ void CRenderManager::RenderBloom()
 	myLuminanceTexture.SetAsResourceOnSlot(0);
 	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_COPY);
 
-	myQuaterSizeTexture.SetAsActiveTarget();
+	myQuarterSizeTexture.SetAsActiveTarget();
 	myHalfSizeTexture.SetAsResourceOnSlot(0);
 	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_COPY);
 
 	myBlurTexture1.SetAsActiveTarget();
-	myQuaterSizeTexture.SetAsResourceOnSlot(0);
+	myQuarterSizeTexture.SetAsResourceOnSlot(0);
 	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_COPY);
 
 	myBlurTexture2.SetAsActiveTarget();
@@ -353,12 +433,12 @@ void CRenderManager::RenderBloom()
 	myBlurTexture2.SetAsResourceOnSlot(0);
 	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_GAUSSIANVERTICAL);
 
-	myQuaterSizeTexture.SetAsActiveTarget();
+	myQuarterSizeTexture.SetAsActiveTarget();
 	myBlurTexture1.SetAsResourceOnSlot(0);
 	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_COPY);
 
 	myHalfSizeTexture.SetAsActiveTarget();
-	myQuaterSizeTexture.SetAsResourceOnSlot(0);
+	myQuarterSizeTexture.SetAsResourceOnSlot(0);
 	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_COPY);
 
 	myVignetteTexture.SetAsActiveTarget();

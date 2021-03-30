@@ -22,14 +22,20 @@
 
 #include "EnvironmentLight.h"
 #include "PointLight.h"
+#include "SpotLight.h"
+#include "BoxLight.h"
+
 #include "Engine.h"
+
 #include "Camera.h"
 #include "CameraComponent.h"
+
 #include <PlayerControllerComponent.h>
 
 #include "CollisionManager.h"
 
 #include "NavmeshLoader.h"
+#include "Canvas.h"
 
 #include "Debug.h"
 //SETUP START
@@ -57,6 +63,10 @@ CScene::CScene(const unsigned int aGameObjectCount)
 	//myGrid->Init(CLineFactory::GetInstance()->CreateGrid({ 0.1f, 0.5f, 1.0f, 1.0f }));
 	//this->AddInstance(myGrid);
 #endif
+
+	//myCanvas = new CCanvas();
+	//myCanvas->Init(ASSETPATH("Assets/Graphics/UI/JSON/UI_HUD.json"), *this);
+
 }
 
 CScene::~CScene()
@@ -65,11 +75,16 @@ CScene::~CScene()
 	delete myEnvironmentLight;
 	myEnvironmentLight = nullptr;
 
+	delete myCanvas;
+	myCanvas = nullptr;
+
 	myVFXTester = nullptr;
 	myPlayer = nullptr;
 
 	this->ClearGameObjects();
 	this->ClearPointLights();
+	this->ClearSpotLights();
+	this->ClearBoxLights();
 
 #ifdef _DEBUG
 	myGrid = nullptr;
@@ -132,6 +147,7 @@ void CScene::MainCamera(CCameraComponent* aMainCamera)
 {
 	myMainCamera = aMainCamera;
 }
+
 void CScene::Player(CGameObject* aPlayerObject)
 {
 	myPlayer = aPlayerObject;
@@ -151,16 +167,22 @@ void CScene::ShouldRenderLineInstance(const bool aShouldRender)
 	aShouldRender;
 #endif //  _DEBUG
 }
+void CScene::UpdateCanvas()
+{
+	myCanvas->Update();
+}
 //SETTERS END
 //GETTERS START
 CCameraComponent* CScene::MainCamera()
 {
 	return myMainCamera;
 }
+
 CGameObject* CScene::Player()
 {
 	return myPlayer;
 }
+
 CPlayerControllerComponent* CScene::PlayerController()
 {
 	if (myPlayer)
@@ -215,6 +237,17 @@ std::vector<CPointLight*> CScene::CullPointLights(CGameObject* /*aGameObject*/)
 	//std::cout << __FUNCTION__ << " Reminde to add actual culling to this function!" << std::endl;
 	return myPointLights;
 }
+
+std::vector<CSpotLight*> CScene::CullSpotLights(CGameObject* /*aGameObject*/)
+{
+	return mySpotLights;
+}
+
+std::vector<CBoxLight*> CScene::CullBoxLights(CGameObject* /*aGameObject*/)
+{
+	return myBoxLights;
+}
+
 
 std::pair<unsigned int, std::array<CPointLight*, LIGHTCOUNT>> CScene::CullLights(CGameObject* aGameObject)
 {
@@ -358,12 +391,23 @@ bool CScene::AddInstance(CPointLight* aPointLight)
 	return true;
 }
 
+bool CScene::AddInstance(CSpotLight* aSpotLight)
+{
+	mySpotLights.emplace_back(aSpotLight);
+	return true;
+}
+
+bool CScene::AddInstance(CBoxLight* aBoxLight)
+{
+	myBoxLights.emplace_back(aBoxLight);
+	return true;
+}
+
 bool CScene::AddInstance(CLineInstance* aLineInstance)
 {
 	myLineInstances.emplace_back(aLineInstance);
 	return true;
 }
-
 
 bool CScene::AddInstance(CAnimatedUIElement* anAnimatedUIElement)
 {
@@ -389,10 +433,11 @@ bool CScene::AddInstance(CGameObject* aGameObject)
 {
 	myGameObjects.emplace_back(aGameObject);
 	myIDGameObjectMap[aGameObject->InstanceID()] = aGameObject;
-	for (auto& component : aGameObject->myComponents)
-	{
+
+	for (auto& component : aGameObject->myComponents) {
 		myComponentMap[typeid(*component).hash_code()].push_back(component);
 	}
+
 	return true;
 }
 
@@ -423,6 +468,7 @@ bool CScene::AddInstance(CSpriteInstance* aSprite)
 
 	return true;
 }
+
 //PhysX
 bool CScene::AddPXScene(PxScene* aPXScene)
 {
@@ -443,6 +489,30 @@ bool CScene::RemoveInstance(CPointLight* aPointLight)
 			//std::swap(myGameObjects[i], myGameObjects[myGameObjects.size() - 1]);
 			//myGameObjects.pop_back();
 			myPointLights.erase(myPointLights.begin() + i);
+		}
+	}
+	return true;
+}
+
+bool CScene::RemoveInstance(CSpotLight* aSpotLight)
+{
+	for (int i = 0; i < mySpotLights.size(); ++i)
+	{
+		if (aSpotLight == mySpotLights[i])
+		{
+			mySpotLights.erase(mySpotLights.begin() + i);
+		}
+	}
+	return true;
+}
+
+bool CScene::RemoveInstance(CBoxLight* aBoxLight)
+{
+	for (int i = 0; i < myBoxLights.size(); ++i)
+	{
+		if (aBoxLight == myBoxLights[i])
+		{
+			myBoxLights.erase(myBoxLights.begin() + i);
 		}
 	}
 	return true;
@@ -483,6 +553,28 @@ bool CScene::ClearPointLights()
 		p = nullptr;
 	}
 	myPointLights.clear();
+	return true;
+}
+
+bool CScene::ClearSpotLights()
+{
+	for (auto& p : mySpotLights)
+	{
+		delete p;
+		p = nullptr;
+	}
+	mySpotLights.clear();
+	return true;
+}
+
+bool CScene::ClearBoxLights()
+{
+	for (auto& p : myBoxLights)
+	{
+		delete p;
+		p = nullptr;
+	}
+	myBoxLights.clear();
 	return true;
 }
 
