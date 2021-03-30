@@ -2,6 +2,7 @@
 #include "NodeTypeGameObjectGetRotation.h"
 #include "NodeInstance.h"
 #include "Scene.h"
+#include "Engine.h"
 #include "GameObject.h"
 #include "GraphManager.h"
 
@@ -15,7 +16,7 @@ CNodeTypeGameObjectGetRotation::CNodeTypeGameObjectGetRotation()
 
 int CNodeTypeGameObjectGetRotation::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 {
-	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject()[1];
+	CGameObject* gameObject = IRONWROUGHT_ACTIVE_SCENE.FindObjectWithID(aTriggeringNodeInstance->GraphManager()->GetCurrentBlueprintInstanceID());
 	Vector3 rotation = gameObject->myTransform->Position();
 
 	std::vector<SPin>& pins = aTriggeringNodeInstance->GetPins();

@@ -3,6 +3,9 @@
 #include "NodeInstance.h"
 #include "GameObject.h"
 #include "TransformComponent.h"
+#include "GraphManager.h"
+#include "Scene.h"
+#include "Engine.h"
 
 CNodeTypeGameObjectSetPosition::CNodeTypeGameObjectSetPosition()
 {
@@ -16,7 +19,7 @@ CNodeTypeGameObjectSetPosition::CNodeTypeGameObjectSetPosition()
 
 int CNodeTypeGameObjectSetPosition::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 {
-	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject()[1];
+	CGameObject* gameObject = IRONWROUGHT_ACTIVE_SCENE.FindObjectWithID(aTriggeringNodeInstance->GraphManager()->GetCurrentBlueprintInstanceID());
 
 	SPin::EPinType outType;
 	NodeDataPtr someData = nullptr;
