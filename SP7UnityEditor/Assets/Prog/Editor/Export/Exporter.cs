@@ -101,6 +101,7 @@ public class Exporter
         Json.AddToExport(ExportDecals.Export(aSceneName));
         Json.AddToExport(ExportPlayer(aSceneName));
         Json.AddToExport(ExportBluePrint.Export(aSceneName));
+        Json.AddToExport(ExportCollider.Export(aSceneName, instanceIDs.Ids));
         Json.AddToExport(ExportInstancedModel.Export(aSceneName), true);
     }
 

@@ -27,7 +27,7 @@ public struct ColliderCollection
 
 public class ExportCollider : MonoBehaviour
 {
-    public static void Export(Scene aScene, List<int> validInstanceIDs)
+    public static ColliderCollection Export(string aSceneName, List<int> validInstanceIDs)
     {
         ColliderCollection colliderCollection = new ColliderCollection();
         colliderCollection.colliders = new List<ColliderLink>();
@@ -59,6 +59,6 @@ public class ExportCollider : MonoBehaviour
                 colliderCollection.colliders.Add(link);
             }
         }
-        Json.ExportToJson(colliderCollection, aScene.name);
+        return colliderCollection;
     }
 }

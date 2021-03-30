@@ -76,6 +76,7 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneJson)
 			AddPointLights(*scene, sceneData["lights"].GetArray());
 			AddDecalComponents(*scene, sceneData["decals"].GetArray());
 			AddInstancedModelComponents(*scene, sceneData["instancedModels"].GetArray());
+			AddCollider(*scene, sceneData["colliders"].GetArray());
 		}
 	}
 
@@ -258,14 +259,14 @@ void CSceneManager::AddPlayer(CScene& aScene/*, RapidObject someData*/)
 	aScene.Player(player);
 }
 
-void CSceneManager::AddCollider(CScene& aScene, const std::string& aJsonFileName)
+void CSceneManager::AddCollider(CScene& aScene, RapidArray someData)
 {
-	const auto& doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + aJsonFileName));
-	if (!CJsonReader::IsValid(doc, { "colliders" }))
-		return;
+	//const auto& doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + aJsonFileName));
+	//if (!CJsonReader::IsValid(doc, { "colliders" }))
+	//	return;
 
-	const auto& colliders = doc.GetObjectW()["colliders"].GetArray();
-	for (const auto& c : colliders) {
+	//const auto& colliders = doc.GetObjectW()["colliders"].GetArray();
+	for (const auto& c : someData) {
 		int id = c["instanceID"].GetInt();
 		CGameObject* gameObject = aScene.FindObjectWithID(id);
 		gameObject->AddComponent<CRigidBodyComponent>(*gameObject);
