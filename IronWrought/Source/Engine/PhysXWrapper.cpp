@@ -196,13 +196,12 @@ PxMaterial* CPhysXWrapper::CreateMaterial(materialfriction amaterial)
 		break;
 	case materialfriction::wood:
 		return myPhysics->createMaterial(0.2f, 0.5f, 0.3f);
-
 		break;
 	case materialfriction::bounce:
 		return myPhysics->createMaterial(0.0f, 0.0f, 1.0f);
 		break;
 	case materialfriction::basic:
-		return myPhysics->createMaterial(0.5f, 0.5f, 0.5f);
+		return myPhysics->createMaterial(0.6f, 0.6f, 0.0f);
 		break;
 	case materialfriction::none:
 		return myPhysics->createMaterial(0.0f, 0.0f, 0.0f);

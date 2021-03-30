@@ -39,6 +39,7 @@ void CRigidBodyComponent::Start()
 void CRigidBodyComponent::Update()
 {
 	if (myDynamicRigidBody != nullptr) {
+		GameObject().myTransform->Rotation(myDynamicRigidBody->GetRotation());
 		GameObject().myTransform->Position(myDynamicRigidBody->GetPosition());
 	}
 }

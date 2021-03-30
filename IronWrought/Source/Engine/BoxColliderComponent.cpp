@@ -25,8 +25,8 @@ void CBoxColliderComponent::Awake()
 
 void CBoxColliderComponent::Start()
 {
-	myShape = CEngine::GetInstance()->GetPhysx().GetPhysics()->createShape(physx::PxBoxGeometry(myBoxSize.x / 2.f, myBoxSize.y / 2.f, myBoxSize.z / 2.f), *CEngine::GetInstance()->GetPhysx().CreateMaterial(CPhysXWrapper::materialfriction::basic), true);
-	//myShape->setLocalPose({ myPositionOffset.x, myPositionOffset.y, myPositionOffset.z });
+	myShape = CEngine::GetInstance()->GetPhysx().GetPhysics()->createShape(physx::PxBoxGeometry(myBoxSize.x / 2.f, myBoxSize.y / 2.f, myBoxSize.z / 2.f), *CEngine::GetInstance()->GetPhysx().CreateMaterial(CPhysXWrapper::materialfriction::metal), true);
+	myShape->setLocalPose({ myPositionOffset.x, myPositionOffset.y, myPositionOffset.z });
 	if (GameObject().GetComponent<CRigidBodyComponent>()) {
 		myDynamic = &GameObject().GetComponent<CRigidBodyComponent>()->GetDynamicRigidBody()->GetBody();
 		GameObject().GetComponent<CRigidBodyComponent>()->AttachShape(myShape);

@@ -58,7 +58,8 @@ Vector3 CRigidDynamicBody::GetPosition() const
 	return { transform.p.x, transform.p.y , transform.p.z};
 }
 
-float CRigidDynamicBody::GetRotation() const
+Quaternion CRigidDynamicBody::GetRotation() const
 {
-	return myBody->getGlobalPose().q.z;
+	const physx::PxTransform transform = myBody->getGlobalPose();
+	return { transform.q.x,transform.q.y, transform.q.z, transform.q.w };
 }
