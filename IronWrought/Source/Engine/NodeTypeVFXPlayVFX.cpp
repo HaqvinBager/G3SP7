@@ -16,7 +16,7 @@ CNodeTypeVFXPlayVFX::CNodeTypeVFXPlayVFX()
 
 int CNodeTypeVFXPlayVFX::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 {
-	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject()[0];
+	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject();
 
 	SPin::EPinType outType;
 	NodeDataPtr someData = nullptr;

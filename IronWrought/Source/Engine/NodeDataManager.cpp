@@ -130,38 +130,6 @@ void CNodeDataManager::SaveDataTypesToJson()
 		writer1.EndObject();
 	}
 
-	/*for (auto& intData : myNodeIntDataMap)
-	{
-		writer1.StartObject();
-		writer1.Key("Data key");
-		writer1.String(intData.first.c_str());
-
-		writer1.Key("Type");
-		writer1.String("Int");
-		writer1.EndObject();
-	}
-
-	for (auto& boolData : myNodeBoolDataMap)
-	{
-		writer1.StartObject();
-		writer1.Key("Data key");
-		writer1.String(boolData.first.c_str());
-
-		writer1.Key("Type");
-		writer1.String("Bool");
-		writer1.EndObject();
-	}
-
-	for (auto& boolData : myNodeStartDataMap)
-	{
-		writer1.StartObject();
-		writer1.Key("Data key");
-		writer1.String(boolData.first.c_str());
-
-		writer1.Key("Type");
-		writer1.String("Start");
-		writer1.EndObject();
-	}*/
 	writer1.EndArray();
 	writer1.EndObject();
 

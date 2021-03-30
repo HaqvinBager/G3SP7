@@ -778,9 +778,6 @@
     <ClCompile Include="NodeTypeGameObjectGetChildPosition.cpp">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClCompile>
-    <ClCompile Include="NodeTypeGameObjectGetPlayerPosition.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
-    </ClCompile>
     <ClCompile Include="VFXEditorWindow.cpp">
       <Filter>Imgui\Windows</Filter>
     </ClCompile>
@@ -1461,9 +1458,6 @@
     <ClInclude Include="NodeTypeVector3Sub.h">
       <Filter>Imgui\Node Editor\Nodes\Vector3</Filter>
     </ClInclude>
-    <ClInclude Include="NodeTypeFloatDecision.h">
-      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
-    </ClInclude>
     <ClInclude Include="NodeTypeGameObjectMoveToPosition.h">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClInclude>
@@ -1472,9 +1466,6 @@
       <Filter>Imgui\Blueprints</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeGameObjectGetChildPosition.h">
-      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
-    </ClInclude>
-    <ClInclude Include="NodeTypeGameObjectGetPlayerPosition.h">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeStartSphereOnTriggerExit.h">

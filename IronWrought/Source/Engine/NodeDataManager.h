@@ -11,6 +11,7 @@ public:
 		EStart,
 		EVector3,
 		EStringList,
+		EChildNodeData,
 		ECount
 	};
 
