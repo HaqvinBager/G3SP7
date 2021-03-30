@@ -8,7 +8,7 @@
 #include "TransformComponent.h"
 
 CBoxColliderComponent::CBoxColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const Vector3& aBoxSize) 
-	: CComponent(aParent)
+	: CBehaviour(aParent)
 {
 	//have check if it should have dynamic or static rigidbody
 	myPositionOffset = aPositionOffset;
@@ -47,5 +47,13 @@ void CBoxColliderComponent::Start()
 }
 
 void CBoxColliderComponent::Update()
+{
+}
+
+void CBoxColliderComponent::OnEnable()
+{
+}
+
+void CBoxColliderComponent::OnDisable()
 {
 }

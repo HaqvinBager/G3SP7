@@ -8,27 +8,24 @@ namespace physx
 	class PxRigidStatic;
 }
 
-class CCapsuleColliderComponent : public CBehaviour
+class CSphereColliderComponent : public CBehaviour
 {
 public:
-	CCapsuleColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const float& aRadius, const float& aHeight);
-	~CCapsuleColliderComponent() override;
+	CSphereColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const float& aRadius);
+	~CSphereColliderComponent() override;
 
-public:
 	void Awake() override;
 	void Start() override;
-	void Update()override;
+	void Update() override;
 
-public:
 	void OnEnable() override;
 	void OnDisable() override;
 
 private:
-	float myRadius;
-	float myHeight;
-	Vector3 myPositionOffset;
 	physx::PxShape* myShape;
 	physx::PxRigidDynamic* myDynamic;
 	physx::PxRigidStatic* myStatic;
+	Vector3 myPositionOffset;
+	float myRadius;
 };
 

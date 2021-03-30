@@ -195,6 +195,7 @@
     <ClInclude Include="Behaviour.h" />
     <ClInclude Include="BoxColliderComponent.h" />
     <ClInclude Include="CameraSetting.h" />
+    <ClInclude Include="SphereColliderComponent.h" />
     <ClInclude Include="VFXEditorWindow.h" />
     <ClInclude Include="Interop.h" />
     <ClInclude Include="NodeTypeActionPatrol.h" />
@@ -423,6 +424,7 @@
     <ClCompile Include="AudioChannel.cpp" />
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="BoxColliderComponent.cpp" />
+    <ClCompile Include="SphereColliderComponent.cpp" />
     <ClCompile Include="VFXEditorWindow.cpp" />
     <ClCompile Include="JsonWriter.cpp" />
     <ClCompile Include="NodeTypeActionPatrol.cpp" />

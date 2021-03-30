@@ -1,5 +1,5 @@
 #pragma once
-#include "Component.h"
+#include "Behaviour.h"
 
 namespace physx
 {
@@ -8,7 +8,7 @@ namespace physx
 	class PxRigidStatic;
 }
 
-class CBoxColliderComponent : public CComponent
+class CBoxColliderComponent : public CBehaviour
 {
 public:
 	CBoxColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const Vector3& aBoxSize);
@@ -17,6 +17,9 @@ public:
 	void Awake() override;
 	void Start() override;
 	void Update() override;
+
+	void OnEnable() override;
+	void OnDisable() override;
 private:
 	physx::PxShape* myShape;
 	physx::PxRigidDynamic* myDynamic;

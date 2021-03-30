@@ -721,7 +721,6 @@
     <ClCompile Include="NodeTypeAudioPlayResearcherReactionExplosives.cpp">
       <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
     </ClCompile>
-    <ClCompile Include="BoxColliderComponent.cpp" />
     <ClCompile Include="NodeTypeListTest.cpp" />
     <ClCompile Include="VFXEffect.cpp">
       <Filter>VFX</Filter>
@@ -801,6 +800,10 @@
     <ClCompile Include="PlayerControlWindow.cpp">
       <Filter>Imgui\Windows</Filter>
     </ClCompile>
+    <ClCompile Include="BoxColliderComponent.cpp">
+      <Filter>GameObject and Component\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="SphereColliderComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1406,7 +1409,6 @@
     <ClInclude Include="NodeTypeAudioPlayResearcherReactionExplosives.h">
       <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
     </ClInclude>
-    <ClInclude Include="BoxColliderComponent.h" />
     <ClInclude Include="NodeTypeListTest.h" />
     <ClInclude Include="VFXEffect.h">
       <Filter>VFX</Filter>
@@ -1498,6 +1500,10 @@
     <ClInclude Include="VFXEditorWindow.h">
       <Filter>Imgui\Windows</Filter>
     </ClInclude>
+    <ClInclude Include="BoxColliderComponent.h">
+      <Filter>GameObject and Component\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="SphereColliderComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">

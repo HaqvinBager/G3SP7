@@ -1,31 +1,28 @@
 #include "stdafx.h"
-#include "CapsuleColliderComponent.h"
+#include "SphereColliderComponent.h"
 #include "PhysXWrapper.h"
 #include "Engine.h"
 #include "RigidBodyComponent.h"
 #include "RigidDynamicBody.h"
 
-CCapsuleColliderComponent::CCapsuleColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const float& aRadius, const float& aHeight)
+CSphereColliderComponent::CSphereColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const float& aRadius) 
 	: CBehaviour(aParent)
-	, myPositionOffset(aPositionOffset)
-	, myRadius(aRadius)
-	, myHeight(aHeight)
 {
-
+	myPositionOffset = aPositionOffset;
+	myRadius = aRadius;
 }
 
-CCapsuleColliderComponent::~CCapsuleColliderComponent()
-{
-
-}
-
-void CCapsuleColliderComponent::Awake()
+CSphereColliderComponent::~CSphereColliderComponent()
 {
 }
 
-void CCapsuleColliderComponent::Start()
+void CSphereColliderComponent::Awake()
 {
-	myShape = CEngine::GetInstance()->GetPhysx().GetPhysics()->createShape(physx::PxCapsuleGeometry(myRadius, myHeight / 2.f), *CEngine::GetInstance()->GetPhysx().CreateMaterial(CPhysXWrapper::materialfriction::metal), true);
+}
+
+void CSphereColliderComponent::Start()
+{
+	myShape = CEngine::GetInstance()->GetPhysx().GetPhysics()->createShape(physx::PxSphereGeometry(myRadius), *CEngine::GetInstance()->GetPhysx().CreateMaterial(CPhysXWrapper::materialfriction::metal), true);
 	myShape->setLocalPose({ myPositionOffset.x, myPositionOffset.y, myPositionOffset.z });
 	if (GameObject().GetComponent<CRigidBodyComponent>()) {
 		myDynamic = &GetComponent<CRigidBodyComponent>()->GetDynamicRigidBody()->GetBody();
@@ -46,14 +43,14 @@ void CCapsuleColliderComponent::Start()
 	}
 }
 
-void CCapsuleColliderComponent::Update()
+void CSphereColliderComponent::Update()
 {
 }
 
-void CCapsuleColliderComponent::OnEnable()
+void CSphereColliderComponent::OnEnable()
 {
 }
 
-void CCapsuleColliderComponent::OnDisable()
+void CSphereColliderComponent::OnDisable()
 {
 }

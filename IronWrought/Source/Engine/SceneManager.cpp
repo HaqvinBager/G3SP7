@@ -13,6 +13,8 @@
 #include "Scene.h"
 #include "RigidBodyComponent.h"
 #include "BoxColliderComponent.h"
+#include "SphereColliderComponent.h"
+#include "CapsuleColliderComponent.h"
 //#include <iostream>
 
 #include <BinReader.h>
@@ -270,17 +272,36 @@ void CSceneManager::AddCollider(CScene& aScene, RapidArray someData)
 		int id = c["instanceID"].GetInt();
 		CGameObject* gameObject = aScene.FindObjectWithID(id);
 		gameObject->AddComponent<CRigidBodyComponent>(*gameObject);
-		if (c["colliderType"].GetInt() == 1) {
-			Vector3 posOffset;
-			posOffset.x = c["positionOffest"]["x"].GetFloat();
-			posOffset.y = c["positionOffest"]["y"].GetFloat();
-			posOffset.z = c["positionOffest"]["z"].GetFloat();
+		ColliderType colliderType = static_cast<ColliderType>(c["colliderType"].GetInt());
 
+		Vector3 posOffset;
+		posOffset.x = c["positionOffest"]["x"].GetFloat();
+		posOffset.y = c["positionOffest"]["y"].GetFloat();
+		posOffset.z = c["positionOffest"]["z"].GetFloat();
+
+		switch (colliderType) {
+		case ColliderType::BoxCollider:
+		{
 			Vector3 boxSize;
 			boxSize.x = c["boxSize"]["x"].GetFloat();
 			boxSize.y = c["boxSize"]["y"].GetFloat();
 			boxSize.z = c["boxSize"]["z"].GetFloat();
 			gameObject->AddComponent<CBoxColliderComponent>(*gameObject, posOffset, boxSize);
+		}
+			break;
+		case ColliderType::SphereCollider:
+		{
+			float radius = c["sphereRadius"].GetFloat();
+			gameObject->AddComponent<CSphereColliderComponent>(*gameObject, posOffset, radius);
+		}
+			break;
+		case ColliderType::CapsuleCollider:
+		{
+			float radius = c["capsuleRadius"].GetFloat();
+			float height = c["capsuleHeight"].GetFloat();
+			gameObject->AddComponent<CCapsuleColliderComponent>(*gameObject, posOffset, radius, height);
+		}
+		break;
 		}
 	}
 }

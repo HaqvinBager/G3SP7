@@ -12,4 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d184d122156d96b4c9a8a1a955cc3186, type: 3}
   m_Name: PhysxTest_Scenes
   m_EditorClassIdentifier: 
-  myScenes: []
+  myScenes:
+  - sceneAsset: {fileID: 102900000, guid: 9fc0d4010bbf28b4594072e72b8655ab, type: 3}
+    scenePath: Assets/Scenes/PhysxTest/SampleScene.unity
