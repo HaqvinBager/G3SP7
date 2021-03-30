@@ -31,6 +31,7 @@ typedef std::pair<unsigned int, std::array<CPointLight*, LIGHTCOUNT>> LightPair;
 
 class CScene {
 	friend class CEngine;
+	friend class CBootUpState;
 	friend class CInGameState;
 	friend class CMenuState;
 public:
@@ -49,7 +50,9 @@ public:
 	void Player(CGameObject* aPlayerObject);
 	bool EnvironmentLight(CEnvironmentLight* anEnvironmentLight);
 	void ShouldRenderLineInstance(const bool aShouldRender);
+#ifdef _DEBUG
 	bool ShouldRenderLineInstance() { return myShouldRenderLineInstance; }
+#endif
 	void UpdateCanvas();
 //SETTERS END
 public:

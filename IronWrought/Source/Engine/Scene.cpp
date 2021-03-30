@@ -48,7 +48,9 @@ CScene::CScene(const unsigned int aGameObjectCount)
 	, myNavMeshGrid(nullptr)
 	, myPXScene(nullptr)
 	, myPlayer(nullptr)
+#ifdef _DEBUG
 	, myGrid(nullptr)
+#endif
 {
 	myGameObjects.reserve(aGameObjectCount);
 	myPXScene = CEngine::GetInstance()->GetPhysx().CreatePXScene(this);
@@ -83,6 +85,9 @@ CScene::~CScene()
 	this->ClearPointLights();
 	this->ClearSpotLights();
 	this->ClearBoxLights();
+	this->ClearSprites();
+	this->ClearAnimatedUIElement();
+	this->ClearTextInstances();
 
 #ifdef _DEBUG
 	myGrid = nullptr;
