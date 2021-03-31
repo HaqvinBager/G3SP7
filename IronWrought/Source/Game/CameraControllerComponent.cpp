@@ -10,7 +10,7 @@
 #include "LineFactory.h"
 #include "LineInstance.h"
 
-//#define PI 3.14159265f
+#define PI 3.14159265f
 
 CCameraControllerComponent::CCameraControllerComponent(CGameObject& aGameObject, float aCameraMoveSpeed, ECameraMode aCameraMode, char aToggleFreeCam, Vector3 aOffset)
 	: CComponent(aGameObject),
