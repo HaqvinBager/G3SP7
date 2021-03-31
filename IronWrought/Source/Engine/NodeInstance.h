@@ -36,6 +36,7 @@ public:
 	~CNodeInstance();
 	CUID myUID;
 	class CNodeType* myNodeType;
+	void CheckIfInputNode() { if (myNodeType->IsInputNode())myShouldTriggerAgain = false; }
 	void Enter();
 	void ExitVia(unsigned int aPinIndex);
 	void ConstructUniquePins();
