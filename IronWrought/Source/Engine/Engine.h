@@ -51,6 +51,7 @@ public:
 	~CEngine();
 	bool Init(CWindowHandler::SWindowData& someWindowData);
 	float BeginFrame();
+	void Update();
 	void RenderFrame();
 	void EndFrame();
 	CWindowHandler* GetWindowHandler();

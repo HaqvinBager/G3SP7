@@ -187,18 +187,27 @@ float CEngine::BeginFrame()
 	size_t decimalIndex = fpsString.find_first_of('.');
 	fpsString = fpsString.substr(0, decimalIndex);
 	myWindowHandler->SetWindowTitle("IronWrought | FPS: " + fpsString);
-
-	myDebug->Update();
-	//CDebug::GetInstance()->Update();
 #endif
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
-	myAudioManager->Update();
-	CSceneFactory::Get()->Update();
-	CMainSingleton::DialogueSystem().Update();
+
 
 	return CTimer::Mark();
+}
+
+void CEngine::Update()
+{
+	if (mySceneMap.find(myActiveState) != mySceneMap.end())
+	{
+		myPhysxWrapper->Simulate();
+		mySceneMap[myActiveState]->Update();
+	}
+
+	myAudioManager->Update();
+	CMainSingleton::DialogueSystem().Update();
+	myDebug->Update();
+	CSceneFactory::Get()->Update(); //Used for loading Scenes on a seperate Thread!
 }
 
 void CEngine::RenderFrame()
@@ -286,40 +295,18 @@ const CStateStack::EState CEngine::AddScene(const CStateStack::EState aState, CS
 
 void CEngine::SetActiveScene(const CStateStack::EState aState)
 {
-	myActiveState = aState;
-
-	std::vector<CGameObject*>& gameObjects = CEngine::GetInstance()->GetActiveScene().myGameObjects;
-	size_t currentSize = gameObjects.size();
-	for (size_t i = 0; i < currentSize; ++i)
-	{
-		if (gameObjects[i])
-		{
-			gameObjects[i]->Awake();
-		}
-	}
-
-	////Late awake
-	size_t newSize = gameObjects.size();
-	for (size_t j = currentSize; j < newSize; ++j)
-	{
-		if (gameObjects[j])
-		{
-			gameObjects[j]->Awake();
-		}
-	}
-
-	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
-	{
-		gameObject->Start();
-	}
-
-	CTimer::Mark();
-	CEngine::GetInstance()->GetActiveScene().MainCamera()->Fade(true);
+	ENGINE_BOOL_POPUP(mySceneMap[aState], "The Scene you tried to Get was nullptr!");
 	
+	mySceneMap[aState]->Awake();
+	mySceneMap[aState]->Start();
+
+	myActiveState = aState;
+	CTimer::Mark();
 }
 
 CScene& CEngine::GetActiveScene()
 {
+	ENGINE_BOOL_POPUP(mySceneMap[myActiveState], "The Scene you tried to Get was nullptr!");
 	return *mySceneMap[myActiveState];
 }
 

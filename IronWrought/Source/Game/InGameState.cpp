@@ -23,6 +23,8 @@
 
 #include <TextFactory.h>
 #include <TextInstance.h>
+#include <SphereColliderComponent.h>
+#include <BoxColliderComponent.h>
 
 void TEMP_VFX(CScene* aScene);
 void TEMP_DeferredRenderingTests(CScene* aScene);
@@ -64,21 +66,7 @@ void CInGameState::Stop()
 
 void CInGameState::Update()
 {
-	CEngine::GetInstance()->GetPhysx().Simulate();
-	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
-	{
-		gameObject->Update();
-	}
-
-	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
-	{
-		gameObject->LateUpdate();
-	}
-
-	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
-	{
-		gameObject->LateUpdate();
-	}
+	
 
 	if (Input::GetInstance()->IsKeyPressed(VK_ESCAPE))
 	{
