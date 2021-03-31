@@ -127,7 +127,7 @@ void CRenderManager::Render(CScene& aScene)
 
 	CEnvironmentLight* environmentlight = aScene.EnvironmentLight();
 	CCameraComponent* maincamera = aScene.MainCamera();
-	CBoxLight* boxLight = aScene.CullBoxLights(nullptr)[0];
+	//CBoxLight* boxLight = aScene.CullBoxLights(nullptr)[0];
 
 	std::vector<CGameObject*> gameObjects = aScene.CullGameObjects(maincamera);
 	std::vector<CGameObject*> instancedGameObjects;
@@ -145,10 +145,6 @@ void CRenderManager::Render(CScene& aScene)
 		//	}
 		//}
 
-		if (instance->GetComponent<CBoxLightComponent>())
-		{
-			boxLight = instance->GetComponent<CBoxLightComponent>()->GetBoxLight();
-		}
 		if (instance->GetComponent<CInstancedModelComponent>()) 
 		{
 			if (instance->GetComponent<CInstancedModelComponent>()->RenderWithAlpha())
@@ -191,8 +187,8 @@ void CRenderManager::Render(CScene& aScene)
 	// Shadows
 	myEnvironmentShadowDepth.SetAsDepthTarget();
 	myShadowRenderer.Render(environmentlight, gameObjects, instancedGameObjects);
-	myBoxLightShadowDepth.SetAsDepthTarget();
-	myShadowRenderer.Render(boxLight, gameObjects, instancedGameObjects);
+	//myBoxLightShadowDepth.SetAsDepthTarget();
+	//myShadowRenderer.Render(boxLight, gameObjects, instancedGameObjects);
 
 	// Decals
 	myDepthCopy.SetAsActiveTarget();

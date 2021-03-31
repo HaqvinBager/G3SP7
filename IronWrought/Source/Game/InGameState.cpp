@@ -75,7 +75,7 @@ void CInGameState::Stop()
 
 void CInGameState::Update()
 {
-	mySpotlight->GetComponent<CSpotLightComponent>()->GetSpotLight()->SetWideness(abs(sinf(CTimer::Time())));
+	//mySpotlight->GetComponent<CSpotLightComponent>()->GetSpotLight()->SetWideness(abs(sinf(CTimer::Time())));
 	//mySpotlight->GetComponent<CSpotLightComponent>()->GetSpotLight()->SetPosition({ 0.0f, abs(sinf(CTimer::Time())), 0.0f });
 	//myBoxLight->GetComponent<CBoxLightComponent>()->GetBoxLight()->Rotate({ 2.0f * CTimer::Dt(), 0.0f, 0.0f });
 
@@ -131,26 +131,25 @@ void CInGameState::TEMP_Sponza(CScene* aScene)
 	sponza->myTransform->Rotation({ 0.0f,0.0f,0.0f });
 	aScene->AddInstance(sponza);
 
-	CGameObject* spotLight = new CGameObject(13414);
-	spotLight->myTransform->Position({ 0.0f, 0.9f, -1.5f });
-	Vector3 color = { 1.0f, 1.0f, 1.0f };
-	Vector3 direction = { 0.0f, -1.0f, 0.0f };
-	spotLight->AddComponent<CSpotLightComponent>(*spotLight, color, 16.0f, direction, 1.2f, 1.0f);
-	mySpotlight = spotLight;
-	aScene->AddInstance(spotLight->GetComponent<CSpotLightComponent>()->GetSpotLight());
+	//CGameObject* spotLight = new CGameObject(13414);
+	//spotLight->myTransform->Position({ 0.0f, 0.9f, -1.5f });
+	//Vector3 color = { 1.0f, 1.0f, 1.0f };
+	//Vector3 direction = { 0.0f, -1.0f, 0.0f };
+	//spotLight->AddComponent<CSpotLightComponent>(*spotLight, color, 16.0f, direction, 1.2f, 1.0f);
+	//mySpotlight = spotLight;
+	//aScene->AddInstance(spotLight->GetComponent<CSpotLightComponent>()->GetSpotLight());
 
-	CGameObject* pointLight = new CGameObject(13314);
-	Vector3 pointColor = { 1.0f, 1.0f, 1.0f };
-	pointLight->myTransform->Position({ 0.0f, 1.0f, 2.0f });
-	pointLight->AddComponent<CPointLightComponent>(*pointLight, 1.0f, pointColor, 10.0f);
-	auto pl = pointLight->GetComponent<CPointLightComponent>()->GetPointLight();
-	pl->SetIntensity(10.0f);
-	pl->SetPosition({ 0.0f, 1.0f, 2.0f });
-	pl->SetColor(pointColor);
-	aScene->AddInstance(pointLight->GetComponent<CPointLightComponent>()->GetPointLight());
+	//CGameObject* pointLight = new CGameObject(13314);
+	//Vector3 pointColor = { 1.0f, 1.0f, 1.0f };
+	//pointLight->myTransform->Position({ 0.0f, 1.0f, 2.0f });
+	//pointLight->AddComponent<CPointLightComponent>(*pointLight, 1.0f, pointColor, 10.0f);
+	//auto pl = pointLight->GetComponent<CPointLightComponent>()->GetPointLight();
+	//pl->SetIntensity(10.0f);
+	//pl->SetPosition({ 0.0f, 1.0f, 2.0f });
+	//pl->SetColor(pointColor);
+	//aScene->AddInstance(pointLight->GetComponent<CPointLightComponent>()->GetPointLight());
 
 	CGameObject* boxLight = new CGameObject(414111);
-	//boxLight->myTransform->Position({ -2.0f, 1.0f, 0.0f });
 	boxLight->myTransform->Position({ -2.0f, 1.0f, 0.0f });
 
 	Vector3 boxColor = { 0.0f, 1.0f, 1.0f };
@@ -158,7 +157,6 @@ void CInGameState::TEMP_Sponza(CScene* aScene)
 	auto component = boxLight->AddComponent<CBoxLightComponent>(*boxLight, boxDirection, boxColor, 5.0f, 2.0f);
 	component->GetBoxLight()->SetArea({ 0.5f, 0.5f });
 	component->GetBoxLight()->SetRotation({ 45.0f, 0.0f, 0.0f });
-	//component->GetBoxLight()->SetPosition({ -2.0f, 1.0f, 0.0f });
 	myBoxLight = boxLight;
 	aScene->AddInstance(boxLight->GetComponent<CBoxLightComponent>()->GetBoxLight());
 }
