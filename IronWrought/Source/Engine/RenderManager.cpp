@@ -340,7 +340,7 @@ void CRenderManager::Render(CScene& aScene)
 	myDeferredLightingTexture.SetAsResourceOnSlot(0);
 	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_TONEMAP);
 
-	if (INPUT->IsKeyPressed(VK_F8))
+	if (INPUT->IsKeyPressed(VK_F2))
 		myUseAntiAliasing = !myUseAntiAliasing;
 
 
