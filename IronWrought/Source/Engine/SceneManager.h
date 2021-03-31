@@ -18,6 +18,7 @@ private:
 	static void SetVertexPaintedColors(CScene& aScene, RapidArray someData, const SVertexPaintCollection& vertexColorData);
 
 	static void AddInstancedModelComponents(CScene& aScene, RapidArray someData);
+	static void AddDirectionalLight(CScene& aScene, RapidObject someData);
 	static void AddPointLights(CScene& aScene, RapidArray someData);
 	static void AddDecalComponents(CScene& aScene, RapidArray someData);
 	static void AddPlayer(CScene& aScene);
