@@ -53,6 +53,14 @@ void CCapsuleColliderComponent::Start()
 
 void CCapsuleColliderComponent::Update()
 {
+	int instanceID = 26686;
+	if (Input::GetInstance()->IsKeyDown('K'))
+	{
+		if (GameObject().InstanceID() == instanceID)
+		{
+			myDynamic->addForce({ 5.1f , 0.0f, 0.0f }, physx::PxForceMode::eVELOCITY_CHANGE);
+		}
+	}
 }
 
 void CCapsuleColliderComponent::OnEnable()
