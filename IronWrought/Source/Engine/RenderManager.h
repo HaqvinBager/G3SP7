@@ -69,6 +69,7 @@ private:
 	CFullscreenTexture myVolumetricBlurTexture;
 	CFullscreenTexture myDownsampledDepth;
 	CFullscreenTexture myTonemappedTexture;
+	CFullscreenTexture myAntiAliasedTexture;
 	CGBuffer myGBuffer;
 	CGBuffer myGBufferCopy;
 
@@ -76,5 +77,6 @@ private:
 
 	// Effectively used to toggle renderpasses and bloom. True == enable bloom, full render. False == disable bloom, isolated render pass
 	bool myDoFullRender;
+	bool myUseAntiAliasing;
 	//int myFrameCounter;// Used for a hack solution, can probably be removed
 };
