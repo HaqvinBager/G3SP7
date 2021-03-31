@@ -7,9 +7,6 @@ CNodeTypeMathMax::CNodeTypeMathMax()
 	myPins.push_back(SPin("Val1", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat)); // Pin index 0
 	myPins.push_back(SPin("Val2", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat)); // Pin index 1
 	myPins.push_back(SPin("OUT", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EFloat)); // Pin index 2
-	DeclareDataOnPinIfNecessary<float>(myPins[0], 0.0f);
-	DeclareDataOnPinIfNecessary<float>(myPins[1], 0.0f);
-	DeclareDataOnPinIfNecessary<float>(myPins[2], 0.0f);
 }
 
 int CNodeTypeMathMax::OnEnter(class CNodeInstance* aTriggeringNodeInstance)

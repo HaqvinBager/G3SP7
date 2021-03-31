@@ -9,8 +9,6 @@ CNodeTypeVariableSetFloat::CNodeTypeVariableSetFloat()
 	myPins.push_back(SPin("", SPin::EPinTypeInOut::EPinTypeInOut_OUT));
 	myPins.push_back(SPin("Val", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));
 	myPins.push_back(SPin("", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EFloat));
-	DeclareDataOnPinIfNecessary<float>(myPins[2], 0.0f);
-	DeclareDataOnPinIfNecessary<float>(myPins[3], 0.0f);
 }
 
 int CNodeTypeVariableSetFloat::OnEnter(CNodeInstance* aTriggeringNodeInstance)
