@@ -1,7 +1,8 @@
 #pragma once
 
 //Windows API
-#include "WinInclude.h"
+//#include "WinInclude.h"
+#include <Windows.h>
 
 //C++
 #include <comdef.h>
@@ -29,7 +30,7 @@ using namespace DirectX::SimpleMath;
 //
 //Engine
 #include "DirectXFramework.h"
-#include "WindowHandler.h"
+//#include "WindowHandler.h"
 #include "EngineDefines.h"
 //
 //Components

@@ -11,9 +11,6 @@ CNodeTypeStartSphereOnTriggerExit::CNodeTypeStartSphereOnTriggerExit()
 	myPins.push_back(SPin("Radius", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));//0
 	myPins.push_back(SPin("Trigger Once", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EBool));//1
 	myPins.push_back(SPin("", SPin::EPinTypeInOut::EPinTypeInOut_OUT));//2
-	
-	DeclareDataOnPinIfNecessary<float>(myPins[0], 1.0f);
-	DeclareDataOnPinIfNecessary<bool>(myPins[1], false);
 }
 
 int CNodeTypeStartSphereOnTriggerExit::OnEnter(CNodeInstance * aTriggeringNodeInstance)

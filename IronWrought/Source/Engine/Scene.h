@@ -44,6 +44,13 @@ public:
 	bool InitNavMesh(std::string aPath);
 	bool InitCanvas(std::string aPath);
 //SETUP END
+
+//UPDATE
+	void Awake();
+	void Start();
+	void Update();
+//UPDATE END
+
 public:
 //SETTERS START
 	void MainCamera(CCameraComponent* aMainCamera);

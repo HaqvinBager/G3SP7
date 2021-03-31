@@ -8,10 +8,6 @@ CNodeTypeVector3Split::CNodeTypeVector3Split()
 	myPins.push_back(SPin("X", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EFloat));		//1
 	myPins.push_back(SPin("Y", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EFloat));		//2
 	myPins.push_back(SPin("Z", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EFloat));		//3
-	DeclareDataOnPinIfNecessary<Vector3>(myPins[0], Vector3(1.0f,1.0f,1.0f));
-	DeclareDataOnPinIfNecessary<float>(myPins[1], 1.0f);
-	DeclareDataOnPinIfNecessary<float>(myPins[2], 1.0f);
-	DeclareDataOnPinIfNecessary<float>(myPins[3], 1.0f);
 }
 
 int CNodeTypeVector3Split::OnEnter(CNodeInstance* aTriggeringNodeInstance)

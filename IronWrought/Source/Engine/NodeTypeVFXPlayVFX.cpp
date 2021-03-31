@@ -10,7 +10,6 @@ CNodeTypeVFXPlayVFX::CNodeTypeVFXPlayVFX()
 {
 	myPins.push_back(SPin("", SPin::EPinTypeInOut::EPinTypeInOut_IN));
 	myPins.push_back(SPin("VFX Name", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EString));
-	//DeclareDataOnPinIfNecessary<const char*>(myPins[1]);
 
 }
 

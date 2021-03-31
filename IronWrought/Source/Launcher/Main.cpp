@@ -181,6 +181,7 @@ void RunGame(LPWSTR lpCmdLine)
 		PrintMemoryUsage();
 		engine.BeginFrame();
 		shouldRun = game.Update();
+		engine.Update();
 		engine.RenderFrame();
 		engine.EndFrame();
 		

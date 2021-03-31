@@ -11,7 +11,6 @@
 CNodeTypePlayerGetPosition::CNodeTypePlayerGetPosition()
 {
     myPins.push_back(SPin("Pos", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EVector3)); //0
-	DeclareDataOnPinIfNecessary<Vector3>(myPins[0], Vector3(0.0f, 0.0f, 0.0f));
 
 }
 
