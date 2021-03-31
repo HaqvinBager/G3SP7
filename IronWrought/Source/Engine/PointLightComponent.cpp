@@ -4,7 +4,6 @@
 #include "PointLight.h"
 #include "LightFactory.h"
 #include "TransformComponent.h"
-#include "Scene.h"
 
 CPointLightComponent::CPointLightComponent(CGameObject& aParent, float aRange, DirectX::SimpleMath::Vector3 aColor, float anIntensity)
     : CBehaviour(aParent),

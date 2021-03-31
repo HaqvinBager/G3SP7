@@ -22,8 +22,12 @@ CGame::~CGame()
 
 void CGame::Init()
 {
+#ifdef NDEBUG
+	InitRealGame();
+#else
 	InitDev();
-	//InitRealGame();
+#endif
+
 }
 
 bool CGame::Update()
@@ -48,7 +52,8 @@ void CGame::InitRealGame()
 	// Currently we wish to only have an InGame and PauseMenu state (preprod - 05 JAN)
 	myStateStack.Awake(
 		{
+		CStateStack::EState::BootUp,
 		CStateStack::EState::InGame
 		},
-		CStateStack::EState::InGame);
+		CStateStack::EState::BootUp);
 }

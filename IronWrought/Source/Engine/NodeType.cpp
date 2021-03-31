@@ -191,12 +191,12 @@ void CNodeTypeCollector::RegisterNewDataType(const std::string& aNodeName, unsig
 	}
 }
 
-void CNodeTypeCollector::RegisterChildNodeTypes(std::string aKey, const unsigned int aNumberOfChildren)
+void CNodeTypeCollector::RegisterChildNodeTypes(std::string aKey, const unsigned int anIndex, int aGOID)
 {
-	int index = aNumberOfChildren;
-	std::string name = "Get " + aKey + " Child " + std::to_string(index) + " Position";
+	//int poop = aGOID;
+	std::string name = "Get " + aKey + " Child " + std::to_string(anIndex) + " Position";
 	RegisterType<CNodeTypeGameObjectGetChildPosition>(name);
-	CNodeDataManager::Get()->SetData(name, CNodeDataManager::EDataType::EInt, index);
+	CNodeDataManager::Get()->SetData(name, CNodeDataManager::EDataType::EChildNodeData, aGOID);
 }
 
 void CNodeType::ClearNodeInstanceFromMap(CNodeInstance* /*aTriggeringNodeInstance*/)

@@ -4,6 +4,9 @@
 #include "GameObject.h"
 #include "TransformComponent.h"
 #include "Timer.h"
+#include "GraphManager.h"
+#include "Scene.h"
+#include "Engine.h"
 
 CNodeTypeGameObjectMove::CNodeTypeGameObjectMove()
 {
@@ -17,7 +20,7 @@ CNodeTypeGameObjectMove::CNodeTypeGameObjectMove()
 
 int CNodeTypeGameObjectMove::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 {
-	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject()[1];
+	CGameObject* gameObject = IRONWROUGHT_ACTIVE_SCENE.FindObjectWithID(aTriggeringNodeInstance->GraphManager()->GetCurrentBlueprintInstanceID());
 
 	SPin::EPinType outType;
 	NodeDataPtr someData = nullptr;

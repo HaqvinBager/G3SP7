@@ -41,8 +41,9 @@ public:
 	bool ToggleShouldRunScripts();
 	bool ShouldRenderGraph() { return myRenderGraph; }
 
-	std::vector<CGameObject*> GetCurrentGameObject();
+	CGameObject* GetCurrentGameObject();
 	std::vector<CGameObject*> GetCurrentGameObjectChildren();
+	const int GetCurrentBlueprintInstanceID() const;
 
 private:
 	ImTextureID HeaderTextureID();

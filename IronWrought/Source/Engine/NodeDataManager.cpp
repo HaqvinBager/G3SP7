@@ -20,8 +20,12 @@ CNodeDataManager::~CNodeDataManager()
 void CNodeDataManager::ClearStoredData()
 {
 	SaveDataTypesToJson();
-	myNodeDataMap.clear();
-	myNodeDataTypeMap.clear();
+	for (auto& data : myNodeData)
+	{
+		delete data.myData;
+		data.myData = nullptr;
+	}
+	myNodeData.clear();
 }
 
 //void CNodeDataManager::SetData(const std::string aNodeDataKey, EDataType aDataType, void* aValue)
@@ -96,13 +100,13 @@ void CNodeDataManager::SaveDataTypesToJson()
 	writer1.StartObject();
 	writer1.Key("Custom Data");
 	writer1.StartArray();
-	for (auto& data : myNodeDataMap)
+	for (auto& data : myNodeData)
 	{
 		writer1.StartObject();
 		writer1.Key("Data key");
-		writer1.String(data.first.c_str());
+		writer1.String(data.myNodeTypeName.c_str());
 		
-		switch (myNodeDataTypeMap[data.first])
+		switch (data.myDataType)
 		{
 		case CNodeDataManager::EDataType::EFloat:
 			writer1.Key("Type");
@@ -130,38 +134,6 @@ void CNodeDataManager::SaveDataTypesToJson()
 		writer1.EndObject();
 	}
 
-	/*for (auto& intData : myNodeIntDataMap)
-	{
-		writer1.StartObject();
-		writer1.Key("Data key");
-		writer1.String(intData.first.c_str());
-
-		writer1.Key("Type");
-		writer1.String("Int");
-		writer1.EndObject();
-	}
-
-	for (auto& boolData : myNodeBoolDataMap)
-	{
-		writer1.StartObject();
-		writer1.Key("Data key");
-		writer1.String(boolData.first.c_str());
-
-		writer1.Key("Type");
-		writer1.String("Bool");
-		writer1.EndObject();
-	}
-
-	for (auto& boolData : myNodeStartDataMap)
-	{
-		writer1.StartObject();
-		writer1.Key("Data key");
-		writer1.String(boolData.first.c_str());
-
-		writer1.Key("Type");
-		writer1.String("Start");
-		writer1.EndObject();
-	}*/
 	writer1.EndArray();
 	writer1.EndObject();
 

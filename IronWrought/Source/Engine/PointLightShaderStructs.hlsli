@@ -1,13 +1,18 @@
 struct PointLightVertexInput
 {
     float4 myPosition : POSITION;
-    //float myRange: RANGE;
+};
+
+struct PointLightVertexToPixel
+{
+    float4 myPosition : SV_POSITION;
+    float4 myWorldPosition : WORLD_POSITION;
+    float3 myUV : UV;
 };
 
 struct PointLightVertexToGeometry
 {
     float4 myPosition : POSITION;
-    //float myRange : RANGE;
 };
 
 struct PointLightGeometryToPixel
@@ -32,13 +37,14 @@ cbuffer PointLightFrameBuffer : register(b0)
 
 cbuffer PointLightObjectBuffer : register(b1)
 {
-    float4x4 pointLightToWorld;
+    float4x4 pointLightTransform;
     unsigned int pointLightMyNumberOfDetailNormals;
     unsigned int pointLightMyNumberOfTextureSets;
 }
 
 cbuffer PointLightValueBuffer : register(b3)
 {
+    float4x4 pointLightToWorld;
     float4 pointLightColorAndIntensity;
     float4 pointLightPositionAndRange;
 }

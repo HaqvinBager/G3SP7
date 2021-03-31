@@ -3,7 +3,10 @@
 #include "NodeInstance.h"
 #include "GameObject.h"
 #include "TransformComponent.h"
+#include "GraphManager.h"
 #include "Timer.h"
+#include "Scene.h"
+#include "Engine.h"
 
 CNodeTypeGameObjectMoveToPosition::CNodeTypeGameObjectMoveToPosition()
 {
@@ -19,7 +22,7 @@ CNodeTypeGameObjectMoveToPosition::CNodeTypeGameObjectMoveToPosition()
 
 int CNodeTypeGameObjectMoveToPosition::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 {
-	std::vector<CGameObject*> gameObjects = aTriggeringNodeInstance->GetCurrentGameObject();
+	CGameObject* gameObject = IRONWROUGHT_ACTIVE_SCENE.FindObjectWithID(aTriggeringNodeInstance->GraphManager()->GetCurrentBlueprintInstanceID());
 
 	SPin::EPinType outType;
 	NodeDataPtr someData = nullptr;
@@ -36,7 +39,7 @@ int CNodeTypeGameObjectMoveToPosition::OnEnter(CNodeInstance* aTriggeringNodeIns
 	GetDataOnPin(aTriggeringNodeInstance, 4, outType, someData, outSize);
 	float speed = NodeData::Get<float>(someData);
 
-	Vector3 currentPosition = gameObjects[1]->myTransform->Position();
+	Vector3 currentPosition = gameObject->myTransform->Position();
 	Vector3 direction = { (postion.x - currentPosition.x), (postion.y - currentPosition.y), (postion.z - currentPosition.z) };
 
 	if ((direction.x < 0.01f && direction.x > -0.01f))
@@ -65,7 +68,7 @@ int CNodeTypeGameObjectMoveToPosition::OnEnter(CNodeInstance* aTriggeringNodeIns
 		direction.Normalize();
 		direction *= CTimer::Dt() * speed;
 
-		gameObjects[1]->myTransform->Move({ direction.x,  direction.y, direction.z });
+		gameObject->myTransform->Move({ direction.x,  direction.y, direction.z });
 	}
 
 

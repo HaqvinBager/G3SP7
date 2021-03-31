@@ -65,10 +65,7 @@ CCanvas::~CCanvas()
 
 void CCanvas::Init(std::string aFilePath, CScene& aScene, bool addToScene)
 {
-	//std::ifstream inputStream(aFilePath);
-	//IStreamWrapper inputWrapper(inputStream);
 	Document document = CJsonReader::Get()->LoadDocument(aFilePath);
-	//document.ParseStream(inputWrapper);
 
 	if (document.HasParseError())
 		return;
@@ -211,13 +208,19 @@ void CCanvas::Update()
 	}
 }
 
-void CCanvas::Receive(const SMessage& /*aMessage*/)
+void CCanvas::Receive(const SMessage& aMessage)
 {
-	//switch (aMessage.myMessageType)
-	//{
-	//default:
-	//	break;
-	//}
+	switch (aMessage.myMessageType)
+	{
+	case EMessageType::PlayerHealthChanged:
+		if (myAnimatedUIs[0])
+		{
+			myAnimatedUIs[0]->Level(*static_cast<float*>(aMessage.data));
+		}
+		break;
+	default:
+		break;
+	}
 }
 
 void CCanvas::SubscribeToMessages()

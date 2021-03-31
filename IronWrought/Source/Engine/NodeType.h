@@ -248,6 +248,6 @@ public:
 	//	myChildNodeTypesMap[aKey].myTypeCounter++;
 	//}
 
-	static void RegisterChildNodeTypes(std::string aKey, const unsigned int aNumberOfChildren);
+	static void RegisterChildNodeTypes(std::string aKey, const unsigned int anIndex, int aGOID);
 	//static std::unordered_map<std::string, SNodeTypeData> myChildNodeTypesMap;
 };

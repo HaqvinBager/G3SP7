@@ -193,14 +193,18 @@
     <ClInclude Include="AudioChannel.h" />
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Behaviour.h" />
+    <ClInclude Include="BoxLight.h" />
+    <ClInclude Include="BoxLightComponent.h" />
     <ClInclude Include="CameraSetting.h" />
+    <ClInclude Include="hasher.h" />
+    <ClInclude Include="LightRenderer.h" />
+    <ClInclude Include="SpotLight.h" />
+    <ClInclude Include="SpotLightComponent.h" />
     <ClInclude Include="VFXEditorWindow.h" />
     <ClInclude Include="Interop.h" />
     <ClInclude Include="NodeTypeActionPatrol.h" />
     <ClInclude Include="NodeTypeEnemySpawn.h" />
-    <ClInclude Include="NodeTypeFloatDecision.h" />
     <ClInclude Include="NodeTypeGameObjectGetChildPosition.h" />
-    <ClInclude Include="NodeTypeGameObjectGetPlayerPosition.h" />
     <ClInclude Include="NodeTypeGameObjectMoveToPosition.h" />
     <ClInclude Include="NodeTypePlayerGetPosition.h" />
     <ClInclude Include="NodeTypeStartSphereOnTriggerExit.h" />
@@ -421,12 +425,16 @@
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="AudioChannel.cpp" />
     <ClCompile Include="AudioManager.cpp" />
+    <ClCompile Include="BoxLight.cpp" />
+    <ClCompile Include="BoxLightComponent.cpp" />
+    <ClCompile Include="LightRenderer.cpp" />
+    <ClCompile Include="SpotLight.cpp" />
+    <ClCompile Include="SpotLightComponent.cpp" />
     <ClCompile Include="VFXEditorWindow.cpp" />
     <ClCompile Include="JsonWriter.cpp" />
     <ClCompile Include="NodeTypeActionPatrol.cpp" />
     <ClCompile Include="NodeTypeEnemySpawn.cpp" />
     <ClCompile Include="NodeTypeGameObjectGetChildPosition.cpp" />
-    <ClCompile Include="NodeTypeGameObjectGetPlayerPosition.cpp" />
     <ClCompile Include="NodeTypeGameObjectMoveToPosition.cpp" />
     <ClCompile Include="NodeTypePlayerGetPosition.cpp" />
     <ClCompile Include="NodeTypeStartSphereOnTriggerExit.cpp" />
@@ -618,6 +626,16 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">4.0</ShaderModel>
     </FxCompile>
+    <FxCompile Include="BoxLightVertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="BoxVolumetricLightPixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
+    </FxCompile>
     <FxCompile Include="DecalPixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
@@ -661,12 +679,22 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Vertex</ShaderType>
     </FxCompile>
+    <FxCompile Include="DeferredLightBoxShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
+    </FxCompile>
     <FxCompile Include="DeferredLightEnvironmentShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="DeferredLightPointShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="DeferredLightSpotShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
@@ -737,6 +765,21 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Vertex</ShaderType>
     </FxCompile>
+    <FxCompile Include="DirectionalVolumetricLightPixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="FullscreenPixelShader_BilateralBlurHorizontal.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="FullscreenPixelShader_BilateralBlurVertical.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
+    </FxCompile>
     <FxCompile Include="FullscreenPixelShader_Bloom.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
@@ -759,6 +802,22 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="FullscreenPixelShader_DepthAwareUpsample.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="FullscreenPixelShader_DepthDownSample.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="FullscreenPixelShader_GammaCorrection.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
@@ -885,6 +944,11 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Vertex</ShaderType>
     </FxCompile>
+    <FxCompile Include="PointVolumetricLightPixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
+    </FxCompile>
     <FxCompile Include="RenderPassAmbientOcclusionPixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
@@ -919,6 +983,21 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="SpotLightGeometryShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Geometry</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Geometry</ShaderType>
+    </FxCompile>
+    <FxCompile Include="SpotLightVertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="SpotVolumetricLightPixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="SpriteGeometryShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
@@ -988,6 +1067,7 @@
     <None Include="..\Includes\ImGui\NodeEditor\imgui_bezier_math.inl" />
     <None Include="..\Includes\ImGui\NodeEditor\imgui_extra_math.inl" />
     <None Include="..\Includes\ImGui\NodeEditor\imgui_node_editor_internal.inl" />
+    <None Include="BoxLightShaderStructs.hlsli" />
     <None Include="cpp.hint" />
     <None Include="DecalShaderStructs.hlsli" />
     <None Include="DeferredPBRFunctions.hlsli" />
@@ -1004,6 +1084,7 @@
     <None Include="PointLightShaderStructs.hlsli" />
     <None Include="SamplingFunctions.hlsli" />
     <None Include="ShaderStructs.hlsli" />
+    <None Include="SpotLightShaderStructs.hlsli" />
     <None Include="SpriteShaderStructs.hlsli" />
     <None Include="SpriteVFXShaderStructs.hlsli" />
     <None Include="VFXShaderStructs.hlsli" />
