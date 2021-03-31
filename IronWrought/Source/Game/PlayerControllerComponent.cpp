@@ -108,7 +108,6 @@ void CPlayerControllerComponent::Update()
 	GameObject().myTransform->Position(myController->GetPosition());
 	gPretendObjectCurrentDistance = max(gPretendObjectCurrentDistance -  CTimer::Dt() * 12.0f, 0.0f);
 	myAnimationComponentController->UpdateBlendValue(min(gPretendObjectCurrentDistance / gPretendObjectDistanceFromPlayer, 1.0f));
-
 	myAnimationComponentController->Update();
 }
 
@@ -189,7 +188,9 @@ void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
 }
 
 void CPlayerControllerComponent::Move(Vector3 aDir)
-{
+{	
+		//->GetController()->getActor()->addForce();
+
 	physx::PxControllerCollisionFlags collisionflag = myController->GetController().move({aDir.x, aDir.y, aDir.z}, 0, CTimer::Dt(), 0);
 	if (collisionflag == physx::PxControllerCollisionFlag::eCOLLISION_DOWN)
 	{

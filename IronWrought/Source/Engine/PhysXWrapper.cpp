@@ -115,7 +115,7 @@ PxScene* CPhysXWrapper::CreatePXScene(CScene* aScene)
 	}
 
 	// Create a basic setup for a scene - contain the rodents in a invisible cage
-	/*PxMaterial* myMaterial*/myPXMaterial = CreateMaterial(CPhysXWrapper::materialfriction::basic);
+	/*PxMaterial* myMaterial myPXMaterial = CreateMaterial(CPhysXWrapper::materialfriction::basic);*/
 
 	//PxRigidStatic* groundPlane = PxCreatePlane(*myPhysics, PxPlane(0, -1, 0, 3.3f), *myPXMaterial/**myMaterial*/);
 	//groundPlane->setGlobalPose( {0.0f,-9999.0f,0.0f} );
@@ -192,7 +192,7 @@ PxMaterial* CPhysXWrapper::CreateMaterial(materialfriction amaterial)
 	switch ((materialfriction)amaterial)
 	{
 	case materialfriction::metal:
-		return myPhysics->createMaterial(1.0f, 1.0f, 0.0f);
+		return myPhysics->createMaterial(1.0f, 5.0f, -1.0f);
 		break;
 	case materialfriction::wood:
 		return myPhysics->createMaterial(0.2f, 0.5f, 0.3f);

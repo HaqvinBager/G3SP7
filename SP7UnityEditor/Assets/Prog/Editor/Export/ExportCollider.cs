@@ -39,22 +39,31 @@ public class ExportCollider : MonoBehaviour
                 ColliderLink link = new ColliderLink();
                 link.instanceID = collider.transform.GetInstanceID();
 
-                if (collider.GetComponent<BoxCollider>() != null)
+                if (collider.GetType() == typeof(BoxCollider))
                 {
-                    link.positionOffest = collider.GetComponent<BoxCollider>().center;
+                    BoxCollider boxCollider = collider as BoxCollider;
                     link.colliderType = 1;
-                    link.boxSize = collider.GetComponent<BoxCollider>().size;
-                } else if(collider.GetComponent<SphereCollider>() != null)
+                    link.positionOffest = boxCollider.center;
+                    link.boxSize = boxCollider.size;
+                }
+                else if (collider.GetType() == typeof(SphereCollider))
                 {
-                    link.positionOffest = collider.GetComponent<SphereCollider>().center;
+                    SphereCollider sphereCollider = collider as SphereCollider;
                     link.colliderType = 2;
-                    link.sphereRadius = collider.GetComponent<SphereCollider>().radius;
-                } else if (collider.GetComponent<CapsuleCollider>() != null)
+                    link.positionOffest = sphereCollider.center;
+                    link.sphereRadius = sphereCollider.radius;
+                }
+                else if (collider.GetType() == typeof(CapsuleCollider))
                 {
-                    link.positionOffest = collider.GetComponent<CapsuleCollider>().center;
+                    CapsuleCollider capsuleCollider = collider as CapsuleCollider;
                     link.colliderType = 3;
-                    link.capsuleHeight = collider.GetComponent<CapsuleCollider>().height;
-                    link.capsuleRadius = collider.GetComponent<CapsuleCollider>().radius;
+                    link.positionOffest = capsuleCollider.center;
+                    link.capsuleHeight = capsuleCollider.height;
+                    link.capsuleRadius = capsuleCollider.radius;
+                }
+                else
+                {
+                    Debug.LogError("We don't accept This type of Collider: " + collider.GetType(), collider);
                 }
                 colliderCollection.colliders.Add(link);
             }

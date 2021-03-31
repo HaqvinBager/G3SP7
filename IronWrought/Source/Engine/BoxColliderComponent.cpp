@@ -32,7 +32,8 @@ void CBoxColliderComponent::Start()
 		GameObject().GetComponent<CRigidBodyComponent>()->AttachShape(myShape);
 		myStatic = nullptr;
 	}
-	else {
+	else 
+	{
 		DirectX::SimpleMath::Vector3 translation;
 		DirectX::SimpleMath::Vector3 scale;
 		DirectX::SimpleMath::Quaternion quat;
@@ -48,6 +49,8 @@ void CBoxColliderComponent::Start()
 
 void CBoxColliderComponent::Update()
 {
+	if (Input::GetInstance()->IsKeyPressed('K'))
+		myDynamic->addForce({ 0.0f, 10.0f, 0.0f }, physx::PxForceMode::eIMPULSE);
 }
 
 void CBoxColliderComponent::OnEnable()
