@@ -10,7 +10,7 @@
 #include "LineFactory.h"
 #include "LineInstance.h"
 
-#define PI 3.14159265f
+//#define PI 3.14159265f
 
 CCameraControllerComponent::CCameraControllerComponent(CGameObject& aGameObject, float aCameraMoveSpeed, ECameraMode aCameraMode, char aToggleFreeCam, Vector3 aOffset)
 	: CComponent(aGameObject),
@@ -147,8 +147,8 @@ void CCameraControllerComponent::UpdatePlayerFirstPerson()
 	myYaw	= WrapAngle(myYaw + (dx * myMouseRotationSpeed * dt));
 	myPitch = std::clamp(myPitch + (dy * myMouseRotationSpeed * dt), ToDegrees(-PI / 2.0f), ToDegrees(PI / 2.0f));
 
-	myYaw = Lerp(myOldYaw, myYaw, 0.6f);
-	myPitch = Lerp(myOldPitch, myPitch, 0.6f);
+	myYaw = LerpDegrees(myOldYaw, myYaw, 0.6f);
+	myPitch = LerpDegrees(myOldPitch, myPitch, 0.6f);
 
 	GameObject().myTransform->Rotation({ myPitch, myYaw, 0});
 
