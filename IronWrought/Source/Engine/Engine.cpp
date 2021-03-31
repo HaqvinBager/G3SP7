@@ -75,7 +75,7 @@ CEngine::CEngine(): myRenderSceneActive(true)
 	// Audio Manager must be constructed after main singleton, since it subscribes to postmaster messages
 	myAudioManager = new CAudioManager();
 	//myActiveScene = 0; //muc bad
-	myActiveState = CStateStack::EState::InGame;
+	myActiveState = CStateStack::EState::BootUp;
 	myPhysxWrapper = new CPhysXWrapper();
 	mySceneFactory = new CSceneFactory();
 	//myDialogueSystem = new CDialogueSystem();
@@ -191,8 +191,6 @@ float CEngine::BeginFrame()
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
-
-
 	return CTimer::Mark();
 }
 
@@ -295,18 +293,22 @@ const CStateStack::EState CEngine::AddScene(const CStateStack::EState aState, CS
 
 void CEngine::SetActiveScene(const CStateStack::EState aState)
 {
-	ENGINE_BOOL_POPUP(mySceneMap[aState], "The Scene you tried to Get was nullptr!");
-	
-	mySceneMap[aState]->Awake();
-	mySceneMap[aState]->Start();
-
+	//ENGINE_BOOL_POPUP(mySceneMap[aState], "The Scene you tried to Get was nullptr!");
 	myActiveState = aState;
+	if (mySceneMap.find(myActiveState) == mySceneMap.end())
+	{
+		AddScene(myActiveState, CSceneManager::CreateEmpty());
+	}
+
 	CTimer::Mark();
+	mySceneMap[myActiveState]->Awake();
+	mySceneMap[myActiveState]->Start();
 }
 
 CScene& CEngine::GetActiveScene()
 {
-	ENGINE_BOOL_POPUP(mySceneMap[myActiveState], "The Scene you tried to Get was nullptr!");
+
+	//ENGINE_BOOL_POPUP(mySceneMap[myActiveState], "The Scene you tried to Get was nullptr!");
 	return *mySceneMap[myActiveState];
 }
 

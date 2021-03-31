@@ -480,6 +480,8 @@ bool CScene::AddInstance(CTextInstance* aText)
 
 bool CScene::AddInstance(CGameObject* aGameObject)
 {
+	//Lägg in dom i en "Next frame i will be initied vector, Then when they are inited we move it into myGameObjects
+
 	myGameObjects.emplace_back(aGameObject);
 	myIDGameObjectMap[aGameObject->InstanceID()] = aGameObject;
 

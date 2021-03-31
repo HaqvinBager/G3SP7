@@ -23,8 +23,8 @@
 
 #include <TextFactory.h>
 #include <TextInstance.h>
-#include <SphereColliderComponent.h>
-#include <BoxColliderComponent.h>
+//#include <SphereColliderComponent.h>
+//#include <BoxColliderComponent.h>
 
 void TEMP_VFX(CScene* aScene);
 void TEMP_DeferredRenderingTests(CScene* aScene);
@@ -41,19 +41,17 @@ CInGameState::~CInGameState() {}
 void CInGameState::Awake()
 {
 	CJsonReader::Get()->Init();
-	CScene* scene = CSceneManager::CreateEmpty();
-	TEMP_VFX(scene);
-
-	CEngine::GetInstance()->AddScene(myState, scene);
-	CEngine::GetInstance()->SetActiveScene(myState);
 	CMainSingleton::PostMaster().Subscribe("LoadScene", this);
 }
 
 
 void CInGameState::Start()
 {
+	//CScene* scene = CSceneManager::CreateEmpty();
+	//TEMP_VFX(scene);
 
-
+	//CEngine::GetInstance()->AddScene(myState, scene);
+	CEngine::GetInstance()->SetActiveScene(myState);
 	TEMP_VFX(&CEngine::GetInstance()->GetActiveScene());
 
 	myExitLevel = false;	
@@ -248,6 +246,10 @@ void TEMP_VFX(CScene* aScene)
 	static int id = 500;
 	CGameObject* abilityObject = new CGameObject(id++);
 	abilityObject->AddComponent<CVFXSystemComponent>(*abilityObject, ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystem_ToLoad.json"));
+
+	abilityObject->Awake();
+	abilityObject->Start();
+
 	aScene->AddInstance(abilityObject);
 	aScene->SetVFXTester(abilityObject);
 }
