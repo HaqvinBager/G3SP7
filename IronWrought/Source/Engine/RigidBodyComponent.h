@@ -9,6 +9,7 @@ namespace physx
 	class PxTransform;
 	class PxShape;
 	class PxScene;
+	class PxVec3;
 }
 
 
@@ -23,6 +24,7 @@ public:
 	void Update() override;
 
 	void AddForce(Vector3 aDirection);
+	void AddForce(physx::PxVec3 aDirection);
 
 	void AttachShape(physx::PxShape* aShape);
 

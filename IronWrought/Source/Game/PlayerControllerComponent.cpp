@@ -104,7 +104,7 @@ void CPlayerControllerComponent::Update()
 	{
 		myMovement.y = myMovement.y >-0.0f ? myMovement.y - myFallSpeed : myMovement.y;
 	}
-
+	//std::cout << "Velocity X: " <<  myController->GetController().getActor()->getLinearVelocity().x << "Velocity Y: " << myController->GetController().getActor()->getLinearVelocity().y << "Velocity Z: " << myController->GetController().getActor()->getLinearVelocity().z << std::endl;;
 	GameObject().myTransform->Position(myController->GetPosition());
 	gPretendObjectCurrentDistance = max(gPretendObjectCurrentDistance -  CTimer::Dt() * 12.0f, 0.0f);
 	myAnimationComponentController->UpdateBlendValue(min(gPretendObjectCurrentDistance / gPretendObjectDistanceFromPlayer, 1.0f));
@@ -189,8 +189,6 @@ void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
 
 void CPlayerControllerComponent::Move(Vector3 aDir)
 {	
-		//->GetController()->getActor()->addForce();
-
 	physx::PxControllerCollisionFlags collisionflag = myController->GetController().move({aDir.x, aDir.y, aDir.z}, 0, CTimer::Dt(), 0);
 	if (collisionflag == physx::PxControllerCollisionFlag::eCOLLISION_DOWN)
 	{

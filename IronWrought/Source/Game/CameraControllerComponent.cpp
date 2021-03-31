@@ -92,11 +92,20 @@ void CCameraControllerComponent::Update()
 		default:break;
 	}
 
-	if (Input::GetInstance()->IsKeyPressed(VK_SPACE)) {
-		PxRaycastBuffer hit = CEngine::GetInstance()->GetPhysx().Raycast(CEngine::GetInstance()->GetActiveScene().MainCamera()->GameObject().myTransform->Position(), CEngine::GetInstance()->GetActiveScene().MainCamera()->GameObject().myTransform->Transform().Forward(), 100000);
+	if (Input::GetInstance()->IsMousePressed(Input::EMouseButton::Right)) {
+		Vector3 start = CEngine::GetInstance()->GetActiveScene().MainCamera()->GameObject().myTransform->GetWorldMatrix().Translation();
+		Vector3 dir = -CEngine::GetInstance()->GetActiveScene().MainCamera()->GameObject().myTransform->GetWorldMatrix().Forward();
+
+
+		PxRaycastBuffer hit = CEngine::GetInstance()->GetPhysx().Raycast(start, dir, 100000);
+		//CTransformComponent* hitTransform = nullptr;
+		//memcpy(hitTransform, hit.block.actor->userData, sizeof(hitTransform));
 		CLineInstance* myLine = new CLineInstance();
-		myLine->Init(CLineFactory::GetInstance()->CreateLine(CEngine::GetInstance()->GetActiveScene().MainCamera()->GameObject().myTransform->Position(), { hit.getAnyHit(0).position.x, hit.getAnyHit(0).position.y, hit.getAnyHit(0).position.z }, { 0,255,0,255 }));
+		CLineInstance* myLine2 = new CLineInstance();
+		myLine->Init(CLineFactory::GetInstance()->CreateLine(start, { hit.getAnyHit(0).position.x, hit.getAnyHit(0).position.y, hit.getAnyHit(0).position.z }, { 0,255,0,255 }));
+		myLine2->Init(CLineFactory::GetInstance()->CreateLine(start, start + (dir * 5.f), { 255,0,0,255 }));
 		CEngine::GetInstance()->GetActiveScene().AddInstance(myLine);
+		CEngine::GetInstance()->GetActiveScene().AddInstance(myLine2);
 	}
 }
 
