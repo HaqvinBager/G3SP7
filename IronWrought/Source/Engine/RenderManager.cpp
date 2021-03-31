@@ -25,6 +25,7 @@ unsigned int CRenderManager::myNumberOfDrawCallsThisFrame = 0;
 
 CRenderManager::CRenderManager()
 	: myDoFullRender(true)
+	, myUseAntiAliasing(true)
 	, myClearColor(0.5f, 0.5f, 0.5f, 1.0f)
 {
 }
@@ -66,9 +67,10 @@ bool CRenderManager::Init(CDirectXFramework* aFramework, CWindowHandler* aWindow
 	myBlurTexture2			  = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R8G8B8A8_UNORM);
 	myVignetteTexture		  = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R16G16B16A16_FLOAT);
 	myDeferredLightingTexture = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R16G16B16A16_FLOAT);
-	myVolumetricAccumulationBuffer = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution() / 2.0f, DXGI_FORMAT_R8G8B8A8_UNORM);
-	myVolumetricBlurTexture	  = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution() / 2.0f, DXGI_FORMAT_R8G8B8A8_UNORM);
+	myVolumetricAccumulationBuffer = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution() / 2.0f, DXGI_FORMAT_R16G16B16A16_FLOAT);
+	myVolumetricBlurTexture	  = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution() / 2.0f, DXGI_FORMAT_R16G16B16A16_FLOAT);
 	myTonemappedTexture		  = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R16G16B16A16_FLOAT);
+	myAntiAliasedTexture	  = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R16G16B16A16_FLOAT);
 	myGBuffer				  = myFullscreenTextureFactory.CreateGBuffer(aWindowHandler->GetResolution());
 	myGBufferCopy			  = myFullscreenTextureFactory.CreateGBuffer(aWindowHandler->GetResolution());
 	
@@ -97,9 +99,10 @@ bool CRenderManager::ReInit(CDirectXFramework* aFramework, CWindowHandler* aWind
 	myBlurTexture2			  = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R8G8B8A8_UNORM);
 	myVignetteTexture		  = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R16G16B16A16_FLOAT);
 	myDeferredLightingTexture = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R16G16B16A16_FLOAT);
-	myVolumetricAccumulationBuffer = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution() / 2.0f, DXGI_FORMAT_R8G8B8A8_UNORM);
-	myVolumetricBlurTexture   = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution() / 2.0f, DXGI_FORMAT_R8G8B8A8_UNORM);
+	myVolumetricAccumulationBuffer = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution() / 2.0f, DXGI_FORMAT_R16G16B16A16_FLOAT);
+	myVolumetricBlurTexture   = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution() / 2.0f, DXGI_FORMAT_R16G16B16A16_FLOAT);
 	myTonemappedTexture		  = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R16G16B16A16_FLOAT);
+	myAntiAliasedTexture	  = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R16G16B16A16_FLOAT);
 	myGBuffer				  = myFullscreenTextureFactory.CreateGBuffer(aWindowHandler->GetResolution());
 	myGBufferCopy             = myFullscreenTextureFactory.CreateGBuffer(aWindowHandler->GetResolution());
 
@@ -337,10 +340,27 @@ void CRenderManager::Render(CScene& aScene)
 	myDeferredLightingTexture.SetAsResourceOnSlot(0);
 	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_TONEMAP);
 
-	// Gamma correction
-	myBackbuffer.SetAsActiveTarget();
-	myTonemappedTexture.SetAsResourceOnSlot(0);
+	if (INPUT->IsKeyPressed(VK_F8))
+		myUseAntiAliasing = !myUseAntiAliasing;
 
+
+	// Anti-aliasing
+	if (myUseAntiAliasing)
+	{
+		myAntiAliasedTexture.SetAsActiveTarget();
+		myTonemappedTexture.SetAsResourceOnSlot(0);
+		myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_FXAA);
+
+		myBackbuffer.SetAsActiveTarget();
+		myAntiAliasedTexture.SetAsResourceOnSlot(0);
+	}
+	else
+	{
+		myBackbuffer.SetAsActiveTarget();
+		myTonemappedTexture.SetAsResourceOnSlot(0);
+	}
+
+	// Gamma correction
 	if (myDoFullRender)
 		myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCRENSHADER_GAMMACORRECTION);
 	else
