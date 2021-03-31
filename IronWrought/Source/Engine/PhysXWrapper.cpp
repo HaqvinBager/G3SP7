@@ -167,19 +167,12 @@ void CPhysXWrapper::RaycastHit(PxRaycastBuffer aHit)
 	//TO DO
 	//Make a create rigidbodydynamic which takes in a shape
 	//Make a create rigidbodydynamic which takes in a radius and material
-	std::cout << "IN" << std::endl;
-	int& myint = (int&)aHit.getAnyHit(0).actor->userData;
-	std::cout << myint << std::endl;
 	CTransformComponent* transform = (CTransformComponent*)aHit.getAnyHit(0).actor->userData;
-	/*std::cout << "X: " << aHit.getAnyHit(0).position.x << */
 	if (transform) {
-		std::cout << "IN TRANSFORM" << std::endl;
-		transform->GameObject().GetComponent<CRigidBodyComponent>()->AddForce({transform->Transform().Up().x, transform->Transform().Up().y * 10000, transform->Transform().Up().z });
-		//PxRigidDynamic* body = (PxRigidDynamic*)aHit.getAnyHit(0).actor->userData;
-		//if (body) {
-		//	//body->addForce({0, 10, 0});
-		//	std::cout << "HIT" << std::endl;
-		//}
+		transform->GameObject().GetComponent<CRigidBodyComponent>()->AddForce( -aHit.getAnyHit(0).normal * 10.f);;
+		CLineInstance* myLine = new CLineInstance();
+		myLine->Init(CLineFactory::GetInstance()->CreateLine({ aHit.getAnyHit(0).position.x, aHit.getAnyHit(0).position.y, aHit.getAnyHit(0).position.z }, { aHit.getAnyHit(0).position.x + -aHit.getAnyHit(0).normal.x, aHit.getAnyHit(0).position.y + -aHit.getAnyHit(0).normal.y, aHit.getAnyHit(0).position.z + -aHit.getAnyHit(0).normal.z }, { 0,0,255,255 }));
+		CEngine::GetInstance()->GetActiveScene().AddInstance(myLine);
 	}
 }
 
