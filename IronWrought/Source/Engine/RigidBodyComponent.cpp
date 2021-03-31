@@ -43,14 +43,14 @@ void CRigidBodyComponent::Update()
 	}
 }
 
-void CRigidBodyComponent::AddForce(Vector3 aDirection)
+void CRigidBodyComponent::AddForce(const Vector3& aDirection)
 {
-	myDynamicRigidBody->GetBody().addForce({aDirection.x, aDirection.y, aDirection.z}, physx::PxForceMode::eIMPULSE);
+	myDynamicRigidBody->GetBody().addForce({aDirection.x, aDirection.y, aDirection.z}, PxForceMode::eIMPULSE);
 }
 
-void CRigidBodyComponent::AddForce(physx::PxVec3 aDirection)
+void CRigidBodyComponent::AddForce(const physx::PxVec3& aDirection)
 {
-	myDynamicRigidBody->GetBody().addForce(aDirection, physx::PxForceMode::eIMPULSE);
+	myDynamicRigidBody->GetBody().addForce(aDirection, PxForceMode::eIMPULSE);
 }
 
 void CRigidBodyComponent::AttachShape(physx::PxShape* aShape)

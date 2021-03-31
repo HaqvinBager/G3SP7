@@ -29,6 +29,8 @@ void CBoxColliderComponent::Start()
 	myShape->setLocalPose({ myPositionOffset.x, myPositionOffset.y, myPositionOffset.z });
 	if (GameObject().GetComponent<CRigidBodyComponent>()) {
 		myDynamic = &GameObject().GetComponent<CRigidBodyComponent>()->GetDynamicRigidBody()->GetBody();
+		myDynamic->setMass(3);
+		myDynamic->setCMassLocalPose({ myPositionOffset.x, myPositionOffset.y, myPositionOffset.z });
 		GameObject().GetComponent<CRigidBodyComponent>()->AttachShape(myShape);
 		myStatic = nullptr;
 	}
