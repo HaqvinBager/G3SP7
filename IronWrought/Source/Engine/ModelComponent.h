@@ -1,6 +1,8 @@
 #pragma once
 #include "Behaviour.h"
 
+#include "TextureWrapperID3D11.h"
+
 class CGameObject;
 class CModel;
 
@@ -44,6 +46,21 @@ public:
 	// Accents tint.
 	Vector4 Tint4() const;
 
+	ID3D11ShaderResourceView* Texture1() const;
+	ID3D11ShaderResourceView* Texture2() const;
+	ID3D11ShaderResourceView* Texture3() const;
+	ID3D11ShaderResourceView* Texture4() const;
+
+	struct STintTexture
+	{
+		CTextureWrapperID3D11 myTexture;
+		Vector3 myColor;
+
+		bool UseTexture() { return myTexture.ShaderResource() != nullptr; }
+	};
+	bool SetTintTextures(std::vector<STintTexture>& aVectorWithTintTextures);
+	const std::vector<STintTexture>& GetTintTextures();
+
 	void HasTintMap(const bool aHasTintMap);
 
 public:
@@ -58,5 +75,5 @@ private:
 	unsigned int myVertexPaintColorID;
 	bool myRenderWithAlpha;
 
-	std::vector<Vector3> myTints;
+	std::vector<STintTexture> myTints;
 };

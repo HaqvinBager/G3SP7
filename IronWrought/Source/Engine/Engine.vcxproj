@@ -354,6 +354,7 @@
     <ClInclude Include="TextFactory.h" />
     <ClInclude Include="TextInstance.h" />
     <ClInclude Include="TextRenderer.h" />
+    <ClInclude Include="TextureWrapperID3D11.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="TransformComponent.h" />
     <ClInclude Include="TriangleColliderComponent.h" />
@@ -535,6 +536,7 @@
     <ClCompile Include="TextFactory.cpp" />
     <ClCompile Include="TextInstance.cpp" />
     <ClCompile Include="TextRenderer.cpp" />
+    <ClCompile Include="TextureWrapperID3D11.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="TransformComponent.cpp" />
     <ClCompile Include="TriangleColliderComponent.cpp" />

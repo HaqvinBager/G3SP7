@@ -64,20 +64,38 @@ std::array<ID3D11ShaderResourceView*, 9> CMaterialHandler::GetVertexPaintMateria
 	return textures;
 }
 
-ID3D11ShaderResourceView* CMaterialHandler::RequestTintMap(const std::string& aMaterialName)
+ID3D11ShaderResourceView* CMaterialHandler::RequestTintMap(const std::string& aTintMapPath)
 {
-	if (myTintMaps.find(aMaterialName) == myTintMaps.end())
+	if (myTintMaps.find(aTintMapPath) == myTintMaps.end())
 	{
 		std::array<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>, 1> newTextures;
-		newTextures[0] = Graphics::GetShaderResourceView(myDevice, myMaterialPath + aMaterialName + "/" + aMaterialName + "_t.dds");
+		newTextures[0] = Graphics::GetShaderResourceView(myDevice, myMaterialPath + aTintMapPath + "/" + aTintMapPath + "_t.dds");
 
-		myTintMaps.emplace(aMaterialName, std::move(newTextures));
-		myTintMapReferences.emplace(aMaterialName, 0);
+		myTintMaps.emplace(aTintMapPath, std::move(newTextures));
+		myTintMapReferences.emplace(aTintMapPath, 0);
 	}
 
-	myTintMapReferences[aMaterialName] += 1;
+	myTintMapReferences[aTintMapPath] += 1;
 	ID3D11ShaderResourceView* texture;
-	texture = myTintMaps[aMaterialName][0].Get();
+	texture = myTintMaps[aTintMapPath][0].Get();
+
+	return texture;
+}
+
+ID3D11ShaderResourceView* CMaterialHandler::RequestSingleTexture(const std::string& aTextureName)
+{
+	if (mySingleTextures.find(aTextureName) == mySingleTextures.end())
+	{
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> newTexture;
+		newTexture = Graphics::GetShaderResourceView(myDevice, mySingleTexturesPath + aTextureName + ".dds");
+
+		mySingleTextures.emplace(aTextureName, std::move(newTexture));
+		mySingleTextureReferences.emplace(aTextureName, 0);
+	}
+
+	mySingleTextureReferences[aTextureName] += 1;
+	ID3D11ShaderResourceView* texture = nullptr;
+	texture = mySingleTextures[aTextureName].Get();
 
 	return texture;
 }
@@ -128,6 +146,29 @@ void CMaterialHandler::ReleaseTintMap(const std::string& aMaterialName)
 
 			myTintMaps.erase(aMaterialName);
 			myTintMapReferences.erase(aMaterialName);
+		}
+	}
+}
+
+void CMaterialHandler::ReleaseSingleTexture(const std::string& aSingleTextureName)
+{
+	if (mySingleTextures.find(aSingleTextureName) != mySingleTextures.end())
+	{
+		mySingleTextureReferences[aSingleTextureName] -= 1;
+
+		if (mySingleTextureReferences[aSingleTextureName] <= 0)
+		{
+			ULONG remainingRefs = 0;
+			do
+			{
+				if (mySingleTextures[aSingleTextureName].Get())
+					remainingRefs = mySingleTextures[aSingleTextureName].Get()->Release();
+				else
+					remainingRefs = 0;
+			} while (remainingRefs > 1);
+
+			mySingleTextures.erase(aSingleTextureName);
+			mySingleTextureReferences.erase(aSingleTextureName);
 		}
 	}
 }
@@ -263,6 +304,7 @@ CMaterialHandler::CMaterialHandler()
 	, myMaterialPath(ASSETPATH("Assets/Graphics/Textures/Materials/"))
 	, myDecalPath(ASSETPATH("Assets/Graphics/Textures/Decals/"))
 	, myVertexLinksPath(ASSETPATH("Assets/Generated/"))
+	, mySingleTexturesPath(ASSETPATH("Assets/Graphics/Textures/Shared/"))
 {
 }
 

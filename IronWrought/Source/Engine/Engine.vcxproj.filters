@@ -718,6 +718,7 @@
     <ClCompile Include="AssetCustomizationWindow.cpp">
       <Filter>Imgui\Windows</Filter>
     </ClCompile>
+    <ClCompile Include="TextureWrapperID3D11.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1318,6 +1319,7 @@
     <ClInclude Include="AssetCustomizationWindow.h">
       <Filter>Imgui\Windows</Filter>
     </ClInclude>
+    <ClInclude Include="TextureWrapperID3D11.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">
