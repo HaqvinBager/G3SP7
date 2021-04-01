@@ -28,7 +28,6 @@ public class ExportDirectionalLight
 {
     public static DirectionalLight Export(string aSceneName)
     {
-        //Light[] allLights = GameObject.FindObjectsOfType<Light>();
         DirectionalLight newLight = new DirectionalLight();
         CubemapReference reference = GameObject.FindObjectOfType<CubemapReference>();
 
@@ -46,43 +45,9 @@ public class ExportDirectionalLight
                 newLight.directionalLight.b = light.color.b;
                 newLight.directionalLight.intensity = light.intensity;
                 newLight.directionalLight.cubemapName = reference.cubeMap.name;
-            }
-                //Debug.LogError("No Directional Light Prefab found!");        
+            }  
         }
-        
-            //Debug.LogError("No Directional Light Prefab found!");
-
-
-        //for (int i = 0; i < allLights.Length; ++i)
-        //{
-        //    if (allLights[i].transform.parent == null)
-        //        continue;
-
-        //    if (allLights[i].type != LightType.Directional)
-        //        continue;
-
-        //    light.directionalLight.instanceID = allLights[i].transform.parent.GetInstanceID();
-        //    light.directionalLight.direction = -allLights[i].transform.forward;
-        //    light.directionalLight.r = allLights[i].color.r;
-        //    light.directionalLight.g = allLights[i].color.g;
-        //    light.directionalLight.b = allLights[i].color.b;
-        //    light.directionalLight.intensity = allLights[i].intensity;
-        //    light.directionalLight.cubemapName = allLights[i].GetComponentInParent<CubemapReference>().cubeMap.name;
-        //    break;
-        //}
 
         return newLight;
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }
