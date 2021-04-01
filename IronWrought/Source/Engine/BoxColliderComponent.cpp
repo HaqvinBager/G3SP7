@@ -7,7 +7,7 @@
 #include "RigidDynamicBody.h"
 #include "TransformComponent.h"
 
-CBoxColliderComponent::CBoxColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const Vector3& aBoxSize) 
+CBoxColliderComponent::CBoxColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const Vector3& aBoxSize)
 	: CBehaviour(aParent)
 	, myShape(nullptr)
 	, myPositionOffset(aPositionOffset)
@@ -26,8 +26,10 @@ void CBoxColliderComponent::Awake()
 	CRigidBodyComponent* rigidBody = nullptr;
 	if (GameObject().TryGetComponent(&rigidBody))
 	{
-		rigidBody->GetDynamicRigidBody()->GetBody();
 		rigidBody->AttachShape(myShape);
+		physx::PxRigidDynamic& dynamic = rigidBody->GetDynamicRigidBody()->GetBody();
+		dynamic.setMass(3);
+		dynamic.setCMassLocalPose({ myPositionOffset.x, myPositionOffset.y, myPositionOffset.z });
 	}
 	else
 	{

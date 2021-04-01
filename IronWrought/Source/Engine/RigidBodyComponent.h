@@ -25,8 +25,8 @@ public:
 	void Start() override;
 	void Update() override;
 
-	void AddForce(Vector3 aDirection);
-	void AddForce(physx::PxVec3 aDirection);
+	void AddForce(const Vector3& aDirection);
+	void AddForce(const physx::PxVec3& aDirection);
 
 	void AttachShape(physx::PxShape* aShape);
 
