@@ -24,10 +24,11 @@ void CSphereColliderComponent::Start()
 {
 	myShape = CEngine::GetInstance()->GetPhysx().GetPhysics()->createShape(physx::PxSphereGeometry(myRadius), *CEngine::GetInstance()->GetPhysx().CreateMaterial(CPhysXWrapper::materialfriction::metal), true);
 	myShape->setLocalPose({ myPositionOffset.x, myPositionOffset.y, myPositionOffset.z });
-	if (GameObject().GetComponent<CRigidBodyComponent>()) {
-		myDynamic = &GetComponent<CRigidBodyComponent>()->GetDynamicRigidBody()->GetBody();
-		GameObject().GetComponent<CRigidBodyComponent>()->AttachShape(myShape);
-		myStatic = nullptr;
+	CRigidBodyComponent* rigidBody = nullptr;
+	if (GameObject().TryGetComponent(&rigidBody))
+	{
+		rigidBody->GetDynamicRigidBody()->GetBody();
+		rigidBody->AttachShape(myShape);
 	}
 	else {
 		DirectX::SimpleMath::Vector3 translation;
@@ -38,8 +39,7 @@ void CSphereColliderComponent::Start()
 
 		PxVec3 pos = { translation.x, translation.y, translation.z };
 		PxQuat pxQuat = { quat.x, quat.y, quat.z, quat.w };
-		myStatic = CEngine::GetInstance()->GetPhysx().GetPhysics()->createRigidStatic({ pos, pxQuat });
-		myDynamic = nullptr;
+		CEngine::GetInstance()->GetPhysx().GetPhysics()->createRigidStatic({ pos, pxQuat });		
 	}
 }
 

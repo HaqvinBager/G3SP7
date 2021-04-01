@@ -9,10 +9,10 @@
 
 CBoxColliderComponent::CBoxColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const Vector3& aBoxSize) 
 	: CBehaviour(aParent)
+	, myShape(nullptr)
+	, myPositionOffset(aPositionOffset)
+	, myBoxSize(aBoxSize)
 {
-	//have check if it should have dynamic or static rigidbody
-	myPositionOffset = aPositionOffset;
-	myBoxSize = aBoxSize;
 }
 
 CBoxColliderComponent::~CBoxColliderComponent()
@@ -21,18 +21,15 @@ CBoxColliderComponent::~CBoxColliderComponent()
 
 void CBoxColliderComponent::Awake()
 {
-}
-
-void CBoxColliderComponent::Start()
-{
 	myShape = CEngine::GetInstance()->GetPhysx().GetPhysics()->createShape(physx::PxBoxGeometry(myBoxSize.x / 2.f, myBoxSize.y / 2.f, myBoxSize.z / 2.f), *CEngine::GetInstance()->GetPhysx().CreateMaterial(CPhysXWrapper::materialfriction::metal), true);
 	myShape->setLocalPose({ myPositionOffset.x, myPositionOffset.y, myPositionOffset.z });
-	if (GameObject().GetComponent<CRigidBodyComponent>()) {
-		myDynamic = &GameObject().GetComponent<CRigidBodyComponent>()->GetDynamicRigidBody()->GetBody();
-		GameObject().GetComponent<CRigidBodyComponent>()->AttachShape(myShape);
-		myStatic = nullptr;
+	CRigidBodyComponent* rigidBody = nullptr;
+	if (GameObject().TryGetComponent(&rigidBody))
+	{
+		rigidBody->GetDynamicRigidBody()->GetBody();
+		rigidBody->AttachShape(myShape);
 	}
-	else 
+	else
 	{
 		DirectX::SimpleMath::Vector3 translation;
 		DirectX::SimpleMath::Vector3 scale;
@@ -42,15 +39,16 @@ void CBoxColliderComponent::Start()
 
 		PxVec3 pos = { translation.x, translation.y, translation.z };
 		PxQuat pxQuat = { quat.x, quat.y, quat.z, quat.w };
-		myStatic = CEngine::GetInstance()->GetPhysx().GetPhysics()->createRigidStatic({ pos, pxQuat });
-		myDynamic = nullptr;
+		CEngine::GetInstance()->GetPhysx().GetPhysics()->createRigidStatic({ pos, pxQuat });
 	}
+}
+
+void CBoxColliderComponent::Start()
+{
 }
 
 void CBoxColliderComponent::Update()
 {
-	if (Input::GetInstance()->IsKeyPressed('K'))
-		myDynamic->addForce({ 0.0f, 10.0f, 0.0f }, physx::PxForceMode::eIMPULSE);
 }
 
 void CBoxColliderComponent::OnEnable()

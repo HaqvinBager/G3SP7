@@ -4,8 +4,6 @@
 namespace physx
 {
 	class PxShape;
-	class PxRigidDynamic;
-	class PxRigidStatic;
 }
 
 class CCapsuleColliderComponent : public CBehaviour
@@ -28,7 +26,5 @@ private:
 	float myHeight;
 	Vector3 myPositionOffset;
 	physx::PxShape* myShape;
-	physx::PxRigidDynamic* myDynamic;
-	physx::PxRigidStatic* myStatic;
 };
 

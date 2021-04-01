@@ -3,6 +3,7 @@
 
 class CRigidDynamicBody;
 class CScene;
+class CPhysXWrapper;
 
 namespace physx
 {
@@ -17,6 +18,7 @@ class CRigidBodyComponent : public CComponent
 {
 public:
 	CRigidBodyComponent(CGameObject& aParent);
+
 	~CRigidBodyComponent() override;
 
 	void Awake() override;
@@ -32,4 +34,3 @@ public:
 private:
 	CRigidDynamicBody* myDynamicRigidBody;
 };
-

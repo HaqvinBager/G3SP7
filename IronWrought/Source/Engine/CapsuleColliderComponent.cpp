@@ -29,15 +29,15 @@ void CCapsuleColliderComponent::Start()
 	PxVec3 offset = { myPositionOffset.x, myPositionOffset.y, myPositionOffset.z };
 	PxTransform relativePose(offset, PxQuat(PxHalfPi, physx::PxVec3(0, 0, 1)));
 	myShape->setLocalPose(relativePose);
-	//myShape->setLocalPose(relativePose);
 
-	//myShape->setLocalPose({ offset.x, offset.y, offset.z });
-	if (GetComponent<CRigidBodyComponent>()) {
-		myDynamic = &GetComponent<CRigidBodyComponent>()->GetDynamicRigidBody()->GetBody();
-		GetComponent<CRigidBodyComponent>()->AttachShape(myShape);
-		myStatic = nullptr;
+	CRigidBodyComponent* rigidBody = nullptr;
+	if (GameObject().TryGetComponent(&rigidBody))
+	{
+		rigidBody->GetDynamicRigidBody()->GetBody();
+		rigidBody->AttachShape(myShape);
 	}
-	else {
+	else
+	{
 		DirectX::SimpleMath::Vector3 translation;
 		DirectX::SimpleMath::Vector3 scale;
 		DirectX::SimpleMath::Quaternion quat;
@@ -46,21 +46,12 @@ void CCapsuleColliderComponent::Start()
 
 		PxVec3 pos = { translation.x, translation.y, translation.z };
 		PxQuat pxQuat = { quat.x, quat.y, quat.z, quat.w };
-		myStatic = CEngine::GetInstance()->GetPhysx().GetPhysics()->createRigidStatic({ pos, pxQuat });
-		myDynamic = nullptr;
+		CEngine::GetInstance()->GetPhysx().GetPhysics()->createRigidStatic({ pos, pxQuat });
 	}
 }
 
 void CCapsuleColliderComponent::Update()
 {
-	int instanceID = 26686;
-	if (Input::GetInstance()->IsKeyDown('K'))
-	{
-		if (GameObject().InstanceID() == instanceID)
-		{
-			myDynamic->addForce({ 5.1f , 0.0f, 0.0f }, physx::PxForceMode::eVELOCITY_CHANGE);
-		}
-	}
 }
 
 void CCapsuleColliderComponent::OnEnable()

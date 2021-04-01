@@ -4,8 +4,6 @@
 namespace physx
 {
 	class PxShape;
-	class PxRigidDynamic;
-	class PxRigidStatic;
 }
 
 class CSphereColliderComponent : public CBehaviour
@@ -23,8 +21,6 @@ public:
 
 private:
 	physx::PxShape* myShape;
-	physx::PxRigidDynamic* myDynamic;
-	physx::PxRigidStatic* myStatic;
 	Vector3 myPositionOffset;
 	float myRadius;
 };

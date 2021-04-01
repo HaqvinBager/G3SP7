@@ -1,5 +1,6 @@
 #pragma once
 #include <PxPhysicsAPI.h>
+#include <queue>
 
 using namespace physx;
 
@@ -7,7 +8,7 @@ class CContactReportCallback;
 class CRigidDynamicBody;
 class CScene;
 class CCharacterController;
-
+class CDynamicRigidBody;
 class CPhysXWrapper
 {
 public:
@@ -43,6 +44,7 @@ public:
 
 	void Simulate();
 
+	CRigidDynamicBody* CreateDynamicRigidbody(const CTransformComponent& aTransform);
 	CRigidDynamicBody* CreateDynamicRigidbody(const PxTransform& aTransform);
 
 	CCharacterController* CreateCharacterController(const Vector3& aPos, const float& aRadius, const float& aHeight);
@@ -68,4 +70,5 @@ private:
 	PxControllerManager* myControllerManager;
 	std::unordered_map<PxScene*, PxControllerManager*> myControllerManagers;// Should not be necessary
 	std::unordered_map<CScene*, PxScene*> myPXScenes;
+	//std::queue<CRigidDynamicBody*> myAddBodyQueue;
 };
