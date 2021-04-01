@@ -300,6 +300,7 @@ void CEngine::SetActiveScene(const CStateStack::EState aState)
 		AddScene(myActiveState, CSceneManager::CreateEmpty());
 	}
 
+	myActiveState = aState;
 	CTimer::Mark();
 	mySceneMap[myActiveState]->Awake();
 	mySceneMap[myActiveState]->Start();

@@ -3,6 +3,14 @@
 #include "JsonReader.h"
 
 struct SVertexPaintCollection;
+
+enum class ColliderType {
+	none = 0,
+	BoxCollider = 1,
+	SphereCollider = 2,
+	CapsuleCollider = 3
+};
+
 class CSceneManager
 {
 public:
@@ -22,6 +30,7 @@ private:
 	static void AddDirectionalLight(CScene& aScene, RapidObject someData);
 	static void AddPointLights(CScene& aScene, RapidArray someData);
 	static void AddDecalComponents(CScene& aScene, RapidArray someData);
+	static void AddCollider(CScene& aScene, RapidArray someData);
 	static void AddPlayer(CScene& aScene);
 };
 
@@ -44,5 +53,3 @@ private:
 	std::function<void(std::string)> myOnComplete;
 	std::string myLastSceneName;
 };
-
-

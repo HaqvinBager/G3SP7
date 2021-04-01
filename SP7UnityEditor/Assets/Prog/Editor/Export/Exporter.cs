@@ -9,6 +9,7 @@ using System.IO;
 public struct PlayerID
 {
     public int instanceID;
+    public List<int> childrenIDs;
 }
 
 [System.Serializable]
@@ -56,7 +57,7 @@ public class Exporter
             Json.EndScene();
         }
 
-        Json.EndExport(parentDirectory.Name, parentDirectory.Name);   
+        Json.EndExport(parentDirectory.Name, parentDirectory.Name);
 
         foreach (var gameObject in allScenesActiveObjects)
             gameObject.SetActive(true);
@@ -76,7 +77,7 @@ public class Exporter
                 gameobject.SetActive(true);
             }
         }
-    
+
         ExportAScene(SceneManager.GetSceneAt(aSceneIndex).name);
 
         foreach (var gameobject in activeobjects)
@@ -89,7 +90,7 @@ public class Exporter
 
     private static void ExportAScene(string aSceneName)
     {
-        //Next Step is to make sure that we only write the correct data to the correct Scene_Json.json! 
+        //Next Step is to make sure that we only write the correct data to the correct Scene_Json.json!
         //Or maybe just leave it be tbh! This might just be a good enough of a solution!
         //Especially if we put these multiple .json files in a folder!
         InstanceIDCollection instanceIDs = ExportInstanceID.Export(aSceneName);
@@ -102,6 +103,7 @@ public class Exporter
         Json.AddToExport(ExportDecals.Export(aSceneName));
         Json.AddToExport(ExportPlayer(aSceneName));
         Json.AddToExport(ExportBluePrint.Export(aSceneName));
+        Json.AddToExport(ExportCollider.Export(aSceneName, instanceIDs.Ids));
         Json.AddToExport(ExportInstancedModel.Export(aSceneName), true);
     }
 
@@ -112,6 +114,9 @@ public class Exporter
         if(player != null)
         {
             data.player.instanceID = player.transform.GetInstanceID();
+            data.player.childrenIDs = new List<int>();
+            foreach (Transform child in player.transform)
+                data.player.childrenIDs.Add(child.GetInstanceID());
             //Json.ExportToJson(data, aScene.name);
         }
         return data;

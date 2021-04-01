@@ -4,3 +4,4 @@
 #include "CameraSetting.h"
 #include "VFXEditorWindow.h"
 #include "PlayerControlWindow.h"
+#include "GravityGloveEditor.h"

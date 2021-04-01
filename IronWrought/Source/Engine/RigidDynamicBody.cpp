@@ -3,7 +3,7 @@
 #include "Engine.h"
 #include "PhysXWrapper.h"
 
-std::string globalNames[] = 
+std::string globalNames[] =
 {
 	"Biscuit",
 	"Buttercup",
@@ -23,35 +23,33 @@ std::string globalNames[] =
 	"Whiskers"
 };
 
-CRigidDynamicBody::CRigidDynamicBody(physx::PxPhysics& aPhysX, int aInstanceID, const Vector3& aPosition)
+CRigidDynamicBody::CRigidDynamicBody(physx::PxPhysics& aPhysX, const physx::PxTransform& aTransform)
 {
-	myBody = aPhysX.createRigidDynamic({ aPosition.x, aPosition.y, aPosition.z });
+	myBody = aPhysX.createRigidDynamic(aTransform);
 
 	// Set userData to identify the collider (usually some GameObjectID)
 	// It's used in ContactReportCallBack::onContact
-	myBody->userData = &aInstanceID;
-		//&globalNames[rand() % 16];
+	//myBody->userData = &globalNames[rand() % 16];
 
 	// Locks Z since the demo only uses two axis
-	myBody->setRigidDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Z);
+	//myBody->setRigidDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Z);
 
 	// Tip! A material is not bound to a single body and can be reused
 	// Use material as a seperate resource
-	constexpr physx::PxReal staticFriction = 0.7f;
+	/*constexpr physx::PxReal staticFriction = 0.7f;
 	constexpr physx::PxReal dynamicFriction = 0.9f;
-	constexpr physx::PxReal restitution = 0.9f;
-	//physx::PxMaterial* material = aPhysX.createMaterial(staticFriction, dynamicFriction, restitution);
-	physx::PxMaterial* material = CEngine::GetInstance()->GetPhysx().CreateMaterial(CPhysXWrapper::materialfriction::metal);
+	constexpr physx::PxReal restitution = 0.9f;*/
+	//physx::PxMaterial* material = CEngine::GetInstance()->GetPhysx().CreateMaterial(CPhysXWrapper::materialfriction::basic);
 
 
 	// Tip! A shape is not bound to a single body and can be reused
 	// Use shape as a seperate resource
-	constexpr float imageSize = 64;
+	/*constexpr float imageSize = 64;
 	constexpr float fluffiness = 3;
-	constexpr physx::PxReal radius = (imageSize / 10) - fluffiness;
-	physx::PxShape* shape = aPhysX.createShape(physx::PxSphereGeometry(radius), *material, true);
-
-	myBody->attachShape(*shape);
+	constexpr physx::PxReal radius = (imageSize / 10) - fluffiness;*/
+	//physx::PxShape* shape = aPhysX.createShape(PxBoxGeometry(0.5f / 2.f, 0.6f / 2.f, 0.2f / 2.f), *CEngine::GetInstance()->GetPhysx().CreateMaterial(CPhysXWrapper::materialfriction::basic), true);
+	//
+	//myBody->attachShape(*shape);
 }
 
 Vector3 CRigidDynamicBody::GetPosition() const
@@ -60,7 +58,8 @@ Vector3 CRigidDynamicBody::GetPosition() const
 	return { transform.p.x, transform.p.y , transform.p.z};
 }
 
-float CRigidDynamicBody::GetRotation() const
+Quaternion CRigidDynamicBody::GetRotation() const
 {
-	return myBody->getGlobalPose().q.z;
+	const physx::PxTransform transform = myBody->getGlobalPose();
+	return { transform.q.x,transform.q.y, transform.q.z, transform.q.w };
 }
