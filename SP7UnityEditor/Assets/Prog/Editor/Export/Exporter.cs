@@ -9,6 +9,7 @@ using System.IO;
 public struct PlayerID
 {
     public int instanceID;
+    public List<int> childrenIDs;
 }
 
 [System.Serializable]
@@ -112,6 +113,9 @@ public class Exporter
         if(player != null)
         {
             data.player.instanceID = player.transform.GetInstanceID();
+            data.player.childrenIDs = new List<int>();
+            foreach (Transform child in player.transform)
+                data.player.childrenIDs.Add(child.GetInstanceID());
             //Json.ExportToJson(data, aScene.name);
         }
         return data;
