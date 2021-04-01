@@ -123,11 +123,10 @@ void CRenderManager::Render(CScene& aScene)
 	myGBuffer.ClearTextures(myClearColor);
 	myDeferredLightingTexture.ClearTexture();
 	myVolumetricAccumulationBuffer.ClearTexture();
-	//myDownsampledDepth.ClearTexture();
 
 	CEnvironmentLight* environmentlight = aScene.EnvironmentLight();
 	CCameraComponent* maincamera = aScene.MainCamera();
-	//CBoxLight* boxLight = aScene.CullBoxLights(nullptr)[0];
+	CBoxLight* boxLight = aScene.CullBoxLights(nullptr)[0];
 
 	std::vector<CGameObject*> gameObjects = aScene.CullGameObjects(maincamera);
 	std::vector<CGameObject*> instancedGameObjects;
@@ -187,8 +186,8 @@ void CRenderManager::Render(CScene& aScene)
 	// Shadows
 	myEnvironmentShadowDepth.SetAsDepthTarget();
 	myShadowRenderer.Render(environmentlight, gameObjects, instancedGameObjects);
-	//myBoxLightShadowDepth.SetAsDepthTarget();
-	//myShadowRenderer.Render(boxLight, gameObjects, instancedGameObjects);
+	myBoxLightShadowDepth.SetAsDepthTarget();
+	myShadowRenderer.Render(boxLight, gameObjects, instancedGameObjects);
 
 	// Decals
 	myDepthCopy.SetAsActiveTarget();
@@ -241,13 +240,7 @@ void CRenderManager::Render(CScene& aScene)
 	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_DOWNSAMPLE_DEPTH);
 
 	// Blur
-	myVolumetricBlurTexture.SetAsActiveTarget();
-	myVolumetricAccumulationBuffer.SetAsResourceOnSlot(0);
-	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_BILATERALHORIZONTAL);
-
-	myVolumetricAccumulationBuffer.SetAsActiveTarget();
-	myVolumetricBlurTexture.SetAsResourceOnSlot(0);
-	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_BILATERALVERTICAL);
+	myDepthCopy.SetAsResourceOnSlot(1);
 
 	myVolumetricBlurTexture.SetAsActiveTarget();
 	myVolumetricAccumulationBuffer.SetAsResourceOnSlot(0);
@@ -273,6 +266,22 @@ void CRenderManager::Render(CScene& aScene)
 	myVolumetricBlurTexture.SetAsResourceOnSlot(0);
 	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_BILATERALVERTICAL);
 
+	myVolumetricBlurTexture.SetAsActiveTarget();
+	myVolumetricAccumulationBuffer.SetAsResourceOnSlot(0);
+	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_BILATERALHORIZONTAL);
+
+	myVolumetricAccumulationBuffer.SetAsActiveTarget();
+	myVolumetricBlurTexture.SetAsResourceOnSlot(0);
+	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_BILATERALVERTICAL);
+
+	myVolumetricBlurTexture.SetAsActiveTarget();
+	myVolumetricAccumulationBuffer.SetAsResourceOnSlot(0);
+	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_BILATERALHORIZONTAL);
+
+	myVolumetricAccumulationBuffer.SetAsActiveTarget();
+	myVolumetricBlurTexture.SetAsResourceOnSlot(0);
+	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_BILATERALVERTICAL);
+	
 	//myVolumetricBlurTexture.SetAsActiveTarget();
 	//myVolumetricAccumulationBuffer.SetAsResourceOnSlot(0);
 	//myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_GAUSSIANHORIZONTAL);

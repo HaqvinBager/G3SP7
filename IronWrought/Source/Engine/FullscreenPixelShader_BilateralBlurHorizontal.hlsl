@@ -4,12 +4,13 @@ PixelOutput main(VertexToPixel input)
 {
     PixelOutput returnValue;
 	
-    float texelSize = 1.0f / resolution.y;
+    float texelSize = 1.0f / /*1600.0f*/resolution.x;
     float3 blurColor = float3(0.0f, 0.0f, 0.0f);
     float normalizationFactor = 0.0f;
     float bZ = 1.0 / normpdf(0.0, BSIGMA);
     float colorFactor = 0.0f;
     float3 originalPixelValue = fullscreenTexture1.Sample(defaultSampler, input.myUV.xy).rgb;
+    float3 originalDepth = fullscreenTexture2.Sample(defaultSampler, input.myUV.xy).rgb;
     
     unsigned int kernelSize = 5;
     float start = (((float) (kernelSize) - 1.0f) / 2.0f) * -1.0f;
@@ -17,9 +18,11 @@ PixelOutput main(VertexToPixel input)
     {
         float2 uv = input.myUV.xy + float2(texelSize * (start + (float) i), 0.0f);
         float3 resource = fullscreenTexture1.Sample(defaultSampler, uv).rgb;
+        float3 resourceDepth = fullscreenTexture2.Sample(defaultSampler, uv).rgb;
+        //colorFactor = normpdf3(resourceDepth - originalDepth, BSIGMA) * bZ * gaussianKernel5[i];
         colorFactor = normpdf3(resource - originalPixelValue, BSIGMA) * bZ * gaussianKernel5[i];
         normalizationFactor += colorFactor;
-        blurColor += resource * colorFactor /** gaussianKernel5[i]*/;
+        blurColor += resource * colorFactor;
     }
 	
     returnValue.myColor.rgb = blurColor / normalizationFactor;

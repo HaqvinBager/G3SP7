@@ -28,9 +28,7 @@ SamplerState defaultSampler : register(s0);
 static const float2 resolution = float2(1600.0f, 900.0f) / 8.0f;
 static const float gaussianKernel5[5] = { 0.06136f, 0.24477f, 0.38774f, 0.24477f, 0.06136f };
 
-#define SIGMA 10
 #define BSIGMA 0.1
-#define MSIZE 15
 
 float normpdf(in float x, in float sigma)
 {

@@ -20,6 +20,7 @@ CLightRenderer::CLightRenderer()
 	, myPointLightBuffer(nullptr)
 	, mySpotLightBuffer(nullptr)
 	, myBoxLightBuffer(nullptr)
+	, myVolumetricLightBuffer(nullptr)
 	, myPointLightVertexBuffer(nullptr)
 	, myPointLightIndexBuffer(nullptr)
 	, mySpotLightVertexBuffer(nullptr)
@@ -79,6 +80,9 @@ bool CLightRenderer::Init(CDirectXFramework* aFramework)
 
 	bufferDescription.ByteWidth = sizeof(SBoxLightBufferData);
 	ENGINE_HR_MESSAGE(device->CreateBuffer(&bufferDescription, nullptr, &myBoxLightBuffer), "Box Light Buffer could not be created.");
+
+	bufferDescription.ByteWidth = sizeof(SVolumetricLightBufferData);
+	ENGINE_HR_MESSAGE(device->CreateBuffer(&bufferDescription, nullptr, &myVolumetricLightBuffer), "Volumetric Light Buffer could not be created.");
 
 	//Vertex Setup
 	struct Vertex
@@ -494,6 +498,14 @@ void CLightRenderer::RenderVolumetric(CCameraComponent* aCamera, CEnvironmentLig
 	BindBuffer(myLightBuffer, myDirectionalLightBufferData, "Light Buffer");
 	myContext->PSSetConstantBuffers(1, 1, &myLightBuffer);
 
+	myVolumetricLightBufferData.myNumberOfSamplesReciprocal = (1.0f / 32.0f);
+	myVolumetricLightBufferData.myLightPower = 5000000.0f;
+	myVolumetricLightBufferData.myScatteringProbability = 0.0001f;
+	myVolumetricLightBufferData.myHenyeyGreensteinGValue = 0.0f;
+
+	BindBuffer(myVolumetricLightBuffer, myVolumetricLightBufferData, "Volumetric Light Buffer");
+	myContext->PSSetConstantBuffers(4, 1, &myVolumetricLightBuffer);
+
 	myContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	myContext->IASetInputLayout(nullptr);
 	myContext->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
@@ -652,6 +664,14 @@ void CLightRenderer::RenderVolumetric(CCameraComponent* aCamera, std::vector<CBo
 		BindBuffer(myBoxLightBuffer, myBoxLightBufferData, "Box Light Buffer");
 		myContext->VSSetConstantBuffers(3, 1, &myBoxLightBuffer);
 		myContext->PSSetConstantBuffers(3, 1, &myBoxLightBuffer);
+
+		myVolumetricLightBufferData.myNumberOfSamplesReciprocal = (1.0f / 16.0f);
+		myVolumetricLightBufferData.myLightPower = 100000.0f;
+		myVolumetricLightBufferData.myScatteringProbability = 0.0001f;
+		myVolumetricLightBufferData.myHenyeyGreensteinGValue = 0.0f;
+
+		BindBuffer(myVolumetricLightBuffer, myVolumetricLightBufferData, "Volumetric Light Buffer");
+		myContext->PSSetConstantBuffers(4, 1, &myVolumetricLightBuffer);
 
 		myContext->VSSetShader(myBoxLightVertexShader, nullptr, 0);
 
