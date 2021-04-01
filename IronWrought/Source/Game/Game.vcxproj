@@ -168,6 +168,7 @@
     <ClInclude Include="EnemyComponent.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="InGameState.h" />
+    <ClInclude Include="MainMenuState.h" />
     <ClInclude Include="NavMeshComponent.h" />
     <ClInclude Include="PlayerComponent.h" />
     <ClInclude Include="PlayerControllerComponent.h" />
@@ -189,6 +190,7 @@
     <ClCompile Include="EnemyComponent.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="InGameState.cpp" />
+    <ClCompile Include="MainMenuState.cpp" />
     <ClCompile Include="NavMeshComponent.cpp" />
     <ClCompile Include="PlayerComponent.cpp" />
     <ClCompile Include="PlayerControllerComponent.cpp" />

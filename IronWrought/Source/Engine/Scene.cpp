@@ -93,7 +93,8 @@ CScene::~CScene()
 	myGrid = nullptr;
 	delete myGrid;
 #endif
-	if (myPXScene != nullptr) {
+	if (myPXScene != nullptr)
+	{
 		myPXScene->release();
 		myPXScene = nullptr;
 	}
@@ -117,7 +118,7 @@ bool CScene::Init()
 	return true;
 }
 
-bool CScene::InitNavMesh(std::string aPath)
+bool CScene::InitNavMesh(const std::string& aPath)
 {
 	CNavmeshLoader* loader = new CNavmeshLoader();
 	myNavMesh = loader->LoadNavmesh(aPath);
@@ -144,15 +145,54 @@ bool CScene::InitNavMesh(std::string aPath)
 	loader = nullptr;
 	return true;
 }
-bool CScene::InitCanvas(std::string aPath)
+bool CScene::InitCanvas(const std::string& aPath)
 {
 	if (!myCanvas)
 		myCanvas = new CCanvas();
-	
+
 	myCanvas->Init(aPath, *this);
 
 	return true;
 }
+bool CScene::ReInitCanvas(const std::string& aPath)
+{
+	if (!myCanvas)
+		InitCanvas(aPath);
+
+	myCanvas->ReInit(aPath, *this);
+	return true;
+}
+void CScene::Awake()
+{
+	size_t currentSize = myGameObjects.size();
+	for (size_t i = 0; i < currentSize; ++i)
+		myGameObjects[i]->Awake();
+
+	size_t newSize = myGameObjects.size();
+	for (size_t j = currentSize; j < newSize; ++j)
+		myGameObjects[j]->Awake(); 	//Late awake
+}
+
+void CScene::Start()
+{
+	for (auto& gameObject : myGameObjects)
+		gameObject->Start();
+
+	CEngine::GetInstance()->GetActiveScene().MainCamera()->Fade(true);
+}
+
+void CScene::Update()
+{
+	for (auto& gameObject : myGameObjects)
+		gameObject->Update();
+
+	for (auto& gameObject : myGameObjects)
+		gameObject->LateUpdate();
+
+	//for (auto& gameObject : myGameObjects) //This was in place to make Childed Transforms update more accurately /Axel 2021-03-31
+	//	gameObject->LateUpdate();
+}
+
 //SETUP END
 //SETTERS START
 void CScene::MainCamera(CCameraComponent* aMainCamera)
@@ -233,8 +273,10 @@ std::vector<CPointLight*>& CScene::PointLights()
 std::vector<CTextInstance*> CScene::Texts()
 {
 	std::vector<CTextInstance*> textToRender;
-	for (auto& text : myTexts) {
-		if (text->GetShouldRender()) {
+	for (auto& text : myTexts)
+	{
+		if (text->GetShouldRender())
+		{
 			textToRender.emplace_back(text);
 		}
 	}
@@ -446,6 +488,8 @@ bool CScene::AddInstance(CTextInstance* aText)
 
 bool CScene::AddInstance(CGameObject* aGameObject)
 {
+	//Lägg in dom i en "Next frame i will be initied vector, Then when they are inited we move it into myGameObjects
+
 	myGameObjects.emplace_back(aGameObject);
 	myIDGameObjectMap[aGameObject->InstanceID()] = aGameObject;
 
@@ -487,7 +531,8 @@ bool CScene::AddInstance(CSpriteInstance* aSprite)
 //PhysX
 bool CScene::AddPXScene(PxScene* aPXScene)
 {
-	if (!aPXScene) {
+	if (!aPXScene)
+	{
 		return false;
 	}
 	myPXScene = aPXScene;

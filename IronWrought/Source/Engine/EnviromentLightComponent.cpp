@@ -5,30 +5,31 @@
 #include "LightFactory.h"
 #include "TransformComponent.h"
 
-CEnviromentLightComponent::CEnviromentLightComponent(CGameObject& aParent, DirectX::SimpleMath::Vector3 aColor, float anIntensity, DirectX::SimpleMath::Vector3 aDirection)
+CEnvironmentLightComponent::CEnvironmentLightComponent(CGameObject& aParent, std::string aCubeMapName, DirectX::SimpleMath::Vector3 aColor, float anIntensity, DirectX::SimpleMath::Vector3 aDirection)
 	: CComponent(aParent)
 {
-	myEnvironmentLight = CLightFactory::GetInstance()->CreateEnvironmentLight(ASSETPATH("Assets/Cubemaps/Cubemap_Inside.dds"));
+	myEnvironmentLight = CLightFactory::GetInstance()->CreateEnvironmentLight(ASSETPATH("Assets/Cubemaps/" + aCubeMapName + ".dds"));
 	myEnvironmentLight->SetColor(aColor);
 	myEnvironmentLight->SetIntensity(anIntensity);
 	//not sure if this work! We want to set the direction of this transform!
 	aParent.myTransform->Transform().Forward(aDirection);
 	myEnvironmentLight->SetDirection(aParent.myTransform->Transform().Forward());
+	//myEnvironmentLight->SetDirection(aDirection);
 	myEnvironmentLight->SetPosition({ /*20.0f*/0.0f, 20.0f, 0.0f });
 }
 
-CEnviromentLightComponent::~CEnviromentLightComponent()
+CEnvironmentLightComponent::~CEnvironmentLightComponent()
 {
 }
 
-void CEnviromentLightComponent::Awake()
+void CEnvironmentLightComponent::Awake()
 {
 }
 
-void CEnviromentLightComponent::Start()
+void CEnvironmentLightComponent::Start()
 {
 }
 
-void CEnviromentLightComponent::Update()
+void CEnvironmentLightComponent::Update()
 {
 }

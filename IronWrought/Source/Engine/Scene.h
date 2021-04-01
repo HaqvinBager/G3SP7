@@ -33,7 +33,7 @@ class CScene {
 	friend class CEngine;
 	friend class CBootUpState;
 	friend class CInGameState;
-	friend class CMenuState;
+	friend class CMainMenuState;
 public:
 //SETUP START
 	CScene(const unsigned int aGameObjectCount = 0);
@@ -41,9 +41,17 @@ public:
 
 	//static CScene* GetInstance();
 	bool Init();
-	bool InitNavMesh(std::string aPath);
-	bool InitCanvas(std::string aPath);
+	bool InitNavMesh(const std::string& aPath);
+	bool InitCanvas(const std::string& aPath);
+	bool ReInitCanvas(const std::string& aPath);
 //SETUP END
+
+//UPDATE
+	void Awake();
+	void Start();
+	void Update();
+//UPDATE END
+
 public:
 //SETTERS START
 	void MainCamera(CCameraComponent* aMainCamera);

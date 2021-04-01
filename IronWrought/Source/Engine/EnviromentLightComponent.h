@@ -4,11 +4,12 @@
 class CGameObject;
 class CEnvironmentLight;
 
-class CEnviromentLightComponent : public CComponent
+class CEnvironmentLightComponent : public CComponent
 {
 public:
-	CEnviromentLightComponent(CGameObject& aParent, DirectX::SimpleMath::Vector3 aColor = { 1.f, 1.f, 1.f }, float anIntensity =  1.0f, DirectX::SimpleMath::Vector3 aDirection = { 0.f, 0.f, 1.f });
-	~CEnviromentLightComponent();
+	CEnvironmentLightComponent(CGameObject& aParent, std::string aCubeMapName, DirectX::SimpleMath::Vector3 aColor = { 1.f, 1.f, 1.f }, float anIntensity =  1.0f, DirectX::SimpleMath::Vector3 aDirection = { 0.f, 0.f, 1.f });
+	~CEnvironmentLightComponent();
+	CEnvironmentLightComponent(const CEnvironmentLightComponent&) = delete;
 
 	void Awake() override;
 	void Start() override;

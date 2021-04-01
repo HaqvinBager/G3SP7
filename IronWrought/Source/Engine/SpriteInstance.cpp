@@ -8,6 +8,7 @@
 CSpriteInstance::CSpriteInstance(CScene& aScene, bool aAddToScene)
 	: mySprite(nullptr)
 	, myRenderOrder(ERenderOrder::BackgroundLayer)
+	, myShouldRender(true)
 {
 	if (aAddToScene)
 		aScene.AddInstance(this);
@@ -15,6 +16,7 @@ CSpriteInstance::CSpriteInstance(CScene& aScene, bool aAddToScene)
 CSpriteInstance::CSpriteInstance()
 	: mySprite(nullptr)
 	, myRenderOrder(ERenderOrder::BackgroundLayer)
+	, myShouldRender(true)
 {
 }
 
@@ -64,7 +66,7 @@ void CSpriteInstance::SetRenderOrder(ERenderOrder aRenderOrder)
 void CSpriteInstance::SetPosition(DirectX::SimpleMath::Vector2 aPosition)
 {
 	myPosition.x = aPosition.x;
-	myPosition.y -= aPosition.y;
+	myPosition.y = -aPosition.y;
 }
 
 void CSpriteInstance::SetNormalPosition(DirectX::SimpleMath::Vector2 aPosition)

@@ -53,6 +53,7 @@ public:
 	~CEngine();
 	bool Init(CWindowHandler::SWindowData& someWindowData);
 	float BeginFrame();
+	void Update();
 	void RenderFrame();
 	void EndFrame();
 	CWindowHandler* GetWindowHandler();
@@ -79,6 +80,8 @@ public:
 	void RemoveScene(CStateStack::EState aState);
 	void ClearModelFactory();
 
+	void ShowCursor();
+	void HideCursor();
 	void LoadGraph(const std::string& aSceneName);
 
 private:
