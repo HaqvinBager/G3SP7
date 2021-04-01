@@ -420,12 +420,7 @@ void CRenderManager::Clear(DirectX::SimpleMath::Vector4 aClearColor)
 
 void CRenderManager::RenderBloom()
 {
-	//myLuminanceTexture.SetAsActiveTarget();
-	//myDeferredLightingTexture.SetAsResourceOnSlot(0);
-	//myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_LUMINANCE);
-
 	myHalfSizeTexture.SetAsActiveTarget();
-	//myLuminanceTexture.SetAsResourceOnSlot(0);
 	myDeferredLightingTexture.SetAsResourceOnSlot(0);
 	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_COPY);
 
