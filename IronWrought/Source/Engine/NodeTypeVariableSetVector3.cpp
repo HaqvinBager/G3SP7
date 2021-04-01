@@ -9,8 +9,6 @@ CNodeTypeVariableSetVector3::CNodeTypeVariableSetVector3()
 	myPins.push_back(SPin("", SPin::EPinTypeInOut::EPinTypeInOut_OUT));
 	myPins.push_back(SPin("Val", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EVector3));
 	myPins.push_back(SPin("", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EVector3));
-	DeclareDataOnPinIfNecessary<Vector3>(myPins[2], Vector3(1.0f,1.0f,1.0f));
-	DeclareDataOnPinIfNecessary<Vector3>(myPins[3], Vector3(1.0f,1.0f,1.0f));
 }
 
 int CNodeTypeVariableSetVector3::OnEnter(CNodeInstance* aTriggeringNodeInstance)

@@ -138,6 +138,7 @@ public:
 
 	std::vector<SPin> GetPins();
 	virtual bool IsStartNode() { return false; }
+	virtual bool IsInputNode() { return false; }
 	virtual std::string GetNodeTypeCategory() { return ""; }
 	bool IsFlowNode()
 	{
