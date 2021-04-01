@@ -3,7 +3,7 @@
 PixelOutput main(VertexToPixel input) {
 	PixelOutput returnValue;
 	
-	float texelSize = 1.0f / resolution.y;
+    float texelSize = 1.0f / /*resolution*/(myResolution.y * 0.125f);
 	float3 blurColor = float3(0.0f, 0.0f, 0.0f);
 	
 	unsigned int kernelSize = 5;

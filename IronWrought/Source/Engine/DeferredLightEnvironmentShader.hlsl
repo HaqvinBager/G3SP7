@@ -28,7 +28,7 @@ PixelOutput main(VertexToPixel input)
     
     float3 ambiance = EvaluateAmbiance(environmentTexture, normal, vertexNormal, toEye, perceptualRoughness, metalness, albedo, ambientOcclusion, diffuseColor, specularColor);
     float3 directionalLight = EvaluateDirectionalLight(diffuseColor, specularColor, normal, perceptualRoughness, directionalLightColor.rgb * directionalLightColor.a, toDirectionalLight.xyz, toEye.xyz);
-    float3 emissive = albedo * emissiveData;
+    float3 emissive = 20.0f * albedo * emissiveData;
     float3 radiance = ambiance + directionalLight * (1.0f - ShadowFactor(worldPosition, directionalLightPosition.xyz, toDirectionalLightView, toDirectionalLightProjection)) + emissive;
 
     output.myColor.rgb = radiance;
