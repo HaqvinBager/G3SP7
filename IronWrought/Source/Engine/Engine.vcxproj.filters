@@ -805,6 +805,7 @@
     </ClCompile>
     <ClCompile Include="SphereColliderComponent.cpp" />
     <ClCompile Include="NodeTypeAddForce.cpp" />
+    <ClCompile Include="GravityGloveEditor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1506,6 +1507,7 @@
     </ClInclude>
     <ClInclude Include="SphereColliderComponent.h" />
     <ClInclude Include="NodeTypeAddForce.h" />
+    <ClInclude Include="GravityGloveEditor.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">

@@ -13,6 +13,9 @@ CGravityGloveComponent::CGravityGloveComponent(CGameObject& aParent, CTransformC
 	: CBehaviour(aParent)
 	, myGravitySlot(aGravitySlot)
 {
+	mySettings.myPushForce = 57.5f;
+	mySettings.myDistanceToMaxLinearVelocity = 2.5f;
+	mySettings.myMaxPushForce = 100.0f;
 }
 
 CGravityGloveComponent::~CGravityGloveComponent()
@@ -41,7 +44,7 @@ void CGravityGloveComponent::Update()
 	{
 		Vector3 direction = -(myCurrentTarget->GameObject().myTransform->WorldPosition() - myGravitySlot->WorldPosition());
 		float distance = direction.Length();
-		myCurrentTarget->GetDynamicRigidBody()->GetBody().setMaxLinearVelocity(max(2.5f, distance));
+		myCurrentTarget->GetDynamicRigidBody()->GetBody().setMaxLinearVelocity(max(mySettings.myDistanceToMaxLinearVelocity, distance));
 		myCurrentTarget->AddForce(direction, distance);
 		//Yaay Here things are happening omfg lets gouee! : D
 	}
@@ -49,6 +52,13 @@ void CGravityGloveComponent::Update()
 
 void CGravityGloveComponent::Pull()
 {
+	if (myCurrentTarget != nullptr)
+	{
+		myCurrentTarget->GetDynamicRigidBody()->GetBody().setMaxLinearVelocity(100.f);
+		myCurrentTarget = nullptr;
+		return;
+	}
+
 	Vector3 start = GameObject().myTransform->GetWorldMatrix().Translation();
 	Vector3 dir = -GameObject().myTransform->GetWorldMatrix().Forward();
 
@@ -74,7 +84,7 @@ void CGravityGloveComponent::Push()
 {
 	if (myCurrentTarget != nullptr) {
 		myCurrentTarget->GetDynamicRigidBody()->GetBody().setMaxLinearVelocity(100.f);
-		myCurrentTarget->AddForce(-GameObject().myTransform->GetWorldMatrix().Forward(), 57.5f);
+		myCurrentTarget->AddForce(-GameObject().myTransform->GetWorldMatrix().Forward(), mySettings.myPushForce);
 		myCurrentTarget = nullptr;
 	}
 }
