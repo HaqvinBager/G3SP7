@@ -30,6 +30,8 @@ public:
 
 	void AttachShape(physx::PxShape* aShape);
 
+	void SetPosition(const Vector3& aPos);
+
 	CRigidDynamicBody* GetDynamicRigidBody() { return myDynamicRigidBody; }
 private:
 	CRigidDynamicBody* myDynamicRigidBody;

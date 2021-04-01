@@ -37,7 +37,6 @@ public:
 
 
 	PxRaycastBuffer Raycast(Vector3 origin, Vector3 direction, float distance);
-	void RaycastHit(PxRaycastBuffer aHit, const PxVec3& dir);
 
 
 	PxMaterial* CreateMaterial(materialfriction amaterial);

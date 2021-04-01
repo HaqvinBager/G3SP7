@@ -15,6 +15,7 @@
 #include "BoxColliderComponent.h"
 #include "SphereColliderComponent.h"
 #include "CapsuleColliderComponent.h"
+#include <GravityGloveComponent.h>
 //#include <iostream>
 
 #include <BinReader.h>
@@ -252,11 +253,21 @@ void CSceneManager::AddPlayer(CScene& aScene/*, RapidObject someData*/)
 	CAnimationComponent* animComp = AnimationLoader::AddAnimationsToGameObject(model, modelPath);
 	animComp->BlendToAnimation(1);
 
+	CGameObject* gravityGloveSlot = new CGameObject(99);
+	gravityGloveSlot->myTransform->Scale(0.1f);
+	gravityGloveSlot->myTransform->SetParent(camera->myTransform);
+	gravityGloveSlot->myTransform->Position({0.f, 0.f, 1.5f});
+	std::string gravitytestpath = ASSETPATH("Assets/Graphics/Environmentprops/Static_props/EN_P_Tetrapod.fbx");
+	gravityGloveSlot->AddComponent<CModelComponent>(*gravityGloveSlot, gravitytestpath);
+
+	camera->AddComponent<CGravityGloveComponent>(*camera, gravityGloveSlot->myTransform);
+
 	player->AddComponent<CPlayerControllerComponent>(*player);// CPlayerControllerComponent constructor sets position of camera child object.
 	player->GetComponent<CPlayerControllerComponent>()->SetControllerPosition({ 0.f, 5.0f,0.0f });
 	aScene.AddInstance(player);
 	aScene.AddInstance(model);
 	aScene.AddInstance(camera);
+	aScene.AddInstance(gravityGloveSlot);
 	aScene.MainCamera(camera->GetComponent<CCameraComponent>());
 	aScene.Player(player);
 }

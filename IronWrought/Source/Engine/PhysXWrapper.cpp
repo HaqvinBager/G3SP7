@@ -155,23 +155,11 @@ PxRaycastBuffer CPhysXWrapper::Raycast(Vector3 aOrigin, Vector3 aDirection, floa
 	PxReal maxDistance = aDistance;
 	PxRaycastBuffer hit;
 
-	bool status = scene->raycast(origin, unitDir, maxDistance, hit);
-	if (status) {
-		RaycastHit(hit, unitDir);
-	}
+	/*bool status = */scene->raycast(origin, unitDir, maxDistance, hit);
+	/*if (status) {
+		return hit;
+	}*/
 	return hit;
-}
-
-void CPhysXWrapper::RaycastHit(PxRaycastBuffer aHit, const PxVec3& dir)
-{
-	CTransformComponent* transform = (CTransformComponent*)aHit.getAnyHit(0).actor->userData;
-	
-	if (transform) {
-		transform->GameObject().GetComponent<CRigidBodyComponent>()->AddForce( dir * 100.f);
-		CLineInstance* myLine = new CLineInstance();
-		myLine->Init(CLineFactory::GetInstance()->CreateLine({ aHit.getAnyHit(0).position.x, aHit.getAnyHit(0).position.y, aHit.getAnyHit(0).position.z }, { aHit.getAnyHit(0).position.x + dir.x, aHit.getAnyHit(0).position.y + dir.y, aHit.getAnyHit(0).position.z + dir.z }, { 0,0,255,255 }));
-		CEngine::GetInstance()->GetActiveScene().AddInstance(myLine);
-	}
 }
 
 

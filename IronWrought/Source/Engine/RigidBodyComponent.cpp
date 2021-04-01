@@ -58,3 +58,7 @@ void CRigidBodyComponent::AttachShape(physx::PxShape* aShape)
 		//CEngine::GetInstance()->GetActiveScene().PXScene()->addActor(myDynamicRigidBody->GetBody());
 	}
 }
+
+void CRigidBodyComponent::SetPosition(const Vector3& aPos) {
+	myDynamicRigidBody->GetBody().setGlobalPose({aPos.x, aPos.y, aPos.z});
+}
