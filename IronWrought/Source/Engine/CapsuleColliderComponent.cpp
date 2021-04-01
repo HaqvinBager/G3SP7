@@ -1,16 +1,17 @@
 #include "stdafx.h"
 #include "CapsuleColliderComponent.h"
-#include "TransformComponent.h"
-//#include "CollisionManager.h"
-#include "MainSingleton.h"
+#include "PhysXWrapper.h"
+#include "Engine.h"
+#include "RigidBodyComponent.h"
+#include "RigidDynamicBody.h"
 
-CCapsuleColliderComponent::CCapsuleColliderComponent(CGameObject& aParent, float aRadius, float aHeight, ECollisionLayer aCollisionLayer, uint64_t someCollisionFlags)
-	: CCollider(aParent, aCollisionLayer, someCollisionFlags)
+CCapsuleColliderComponent::CCapsuleColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const float& aRadius, const float& aHeight)
+	: CBehaviour(aParent)
+	, myPositionOffset(aPositionOffset)
 	, myRadius(aRadius)
-	, myHeight(aHeight) 
+	, myHeight(aHeight)
 {
-	CMainSingleton::CollisionManager().RegisterCollider(this);
-	SetCollisionLayer(aCollisionLayer);
+
 }
 
 CCapsuleColliderComponent::~CCapsuleColliderComponent()
@@ -20,54 +21,37 @@ CCapsuleColliderComponent::~CCapsuleColliderComponent()
 
 void CCapsuleColliderComponent::Awake()
 {
-	SetPosition(GameObject().GetComponent<CTransformComponent>()->Position());
-	myTop = GetPosition();
-	if (myHeight < (myRadius * 2)) {
-		myHeight = myRadius * 2;
-	}
-	SetPosition({GetPosition().x, GetPosition().y - myHeight / 2.0f, GetPosition().z});
-	myTop.y += myHeight / 2.0f;
-
 }
 
 void CCapsuleColliderComponent::Start()
 {
+	myShape = CEngine::GetInstance()->GetPhysx().GetPhysics()->createShape(physx::PxCapsuleGeometry(myRadius, myHeight * 0.5f), *CEngine::GetInstance()->GetPhysx().CreateMaterial(CPhysXWrapper::materialfriction::metal), true);
+	PxVec3 offset = { myPositionOffset.x, myPositionOffset.y, myPositionOffset.z };
+	PxTransform relativePose(offset, PxQuat(PxHalfPi, physx::PxVec3(0, 0, 1)));
+	myShape->setLocalPose(relativePose);
+
+	CRigidBodyComponent* rigidBody = nullptr;
+	if (GameObject().TryGetComponent(&rigidBody))
+	{
+		rigidBody->GetDynamicRigidBody()->GetBody();
+		rigidBody->AttachShape(myShape);
+	}
+	else
+	{
+		DirectX::SimpleMath::Vector3 translation;
+		DirectX::SimpleMath::Vector3 scale;
+		DirectX::SimpleMath::Quaternion quat;
+		DirectX::SimpleMath::Matrix transform = GameObject().GetComponent<CTransformComponent>()->GetLocalMatrix();
+		transform.Decompose(scale, quat, translation);
+
+		PxVec3 pos = { translation.x, translation.y, translation.z };
+		PxQuat pxQuat = { quat.x, quat.y, quat.z, quat.w };
+		CEngine::GetInstance()->GetPhysx().GetPhysics()->createRigidStatic({ pos, pxQuat });
+	}
 }
 
 void CCapsuleColliderComponent::Update()
 {
-	SetPosition(GameObject().GetComponent<CTransformComponent>()->Position());
-	myTop = GetPosition();
-	if (myHeight < (myRadius * 2))
-	{
-		myHeight = myRadius * 2;
-	}
-	SetPosition({ GetPosition().x, GetPosition().y - myHeight / 2.0f, GetPosition().z });
-	myTop.y += myHeight / 2.0f;
-}
-
-bool CCapsuleColliderComponent::Collided(CCircleColliderComponent* /*aCollidedGameObject*/)
-{
-	//NO INTERSECTION TEST IMPLEMENTED AS OF YET
-	return false;
-}
-
-bool CCapsuleColliderComponent::Collided(CTriangleColliderComponent* /*aCollidedGameObject*/)
-{
-	//NO INTERSECTION TEST IMPLEMENTED AS OF YET
-	return false;
-}
-
-bool CCapsuleColliderComponent::Collided(CRectangleColliderComponent* /*aCollidedGameObject*/)
-{
-	//NO INTERSECTION TEST IMPLEMENTED AS OF YET
-	return false;
-}
-
-bool CCapsuleColliderComponent::Collided(CCollider* /*aCollidedGameObject*/)
-{
-	//GetParent().Collided(aCollidedGameObject);
-	return false;
 }
 
 void CCapsuleColliderComponent::OnEnable()
@@ -76,24 +60,4 @@ void CCapsuleColliderComponent::OnEnable()
 
 void CCapsuleColliderComponent::OnDisable()
 {
-}
-
-float const CCapsuleColliderComponent::GetRadius() const
-{
-	return myRadius;
-}
-
-void CCapsuleColliderComponent::SetRadius(float aRadius)
-{
-	myRadius = aRadius;
-}
-
-float const CCapsuleColliderComponent::GetHeight() const
-{
-	return myHeight;
-}
-
-void CCapsuleColliderComponent::SetHeight(float aHeight)
-{
-	myHeight = aHeight;
 }

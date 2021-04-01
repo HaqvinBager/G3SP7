@@ -1,4 +1,5 @@
 static float PI = 3.14159265;
+
 float3 Diffuse(float3 pAlbedo)
 {
     return pAlbedo / PI;

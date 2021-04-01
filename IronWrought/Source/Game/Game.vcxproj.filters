@@ -69,8 +69,14 @@
     <ClInclude Include="EnemyComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GravityGloveComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="BootUpState.h">
       <Filter>State Stack</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerComponent.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MainMenuState.h">
       <Filter>State Stack</Filter>
@@ -128,8 +134,14 @@
     <ClCompile Include="EnemyComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GravityGloveComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="BootUpState.cpp">
       <Filter>State Stack</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerComponent.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MainMenuState.cpp">
       <Filter>State Stack</Filter>

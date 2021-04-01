@@ -12,4 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d184d122156d96b4c9a8a1a955cc3186, type: 3}
   m_Name: Level_1-1_Scenes
   m_EditorClassIdentifier: 
-  myScenes: []
+  myScenes:
+  - sceneAsset: {fileID: 102900000, guid: 9c8332e649a886a42b2c8bee9992304d, type: 3}
+    scenePath: Assets/Scenes/Level_1-1/Level_1-1_Environment.unity
+  - sceneAsset: {fileID: 102900000, guid: 9a81ded7ed7a8874082c9fbf7e54f4a4, type: 3}
+    scenePath: Assets/Scenes/Level_1-1/Level_1-1_GuidingDesign.unity
+  - sceneAsset: {fileID: 102900000, guid: 3e6d7327f3655a04d821d301f5eef079, type: 3}
+    scenePath: Assets/Scenes/Level_1-1/Level_1-1_InteractableProps.unity
+  - sceneAsset: {fileID: 102900000, guid: 51ed0e9e319cb804f83bee6143e7759c, type: 3}
+    scenePath: Assets/Scenes/Level_1-1/Level_1-1_Layout.unity
+  - sceneAsset: {fileID: 102900000, guid: 01cfb555400567d4ba4bee4932596264, type: 3}
+    scenePath: Assets/Scenes/Level_1-1/Level_1-1_Lights.unity
+  - sceneAsset: {fileID: 102900000, guid: 6252ca2860a01d14ba82e5e37f56a4fd, type: 3}
+    scenePath: Assets/Scenes/Level_1-1/Level_1-1_Script.unity
