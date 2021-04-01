@@ -31,10 +31,10 @@ public:
 
 	void AttachShape(physx::PxShape* aShape);
 	
+	CRigidDynamicBody* GetDynamicRigidBody() { return myDynamicRigidBody; }
 private:
 	void AddForce(const physx::PxVec3& aDirection);
 
-	CRigidDynamicBody* GetDynamicRigidBody() { return myDynamicRigidBody; }
 private:
 	CRigidDynamicBody* myDynamicRigidBody;
 };

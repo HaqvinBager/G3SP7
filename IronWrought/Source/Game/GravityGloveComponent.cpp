@@ -33,11 +33,15 @@ void CGravityGloveComponent::Update()
 	if (Input::GetInstance()->IsMousePressed(Input::EMouseButton::Left)) {
 		Pull();
 	}
+	if (Input::GetInstance()->IsMousePressed(Input::EMouseButton::Right)) {
+		Push();
+	}
 
 	if (myCurrentTarget != nullptr)
 	{
 		Vector3 direction = -(myCurrentTarget->GameObject().myTransform->WorldPosition() - myGravitySlot->WorldPosition());
 		float distance = direction.Length();
+		myCurrentTarget->GetDynamicRigidBody()->GetBody().setMaxLinearVelocity(max(2.5f, distance));
 		myCurrentTarget->AddForce(direction, distance);
 		//Yaay Here things are happening omfg lets gouee! : D
 	}
@@ -68,6 +72,11 @@ void CGravityGloveComponent::Pull()
 
 void CGravityGloveComponent::Push()
 {
+	if (myCurrentTarget != nullptr) {
+		myCurrentTarget->GetDynamicRigidBody()->GetBody().setMaxLinearVelocity(100.f);
+		myCurrentTarget->AddForce(-GameObject().myTransform->GetWorldMatrix().Forward(), 57.5f);
+		myCurrentTarget = nullptr;
+	}
 }
 
 void CGravityGloveComponent::OnEnable()
