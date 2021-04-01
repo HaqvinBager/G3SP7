@@ -2,6 +2,7 @@
 #include "Behaviour.h"
 
 class CTransformComponent;
+class CRigidBodyComponent;
 
 class CGravityGloveComponent : public CBehaviour
 {
@@ -20,5 +21,6 @@ public:
 	void OnDisable() override;
 private:
 	CTransformComponent* myGravitySlot;
+	CRigidBodyComponent* myCurrentTarget;
 };
 

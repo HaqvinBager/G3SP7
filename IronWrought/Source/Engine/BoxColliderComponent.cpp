@@ -30,6 +30,7 @@ void CBoxColliderComponent::Awake()
 		physx::PxRigidDynamic& dynamic = rigidBody->GetDynamicRigidBody()->GetBody();
 		dynamic.setMass(3);
 		dynamic.setCMassLocalPose({ myPositionOffset.x, myPositionOffset.y, myPositionOffset.z });
+		
 	}
 	else
 	{

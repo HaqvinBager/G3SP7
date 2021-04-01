@@ -43,7 +43,13 @@ void CRigidBodyComponent::Update()
 
 void CRigidBodyComponent::AddForce(const Vector3& aDirection)
 {
-	myDynamicRigidBody->GetBody().addForce({aDirection.x, aDirection.y, aDirection.z}, PxForceMode::eIMPULSE);
+	AddForce(PxVec3(aDirection.x, aDirection.y, aDirection.z));
+}
+
+void CRigidBodyComponent::AddForce(const Vector3& aNormalizedDirection, const float aForce)
+{
+	Vector3 aDirectionWithForce = aNormalizedDirection * aForce;
+	AddForce(PxVec3(aDirectionWithForce.x, aDirectionWithForce.y, aDirectionWithForce.z));
 }
 
 void CRigidBodyComponent::AddForce(const physx::PxVec3& aDirection)

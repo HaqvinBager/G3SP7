@@ -137,6 +137,27 @@ PxScene* CPhysXWrapper::GetPXScene()
 	return CEngine::GetInstance()->GetActiveScene().PXScene();
 }
 
+bool CPhysXWrapper::TryRayCast(const Vector3& aOrigin, Vector3& aDirection, const float aDistance, PxRaycastBuffer& /*outHit*/)
+{
+	PxScene* scene = CEngine::GetInstance()->GetActiveScene().PXScene();
+
+	PxVec3 origin;
+	origin.x = aOrigin.x;
+	origin.y = aOrigin.y;
+	origin.z = aOrigin.z;
+
+	PxVec3 unitDir;
+	aDirection.Normalize();
+	unitDir.x = aDirection.x;
+	unitDir.y = aDirection.y;
+	unitDir.z = aDirection.z;
+
+	PxReal maxDistance = aDistance;
+	PxRaycastBuffer hit;
+	bool hasHit = scene->raycast(origin, unitDir, maxDistance, hit);
+	return hasHit;
+}
+
 PxRaycastBuffer CPhysXWrapper::Raycast(Vector3 aOrigin, Vector3 aDirection, float aDistance)
 {
 	PxScene* scene = CEngine::GetInstance()->GetActiveScene().PXScene();

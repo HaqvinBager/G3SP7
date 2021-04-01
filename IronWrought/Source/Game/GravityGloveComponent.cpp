@@ -7,6 +7,7 @@
 #include "LineInstance.h"
 #include "Engine.h"
 #include "Scene.h"
+#include "RigidDynamicBody.h"
 
 CGravityGloveComponent::CGravityGloveComponent(CGameObject& aParent, CTransformComponent* aGravitySlot)
 	: CBehaviour(aParent)
@@ -32,6 +33,14 @@ void CGravityGloveComponent::Update()
 	if (Input::GetInstance()->IsMousePressed(Input::EMouseButton::Left)) {
 		Pull();
 	}
+
+	if (myCurrentTarget != nullptr)
+	{
+		Vector3 direction = -(myCurrentTarget->GameObject().myTransform->WorldPosition() - myGravitySlot->WorldPosition());
+		float distance = direction.Length();
+		myCurrentTarget->AddForce(direction, distance);
+		//Yaay Here things are happening omfg lets gouee! : D
+	}
 }
 
 void CGravityGloveComponent::Pull()
@@ -39,12 +48,13 @@ void CGravityGloveComponent::Pull()
 	Vector3 start = GameObject().myTransform->GetWorldMatrix().Translation();
 	Vector3 dir = -GameObject().myTransform->GetWorldMatrix().Forward();
 
-
-	PxRaycastBuffer hit = CEngine::GetInstance()->GetPhysx().Raycast(start, dir, 100000);
-
+	PxRaycastBuffer hit = CEngine::GetInstance()->GetPhysx().Raycast(start, dir, 100000);;
 	CTransformComponent* transform = (CTransformComponent*)hit.getAnyHit(0).actor->userData;
-	CRigidBodyComponent* rigidBody = transform->GetComponent<CRigidBodyComponent>();
-	rigidBody->SetPosition(myGravitySlot->Position());
+	if (transform == nullptr)
+		return;
+
+	myCurrentTarget = transform->GetComponent<CRigidBodyComponent>();
+	//myCurrentTarget->SetPosition(myGravitySlot->WorldPosition());
 	
 #ifdef _DEBUG
 	CLineInstance* myLine = new CLineInstance();

@@ -26,11 +26,13 @@ public:
 	void Update() override;
 
 	void AddForce(const Vector3& aDirection);
-	void AddForce(const physx::PxVec3& aDirection);
+	void AddForce(const Vector3& aDirection, const float aForce);
+	void SetPosition(const Vector3& aPos);
 
 	void AttachShape(physx::PxShape* aShape);
-
-	void SetPosition(const Vector3& aPos);
+	
+private:
+	void AddForce(const physx::PxVec3& aDirection);
 
 	CRigidDynamicBody* GetDynamicRigidBody() { return myDynamicRigidBody; }
 private:

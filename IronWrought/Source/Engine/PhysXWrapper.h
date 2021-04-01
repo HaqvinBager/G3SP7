@@ -36,6 +36,8 @@ public:
 	PxPhysics* GetPhysics() { return myPhysics; }
 
 
+	bool TryRayCast(const Vector3& aOrigin, Vector3& aDirection, const float aDistance, PxRaycastBuffer& outHit);
+
 	PxRaycastBuffer Raycast(Vector3 origin, Vector3 direction, float distance);
 
 
