@@ -28,7 +28,7 @@ public:
 	static bool HasParseError(const rapidjson::Document& aDoc);
 
 public:
-	void Init();
+	void InitFromGenerated();
 	const bool HasAssetPath(const int anAssetID) const;
 	const std::string& GetAssetPath(const int anAssetID) const;
 

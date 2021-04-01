@@ -79,6 +79,8 @@ public:
 	void RemoveScene(CStateStack::EState aState);
 	void ClearModelFactory();
 
+	void ShowCursor();
+	void HideCursor();
 	void LoadGraph(const std::string& aSceneName);
 
 private:

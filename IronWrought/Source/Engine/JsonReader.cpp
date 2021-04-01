@@ -42,7 +42,7 @@ bool CJsonReader::HasParseError(const rapidjson::Document& aDoc)
 	return aDoc.HasParseError();
 }
 
-void CJsonReader::Init()
+void CJsonReader::InitFromGenerated()
 {
 	const auto& doc = LoadDocument(ASSETPATH("Assets/Generated/Resource_Assets.json"));
 	if (!IsValid(doc, { "models", "vertexColors" }))

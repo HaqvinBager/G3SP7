@@ -78,9 +78,19 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneJson)
 	}
 
 	CEngine::GetInstance()->GetPhysx().Cooking(scene->ActiveGameObjects(), scene);
-	AddPlayer(*scene); //This add play does not read data from unity. (Yet..!) /Axel 2021-03-24
+	AddPlayer(*scene); //This add player does not read data from unity. (Yet..!) /Axel 2021-03-24
 
 	scene->InitCanvas(ASSETPATH("Assets/Graphics/UI/JSON/UI_HUD.json"));
+
+	return scene;
+}
+
+CScene* CSceneManager::CreateMenuScene(const std::string& aSceneName, const std::string& aCanvasPath)
+{
+	aSceneName;
+	CScene* scene = CreateEmpty();
+	scene->MainCamera()->GameObject().GetComponent<CCameraControllerComponent>()->SetCameraMode(CCameraControllerComponent::ECameraMode::MenuCam);
+	scene->InitCanvas(aCanvasPath);
 
 	return scene;
 }

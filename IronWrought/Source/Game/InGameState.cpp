@@ -38,7 +38,7 @@ CInGameState::~CInGameState() {}
 
 void CInGameState::Awake()
 {
-	CJsonReader::Get()->Init();
+	CJsonReader::Get()->InitFromGenerated();
 	CScene* scene = CSceneManager::CreateEmpty();
 	TEMP_VFX(scene);
 
@@ -50,9 +50,9 @@ void CInGameState::Awake()
 
 void CInGameState::Start()
 {
-
-
 	TEMP_VFX(&CEngine::GetInstance()->GetActiveScene());
+
+	CEngine::GetInstance()->SetActiveScene(myState);
 
 	myExitLevel = false;	
 }

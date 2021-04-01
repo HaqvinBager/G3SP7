@@ -117,7 +117,7 @@ bool CScene::Init()
 	return true;
 }
 
-bool CScene::InitNavMesh(std::string aPath)
+bool CScene::InitNavMesh(const std::string& aPath)
 {
 	CNavmeshLoader* loader = new CNavmeshLoader();
 	myNavMesh = loader->LoadNavmesh(aPath);
@@ -144,13 +144,21 @@ bool CScene::InitNavMesh(std::string aPath)
 	loader = nullptr;
 	return true;
 }
-bool CScene::InitCanvas(std::string aPath)
+bool CScene::InitCanvas(const std::string& aPath)
 {
 	if (!myCanvas)
 		myCanvas = new CCanvas();
 	
 	myCanvas->Init(aPath, *this);
 
+	return true;
+}
+bool CScene::ReInitCanvas(const std::string& aPath)
+{
+	if (!myCanvas)
+		InitCanvas(aPath);
+
+	myCanvas->ReInit(aPath, *this);
 	return true;
 }
 //SETUP END
