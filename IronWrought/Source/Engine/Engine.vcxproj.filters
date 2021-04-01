@@ -1486,6 +1486,9 @@
     <None Include="BoxLightShaderStructs.hlsli">
       <Filter>Shaders\BoxLight</Filter>
     </None>
+    <None Include="VolumetricLightShaderStructs.hlsli">
+      <Filter>Shaders\Volumetric Light</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">
