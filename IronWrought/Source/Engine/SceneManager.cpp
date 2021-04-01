@@ -217,6 +217,10 @@ void CSceneManager::AddInstancedModelComponents(CScene& aScene, RapidArray someD
 void CSceneManager::AddDirectionalLight(CScene& aScene, RapidObject someData)
 {
 	const auto& id = someData["instanceID"].GetInt();
+
+	if (id == 0)
+		return;
+
 	CGameObject* gameObject = aScene.FindObjectWithID(id);
 	if (gameObject == nullptr)
 		return;
