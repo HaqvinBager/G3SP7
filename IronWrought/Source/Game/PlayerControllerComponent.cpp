@@ -13,6 +13,7 @@
 #include "CameraControllerComponent.h"
 
 #include "PlayerAnimationController.h"
+#include "PlayerComponent.h"
 
 // TEMP
 static const float gPretendObjectDistanceFromPlayer = 5.0f;// TEMP
@@ -78,6 +79,7 @@ void CPlayerControllerComponent::Awake()
 void CPlayerControllerComponent::Start()
 {
 	myRespawnPosition = myController->GetPosition();
+
 }
 
 void CPlayerControllerComponent::Update()
@@ -89,6 +91,15 @@ void CPlayerControllerComponent::Update()
 	Move({0.0f, myMovement.y, 0.0f});
 	//Move(myMovement * mySpeed);
 	
+	/*if (myPlayerComponent->getIsAlive() == false)
+	{
+		myController->SetPosition(myRespawnPosition);
+		GameObject().myTransform->Position(myController->GetPosition());
+
+		myPlayerComponent->setIsAlive(true);
+		myPlayerComponent->resetHealth();
+	}*/
+
 	if (myHasJumped == true)
 	{
 		myMovement.y = myJumpHeight;
@@ -108,8 +119,15 @@ void CPlayerControllerComponent::Update()
 	GameObject().myTransform->Position(myController->GetPosition());
 	gPretendObjectCurrentDistance = max(gPretendObjectCurrentDistance -  CTimer::Dt() * 12.0f, 0.0f);
 	myAnimationComponentController->UpdateBlendValue(min(gPretendObjectCurrentDistance / gPretendObjectDistanceFromPlayer, 1.0f));
-
+	 
 	myAnimationComponentController->Update();
+
+	if (Input::GetInstance()->IsKeyPressed('R'))
+	{
+
+		myController->SetPosition(myRespawnPosition);
+
+	}
 }
 
 void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
@@ -222,6 +240,11 @@ void CPlayerControllerComponent::Crouch()
 		GameObject().myTransform->FetchChildren()[0]->Position({ 0.0f, myCameraPosYStanding, myCameraPosZ });// Equivalent to myCamera->GameObject().myTransform->Position
 		mySpeed = myWalkSpeed;
 	}
+}
+
+void CPlayerControllerComponent::ResetPlayerPosition()
+{
+	myController->SetPosition(myRespawnPosition);
 }
 
 CCharacterController* CPlayerControllerComponent::GetCharacterController()

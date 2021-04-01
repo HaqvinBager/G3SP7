@@ -15,6 +15,7 @@
 
 #include <BinReader.h>
 #include <PlayerControllerComponent.h>
+#include <PlayerComponent.h>
 #include "animationLoader.h"
 #include "AnimationComponent.h"
 
@@ -249,6 +250,8 @@ void CSceneManager::AddPlayer(CScene& aScene/*, RapidObject someData*/)
 	model->myTransform->Rotation({ 0.0f, 0.0f, 0.0f });
 	CAnimationComponent* animComp = AnimationLoader::AddAnimationsToGameObject(model, modelPath);
 	animComp->BlendToAnimation(1);
+
+	player->AddComponent<CPlayerComponent>(*player);
 
 	player->AddComponent<CPlayerControllerComponent>(*player);// CPlayerControllerComponent constructor sets position of camera child object.
 	player->GetComponent<CPlayerControllerComponent>()->SetControllerPosition({ 0.f, 5.0f,0.0f });

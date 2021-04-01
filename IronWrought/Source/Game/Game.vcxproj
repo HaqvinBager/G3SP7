@@ -169,6 +169,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="InGameState.h" />
     <ClInclude Include="NavMeshComponent.h" />
+    <ClInclude Include="PlayerComponent.h" />
     <ClInclude Include="PlayerControllerComponent.h" />
     <ClInclude Include="PopupTextService.h" />
     <ClInclude Include="BinReader.h" />
@@ -189,6 +190,7 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="InGameState.cpp" />
     <ClCompile Include="NavMeshComponent.cpp" />
+    <ClCompile Include="PlayerComponent.cpp" />
     <ClCompile Include="PlayerControllerComponent.cpp" />
     <ClCompile Include="PopupTextService.cpp" />
     <ClCompile Include="BinReader.cpp" />

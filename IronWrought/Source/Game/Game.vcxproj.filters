@@ -72,6 +72,9 @@
     <ClInclude Include="BootUpState.h">
       <Filter>State Stack</Filter>
     </ClInclude>
+    <ClInclude Include="PlayerComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp">
@@ -127,6 +130,9 @@
     </ClCompile>
     <ClCompile Include="BootUpState.cpp">
       <Filter>State Stack</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerComponent.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
