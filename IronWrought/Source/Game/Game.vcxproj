@@ -160,6 +160,7 @@
     <ClInclude Include="AIBehavior.h" />
     <ClInclude Include="AIBehaviorComponent.h" />
     <ClInclude Include="AIController.h" />
+    <ClInclude Include="BootUpState.h" />
     <ClInclude Include="CameraControllerComponent.h" />
     <ClInclude Include="CharacterControllerComponent.h" />
     <ClInclude Include="CollisionEventComponent.h" />
@@ -168,7 +169,9 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GravityGloveComponent.h" />
     <ClInclude Include="InGameState.h" />
+    <ClInclude Include="MainMenuState.h" />
     <ClInclude Include="NavMeshComponent.h" />
+    <ClInclude Include="PlayerComponent.h" />
     <ClInclude Include="PlayerControllerComponent.h" />
     <ClInclude Include="PopupTextService.h" />
     <ClInclude Include="BinReader.h" />
@@ -180,6 +183,7 @@
     <ClCompile Include="AIBehavior.cpp" />
     <ClCompile Include="AIBehaviorComponent.cpp" />
     <ClCompile Include="AIController.cpp" />
+    <ClCompile Include="BootUpState.cpp" />
     <ClCompile Include="CameraControllerComponent.cpp" />
     <ClCompile Include="CharacterControllerComponent.cpp" />
     <ClCompile Include="CollisionEventComponent.cpp" />
@@ -188,7 +192,9 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GravityGloveComponent.cpp" />
     <ClCompile Include="InGameState.cpp" />
+    <ClCompile Include="MainMenuState.cpp" />
     <ClCompile Include="NavMeshComponent.cpp" />
+    <ClCompile Include="PlayerComponent.cpp" />
     <ClCompile Include="PlayerControllerComponent.cpp" />
     <ClCompile Include="PopupTextService.cpp" />
     <ClCompile Include="BinReader.cpp" />

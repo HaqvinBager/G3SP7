@@ -10,12 +10,11 @@ CNodeTypeVFXStopVFX::CNodeTypeVFXStopVFX()
 {
 	myPins.push_back(SPin("", SPin::EPinTypeInOut::EPinTypeInOut_IN));
 	myPins.push_back(SPin("VFX Name", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EString));
-	//DeclareDataOnPinIfNecessary<const char*>(myPins[1]);
 }
 
 int CNodeTypeVFXStopVFX::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 {
-	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject()[0];
+	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject();
 
 	SPin::EPinType outType;
 	NodeDataPtr someData = nullptr;

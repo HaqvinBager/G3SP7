@@ -4,6 +4,9 @@
 #include "GameObject.h"
 #include "TransformComponent.h"
 #include "Timer.h"
+#include "Scene.h"
+#include "Engine.h"
+#include "GraphManager.h"
 
 CNodeTypeGameObjectRotate::CNodeTypeGameObjectRotate()
 {
@@ -12,12 +15,11 @@ CNodeTypeGameObjectRotate::CNodeTypeGameObjectRotate()
 	myPins.push_back(SPin("Rot", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EVector3));	//2
 	//myPins.push_back(SPin("Yaw", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));	//3
 	//myPins.push_back(SPin("Roll", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));	//4
-	DeclareDataOnPinIfNecessary<Vector3>(myPins[2], Vector3(0.f, 0.f, 0.f));
 }
 
 int CNodeTypeGameObjectRotate::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 {
-	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject()[1];
+	CGameObject* gameObject = IRONWROUGHT_ACTIVE_SCENE.FindObjectWithID(aTriggeringNodeInstance->GraphManager()->GetCurrentBlueprintInstanceID());
 
 	SPin::EPinType outType;
 	NodeDataPtr someData = nullptr;

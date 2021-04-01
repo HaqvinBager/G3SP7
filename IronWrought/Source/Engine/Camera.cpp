@@ -4,8 +4,7 @@
 using namespace DirectX::SimpleMath;
 
 CCamera::CCamera()
-	: myTarget(nullptr) //gör rätt 
-//Okej jag gör väl rätt då Hahaha roligt fyfan bästa skiten ever omfg
+	: myTarget(nullptr)
 {
 }
 

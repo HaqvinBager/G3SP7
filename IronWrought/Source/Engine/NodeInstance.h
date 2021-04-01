@@ -36,6 +36,7 @@ public:
 	~CNodeInstance();
 	CUID myUID;
 	class CNodeType* myNodeType;
+	void CheckIfInputNode() { if (myNodeType->IsInputNode())myShouldTriggerAgain = false; }
 	void Enter();
 	void ExitVia(unsigned int aPinIndex);
 	void ConstructUniquePins();
@@ -190,7 +191,8 @@ public:
 	}
 	float myEnteredTimer = 0.0f;
 
-	std::vector<CGameObject*> GetCurrentGameObject();
+	CGameObject* GetCurrentGameObject();
+	const CGraphManager* GraphManager() { return myGraphManager; }
 
 private:
 	CGraphManager* myGraphManager;

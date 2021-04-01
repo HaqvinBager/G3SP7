@@ -15,7 +15,6 @@
 #include "Engine.h"
 #include "Scene.h"
 
-#include "JsonReader.h"
 //#include "rapidjson\document.h"
 //#include "rapidjson\istreamwrapper.h"
 
@@ -55,6 +54,13 @@ CCanvas::~CCanvas()
 	}
 	mySprites.clear();
 
+	for (size_t i = 0; i < myButtonTexts.size(); ++i)
+	{
+		delete myButtonTexts[i];
+		myButtonTexts[i] = nullptr;
+	}
+	myButtonTexts.clear();
+
 	for (size_t i = 0; i < myTexts.size(); ++i)
 	{
 			delete myTexts[i];
@@ -65,10 +71,7 @@ CCanvas::~CCanvas()
 
 void CCanvas::Init(std::string aFilePath, CScene& aScene, bool addToScene)
 {
-	//std::ifstream inputStream(aFilePath);
-	//IStreamWrapper inputWrapper(inputStream);
 	Document document = CJsonReader::Get()->LoadDocument(aFilePath);
-	//document.ParseStream(inputWrapper);
 
 	if (document.HasParseError())
 		return;
@@ -78,31 +81,9 @@ void CCanvas::Init(std::string aFilePath, CScene& aScene, bool addToScene)
 		auto buttonDataArray = document["Buttons"].GetArray();
 		for (unsigned int i = 0; i < buttonDataArray.Size(); ++i)
 		{
-			SButtonData data;
-			auto buttonData = buttonDataArray[i].GetObjectW();
-			
-			myTexts.emplace_back(new CTextInstance(aScene, addToScene));
-			myTexts.back()->Init(CTextFactory::GetInstance()->GetText(buttonData["FontAndFontSize"].GetString()));
-			myTexts.back()->SetText(buttonData["Text"].GetString());
-			myTexts.back()->SetColor({ buttonData["Text Color R"].GetFloat(), buttonData["Text Color G"].GetFloat(), buttonData["Text Color B"].GetFloat(), 1.0f });
-			myTexts.back()->SetPosition({ buttonData["Text Position X"].GetFloat(), buttonData["Text Position Y"].GetFloat() });
-			myTexts.back()->SetPivot({ buttonData["Text Pivot X"].GetFloat(), buttonData["Text Pivot Y"].GetFloat() });
-
-			data.myPosition = { buttonData["Position X"].GetFloat(), buttonData["Position Y"].GetFloat() };
-			data.myDimensions = { buttonData["Pixel Width"].GetFloat(), buttonData["Pixel Height"].GetFloat() };
-			data.mySpritePaths.at(0) = buttonData["Idle Sprite Path"].GetString();
-			data.mySpritePaths.at(1) = buttonData["Hover Sprite Path"].GetString();
-			data.mySpritePaths.at(2) = buttonData["Click Sprite Path"].GetString();
-
-			auto messageDataArray = buttonData["Messages"].GetArray();
-			data.myMessagesToSend.resize(messageDataArray.Size());
-
-			for (unsigned int j = 0; j < messageDataArray.Size(); ++j)
-			{
-				data.myMessagesToSend[j] = static_cast<EMessageType>(messageDataArray[j].GetInt());
-			}
-
-			myButtons.emplace_back(new CButton(data, aScene));
+			myButtonTexts.emplace_back(new CTextInstance(aScene, addToScene));
+			myButtons.emplace_back(new CButton());
+			InitButton(buttonDataArray[i].GetObjectW(), i, aScene);
 		}
 	}
 
@@ -113,7 +94,7 @@ void CCanvas::Init(std::string aFilePath, CScene& aScene, bool addToScene)
 		{
 			auto textData = textDataArray[i].GetObjectW();
 			myTexts.emplace_back(new CTextInstance(aScene, addToScene));
-			myTexts.back()->Init(CTextFactory::GetInstance()->GetText(textData["FontAndFontSize"].GetString()));
+			myTexts.back()->Init(CTextFactory::GetInstance()->GetText(ASSETPATH(textData["FontAndFontSize"].GetString())));
 			myTexts.back()->SetText(textData["Text"].GetString());
 			myTexts.back()->SetColor({ textData["Color R"].GetFloat(), textData["Color G"].GetFloat(), textData["Color B"].GetFloat(), 1.0f });
 			myTexts.back()->SetPosition({ textData["Position X"].GetFloat(), textData["Position Y"].GetFloat() });
@@ -183,6 +164,34 @@ void CCanvas::Init(std::string aFilePath, CScene& aScene, bool addToScene)
 
 }
 
+void CCanvas::ReInit(std::string aFilePath, CScene& aScene, bool /*addToScene*/)
+{
+	Document document = CJsonReader::Get()->LoadDocument(aFilePath);
+
+	if (document.HasParseError())
+		return;
+
+	if (document.HasMember("Buttons"))
+	{
+		auto buttonDataArray = document["Buttons"].GetArray();
+		int currentSize = (int)myButtons.size();
+		int newSize = (int)buttonDataArray.Size();
+		if (currentSize <= newSize)
+		{
+			// Todo: if there are more buttons, add them.
+			int difference = currentSize - newSize;
+			if (difference > 0)
+			{
+				difference;
+			}
+			for (unsigned int i = 0; i < (unsigned int)currentSize; ++i)
+			{
+				InitButton(buttonDataArray[i].GetObjectW(), i, aScene);
+			}
+		}	
+	}
+}
+
 void CCanvas::Update()
 {
 	if (myButtons.size() <= 0)
@@ -211,13 +220,19 @@ void CCanvas::Update()
 	}
 }
 
-void CCanvas::Receive(const SMessage& /*aMessage*/)
+void CCanvas::Receive(const SMessage& aMessage)
 {
-	//switch (aMessage.myMessageType)
-	//{
-	//default:
-	//	break;
-	//}
+	switch (aMessage.myMessageType)
+	{
+	case EMessageType::PlayerHealthChanged:
+		if (myAnimatedUIs[0])
+		{
+			myAnimatedUIs[0]->Level(*static_cast<float*>(aMessage.data));
+		}
+		break;
+	default:
+		break;
+	}
 }
 
 void CCanvas::SubscribeToMessages()
@@ -257,4 +272,43 @@ void CCanvas::SetEnabled(bool isEnabled)
 			sprite->SetShouldRender(myIsEnabled);
 		}
 	}
+}
+
+bool CCanvas::InitButton(const rapidjson::GenericObject<false, rapidjson::Value>& aRapidObject, const int& anIndex, CScene& aScene)
+{
+	myButtonTexts[anIndex]->Init(CTextFactory::GetInstance()->GetText(ASSETPATH(aRapidObject["FontAndFontSize"].GetString())));
+	myButtonTexts[anIndex]->SetText(aRapidObject["Text"].GetString());
+	myButtonTexts[anIndex]->SetColor({ aRapidObject["Text Color R"].GetFloat(), aRapidObject["Text Color G"].GetFloat(), aRapidObject["Text Color B"].GetFloat(), 1.0f });
+	Vector2 pos = { aRapidObject["Text Position X"].GetFloat(), aRapidObject["Text Position Y"].GetFloat() };
+	myButtonTexts[anIndex]->SetPosition(pos);
+	myButtonTexts[anIndex]->SetPivot({ aRapidObject["Text Pivot X"].GetFloat(), aRapidObject["Text Pivot Y"].GetFloat() });
+
+
+	SButtonData data;
+	if (aRapidObject.HasMember("Sprite Position X"))
+		data.myPosition.x = aRapidObject["Sprite Position X"].GetFloat();
+	else
+		data.myPosition.x = pos.x;
+
+	if (aRapidObject.HasMember("Sprite Position Y"))
+		data.myPosition.y = aRapidObject["Sprite Position Y"].GetFloat();
+	else
+		data.myPosition.y = pos.y;
+
+	data.myDimensions = { aRapidObject["Pixel Width"].GetFloat(), aRapidObject["Pixel Height"].GetFloat() };
+	data.mySpritePaths.at(0) = ASSETPATH(aRapidObject["Idle Sprite Path"].GetString());
+	data.mySpritePaths.at(1) = ASSETPATH(aRapidObject["Hover Sprite Path"].GetString());
+	data.mySpritePaths.at(2) = ASSETPATH(aRapidObject["Click Sprite Path"].GetString());
+
+	auto messageDataArray = aRapidObject["Messages"].GetArray();
+	data.myMessagesToSend.resize(messageDataArray.Size());
+
+	for (unsigned int j = 0; j < messageDataArray.Size(); ++j)
+	{
+		data.myMessagesToSend[j] = static_cast<EMessageType>(messageDataArray[j].GetInt());
+	}
+
+	myButtons[anIndex]->Init(data, aScene);
+
+	return true;
 }

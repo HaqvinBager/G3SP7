@@ -9,8 +9,8 @@ CNodeTypeAudioPlayResearcherEvent::CNodeTypeAudioPlayResearcherEvent()
 {
 	myPins.push_back(SPin("", SPin::EPinTypeInOut::EPinTypeInOut_IN));
 	myPins.push_back(SPin("Clip", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EStringListIndexed));
-	std::vector<std::string> list = { "DoorEventVerticalSlice\0", "IntroVerticalSlice\0" };
-	CNodeDataManager::Get()->SetData("Play Researcher Event", CNodeDataManager::EDataType::EStringList, list);
+	//std::vector<std::string> list = { "DoorEventVerticalSlice\0", "IntroVerticalSlice\0" };
+	//CNodeDataManager::Get()->SetData("Play Researcher Event", CNodeDataManager::EDataType::EStringList, list);
 }
 
 int CNodeTypeAudioPlayResearcherEvent::OnEnter(CNodeInstance* aTriggeringNodeInstance)

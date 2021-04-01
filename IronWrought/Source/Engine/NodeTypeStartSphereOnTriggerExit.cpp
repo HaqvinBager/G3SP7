@@ -11,9 +11,6 @@ CNodeTypeStartSphereOnTriggerExit::CNodeTypeStartSphereOnTriggerExit()
 	myPins.push_back(SPin("Radius", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));//0
 	myPins.push_back(SPin("Trigger Once", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EBool));//1
 	myPins.push_back(SPin("", SPin::EPinTypeInOut::EPinTypeInOut_OUT));//2
-	
-	DeclareDataOnPinIfNecessary<float>(myPins[0], 1.0f);
-	DeclareDataOnPinIfNecessary<bool>(myPins[1], false);
 }
 
 int CNodeTypeStartSphereOnTriggerExit::OnEnter(CNodeInstance * aTriggeringNodeInstance)
@@ -28,9 +25,9 @@ int CNodeTypeStartSphereOnTriggerExit::OnEnter(CNodeInstance * aTriggeringNodeIn
 	GetDataOnPin(aTriggeringNodeInstance, 1, outType, someData, outSize);
 	bool triggerOnce = NodeData::Get<bool>(someData);
 
-	const std::vector<CGameObject*> gameObjects = aTriggeringNodeInstance->GetCurrentGameObject();
+	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject();
 	const CTransformComponent& playerTransform = *IRONWROUGHT->GetActiveScene().Player()->myTransform;
-	float distanceSquared = Vector3::DistanceSquared(playerTransform.Position(), gameObjects[1]->myTransform->Position());
+	float distanceSquared = Vector3::DistanceSquared(playerTransform.Position(), gameObject->myTransform->Position());
 	float radiusSquared = radius * radius;
 
 	bool trigger = distanceSquared > radiusSquared;

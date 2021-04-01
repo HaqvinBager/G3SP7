@@ -20,6 +20,7 @@
 
 #include <BinReader.h>
 #include <PlayerControllerComponent.h>
+#include <PlayerComponent.h>
 #include "animationLoader.h"
 #include "AnimationComponent.h"
 
@@ -39,15 +40,15 @@ CScene* CSceneManager::CreateEmpty()
 	camera->myTransform->Position({ 0.0f, 1.0f, 0.0f });
 
 	CGameObject* envLight = new CGameObject(1);
-	envLight->AddComponent<CEnviromentLightComponent>(*envLight);
-	envLight->GetComponent<CEnviromentLightComponent>()->GetEnvironmentLight()->SetIntensity(0.f);
-	envLight->GetComponent<CEnviromentLightComponent>()->GetEnvironmentLight()->SetColor({ 0.f, 0.f, 0.f });
-	envLight->GetComponent<CEnviromentLightComponent>()->GetEnvironmentLight()->SetDirection({ 0.0f,1.0f,1.0f });
+	envLight->AddComponent<CEnvironmentLightComponent>(*envLight, "Cubemap_Inside");
+	envLight->GetComponent<CEnvironmentLightComponent>()->GetEnvironmentLight()->SetIntensity(0.f);
+	envLight->GetComponent<CEnvironmentLightComponent>()->GetEnvironmentLight()->SetColor({ 0.f, 0.f, 0.f });
+	envLight->GetComponent<CEnvironmentLightComponent>()->GetEnvironmentLight()->SetDirection({ 0.0f,1.0f,1.0f });
 
 	CScene* emptyScene = new CScene(2);
 	emptyScene->AddInstance(camera);
 	emptyScene->MainCamera(camera->GetComponent<CCameraComponent>());
-	emptyScene->EnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnvironmentLight());
+	emptyScene->EnvironmentLight(envLight->GetComponent<CEnvironmentLightComponent>()->GetEnvironmentLight());
 	emptyScene->AddInstance(envLight);
 
 	//AddPlayer(*emptyScene, std::string());
@@ -57,7 +58,16 @@ CScene* CSceneManager::CreateEmpty()
 
 CScene* CSceneManager::CreateScene(const std::string& aSceneJson)
 {
-	CScene* scene = CreateEmpty();
+	//CScene* scene = CreateEmpty();
+
+	CGameObject* camera = new CGameObject(0);
+	camera->AddComponent<CCameraComponent>(*camera);//Default Fov is 70.0f
+	camera->AddComponent<CCameraControllerComponent>(*camera); //Default speed is 2.0f
+	camera->myTransform->Position({ 0.0f, 1.0f, 0.0f });
+
+	CScene* scene = new CScene(2);
+	scene->AddInstance(camera);
+	scene->MainCamera(camera->GetComponent<CCameraComponent>());
 
 	const auto doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + aSceneJson + "/" + aSceneJson + ".json"));
 	if(doc.HasParseError())
@@ -76,6 +86,7 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneJson)
 			SetTransforms(*scene, sceneData["transforms"].GetArray());
 			AddModelComponents(*scene, sceneData["models"].GetArray());
 			SetVertexPaintedColors(*scene, sceneData["vertexColors"].GetArray(), vertexPaintData);
+			AddDirectionalLight(*scene, sceneData["directionalLight"].GetObjectW());
 			AddPointLights(*scene, sceneData["lights"].GetArray());
 			AddDecalComponents(*scene, sceneData["decals"].GetArray());
 			AddInstancedModelComponents(*scene, sceneData["instancedModels"].GetArray());
@@ -84,7 +95,20 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneJson)
 	}
 
 	CEngine::GetInstance()->GetPhysx().Cooking(scene->ActiveGameObjects(), scene);
-	AddPlayer(*scene); //This add play does not read data from unity. (Yet..!) /Axel 2021-03-24
+	AddPlayer(*scene); //This add player does not read data from unity. (Yet..!) /Axel 2021-03-24
+
+	scene->InitCanvas(ASSETPATH("Assets/Graphics/UI/JSON/UI_HUD.json"));
+
+	return scene;
+}
+
+CScene* CSceneManager::CreateMenuScene(const std::string& aSceneName, const std::string& aCanvasPath)
+{
+	aSceneName;
+	CScene* scene = CreateEmpty();
+	scene->MainCamera()->GameObject().GetComponent<CCameraControllerComponent>()->SetCameraMode(CCameraControllerComponent::ECameraMode::MenuCam);
+	scene->InitCanvas(aCanvasPath);
+
 	return scene;
 }
 
@@ -197,6 +221,31 @@ void CSceneManager::AddInstancedModelComponents(CScene& aScene, RapidArray someD
 	}
 }
 
+void CSceneManager::AddDirectionalLight(CScene& aScene, RapidObject someData)
+{
+	const auto& id = someData["instanceID"].GetInt();
+
+	if (id == 0)
+		return;
+
+	CGameObject* gameObject = aScene.FindObjectWithID(id);
+	if (gameObject == nullptr)
+		return;
+
+	gameObject->AddComponent<CEnvironmentLightComponent>(
+		*gameObject,
+		someData["cubemapName"].GetString(),
+		Vector3(someData["r"].GetFloat(),
+			someData["g"].GetFloat(),
+			someData["b"].GetFloat()),
+		someData["intensity"].GetFloat(),
+		Vector3(someData["direction"]["x"].GetFloat(),
+			someData["direction"]["y"].GetFloat(),
+			someData["direction"]["z"].GetFloat())
+	);
+	aScene.EnvironmentLight(gameObject->GetComponent<CEnvironmentLightComponent>()->GetEnvironmentLight());
+}
+
 void CSceneManager::AddPointLights(CScene& aScene, RapidArray someData)
 {
 	for (const auto& pointLight : someData) {
@@ -252,15 +301,14 @@ void CSceneManager::AddPlayer(CScene& aScene/*, RapidObject someData*/)
 	model->myTransform->Rotation({ 0.0f, 0.0f, 0.0f });
 	CAnimationComponent* animComp = AnimationLoader::AddAnimationsToGameObject(model, modelPath);
 	animComp->BlendToAnimation(1);
-
 	CGameObject* gravityGloveSlot = new CGameObject(99);
 	gravityGloveSlot->myTransform->Scale(0.1f);
 	gravityGloveSlot->myTransform->SetParent(camera->myTransform);
 	gravityGloveSlot->myTransform->Position({0.f, 0.f, 1.5f});
-	std::string gravitytestpath = ASSETPATH("Assets/Graphics/Environmentprops/Static_props/EN_P_Tetrapod.fbx");
-	gravityGloveSlot->AddComponent<CModelComponent>(*gravityGloveSlot, gravitytestpath);
-
+	//std::string gravitytestpath = ASSETPATH("Assets/Graphics/Environmentprops/Static_props/EN_P_Tetrapod.fbx");
+	//gravityGloveSlot->AddComponent<CModelComponent>(*gravityGloveSlot, gravitytestpath);
 	camera->AddComponent<CGravityGloveComponent>(*camera, gravityGloveSlot->myTransform);
+	player->AddComponent<CPlayerComponent>(*player);
 
 	player->AddComponent<CPlayerControllerComponent>(*player);// CPlayerControllerComponent constructor sets position of camera child object.
 	player->GetComponent<CPlayerControllerComponent>()->SetControllerPosition({ 0.f, 5.0f,0.0f });
@@ -286,7 +334,7 @@ void CSceneManager::AddCollider(CScene& aScene, RapidArray someData)
 		CRigidBodyComponent* rigidBody = gameObject->GetComponent<CRigidBodyComponent>();
 		if (rigidBody == nullptr)
 			gameObject->AddComponent<CRigidBodyComponent>(*gameObject);
-		
+
 		ColliderType colliderType = static_cast<ColliderType>(c["colliderType"].GetInt());
 
 		Vector3 posOffset;

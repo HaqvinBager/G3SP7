@@ -6,8 +6,6 @@ CNodeTypeMathToRadians::CNodeTypeMathToRadians()
 {
     myPins.push_back(SPin("Val", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));
     myPins.push_back(SPin("OUT", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EFloat));
-	DeclareDataOnPinIfNecessary<float>(myPins[0], 0.0f);
-	DeclareDataOnPinIfNecessary<float>(myPins[1], 0.0f);
 }
 
 int CNodeTypeMathToRadians::OnEnter(CNodeInstance* aTriggeringNodeInstance)

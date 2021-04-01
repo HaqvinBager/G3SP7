@@ -8,6 +8,7 @@ public:
 	CNodeTypeStartKeyboardInput();
 	int OnEnter(class CNodeInstance* aTriggeringNodeInstance) override;
 	bool IsStartNode() override { return true; }
+	bool IsInputNode() override { return true; }
 	std::string GetNodeTypeCategory() override { return "Start"; }
 };
 

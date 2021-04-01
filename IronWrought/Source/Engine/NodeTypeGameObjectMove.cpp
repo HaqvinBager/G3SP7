@@ -4,6 +4,9 @@
 #include "GameObject.h"
 #include "TransformComponent.h"
 #include "Timer.h"
+#include "GraphManager.h"
+#include "Scene.h"
+#include "Engine.h"
 
 CNodeTypeGameObjectMove::CNodeTypeGameObjectMove()
 {
@@ -12,12 +15,11 @@ CNodeTypeGameObjectMove::CNodeTypeGameObjectMove()
 	myPins.push_back(SPin("Speed", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EVector3));	//2
 	//myPins.push_back(SPin("Y Speed", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));	//3
 	//myPins.push_back(SPin("Z Speed", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EFloat));	//4
-	DeclareDataOnPinIfNecessary<Vector3>(myPins[2], Vector3(0.0f, 0.0f, 0.0f));
 }
 
 int CNodeTypeGameObjectMove::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 {
-	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject()[1];
+	CGameObject* gameObject = IRONWROUGHT_ACTIVE_SCENE.FindObjectWithID(aTriggeringNodeInstance->GraphManager()->GetCurrentBlueprintInstanceID());
 
 	SPin::EPinType outType;
 	NodeDataPtr someData = nullptr;

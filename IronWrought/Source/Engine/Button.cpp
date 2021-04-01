@@ -105,29 +105,57 @@ void CButton::CheckMouseCollision(DirectX::SimpleMath::Vector2 aScreenSpacePosit
 		}
 	}
 }
+CButton::CButton()
+	: myState(EButtonState::Idle)
+	, myEnabled(false)
+	, myIsMouseHover(false)
+{}
 
 CButton::CButton(SButtonData& someData, CScene& aScene)
-	: myMessagesToSend(someData.myMessagesToSend)
-	, myState(EButtonState::Idle)
-	, myEnabled(true)
-	, myIsMouseHover(false)
 {
-	//Load Sprites
-	for (unsigned int i = 0; i < 3; ++i) 
-	{
-		mySprites.at(i) = new CSpriteInstance(aScene);
-		mySprites.at(i)->Init(CSpriteFactory::GetInstance()->GetSprite(someData.mySpritePaths.at(i)));
-		mySprites.at(i)->SetRenderOrder(ERenderOrder::ForegroundLayer);
-		aScene.AddInstance(mySprites.at(i));
-	}
+	Init(someData, aScene);
+}
 
+CButton::~CButton()
+{
+	delete mySprites.at(static_cast<size_t>(EButtonState::Idle));
+	delete mySprites.at(static_cast<size_t>(EButtonState::Hover));
+	delete mySprites.at(static_cast<size_t>(EButtonState::Click));
+}
+
+void CButton::Init(SButtonData& someData, CScene& aScene)
+{
+	myMessagesToSend = someData.myMessagesToSend;
+	myState = EButtonState::Idle;
+	myEnabled = true;
+	myIsMouseHover = false;
+
+
+	CSpriteFactory& spriteFactory = *CSpriteFactory::GetInstance();
+	for (unsigned int i = 0; i < mySprites.max_size(); ++i) 
+	{
+		bool addToScene = false;// For some reason the sprite won't render/show on screen unless added to the scene after Init(),SetRenderOrder() & SetPosition. Maybe I am just going crazy. / Aki 03-31-2021
+		if (mySprites.at(i) == nullptr)
+		{
+			mySprites.at(i) = new CSpriteInstance(aScene, false);
+			addToScene = true;
+		}
+
+		mySprites.at(i)->Init(spriteFactory.GetSprite(someData.mySpritePaths.at(i)));
+		mySprites.at(i)->SetRenderOrder(ERenderOrder::ForegroundLayer);
+		mySprites.at(i)->SetPosition({ someData.myPosition.x, someData.myPosition.y });
+
+		if(addToScene)
+			aScene.AddInstance(mySprites.at(i));
+		
+	}
 	mySprites.at(static_cast<size_t>(EButtonState::Hover))->SetShouldRender(false);
 	mySprites.at(static_cast<size_t>(EButtonState::Click))->SetShouldRender(false);
 
 
 	float windowWidth = CEngine::GetInstance()->GetWindowHandler()->GetResolution().x;
 	float windowHeight = CEngine::GetInstance()->GetWindowHandler()->GetResolution().y;
-	
+
 	DirectX::SimpleMath::Vector2 normalizedPosition = someData.myPosition;
 	normalizedPosition /= 2.0f;
 	normalizedPosition += { 0.5f, 0.5f };
@@ -138,16 +166,4 @@ CButton::CButton(SButtonData& someData, CScene& aScene)
 	myRect.myBottom = normalizedPosition.y * windowHeight + spriteDimensions.y;
 	myRect.myLeft = normalizedPosition.x * windowWidth - spriteDimensions.x;
 	myRect.myRight = normalizedPosition.x * windowWidth + spriteDimensions.x;
-
-	for (unsigned int i = 0; i < 3; ++i)
-	{
-		mySprites.at(i)->SetPosition({ someData.myPosition.x, someData.myPosition.y });
-	}
-}
-
-CButton::~CButton()
-{
-	delete mySprites.at(static_cast<size_t>(EButtonState::Idle));
-	delete mySprites.at(static_cast<size_t>(EButtonState::Hover));
-	delete mySprites.at(static_cast<size_t>(EButtonState::Click));
 }

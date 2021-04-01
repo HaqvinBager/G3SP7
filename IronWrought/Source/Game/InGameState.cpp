@@ -23,8 +23,6 @@
 
 #include <TextFactory.h>
 #include <TextInstance.h>
-#include <SphereColliderComponent.h>
-#include <BoxColliderComponent.h>
 
 void TEMP_VFX(CScene* aScene);
 void TEMP_DeferredRenderingTests(CScene* aScene);
@@ -40,21 +38,21 @@ CInGameState::~CInGameState() {}
 
 void CInGameState::Awake()
 {
-	CJsonReader::Get()->Init();
-	CScene* scene = CSceneManager::CreateEmpty();
-	TEMP_VFX(scene);
-
-	CEngine::GetInstance()->AddScene(myState, scene);
-	CEngine::GetInstance()->SetActiveScene(myState);
+	CJsonReader::Get()->InitFromGenerated();
 	CMainSingleton::PostMaster().Subscribe("LoadScene", this);
 }
 
 
 void CInGameState::Start()
 {
+	//CScene* scene = CSceneManager::CreateEmpty();
+	//TEMP_VFX(scene);
 
-
+	//CEngine::GetInstance()->AddScene(myState, scene);
+	CEngine::GetInstance()->SetActiveScene(myState);
 	TEMP_VFX(&CEngine::GetInstance()->GetActiveScene());
+
+	CEngine::GetInstance()->SetActiveScene(myState);
 
 	myExitLevel = false;
 }
@@ -66,12 +64,14 @@ void CInGameState::Stop()
 
 void CInGameState::Update()
 {
-	
+
 
 	if (Input::GetInstance()->IsKeyPressed(VK_ESCAPE))
 	{
 		myStateStack.PopTopAndPush(CStateStack::EState::InGame);
 	}
+
+	IRONWROUGHT->GetActiveScene().UpdateCanvas();
 }
 
 void CInGameState::ReceiveEvent(const EInputEvent aEvent)
@@ -246,6 +246,10 @@ void TEMP_VFX(CScene* aScene)
 	static int id = 500;
 	CGameObject* abilityObject = new CGameObject(id++);
 	abilityObject->AddComponent<CVFXSystemComponent>(*abilityObject, ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystem_ToLoad.json"));
+
+	abilityObject->Awake();
+	abilityObject->Start();
+
 	aScene->AddInstance(abilityObject);
 	aScene->SetVFXTester(abilityObject);
 }

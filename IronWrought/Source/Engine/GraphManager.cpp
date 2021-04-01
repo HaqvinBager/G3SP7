@@ -115,13 +115,21 @@ void CGraphManager::Load(const std::string& aSceneName)
 					}
 					BluePrintInstance bpInstance;
 					bpInstance.rootID = jsonGameObjectID["instanceID"].GetInt();
+					bool firstLoop = true;
+					int counter = 1;
 					for (const auto& childID : jsonGameObjectID["childrenInstanceIDs"].GetArray())
 					{
-						CNodeTypeCollector::RegisterChildNodeTypes(key, childID.GetInt());
 						bpInstance.childrenIDs.emplace_back(childID.GetInt());
+						if (firstLoop)
+						{
+
+							firstLoop = false;
+							continue;
+						}
+						myGraphs.back().myChildrenKey = key;
+						CNodeTypeCollector::RegisterChildNodeTypes(key, counter++, childID.GetInt());
 					}
 					myGraphs.back().myBluePrintInstances.emplace_back(bpInstance);
-					myGraphs.back().myChildrenKey = key;
 				}
 
 				std::string scriptFolder = mySceneFolder + key + "/";
@@ -186,7 +194,6 @@ void CGraphManager::ReTriggerUpdatingTrees()
 	{
 		for (const auto& graph : myGraphs)
 		{
-			//const auto& currentGraph = myGraphs[key];
 			const auto& bluePrintInstances = graph.myBluePrintInstances;
 
 			for (unsigned int i = 0; i < bluePrintInstances.size(); ++i)
@@ -337,7 +344,7 @@ void CGraphManager::LoadTreeFromFile()
 					int UID = nodeInstance["UID"].GetInt();
 					object->myUID.SetUID(UID);
 					object->myNodeType = CNodeTypeCollector::GetNodeTypeFromID(nodeType);
-
+					object->CheckIfInputNode();
 
 					object->myEditorPosition[0] = static_cast<float>(nodeInstance["Position"]["X"].GetInt());
 					object->myEditorPosition[1] = static_cast<float>(nodeInstance["Position"]["Y"].GetInt());
@@ -455,6 +462,7 @@ void CGraphManager::LoadNodesFromClipboard()
 		CNodeInstance* object = new CNodeInstance(this, true);
 		int nodeType = nodeInstance["NodeType"].GetInt();
 		object->myNodeType = CNodeTypeCollector::GetNodeTypeFromID(nodeType);
+		object->CheckIfInputNode();
 
 		if (i == 0)
 		{
@@ -520,15 +528,12 @@ bool CGraphManager::ToggleShouldRunScripts()
 	return myRunScripts;
 }
 
-std::vector<CGameObject*> CGraphManager::GetCurrentGameObject()
+CGameObject* CGraphManager::GetCurrentGameObject()
 {
 	CScene& scene = CEngine::GetInstance()->GetActiveScene();
-	std::vector<CGameObject*> gameObjects = {};
-	gameObjects.push_back(scene.FindObjectWithID(myCurrentBluePrintInstance.rootID));
-	for (const auto& id : myCurrentBluePrintInstance.childrenIDs)
-		gameObjects.push_back(scene.FindObjectWithID(id));
+	CGameObject* gameObject = scene.FindObjectWithID(myCurrentBluePrintInstance.childrenIDs[0]);
 
-	return gameObjects;
+	return gameObject;
 }
 
 std::vector<CGameObject*> CGraphManager::GetCurrentGameObjectChildren()
@@ -540,6 +545,11 @@ std::vector<CGameObject*> CGraphManager::GetCurrentGameObjectChildren()
 		gameObjects.push_back(scene.FindObjectWithID(myCurrentBluePrintInstance.childrenIDs[i]));
 
 	return gameObjects;
+}
+
+const int CGraphManager::GetCurrentBlueprintInstanceID() const
+{
+	return myCurrentBluePrintInstance.childrenIDs[0];
 }
 
 ImColor GetIconColor(SPin::EPinType type)
@@ -790,105 +800,105 @@ void CGraphManager::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInstance
 		ImGui::PopID();
 		break;
 	}
-	case SPin::EPinType::EStringList:
-	{
-		if (!aPin.myData)
-		{
-			aPin.myData = new char[128];
-			static_cast<char*>(aPin.myData)[0] = '\0';
-		}
+	//case SPin::EPinType::EStringList:
+	//{
+	//	if (!aPin.myData)
+	//	{
+	//		aPin.myData = new char[128];
+	//		static_cast<char*>(aPin.myData)[0] = '\0';
+	//	}
 
-		ImGui::PushID(aPin.myUID.AsInt());
-		ImGui::PushItemWidth(100.0f);
-		if (aNodeInstance->IsPinConnected(aPin))
-		{
-			DrawPinIcon(aPin, true, 255);
-		}
-		else
-		{
-			static bool pressed = false;
-			std::vector<std::string> item = CNodeDataManager::Get()->GetData<std::vector<std::string>>(aNodeInstance->GetNodeName());
-			std::string selected = static_cast<char*>(aPin.myData);
+	//	ImGui::PushID(aPin.myUID.AsInt());
+	//	ImGui::PushItemWidth(100.0f);
+	//	if (aNodeInstance->IsPinConnected(aPin))
+	//	{
+	//		DrawPinIcon(aPin, true, 255);
+	//	}
+	//	else
+	//	{
+	//		static bool pressed = false;
+	//		std::vector<std::string> item = CNodeDataManager::Get()->GetData<std::vector<std::string>>(aNodeInstance->GetNodeName());
+	//		std::string selected = static_cast<char*>(aPin.myData);
 
-			if (pressed)
-			{
-				ImGui::SetNextWindowPos({ ImGui::GetMousePos().x + aNodeInstance->myEditorPosition[0], ImGui::GetMousePos().y + aNodeInstance->myEditorPosition[1] });
-			}
+	//		if (pressed)
+	//		{
+	//			ImGui::SetNextWindowPos({ ImGui::GetMousePos().x + aNodeInstance->myEditorPosition[0], ImGui::GetMousePos().y + aNodeInstance->myEditorPosition[1] });
+	//		}
 
-			if (!myRunScripts)
-			{
-				if (ImGui::BeginCombo("##combo", selected.c_str()))
-				{
-					pressed = true;
-					int index = -1;
-					for (int n = 0; n < item.size(); n++)
-					{
-						if (ImGui::Selectable(item[n].c_str(), index == n))
-						{
-							char* input = item[n].data();
-							selected = input;
-							size_t size = strlen(input) + 1;
-							memcpy(aPin.myData, input, size);
-						}
-					}
-					ImGui::EndCombo();
-				}
-			}
-			pressed = false;
-		}
-		ImGui::PopItemWidth();
+	//		if (!myRunScripts)
+	//		{
+	//			if (ImGui::BeginCombo("##combo", selected.c_str()))
+	//			{
+	//				pressed = true;
+	//				int index = -1;
+	//				for (int n = 0; n < item.size(); n++)
+	//				{
+	//					if (ImGui::Selectable(item[n].c_str(), index == n))
+	//					{
+	//						char* input = item[n].data();
+	//						selected = input;
+	//						size_t size = strlen(input) + 1;
+	//						memcpy(aPin.myData, input, size);
+	//					}
+	//				}
+	//				ImGui::EndCombo();
+	//			}
+	//		}
+	//		pressed = false;
+	//	}
+	//	ImGui::PopItemWidth();
 
-		ImGui::PopID();
-		break;
-	}
-	case SPin::EPinType::EStringListIndexed:
-	{
-		if (!aPin.myData)
-		{
-			aPin.myData = new char[128];
-			static_cast<char*>(aPin.myData)[0] = '\0';
-		}
+	//	ImGui::PopID();
+	//	break;
+	//}
+	//case SPin::EPinType::EStringListIndexed:
+	//{
+	//	if (!aPin.myData)
+	//	{
+	//		aPin.myData = new char[128];
+	//		static_cast<char*>(aPin.myData)[0] = '\0';
+	//	}
 
-		ImGui::PushID(aPin.myUID.AsInt());
-		ImGui::PushItemWidth(100.0f);
-		if (aNodeInstance->IsPinConnected(aPin))
-		{
-			DrawPinIcon(aPin, true, 255);
-		}
-		else
-		{
-			static bool pressed = false;
-			std::vector<std::string> item = CNodeDataManager::Get()->GetData<std::vector<std::string>>(aNodeInstance->GetNodeName());
-			int selected = *static_cast<int*>(aPin.myData);
-			if (selected < 0) selected = 0;
+	//	ImGui::PushID(aPin.myUID.AsInt());
+	//	ImGui::PushItemWidth(100.0f);
+	//	if (aNodeInstance->IsPinConnected(aPin))
+	//	{
+	//		DrawPinIcon(aPin, true, 255);
+	//	}
+	//	else
+	//	{
+	//		static bool pressed = false;
+	//		std::vector<std::string> item = CNodeDataManager::Get()->GetData<std::vector<std::string>>(aNodeInstance->GetNodeName());
+	//		int selected = *static_cast<int*>(aPin.myData);
+	//		if (selected < 0) selected = 0;
 
-			if (pressed)
-			{
-				ImGui::SetNextWindowPos({ ImGui::GetMousePos().x + aNodeInstance->myEditorPosition[0], ImGui::GetMousePos().y + aNodeInstance->myEditorPosition[1] });
-			}
-			if (!myRunScripts)
-			{
-				if (ImGui::BeginCombo("##combo", item[selected].c_str())) // The second parameter is the label previewed before opening the combo.
-				{
-					pressed = true;
-					int index = -1;
-					for (int n = 0; n < item.size(); n++)
-					{
-						if (ImGui::Selectable(item[n].c_str(), index == n))
-						{
-							memcpy(aPin.myData, &n, sizeof(int));
-						}
-					}
-					ImGui::EndCombo();
-				}
-			}
-			pressed = false;
-		}
-		ImGui::PopItemWidth();
+	//		if (pressed)
+	//		{
+	//			ImGui::SetNextWindowPos({ ImGui::GetMousePos().x + aNodeInstance->myEditorPosition[0], ImGui::GetMousePos().y + aNodeInstance->myEditorPosition[1] });
+	//		}
+	//		if (!myRunScripts)
+	//		{
+	//			if (ImGui::BeginCombo("##combo", item[selected].c_str())) // The second parameter is the label previewed before opening the combo.
+	//			{
+	//				pressed = true;
+	//				int index = -1;
+	//				for (int n = 0; n < item.size(); n++)
+	//				{
+	//					if (ImGui::Selectable(item[n].c_str(), index == n))
+	//					{
+	//						memcpy(aPin.myData, &n, sizeof(int));
+	//					}
+	//				}
+	//				ImGui::EndCombo();
+	//			}
+	//		}
+	//		pressed = false;
+	//	}
+	//	ImGui::PopItemWidth();
 
-		ImGui::PopID();
-		break;
-	}
+	//	ImGui::PopID();
+	//	break;
+	//}
 	case SPin::EPinType::EUnknown:
 	{
 		if (!myRunScripts)
@@ -1547,6 +1557,7 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 						node = new CNodeInstance(this);
 
 						node->myNodeType = found[i];
+						node->CheckIfInputNode();
 						node->ConstructUniquePins();
 						ed::SetNodePosition(node->myUID.AsInt(), newNodePostion);
 						node->myHasSetEditorPosition = true;
@@ -1595,10 +1606,11 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 							CNodeType* type = category.second[i];
 							if (ImGui::MenuItem(type->NodeName().c_str()))
 							{
-								node = new CNodeInstance(this);
+								node = new CNodeInstance(this, true);
 
 								//int nodeType = i;
 								node->myNodeType = type;
+								node->CheckIfInputNode();
 								node->ConstructUniquePins();
 								ed::SetNodePosition(node->myUID.AsInt(), newNodePostion);
 								node->myHasSetEditorPosition = true;

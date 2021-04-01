@@ -7,6 +7,8 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+//AKI SA ÅT MIG ATT GÖRA DET HÄR, OKEJ??? EPIC PRABKN
+//#include "Scene.h"
 
 #define IRONWROUGHT CEngine::GetInstance()
 #define IRONWROUGHT_ACTIVE_SCENE CEngine::GetInstance()->GetActiveScene()
@@ -78,6 +80,8 @@ public:
 	void RemoveScene(CStateStack::EState aState);
 	void ClearModelFactory();
 
+	void ShowCursor();
+	void HideCursor();
 	void LoadGraph(const std::string& aSceneName);
 
 private:

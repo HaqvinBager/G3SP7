@@ -1,6 +1,7 @@
 #pragma once
 #include "ForwardRenderer.h"
 #include "DeferredRenderer.h"
+#include "LightRenderer.h"
 #include "FullscreenRenderer.h"
 #include "FullscreenTexture.h"
 #include "FullscreenTextureFactory.h"
@@ -41,6 +42,7 @@ private:
 	CRenderStateManager myRenderStateManager;
 	CForwardRenderer myForwardRenderer;
 	CDeferredRenderer myDeferredRenderer;
+	CLightRenderer myLightRenderer;
 	CFullscreenRenderer myFullscreenRenderer;
 	CParticleRenderer myParticleRenderer;
 	CVFXRenderer myVFXRenderer;
@@ -54,15 +56,20 @@ private:
 	CFullscreenTexture myIntermediateTexture;
 	CFullscreenTexture myIntermediateDepth;
 	CFullscreenTexture myEnvironmentShadowDepth;
+	CFullscreenTexture myBoxLightShadowDepth;
 	CFullscreenTexture myDepthCopy;
 	CFullscreenTexture myLuminanceTexture;
 	CFullscreenTexture myHalfSizeTexture;
-	CFullscreenTexture myQuaterSizeTexture;
+	CFullscreenTexture myQuarterSizeTexture;
 	CFullscreenTexture myBlurTexture1;
 	CFullscreenTexture myBlurTexture2;
 	CFullscreenTexture myVignetteTexture;
 	CFullscreenTexture myDeferredLightingTexture;
+	CFullscreenTexture myVolumetricAccumulationBuffer;
+	CFullscreenTexture myVolumetricBlurTexture;
+	CFullscreenTexture myDownsampledDepth;
 	CFullscreenTexture myTonemappedTexture;
+	CFullscreenTexture myAntiAliasedTexture;
 	CGBuffer myGBuffer;
 	CGBuffer myGBufferCopy;
 
@@ -70,5 +77,6 @@ private:
 
 	// Effectively used to toggle renderpasses and bloom. True == enable bloom, full render. False == disable bloom, isolated render pass
 	bool myDoFullRender;
+	bool myUseAntiAliasing;
 	//int myFrameCounter;// Used for a hack solution, can probably be removed
 };

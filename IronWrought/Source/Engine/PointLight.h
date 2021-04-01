@@ -12,15 +12,18 @@ public:
 	void SetColor(SM::Vector3 aColor);
 	void SetRange(float aRange);
 	void SetIntensity(float aIntensity);
+
+	const Matrix& GetWorldMatrix() const;
 	const SM::Vector3& GetPosition() const;
 	const SM::Vector3& GetColor() const;
 	float GetIntensity() const;
 	float GetRange() const;
 
 private:
+	Matrix myToWorld;
 	SM::Vector3 myPosition;
-	float myIntensity;
 	SM::Vector3 myColor;
+	float myIntensity;
 	float myRange;
 };
 

@@ -2,6 +2,7 @@
 #include "FullscreenRenderer.h"
 #include "DirectXFramework.h"
 #include "RenderManager.h"
+#include "Engine.h"
 #include <fstream>
 
 CFullscreenRenderer::CFullscreenRenderer() 
@@ -28,6 +29,14 @@ bool CFullscreenRenderer::Init(CDirectXFramework* aFramework) {
 	ID3D11Device* device = aFramework->GetDevice();
 	HRESULT result;
 
+	D3D11_BUFFER_DESC bufferDescription = { 0 };
+	bufferDescription.Usage = D3D11_USAGE_DYNAMIC;
+	bufferDescription.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bufferDescription.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+	bufferDescription.ByteWidth = sizeof(SFullscreenData);
+	ENGINE_HR_BOOL_MESSAGE(device->CreateBuffer(&bufferDescription, nullptr, &myFullscreenDataBuffer), "Fullscreen Data Buffer could not be created.");
+
 	std::ifstream vsFile;
 	vsFile.open("Shaders/FullscreenVertexShader.cso", std::ios::binary);
 	std::string vsData = { std::istreambuf_iterator<char>(vsFile), std::istreambuf_iterator<char>() };
@@ -46,11 +55,16 @@ bool CFullscreenRenderer::Init(CDirectXFramework* aFramework) {
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_LUMINANCE)] = "Shaders/FullscreenPixelShader_Luminance.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_GAUSSIANHORIZONTAL)] = "Shaders/FullscreenPixelShader_GaussianBlurHorizontal.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_GAUSSIANVERTICAL)] = "Shaders/FullscreenPixelShader_GaussianBlurVertical.cso";
+	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_BILATERALHORIZONTAL)] = "Shaders/FullscreenPixelShader_BilateralBlurHorizontal.cso";
+	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_BILATERALVERTICAL)] = "Shaders/FullscreenPixelShader_BilateralBlurVertical.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_BLOOM)] = "Shaders/FullscreenPixelShader_Bloom.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_VIGNETTE)] = "Shaders/FullscreenPixelShader_Vignette.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_TONEMAP)] = "Shaders/FullscreenPixelShader_Tonemap.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCRENSHADER_GAMMACORRECTION)] = "Shaders/FullscreenPixelShader_GammaCorrection.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCRENSHADER_GAMMACORRECTION_RENDERPASS)] = "Shaders/DeferredRenderPassFullscreenPixelShader_GammaCorrection.cso";
+	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_FXAA)] = "Shaders/FullscreenPixelShader_FXAA.cso";
+	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_DOWNSAMPLE_DEPTH)] = "Shaders/FullscreenPixelShader_DepthDownSample.cso";
+	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_DEPTH_AWARE_UPSAMPLING)] = "Shaders/FullscreenPixelShader_DepthAwareUpsample.cso";
 
 	for (UINT i = 0; i < static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_COUNT); i++) {
 		std::ifstream psFile;
@@ -82,6 +96,9 @@ bool CFullscreenRenderer::Init(CDirectXFramework* aFramework) {
 }
 
 void CFullscreenRenderer::Render(FullscreenShader anEffect) {
+	myFullscreenData.myResolution = IRONWROUGHT->GetWindowHandler()->GetResolution();
+	BindBuffer(myFullscreenDataBuffer, myFullscreenData, "Fullscreen Data Buffer");
+	
 	myContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	myContext->IASetInputLayout(nullptr);
 	myContext->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
@@ -90,6 +107,7 @@ void CFullscreenRenderer::Render(FullscreenShader anEffect) {
 	myContext->VSSetShader(myVertexShader, nullptr, 0);
 	myContext->PSSetShader(myPixelShaders[static_cast<size_t>(anEffect)], nullptr, 0);
 	myContext->PSSetSamplers(0, 1, &mySampler);
+	myContext->PSSetConstantBuffers(0, 1, &myFullscreenDataBuffer);
 
 	myContext->Draw(3, 0);
 	CRenderManager::myNumberOfDrawCallsThisFrame++;
