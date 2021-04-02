@@ -13,6 +13,13 @@ namespace physx
 	class PxVec3;
 }
 
+enum class EForceMode
+{
+	EForce,				//!< parameter has unit of mass * distance/ time^2, i.e. a force
+	EImpulse,			//!< parameter has unit of mass * distance /time
+	EVelocityChange,	//!< parameter has unit of distance / time, i.e. the effect is mass independent: a velocity change.
+	EAcceleration		//!< parameter has unit of distance/ time^2, i.e. an acceleration. It gets treated just like a force except the mass is not divided out before integration.
+};
 
 class CRigidBodyComponent : public CComponent
 {
@@ -25,15 +32,15 @@ public:
 	void Start() override;
 	void Update() override;
 
-	void AddForce(const Vector3& aDirection);
-	void AddForce(const Vector3& aDirection, const float aForce);
+	void AddForce(const Vector3& aDirection, const EForceMode aForceMode = EForceMode::EForce);
+	void AddForce(const Vector3& aDirection, const float aForce, const EForceMode aForceMode = EForceMode::EForce);
 	void SetPosition(const Vector3& aPos);
 
 	void AttachShape(physx::PxShape* aShape);
 	
 	CRigidDynamicBody* GetDynamicRigidBody() { return myDynamicRigidBody; }
 private:
-	void AddForce(const physx::PxVec3& aDirection);
+	void AddForce(const physx::PxVec3& aDirection, const EForceMode aForceMode);
 
 private:
 	CRigidDynamicBody* myDynamicRigidBody;
