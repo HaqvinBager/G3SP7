@@ -13,8 +13,10 @@ public:
 	void Update() override;
 	void LateUpdate() override;
 
+
 	void Position(DirectX::SimpleMath::Vector3 aPosition);
 	DirectX::SimpleMath::Vector3 Position() const;
+	DirectX::SimpleMath::Vector3 WorldPosition() const;
 
 	void Rotation(DirectX::SimpleMath::Vector3 aRotation);
 	void Rotation(DirectX::SimpleMath::Quaternion aQuaternion);

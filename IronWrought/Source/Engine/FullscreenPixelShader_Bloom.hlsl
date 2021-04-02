@@ -7,8 +7,9 @@ PixelOutput main(VertexToPixel input) {
 	
 	//Snippet 1
 	{
-		returnValue.myColor.rgb = resource + resource2;
-	}
+		//returnValue.myColor.rgb = resource + resource2;
+        returnValue.myColor.rgb = resource + (resource2 * 0.1f);
+    }
 	//Snippet 1
 	
 	//Snippet 2

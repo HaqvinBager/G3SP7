@@ -193,6 +193,10 @@
     <ClInclude Include="AudioChannel.h" />
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Behaviour.h" />
+    <ClInclude Include="BoxColliderComponent.h" />
+    <ClInclude Include="GravityGloveEditor.h" />
+    <ClInclude Include="NodeTypeAddForce.h" />
+    <ClInclude Include="SphereColliderComponent.h" />
     <ClInclude Include="BoxLight.h" />
     <ClInclude Include="BoxLightComponent.h" />
     <ClInclude Include="CameraSetting.h" />
@@ -425,6 +429,10 @@
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="AudioChannel.cpp" />
     <ClCompile Include="AudioManager.cpp" />
+    <ClCompile Include="BoxColliderComponent.cpp" />
+    <ClCompile Include="GravityGloveEditor.cpp" />
+    <ClCompile Include="NodeTypeAddForce.cpp" />
+    <ClCompile Include="SphereColliderComponent.cpp" />
     <ClCompile Include="BoxLight.cpp" />
     <ClCompile Include="BoxLightComponent.cpp" />
     <ClCompile Include="LightRenderer.cpp" />

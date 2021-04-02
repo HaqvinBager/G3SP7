@@ -23,8 +23,6 @@
 
 #include <TextFactory.h>
 #include <TextInstance.h>
-//#include <SphereColliderComponent.h>
-//#include <BoxColliderComponent.h>
 
 void TEMP_VFX(CScene* aScene);
 void TEMP_DeferredRenderingTests(CScene* aScene);
@@ -56,7 +54,7 @@ void CInGameState::Start()
 
 	CEngine::GetInstance()->SetActiveScene(myState);
 
-	myExitLevel = false;	
+	myExitLevel = false;
 }
 
 void CInGameState::Stop()
@@ -66,7 +64,7 @@ void CInGameState::Stop()
 
 void CInGameState::Update()
 {
-	
+
 
 	if (Input::GetInstance()->IsKeyPressed(VK_ESCAPE))
 	{

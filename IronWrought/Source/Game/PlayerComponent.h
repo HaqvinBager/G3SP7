@@ -3,7 +3,7 @@
 #include "Component.h"
 
 class CGameObject;
- 
+class CPlayerControllerComponent;
 class CPlayerComponent : public CComponent
 {
 public:
@@ -18,11 +18,15 @@ public:
 	void Start() override;
 	void Update() override;
 
+	bool getIsAlive();
+	void setIsAlive(bool setAlive);
 
+	void resetHealth();
 
 private:
+	CPlayerControllerComponent* myPlayerController;
 
 	float myHealth;
-	bool isAlive;
+	bool isAlive = true;
 };
 

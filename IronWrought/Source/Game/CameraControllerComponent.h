@@ -32,6 +32,40 @@ public:
 	{
 		return a + t * (b - a);
 	}
+
+	float LerpDegrees(float a, float b, float lerpFactor) // Lerps from angle a to b (both between 0.f and 360.f), taking the shortest path
+	{
+		float result;
+		float diff = b - a;
+		if (diff < -180.f)
+		{
+			// lerp upwards past 360
+			b += 360.f;
+			result = Lerp(a, b, lerpFactor);
+			if (result >= 360.f)
+			{
+				result -= 360.f;
+			}
+		}
+		else if (diff > 180.f)
+		{
+			// lerp downwards past 0
+			b -= 360.f;
+			result = Lerp(a, b, lerpFactor);
+			if (result < 0.f)
+			{
+				result += 360.f;
+			}
+		}
+		else
+		{
+			// straight lerp
+			result = Lerp(a, b, lerpFactor);
+		}
+
+		return result;
+	}
+
 	// Creates a camera and sets parent-child relationship with proper offsets.
 	static CGameObject* CreatePlayerFirstPersonCamera(CGameObject* aParentObject);
 
