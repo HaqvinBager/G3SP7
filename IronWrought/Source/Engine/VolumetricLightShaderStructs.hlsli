@@ -26,8 +26,7 @@ sampler shadowSampler : register(s1);
 Texture2D depthTexture : register(t21);
 Texture2D shadowDepthTexture : register(t22);
 
-//const float4 lightVolumetricRandomRaySamples[16] = { float4(34, 6, 22, 62), float4(25, 15, 10, 56), float4(29, 18, 46, 35), float4(5, 9, 37, 24), float4(60, 13, 19, 28), float4(17, 41, 11, 31), float4(58, 51, 40, 59), float4(7, 27, 50, 21), float4(4, 48, 53, 45), float4(43, 39, 20, 42), float4(44, 49, 38, 54), float4(23, 2, 33, 47), float4(1, 26, 61, 3), float4(12, 57, 36, 30), float4(55, 16, 0, 52), float4(14, 32, 8, 63) };
-const float lightVolumetricRandomRaySamples[64] = { 34.0f, 6, 22, 62, 25, 15, 10, 56, 29, 18, 46, 35, 5, 9, 37, 24, 60, 13, 19, 28, 17, 41, 11, 31, 58, 51, 40, 59, 7, 27, 50, 21, 4, 48, 53, 45, 43, 39, 20, 42, 44, 49, 38, 54, 23, 2, 33, 47, 1, 26, 61, 3, 12, 57, 36, 30, 55, 16, 0, 52, 14, 32, 8, 63 };
+static const float lightVolumetricRandomRaySamples[64] = { 34.0f, 6, 22, 62, 25, 15, 10, 56, 29, 18, 46, 35, 5, 9, 37, 24, 60, 13, 19, 28, 17, 41, 11, 31, 58, 51, 40, 59, 7, 27, 50, 21, 4, 48, 53, 45, 43, 39, 20, 42, 44, 49, 38, 54, 23, 2, 33, 47, 1, 26, 61, 3, 12, 57, 36, 30, 55, 16, 0, 52, 14, 32, 8, 63 };
 
 float PhaseFunctionHenyeyGreenstein(float projection, float g)
 {

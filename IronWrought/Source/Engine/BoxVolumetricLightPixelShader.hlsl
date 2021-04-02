@@ -128,7 +128,7 @@ float3 SampleShadowPos(float3 projectionPos)
 
     b *= oob;
 
-    //return 1.0f;
+    return 1.0f;
     
     if (b - a < 0.001f)
     {
@@ -154,8 +154,8 @@ void ExecuteRaymarching(inout float3 rayPositionLightVS, float3 invViewDirLightV
     rayPositionWorld += stepSize * invViewDirWorld;
     //..
     
-    //float3 shadowTerm = ShadowFactor(rayPositionLightVS.xyz).xxx;
-    float3 shadowTerm = 1.0f;
+    float3 shadowTerm = ShadowFactor(rayPositionLightVS.xyz).xxx;
+    //float3 shadowTerm = 1.0f;
     
     // World space based attenuation
     float3 lightToPixel = rayPositionWorld.xyz - boxLightPositionAndRange.xyz;
@@ -215,20 +215,17 @@ BoxLightPixelOutput main(BoxLightVertexToPixel input)
     
     // Calculate the size of each step
     float stepSize = raymarchDistance * numberOfSamplesReciprocal;
-    const float lightVolumetricRandomRaySampleslocal[64] = { 34.0f, 6, 22, 62, 25, 15, 10, 56, 29, 18, 46, 35, 5, 9, 37, 24, 60, 13, 19, 28, 17, 41, 11, 31, 58, 51, 40, 59, 7, 27, 50, 21, 4, 48, 53, 45, 43, 39, 20, 42, 44, 49, 38, 54, 23, 2, 33, 47, 1, 26, 61, 3, 12, 57, 36, 30, 55, 16, 0, 52, 14, 32, 8, 63 };
     
  // Calculate the offsets on the ray according to the interleaved sampling pattern
     float2 interleavedPos = fmod(worldPosition.xy, INTERLEAVED_GRID_SIZE);
 #if defined(USE_RANDOM_RAY_SAMPLES)
     float index = (interleavedPos.y * INTERLEAVED_GRID_SIZE + interleavedPos.x);
     // lightVolumetricRandomRaySamples contains the values 0..63 in a randomized order
-    // The indices are packed to float4s => { (0,1,2,3), (4,5,6,7), ... }
-    float rayStartOffset = lightVolumetricRandomRaySampleslocal[index /* * 0.25][fmod(index, 4.0f)*/] * (stepSize * INTERLEAVED_GRID_SIZE_SQR_RCP);
+    float rayStartOffset = lightVolumetricRandomRaySamples[index] * (stepSize * INTERLEAVED_GRID_SIZE_SQR_RCP);
 #else
     float rayStartOffset = (interleavedPos.y * INTERLEAVED_GRID_SIZE + interleavedPos.x) * (stepSize * INTERLEAVED_GRID_SIZE_SQR_RCP);
 #endif // USE_RANDOM_RAY_SAMPLES
     
-    //float3 rayPositionLightVS = positionLightVS.xyz;
     float3 rayPositionLightVS = rayStartOffset * invViewDirLightVS.xyz + positionLightVS.xyz;
     
     // The total light contribution accumulated along the ray

@@ -77,7 +77,7 @@ void CInGameState::Update()
 {
 	//mySpotlight->GetComponent<CSpotLightComponent>()->GetSpotLight()->SetWideness(abs(sinf(CTimer::Time())));
 	//mySpotlight->GetComponent<CSpotLightComponent>()->GetSpotLight()->SetPosition({ 0.0f, abs(sinf(CTimer::Time())), 0.0f });
-	//myBoxLight->GetComponent<CBoxLightComponent>()->GetBoxLight()->Rotate({ 2.0f * CTimer::Dt(), 0.0f, 0.0f });
+	//myBoxLight->GetComponent<CBoxLightComponent>()->GetBoxLight()->SetRotation({ 90.0f * sinf(CTimer::Time()), 0.0f, 0.0f });
 
 	CEngine::GetInstance()->GetPhysx().Simulate();
 	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)

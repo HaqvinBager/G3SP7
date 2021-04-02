@@ -673,6 +673,7 @@ void CLightRenderer::RenderVolumetric(CCameraComponent* aCamera, std::vector<CBo
 		BindBuffer(myVolumetricLightBuffer, myVolumetricLightBufferData, "Volumetric Light Buffer");
 		myContext->PSSetConstantBuffers(4, 1, &myVolumetricLightBuffer);
 
+		//myContext->VSSetShader(myFullscreenShader, nullptr, 0);
 		myContext->VSSetShader(myBoxLightVertexShader, nullptr, 0);
 
 		myContext->PSSetShader(myBoxLightVolumetricLightShader, nullptr, 0);

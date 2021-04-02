@@ -120,6 +120,7 @@ void CRenderManager::Render(CScene& aScene)
 	myIntermediateTexture.ClearTexture(myClearColor);
 	myIntermediateDepth.ClearDepth();
 	myEnvironmentShadowDepth.ClearDepth();
+	myBoxLightShadowDepth.ClearDepth();
 	myGBuffer.ClearTextures(myClearColor);
 	myDeferredLightingTexture.ClearTexture();
 	myVolumetricAccumulationBuffer.ClearTexture();
@@ -220,6 +221,7 @@ void CRenderManager::Render(CScene& aScene)
 	myRenderStateManager.SetRasterizerState(CRenderStateManager::RasterizerStates::RASTERIZERSTATE_FRONTFACECULLING);
 	myLightRenderer.Render(maincamera, onlyPointLights);
 	myLightRenderer.Render(maincamera, onlySpotLights);
+	myBoxLightShadowDepth.SetAsResourceOnSlot(22);
 	myLightRenderer.Render(maincamera, onlyBoxLights);
 
 	// Volumetric Lighting
