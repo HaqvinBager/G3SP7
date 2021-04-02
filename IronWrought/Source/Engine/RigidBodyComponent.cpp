@@ -41,20 +41,23 @@ void CRigidBodyComponent::Update()
 	}
 }
 
-void CRigidBodyComponent::AddForce(const Vector3& aDirection)
+void CRigidBodyComponent::AddForce(const Vector3& aDirection, const EForceMode aForceMode)
 {
-	AddForce(PxVec3(aDirection.x, aDirection.y, aDirection.z));
+	AddForce(PxVec3(aDirection.x, aDirection.y, aDirection.z), aForceMode);
 }
 
-void CRigidBodyComponent::AddForce(const Vector3& aNormalizedDirection, const float aForce)
+void CRigidBodyComponent::AddForce(const Vector3& aNormalizedDirection, const float aForce, const EForceMode aForceMode)
 {
 	Vector3 aDirectionWithForce = aNormalizedDirection * aForce;
-	AddForce(PxVec3(aDirectionWithForce.x, aDirectionWithForce.y, aDirectionWithForce.z));
+	AddForce(PxVec3(aDirectionWithForce.x, aDirectionWithForce.y, aDirectionWithForce.z), aForceMode);
 }
 
-void CRigidBodyComponent::AddForce(const physx::PxVec3& aDirection)
+void CRigidBodyComponent::AddForce(const physx::PxVec3& aDirectionAndForce, const EForceMode aForceMode)
 {
-	myDynamicRigidBody->GetBody().addForce(aDirection, PxForceMode::eIMPULSE);
+	//myDynamicRigidBody->GetBody().setForceAndTorque({ 0.f, 0.f, 0.f }, { 0.f, 0.f, 0.f }, PxForceMode::eIMPULSE);
+	//myDynamicRigidBody->GetBody().setForceAndTorque(aDirectionAndForce, { 0.f, 0.f, 0.f }, PxForceMode::eIMPULSE);
+
+	myDynamicRigidBody->GetBody().addForce(aDirectionAndForce, (PxForceMode::Enum)aForceMode);
 }
 
 void CRigidBodyComponent::AttachShape(physx::PxShape* aShape)
