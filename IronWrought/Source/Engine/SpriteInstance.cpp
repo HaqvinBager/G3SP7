@@ -39,7 +39,7 @@ bool CSpriteInstance::Init(CSprite* aSprite, const Vector2& aScale)
 	return true;
 }
 
-bool CSpriteInstance::Init(CSprite* aSprite, const SSpriteSheetPositionData& someSpriteSheetPositionData, const Vector2& aScale)
+bool CSpriteInstance::Init(CSprite* aSprite, const SSpriteSheetPositionData& /*someSpriteSheetPositionData*/, const Vector2& aScale)
 {
 	if (!aSprite) {
 		return false;
