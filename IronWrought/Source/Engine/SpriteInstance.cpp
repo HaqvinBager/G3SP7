@@ -9,6 +9,7 @@ CSpriteInstance::CSpriteInstance(CScene& aScene, bool aAddToScene)
 	: mySprite(nullptr)
 	, myRenderOrder(ERenderOrder::BackgroundLayer)
 	, myShouldRender(true)
+	, myShouldAnimate(false)
 {
 	if (aAddToScene)
 		aScene.AddInstance(this);
@@ -17,6 +18,7 @@ CSpriteInstance::CSpriteInstance()
 	: mySprite(nullptr)
 	, myRenderOrder(ERenderOrder::BackgroundLayer)
 	, myShouldRender(true)
+	, myShouldAnimate(false)
 {
 }
 
@@ -37,6 +39,22 @@ bool CSpriteInstance::Init(CSprite* aSprite, const Vector2& aScale)
 	return true;
 }
 
+bool CSpriteInstance::Init(CSprite* aSprite, const SSpriteSheetPositionData& /*someSpriteSheetPositionData*/, const Vector2& aScale)
+{
+	if (!aSprite) {
+		return false;
+	}
+
+	mySprite = aSprite;
+	this->SetSize(aScale);
+	myRenderOrder = ERenderOrder::ForegroundLayer;
+
+
+
+
+	return true;
+}
+
 void CSpriteInstance::SetSize(DirectX::SimpleMath::Vector2 aSize)
 {
 	//Sprites are assumed to be the correct native size in a 1920x1080 resolution
@@ -49,6 +67,10 @@ void CSpriteInstance::SetSize(DirectX::SimpleMath::Vector2 aSize)
 void CSpriteInstance::SetShouldRender(bool aBool)
 {
 	myShouldRender = aBool;
+}
+
+void CSpriteInstance::Update()
+{
 }
 
 void CSpriteInstance::SetRenderOrder(ERenderOrder aRenderOrder)

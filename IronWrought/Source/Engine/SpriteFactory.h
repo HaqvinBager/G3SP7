@@ -13,8 +13,8 @@ public:
 	bool Init(CDirectXFramework* aFramework);
 
 	CSprite* LoadSprite(std::string aFilePath);
-	SAnimatedSpriteData* LoadVFXSprite(std::string aTexturePath);
 	CSprite* GetSprite(std::string aFilePath);
+	SAnimatedSpriteData* LoadVFXSprite(std::string aTexturePath);
 	SAnimatedSpriteData* GetVFXSprite(std::string aTexturePath);
 
 	static CSpriteFactory* GetInstance();
