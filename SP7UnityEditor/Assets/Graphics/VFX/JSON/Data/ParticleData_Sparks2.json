@@ -1,0 +1,93 @@
+{
+  "Max Number Of Particles": 15,
+  "Spawn Rate": 50.0,
+  "Lifetime": 0.9800000190734863,
+  "Speed": 7.0,
+  "Start Color R": 1.0,
+  "Start Color G": 0.8027647137641907,
+  "Start Color B": 0.2549019455909729,
+  "Start Color A": 1.0,
+  "End Color R": 1.0,
+  "End Color G": 0.5053684115409851,
+  "End Color B": 0.20098036527633668,
+  "End Color A": 0.0,
+  "Start Size": 0.10000000149011612,
+  "End Size": 0.5899999737739563,
+  "Start Direction X": 0.0,
+  "Start Direction Y": 1.0,
+  "Start Direction Z": 0.0,
+  "End Direction X": 0.0,
+  "End Direction Y": 1.0,
+  "End Direction Z": 0.0,
+  "Lifetime Minimum Offset": 0.0,
+  "Lifetime Maximum Offset": 0.0,
+  "Speed Minimum Offset": 0.0,
+  "Speed Maximum Offset": 0.0,
+  "Offset Spawn Position X Randomize From": 0.0,
+  "Offset Spawn Position X Randomize To": 0.0,
+  "Offset Spawn Position Y Randomize From": 0.0,
+  "Offset Spawn Position Y Randomize To": 0.0,
+  "Offset Spawn Position Z Randomize From": 0.0,
+  "Offset Spawn Position Z Randomize To": 0.0,
+  "Spawn Direction X Randomize From": 0.0,
+  "Spawn Direction X Randomize To": 7.800000190734863,
+  "Spawn Direction Y Randomize From": 0.0,
+  "Spawn Direction Y Randomize To": 9.199999809265137,
+  "Spawn Direction Z Randomize From": 0.0,
+  "Spawn Direction Z Randomize To": 9.600000381469727,
+  "Texture Path": "Assets/Graphics/VFX/Texture/VFX_Particle_round.dds",
+  "Color Curve": [
+    {
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "x": 0.33000001311302187,
+      "y": 0.30000001192092898
+    },
+    {
+      "x": 0.6600000262260437,
+      "y": 0.6600000262260437
+    },
+    {
+      "x": 1.0,
+      "y": 1.0
+    }
+  ],
+  "Size Curve": [
+    {
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "x": 0.33000001311302187,
+      "y": 0.30000001192092898
+    },
+    {
+      "x": 0.6600000262260437,
+      "y": 0.6600000262260437
+    },
+    {
+      "x": 1.0,
+      "y": 1.0
+    }
+  ],
+  "Direction Curve": [
+    {
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "x": 0.33000001311302187,
+      "y": 0.30000001192092898
+    },
+    {
+      "x": 0.6600000262260437,
+      "y": 0.6600000262260437
+    },
+    {
+      "x": 1.0,
+      "y": 1.0
+    }
+  ]
+}
