@@ -71,11 +71,13 @@ cbuffer ObjectBuffer : register(b1)
     float4x4 toWorld;
     unsigned int myNumberOfDetailNormals;
     unsigned int myNumberOfTextureSets;
-
+    // padding/unused 8-bytes
+    // Create a separate shaderstructs.hlsli for tinted
     float4 myTint1;
     float4 myTint2;
     float4 myTint3;
     float4 myTint4;
+    float4 myEmissive;
 }
 
 cbuffer LightBuffer : register(b2)
@@ -124,6 +126,7 @@ Texture2D depthTexture          : register(t21);
 Texture2D shadowDepthTexture    : register(t22);
 
 Texture2D tintMapTexture : register(t23);
+Texture2D tintTextures[4] : register(t24);// & 25 & 26 & 27
 
 sampler defaultSampler : register(s0);
 sampler shadowSampler  : register(s1);

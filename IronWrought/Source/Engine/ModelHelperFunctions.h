@@ -28,7 +28,8 @@ namespace ModelHelperFunctions
 
 	namespace Internal
 	{
-		std::vector<DirectX::SimpleMath::Vector3> DeserializeTintsData(rapidjson::Document& aDocument, const std::string& aTintDataPath = "");
+		std::vector<DirectX::SimpleMath::Vector4> DeserializeTintsData(rapidjson::Document& aDocument, const std::string& aTintDataPath = "");
+		DirectX::SimpleMath::Vector4 DeserializeEmissiveData(rapidjson::Document& aDocument, const std::string& aTintDataPath = "");
 	}
 }
 //class CModelHelperFunctions// Could just be a namespace

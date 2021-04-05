@@ -33,10 +33,11 @@ namespace ImGuiWindow
 		void SaveJSON(const std::string& aCustomPath = "");
 
 	private:
-		float myPrimaryTint[3];
-		float mySecondaryTint[3];
-		float myTertiaryTint[3];
-		float myAccentTint[3];
+		float myPrimaryTint[4];
+		float mySecondaryTint[4];
+		float myTertiaryTint[4];
+		float myAccentTint[4];
+		float myEmissiveTint[4];
 
 		CGameObject* myGameObject;
 		SAssetInfo mySelectedFBX;

@@ -240,6 +240,19 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 			myObjectBufferData.myTint2 = modelComponent->Tint2();
 			myObjectBufferData.myTint3 = modelComponent->Tint3();
 			myObjectBufferData.myTint4 = modelComponent->Tint4();
+			myObjectBufferData.myEmissive = modelComponent->Emissive();
+
+			auto tintTextures = modelComponent->GetConstTintTextures();
+			for (unsigned short i = 0; i < NUMBER_OF_TINT_SLOTS; ++i)
+			{
+				myContext->PSSetShaderResources(24 + i, 1, tintTextures[i]);
+			}
+			/*myContext->PSSetShaderResources(24, 4, *tintTextures.data());*/
+		}
+		else
+		{
+			// Emissive data is handled in a shared shader.
+			myObjectBufferData.myEmissive = Vector4(1.0f);
 		}
 
 		BindBuffer(myObjectBuffer, myObjectBufferData, "Object Buffer");

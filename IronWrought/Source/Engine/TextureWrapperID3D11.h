@@ -15,7 +15,12 @@ public:
 	void Init(const char* aTexturePath);
 
 	ID3D11ShaderResourceView* ShaderResource();
+	ID3D11ShaderResourceView* const* ConstShaderResource();
 	void ShaderResource(ID3D11ShaderResourceView*);
+
+	inline const bool HasTexture() const { return myShaderResource != nullptr; };
+
+	const std::string& TextureName() const { return myName; }
 
 private:
 	bool VerifyIsDDS(const std::string& aPathToVerify);

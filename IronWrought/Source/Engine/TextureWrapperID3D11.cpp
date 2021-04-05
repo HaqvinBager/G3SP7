@@ -42,10 +42,12 @@ void CTextureWrapperID3D11::Init(const std::string & aTexturePath)
 	assert(VerifyIsDDS(aTexturePath) && std::string(aTexturePath + " is not .dds format.").c_str());
 	if (VerifyIsDDS(aTexturePath))
 	{
-		size_t lastDot = aTexturePath.find_last_of(".");
 		size_t lastSlash = aTexturePath.find_last_of("\\/");
+		size_t lastDot = aTexturePath.find_last_of(".");
 		size_t length = aTexturePath.length() - lastDot;
 		myName = aTexturePath.substr(lastSlash + 1, length - lastSlash + 1);
+		lastDot = myName.find_last_of(".");
+		myName = myName.substr(0, lastDot);
 		myShaderResource = CMainSingleton::MaterialHandler().RequestSingleTexture(myName);
 	}
 }
@@ -58,6 +60,11 @@ void CTextureWrapperID3D11::Init(const char* aTexturePath)
 ID3D11ShaderResourceView* CTextureWrapperID3D11::ShaderResource()
 {
 	return myShaderResource;
+}
+
+ID3D11ShaderResourceView* const* CTextureWrapperID3D11::ConstShaderResource()
+{
+	return &myShaderResource;
 }
 
 void CTextureWrapperID3D11::ShaderResource(ID3D11ShaderResourceView* aShaderResource)

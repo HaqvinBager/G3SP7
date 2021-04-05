@@ -59,6 +59,7 @@ private:
 		Vector4 myTint2;
 		Vector4 myTint3;
 		Vector4 myTint4;
+		Vector4 myEmissive;
 	} myObjectBufferData;
 
 	struct SLightBufferData 

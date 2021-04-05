@@ -34,7 +34,7 @@ namespace ModelHelperFunctions
         //    //    //tints[i] = Vector3(tintRGB["Red"].GetFloat(), tintRGB["Green"].GetFloat(), tintRGB["Blue"].GetFloat());
         //    tints[i] = Vector3(tintRGB["Red"].GetFloat(), tintRGB["Green"].GetFloat(), tintRGB["Blue"].GetFloat());
         //}
-        std::vector<Vector3> tints = Internal::DeserializeTintsData(document, aTintDataPath);
+        std::vector<Vector4> tints = Internal::DeserializeTintsData(document, aTintDataPath);
         return aModelComponent->SetTints(tints);
     }
 
@@ -45,13 +45,13 @@ namespace ModelHelperFunctions
 
         anOutModelPath = document["Model path"].GetString();
 
-        std::vector<Vector3> tints = Internal::DeserializeTintsData(document, aTintDataPath);
+        std::vector<Vector4> tints = Internal::DeserializeTintsData(document, aTintDataPath);
         return aModelComponent->SetTints(tints);
     }
 
     bool LoadTintsToModelComponent(CModelComponent* aModelComponent, rapidjson::Document& aDocument)
     {
-        std::vector<Vector3> tints = Internal::DeserializeTintsData(aDocument);
+        std::vector<Vector4> tints = Internal::DeserializeTintsData(aDocument);
         return aModelComponent->SetTints(tints);
     }
 
@@ -64,7 +64,7 @@ namespace ModelHelperFunctions
 
         anOutModelPath = aDocument["Model path"].GetString();
 
-        std::vector<Vector3> tints = Internal::DeserializeTintsData(aDocument);
+        std::vector<Vector4> tints = Internal::DeserializeTintsData(aDocument);
         return aModelComponent->SetTints(tints);
     }
 
@@ -92,13 +92,14 @@ namespace ModelHelperFunctions
             aFileName = aTintDataPath;
         }
 
-        const std::vector<Vector3>& tints = aModelComponent->GetTints();
+        const std::vector<Vector4>& tints = aModelComponent->GetTints();
         std::array<std::string, TINTED_MODEL_MAX_NR_OF_TINTS> tintKeys = {
             "Tint1-Primary-Red Channel",
             "Tint2-Secondary-Green Channel",
             "Tint3-Tertiary-Blue Channel",
             "Tint4-Accents-Alpha Channel"
         };
+        const std::string emissiveKey = "Emissive";
 
         using namespace rapidjson;
         StringBuffer stringBuffer;
@@ -117,18 +118,35 @@ namespace ModelHelperFunctions
                     {
                         prettyWriter.Key(tintKeys[i].c_str()); 
                         prettyWriter.String("");
-                        const Vector3& tint = tints[i];
+                        const Vector4& tint = tints[i];
                         prettyWriter.Key("Red");
                         prettyWriter.Double(static_cast<double>(tint.x));
                         prettyWriter.Key("Green");
                         prettyWriter.Double(static_cast<double>(tint.y));
                         prettyWriter.Key("Blue");
                         prettyWriter.Double(static_cast<double>(tint.z));
+                        prettyWriter.Key("Alpha");
+                        prettyWriter.Double(static_cast<double>(tint.w));
                     }
                     prettyWriter.EndObject();
                 }
             }
             prettyWriter.EndArray();
+
+            prettyWriter.Key(emissiveKey.c_str()); 
+            prettyWriter.StartObject();
+            {
+                const Vector4& tint = aModelComponent->Emissive();
+                prettyWriter.Key("Red");
+                prettyWriter.Double(static_cast<double>(tint.x));
+                prettyWriter.Key("Green");
+                prettyWriter.Double(static_cast<double>(tint.y));
+                prettyWriter.Key("Blue");
+                prettyWriter.Double(static_cast<double>(tint.z));
+                prettyWriter.Key("Alpha");
+                prettyWriter.Double(static_cast<double>(tint.w));
+            }
+            prettyWriter.EndObject();
         }
         prettyWriter.EndObject();
 
@@ -219,10 +237,10 @@ namespace ModelHelperFunctions
 
     namespace Internal
     {
-        std::vector<DirectX::SimpleMath::Vector3> DeserializeTintsData(rapidjson::Document& aDocument, const std::string& aTintDataPath)
+        std::vector<DirectX::SimpleMath::Vector4> DeserializeTintsData(rapidjson::Document& aDocument, const std::string& aTintDataPath)
         {
             using namespace rapidjson;
-            std::vector<Vector3> tints;
+            std::vector<Vector4> tints;
 
             assert(aDocument["Tints"].IsArray() && std::string("Tints is not an array in: " + aTintDataPath).c_str());
             if (!aDocument["Tints"].IsArray())
@@ -237,9 +255,29 @@ namespace ModelHelperFunctions
                 //    // read the texture instead
                 //else
                 //    //tints[i] = Vector3(tintRGB["Red"].GetFloat(), tintRGB["Green"].GetFloat(), tintRGB["Blue"].GetFloat());
-                tints[i] = Vector3(tintRGB["Red"].GetFloat(), tintRGB["Green"].GetFloat(), tintRGB["Blue"].GetFloat());
+                tints[i].x = tintRGB.HasMember("Red")   ? tintRGB["Red"].GetFloat()   : 1.0f;
+                tints[i].y = tintRGB.HasMember("Green") ? tintRGB["Green"].GetFloat() : 1.0f;
+                tints[i].z = tintRGB.HasMember("Blue")  ? tintRGB["Blue"].GetFloat()  : 1.0f;
+                tints[i].w = tintRGB.HasMember("Alpha") ? tintRGB["Alpha"].GetFloat() : 1.0f;
             }
             return std::move(tints);
+        }
+
+        DirectX::SimpleMath::Vector4 DeserializeEmissiveData(rapidjson::Document& aDocument, const std::string& aTintDataPath)
+        {
+            using namespace rapidjson;
+            Vector4 emissive;
+
+            assert(aDocument["Emissive"].IsObject() && std::string("Emissive is not an object in: " + aTintDataPath).c_str());
+            if (!aDocument["Emissive"].IsObject())
+                return std::move(emissive);
+
+            auto emissiveObject = aDocument["Emissive"].GetObjectW();
+            emissive.x = emissiveObject["Red"].GetFloat();
+            emissive.y = emissiveObject["Green"].GetFloat();
+            emissive.z = emissiveObject["Blue"].GetFloat();
+            emissive.w = emissiveObject["Alpha"].GetFloat();
+            return std::move(emissive);
         }
     }
 }

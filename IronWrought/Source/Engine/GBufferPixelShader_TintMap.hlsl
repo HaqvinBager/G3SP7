@@ -8,6 +8,15 @@ struct GBufferOutput
     float4 myMetalRoughAOEm     : SV_TARGET3;
 };
 
+float4 SampleTintTextureAlbedo(int index, float2 uv)
+{
+    float tilingModifier = 4.0f;
+   
+    float4 tintTexture;
+    tintTexture = tintTextures[index].Sample(defaultSampler, uv * tilingModifier).rgba;
+    
+    return tintTexture;
+}
 
 GBufferOutput main(VertexModelToPixel input)
 {
@@ -18,18 +27,31 @@ GBufferOutput main(VertexModelToPixel input)
     float3 albedo = PixelShader_Albedo(vertToPixel.myUV).rgb;
     
     float4 tintMap = PixelShader_TintMap(vertToPixel.myUV).rgba;
-    float blendFactor = 0.65f;
-    
     float emissive = PixelShader_Emissive(vertToPixel.myUV);
-    albedo = lerp(albedo, myTint1.rgb, tintMap.r * blendFactor * (1 - emissive));
-    albedo = lerp(albedo, myTint2.rgb, tintMap.g * blendFactor * (1 - emissive));
-    albedo = lerp(albedo, myTint3.rgb, tintMap.b * blendFactor * (1 - emissive));
-    albedo = lerp(albedo, myTint4.rgb, tintMap.a * blendFactor * (1 - emissive));
-
-    //Reminder: Nico säger att gamma korrigering kommer ske fast att det är onödigt, kan vara en grej!
+    if (emissive < 0.99f)
+    {
+        float blendFactor = 0.65f * (1 - emissive);
+        float tint1BlendFactor = tintMap.r * blendFactor;
+        float tint2BlendFactor = tintMap.g * blendFactor;
+        float tint3BlendFactor = tintMap.b * blendFactor;
+        float tint4BlendFactor = tintMap.a * blendFactor;
     
-    float3 normal = PixelShader_Normal(vertToPixel.myUV).xyz;
+        albedo = lerp(albedo, SampleTintTextureAlbedo(0, vertToPixel.myUV).rgb, tint1BlendFactor);
+        albedo = lerp(albedo, SampleTintTextureAlbedo(1, vertToPixel.myUV).rgb, tint2BlendFactor);
+        albedo = lerp(albedo, SampleTintTextureAlbedo(2, vertToPixel.myUV).rgb, tint3BlendFactor);
+        albedo = lerp(albedo, SampleTintTextureAlbedo(3, vertToPixel.myUV).rgb, tint4BlendFactor);
+        
+        albedo = lerp(albedo, myTint1.rgb, tint1BlendFactor * myTint1.a);
+        albedo = lerp(albedo, myTint2.rgb, tint2BlendFactor * myTint2.a);
+        albedo = lerp(albedo, myTint3.rgb, tint3BlendFactor * myTint3.a);
+        albedo = lerp(albedo, myTint4.rgb, tint4BlendFactor * myTint4.a);
+    }
+    else
+    {
+        albedo = myEmissive.rgb * myEmissive.a;
+    }
     
+    float3 normal = PixelShader_Normal(vertToPixel.myUV).xyz; 
     if (myNumberOfDetailNormals > 0)
     {
         float detailNormalStrength = PixelShader_DetailNormalStrength(vertToPixel.myUV);

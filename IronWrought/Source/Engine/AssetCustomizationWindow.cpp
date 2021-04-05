@@ -30,10 +30,11 @@ ImGuiWindow::CAssetCustomizationWindow::CAssetCustomizationWindow(const char* aN
 	, myShowOverwriteCustomizationFile(false)
 	, myReplaceFBX(true)
 {
-	ZeroMemory(myPrimaryTint, 3);
-	ZeroMemory(mySecondaryTint, 3);
-	ZeroMemory(myTertiaryTint, 3);
-	ZeroMemory(myAccentTint, 3);
+	ZeroMemory(myPrimaryTint, 4);
+	ZeroMemory(mySecondaryTint, 4);
+	ZeroMemory(myTertiaryTint, 4);
+	ZeroMemory(myAccentTint, 4);
+	ZeroMemory(myEmissiveTint, 4);
 
 	ZeroMemory(myJSONFileName, AssetCustomizationWindow::JSONNameBufferSize);
 }
@@ -74,17 +75,19 @@ void ImGuiWindow::CAssetCustomizationWindow::OnInspectorGUI()
 			ImGui::EndMenuBar();
 		}
 
-		ImGui::ColorEdit3(": Color 1, Primary", myPrimaryTint);
-		ImGui::ColorEdit3(": Color 2, Secondary", mySecondaryTint);
-		ImGui::ColorEdit3(": Color 3, Tertiary", myTertiaryTint);
-		ImGui::ColorEdit3(": Color 4, Accents", myAccentTint);
+		ImGui::ColorEdit4(": Color 1, Primary", myPrimaryTint);
+		ImGui::ColorEdit4(": Color 2, Secondary", mySecondaryTint);
+		ImGui::ColorEdit4(": Color 3, Tertiary", myTertiaryTint);
+		ImGui::ColorEdit4(": Color 4, Accents", myAccentTint);
+		ImGui::ColorEdit4(": Color 5, Emissive", myEmissiveTint);
 		if (myGameObject->GetComponent<CModelComponent>())
 		{
 			auto& model = *myGameObject->GetComponent<CModelComponent>();
-			model.Tint1(Vector3(myPrimaryTint));
-			model.Tint2(Vector3(mySecondaryTint));
-			model.Tint3(Vector3(myTertiaryTint));
-			model.Tint4(Vector3(myAccentTint));
+			model.Tint1(Vector4(myPrimaryTint));
+			model.Tint2(Vector4(mySecondaryTint));
+			model.Tint3(Vector4(myTertiaryTint));
+			model.Tint4(Vector4(myAccentTint));
+			model.Emissive(Vector4(myEmissiveTint));
 		}
 
 		ImGui::Spacing();
@@ -106,7 +109,7 @@ void ImGuiWindow::CAssetCustomizationWindow::OnInspectorGUI()
 		if (myShowOverwriteCustomizationFile)
 			SaveOverwriteFile();
 
-		ImGui::SetWindowSize(Name(), ImVec2(0, 0));// Prohibits resize and sets size to fit all items. Magic.
+		ImGui::SetWindowSize(Name(), ImVec2(0, 0));// Prohibits resize and sets size to fit all items. Magic :o
 	}
 	ImGui::End();
 }
@@ -180,10 +183,12 @@ void ImGuiWindow::CAssetCustomizationWindow::LoadCustomizationFile()
 				Vector4 secondary	= model->Tint2();
 				Vector4 tertiary	= model->Tint3();
 				Vector4 accents		= model->Tint4();
-				myPrimaryTint[0]   = primary.x;		myPrimaryTint[1]   = primary.y;		myPrimaryTint[2]   = primary.z;
-				mySecondaryTint[0] = secondary.x;	mySecondaryTint[1] = secondary.y;	mySecondaryTint[2] = secondary.z;
-				myTertiaryTint[0]  = tertiary.x;	myTertiaryTint[1]  = tertiary.y;	myTertiaryTint[2]  = tertiary.z;
-				myAccentTint[0]	   = accents.x;		myAccentTint[1]    = accents.y;		myAccentTint[2]    = accents.z;
+				Vector4 emissive	= model->Emissive();
+				myPrimaryTint[0]   = primary.x;		myPrimaryTint[1]   = primary.y;		myPrimaryTint[2]   = primary.z;   myPrimaryTint[3]   = primary.w;
+				mySecondaryTint[0] = secondary.x;	mySecondaryTint[1] = secondary.y;	mySecondaryTint[2] = secondary.z; mySecondaryTint[3] = secondary.w;
+				myTertiaryTint[0]  = tertiary.x;	myTertiaryTint[1]  = tertiary.y;	myTertiaryTint[2]  = tertiary.z;  myTertiaryTint[3]  = tertiary.w;
+				myAccentTint[0]	   = accents.x;		myAccentTint[1]    = accents.y;		myAccentTint[2]    = accents.z;	  myAccentTint[3]    = accents.w;
+				myEmissiveTint[0]  = emissive.x;	myEmissiveTint[1]  = emissive.y;	myEmissiveTint[2]  = emissive.z;  myEmissiveTint[3]  = emissive.w;
 
 				mySelectedJSON = std::move(myJSONPaths[i]);
 				mySelectedFBX.myDisplayName = CutToFileNameOnly(mySelectedFBX.myPath);

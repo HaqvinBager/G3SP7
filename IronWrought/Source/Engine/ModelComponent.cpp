@@ -26,6 +26,12 @@ CModelComponent::CModelComponent(CGameObject& aParent, const std::string& aFBXPa
 	}
 
 	HasTintMap(myModel->GetModelData().myTintMap != nullptr);
+	myEmissive = Vector4(1.0f);
+
+	Texture1(ASSETPATH("Assets/Graphics/Textures/Shared/orchid0.dds"));
+	Texture2(ASSETPATH("Assets/Graphics/Textures/Shared/orchid0.dds"));
+	//Texture3(ASSETPATH("Assets/Graphics/Textures/Shared/blue.dds"));
+	Texture4(ASSETPATH("Assets/Graphics/Textures/Shared/orchid2.dds"));
 }
 
 CModelComponent::~CModelComponent()
@@ -73,80 +79,258 @@ const std::vector<std::string>& CModelComponent::VertexPaintMaterialNames() cons
 	return myVertexPaintMaterialNames;
 }
 
-bool CModelComponent::SetTints(std::vector<Vector3>& aVectorWithTints)
+bool CModelComponent::SetTints(std::vector<Vector4>& aVectorWithTints)
 {
 	assert(!aVectorWithTints.empty());
 	if (aVectorWithTints.empty())
 		return false;
-	myTints = std::move(aVectorWithTints);
-	//if (myTints.empty())
-	//	myTints.resize(aVectorWithTints.size());
-	//
-	//memcpy(&myTints, &aVectorWithTints, sizeof(Vector3) * aVectorWithTints.size());
-	//myTints;
+
+	memmove(&myTints[0].myColor, &aVectorWithTints[0], sizeof(Vector4));
+	memmove(&myTints[1].myColor, &aVectorWithTints[1], sizeof(Vector4));
+	memmove(&myTints[2].myColor, &aVectorWithTints[2], sizeof(Vector4));
+	memmove(&myTints[3].myColor, &aVectorWithTints[3], sizeof(Vector4));
+
 	return true;
 }
 
-const std::vector<Vector3>& CModelComponent::GetTints()
+std::vector<Vector4> CModelComponent::GetTints()
 {
 	if (myTints.empty())
-		myTints.resize(4);
+		myTints.resize(NUMBER_OF_TINT_SLOTS);
+	std::vector<Vector4> tints(NUMBER_OF_TINT_SLOTS);
+	memcpy(&tints[0], &myTints[0].myColor, sizeof(Vector4));
+	memcpy(&tints[1], &myTints[1].myColor, sizeof(Vector4));
+	memcpy(&tints[2], &myTints[2].myColor, sizeof(Vector4));
+	memcpy(&tints[3], &myTints[3].myColor, sizeof(Vector4));
+	return std::move(tints);
+}
+
+void CModelComponent::Tint1(const Vector4& aTint)
+{
+	if(!myTints.empty())
+		myTints[0].myColor = aTint;
+}
+void CModelComponent::Tint2(const Vector4& aTint)
+{
+	if(!myTints.empty())
+		myTints[1].myColor = aTint;
+}
+void CModelComponent::Tint3(const Vector4& aTint)
+{
+	if(!myTints.empty())
+		myTints[2].myColor = aTint;
+}
+void CModelComponent::Tint4(const Vector4& aTint)
+{
+	if(!myTints.empty())
+		myTints[3].myColor = aTint;
+}
+
+void CModelComponent::Emissive(const Vector4& aTint)
+{
+	myEmissive = aTint;
+}
+
+const Vector4& CModelComponent::Tint1() const
+{
+	if (myTints.empty())
+	{
+		assert(false && "myTints are empty!");
+		return myEmissive;
+	}
+
+	return myTints[0].myColor;
+}
+const Vector4& CModelComponent::Tint2() const
+{
+	if (myTints.empty())
+	{
+		assert(false && "myTints are empty!");
+		return myEmissive;
+	}
+
+	return myTints[1].myColor;
+}
+const Vector4& CModelComponent::Tint3() const
+{
+	if (myTints.empty())
+	{
+		assert(false && "myTints are empty!");
+		return myEmissive;
+	}
+
+	return myTints[2].myColor;
+}
+const Vector4& CModelComponent::Tint4() const
+{
+	if (myTints.empty())
+	{
+		assert(false && "myTints are empty!");
+		return myEmissive;
+	}
+
+	return myTints[3].myColor;
+}
+
+const Vector4& CModelComponent::Emissive() const
+{
+	return myEmissive;
+}
+
+ ID3D11ShaderResourceView* CModelComponent::Texture1()
+{
+	return myTints[0].myTexture.ShaderResource();
+}
+
+ID3D11ShaderResourceView* CModelComponent::Texture2() 
+{
+	return myTints[1].myTexture.ShaderResource();
+}
+
+ ID3D11ShaderResourceView* CModelComponent::Texture3() 
+{
+	return myTints[2].myTexture.ShaderResource();
+}
+
+ ID3D11ShaderResourceView* CModelComponent::Texture4() 
+{
+	return myTints[3].myTexture.ShaderResource();
+}
+
+ ID3D11ShaderResourceView* CModelComponent::TextureOnIndex(const int& anIndex)
+{
+	const size_t index = anIndex < 0 ? 0 : anIndex >= myTints.size() ? myTints.size() - 1 : anIndex;
+	return myTints[index].myTexture.ShaderResource();
+}
+
+ ID3D11ShaderResourceView* const* CModelComponent::ConstTintTexture1()
+ {
+	 return myTints[0].myTexture.ConstShaderResource();
+ }
+
+ ID3D11ShaderResourceView* const* CModelComponent::ConstTintTexture2()
+ {
+	 return myTints[1].myTexture.ConstShaderResource();
+ }
+
+ ID3D11ShaderResourceView* const* CModelComponent::ConstTintTexture3()
+ {
+	 return myTints[2].myTexture.ConstShaderResource();
+ }
+
+ ID3D11ShaderResourceView* const* CModelComponent::ConstTintTexture4()
+ {
+	 return myTints[3].myTexture.ConstShaderResource();
+ }
+
+ ID3D11ShaderResourceView* const* CModelComponent::ConstTintTextureOnIndex(const int& anIndex)
+ {
+	 const size_t index = anIndex < 0 ? 0 : anIndex >= myTints.size() ? myTints.size() - 1 : anIndex;
+	 return myTints[index].myTexture.ConstShaderResource();
+ }
+
+void CModelComponent::Texture1(const std::string& aTexturePath)
+{
+	myTints[0].myTexture.Init(aTexturePath);
+}
+
+void CModelComponent::Texture2(const std::string & aTexturePath)
+{
+	myTints[1].myTexture.Init(aTexturePath);
+}
+
+void CModelComponent::Texture3(const std::string & aTexturePath)
+{
+	myTints[2].myTexture.Init(aTexturePath);
+}
+
+void CModelComponent::Texture4(const std::string & aTexturePath)
+{
+	myTints[3].myTexture.Init(aTexturePath);
+}
+
+void CModelComponent::TextureOnIndex(const std::string& aTexturePath, const int anIndex)
+{
+	const size_t index = anIndex < 0 ? 0 : anIndex >= myTints.size() ? myTints.size() - 1 : anIndex;
+	myTints[index].myTexture.Init(aTexturePath);
+}
+
+void CModelComponent::Texture1(ID3D11ShaderResourceView* aTexture)
+{
+	myTints[0].myTexture.ShaderResource(aTexture);
+}
+
+void CModelComponent::Texture2(ID3D11ShaderResourceView* aTexture)
+{
+	myTints[1].myTexture.ShaderResource(aTexture);
+}
+
+void CModelComponent::Texture3(ID3D11ShaderResourceView* aTexture)
+{
+	myTints[2].myTexture.ShaderResource(aTexture);
+}
+
+void CModelComponent::Texture4(ID3D11ShaderResourceView* aTexture)
+{
+	myTints[3].myTexture.ShaderResource(aTexture);
+}
+
+void CModelComponent::TextureOnIndex(ID3D11ShaderResourceView* aTexture, const int anIndex)
+{
+	const size_t index = anIndex < 0 ? 0 : anIndex >= myTints.size() ? myTints.size() - 1 : anIndex;
+	myTints[index].myTexture.ShaderResource(aTexture);
+}
+
+bool CModelComponent::SetTintTextures(std::vector<CModelComponent::STintData>& aVectorWithTintTextures)
+{
+	myTints = std::move(aVectorWithTintTextures);
+	return true;
+}
+
+const std::vector<CModelComponent::STintData>& CModelComponent::GetTintData()
+{
 	return myTints;
 }
 
-void CModelComponent::Tint1(const Vector3& aTint)
+std::array<ID3D11ShaderResourceView* const*, NUMBER_OF_TINT_SLOTS> CModelComponent::GetConstTintTextures()
 {
-	if(!myTints.empty())
-		myTints[0] = aTint;
-}
-void CModelComponent::Tint2(const Vector3& aTint)
-{
-	if(!myTints.empty())
-		myTints[1] = aTint;
-}
-void CModelComponent::Tint3(const Vector3& aTint)
-{
-	if(!myTints.empty())
-		myTints[2] = aTint;
-}
-void CModelComponent::Tint4(const Vector3& aTint)
-{
-	if(!myTints.empty())
-		myTints[3] = aTint;
+	std::array<ID3D11ShaderResourceView* const*, NUMBER_OF_TINT_SLOTS>  resources = {
+		ConstTintTexture1(),
+		ConstTintTexture2(),
+		ConstTintTexture3(),
+		ConstTintTexture4()
+	};
+
+	return std::move(resources);
 }
 
-Vector4 CModelComponent::Tint1() const
+std::array<ID3D11ShaderResourceView*, NUMBER_OF_TINT_SLOTS> CModelComponent::GetTintTextures()
 {
-	if (myTints.empty())
-		return Vector4();
-	Vector4 v = {myTints[0].x, myTints[0].y, myTints[0].z, 1.0f };
-	return std::move(v);
-}
-Vector4 CModelComponent::Tint2() const
-{
-	if (myTints.empty())
-		return Vector4();
-	Vector4 v = {myTints[1].x, myTints[1].y, myTints[1].z, 1.0f };
-	return std::move(v);
-}
-Vector4 CModelComponent::Tint3() const
-{
-	if (myTints.empty())
-		return Vector4();
-	Vector4 v = { myTints[2].x, myTints[2].y, myTints[2].z, 1.0f };
-	return std::move(v);
-}
-Vector4 CModelComponent::Tint4() const
-{
-	if (myTints.empty())
-		return Vector4();
-	Vector4 v = { myTints[3].x, myTints[3].y, myTints[3].z, 1.0f };
-	return std::move(v);
+	std::array<ID3D11ShaderResourceView*, NUMBER_OF_TINT_SLOTS>  resources = {
+		Texture1(),
+		Texture2(),
+		Texture3(),
+		Texture4()
+	};
+
+	return std::move(resources);
 }
 
 void CModelComponent::HasTintMap(const bool aHasTintMap)
 {
 	if(aHasTintMap)
 		if (myTints.empty())
-			myTints.resize(4);
+			myTints.resize(NUMBER_OF_TINT_SLOTS);
+}
+
+std::array<bool, NUMBER_OF_TINT_SLOTS> CModelComponent::HasTintTexturesOnSlots() const
+{
+	std::array<bool, NUMBER_OF_TINT_SLOTS> onSlots = { 
+		myTints[0].myTexture.HasTexture(),
+		myTints[1].myTexture.HasTexture(),
+		myTints[2].myTexture.HasTexture(),
+		myTints[3].myTexture.HasTexture() 
+	};
+
+	return std::move(onSlots);
 }
