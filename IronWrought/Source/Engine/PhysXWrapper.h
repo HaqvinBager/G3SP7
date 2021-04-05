@@ -30,6 +30,7 @@ public:
 	~CPhysXWrapper();
 
 	bool Init();
+	void Simulate();
 
 	PxScene* CreatePXScene(CScene* aScene);
 	PxScene* GetPXScene();
@@ -39,12 +40,7 @@ public:
 	bool TryRayCast(const Vector3& aOrigin, Vector3& aDirection, const float aDistance, PxRaycastBuffer& outHit);
 
 	PxRaycastBuffer Raycast(Vector3 origin, Vector3 direction, float distance);
-
-
 	PxMaterial* CreateMaterial(materialfriction amaterial);
-
-	void Simulate();
-
 	CRigidDynamicBody* CreateDynamicRigidbody(const CTransformComponent& aTransform);
 	CRigidDynamicBody* CreateDynamicRigidbody(const PxTransform& aTransform);
 
@@ -69,7 +65,7 @@ private:
 	PxCooking* myCooking;
 	CContactReportCallback* myContactReportCallback;
 	PxControllerManager* myControllerManager;
-	std::unordered_map<PxScene*, PxControllerManager*> myControllerManagers;// Should not be necessary
+	//std::unordered_map<PxScene*, PxControllerManager*> myControllerManagers;// Should not be necessary
 	std::unordered_map<CScene*, PxScene*> myPXScenes;
 	//std::queue<CRigidDynamicBody*> myAddBodyQueue;
 };
