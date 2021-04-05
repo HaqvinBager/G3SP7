@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "LoadScene.h"
+#include <imgui.h>
 
 #include "JsonReader.h"
 #include "Scene.h"

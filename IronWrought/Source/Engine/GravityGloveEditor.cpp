@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "GravityGloveEditor.h"
+#include <imgui.h>
+
 #include "Engine.h"
 #include "Scene.h"
 #include <GravityGloveComponent.h>
@@ -15,7 +17,7 @@ IronWroughtImGui::CGravityGloveEditor::~CGravityGloveEditor()
 
 void IronWroughtImGui::CGravityGloveEditor::OnEnable()
 {
-	myGlove = IRONWROUGHT->GetActiveScene().FindFirstObjectWithComponent<CGravityGloveComponent>();
+	myGlove = IRONWROUGHT_ACTIVE_SCENE.FindFirstObjectWithComponent<CGravityGloveComponent>();
 
 	if (myGlove != nullptr)
 	{
