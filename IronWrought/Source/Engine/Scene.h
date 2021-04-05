@@ -126,6 +126,8 @@ public:
 	bool RemoveInstance(CBoxLight* aBoxLight);
 	bool RemoveInstance(CAnimatedUIElement* anAnimatedUIElement);
 	bool RemoveInstance(CGameObject* aGameObject);
+	bool RemoveInstance(CSpriteInstance* aSpriteInstance);
+	bool RemoveInstance(CTextInstance* aTextInstance);
 //REMOVE SPECIFIC INSTANCE END
 //CLEAR SCENE OF INSTANCES START
 	bool ClearPointLights();

@@ -549,9 +549,10 @@ bool CScene::RemoveInstance(CPointLight* aPointLight)
 			//std::swap(myGameObjects[i], myGameObjects[myGameObjects.size() - 1]);
 			//myGameObjects.pop_back();
 			myPointLights.erase(myPointLights.begin() + i);
+			return true;
 		}
 	}
-	return true;
+	return false;
 }
 
 bool CScene::RemoveInstance(CSpotLight* aSpotLight)
@@ -561,9 +562,10 @@ bool CScene::RemoveInstance(CSpotLight* aSpotLight)
 		if (aSpotLight == mySpotLights[i])
 		{
 			mySpotLights.erase(mySpotLights.begin() + i);
+			return true;
 		}
 	}
-	return true;
+	return false;
 }
 
 bool CScene::RemoveInstance(CBoxLight* aBoxLight)
@@ -573,9 +575,10 @@ bool CScene::RemoveInstance(CBoxLight* aBoxLight)
 		if (aBoxLight == myBoxLights[i])
 		{
 			myBoxLights.erase(myBoxLights.begin() + i);
+			return true;
 		}
 	}
-	return true;
+	return false;
 }
 
 bool CScene::RemoveInstance(CAnimatedUIElement* anAnimatedUIElement)
@@ -585,9 +588,10 @@ bool CScene::RemoveInstance(CAnimatedUIElement* anAnimatedUIElement)
 		if (myAnimatedUIElements[i] == anAnimatedUIElement)
 		{
 			myAnimatedUIElements.erase(myAnimatedUIElements.begin() + i);
+			return true;
 		}
 	}
-	return true;
+	return false;
 }
 
 bool CScene::RemoveInstance(CGameObject* aGameObject)
@@ -599,9 +603,35 @@ bool CScene::RemoveInstance(CGameObject* aGameObject)
 			//std::swap(myGameObjects[i], myGameObjects[myGameObjects.size() - 1]);
 			//myGameObjects.pop_back();
 			myGameObjects.erase(myGameObjects.begin() + i);
+			return true;
 		}
 	}
-	return true;
+	return false;
+}
+bool CScene::RemoveInstance(CSpriteInstance* aSpriteInstance)
+{
+	ERenderOrder renderOrder = aSpriteInstance->GetRenderOrder();
+	for (UINT i = 0; i < mySpriteInstances[renderOrder].size(); ++i)
+	{
+		if (aSpriteInstance == mySpriteInstances[renderOrder][i])
+		{
+			mySpriteInstances[renderOrder].erase(mySpriteInstances[renderOrder].begin() + i);
+			return true;
+		}
+	}
+	return false;
+}
+bool CScene::RemoveInstance(CTextInstance* aTextInstance)
+{
+	for (UINT i = 0; i < myTexts.size(); ++i)
+	{
+		if (aTextInstance == myTexts[i])
+		{
+			myTexts.erase(myTexts.begin() + i);
+			return true;
+		}
+	}
+	return false;
 }
 //REMOVE SPECIFIC INSTANCE END
 //CLEAR SCENE OF INSTANCES START

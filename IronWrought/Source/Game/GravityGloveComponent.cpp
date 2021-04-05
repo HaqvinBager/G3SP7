@@ -101,10 +101,7 @@ void CGravityGloveComponent::Pull()
 		CEngine::GetInstance()->GetActiveScene().AddInstance(myLine2);
 	#endif
 	}
-
 	//myCurrentTarget->SetPosition(myGravitySlot->WorldPosition());
-	
-
 }
 
 void CGravityGloveComponent::Push()

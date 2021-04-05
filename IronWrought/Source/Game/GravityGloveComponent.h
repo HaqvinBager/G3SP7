@@ -5,6 +5,10 @@
 class CTransformComponent;
 class CRigidBodyComponent;
 
+namespace IronWroughtImGui {
+	class CGravityGloveEditor;
+}
+
 struct SGravityGloveSettings {
 	float myPushForce;
 	float myDistanceToMaxLinearVelocity;
@@ -21,7 +25,7 @@ struct SGravityGloveSettings {
 
 class CGravityGloveComponent : public CBehaviour
 {
-	//friend class IronWroughtImGui::CGravityGloveEditor;
+	friend class IronWroughtImGui::CGravityGloveEditor;
 public:
 	CGravityGloveComponent(CGameObject& aParent, CTransformComponent* aGravitySlot);
 	~CGravityGloveComponent() override;
@@ -36,13 +40,8 @@ public:
 	void OnEnable() override;
 	void OnDisable() override;
 
-
-	SGravityGloveSettings& GetSettings() { return mySettings; }
-	//void SetSettings(const SGravityGloveSettings& someSettings) { mySettings = someSettings; }
-
-
-	SGravityGloveSettings mySettings;
 private:
+	SGravityGloveSettings mySettings;
 	float InverseLerp(float a, float b, float t) const
 	{
 		if (a == b)

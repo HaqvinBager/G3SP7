@@ -5,13 +5,15 @@
       "FontAndFontSize": "Assets/Fonts/MorrisRoman42",
       "Text Position X": 0.0,
       "Text Position Y": 0.0,
-      "Text Pivot X": 1.0,
-      "Text Pivot Y": 1.0,
+      "Text Pivot X": 0.0,
+      "Text Pivot Y": 0.0,
       "Text Color R": 1.5,
       "Text Color G": 0.7,
       "Text Color B": 0.0,
       "Pixel Width": 320.0,
       "Pixel Height": 100.0,
+      "Sprite Position X": 0.0,
+      "Sprite Position Y": 0.0,
       "Idle Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_IDLE.dds",
       "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_HOVER.dds",
       "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_CLICK.dds",
@@ -34,7 +36,7 @@
       "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_CLICK.dds",
       "Messages": [ 8 ]
     },
-   {
+    {
       "Text": "3",
       "FontAndFontSize": "Assets/Fonts/MorrisRoman42",
       "Text Position X": 0.0,
@@ -51,43 +53,54 @@
       "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_CLICK.dds",
       "Messages": [ 5 ]
     },
-  {
-      "Text": "4",
-      "FontAndFontSize": "Assets/Fonts/MorrisRoman42",
-      "Text Position X": 0.0,
-      "Text Position Y": 0.45,
-      "Text Pivot X": 0.0,
-      "Text Pivot Y": 0.0,
-      "Text Color R": 1.5,
-      "Text Color G": 0.7,
-      "Text Color B": 0.0,
-      "Pixel Width": 320.0,
-      "Pixel Height": 100.0,
-      "Idle Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_IDLE.dds",
-      "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_HOVER.dds",
-      "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_CLICK.dds",
-      "Messages": [ 4 ]
-    },
- {
-      "Text": "5",
-      "FontAndFontSize": "Assets/Fonts/MorrisRoman42",
-      "Text Position X": 0.0,
-      "Text Position Y": 0.60,
-      "Text Pivot X": 0.0,
-      "Text Pivot Y": 0.0,
-      "Text Color R": 1.5,
-      "Text Color G": 0.7,
-      "Text Color B": 0.0,
-      "Pixel Width": 320.0,
-      "Pixel Height": 100.0,
-      "Idle Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_IDLE.dds",
-      "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_HOVER.dds",
-      "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_CLICK.dds",
-      "Messages": [ 9 ]
-    }
+    {
+        "Text": "4",
+        "FontAndFontSize": "Assets/Fonts/MorrisRoman42",
+        "Text Position X": 0.0,
+        "Text Position Y": 0.45,
+        "Text Pivot X": 0.0,
+        "Text Pivot Y": 0.0,
+        "Text Color R": 1.5,
+        "Text Color G": 0.7,
+        "Text Color B": 0.0,
+        "Pixel Width": 320.0,
+        "Pixel Height": 100.0,
+        "Idle Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_IDLE.dds",
+        "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_HOVER.dds",
+        "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_CLICK.dds",
+        "Messages": [ 4 ]
+      },
+      {
+        "Text": "5",
+        "FontAndFontSize": "Assets/Fonts/MorrisRoman42",
+        "Text Position X": 0.0,
+        "Text Position Y": 0.60,
+        "Text Pivot X": 0.0,
+        "Text Pivot Y": 0.0,
+        "Text Color R": 1.5,
+        "Text Color G": 0.7,
+        "Text Color B": 0.0,
+        "Pixel Width": 320.0,
+        "Pixel Height": 100.0,
+        "Idle Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_IDLE.dds",
+        "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_HOVER.dds",
+        "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_CLICK.dds",
+        "Messages": [ 9 ]
+      }
   ],
 
   "Texts": [
+    {
+      "Text": "HELLO",
+      "FontAndFontSize": "Assets/Fonts/MorrisRoman42",
+      "Position X": 0.25,
+      "Position Y": 0.25,
+      "Pivot X": 0.0,
+      "Pivot Y": 0.0,
+      "Color R": 1.0,
+      "Color G": 1.0,
+      "Color B": 1.0
+    }
   ],
 
   "Animated UI Elements": [
