@@ -13,11 +13,18 @@ public struct ColliderLink
     public float sphereRadius;
     public float capsuleHeight;
     public float capsuleRadius;
-
 }
 // 1 - BoxCollider
 // 2 - SphereCollider
 // 3 - CapsuleCollider
+// 4 - MeshCollider
+enum IronColliderType
+{
+    BoxCollider = 1,
+    SphereCollider = 2,
+    CapsuleCollider = 3,
+    MeshCollider = 4, 
+}
 
 [System.Serializable]
 public struct ColliderCollection
@@ -42,24 +49,28 @@ public class ExportCollider : MonoBehaviour
                 if (collider.GetType() == typeof(BoxCollider))
                 {
                     BoxCollider boxCollider = collider as BoxCollider;
-                    link.colliderType = 1;
+                    link.colliderType = (int)IronColliderType.BoxCollider;
                     link.positionOffest = boxCollider.center;
                     link.boxSize = boxCollider.size;
                 }
                 else if (collider.GetType() == typeof(SphereCollider))
                 {
                     SphereCollider sphereCollider = collider as SphereCollider;
-                    link.colliderType = 2;
+                    link.colliderType = (int)IronColliderType.SphereCollider;
                     link.positionOffest = sphereCollider.center;
                     link.sphereRadius = sphereCollider.radius;
                 }
                 else if (collider.GetType() == typeof(CapsuleCollider))
                 {
                     CapsuleCollider capsuleCollider = collider as CapsuleCollider;
-                    link.colliderType = 3;
+                    link.colliderType = (int)IronColliderType.CapsuleCollider;
                     link.positionOffest = capsuleCollider.center;
                     link.capsuleHeight = capsuleCollider.height;
                     link.capsuleRadius = capsuleCollider.radius;
+                }
+                else if(collider.GetType() == typeof(MeshCollider))
+                {
+                    link.colliderType = (int)IronColliderType.MeshCollider;
                 }
                 else
                 {
