@@ -110,11 +110,11 @@ public static class Json
             return false;
 
 
-        if(!objectWithInstanceID.TryGetComponent(out Collider collider))
-        {
+        //if(!objectWithInstanceID.GetComponent<Collider>())
+        //{
             if (objectWithInstanceID.isStatic != aIsStatic)
                 return false;
-        }
+        //}
 
         var prefabAssetType = PrefabUtility.GetPrefabAssetType(objectWithInstanceID);
         if (PrefabUtility.GetPrefabAssetType(objectWithInstanceID) != PrefabAssetType.Regular &&
