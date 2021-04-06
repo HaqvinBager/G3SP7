@@ -172,8 +172,8 @@ void ImGuiWindow::CAssetCustomizationWindow::LoadCustomizationFile()
 				{
 					if (myReplaceFBX)
 						ModelHelperFunctions::ReplaceModelAndLoadTints(myGameObject, myJSONPaths[i].myPath, mySelectedFBX.myPath);
-					else 
-						ModelHelperFunctions::LoadTintsToModelComponent(myGameObject, myJSONPaths[i].myPath, mySelectedFBX.myPath);
+					else
+						myGameObject->GetComponent<CModelComponent>()->DeserializeTintData(myJSONPaths[i].myPath);
 				}
 				else
 					ModelHelperFunctions::AddModelComponentWithTintsFromData(myGameObject, myJSONPaths[i].myPath, mySelectedFBX.myPath);
@@ -230,7 +230,7 @@ void ImGuiWindow::CAssetCustomizationWindow::SaveCustomizationFile()
 					}
 				}
 				else
-					ModelHelperFunctions::SaveTintsFromModelComponent(myGameObject, mySelectedFBX.myPath);
+					myGameObject->GetComponent<CModelComponent>()->SerializeTintData();
 			}
 		}
 	}
@@ -298,7 +298,7 @@ void ImGuiWindow::CAssetCustomizationWindow::SaveJSON(const std::string& aCustom
 	else
 		jsonPath = (ASSETPATH("Assets/Graphics/TintedModels/Data/") + myJSONFileName + ".json");
 
-	ModelHelperFunctions::SaveTintsFromModelComponent(myGameObject, mySelectedFBX.myPath, jsonPath);
+	myGameObject->GetComponent<CModelComponent>()->SerializeTintData(jsonPath);
 
 	mySelectedJSON.myPath = jsonPath;
 	mySelectedJSON.myDisplayName = myJSONFileName;

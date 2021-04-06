@@ -93,9 +93,9 @@ void CInGameState::Start()
 	//CModelHelperFunctions::SaveTintsFromModelComponent(models[1], ASSETPATH("Assets/Graphics/TintModels/Pokeball/pokeball.fbx"), "Assets/TintedModels/Data/qck.json");
 	//CModelHelperFunctions::SaveTintsFromModelComponent(models[2]->GetComponent<CModelComponent>(), ASSETPATH("Assets/Graphics/TintModels/Pokeball/pokeball.fbx"), "Assets/TintedModels/Data/premier.json");
 	
-	ModelHelperFunctions::LoadTintsToModelComponent(models[0]->GetComponent<CModelComponent>(), "Assets/TintedModels/Data/rgbw.json");
-	ModelHelperFunctions::LoadTintsToModelComponent(models[1], "Assets/TintedModels/Data/qck.json");
-	ModelHelperFunctions::LoadTintsToModelComponent(models[2], "Assets/TintedModels/Data/premier.json");
+	models[0]->GetComponent<CModelComponent>()->DeserializeTintData(ASSETPATH("Assets/TintedModels/Data/rgbw.json"));
+	models[1]->GetComponent<CModelComponent>()->DeserializeTintData(ASSETPATH("Assets/TintedModels/Data/qck.json"));
+	models[2]->GetComponent<CModelComponent>()->DeserializeTintData(ASSETPATH("Assets/TintedModels/Data/premier.json"));
 
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);

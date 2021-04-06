@@ -1,5 +1,7 @@
 #pragma once
 
+#include <array>
+
 #include "..\Includes\rapidjson\document.h"
 class CModelComponent;
 class CGameObject;
@@ -7,30 +9,29 @@ class CGameObject;
 namespace ModelHelperFunctions
 {
 	// Load using CModelComponent
-	bool LoadTintsToModelComponent(CModelComponent* aModelComponent, const std::string& aTintDataPath);
-	bool LoadTintsToModelComponent(CModelComponent* aModelComponent, const std::string& aTintDataPath, std::string& anOutModelPath);
-	bool LoadTintsToModelComponent(CModelComponent* aModelComponent, rapidjson::Document& aDocument);
-	bool LoadTintsToModelComponent(CModelComponent* aModelComponent, rapidjson::Document& aDocument, std::string& anOutModelPath);
-	// Load using CGameObject
-	bool LoadTintsToModelComponent(CGameObject* aGameObject, const std::string& aTintDataPath);
-	bool LoadTintsToModelComponent(CGameObject* aGameObject, const std::string& aTintDataPath, std::string& anOutModelPath);
-
+	//bool LoadTintsToModelComponent(CModelComponent* aModelComponent, const std::string& aTintDataPath);
+	//bool LoadTintsToModelComponent(CModelComponent* aModelComponent, const std::string& aTintDataPath, std::string& anOutModelPath);
+	//bool LoadTintsToModelComponent(CModelComponent* aModelComponent, rapidjson::Document& aDocument);
+	//bool LoadTintsToModelComponent(CModelComponent* aModelComponent, rapidjson::Document& aDocument, std::string& anOutModelPath);
+	//// Load using CGameObject
+	//bool LoadTintsToModelComponent(CGameObject* aGameObject, const std::string& aTintDataPath);
+	//bool LoadTintsToModelComponent(CGameObject* aGameObject, const std::string& aTintDataPath, std::string& anOutModelPath);
+	//
 	bool ReplaceModelAndLoadTints(CGameObject* aGameObject, const std::string& aTintDataPath);
 	bool ReplaceModelAndLoadTints(CGameObject* aGameObject, const std::string& aTintDataPath, std::string& anOutModelPath);
-
-	bool SaveTintsFromModelComponent(CModelComponent* aModelComponent, const std::string& aModelPath, const std::string& aTintDataPath = "");
-	bool SaveTintsFromModelComponent(CGameObject* aGameObject, const std::string& aModelPath, const std::string& aTintDataPath = "");
+	//
+	//bool SaveTintsFromModelComponent(CModelComponent* aModelComponent, const std::string& aModelPath, const std::array<std::string, 4>& someTexturePaths = {"","","",""}, const std::string& aTintDataPath = "");
+	//bool SaveTintsFromModelComponent(CGameObject* aGameObject, const std::string& aModelPath, const std::string& aTintDataPath = "");
 
 	CGameObject* CreateGameObjectWithTintedModel(const int anInstanceId, const std::string& aModelPath, const std::string& aTintDataPath);
-
 	bool AddModelComponentWithTintsFromData(CGameObject* aGameObject, const std::string& aTintDataPath);
 	bool AddModelComponentWithTintsFromData(CGameObject* aGameObject, const std::string& aTintDataPath, std::string& anOutModelPath);
 
-	namespace Internal
-	{
-		std::vector<DirectX::SimpleMath::Vector4> DeserializeTintsData(rapidjson::Document& aDocument, const std::string& aTintDataPath = "");
-		DirectX::SimpleMath::Vector4 DeserializeEmissiveData(rapidjson::Document& aDocument, const std::string& aTintDataPath = "");
-	}
+	//namespace Internal
+	//{
+	//	std::vector<DirectX::SimpleMath::Vector4> DeserializeTintsData(rapidjson::Document& aDocument, const std::string& aTintDataPath = "");
+	//	DirectX::SimpleMath::Vector4 DeserializeEmissiveData(rapidjson::Document& aDocument, const std::string& aTintDataPath = "");
+	//}
 }
 //class CModelHelperFunctions// Could just be a namespace
 //{

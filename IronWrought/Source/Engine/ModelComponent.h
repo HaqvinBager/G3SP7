@@ -3,6 +3,8 @@
 
 #include "TextureWrapperID3D11.h"
 
+#include <array>
+
 class CGameObject;
 class CModel;
 
@@ -27,9 +29,16 @@ public:
 	void OnDisable() override;
 
 public:
+	const unsigned int VertexPaintColorID() const;
+	const std::vector<std::string>& VertexPaintMaterialNames() const;
+	const bool RenderWithAlpha() const { return myRenderWithAlpha; }
+
+#pragma region TINT_FUNCTIONS
+public:
 	bool SetTints(std::vector<Vector4>& aVectorWithTints);
 	std::vector<Vector4> GetTints();
 
+	void TintOnIndex(const Vector4& aTint, const int& anIndex);
 	// Primary tint.
 	void Tint1(const Vector4& aTint);
 	// Secondary tint.
@@ -40,6 +49,7 @@ public:
 	void Tint4(const Vector4& aTint);
 	void Emissive(const Vector4& aTint);
 
+	const Vector4& TintOnIndex(const int& anIndex);
 	// Primary tint.
 	const Vector4& Tint1() const;
 	// Secondary tint.
@@ -50,27 +60,16 @@ public:
 	const Vector4& Tint4() const;
 	const Vector4& Emissive() const;
 
-	ID3D11ShaderResourceView* Texture1();
-	ID3D11ShaderResourceView* Texture2();
-	ID3D11ShaderResourceView* Texture3();
-	ID3D11ShaderResourceView* Texture4();
-	ID3D11ShaderResourceView* TextureOnIndex(const int& anIndex);
-	ID3D11ShaderResourceView* const* ConstTintTexture1();
-	ID3D11ShaderResourceView* const* ConstTintTexture2();
-	ID3D11ShaderResourceView* const* ConstTintTexture3();
-	ID3D11ShaderResourceView* const* ConstTintTexture4();
+	ID3D11ShaderResourceView* TintTextureOnIndex(const int& anIndex);
 	ID3D11ShaderResourceView* const* ConstTintTextureOnIndex(const int& anIndex);
+	std::array<ID3D11ShaderResourceView*, 4> GetTintTextures();
+	std::array<ID3D11ShaderResourceView* const*, 4> GetConstTintTextures();
 
-	void Texture1(const std::string& aTexturePath);
-	void Texture2(const std::string& aTexturePath);
-	void Texture3(const std::string& aTexturePath);
-	void Texture4(const std::string& aTexturePath);
-	void TextureOnIndex(const std::string& aTexturePath, const int anIndex);
-	void Texture1(ID3D11ShaderResourceView* aTexture);
-	void Texture2(ID3D11ShaderResourceView* aTexture);
-	void Texture3(ID3D11ShaderResourceView* aTexture);
-	void Texture4(ID3D11ShaderResourceView* aTexture);
-	void TextureOnIndex(ID3D11ShaderResourceView* aTexture, const int anIndex);
+	void TintTextureOnIndex(const std::string& aTexturePath, const int& anIndex);
+	void TintTextureOnIndex(ID3D11ShaderResourceView* aTexture, const int& anIndex);
+
+	const std::string& TextureNameOnIndex(const int& anIndex);
+	const std::string& TexturePathOnIndex(const int& anIndex);
 
 	struct STintData
 	{
@@ -79,18 +78,16 @@ public:
 	};
 	bool SetTintTextures(std::vector<STintData>& aVectorWithTintTextures);
 	const std::vector<STintData>& GetTintData();
-	std::array<ID3D11ShaderResourceView*, 4> GetTintTextures();
-	std::array<ID3D11ShaderResourceView* const*, 4> GetConstTintTextures();
 
 	// This is confusingly named.
 	void HasTintMap(const bool aHasTintMap);
 
-	std::array<bool, 4> HasTintTexturesOnSlots() const;
+	bool SerializeTintData(const std::string& aTintDataPath = "");
+	bool DeserializeTintData(const std::string& aTintDataPath);
 
-public:
-	const unsigned int VertexPaintColorID() const;
-	const std::vector<std::string>& VertexPaintMaterialNames() const;
-	const bool RenderWithAlpha() const { return myRenderWithAlpha; }
+private:
+	inline int TintsBoundsCheck(const int& anIndex);
+#pragma endregion TINT_FUNCTIONS
 
 private:
 	CModel* myModel;
