@@ -28,9 +28,9 @@ int CNodeTypeStartSphereOnTriggerExit::OnEnter(CNodeInstance * aTriggeringNodeIn
 	GetDataOnPin(aTriggeringNodeInstance, 1, outType, someData, outSize);
 	bool triggerOnce = NodeData::Get<bool>(someData);
 
-	const std::vector<CGameObject*> gameObjects = aTriggeringNodeInstance->GetCurrentGameObject();
+	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject();
 	const CTransformComponent& playerTransform = *IRONWROUGHT->GetActiveScene().Player()->myTransform;
-	float distanceSquared = Vector3::DistanceSquared(playerTransform.Position(), gameObjects[1]->myTransform->Position());
+	float distanceSquared = Vector3::DistanceSquared(playerTransform.Position(), gameObject->myTransform->Position());
 	float radiusSquared = radius * radius;
 
 	bool trigger = distanceSquared > radiusSquared;

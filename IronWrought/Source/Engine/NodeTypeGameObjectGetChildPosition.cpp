@@ -4,7 +4,6 @@
 #include "Scene.h"
 #include "Engine.h"
 #include "GameObject.h"
-#include "GraphManager.h"
 #include "NodeDataManager.h"
 
 CNodeTypeGameObjectGetChildPosition::CNodeTypeGameObjectGetChildPosition()
@@ -17,7 +16,7 @@ int CNodeTypeGameObjectGetChildPosition::OnEnter(CNodeInstance* aTriggeringNodeI
 {
 	int goid = CNodeDataManager::Get()->GetData<int>(myNodeName);
 	auto obj = IRONWROUGHT_ACTIVE_SCENE.FindObjectWithID(goid);
-	Vector3 position = obj/*gameObject[index]*/->myTransform->Position();
+	Vector3 position = obj->myTransform->Position();
 
 	std::vector<SPin>& pins = aTriggeringNodeInstance->GetPins();
 	DeclareDataOnPinIfNecessary<Vector3>(pins[0]);

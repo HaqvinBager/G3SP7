@@ -14,8 +14,8 @@ CNodeTypeStartSphereOnTriggerStay::CNodeTypeStartSphereOnTriggerStay()
 
 int CNodeTypeStartSphereOnTriggerStay::OnEnter(class CNodeInstance* aTriggeringNodeInstance)
 {
-	std::vector<CGameObject*> gameObject = aTriggeringNodeInstance->GetCurrentGameObject();
-	Vector3 position = gameObject[1]->myTransform->Position();
+	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject();
+	Vector3 position = gameObject->myTransform->Position();
 	Vector3 playerPosition = CEngine::GetInstance()->GetActiveScene().Player()->myTransform->Position();
 
 	SPin::EPinType outType;

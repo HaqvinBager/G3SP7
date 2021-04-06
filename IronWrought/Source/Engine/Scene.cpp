@@ -25,6 +25,7 @@
 #include "BoxLight.h"
 
 #include "Engine.h"
+#include "PostMaster.h"
 
 #include "Camera.h"
 #include "CameraComponent.h"
@@ -46,6 +47,7 @@ CScene::CScene(const unsigned int aGameObjectCount)
 	, myNavMeshGrid(nullptr)
 	, myPXScene(nullptr)
 	, myPlayer(nullptr)
+	, myGrid(nullptr)
 {
 	myGameObjects.reserve(aGameObjectCount);
 	myPXScene = CEngine::GetInstance()->GetPhysx().CreatePXScene(this);
@@ -62,10 +64,6 @@ CScene::CScene(const unsigned int aGameObjectCount)
 	//myGrid->Init(CLineFactory::GetInstance()->CreateGrid({ 0.1f, 0.5f, 1.0f, 1.0f }));
 	//this->AddInstance(myGrid);
 #endif
-
-	//myCanvas = new CCanvas();
-	//myCanvas->Init(ASSETPATH("Assets/Graphics/UI/JSON/UI_HUD.json"), *this);
-
 }
 
 CScene::~CScene()
@@ -140,6 +138,15 @@ bool CScene::InitNavMesh(std::string aPath)
 	loader = nullptr;
 	return true;
 }
+bool CScene::InitCanvas(std::string aPath)
+{
+	if (!myCanvas)
+		myCanvas = new CCanvas();
+	
+	myCanvas->Init(aPath, *this);
+
+	return true;
+}
 //SETUP END
 //SETTERS START
 void CScene::MainCamera(CCameraComponent* aMainCamera)
@@ -168,7 +175,10 @@ void CScene::ShouldRenderLineInstance(const bool aShouldRender)
 }
 void CScene::UpdateCanvas()
 {
-	myCanvas->Update();
+	if (myCanvas)
+	{
+		myCanvas->Update();
+	}
 }
 //SETTERS END
 //GETTERS START

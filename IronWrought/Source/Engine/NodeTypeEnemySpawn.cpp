@@ -30,8 +30,8 @@ int CNodeTypeEnemySpawn::OnEnter(CNodeInstance * aTriggeringNodeInstance)
 	GetDataOnPin(aTriggeringNodeInstance, 1, outType, someData, outSize);
 	int nrToSpawn = NodeData::Get<int>(someData);
 
-	const std::vector<CGameObject*> gameObjects = aTriggeringNodeInstance->GetCurrentGameObject();
-	std::thread spawnThread(SpawnEnemies, nrToSpawn, gameObjects[1]->myTransform->Position()/*i, std::ref(*this), std::ref(loadSuccessful)*/);
+	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject();
+	std::thread spawnThread(SpawnEnemies, nrToSpawn, gameObject->myTransform->Position()/*i, std::ref(*this), std::ref(loadSuccessful)*/);
 	spawnThread.detach();
 	//SpawnEnemies(nrToSpawn, gameObjects[1]->myTransform->Position());
 

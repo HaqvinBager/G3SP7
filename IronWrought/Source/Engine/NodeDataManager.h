@@ -1,5 +1,5 @@
 #pragma once
-
+#include <map>
 class CNodeDataManager
 {
 public:
@@ -10,47 +10,68 @@ public:
 		EBool,
 		EStart,
 		EVector3,
-		EStringList,
+		EChildNodeData,
 		ECount
+	};
+
+	struct SNodeData
+	{
+		std::string myNodeTypeName;
+		void* myData;
+		EDataType myDataType;
 	};
 
 	~CNodeDataManager();
 	static void Create() { ourInstance = new CNodeDataManager(); }
 	static CNodeDataManager* Get() { return ourInstance; }
 
-	static void SetFolderPath(std::string aFolderPath) { ourInstance->myCurrentFolderPath = aFolderPath; }
+	static void SetFolderPath(const std::string& aFolderPath) { ourInstance->myCurrentFolderPath = aFolderPath; }
 	static std::string GetFolderPath() { return ourInstance->myCurrentFolderPath; }
 
 	void ClearStoredData();
 
 	template <typename T>
-	void SetData(const std::string aNodeDataKey, EDataType aDataType, T& aValue)
+	T GetData(const std::string& aNodeTypeName)
 	{
-
-		auto it = myNodeDataMap.find(aNodeDataKey);
-		if (it == myNodeDataMap.end())
+		std::hash<std::string> hasher;
+		size_t hash = hasher(aNodeTypeName);
+		for (auto& data : myNodeData)
 		{
-			myNodeDataMap[aNodeDataKey] = new T(aValue);
-			myNodeDataTypeMap[aNodeDataKey] = aDataType;
+			if (hasher(data.myNodeTypeName) == hash)
+			{
+				return *(reinterpret_cast<T*>(data.myData));
+			}
 		}
-		else
-		{
-			*(reinterpret_cast<T*>((*it).second)) = aValue;
-		}
+		return NULL;
 	}
 
 	template <typename T>
-	T GetData(const std::string aNodeDataKey)
+	void SetData(const std::string& aNodeTypeName, const EDataType& aDataType, const T& aValue)
 	{
-		auto it = myNodeDataMap.find(aNodeDataKey);
-		return *(reinterpret_cast<T*>((*it).second));
+		std::hash<std::string> hasher;
+		size_t hash = hasher(aNodeTypeName);
+
+		for (size_t i = 0; i < myNodeData.size(); ++i)
+		{
+			if (hasher(myNodeData[i].myNodeTypeName) == hash)
+			{
+				*(reinterpret_cast<T*>(myNodeData[i].myData)) = aValue;
+				return;
+			}
+		}
+
+		myNodeData.push_back({ aNodeTypeName, new T(aValue), aDataType });
 	}
 
 	void SaveDataTypesToJson();
 
+
+
 private:
-	std::unordered_map<std::string, void*> myNodeDataMap;
-	std::unordered_map<std::string, EDataType> myNodeDataTypeMap;
+	std::vector<SNodeData> myNodeData;
+
+	//std::unordered_map<std::string, void*> myNodeDataMap;
+	//std::unordered_map<std::string, EDataType> myNodeDataTypeMap;
 	std::string myCurrentFolderPath;
 	static CNodeDataManager* ourInstance;
 };
