@@ -29,6 +29,8 @@ public:
 
 	CCharacterController* GetCharacterController();
 
+	const Vector3 GetLinearVelocity();
+
 	const float WalkSpeed() const { return myWalkSpeed; }
 	void WalkSpeed(const float aSpeed) { myWalkSpeed = aSpeed; }
 	const float CrouchSpeed() const { return myCrouchSpeed; }

@@ -5,13 +5,13 @@
 #include "RigidBodyComponent.h"
 #include "RigidDynamicBody.h"
 
-CCapsuleColliderComponent::CCapsuleColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const float& aRadius, const float& aHeight)
+CCapsuleColliderComponent::CCapsuleColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const float& aRadius, const float& aHeight, bool aIsStatic)
 	: CBehaviour(aParent)
 	, myPositionOffset(aPositionOffset)
 	, myRadius(aRadius)
 	, myHeight(aHeight)
 {
-
+	aIsStatic;
 }
 
 CCapsuleColliderComponent::~CCapsuleColliderComponent()

@@ -194,6 +194,7 @@
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Behaviour.h" />
     <ClInclude Include="BoxColliderComponent.h" />
+    <ClInclude Include="CharacterReportCallback.h" />
     <ClInclude Include="GravityGloveEditor.h" />
     <ClInclude Include="NodeTypeAddForce.h" />
     <ClInclude Include="SphereColliderComponent.h" />
@@ -430,6 +431,7 @@
     <ClCompile Include="AudioChannel.cpp" />
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="BoxColliderComponent.cpp" />
+    <ClCompile Include="CharacterReportCallback.cpp" />
     <ClCompile Include="GravityGloveEditor.cpp" />
     <ClCompile Include="NodeTypeAddForce.cpp" />
     <ClCompile Include="SphereColliderComponent.cpp" />

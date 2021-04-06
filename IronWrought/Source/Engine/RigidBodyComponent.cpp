@@ -68,6 +68,12 @@ void CRigidBodyComponent::AttachShape(physx::PxShape* aShape)
 	}
 }
 
+const float CRigidBodyComponent::GetMass()
+{
+	PxReal mass = myDynamicRigidBody->GetBody().getMass();
+	return {mass};
+}
+
 void CRigidBodyComponent::SetPosition(const Vector3& aPos) {
 	myDynamicRigidBody->GetBody().setGlobalPose({aPos.x, aPos.y, aPos.z});
 }
