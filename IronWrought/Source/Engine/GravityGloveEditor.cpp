@@ -6,7 +6,7 @@
 #include "Scene.h"
 #include <GravityGloveComponent.h>
 
-IronWroughtImGui::CGravityGloveEditor::CGravityGloveEditor(const char* aName) 
+IronWroughtImGui::CGravityGloveEditor::CGravityGloveEditor(const char* aName)
 	: CWindow(aName)
 {
 }
