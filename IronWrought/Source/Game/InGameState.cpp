@@ -247,8 +247,8 @@ void TEMP_VFX(CScene* aScene)
 	CGameObject* abilityObject = new CGameObject(id++);
 	abilityObject->AddComponent<CVFXSystemComponent>(*abilityObject, ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystem_ToLoad.json"));
 
-	abilityObject->Awake();
-	abilityObject->Start();
+	//abilityObject->Awake();
+	//abilityObject->Start();
 
 	aScene->AddInstance(abilityObject);
 	aScene->SetVFXTester(abilityObject);

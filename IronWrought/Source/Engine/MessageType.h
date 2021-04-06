@@ -49,5 +49,7 @@ enum class EMessageType
 	CursorHideAndLock,
 	CursorShowAndUnlock,
 
+	ComponentAdded,
+
 	Count
 };

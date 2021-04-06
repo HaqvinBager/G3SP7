@@ -72,7 +72,7 @@ bool IronWroughtImGui::CLoadScene::OnMainMenuGUI()
 				}
 				else
 				{
-					CSceneFactory::Get()->LoadSceneAsync(scene, [this](std::string aJson) { CLoadScene::OnComplete(aJson); });
+					CSceneFactory::Get()->LoadSceneAsync(scene, CStateStack::EState::InGame, [this](std::string aJson) { CLoadScene::OnComplete(aJson); });
 				}
 			}
 			index++;

@@ -27,9 +27,9 @@ public:
 	void DisableEffect(const unsigned int anIndex);
 
 public:
-	std::vector<SVFXEffect*>& GetVFXEffects() { return myEffects; }
+	std::vector<std::unique_ptr<SVFXEffect>>& GetVFXEffects() { return myEffects; }
 
 private:
-	std::vector<SVFXEffect*> myEffects;
+	std::vector<std::unique_ptr<SVFXEffect>> myEffects;
 };
 

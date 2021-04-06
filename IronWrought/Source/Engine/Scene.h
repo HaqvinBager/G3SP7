@@ -5,6 +5,7 @@
 #include "SpriteInstance.h"
 #include "EngineDefines.h"
 #include "PhysXWrapper.h"
+#include "PostMaster.h"
 
 class CModelComponent;
 class CCamera;
@@ -29,7 +30,7 @@ class CPlayerControllerComponent;
 
 typedef std::pair<unsigned int, std::array<CPointLight*, LIGHTCOUNT>> LightPair;
 
-class CScene {
+class CScene : public IObserver {
 	friend class CEngine;
 	friend class CBootUpState;
 	friend class CInGameState;
@@ -44,12 +45,21 @@ public:
 	bool InitNavMesh(const std::string& aPath);
 	bool InitCanvas(const std::string& aPath);
 	bool ReInitCanvas(const std::string& aPath);
+
+	
 //SETUP END
 
 //UPDATE
+public:
 	void Awake();
 	void Start();
 	void Update();
+	void Receive(const SMessage& aMessage) override;
+
+private:
+	void InitAnyNewComponents();
+	void CallStartOnNewComponents();
+	void CallAwakeOnNewComponents();
 //UPDATE END
 
 public:
@@ -160,6 +170,11 @@ private:
 	std::unordered_map<int, CGameObject*> myIDGameObjectMap;
 	std::unordered_map<size_t, std::vector<CComponent*>> myComponentMap;
 	std::unordered_map<ERenderOrder, std::vector<CSpriteInstance*>> mySpriteInstances;
+
+	std::queue<CComponent*> myAwakeComponents;
+	std::queue<CComponent*> myStartComponents;
+
+
 //CONTAINERS END
 private:
 //POINTERS START
