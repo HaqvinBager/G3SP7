@@ -22,5 +22,6 @@ private:
 	physx::PxShape* myShape;
 	Vector3 myPositionOffset;
 	Vector3 myBoxSize;
+	bool created;
 };
 

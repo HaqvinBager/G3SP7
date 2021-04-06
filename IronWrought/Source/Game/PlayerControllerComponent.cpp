@@ -44,7 +44,7 @@ CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, 
 	INPUT_MAPPER->AddObserver(EInputEvent::ResetEntities, this);
 	INPUT_MAPPER->AddObserver(EInputEvent::SetResetPointEntities, this);
 
-	myController = CEngine::GetInstance()->GetPhysx().CreateCharacterController(gameObject.myTransform->Position(), myColliderRadius, myColliderHeightStanding);
+	myController = CEngine::GetInstance()->GetPhysx().CreateCharacterController(gameObject.myTransform->Position(), myColliderRadius, myColliderHeightStanding, GameObject().myTransform);
 	GameObject().myTransform->Position(myController->GetPosition());// This is a test / Aki 2021 03 12
 
 	GameObject().myTransform->FetchChildren()[0]->Position({ 0.0f, myCameraPosYStanding, myCameraPosZ });
@@ -249,4 +249,11 @@ void CPlayerControllerComponent::ResetPlayerPosition()
 CCharacterController* CPlayerControllerComponent::GetCharacterController()
 {
 	return myController;
+}
+
+const Vector3 CPlayerControllerComponent::GetLinearVelocity()
+{
+	const PxVec3 pxVec3 = myController->GetController().getActor()->getLinearVelocity();
+	//const Vector3& vec3 = {pxVec3.x, pxVec3.y, pxVec3.z};
+	return {pxVec3.x, pxVec3.y, pxVec3.z};
 }

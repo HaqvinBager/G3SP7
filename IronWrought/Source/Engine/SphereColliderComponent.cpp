@@ -24,6 +24,7 @@ void CSphereColliderComponent::Start()
 {
 	myShape = CEngine::GetInstance()->GetPhysx().GetPhysics()->createShape(physx::PxSphereGeometry(myRadius), *CEngine::GetInstance()->GetPhysx().CreateMaterial(CPhysXWrapper::materialfriction::metal), true);
 	myShape->setLocalPose({ myPositionOffset.x, myPositionOffset.y, myPositionOffset.z });
+	myShape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, true);
 	CRigidBodyComponent* rigidBody = nullptr;
 	if (GameObject().TryGetComponent(&rigidBody))
 	{

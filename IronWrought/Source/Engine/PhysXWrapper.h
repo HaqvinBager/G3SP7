@@ -9,6 +9,8 @@ class CRigidDynamicBody;
 class CScene;
 class CCharacterController;
 class CDynamicRigidBody;
+class CCharacterReportCallback;
+
 class CPhysXWrapper
 {
 public:
@@ -48,9 +50,11 @@ public:
 	CRigidDynamicBody* CreateDynamicRigidbody(const CTransformComponent& aTransform);
 	CRigidDynamicBody* CreateDynamicRigidbody(const PxTransform& aTransform);
 
-	CCharacterController* CreateCharacterController(const Vector3& aPos, const float& aRadius, const float& aHeight);
+	CCharacterController* CreateCharacterController(const Vector3& aPos, const float& aRadius, const float& aHeight, CTransformComponent* aUserData = nullptr);
 
 	PxControllerManager* GetControllerManager();
+
+	physx::PxUserControllerHitReport* GetCharacterReportBack() { return myCharacterReportCallback; }
 
 
   //merge conflict 8/3/2021
@@ -71,5 +75,6 @@ private:
 	PxControllerManager* myControllerManager;
 	std::unordered_map<PxScene*, PxControllerManager*> myControllerManagers;// Should not be necessary
 	std::unordered_map<CScene*, PxScene*> myPXScenes;
+	physx::PxUserControllerHitReport* myCharacterReportCallback;
 	//std::queue<CRigidDynamicBody*> myAddBodyQueue;
 };

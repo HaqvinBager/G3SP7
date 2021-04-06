@@ -860,6 +860,7 @@
     <ClCompile Include="LightRenderer.cpp">
       <Filter>Renderers</Filter>
     </ClCompile>
+    <ClCompile Include="CharacterReportCallback.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1574,6 +1575,7 @@
     <ClInclude Include="hasher.h">
       <Filter>Imgui\Node Editor\Utilities</Filter>
     </ClInclude>
+    <ClInclude Include="CharacterReportCallback.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">

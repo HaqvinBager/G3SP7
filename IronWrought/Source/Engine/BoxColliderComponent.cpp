@@ -12,25 +12,30 @@ CBoxColliderComponent::CBoxColliderComponent(CGameObject& aParent, const Vector3
 	, myShape(nullptr)
 	, myPositionOffset(aPositionOffset)
 	, myBoxSize(aBoxSize)
+	, created(false)
 {
 }
 
 CBoxColliderComponent::~CBoxColliderComponent()
 {
+	created = false;
 }
 
 void CBoxColliderComponent::Awake()
 {
 	myShape = CEngine::GetInstance()->GetPhysx().GetPhysics()->createShape(physx::PxBoxGeometry(myBoxSize.x / 2.f, myBoxSize.y / 2.f, myBoxSize.z / 2.f), *CEngine::GetInstance()->GetPhysx().CreateMaterial(CPhysXWrapper::materialfriction::metal), true);
 	myShape->setLocalPose({ myPositionOffset.x, myPositionOffset.y, myPositionOffset.z });
+	myShape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, true);
 	CRigidBodyComponent* rigidBody = nullptr;
 	if (GameObject().TryGetComponent(&rigidBody))
 	{
 		rigidBody->AttachShape(myShape);
 		physx::PxRigidDynamic& dynamic = rigidBody->GetDynamicRigidBody()->GetBody();
-		dynamic.setMass(3);
+		dynamic.setMass(3.f);
 		dynamic.setCMassLocalPose({ myPositionOffset.x, myPositionOffset.y, myPositionOffset.z });
-		
+		dynamic.putToSleep();
+		dynamic.setMaxLinearVelocity(10.f);
+		created = true;
 	}
 	else
 	{

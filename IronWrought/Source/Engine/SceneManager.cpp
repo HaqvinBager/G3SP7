@@ -366,6 +366,8 @@ void CSceneManager::AddCollider(CScene& aScene, RapidArray someData)
 		}
 		break;
 		}
+		int i = 0;
+		++i;
 	}
 }
 

@@ -14,6 +14,7 @@
 #include "CharacterController.h"
 #include <PlayerControllerComponent.h>
 #include "RigidBodyComponent.h"
+#include "CharacterReportCallback.h"
 
 PxFilterFlags contactReportFilterShader(PxFilterObjectAttributes attributes0, PxFilterData filterData0,
 	PxFilterObjectAttributes attributes1, PxFilterData filterData1,
@@ -90,6 +91,7 @@ bool CPhysXWrapper::Init()
 
 	// All collisions gets pushed to this class
 	myContactReportCallback = new CContactReportCallback();
+	myCharacterReportCallback = new CCharacterReportCallback();
     return true;
 }
 
@@ -241,9 +243,9 @@ CRigidDynamicBody* CPhysXWrapper::CreateDynamicRigidbody(const PxTransform& aTra
 	return dynamicBody;
 }
 
-CCharacterController* CPhysXWrapper::CreateCharacterController(const Vector3& aPos, const float& aRadius, const float& aHeight)
+CCharacterController* CPhysXWrapper::CreateCharacterController(const Vector3& aPos, const float& aRadius, const float& aHeight, CTransformComponent* aUserData)
 {
-	CCharacterController* characterController = new CCharacterController(aPos, aRadius, aHeight);
+	CCharacterController* characterController = new CCharacterController(aPos, aRadius, aHeight, aUserData);
 	return characterController;
 }
 
