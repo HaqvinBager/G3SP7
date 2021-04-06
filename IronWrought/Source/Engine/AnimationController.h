@@ -59,29 +59,21 @@ struct VertexBoneDataAnim
 
 struct BoneInfoAnim
 {
-	aiVector3D myPosition;
-	aiQuaternion myRotation;
-	aiVector3D myScale;
-
-	aiMatrix4x4 myNodeTransformation;
-	aiMatrix4x4 myParentTransform;
 	aiMatrix4x4 myBoneOffset;
-	aiMatrix4x4 myFinalTransformation;
 };
-//aiVector3D myScale;
 
 //Attempting Hype
 struct Joint {
-	Joint(aiMatrix4x4& aTransformation, const char* aName, int aParentIndex)
+	/*Joint(aiMatrix4x4& aTransformation, const char* aName, int aParentIndex)
 	{
 		myInverseBindPose = aTransformation;
 		myName = aName;
 		myParentIndex = static_cast<INT8>(aParentIndex);
-	}
+	}*/
 
 	aiMatrix4x4 myInverseBindPose;
 	const char* myName;
-	INT8 myParentIndex;
+	//INT8 myParentIndex;
 };
 
 struct Skeleton {
@@ -91,9 +83,10 @@ struct Skeleton {
 
 struct JointPose
 {
-	aiQuatKey myRotKey;
-	aiVectorKey myPosKey;
-	aiVectorKey myScaleKey;
+	aiMatrix4x4 aNodeTransformation;
+	aiQuaternion myRotKey;
+	aiVector3D myPosKey;
+	aiVector3D myScaleKey;
 };
 
 struct SkeletonPose {
@@ -150,31 +143,17 @@ public:
 	//Animate
 	void SetBoneTransforms(int animIndex0, float aTick, std::array<aiMatrix4x4, 64>& outTransforms);
 	void SetBoneTransforms(int animIndex0, int animIndex1, float aTick0, float aTick1, float blend, std::array<aiMatrix4x4, 64>& outTransforms);
+	void SetBoneTransforms(int indexes[3], Vector3 someTicks, Vector3 someBlends, std::array<aiMatrix4x4, 64>& outTransforms);
 
 
-	
+	void BlendSpace2D(const Vector4& indexes, const Vector2& blendValues, const Vector4& ticks, std::array<aiMatrix4x4, 64>& outTransforms);
+
+
 	const int AnimationCount() const;
 	const float AnimationDurationInTicks(int anIndex) const;
 	const float AnimationTPS(int anIndex) const;
 	std::vector<std::string> GetMotionNames();
 	const int AnimationIndex(const std::string& aMotionName);
-
-
-	//const int Animation0Index() const { return static_cast<int>(myAnimIndex0); }
-	//const int Animation1Index() const { return static_cast<int>(myAnimIndex1); }
-
-	//const float AnimationTPS(const std::string& aMotionName);
-	//
-	//const float AnimationDurationInSeconds(int anIndex) const;
-
-	//void AnimationIndex0(int anIndex) { myAnimIndex0 = static_cast<uint>(anIndex); }
-	//void AnimationIndex1(int anIndex) { myAnimIndex1 = static_cast<uint>(anIndex); }
-	//void SetAnimationIndexTick0(const float aTick) { myTicks0 = aTick; }
-	//void SetAnimationIndexTick1(const float aTick) { myTicks1 = aTick; }
-	//void SetBlendingTime(const float aBlendValue) { myBlendingTime = aBlendValue; }
-
-	//CBlendTree* AddBlendTree(const char* aName);
-	//std::vector<CBlendTree>& GetBlendTrees() { return myBlendTrees; }
 
 
 private:
@@ -183,22 +162,24 @@ private:
 	void LoadBones(uint aMeshIndex, const aiMesh* aMesh);
 
 	//Animate
-	void ReadNodeHeirarchy(const aiScene* aScene, float tick, const aiNode* aNode, std::vector<aiMatrix4x4>& outJointPoses);
-	void CalculateWorldTransforms(std::array<aiMatrix4x4, 64>& outTransforms, std::vector<aiMatrix4x4>::const_iterator& aNodeTransformationIterator, const aiNode* aParentNode, const aiMatrix4x4& aParentTransform);
+	void ReadNodeHeirarchy(const aiScene* aScene, float tick, const aiNode* aNode,/* std::vector<aiMatrix4x4>& outJointPoses,*/ std::vector<JointPose>& outPoses);
+	void CalculateNodePoses(const aiScene* aScene, const aiNode* aNode, float aTick, std::vector<JointPose>& outJointPoses);
+	void CalculateWorldTransforms(std::array<aiMatrix4x4, 64>& outTransforms, std::vector<JointPose>::const_iterator& aNodeTransformationIterator, const aiNode* aParentNode, const aiMatrix4x4& aParentTransform);
 
 
 private:
-	bool AnimationIndexWithinRange(int anIndex) const;
+	//bool AnimationIndexWithinRange(int anIndex) const;
 	void SaveMotionToMap(const aiScene* aScene, const std::string& aFilePath);
 
 	aiMatrix4x4 BlendMatrix(const aiMatrix4x4& aMatrixA, const aiMatrix4x4& aMatrixB, float aBlend) const;
-	unsigned int CountChildren(const aiNode* aNode);
+	unsigned int CountJoints(const aiNode* aNode);
 
+	void ReadCreateSkeleton(const aiNode* aNode, Skeleton& outSkeleton);
 	//unsigned int CountChildren(const aiNode* aNode);
 
 private:
 
-	std::unique_ptr<Skeleton> mySkeleton;
+	Skeleton mySkeleton;
 	std::unique_ptr<SkeletonPose> mySkeletonPose;
 
 
@@ -226,10 +207,13 @@ private:
 	// Holds the animations that we play. Each animation modifies bonetransforms depending on animation time.
 	std::map<std::string, const aiScene*> mySceneMap;
 	std::vector<const aiScene*>			myScenes;// was std::vector<const aiScene*>
+	std::vector<Joint>			myBoneInfo;
+
+
 	aiMatrix4x4							myGlobalInverseTransform;
 	std::map<std::string, uint>			myBoneMapping;
 	std::vector<MeshEntry>				myEntries;
-	std::vector<BoneInfoAnim>			myBoneInfo;
+	//std::map<const char*, BoneInfoAnim>		myBoneInfoMap;
 	std::vector<VertexBoneDataAnim>		myMass;
 	std::vector<std::string>			myMotionPaths;
 	std::vector<CBlendTree>				myBlendTrees;
@@ -284,7 +268,7 @@ public:
 		aiMatrix4x4							myGlobalInverseTransform;
 		std::map<std::string, uint>			myBoneMapping;
 		std::vector<MeshEntry>				myEntries;
-		std::vector<BoneInfoAnim>			myBoneInfo;
+		std::vector<Joint>			myBoneInfo;
 		std::vector<VertexBoneDataAnim>		myMass;
 	};
 
@@ -320,3 +304,19 @@ private:
 };
 
 //void UpdateAnimationTimes(std::array<SlimMatrix44, 64>& someBones);
+
+	//const int Animation0Index() const { return static_cast<int>(myAnimIndex0); }
+	//const int Animation1Index() const { return static_cast<int>(myAnimIndex1); }
+
+	//const float AnimationTPS(const std::string& aMotionName);
+	//
+	//const float AnimationDurationInSeconds(int anIndex) const;
+
+	//void AnimationIndex0(int anIndex) { myAnimIndex0 = static_cast<uint>(anIndex); }
+	//void AnimationIndex1(int anIndex) { myAnimIndex1 = static_cast<uint>(anIndex); }
+	//void SetAnimationIndexTick0(const float aTick) { myTicks0 = aTick; }
+	//void SetAnimationIndexTick1(const float aTick) { myTicks1 = aTick; }
+	//void SetBlendingTime(const float aBlendValue) { myBlendingTime = aBlendValue; }
+
+	//CBlendTree* AddBlendTree(const char* aName);
+	//std::vector<CBlendTree>& GetBlendTrees() { return myBlendTrees; }

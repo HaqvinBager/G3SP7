@@ -52,6 +52,8 @@ void CAnimationController::ImportSkeleton(const std::string& aSkeletonFBXPath)
 }
 bool CAnimationController::ImportRig(const std::string& anFBXFilePath/*, const std::vector<std::string>& someAnimationPaths*/)
 {
+
+
 	if (anFBXFilePath.length() <= 0)
 		return false;
 
@@ -72,6 +74,18 @@ bool CAnimationController::ImportRig(const std::string& anFBXFilePath/*, const s
 	Assimp::Importer importer;
 	if (importer.ReadFile(anFBXFilePath, aiProcessPreset_TargetRealtime_Quality | aiProcess_ConvertToLeftHanded))
 	{
+		//const aiScene* scene = importer.GetScene();
+		//scene->mMeshes[0]->mBones
+	/*	const aiMesh* mesh = scene->mMeshes[0];
+		for (uint i = 0; i < mesh->mNumBones; ++i)
+		{
+			mesh->mBones[i]->mName;
+		}
+		scene->mMeshes[0]->mBones*/
+
+		//mySkeleton.myJoints.reserve(CountJoints(scene->mRootNode));
+		//ReadCreateSkeleton(scene->mRootNode, mySkeleton);
+
 		myScenes.emplace_back(importer.GetOrphanedScene());
 		SaveMotionToMap(myScenes.back(), anFBXFilePath);
 	}
@@ -86,6 +100,23 @@ bool CAnimationController::ImportRig(const std::string& anFBXFilePath/*, const s
 	// We're done. Everything will be cleaned up by the importer destructor
 	return InitFromScene(myScenes[myAnimIndex0]);;
 }
+
+void CAnimationController::ReadCreateSkeleton(const aiNode* aNode, Skeleton& outSkeleton)
+{
+
+
+	//aiMatrix4x4 inverseBindPose = {};
+	//outSkeleton.myJoints.push_back({ aNode-> })
+
+	Joint joint = {};
+	//joint.myName = aNode->mName.C_Str();
+	//joint.myParentIndex = aNode->mParent->mName;
+	//outSkeleton.myJoints.push_back()
+
+		for (uint i = 0; i < aNode->mNumChildren; ++i)
+			ReadCreateSkeleton(aNode->mChildren[i], outSkeleton);
+}
+
 bool CAnimationController::ImportAnimation(const std::string& anFBXFilePath)
 {
 	// Check if file exists
@@ -130,29 +161,30 @@ bool CAnimationController::InitFromScene(const aiScene* pScene)
 	myTicks0 = 0.0f;
 	myTicks1 = 0.0f;
 
-	myEntries.resize(pScene->mNumMeshes);
+	//myEntries.resize(pScene->mNumMeshes);
 
-	uint NumVertices = 0;
-	uint NumIndices = 0;
+	//uint NumVertices = 0;
+	//uint NumIndices = 0;
 
 	// Count the number of vertices and indices
 	for (uint i = 0; i < myEntries.size(); i++)
 	{
-		myEntries[i].myMaterialIndex = pScene->mMeshes[i]->mMaterialIndex;
-		myEntries[i].myNumIndices = pScene->mMeshes[i]->mNumFaces * 3;
-		myEntries[i].myBaseVertex = NumVertices;
-		myEntries[i].myBaseIndex = NumIndices;
+		//myEntries[i].myMaterialIndex = pScene->mMeshes[i]->mMaterialIndex;
+		//myEntries[i].myNumIndices = pScene->mMeshes[i]->mNumFaces * 3;
+		//myEntries[i].myBaseVertex = NumVertices;
+		//myEntries[i].myBaseIndex = NumIndices;
 
-		NumVertices += pScene->mMeshes[i]->mNumVertices;
-		NumIndices += myEntries[i].myNumIndices;
+		//NumVertices += pScene->mMeshes[i]->mNumVertices;
+		//NumIndices += myEntries[i].myNumIndices;
 	}
 
-	myMass.resize(NumVertices);
+	//myMass.resize(NumVertices);
 
 	for (uint i = 0; i < pScene->mNumMeshes; ++i)
 	{
 		LoadBones(i, pScene->mMeshes[i]);
 	}
+
 	return true;
 }
 void CAnimationController::LoadBones(uint aMeshIndex, const aiMesh* aMesh)
@@ -166,8 +198,7 @@ void CAnimationController::LoadBones(uint aMeshIndex, const aiMesh* aMesh)
 		{
 			BoneIndex = myNumOfBones;
 			myNumOfBones++;
-			BoneInfoAnim bi;
-			myBoneInfo.push_back(bi);
+			myBoneInfo.push_back(Joint());
 		}
 		else
 		{
@@ -175,35 +206,33 @@ void CAnimationController::LoadBones(uint aMeshIndex, const aiMesh* aMesh)
 		}
 
 		myBoneMapping[BoneName] = BoneIndex;
-		aiMatrix4x4 matrix = aMesh->mBones[i]->mOffsetMatrix;
-		matrix.Decompose(
-			myBoneInfo[BoneIndex].myPosition
-			, myBoneInfo[BoneIndex].myRotation
-			, myBoneInfo[BoneIndex].myScale);
-		myBoneInfo[BoneIndex].myBoneOffset = matrix;
+		myBoneInfo[BoneIndex].myInverseBindPose = aMesh->mBones[i]->mOffsetMatrix;
+		myBoneInfo[BoneIndex].myName = aMesh->mBones[i]->mName.C_Str();
+		//BoneInfoAnim bone = {};
+		//bone.myBoneOffset = aMesh->mBones[i]->mOffsetMatrix;
+		//myBoneInfoMap[aMesh->mBones[i]->mName.C_Str()] = bone;
 
-		for (uint j = 0; j < aMesh->mBones[i]->mNumWeights; j++)// Mass for physics?
-		{
-			uint VertexID = myEntries[aMeshIndex].myBaseVertex + aMesh->mBones[i]->mWeights[j].mVertexId;
-			float Weight = aMesh->mBones[i]->mWeights[j].mWeight;
-			myMass[VertexID].AddBoneData(BoneIndex, Weight);
-		}
+
+		//myBoneInfo[BoneIndex]
 	}
 }
 
 void CAnimationController::SetBoneTransforms(int animIndex0, float aTick, std::array<aiMatrix4x4, 64>& outTransforms)
 {
 	unsigned int jointCount = 0;
-	jointCount = CountChildren(myScenes[animIndex0]->mRootNode);
-	std::vector<aiMatrix4x4> jointPoses;
-	jointPoses.reserve(jointCount);
+	jointCount = CountJoints(myScenes[animIndex0]->mRootNode);
+	//std::vector<aiMatrix4x4> jointPoses;
+	std::vector<JointPose> poses;
+	poses.reserve(jointCount);
+	//jointPoses.reserve(jointCount);
 	ReadNodeHeirarchy(
 		myScenes[animIndex0]
 		, aTick
 		, myScenes[animIndex0]->mRootNode
-		, jointPoses);
+		//, jointPoses
+		, poses);
 
-	auto iterator = jointPoses.begin();
+	auto iterator = poses.begin();
 	CalculateWorldTransforms(outTransforms, iterator, myScenes[animIndex0]->mRootNode, myGlobalInverseTransform);
 }
 
@@ -216,39 +245,150 @@ void CAnimationController::SetBoneTransforms(int animIndex0, int animIndex1, flo
 	}
 
 	unsigned int jointCount = 0;
-	jointCount = CountChildren(myScenes[animIndex0]->mRootNode);
-	std::vector<aiMatrix4x4> jointPoses0;
-	jointPoses0.reserve(jointCount);
+	jointCount = CountJoints(myScenes[animIndex0]->mRootNode);
+	std::vector<JointPose> poses0;
+	poses0.reserve(jointCount);
 	ReadNodeHeirarchy(
 		myScenes[animIndex0]
 		, aTick0
 		, myScenes[animIndex0]->mRootNode
-		, jointPoses0);
+		, poses0);
 
-	std::vector<aiMatrix4x4> jointPoses1;
-	jointPoses1.reserve(jointCount);
+	std::vector<JointPose> poses1;
+	poses1.reserve(jointCount);
 	ReadNodeHeirarchy(
 		myScenes[animIndex1]
 		, aTick1
 		, myScenes[animIndex1]->mRootNode
-		, jointPoses1);
+		, poses1);
 
-	std::vector<aiMatrix4x4> nodeTransformations;
-	for (size_t i = 0; i < jointPoses0.size(); i++)
+	std::vector<JointPose> nodeTransformations;
+	for (size_t i = 0; i < poses0.size(); i++)
 	{
-		nodeTransformations.push_back(BlendMatrix(jointPoses0[i], jointPoses1[i], blend));
+		JointPose finalPose = {};
+		finalPose.aNodeTransformation = BlendMatrix(poses0[i].aNodeTransformation, poses1[i].aNodeTransformation, blend);
+		nodeTransformations.push_back(finalPose);
 	}
 
 	auto iterator = nodeTransformations.begin();
 	CalculateWorldTransforms(outTransforms, iterator, myScenes[myAnimIndex0]->mRootNode, myGlobalInverseTransform);
 }
 
+void CAnimationController::SetBoneTransforms(int indexes[3], Vector3 someTicks, Vector3 someBlends, std::array<aiMatrix4x4, 64>& outTransforms)
+{
+	unsigned int jointCount = 0;
+	jointCount = CountJoints(myScenes[indexes[0]]->mRootNode);
+	std::vector<JointPose> poses0;
+	poses0.reserve(jointCount);
+	ReadNodeHeirarchy(
+		myScenes[indexes[0]]
+		, someTicks.x
+		, myScenes[indexes[0]]->mRootNode
+		, poses0);
 
-void CAnimationController::ReadNodeHeirarchy(const aiScene* aScene, float tick, const aiNode* aNode, std::vector<aiMatrix4x4>& outNodeTransformations)
+	std::vector<JointPose> poses1;
+	poses1.reserve(jointCount);
+	ReadNodeHeirarchy(
+		myScenes[indexes[1]]
+		, someTicks.y
+		, myScenes[indexes[1]]->mRootNode
+		, poses1);
+
+	std::vector<JointPose> poses2;
+	poses2.reserve(jointCount);
+	ReadNodeHeirarchy(
+		myScenes[indexes[2]]
+		, someTicks.z
+		, myScenes[indexes[2]]->mRootNode
+		, poses2);
+
+	assert(poses0.size() == poses1.size() && poses1.size() == poses2.size());
+
+	std::vector<JointPose> nodeTransformations;
+	nodeTransformations.reserve(jointCount);
+	for (size_t i = 0; i < poses0.size(); i++)
+	{
+		aiMatrix4x4 first = BlendMatrix(poses0[i].aNodeTransformation, poses1[i].aNodeTransformation, someBlends.x);
+		aiMatrix4x4 second = BlendMatrix(poses0[i].aNodeTransformation, poses2[i].aNodeTransformation, someBlends.y);
+		
+		JointPose finalPose = {};
+		finalPose.aNodeTransformation = BlendMatrix(first, second, someBlends.z);
+		nodeTransformations.push_back(finalPose);
+
+		//JointPose finalPose = {};
+		//finalPose.aNodeTransformation = BlendMatrix(poses0[i].aNodeTransformation, poses1[i].aNodeTransformation, );
+		//nodeTransformations.push_back(finalPose);
+	}
+	//Getting some strange thing with different bones..? D:
+	auto iterator = nodeTransformations.begin();
+	CalculateWorldTransforms(outTransforms, iterator, myScenes[indexes[0]]->mRootNode, myGlobalInverseTransform);
+}
+
+void CAnimationController::BlendSpace2D(const Vector4& indexes, const Vector2& blendValues, const Vector4& ticks, std::array<aiMatrix4x4, 64>& outTransforms)
+{
+	int index0, index1, index2, index3;
+	index0 = static_cast<int>(indexes.x);
+	index1 = static_cast<int>(indexes.y);
+	index2 = static_cast<int>(indexes.z);
+	index3 = static_cast<int>(indexes.w);
+	uint jointCount = CountJoints(myScenes[index0]->mRootNode);
+
+	std::vector<JointPose> poses0;
+	poses0.reserve(jointCount);
+	CalculateNodePoses(myScenes[index0], myScenes[index0]->mRootNode, ticks.x, poses0);
+
+	std::vector<JointPose> poses1;
+	poses1.reserve(jointCount);
+	CalculateNodePoses(myScenes[index1], myScenes[index1]->mRootNode, ticks.y, poses1);
+
+	std::vector<JointPose> poses2;
+	poses2.reserve(jointCount);
+	CalculateNodePoses(myScenes[index2], myScenes[index2]->mRootNode, ticks.z, poses2);
+
+	std::vector<JointPose> poses3;
+	poses3.reserve(jointCount);
+	CalculateNodePoses(myScenes[index3], myScenes[index3]->mRootNode, ticks.w, poses3);
+
+	std::vector<JointPose> abTransformations;
+	abTransformations.reserve(jointCount);
+	for (size_t i = 0; i < poses0.size(); i++)
+	{
+		JointPose finalPose = {};
+		finalPose.aNodeTransformation = BlendMatrix(poses0[i].aNodeTransformation, poses1[i].aNodeTransformation, blendValues.x);
+		abTransformations.push_back(finalPose);
+	}
+
+	std::vector<JointPose> cdTransformations;
+	cdTransformations.reserve(jointCount);
+	for (size_t i = 0; i < poses2.size(); i++)
+	{
+		JointPose finalPose = {};
+		finalPose.aNodeTransformation = BlendMatrix(poses2[i].aNodeTransformation, poses3[i].aNodeTransformation, blendValues.x);
+		cdTransformations.push_back(finalPose);
+	}
+
+	std::vector<JointPose> transformations;
+	transformations.reserve(jointCount);
+	for (size_t i = 0; i < poses0.size(); ++i)
+	{
+		JointPose finalPose = {};
+		finalPose.aNodeTransformation = BlendMatrix(abTransformations[i].aNodeTransformation, cdTransformations[i].aNodeTransformation, blendValues.y);
+		transformations.push_back(finalPose);
+	}
+
+	auto iterator = transformations.begin();
+	CalculateWorldTransforms(outTransforms, iterator, myScenes[index0]->mRootNode, myGlobalInverseTransform);
+}
+
+
+void CAnimationController::ReadNodeHeirarchy(const aiScene* aScene, float tick, const aiNode* aNode, /*std::vector<aiMatrix4x4>& outNodeTransformations,*/ std::vector<JointPose>& outPoses)
 {
 	aiMatrix4x4 nodeTransformation(aNode->mTransformation);
-	const aiNodeAnim* nodeAnimation = FindNodeAnim(aScene->mAnimations[0], aNode->mName.data);
+	
+	JointPose nodeJoint = {};
+	nodeJoint.aNodeTransformation = aNode->mTransformation;
 
+	const aiNodeAnim* nodeAnimation = FindNodeAnim(aScene->mAnimations[0], aNode->mName.data);
 	if (nodeAnimation)
 	{
 		aiMatrix4x4 ScalingM;
@@ -263,22 +403,44 @@ void CAnimationController::ReadNodeHeirarchy(const aiScene* aScene, float tick, 
 		aiVector3D pos = CalculateInterpolation(nodeAnimation->mPositionKeys, nodeAnimation->mNumPositionKeys, tick).mValue;
 		aiMatrix4x4::Translation(pos, TranslationM);
 
-		nodeTransformation = TranslationM * RotationM * ScalingM;
+		nodeJoint.aNodeTransformation = TranslationM * RotationM * ScalingM;
+		nodeJoint.myPosKey = pos;
+		nodeJoint.myRotKey = rot;
+		nodeJoint.myScaleKey = scale;
 	}
-	outNodeTransformations.push_back(nodeTransformation);
+
+	outPoses.push_back(nodeJoint);	
+	//outNodeTransformations.push_back(nodeTransformation);
 
 	for (uint i = 0; i < aNode->mNumChildren; i++)
-		ReadNodeHeirarchy(aScene, tick, aNode->mChildren[i], outNodeTransformations);
+		ReadNodeHeirarchy(aScene, tick, aNode->mChildren[i], /*outNodeTransformations, */outPoses);
 }
 
-void CAnimationController::CalculateWorldTransforms(std::array<aiMatrix4x4, 64>& outTransforms, std::vector<aiMatrix4x4>::const_iterator& aNodeTransformationIterator, const aiNode* aNode, const aiMatrix4x4& aParentTransform)
+
+void CAnimationController::CalculateNodePoses(const aiScene* aScene, const aiNode* aNode, float aTick, std::vector<JointPose>& outJointPoses)
+{
+	unsigned int jointCount = 0;
+	jointCount = CountJoints(aNode);
+	//std::vector<aiMatrix4x4> jointPoses;
+	std::vector<JointPose> poses;
+	poses.reserve(jointCount);
+	//jointPoses.reserve(jointCount);
+	ReadNodeHeirarchy(
+		  aScene
+		, aTick
+		, aNode
+		//, jointPoses
+		, outJointPoses);
+}
+
+void CAnimationController::CalculateWorldTransforms(std::array<aiMatrix4x4, 64>& outTransforms, std::vector<JointPose>::const_iterator& aNodeTransformationIterator, const aiNode* aNode, const aiMatrix4x4& aParentTransform)
 {
 
-	aiMatrix4x4 globalTransformation = aParentTransform * (*aNodeTransformationIterator);
+	aiMatrix4x4 globalTransformation = aParentTransform * (*aNodeTransformationIterator).aNodeTransformation;
 	if (myBoneMapping.find(aNode->mName.data) != myBoneMapping.end())
 	{
 		uint boneIndex = myBoneMapping[aNode->mName.data];
-		outTransforms[boneIndex] = globalTransformation * myBoneInfo[boneIndex].myBoneOffset;
+		outTransforms[boneIndex] = globalTransformation * myBoneInfo[boneIndex].myInverseBindPose;
 	}
 
 	for (unsigned int i = 0; i < aNode->mNumChildren; ++i)
@@ -311,15 +473,16 @@ aiMatrix4x4 CAnimationController::BlendMatrix(const aiMatrix4x4& aMatrixA, const
 	return transformation;
 }
 
-unsigned int CAnimationController::CountChildren(const aiNode* aNode)
+unsigned int CAnimationController::CountJoints(const aiNode* aNode)
 {
 	unsigned int count = aNode->mNumChildren;
 	for (uint i = 0; i < aNode->mNumChildren; i++)
 	{
-		count += CountChildren(aNode->mChildren[i]);
+		count += CountJoints(aNode->mChildren[i]);
 	}
 	return count;
 }
+
 void CAnimationController::SaveMotionToMap(const aiScene* aScene, const std::string& aFilePath)
 {
 	auto lastSlash = aFilePath.find_last_of('/') + 1;
@@ -376,7 +539,6 @@ const int CAnimationController::AnimationIndex(const std::string& aMotionName)
 //	myBlendTrees.push_back(CBlendTree(aName, *this));
 //	return &myBlendTrees.back();
 //}
-
 //void CAnimationController::UpdateAnimationTimes(std::array<SlimMatrix44, 64>& someBones)
 //{
 //	float dt = CTimer::Dt();

@@ -1411,6 +1411,9 @@
     <ClInclude Include="..\Includes\ImGui\Core\ImGuiHelper.h">
       <Filter>Imgui\Helper</Filter>
     </ClInclude>
+    <ClInclude Include="delaunator.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">

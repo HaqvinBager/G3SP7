@@ -49,7 +49,8 @@ private:
 		DirectX::SimpleMath::Matrix myToCameraFromProjection;
 		DirectX::SimpleMath::Vector4 myCameraPosition;
 	} myFrameBufferData;
-	
+	static_assert((sizeof(SFrameBufferData) % 16) == 0, "SFrameBufferData size not padded correctly");
+
 	struct SObjectBufferData
 	{
 		DirectX::SimpleMath::Matrix myToWorld;
@@ -57,6 +58,7 @@ private:
 		unsigned int myNumberOfTextureSets;
 		unsigned int myPaddington[2];
 	} myObjectBufferData;
+	static_assert((sizeof(SObjectBufferData) % 16) == 0, "SObjectBufferData size not padded correctly");
 
 	struct SLightBufferData 
 	{
@@ -66,22 +68,26 @@ private:
 		DirectX::SimpleMath::Vector4 myDirectionalLightDirection;
 		DirectX::SimpleMath::Vector4 myDirectionalLightColor;
 	} myLightBufferData;
+	static_assert((sizeof(SLightBufferData) % 16) == 0, "SLightBufferData size not padded correctly");
 
 	struct SPointLightBufferData 
 	{
 		DirectX::SimpleMath::Vector4 myColorAndIntensity;
 		DirectX::SimpleMath::Vector4 myPositionAndRange;
 	} myPointLightBufferData;
+	static_assert((sizeof(SPointLightBufferData) % 16) == 0, "SBoneBufferData size not padded correctly");
+
 
 	struct SBoneBufferData {
-		/*SlimMatrix44*/Matrix myBones[64];
+		Matrix myBones[64];
 	} myBoneBufferData;
+	static_assert((sizeof(SBoneBufferData) % 16) == 0, "SBoneBufferData size not padded correctly");
 
 	struct SSkyboxTransformData {
 		Matrix myCameraViewProjection;
 	} mySkyboxTransformData;
+	static_assert((sizeof(SSkyboxTransformData) % 16) == 0, "SSkyboxTransformData size not padded correctly");
 
-	static_assert((sizeof(SBoneBufferData) % 16) == 0, "SBoneBufferData size not padded correctly");
 
 private:
 	bool LoadRenderPassPixelShaders(ID3D11Device* aDevice);

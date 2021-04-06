@@ -153,13 +153,12 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 		meshData[i].myVertexBuffer = vertexBuffer;
 		meshData[i].myIndexBuffer = indexBuffer;
 	}
-	bool modelHasBones = false;
+	bool modelHasBones = mesh->myModel->myNumBones > 0;
 	//VertexShader
 	std::ifstream vsFile;
 #ifdef ALLOW_ANIMATIONS
-	if (mesh->myModel->myNumBones > 0)
-	{
-		modelHasBones = true;
+	if (modelHasBones)
+	{		
 		vsFile.open("Shaders/AnimatedVertexShader.cso", std::ios::binary);
 	}
 	else

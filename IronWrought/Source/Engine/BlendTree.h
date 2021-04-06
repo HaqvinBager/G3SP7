@@ -7,6 +7,7 @@ class CBlendTree
 {
 public:
 	friend class IronWroughtImGui::CAnimator;
+	
 	CBlendTree(const std::string& aName, CAnimationController& aController);
 	~CBlendTree();
 
