@@ -11,28 +11,48 @@
 #include "rapidjson\document.h"
 #include "rapidjson\istreamwrapper.h"
 
-CAnimatedUIElement::CAnimatedUIElement(std::string aFilePath, CScene& aScene, bool addToScene) : mySpriteInstance(nullptr), myLevel(1.0f)
+CAnimatedUIElement::CAnimatedUIElement(CScene& aScene, bool addToScene)
+    :  mySpriteInstance(new CSpriteInstance(aScene, addToScene))
+    , myData(nullptr)
+    , myLevel(1.0f)
 {
-    using namespace rapidjson;
-
-    //std::ifstream input_stream(aFilePath);
-    //IStreamWrapper input_wrapper(input_stream);
-    Document document = CJsonReader::Get()->LoadDocument(aFilePath);
-    //document.ParseStream(input_wrapper);
-    mySpriteInstance = new CSpriteInstance(aScene, addToScene);
-    mySpriteInstance->Init(CSpriteFactory::GetInstance()->GetSprite(ASSETPATH(document["Texture Overlay"].GetString())));
     if (addToScene == false) {
         mySpriteInstance->SetShouldRender(false);
     }
+    aScene.AddInstance(this);
+}
 
-    myData = CSpriteFactory::GetInstance()->GetVFXSprite(aFilePath);
+CAnimatedUIElement::CAnimatedUIElement(const std::string& aFilePath, CScene& aScene, bool addToScene) 
+    : mySpriteInstance(nullptr)
+    , myLevel(1.0f)
+{
+    mySpriteInstance = new CSpriteInstance(aScene, addToScene);
+    Init(aFilePath, addToScene, myLevel);
     aScene.AddInstance(this);
 }
 
 CAnimatedUIElement::~CAnimatedUIElement()
 {
-    //delete mySpriteInstance;
-    //mySpriteInstance = nullptr;
+    // This is done for reinit of canvas. / Aki 20210401
+    CScene& scene = IRONWROUGHT_ACTIVE_SCENE;
+    scene.RemoveInstance(mySpriteInstance);
+    delete mySpriteInstance;
+    mySpriteInstance = nullptr;
+}
+
+void CAnimatedUIElement::Init(const std::string& aFilePath, const bool& aAddToScene, const float& aLevel)
+{
+    using namespace rapidjson;
+    Document document = CJsonReader::Get()->LoadDocument(aFilePath);
+
+    mySpriteInstance->Init(CSpriteFactory::GetInstance()->GetSprite(ASSETPATH(document["Texture Overlay"].GetString())));
+    if (aAddToScene == false) {
+        mySpriteInstance->SetShouldRender(false);
+    }
+
+    myData = CSpriteFactory::GetInstance()->GetVFXSprite(aFilePath);
+
+    myLevel = aLevel;
 }
 
 void CAnimatedUIElement::Level(float aLevel)

@@ -77,8 +77,8 @@ bool CPhysXWrapper::Init()
 	if (!myPhysicsVisualDebugger) {
 		return false;
 	}
+	//Omg är det såhär vi kopplar vårt program till PVD Debuggern?! :D
 	PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate("localhost", 5425, 10);
-	//PxPvdTransport* transport = PxDefaultPvdFileTransportCreate("Test.pxd2");
 	myPhysicsVisualDebugger->connect(*transport, PxPvdInstrumentationFlag::eALL);
 	PxTolerancesScale scale;
 	scale.length = 1;
@@ -99,7 +99,7 @@ PxScene* CPhysXWrapper::CreatePXScene(CScene* aScene)
 {
 	PxSceneDesc sceneDesc(myPhysics->getTolerancesScale());
 	sceneDesc.gravity = PxVec3(0.0f, -9.82f, 0.0f);
-	myDispatcher = PxDefaultCpuDispatcherCreate(2);
+	myDispatcher = PxDefaultCpuDispatcherCreate(1);
 	sceneDesc.cpuDispatcher = myDispatcher;
 	sceneDesc.filterShader = contactReportFilterShader;
 	sceneDesc.simulationEventCallback = myContactReportCallback;
@@ -115,6 +115,10 @@ PxScene* CPhysXWrapper::CreatePXScene(CScene* aScene)
 		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);
 		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
 	}
+	myControllerManager = PxCreateControllerManager(*pXScene);
+	myPXScenes[aScene] = pXScene;
+	return pXScene;
+}
 
 	// Create a basic setup for a scene - contain the rodents in a invisible cage
 	/*PxMaterial* myMaterial myPXMaterial = CreateMaterial(CPhysXWrapper::materialfriction::basic);*/
@@ -126,12 +130,9 @@ PxScene* CPhysXWrapper::CreatePXScene(CScene* aScene)
 //pXScene->setVisualizationParameter(PxVisualizationParameter::eSCALE, 1.0f);
 //pXScene->setVisualizationParameter(PxVisualizationParameter::eACTOR_AXES, 2.0f);
 
-	/*myControllerManagers[pXScene]*/myControllerManager = PxCreateControllerManager(*pXScene);
+	/*myControllerManagers[pXScene]*/
 
-	myPXScenes[aScene] = pXScene;
 
-	return pXScene;
-}
 
 PxScene* CPhysXWrapper::GetPXScene()
 {
