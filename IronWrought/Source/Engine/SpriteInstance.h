@@ -48,7 +48,8 @@ public:
 
 	void Update();
 
-	//void PlayAnimation(unsigned int anIndex, bool aShouldLoop = false, )
+	void PlayAnimation(unsigned int anIndex, bool aShouldLoop = false, bool aShouldBeReversed = false);
+	void PlayAnimation(std::string aName, bool aShouldLoop = false, bool aShouldBeReversed = false);
 
 public:
 	const DirectX::SimpleMath::Vector4 GetPosition() const { return myPosition; }
@@ -77,5 +78,7 @@ private:
 	unsigned int myCurrentAnimationFrame;
 	bool myShouldRender = true;
 	bool myShouldAnimate;
+	bool myShouldLoopAnimation;
+	bool myShouldReverseAnimation;
 };
 

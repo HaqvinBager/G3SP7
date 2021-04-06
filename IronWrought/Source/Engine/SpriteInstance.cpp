@@ -81,6 +81,8 @@ bool CSpriteInstance::Init(CSprite* aSprite, const std::vector<SSpriteSheetPosit
 		Vector2 frameSize = { someSpriteSheetPositionData.back().mySpriteWidth,  someSpriteSheetPositionData.back().mySpriteHeight };
 		Vector2 scaleProportions = (frameSize / sheetDimensions);
 		this->SetSize(aScale * scaleProportions);
+
+		this->SetUVRect(myAnimationFrames[0]);
 	}
 
 	return true;
@@ -93,10 +95,6 @@ void CSpriteInstance::SetSize(DirectX::SimpleMath::Vector2 aSize)
 	mySize = mySpriteData.myDimensions;
 	mySize /= 1080.0f;
 	mySize *= aSize;
-	//mySize = mySpriteData.myDimensions;
-	//mySize.x /= 1920.0f;
-	//mySize.y /= 1080.0f;
-	//mySize *= aSize;
 }
 
 void CSpriteInstance::SetShouldRender(bool aBool)
@@ -119,6 +117,40 @@ void CSpriteInstance::Update()
 		}
 		this->SetUVRect(myAnimationFrames[myCurrentAnimationFrame]);
 	}
+}
+
+void CSpriteInstance::PlayAnimation(unsigned int anIndex, bool aShouldLoop, bool aShouldBeReversed)
+{
+	if (anIndex >= myAnimationData.size())
+		return;
+
+	myCurrentAnimationIndex = anIndex;
+	myCurrentAnimationFrame = myAnimationData[myCurrentAnimationIndex].myFramesOffset;
+	myShouldLoopAnimation = aShouldLoop;
+	myShouldReverseAnimation = aShouldBeReversed;
+	myShouldAnimate = true;
+}
+
+void CSpriteInstance::PlayAnimation(std::string aName, bool aShouldLoop, bool aShouldBeReversed)
+{
+	unsigned int newIndex = 99999;
+	for (unsigned int i = 0; i < myAnimationData.size(); ++i)
+	{
+		if (myAnimationData[i].myAnimationName.find(aName) != std::string::npos)
+		{
+			newIndex = i;
+			break;
+		}
+	}
+
+	if (newIndex >= myAnimationData.size())
+		return;
+
+	myCurrentAnimationIndex = newIndex;
+	myCurrentAnimationFrame = myAnimationData[myCurrentAnimationIndex].myFramesOffset;
+	myShouldLoopAnimation = aShouldLoop;
+	myShouldReverseAnimation = aShouldBeReversed;
+	myShouldAnimate = true;
 }
 
 void CSpriteInstance::SetRenderOrder(ERenderOrder aRenderOrder)
