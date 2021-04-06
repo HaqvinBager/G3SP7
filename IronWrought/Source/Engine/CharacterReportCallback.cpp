@@ -14,7 +14,7 @@ void CCharacterReportCallback::onShapeHit(const physx::PxControllerShapeHit& hit
 	}*/
 	CTransformComponent* playerTransform = (CTransformComponent*)hit.controller->getUserData();
 	if(playerTransform->GameObject().GetComponent<CPlayerControllerComponent>()){
-		if (hit.shape->getGeometryType() == physx::PxGeometryType::eBOX) {
+		if (hit.shape->getGeometryType() != physx::PxGeometryType::eTRIANGLEMESH) {
 			CTransformComponent* objectTransform = (CTransformComponent*)hit.actor->userData;
 			CPlayerControllerComponent* player = playerTransform->GameObject().GetComponent<CPlayerControllerComponent>();
 			if (player) {
