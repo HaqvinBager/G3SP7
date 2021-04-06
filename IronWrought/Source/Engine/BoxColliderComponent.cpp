@@ -7,13 +7,14 @@
 #include "RigidDynamicBody.h"
 #include "TransformComponent.h"
 
-CBoxColliderComponent::CBoxColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const Vector3& aBoxSize)
+CBoxColliderComponent::CBoxColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const Vector3& aBoxSize, bool aIsStatic)
 	: CBehaviour(aParent)
 	, myShape(nullptr)
 	, myPositionOffset(aPositionOffset)
 	, myBoxSize(aBoxSize)
 	, created(false)
 {
+	aIsStatic;
 }
 
 CBoxColliderComponent::~CBoxColliderComponent()

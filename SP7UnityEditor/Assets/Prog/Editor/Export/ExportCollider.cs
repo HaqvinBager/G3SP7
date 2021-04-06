@@ -13,6 +13,7 @@ public struct ColliderLink
     public float sphereRadius;
     public float capsuleHeight;
     public float capsuleRadius;
+    public bool isStatic;
 }
 // 1 - BoxCollider
 // 2 - SphereCollider
@@ -23,7 +24,7 @@ enum IronColliderType
     BoxCollider = 1,
     SphereCollider = 2,
     CapsuleCollider = 3,
-    MeshCollider = 4, 
+    MeshCollider = 4,
 }
 
 [System.Serializable]
@@ -45,6 +46,7 @@ public class ExportCollider : MonoBehaviour
             {
                 ColliderLink link = new ColliderLink();
                 link.instanceID = collider.transform.GetInstanceID();
+                link.isStatic = collider.gameObject.isStatic;
 
                 if (collider.GetType() == typeof(BoxCollider))
                 {
@@ -68,7 +70,7 @@ public class ExportCollider : MonoBehaviour
                     link.capsuleHeight = capsuleCollider.height;
                     link.capsuleRadius = capsuleCollider.radius;
                 }
-                else if(collider.GetType() == typeof(MeshCollider))
+                else if (collider.GetType() == typeof(MeshCollider))
                 {
                     link.colliderType = (int)IronColliderType.MeshCollider;
                 }
@@ -78,6 +80,7 @@ public class ExportCollider : MonoBehaviour
                 }
                 colliderCollection.colliders.Add(link);
             }
+
         }
         return colliderCollection;
     }

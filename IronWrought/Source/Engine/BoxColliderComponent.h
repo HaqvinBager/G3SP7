@@ -9,7 +9,7 @@ namespace physx
 class CBoxColliderComponent : public CBehaviour
 {
 public:
-	CBoxColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const Vector3& aBoxSize);
+	CBoxColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const Vector3& aBoxSize, bool aIsStatic = false);
 	~CBoxColliderComponent() override;
 
 	void Awake() override;

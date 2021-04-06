@@ -5,9 +5,10 @@
 #include "RigidBodyComponent.h"
 #include "RigidDynamicBody.h"
 
-CSphereColliderComponent::CSphereColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const float& aRadius) 
+CSphereColliderComponent::CSphereColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const float& aRadius, bool aIsStatic) 
 	: CBehaviour(aParent)
 {
+	aIsStatic;
 	myPositionOffset = aPositionOffset;
 	myRadius = aRadius;
 }
