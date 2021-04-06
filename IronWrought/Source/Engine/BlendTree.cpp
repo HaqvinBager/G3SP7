@@ -18,8 +18,8 @@ void CBlendTree::Update(const float /*aTime*/)
 	for (int i = 0; i < myMotions.size(); ++i)
 	{
 		int index = myController.AnimationIndex(myMotions[i]);
-		float tps = myController.AnimationTPS(index);
-		float duration = myController.AnimationDurationInTicks(index);
+		float tps = myController.MotionTPS(index);
+		float duration = myController.MotionDurationInTicks(index);
 
 		index;
 		tps;

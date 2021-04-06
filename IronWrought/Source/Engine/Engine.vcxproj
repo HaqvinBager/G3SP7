@@ -188,6 +188,7 @@
     <ClInclude Include="AnimationComponent.h" />
     <ClInclude Include="AnimationController.h" />
     <ClInclude Include="animationLoader.h" />
+    <ClInclude Include="AnimationStructs.h" />
     <ClInclude Include="AStar.h" />
     <ClInclude Include="Audio.h" />
     <ClInclude Include="AudioChannel.h" />
@@ -200,6 +201,7 @@
     <ClInclude Include="delaunator.h" />
     <ClInclude Include="FlipACoinDecision.h" />
     <ClInclude Include="IronMath.h" />
+    <ClInclude Include="MotionTriangle.h" />
     <ClInclude Include="NodeDataManager.h" />
     <ClInclude Include="NodeTypeAudioPlayResearcherEvent.h" />
     <ClInclude Include="NodeTypeAudioPlayResearcherReactionExplosives.h" />
@@ -401,6 +403,7 @@
     <ClCompile Include="AnimationComponent.cpp" />
     <ClCompile Include="AnimationController.cpp" />
     <ClCompile Include="animationLoader.cpp" />
+    <ClCompile Include="AnimationStructs.cpp" />
     <ClCompile Include="AStar.cpp" />
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="AudioChannel.cpp" />
@@ -408,6 +411,7 @@
     <ClCompile Include="Animator.cpp" />
     <ClCompile Include="BlendTree.cpp" />
     <ClCompile Include="CCurveWindow.cpp" />
+    <ClCompile Include="MotionTriangle.cpp" />
     <ClCompile Include="NodeTypeAudioPlayResearcherEvent.cpp" />
     <ClCompile Include="NodeTypeAudioPlayResearcherReactionExplosives.cpp" />
     <ClCompile Include="NodeTypeAudioPlayRobotPatrolling.cpp" />
