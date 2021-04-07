@@ -21,7 +21,7 @@ void IronWroughtImGui::CGravityGloveEditor::OnEnable()
 
 	if (myGlove != nullptr)
 	{
-		//myValues["Push Force"] = &myGlove->mySettings.myPushForce;// serializedData.myPushForce;
+		myValues["Push Force"] = &myGlove->mySettings.myPushForce;// serializedData.myPushForce;
 		//myValues["Max Push Force"] = &myGlove->mySettings.myMaxPushForce;
 		//myValues["Minimum Velocity On Arrive"] = &myGlove->mySettings.myDistanceToMaxLinearVelocity;
 		myValues["Max Distance"] = &myGlove->mySettings.myMaxDistance;

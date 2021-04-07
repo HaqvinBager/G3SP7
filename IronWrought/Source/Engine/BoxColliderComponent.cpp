@@ -42,11 +42,8 @@ void CBoxColliderComponent::CreateBoxCollider()
 	if (GameObject().TryGetComponent(&rigidBody))
 	{
 		rigidBody->AttachShape(myShape);
-		physx::PxRigidDynamic& dynamic = rigidBody->GetDynamicRigidBody()->GetBody();
-		dynamic.setMass(3.f);
-		dynamic.setCMassLocalPose({ myPositionOffset.x, myPositionOffset.y, myPositionOffset.z });
-		dynamic.putToSleep();
-		dynamic.setMaxLinearVelocity(10.f);
+		rigidBody->GetDynamicRigidBody()->GetBody();
+		//dynamic.setMaxLinearVelocity(10.f);
 	}
 	else
 	{

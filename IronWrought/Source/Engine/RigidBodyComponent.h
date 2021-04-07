@@ -24,7 +24,7 @@ enum class EForceMode
 class CRigidBodyComponent : public CComponent
 {
 public:
-	CRigidBodyComponent(CGameObject& aParent);
+	CRigidBodyComponent(CGameObject& aParent, const float& aMass, const Vector3& aLocalCenterMass, const Vector3& aInertiaTensor);
 
 	~CRigidBodyComponent() override;
 
@@ -49,4 +49,7 @@ private:
 
 private:
 	CRigidDynamicBody* myDynamicRigidBody;
+	float myMass;
+	Vector3 myLocalCenterMass;
+	Vector3 myInertiaTensor;
 };

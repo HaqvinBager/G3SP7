@@ -104,6 +104,9 @@ PxScene* CPhysXWrapper::CreatePXScene(CScene* aScene)
 	sceneDesc.cpuDispatcher = myDispatcher;
 	sceneDesc.filterShader = contactReportFilterShader;
 	sceneDesc.simulationEventCallback = myContactReportCallback;
+	sceneDesc.flags |= PxSceneFlag::eENABLE_CCD;
+
+
 	PxScene* pXScene = myPhysics->createScene(sceneDesc);
 	if (!pXScene) {
 		return nullptr;
@@ -271,7 +274,7 @@ PxControllerManager* CPhysXWrapper::GetControllerManager()
 void CPhysXWrapper::Cooking(const std::vector<CGameObject*>& gameObjectsToCook, CScene* aScene)
 {
 	for (int i = 0; i < gameObjectsToCook.size(); ++i) {
-		/*if (gameObjectsToCook[i]->GetComponent<CModelComponent>() && gameObjectsToCook[i]->GetComponent<CConvexMeshColliderComponent>()) {
+		if (gameObjectsToCook[i]->GetComponent<CModelComponent>() && gameObjectsToCook[i]->GetComponent<CConvexMeshColliderComponent>()) {
 			std::vector<PxVec3> verts(gameObjectsToCook[i]->GetComponent<CModelComponent>()->GetMyModel()->GetModelData().myMeshFilter.myVertecies.size());
 
 			for (auto z = 0; z < gameObjectsToCook[i]->GetComponent<CModelComponent>()->GetMyModel()->GetModelData().myMeshFilter.myVertecies.size(); ++z) {
@@ -301,7 +304,7 @@ void CPhysXWrapper::Cooking(const std::vector<CGameObject*>& gameObjectsToCook, 
 
 			PxShape* convexShape = myPhysics->createShape(pMeshGeometry, *CreateMaterial(CPhysXWrapper::materialfriction::basic), true);
 			gameObjectsToCook[i]->GetComponent<CConvexMeshColliderComponent>()->SetShape(convexShape);
-		}*/
+		}
 
 		if (gameObjectsToCook[i]->GetComponent<CInstancedModelComponent>() &&
 			!gameObjectsToCook[i]->GetComponent<CPlayerControllerComponent>()) {

@@ -14,6 +14,9 @@ public struct ColliderLink
     public float capsuleHeight;
     public float capsuleRadius;
     public bool isStatic;
+    public float mass;
+    public Vector3 localMassPosition;
+    public Vector3 inertiaTensor;
 }
 // 1 - BoxCollider
 // 2 - SphereCollider
@@ -47,6 +50,11 @@ public class ExportCollider : MonoBehaviour
                 ColliderLink link = new ColliderLink();
                 link.instanceID = collider.transform.GetInstanceID();
                 link.isStatic = collider.gameObject.isStatic;
+
+                Rigidbody rigidbody = collider.GetComponent<Rigidbody>();
+                link.mass = rigidbody.mass;
+                link.localMassPosition = rigidbody.centerOfMass;
+                link.inertiaTensor = rigidbody.inertiaTensor;
 
                 if (collider.GetType() == typeof(BoxCollider))
                 {

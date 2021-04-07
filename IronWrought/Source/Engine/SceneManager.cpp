@@ -356,8 +356,18 @@ void CSceneManager::AddCollider(CScene& aScene, RapidArray someData)
 		bool isStatic = c.HasMember("isStatic") ? c["isStatic"].GetBool() : false;
 
 		CRigidBodyComponent* rigidBody = gameObject->GetComponent<CRigidBodyComponent>();
-		if (rigidBody == nullptr && isStatic == false)
-			gameObject->AddComponent<CRigidBodyComponent>(*gameObject);
+		if (rigidBody == nullptr && isStatic == false) {
+			float mass = c["mass"].GetFloat();
+			Vector3 localCenterMass;
+			localCenterMass.x = c["localMassPosition"]["x"].GetFloat();
+			localCenterMass.y = c["localMassPosition"]["y"].GetFloat();
+			localCenterMass.z = c["localMassPosition"]["z"].GetFloat();
+			Vector3 inertiaTensor;
+			inertiaTensor.x = c["inertiaTensor"]["x"].GetFloat();
+			inertiaTensor.y = c["inertiaTensor"]["y"].GetFloat();
+			inertiaTensor.z = c["inertiaTensor"]["z"].GetFloat();
+			gameObject->AddComponent<CRigidBodyComponent>(*gameObject, mass, localCenterMass, inertiaTensor);
+		}
 
 
 		Vector3 posOffset;
