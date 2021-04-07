@@ -8334,6 +8334,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: EN_P_InfoScreen
       objectReference: {fileID: 0}
+    - target: {fileID: 2349849981038326532, guid: 0accf3a86b5a7b042b354fe5d37f4886,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3493379506739907993, guid: 0accf3a86b5a7b042b354fe5d37f4886,
         type: 3}
       propertyPath: m_RootOrder
@@ -19966,6 +19971,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: EN_P_InfoScreen (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2349849981038326532, guid: 0accf3a86b5a7b042b354fe5d37f4886,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3493379506739907993, guid: 0accf3a86b5a7b042b354fe5d37f4886,
         type: 3}
