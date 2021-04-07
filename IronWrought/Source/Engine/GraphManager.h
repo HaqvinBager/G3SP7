@@ -132,4 +132,5 @@ private:
 	bool myRunScripts;
 	std::string mySceneFolder;
 	ImTextureID myHeaderTextureID;
+	std::vector<std::string> myCustomDataNodes;
 };

@@ -64,6 +64,34 @@ public:
 		myNodeData.push_back({ aNodeTypeName, new T(aValue), aDataType });
 	}
 
+	void RemoveData(const std::string& aNodeTypeName)
+	{
+		if (myNodeData.size() > 0)
+		{
+			bool foundElement = false;
+			int i;
+			for (i = 0; i < myNodeData.size(); ++i)
+			{
+				if (myNodeData[i].myNodeTypeName == aNodeTypeName)
+				{
+					foundElement = true;
+					break;
+				}
+			}
+
+			if (foundElement)
+			{
+				for (int j = i; j < myNodeData.size() - 1; ++j)
+				{
+					myNodeData[j] = myNodeData[j + 1];
+
+				}
+
+				myNodeData.pop_back();
+			}
+		}
+	}
+
 	void SaveDataTypesToJson();
 
 
