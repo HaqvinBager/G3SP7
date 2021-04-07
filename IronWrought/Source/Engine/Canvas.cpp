@@ -304,6 +304,16 @@ void CCanvas::ReInit(std::string aFilePath, CScene& aScene, bool addToScene)
 
 void CCanvas::Update()
 {
+	if (Input::GetInstance()->IsMousePressed(Input::EMouseButton::Left))
+	{
+		mySprites[0]->PlayAnimation(0);
+	}
+
+	if (Input::GetInstance()->IsMouseReleased(Input::EMouseButton::Left))
+	{
+		mySprites[0]->PlayAnimation(0, false, true);
+	}
+
 	for (unsigned int i = 0; i < mySprites.size(); ++i)
 	{
 		mySprites[i]->Update();
@@ -324,6 +334,8 @@ void CCanvas::Update()
 		{
 			myButtons[i]->Click(true, nullptr);
 		}
+
+		mySprites[0]->PlayAnimation(0);
 	}
 
 	if (Input::GetInstance()->IsMouseReleased(Input::EMouseButton::Left))
@@ -332,6 +344,8 @@ void CCanvas::Update()
 		{
 			myButtons[i]->Click(false, nullptr);
 		}
+
+		mySprites[0]->PlayAnimation(0, false, true);
 	}
 }
 
