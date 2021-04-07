@@ -40,9 +40,9 @@ void CVFXSystemComponent::Init(const std::string& aVFXDataPath)
 
 	for (unsigned int j = 0; j < document["VFXEffects"].Size(); ++j)
 	{
-		myEffects.push_back(new SVFXEffect());
+		myEffects.push_back(std::make_unique<SVFXEffect>());
 		auto doc = document["VFXEffects"][j].GetObjectW();
-		auto effect = myEffects.back();
+		auto& effect = myEffects.back();
 
 		ENGINE_BOOL_POPUP(doc.HasMember("Name"), "VFX Json: %s is not structured correctly! Please compare to VFXSystem_ToLoad.json", aVFXDataPath.c_str());
 		effect->myName = doc["Name"].GetString();
@@ -173,7 +173,7 @@ void CVFXSystemComponent::Update()
 
 	for (unsigned int j = 0; j < myEffects.size(); ++j)
 	{
-		auto effect = myEffects[j];
+		auto& effect = myEffects[j];
 
 		if (!effect->myIsEnabled) continue;
 
@@ -224,7 +224,7 @@ void CVFXSystemComponent::LateUpdate()
 
 	for (unsigned int j = 0; j < myEffects.size(); ++j)
 	{
-		auto effect = myEffects[j];
+		auto& effect = myEffects[j];
 
 		for (unsigned int i = 0; i < effect->myVFXTransforms.size(); ++i)
 		{
@@ -267,7 +267,7 @@ void CVFXSystemComponent::OnEnable()
 {
 	Enabled(true);
 
-	for (auto effect : myEffects)
+	for (auto& effect : myEffects)
 	{
 		effect->Enable();
 	}
@@ -277,7 +277,7 @@ void CVFXSystemComponent::OnDisable()
 {
 	Enabled(false);
 
-	for (auto effect : myEffects)
+	for (auto& effect : myEffects)
 	{
 		effect->Disable();
 	}

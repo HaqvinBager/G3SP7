@@ -124,6 +124,9 @@ bool CNodeInstance::AddLinkToVia(CNodeInstance* aLink, unsigned int aPinIDFromMe
 
 void CNodeInstance::RemoveLinkToVia(CNodeInstance* aLink, unsigned int aPinThatIOwn)
 {
+	if (!aLink)
+		return;
+
 	for (int i=0; i< myLinks.size(); i++)
 	{
 		if (myLinks[i].myLink == aLink)

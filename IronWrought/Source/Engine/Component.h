@@ -2,6 +2,7 @@
 #include "GameObject.h"
 class CComponent
 {
+	friend class CGameObject;
 public:
 	CComponent(CGameObject& aParent);
 	virtual ~CComponent();

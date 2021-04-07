@@ -39,8 +39,8 @@ public class ExportCollider : MonoBehaviour
     {
         ColliderCollection colliderCollection = new ColliderCollection();
         colliderCollection.colliders = new List<ColliderLink>();
-        Collider[] colliderss = GameObject.FindObjectsOfType<Collider>();
-        foreach (Collider collider in colliderss)
+        Collider[] colliders = GameObject.FindObjectsOfType<Collider>();
+        foreach (Collider collider in colliders)
         {
             if (validInstanceIDs.Contains(collider.transform.GetInstanceID()))
             {

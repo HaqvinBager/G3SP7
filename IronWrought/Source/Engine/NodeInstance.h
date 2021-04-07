@@ -122,8 +122,11 @@ public:
 	void Serialize(Writer& aWriter) const
 	{
 		aWriter.StartObject();
-		aWriter.Key("NodeType");
+		aWriter.Key("NodeType ID");
 		aWriter.Int(myNodeType->myID);
+		
+		aWriter.Key("NodeType");
+		aWriter.Int(static_cast<int>(myNodeType->myNodeType));
 
 		aWriter.Key("UID");
 		aWriter.Int(myUID.AsInt());

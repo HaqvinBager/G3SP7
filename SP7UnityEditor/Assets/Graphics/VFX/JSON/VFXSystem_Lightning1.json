@@ -1,0 +1,79 @@
+{
+  "VFXEffects": [
+    {
+      "Name": "Lightning_1",
+      "VFXMeshes": [
+        {
+          "Path": "Assets/Graphics/VFX/JSON/Data/VFXMeshData_Ball.json",
+          "Offset X": 0.0,
+          "Offset Y": 0.0,
+          "Offset Z": 0.0,
+          "Rotation X": 10.0,
+          "Rotation Y": 0.0,
+          "Rotation Z": 4.0,
+          "Scale X": 1.0,
+          "Scale Y": 1.0,
+          "Scale Z": 1.0,
+          "Rotate X per second": 0.0,
+          "Rotate Y per second": 0.0,
+          "Rotate Z per second": 0.0,
+          "Orbit": true,
+          "Delay": 0.0,
+          "Duration": 4.199999809265137
+        },
+        {
+          "Path": "Assets/Graphics/VFX/JSON/Data/VFXMeshData_Lightningrail.json",
+          "Offset X": 0.5,
+          "Offset Y": 0.0,
+          "Offset Z": 0.0,
+          "Rotation X": 10.0,
+          "Rotation Y": 4.0,
+          "Rotation Z": 5.0,
+          "Scale X": 1.0,
+          "Scale Y": 1.0,
+          "Scale Z": 1.0,
+          "Rotate X per second": 4.0,
+          "Rotate Y per second": 0.0,
+          "Rotate Z per second": 0.0,
+          "Orbit": true,
+          "Delay": 1.0,
+          "Duration": 4.400000095367432
+        }
+      ],
+      "ParticleSystems": [
+        {
+          "Path": "Assets/Graphics/VFX/JSON/Data/ParticleData_Pull.json",
+          "Offset X": 0.0,
+          "Offset Y": 0.0,
+          "Offset Z": 0.0,
+          "Rotation X": 0.0,
+          "Rotation Y": 1.0,
+          "Rotation Z": 20.0,
+          "Scale": 1.0,
+          "Rotate X per second": 0.0,
+          "Rotate Y per second": 0.0,
+          "Rotate Z per second": 0.0,
+          "Orbit": true,
+          "Delay": 0.0,
+          "Duration": 3.799999952316284
+        },
+        {
+          "Path": "Assets/Graphics/VFX/JSON/Data/ParticleData_LightningSparks.json",
+          "Offset X": 0.0,
+          "Offset Y": 0.0,
+          "Offset Z": 0.0,
+          "Rotation X": 0.0,
+          "Rotation Y": 0.0,
+          "Rotation Z": 5.0,
+          "Scale": 1.0,
+          "Rotate X per second": 0.0,
+          "Rotate Y per second": 0.0,
+          "Rotate Z per second": 0.0,
+          "Orbit": true,
+          "Delay": 0.20000000298023225,
+          "Duration": 2.0999999046325685
+        }
+      ]
+    }
+  ]
+}

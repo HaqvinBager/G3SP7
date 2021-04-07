@@ -20,5 +20,7 @@ public:
 	void Receive(const SMessage& aMessage) override;
 
 private:
+	// More or less temp. / Aki 2021 04 06
+	bool myTimeToQuit;
 };
 

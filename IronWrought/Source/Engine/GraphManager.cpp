@@ -213,59 +213,60 @@ void CGraphManager::ReTriggerUpdatingTrees()
 
 void CGraphManager::SaveTreeToFile()
 {
-
+	for (const auto& graph : myGraphs)
 	{
-		rapidjson::StringBuffer s;
-		rapidjson::PrettyWriter<rapidjson::StringBuffer> writer1(s);
 
-		writer1.StartObject();
-		writer1.Key("UID_MAX");
-
-		writer1.StartObject();
-		writer1.Key("Num");
-		writer1.Int(CUID::myGlobalUID);
-		writer1.EndObject();
-
-		writer1.Key("NodeInstances");
-		writer1.StartArray();
-		for (auto& nodeInstance : myCurrentGraph->myNodeInstances)
 		{
-			nodeInstance->Serialize(writer1);
-		}
-		writer1.EndArray();
-		writer1.EndObject();
+			rapidjson::StringBuffer s;
+			rapidjson::PrettyWriter<rapidjson::StringBuffer> writer1(s);
 
-
-
-		std::ofstream of(myCurrentGraph->myFolderPath + "/nodeinstances.json");
-		of << s.GetString();
-	}
-	//Links
-	{
-		rapidjson::StringBuffer s;
-		rapidjson::PrettyWriter<rapidjson::StringBuffer> writer1(s);
-
-		writer1.StartObject();
-		writer1.Key("Links");
-		writer1.StartArray();
-		for (auto& link : myCurrentGraph->myLinks)
-		{
 			writer1.StartObject();
-			writer1.Key("ID");
-			writer1.Int(static_cast<int>(link.myID.Get()));
-			writer1.Key("Input");
-			writer1.Int(static_cast<int>(link.myInputID.Get()));
-			writer1.Key("Output");
-			writer1.Int(static_cast<int>(link.myOutputID.Get()));
+			writer1.Key("UID_MAX");
+
+			writer1.StartObject();
+			writer1.Key("Num");
+			writer1.Int(CUID::myGlobalUID);
 			writer1.EndObject();
 
+			writer1.Key("NodeInstances");
+			writer1.StartArray();
+			for (auto& nodeInstance : graph.myNodeInstances)
+			{
+				nodeInstance->Serialize(writer1);
+			}
+			writer1.EndArray();
+			writer1.EndObject();
+
+			std::ofstream of(graph.myFolderPath + "/nodeinstances.json");
+			of << s.GetString();
 		}
-		writer1.EndArray();
-		writer1.EndObject();
+		//Links
+		{
+			rapidjson::StringBuffer s;
+			rapidjson::PrettyWriter<rapidjson::StringBuffer> writer1(s);
+
+			writer1.StartObject();
+			writer1.Key("Links");
+			writer1.StartArray();
+			for (auto& link : graph.myLinks)
+			{
+				writer1.StartObject();
+				writer1.Key("ID");
+				writer1.Int(static_cast<int>(link.myID.Get()));
+				writer1.Key("Input");
+				writer1.Int(static_cast<int>(link.myInputID.Get()));
+				writer1.Key("Output");
+				writer1.Int(static_cast<int>(link.myOutputID.Get()));
+				writer1.EndObject();
+
+			}
+			writer1.EndArray();
+			writer1.EndObject();
 
 
-		std::ofstream of(myCurrentGraph->myFolderPath + "/links.json");
-		of << s.GetString();
+			std::ofstream of(graph.myFolderPath + "/links.json");
+			of << s.GetString();
+		}
 	}
 }
 
@@ -340,11 +341,13 @@ void CGraphManager::LoadTreeFromFile()
 				{
 					auto nodeInstance = nodeInstances[i].GetObjectW();
 					CNodeInstance* object = new CNodeInstance(this, false);
-					int nodeType = nodeInstance["NodeType"].GetInt();
+					int nodeTypeID = nodeInstance["NodeType ID"].GetInt();
 					int UID = nodeInstance["UID"].GetInt();
 					object->myUID.SetUID(UID);
-					object->myNodeType = CNodeTypeCollector::GetNodeTypeFromID(nodeType);
-					object->CheckIfInputNode();
+					object->myNodeType = CNodeTypeCollector::GetNodeTypeFromID(nodeTypeID, static_cast<CNodeType::ENodeType>(nodeInstance["NodeType"].GetInt()));
+
+					if (object->myNodeType)
+						object->CheckIfInputNode();
 
 					object->myEditorPosition[0] = static_cast<float>(nodeInstance["Position"]["X"].GetInt());
 					object->myEditorPosition[1] = static_cast<float>(nodeInstance["Position"]["Y"].GetInt());
@@ -378,7 +381,11 @@ void CGraphManager::LoadTreeFromFile()
 					int Output = document["Links"][i]["Output"].GetInt();
 
 					CNodeInstance* firstNode = GetNodeFromPinID(inputID);
+					if (!firstNode)
+						continue;
 					CNodeInstance* secondNode = GetNodeFromPinID(Output);
+					if (!secondNode)
+						continue;
 
 					firstNode->AddLinkToVia(secondNode, inputID, Output, id);
 					secondNode->AddLinkToVia(firstNode, Output, inputID, id);
@@ -460,9 +467,11 @@ void CGraphManager::LoadNodesFromClipboard()
 
 
 		CNodeInstance* object = new CNodeInstance(this, true);
-		int nodeType = nodeInstance["NodeType"].GetInt();
-		object->myNodeType = CNodeTypeCollector::GetNodeTypeFromID(nodeType);
-		object->CheckIfInputNode();
+		int nodeTypeID = nodeInstance["NodeType ID"].GetInt();
+		object->myNodeType = CNodeTypeCollector::GetNodeTypeFromID(nodeTypeID, static_cast<CNodeType::ENodeType>(nodeInstance["NodeType"].GetInt()));
+
+		if (object->myNodeType)
+			object->CheckIfInputNode();
 
 		if (i == 0)
 		{
@@ -967,11 +976,11 @@ void CGraphManager::CreateNewDataNode()
 			if (strlen(buffer) == 0)
 				memcpy(buffer, myNewVariableType.c_str(), 10);
 
-			for (unsigned int i = 0; i < CNodeTypeCollector::GetNodeTypeCount(); ++i)
+			for (unsigned int i = 0; i < CNodeTypeCollector::GetNodeTypeCount(CNodeType::ENodeType::EChild); ++i)
 			{
 				if (!hasCreatedNewVariable)
 				{
-					if (CNodeTypeCollector::GetAllNodeTypes()[i]->NodeName() == buffer)
+					if (CNodeTypeCollector::GetAllNodeTypes(CNodeType::ENodeType::EChild)[i]->NodeName() == buffer)
 					{
 						break;
 					}
@@ -1007,6 +1016,7 @@ void CGraphManager::CreateNewDataNode()
 							CNodeTypeCollector::RegisterNewDataType(buffer, static_cast<int>(CNodeDataManager::EDataType::EVector3));
 							CNodeDataManager::Get()->SetData(buffer, CNodeDataManager::EDataType::EVector3, nullValue);
 						}
+						myCustomDataNodes.push_back(buffer);
 						CNodeDataManager::Get()->SaveDataTypesToJson();
 						hasCreatedNewVariable = true;
 					}
@@ -1063,6 +1073,7 @@ void CGraphManager::LoadDataNodesFromFile()
 						CNodeTypeCollector::RegisterNewDataType(nodeInstances[i]["Data key"].GetString(), static_cast<int>(CNodeDataManager::EDataType::EVector3));
 						CNodeDataManager::Get()->SetData(nodeInstances[i]["Data key"].GetString(), CNodeDataManager::EDataType::EVector3, value);
 					}
+					myCustomDataNodes.push_back(nodeInstances[i]["Data key"].GetString());
 				}
 			}
 		}
@@ -1500,19 +1511,33 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 		if (ImGui::BeginPopup("Create New Node"))
 		{
 			auto newNodePostion = openPopupPosition;
-			CNodeType** types = CNodeTypeCollector::GetAllNodeTypes();
-			unsigned short noOfTypes = CNodeTypeCollector::GetNodeTypeCount();
+			CNodeType** defaultTypes = CNodeTypeCollector::GetAllNodeTypes(CNodeType::ENodeType::EDefault);
+			CNodeType** customTypes = CNodeTypeCollector::GetAllNodeTypes(CNodeType::ENodeType::ECustom);
+			CNodeType** childTypes = CNodeTypeCollector::GetAllNodeTypes(CNodeType::ENodeType::EChild);
+			unsigned short noOfDefaultTypes = CNodeTypeCollector::GetNodeTypeCount(CNodeType::ENodeType::EDefault);
+			unsigned short noOfCustomTypes = CNodeTypeCollector::GetNodeTypeCount(CNodeType::ENodeType::ECustom);
+			unsigned short noOfChildTypes = CNodeTypeCollector::GetNodeTypeCount(CNodeType::ENodeType::EChild);
 
 			//CNodeType** childTypes = CNodeTypeCollector::GetAllChildNodeTypes(myCurrentGraph->myChildrenKey);
 			//unsigned short noOfChildTypes = CNodeTypeCollector::GetChildNodeTypeCount(myCurrentGraph->myChildrenKey);
 
 			std::map< std::string, std::vector<CNodeType*>> cats;
-			static bool noVariablesCreated = true;
-			for (int i = 0; i < noOfTypes; i++)
+			for (int i = 0; i < noOfDefaultTypes; i++)
 			{
-				cats[types[i]->GetNodeTypeCategory()].push_back(types[i]);
-				if (types[i]->GetNodeTypeCategory() == "New Node Type")
+				cats[defaultTypes[i]->GetNodeTypeCategory()].push_back(defaultTypes[i]);
+			}
+
+			static bool noVariablesCreated = true;
+			for (int i = 0; i < noOfCustomTypes; i++)
+			{
+				cats[customTypes[i]->GetNodeTypeCategory()].push_back(customTypes[i]);
+				if (customTypes[i]->GetNodeTypeCategory() == "New Node Type")
 					noVariablesCreated = false;
+			}
+			
+			for (int i = 0; i < noOfChildTypes; i++)
+			{
+				cats[childTypes[i]->GetNodeTypeCategory()].push_back(childTypes[i]);
 			}
 
 			//for (int i = 0; i < noOfChildTypes; i++)
@@ -1523,6 +1548,7 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 			if (noVariablesCreated)
 			{
 				cats["New Node Type"].push_back(nullptr);
+				cats["Delete Node Type"].push_back(nullptr);
 			}
 
 			//Fix so it actually shows search results #Haqbun
@@ -1538,15 +1564,37 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 			if (myMenuSearchField[0] != '\0')
 			{
 				std::vector<CNodeType*> found;
-				for (int i = 0; i < noOfTypes; i++)
+				for (int i = 0; i < noOfDefaultTypes; i++)
 				{
-					std::string first = types[i]->NodeName();
+					std::string first = defaultTypes[i]->NodeName();
 					std::transform(first.begin(), first.end(), first.begin(), [](unsigned char c) { return static_cast<unsigned char>(std::tolower(c)); });
 					std::string second = myMenuSearchField;
 					std::transform(second.begin(), second.end(), second.begin(), [](unsigned char c) { return static_cast<unsigned char>(std::tolower(c)); });
 
 					if (first.find(second) != std::string::npos)
-						found.push_back(types[i]);
+						found.push_back(defaultTypes[i]);
+				}
+
+				for (int i = 0; i < noOfCustomTypes; i++)
+				{
+					std::string first = customTypes[i]->NodeName();
+					std::transform(first.begin(), first.end(), first.begin(), [](unsigned char c) { return static_cast<unsigned char>(std::tolower(c)); });
+					std::string second = myMenuSearchField;
+					std::transform(second.begin(), second.end(), second.begin(), [](unsigned char c) { return static_cast<unsigned char>(std::tolower(c)); });
+
+					if (first.find(second) != std::string::npos)
+						found.push_back(customTypes[i]);
+				}
+
+				for (int i = 0; i < noOfChildTypes; i++)
+				{
+					std::string first = childTypes[i]->NodeName();
+					std::transform(first.begin(), first.end(), first.begin(), [](unsigned char c) { return static_cast<unsigned char>(std::tolower(c)); });
+					std::string second = myMenuSearchField;
+					std::transform(second.begin(), second.end(), second.begin(), [](unsigned char c) { return static_cast<unsigned char>(std::tolower(c)); });
+
+					if (first.find(second) != std::string::npos)
+						found.push_back(childTypes[i]);
 				}
 
 				for (int i = 0; i < found.size(); i++)
@@ -1598,29 +1646,100 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 								}
 							}
 						}
-						for (int i = 0; i < category.second.size(); i++)
+						else if (theCatName == "Delete Node Type")
 						{
-							if (category.second[i] == nullptr)
-								break;
-
-							CNodeType* type = category.second[i];
-							if (ImGui::MenuItem(type->NodeName().c_str()))
+							for (int i = 0; i < myCustomDataNodes.size(); ++i)
 							{
-								node = new CNodeInstance(this, true);
-
-								//int nodeType = i;
-								node->myNodeType = type;
-								node->CheckIfInputNode();
-								node->ConstructUniquePins();
-								ed::SetNodePosition(node->myUID.AsInt(), newNodePostion);
-								node->myHasSetEditorPosition = true;
-
-								myCurrentGraph->myNodeInstances.push_back(node);
-
-								if (myPushCommand)
+								if (ImGui::MenuItem(myCustomDataNodes[i].c_str()))
 								{
-									mySave = true;
-									myUndoCommands.push({ ECommandAction::ECreate, node, nullptr, {0,0,0}, node->myUID.AsInt() });
+									for (auto& graph : myGraphs)
+									{
+
+										auto it = graph.myNodeInstances.begin();
+										while (it != graph.myNodeInstances.end())
+										{
+											if ((*it)->myNodeType->NodeName() == "Get: " + myCustomDataNodes[i])
+											{
+
+												(*it)->myNodeType->ClearNodeInstanceFromMap((*it));
+												std::vector<SNodeInstanceLink> links = (*it)->GetLinks();
+												for (auto& link : links)
+												{
+													CNodeInstance* firstNode = GetNodeFromPinID(static_cast<unsigned int>(link.myFromPinID));
+													CNodeInstance* secondNode = GetNodeFromPinID(static_cast<unsigned int>(link.myToPinID));
+													//if (!firstNode)
+													//	continue;
+													//if (!secondNode)
+													//	continue;
+													/*assert(firstNode);
+													assert(secondNode);*/
+
+													firstNode->RemoveLinkToVia(secondNode, static_cast<unsigned int>(link.myFromPinID));
+													secondNode->RemoveLinkToVia(firstNode, static_cast<unsigned int>(link.myToPinID));
+												}
+												it = graph.myNodeInstances.erase(it);
+											}
+											else if ((*it)->myNodeType->NodeName() == "Set: " + myCustomDataNodes[i])
+											{
+
+												(*it)->myNodeType->ClearNodeInstanceFromMap((*it));
+												std::vector<SNodeInstanceLink> links = (*it)->GetLinks();
+												for (auto& link : links)
+												{
+													CNodeInstance* firstNode = GetNodeFromPinID(static_cast<unsigned int>(link.myFromPinID));
+													CNodeInstance* secondNode = GetNodeFromPinID(static_cast<unsigned int>(link.myToPinID));
+													//if (!firstNode)
+													//	continue;
+													//if (!secondNode)
+													//	continue;
+													////assert(firstNode);
+													////assert(secondNode);
+
+													firstNode->RemoveLinkToVia(secondNode, static_cast<unsigned int>(link.myFromPinID));
+													secondNode->RemoveLinkToVia(firstNode, static_cast<unsigned int>(link.myToPinID));
+												}
+												it = graph.myNodeInstances.erase(it);
+											}
+											else
+											{
+												++it;
+											}
+										}
+									}
+									CNodeTypeCollector::DegisterCustomDataType(myCustomDataNodes[i]);
+									std::swap(myCustomDataNodes[i], myCustomDataNodes.back());
+									myCustomDataNodes.pop_back();
+									CNodeDataManager::Get()->SaveDataTypesToJson();
+								}
+							}
+						}
+						else
+						{
+
+							for (int i = 0; i < category.second.size(); i++)
+							{
+								if (category.second[i] == nullptr)
+									break;
+
+								CNodeType* type = category.second[i];
+								if (ImGui::MenuItem(type->NodeName().c_str()))
+								{
+									node = new CNodeInstance(this, true);
+
+									//int nodeType = i;
+									node->myNodeType = type;
+									node->CheckIfInputNode();
+									node->ConstructUniquePins();
+									ed::SetNodePosition(node->myUID.AsInt(), newNodePostion);
+									node->myHasSetEditorPosition = true;
+
+									myCurrentGraph->myNodeInstances.push_back(node);
+
+									if (myPushCommand)
+									{
+										mySave = true;
+										myUndoCommands.push({ ECommandAction::ECreate, node, nullptr, {0,0,0}, node->myUID.AsInt() });
+									}
 								}
 							}
 						}

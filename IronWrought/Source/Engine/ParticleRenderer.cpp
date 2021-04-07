@@ -74,7 +74,7 @@ void CParticleRenderer::Render(CCameraComponent* aCamera, std::vector<CGameObjec
         auto& effects = component->GetVFXEffects();
         for (unsigned int j = 0; j < effects.size(); ++j)
         {
-            auto effect = effects[j];
+            auto& effect = effects[j];
 
             const std::vector<CParticleEmitter*>& particles = effect->GetParticleSet();
             if (particles.empty())
