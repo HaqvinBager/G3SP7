@@ -25,8 +25,8 @@ public:
 	void SetIntensity(float anIntensity);
 	void SetPosition(DirectX::SimpleMath::Vector3 aPosition); // Used for shadow calculation
 
-private:
 	DirectX::SimpleMath::Matrix GetShadowTransform() const; // Used for shadow position calculation
+private:
 
 private:
 	Matrix myShadowmapViewMatrix;

@@ -149,14 +149,14 @@ void CInGameState::TEMP_Sponza(CScene* aScene)
 	//pl->SetColor(pointColor);
 	//aScene->AddInstance(pointLight->GetComponent<CPointLightComponent>()->GetPointLight());
 
-	CGameObject* boxLight = new CGameObject(414111);
-	boxLight->myTransform->Position({ -2.0f, 2.0f, -0.0f });
+	//CGameObject* boxLight = new CGameObject(414111);
+	//boxLight->myTransform->Position({ -2.0f, 2.0f, -0.0f });
 
-	Vector3 boxColor = { 0.0f, 1.0f, 1.0f };
-	Vector3 boxDirection = { 0.0f, -1.0f, 0.0f };
-	auto component = boxLight->AddComponent<CBoxLightComponent>(*boxLight, boxDirection, boxColor, 5.0f, 5.0f);
-	component->GetBoxLight()->SetArea({ 2.5f, 2.5f });
-	component->GetBoxLight()->SetRotation({ 45.0f, 0.0f, 0.0f });
-	myBoxLight = boxLight;
-	aScene->AddInstance(boxLight->GetComponent<CBoxLightComponent>()->GetBoxLight());
+	//Vector3 boxColor = { 0.0f, 1.0f, 1.0f };
+	//Vector3 boxDirection = { 0.0f, -1.0f, 0.0f };
+	//auto component = boxLight->AddComponent<CBoxLightComponent>(*boxLight, boxDirection, boxColor, 5.0f, 5.0f);
+	//component->GetBoxLight()->SetArea({ 2.5f, 2.5f });
+	//component->GetBoxLight()->SetRotation({ 45.0f, 0.0f, 0.0f });
+	//myBoxLight = boxLight;
+	//aScene->AddInstance(boxLight->GetComponent<CBoxLightComponent>()->GetBoxLight());
 }

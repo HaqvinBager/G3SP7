@@ -248,6 +248,7 @@ float SampleShadowPos(float3 projectionPos)
     uvCoords += float2(0.5f, 0.5f);
 
     float nonLinearDepth = shadowDepthTexture.Sample(shadowSampler, uvCoords).r;
+    
     float oob = 1.0f;
     if (projectionPos.x > 1.0f || projectionPos.x < -1.0f || projectionPos.y > 1.0f || projectionPos.y < -1.0f)
     {

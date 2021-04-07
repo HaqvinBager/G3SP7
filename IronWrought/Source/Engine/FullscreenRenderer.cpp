@@ -2,6 +2,7 @@
 #include "FullscreenRenderer.h"
 #include "DirectXFramework.h"
 #include "RenderManager.h"
+#include "Engine.h"
 #include <fstream>
 
 CFullscreenRenderer::CFullscreenRenderer() 
@@ -9,6 +10,7 @@ CFullscreenRenderer::CFullscreenRenderer()
 	, myVertexShader(nullptr)
 	, myPixelShaders()
 	, mySampler(nullptr)
+	, myFullscreenDataBuffer(nullptr)
 {
 }
 
@@ -27,6 +29,14 @@ bool CFullscreenRenderer::Init(CDirectXFramework* aFramework) {
 
 	ID3D11Device* device = aFramework->GetDevice();
 	HRESULT result;
+
+	D3D11_BUFFER_DESC bufferDescription = { 0 };
+	bufferDescription.Usage = D3D11_USAGE_DYNAMIC;
+	bufferDescription.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bufferDescription.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+	bufferDescription.ByteWidth = sizeof(SFullscreenData);
+	ENGINE_HR_BOOL_MESSAGE(device->CreateBuffer(&bufferDescription, nullptr, &myFullscreenDataBuffer), "Fullscreen Data Buffer could not be created.");
 
 	std::ifstream vsFile;
 	vsFile.open("Shaders/FullscreenVertexShader.cso", std::ios::binary);
@@ -86,7 +96,11 @@ bool CFullscreenRenderer::Init(CDirectXFramework* aFramework) {
 	return true;
 }
 
-void CFullscreenRenderer::Render(FullscreenShader anEffect) {
+void CFullscreenRenderer::Render(FullscreenShader anEffect) 
+{
+	myFullscreenData.myResolution = IRONWROUGHT->GetWindowHandler()->GetResolution();
+	BindBuffer(myFullscreenDataBuffer, myFullscreenData, "Fullscreen Data Buffer");
+
 	myContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	myContext->IASetInputLayout(nullptr);
 	myContext->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);

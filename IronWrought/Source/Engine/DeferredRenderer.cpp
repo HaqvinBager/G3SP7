@@ -111,97 +111,6 @@ bool CDeferredRenderer::Init(CDirectXFramework* aFramework)
 	bufferDescription.ByteWidth = sizeof(SSkyboxTransformData);
 	ENGINE_HR_BOOL_MESSAGE(device->CreateBuffer(&bufferDescription, nullptr, &mySkyboxTransformBuffer), "Skybox Transform Buffer could not be created.");
 
-	//Vertex Setup
-	struct SpotLightVertex
-	{
-		float x, y, z, w;
-	} vertex[1] = { 0.0f, 0.0f, 0.0f, 1.0f };
-
-	struct PointLightVertex
-	{
-		float x, y, z, w;
-	} vertices[24] = {
-		// X      Y      Z      W 
-		{ -1.0f, -1.0f, -1.0f,  1.0f },
-		{  1.0f, -1.0f, -1.0f,  1.0f },
-		{ -1.0f,  1.0f, -1.0f,  1.0f },
-		{  1.0f,  1.0f, -1.0f,  1.0f },
-		{ -1.0f, -1.0f,  1.0f,  1.0f },
-		{  1.0f, -1.0f,  1.0f,  1.0f },
-		{ -1.0f,  1.0f,  1.0f,  1.0f },
-		{  1.0f,  1.0f,  1.0f,  1.0f },
-		// X      Y      Z      W 
-		{ -1.0f, -1.0f, -1.0f,  1.0f },
-		{ -1.0f,  1.0f, -1.0f,  1.0f },
-		{ -1.0f, -1.0f,  1.0f,  1.0f },
-		{ -1.0f,  1.0f,  1.0f,  1.0f },
-		{  1.0f, -1.0f, -1.0f,  1.0f },
-		{  1.0f,  1.0f, -1.0f,  1.0f },
-		{  1.0f, -1.0f,  1.0f,  1.0f },
-		{  1.0f,  1.0f,  1.0f,  1.0f },
-		// X      Y      Z      W 
-		{ -1.0f, -1.0f, -1.0f,  1.0f },
-		{  1.0f, -1.0f, -1.0f,  1.0f },
-		{ -1.0f, -1.0f,  1.0f,  1.0f },
-		{  1.0f, -1.0f,  1.0f,  1.0f },
-		{ -1.0f,  1.0f, -1.0f,  1.0f },
-		{  1.0f,  1.0f, -1.0f,  1.0f },
-		{ -1.0f,  1.0f,  1.0f,  1.0f },
-		{  1.0f,  1.0f,  1.0f,  1.0f }
-	};
-	//Index Setup
-	unsigned int indices[36] = {
-		0,2,1,
-		2,3,1,
-		4,5,7,
-		4,7,6,
-		8,10,9,
-		10,11,9,
-		12,13,15,
-		12,15,14,
-		16,17,18,
-		18,17,19,
-		20,23,21,
-		20,22,23
-	};
-
-	// Point Light
-	D3D11_BUFFER_DESC pointLightVertexBufferDesc = { 0 };
-	pointLightVertexBufferDesc.ByteWidth = sizeof(vertices);
-	pointLightVertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-	pointLightVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-
-	D3D11_SUBRESOURCE_DATA pointLightSubVertexResourceData = { 0 };
-	pointLightSubVertexResourceData.pSysMem = vertices;
-
-	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateBuffer(&pointLightVertexBufferDesc, &pointLightSubVertexResourceData, &myPointLightVertexBuffer), "Point Light Vertex Buffer could not be created.");
-
-	D3D11_BUFFER_DESC pointLightIndexBufferDesc = { 0 };
-	pointLightIndexBufferDesc.ByteWidth = sizeof(indices);
-	pointLightIndexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-	pointLightIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-
-	D3D11_SUBRESOURCE_DATA pointLightIndexSubresourceData = { 0 };
-	pointLightIndexSubresourceData.pSysMem = indices;
-
-	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateBuffer(&pointLightIndexBufferDesc, &pointLightIndexSubresourceData, &myPointLightIndexBuffer), "Point Light Index Buffer could not be created.");
-
-	myPointLightNumberOfVertices = static_cast<UINT>(sizeof(vertices) / sizeof(PointLightVertex));
-	myPointLightNumberOfIndices = static_cast<UINT>(sizeof(indices) / sizeof(UINT));
-	myPointLightStride = sizeof(PointLightVertex);
-	myPointLightOffset = 0;
-
-	// Spot Light
-	D3D11_BUFFER_DESC vertexBufferDesc = { 0 };
-	vertexBufferDesc.ByteWidth = sizeof(Vector4);
-	vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-
-	D3D11_SUBRESOURCE_DATA subVertexResourceData = { 0 };
-	subVertexResourceData.pSysMem = vertex;
-
-	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateBuffer(&vertexBufferDesc, &subVertexResourceData, &mySpotLightVertexBuffer), "Spot Light Vertex Buffer could not be created.");
-
 	std::string vsData;
 	Graphics::CreateVertexShader("Shaders/DeferredVertexShader.cso", aFramework, &myFullscreenShader, vsData);
 	Graphics::CreateVertexShader("Shaders/DeferredModelVertexShader.cso", aFramework, &myModelVertexShader, vsData);
@@ -229,19 +138,6 @@ bool CDeferredRenderer::Init(CDirectXFramework* aFramework)
 		{"COLOR"	,	0, DXGI_FORMAT_R32G32B32_FLOAT	 , 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
 	ENGINE_HR_MESSAGE(aFramework->GetDevice()->CreateInputLayout(layout, sizeof(layout) / sizeof(D3D11_INPUT_ELEMENT_DESC), vsData.data(), vsData.size(), &myVertexPaintInputLayout), "Vertex Paint Input Layout could not be created.");
-
-	// Point light 
-	Graphics::CreateGeometryShader("Shaders/PointLightGeometryShader.cso", aFramework, &myPointLightGeometryShader);
-	Graphics::CreateVertexShader("Shaders/PointLightVertexShader.cso", aFramework, &myPointLightVertexShader, vsData);
-	D3D11_INPUT_ELEMENT_DESC pointLightLayout[] =
-	{
-		{"POSITION"	,	0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
-	};
-	ENGINE_HR_MESSAGE(aFramework->GetDevice()->CreateInputLayout(pointLightLayout, sizeof(pointLightLayout) / sizeof(D3D11_INPUT_ELEMENT_DESC), vsData.data(), vsData.size(), &myPointLightInputLayout), "Point Light Input Layout could not be created.");
-
-	// Spot light
-	Graphics::CreateGeometryShader("Shaders/SpotLightGeometryShader.cso", aFramework, &mySpotLightGeometryShader);
-	Graphics::CreateVertexShader("Shaders/SpotLightVertexShader.cso", aFramework, &mySpotLightVertexShader, vsData);
 
 	// Samplers
 	D3D11_SAMPLER_DESC samplerDesc = {};
@@ -811,10 +707,6 @@ bool CDeferredRenderer::LoadRenderPassPixelShaders(ID3D11Device* aDevice)
 	ENGINE_HR_MESSAGE(aDevice->CreatePixelShader(psData.data(), psData.size(), nullptr, &myRenderPassGBuffer), "Renderpass GBuffer could not be created.");
 
 	return true;
-}
-
-void CDeferredRenderer::RenderSkybox(CCameraComponent* aCamera, CEnvironmentLight* anEnvironmentLight)
-{
 }
 
 bool CDeferredRenderer::ToggleRenderPass()

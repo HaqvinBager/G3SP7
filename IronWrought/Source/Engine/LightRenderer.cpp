@@ -285,6 +285,8 @@ bool CLightRenderer::Init(CDirectXFramework* aFramework)
 	samplerDesc.BorderColor[0] = 1.0f;
 	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
 	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+	samplerDesc.MinLOD = 0;
+	samplerDesc.MaxLOD = 10;
 
 	ENGINE_HR_BOOL_MESSAGE(device->CreateSamplerState(&samplerDesc, &myShadowSampler), "Shadow Sampler could not be created.");
 
@@ -498,7 +500,7 @@ void CLightRenderer::RenderVolumetric(CCameraComponent* aCamera, CEnvironmentLig
 	BindBuffer(myLightBuffer, myDirectionalLightBufferData, "Light Buffer");
 	myContext->PSSetConstantBuffers(1, 1, &myLightBuffer);
 
-	myVolumetricLightBufferData.myNumberOfSamplesReciprocal = (1.0f / 32.0f);
+	myVolumetricLightBufferData.myNumberOfSamplesReciprocal = (1.0f / 128.0f);
 	myVolumetricLightBufferData.myLightPower = 5000000.0f;
 	myVolumetricLightBufferData.myScatteringProbability = 0.0001f;
 	myVolumetricLightBufferData.myHenyeyGreensteinGValue = 0.0f;

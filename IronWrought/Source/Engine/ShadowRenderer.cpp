@@ -56,6 +56,19 @@ bool CShadowRenderer::Init(CDirectXFramework* aFramework)
 
 void CShadowRenderer::Render(CEnvironmentLight* anEnvironmentLight, std::vector<CGameObject*>& aGameObjectList, std::vector<CGameObject*>& aInstancedGameObjectList)
 {
+
+	//myFrameBufferData.myToCameraSpace = anEnvironmentLight->GetShadowTransform();
+	//myFrameBufferData.myToCameraSpace = myFrameBufferData.myToCameraSpace.Invert();
+	//SM::Vector3 pos;
+	//pos.x = anEnvironmentLight->GetShadowPosition().x;
+	//pos.y = anEnvironmentLight->GetShadowPosition().y;
+	//pos.z = anEnvironmentLight->GetShadowPosition().z;
+	//pos = SM::Vector3::Transform(pos, myFrameBufferData.myToCameraSpace);
+	//myFrameBufferData.myToCameraSpace(3, 0) = -pos.x;
+	//myFrameBufferData.myToCameraSpace(3, 1) = -pos.y;
+	//myFrameBufferData.myToCameraSpace(3, 2) = -pos.z;
+
+
 	myFrameBufferData.myToCameraSpace = anEnvironmentLight->GetShadowView();
 	myFrameBufferData.myToProjectionSpace = anEnvironmentLight->GetShadowProjection();
 

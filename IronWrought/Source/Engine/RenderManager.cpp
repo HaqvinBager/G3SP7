@@ -52,7 +52,7 @@ bool CRenderManager::Init(CDirectXFramework* aFramework, CWindowHandler* aWindow
 
 	myBackbuffer			 = myFullscreenTextureFactory.CreateTexture(backbufferTexture);
 	myIntermediateDepth		 = myFullscreenTextureFactory.CreateDepth(aWindowHandler->GetResolution(), DXGI_FORMAT_R24G8_TYPELESS);
-	myEnvironmentShadowDepth = myFullscreenTextureFactory.CreateDepth(aWindowHandler->GetResolution(), DXGI_FORMAT_R32_TYPELESS);
+	myEnvironmentShadowDepth = myFullscreenTextureFactory.CreateDepth(/*aWindowHandler->GetResolution()*/ {2048.0f * 4.0f, 2048.0f * 4.0f}, DXGI_FORMAT_R32_TYPELESS);
 	myBoxLightShadowDepth	 = myFullscreenTextureFactory.CreateDepth(aWindowHandler->GetResolution(), DXGI_FORMAT_R32_TYPELESS);
 	myDepthCopy				 = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R32_FLOAT);
 	myDownsampledDepth		 = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution() / 2.0f, DXGI_FORMAT_R32_FLOAT);
@@ -84,7 +84,7 @@ bool CRenderManager::ReInit(CDirectXFramework* aFramework, CWindowHandler* aWind
 
 	myBackbuffer			 = myFullscreenTextureFactory.CreateTexture(backbufferTexture);
 	myIntermediateDepth		 = myFullscreenTextureFactory.CreateDepth(aWindowHandler->GetResolution(), DXGI_FORMAT_R24G8_TYPELESS);
-	myEnvironmentShadowDepth = myFullscreenTextureFactory.CreateDepth(aWindowHandler->GetResolution(), DXGI_FORMAT_R32_TYPELESS);
+	myEnvironmentShadowDepth = myFullscreenTextureFactory.CreateDepth(/*aWindowHandler->GetResolution()*/{2048.0f*4.0f, 2048.0f*4.0f}, DXGI_FORMAT_R32_TYPELESS);
 	myBoxLightShadowDepth	 = myFullscreenTextureFactory.CreateDepth(aWindowHandler->GetResolution(), DXGI_FORMAT_R32_TYPELESS);
 	myDepthCopy				 = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R32_FLOAT);
 	myDownsampledDepth		 = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution() / 2.0f, DXGI_FORMAT_R32_FLOAT);
@@ -129,7 +129,7 @@ void CRenderManager::Render(CScene& aScene)
 
 	CEnvironmentLight* environmentlight = aScene.EnvironmentLight();
 	CCameraComponent* maincamera = aScene.MainCamera();
-	CBoxLight* boxLight = aScene.CullBoxLights(nullptr)[0];
+	//CBoxLight* boxLight = aScene.CullBoxLights(nullptr)[0];
 
 	std::vector<CGameObject*> gameObjects = aScene.CullGameObjects(maincamera);
 	std::vector<CGameObject*> instancedGameObjects;
@@ -189,8 +189,8 @@ void CRenderManager::Render(CScene& aScene)
 	// Shadows
 	myEnvironmentShadowDepth.SetAsDepthTarget();
 	myShadowRenderer.Render(environmentlight, gameObjects, instancedGameObjects);
-	myBoxLightShadowDepth.SetAsDepthTarget();
-	myShadowRenderer.Render(boxLight, gameObjects, instancedGameObjects);
+	//myBoxLightShadowDepth.SetAsDepthTarget();
+	//myShadowRenderer.Render(boxLight, gameObjects, instancedGameObjects);
 
 	// Decals
 	myDepthCopy.SetAsActiveTarget();

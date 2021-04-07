@@ -18,6 +18,12 @@ struct GBufferOutput {
     float4 myMetalRoughAOEm : SV_TARGET3;
 };
 
+cbuffer FullscreenBuffer : register(b0)
+{
+    float2 myResolution;
+    float2 myPadding;
+}
+
 Texture2D fullscreenTexture1 : register(t0);
 Texture2D fullscreenTexture2 : register(t1);
 Texture2D fullscreenTexture3 : register(t2);
