@@ -22,10 +22,9 @@ void CConvexMeshColliderComponent::Awake()
 	if (GameObject().TryGetComponent(&rigidBody))
 	{
 			rigidBody->GetDynamicRigidBody()->GetBody();
+			//rigidBody->GetDynamicRigidBody()->GetBody().setRigidBodyFlag(PxRigidBodyFlag::eENABLE_SPECULATIVE_CCD, true);
 		if (myShape) {
 			rigidBody->AttachShape(myShape);
-			rigidBody->GetDynamicRigidBody()->GetBody().setCMassLocalPose({ -5.149889e-07f, 0.5043119f,  1.865765e-05f});
-			rigidBody->GetDynamicRigidBody()->GetBody().setMass(3.f);
 		}
 	}
 }

@@ -13,7 +13,7 @@ CGravityGloveComponent::CGravityGloveComponent(CGameObject& aParent, CTransformC
 	: CBehaviour(aParent)
 	, myGravitySlot(aGravitySlot)
 {
-	mySettings.myPushForce = 57.5f;
+	mySettings.myPushForce = 27.f;
 	//mySettings.myDistanceToMaxLinearVelocity = 2.5f;
 	mySettings.myMaxPushForce = 100.0f;
 	mySettings.myMinPushForce = 10.0f;
@@ -108,7 +108,7 @@ void CGravityGloveComponent::Push()
 {
 	if (myCurrentTarget != nullptr) {
 		myCurrentTarget->GetDynamicRigidBody()->GetBody().setMaxLinearVelocity(100.f);
-		myCurrentTarget->AddForce(-GameObject().myTransform->GetWorldMatrix().Forward(), mySettings.myPushForce, EForceMode::EImpulse);
+		myCurrentTarget->AddForce(-GameObject().myTransform->GetWorldMatrix().Forward(), mySettings.myPushForce * myCurrentTarget->GetMass(), EForceMode::EImpulse);
 		myCurrentTarget = nullptr;
 	}
 }

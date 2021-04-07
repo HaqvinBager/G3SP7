@@ -11,9 +11,12 @@
 //{
 //}
 
-CRigidBodyComponent::CRigidBodyComponent(CGameObject& aParent)
+CRigidBodyComponent::CRigidBodyComponent(CGameObject& aParent, const float& aMass, const Vector3& aLocalCenterMass, const Vector3& aInertiaTensor)
 	: CComponent(aParent)
 	, myDynamicRigidBody(nullptr)
+	, myMass(aMass)
+	, myLocalCenterMass(aLocalCenterMass)
+	, myInertiaTensor(aInertiaTensor)
 {
 }
 
@@ -25,6 +28,9 @@ CRigidBodyComponent::~CRigidBodyComponent()
 void CRigidBodyComponent::Awake()
 {
 	myDynamicRigidBody = CEngine::GetInstance()->GetPhysx().CreateDynamicRigidbody(*GameObject().myTransform);
+	myDynamicRigidBody->GetBody().setMass(myMass);
+	myDynamicRigidBody->GetBody().setMassSpaceInertiaTensor({ myInertiaTensor.x, myInertiaTensor.y, myInertiaTensor.z });
+	myDynamicRigidBody->GetBody().setCMassLocalPose({myLocalCenterMass.x, myLocalCenterMass.y, myLocalCenterMass.z});
 	myDynamicRigidBody->GetBody().userData = (void*)GameObject().myTransform;
 }
 
