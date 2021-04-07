@@ -10,7 +10,7 @@ namespace IronWroughtImGui {
 }
 
 struct SGravityGloveSettings {
-	float myPushForce;
+	float myPushForce; //Current Default Value: 27
 	float myDistanceToMaxLinearVelocity;
 
 	float myMaxPushForce;

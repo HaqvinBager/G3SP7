@@ -32,8 +32,11 @@ public:
 	void Start() override;
 	void Update() override;
 
-	void AddForce(const Vector3& aDirection, const EForceMode aForceMode = EForceMode::EForce);
+	void AddForce(const Vector3& aVelocity, const EForceMode aForceMode = EForceMode::EForce);
 	void AddForce(const Vector3& aDirection, const float aForce, const EForceMode aForceMode = EForceMode::EForce);
+	void AddAngularForce(const Vector3& aAngularForce, const EForceMode aForceMode = EForceMode::EForce);
+	void SetAngularVelocity(const Vector3& aVelocity);
+
 	void SetPosition(const Vector3& aPos);
 
 	void AttachShape(physx::PxShape* aShape);
