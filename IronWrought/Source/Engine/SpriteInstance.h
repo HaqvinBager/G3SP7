@@ -24,8 +24,8 @@ struct SSpriteSheetPositionData
 
 struct SSpriteAnimationData
 {
-	unsigned int myFramesOffset;
-	unsigned int myNumberOfFrames;
+	int myFramesOffset;
+	int myNumberOfFrames;
 	float myFramesPerSecond;
 	std::string myAnimationName;
 };
@@ -65,7 +65,6 @@ public:
 private:
 	std::vector<Vector4> myAnimationFrames;
 	std::vector<SSpriteAnimationData> myAnimationData;
-	//std::vector<std::vector<Vector4>> myAnimations;
 	DirectX::SimpleMath::Vector4 myPosition = { 0.0f, 0.0f, 0.0f, 1.0f };
 	DirectX::SimpleMath::Vector4 myColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 	DirectX::SimpleMath::Vector4 myUVRect = { 0.0f, 0.0f, 1.0f, 1.0f };
@@ -75,7 +74,7 @@ private:
 	float myAnimationTimer;
 	float myCurrentAnimationSpeed;
 	unsigned int myCurrentAnimationIndex;
-	unsigned int myCurrentAnimationFrame;
+	int myCurrentAnimationFrame;
 	bool myShouldRender = true;
 	bool myShouldAnimate;
 	bool myShouldLoopAnimation;
