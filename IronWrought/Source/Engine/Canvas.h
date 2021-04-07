@@ -14,6 +14,7 @@ class CCanvas : public IObserver
 public:
 	CCanvas();
 	~CCanvas();
+	void ClearFromScene(CScene& aScene);
 
 public:
 	void Init(std::string aFilePath, CScene& aScene, bool addToScene = true);
