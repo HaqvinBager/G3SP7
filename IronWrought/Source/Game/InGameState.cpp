@@ -74,28 +74,10 @@ void CInGameState::Start()
 		minX += offsetX;
 		scene->AddInstance(go);
 	}
-	//models[0]->Tint1({ 1.0f, 0.0f, 0.0f });
-	//models[0]->Tint2({ 0.0f, 1.0f, 0.0f });
-	//models[0]->Tint3({ 0.0f, 0.0f, 1.0f });
-	//models[0]->Tint4({ 1.0f, 1.0f, 1.0f });
 
-	//models[1]->Tint1({ 0.1f, 0.1f, 1.0f });
-	//models[1]->Tint2({ 0.1f, 0.1f, 1.0f });
-	//models[1]->Tint3({ 0.2f, 0.2f, 0.2f });
-	//models[1]->Tint4({ 1.0f, 0.75f, 0.0f });
-
-	//models[2]->Tint1({ 1.0f, 1.0f, 1.0f });
-	//models[2]->Tint2({ 1.0f, 1.0f, 1.0f });
-	//models[2]->Tint3({ 1.0f, 0.0f, 0.0f });
-	//models[2]->Tint4({ 1.0f, 1.0f, 1.0f });
-
-	//CModelHelperFunctions::SaveTintsFromModelComponent(models[0], ASSETPATH("Assets/Graphics/TintModels/Pokeball/pokeball.fbx"), "Assets/TintedModels/Data/rgbw.json");
-	//CModelHelperFunctions::SaveTintsFromModelComponent(models[1], ASSETPATH("Assets/Graphics/TintModels/Pokeball/pokeball.fbx"), "Assets/TintedModels/Data/qck.json");
-	//CModelHelperFunctions::SaveTintsFromModelComponent(models[2]->GetComponent<CModelComponent>(), ASSETPATH("Assets/Graphics/TintModels/Pokeball/pokeball.fbx"), "Assets/TintedModels/Data/premier.json");
-	
-	models[0]->GetComponent<CModelComponent>()->DeserializeTintData(ASSETPATH("Assets/TintedModels/Data/rgbw.json"));
-	models[1]->GetComponent<CModelComponent>()->DeserializeTintData(ASSETPATH("Assets/TintedModels/Data/qck.json"));
-	models[2]->GetComponent<CModelComponent>()->DeserializeTintData(ASSETPATH("Assets/TintedModels/Data/premier.json"));
+	models[0]->GetComponent<CModelComponent>()->DeserializeTintData(ASSETPATH("Assets/Graphics/TintedModels/Data/rgbw.json"));
+	models[1]->GetComponent<CModelComponent>()->DeserializeTintData(ASSETPATH("Assets/Graphics/TintedModels/Data/qck.json"));
+	models[2]->GetComponent<CModelComponent>()->DeserializeTintData(ASSETPATH("Assets/Graphics/TintedModels/Data/premier.json"));
 
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);

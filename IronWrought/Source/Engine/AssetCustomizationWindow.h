@@ -8,6 +8,35 @@ namespace ImGuiWindow
 	{
 		constexpr int JSONNameBufferSize = 256;
 	}
+
+	class CTexturePath
+	{
+	public:
+		CTexturePath(): myHasChanged(true), myPath(""){}
+		~CTexturePath() {}
+
+		void UpdatePath(const std::string& aPath)
+		{
+			myPath = aPath;
+			myHasChanged = true;
+		}
+
+		const std::string& GetPath()
+		{
+			myHasChanged = false;
+			return myPath;
+		}
+
+		inline const bool HasChanged()
+		{
+			return myHasChanged;
+		}
+
+	private:
+		bool myHasChanged = false;
+		std::string myPath;
+	};
+
 	class CAssetCustomizationWindow : public CWindow
 	{
 	public:
@@ -27,8 +56,10 @@ namespace ImGuiWindow
 		void LoadCustomizationFile();
 		void SaveCustomizationFile();
 		void SaveOverwriteFile();
+		void TextureBrowser();
 
 		bool GetPathsByExtension(const std::string& aPath, const std::string& aFileExtesion,std::vector<SAssetInfo>& anOutVector, const bool aShouldClearVector = true);
+		bool GetPathsByExtension(const std::string& aPath, const std::string& aFileExtesion,std::vector<std::string>& anOutVector, const bool aShouldClearVector = true);
 
 		void SaveJSON(const std::string& aCustomPath = "");
 
@@ -38,6 +69,8 @@ namespace ImGuiWindow
 		float myTertiaryTint[4];
 		float myAccentTint[4];
 		float myEmissiveTint[4];
+		std::array<CTexturePath, 4> myTexturePaths;
+
 
 		CGameObject* myGameObject;
 		SAssetInfo mySelectedFBX;
@@ -45,12 +78,15 @@ namespace ImGuiWindow
 		char myJSONFileName[AssetCustomizationWindow::JSONNameBufferSize];
 		std::vector<SAssetInfo> myFBXAssetPaths;
 		std::vector<SAssetInfo> myJSONPaths;
+		std::vector<SAssetInfo> myTexturePathsInFolder;
 
 		bool myShowLoadAsset;
 		bool myShowLoadCustomizationFile;
 		bool myShowSaveCustomizationFile;
 		bool myShowOverwriteCustomizationFile;
+		bool myShowTextureBrowser;
 		bool myReplaceFBX;
+		short myCurrentTextureSlot;
 	};
 }
 

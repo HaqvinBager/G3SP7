@@ -36,6 +36,8 @@ CTextureWrapperID3D11::~CTextureWrapperID3D11()
 {
 	myShaderResource = nullptr;
 	CMainSingleton::MaterialHandler().ReleaseSingleTexture(myName);
+	myName = "";
+	myTexturePath = "";
 }
 
 void CTextureWrapperID3D11::Init(const std::string & aTexturePath)
@@ -60,6 +62,14 @@ void CTextureWrapperID3D11::Init(const std::string & aTexturePath)
 void CTextureWrapperID3D11::Init(const char* aTexturePath)
 {
 	Init(std::string(aTexturePath));
+}
+
+void CTextureWrapperID3D11::Clear()
+{
+	myShaderResource = nullptr;
+	CMainSingleton::MaterialHandler().ReleaseSingleTexture(myName);
+	myName = "";
+	myTexturePath = "";
 }
 
 ID3D11ShaderResourceView* CTextureWrapperID3D11::ShaderResource()

@@ -68,7 +68,7 @@ namespace ModelHelperFunctions
         using namespace rapidjson;
         Document document = CJsonReader::Get()->LoadDocument(aTintDataPath);
         anOutModelPath = document["Model path"].GetString();
-        return AddModelComponentWithTintsFromData(aGameObject, anOutModelPath);
+        return AddModelComponentWithTintsFromData(aGameObject, aTintDataPath);
     }
 
     //namespace Internal

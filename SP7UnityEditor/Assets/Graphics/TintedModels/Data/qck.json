@@ -3,27 +3,41 @@
     "Tints": [
         {
             "Tint1-Primary-Red Channel": "",
-            "Red": 0.10000000149011612,
-            "Green": 0.10000000149011612,
-            "Blue": 1.0
+            "Red": 0.0,
+            "Green": 0.23529410362243653,
+            "Blue": 1.0,
+            "Alpha": 1.0,
+            "Texture": ""
         },
         {
             "Tint2-Secondary-Green Channel": "",
-            "Red": 0.10000000149011612,
-            "Green": 0.10000000149011612,
-            "Blue": 1.0
+            "Red": 0.0,
+            "Green": 0.23529411852359773,
+            "Blue": 1.0,
+            "Alpha": 1.0,
+            "Texture": ""
         },
         {
             "Tint3-Tertiary-Blue Channel": "",
-            "Red": 0.20000000298023225,
-            "Green": 0.20000000298023225,
-            "Blue": 0.20000000298023225
+            "Red": 0.25929930806159975,
+            "Green": 0.29173848032951357,
+            "Blue": 0.5343137383460999,
+            "Alpha": 1.0,
+            "Texture": "../../SP7UnityEditor/Assets/Graphics/Textures/Shared/blue.dds"
         },
         {
             "Tint4-Accents-Alpha Channel": "",
             "Red": 1.0,
             "Green": 0.75,
-            "Blue": 0.0
+            "Blue": 0.0,
+            "Alpha": 1.0,
+            "Texture": ""
         }
-    ]
+    ],
+    "Emissive": {
+        "Red": 0.0,
+        "Green": 0.9117646217346191,
+        "Blue": 1.0,
+        "Alpha": 1.0
+    }
 }

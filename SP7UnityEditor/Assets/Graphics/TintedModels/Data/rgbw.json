@@ -3,27 +3,41 @@
     "Tints": [
         {
             "Tint1-Primary-Red Channel": "",
-            "Red": 1.0,
-            "Green": 1.0,
-            "Blue": 1.0
+            "Red": 0.6117647290229797,
+            "Green": 0.0,
+            "Blue": 0.14509804546833039,
+            "Alpha": 0.0,
+            "Texture": "../../SP7UnityEditor/Assets/Graphics/Textures/Shared/water.dds"
         },
         {
             "Tint2-Secondary-Green Channel": "",
             "Red": 0.0,
             "Green": 0.5,
-            "Blue": 1.0
+            "Blue": 1.0,
+            "Alpha": 1.0,
+            "Texture": "../../SP7UnityEditor/Assets/Graphics/Textures/Shared/water.dds"
         },
         {
             "Tint3-Tertiary-Blue Channel": "",
-            "Red": 0.10000000149011612,
-            "Green": 0.699999988079071,
-            "Blue": 0.20000000298023225
+            "Red": 0.10196078568696976,
+            "Green": 0.7019608020782471,
+            "Blue": 0.20000000298023225,
+            "Alpha": 0.3529411852359772,
+            "Texture": "../../SP7UnityEditor/Assets/Graphics/Textures/Shared/red.dds"
         },
         {
             "Tint4-Accents-Alpha Channel": "",
-            "Red": 1.0,
-            "Green": 0.20000000298023225,
-            "Blue": 0.0
+            "Red": 9.999999974752428e-7,
+            "Green": 9.999996564147296e-7,
+            "Blue": 9.999899930335233e-7,
+            "Alpha": 1.0,
+            "Texture": "../../SP7UnityEditor/Assets/Graphics/Textures/Shared/green.dds"
         }
-    ]
+    ],
+    "Emissive": {
+        "Red": 1.0,
+        "Green": 0.0,
+        "Blue": 0.0,
+        "Alpha": 1.0
+    }
 }

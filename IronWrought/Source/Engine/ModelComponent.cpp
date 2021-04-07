@@ -35,10 +35,10 @@ CModelComponent::CModelComponent(CGameObject& aParent, const std::string& aFBXPa
 	HasTintMap(myModel->GetModelData().myTintMap != nullptr);
 	myEmissive = Vector4(1.0f);
 
-	TintTextureOnIndex(ASSETPATH("Assets/Graphics/Textures/Shared/orchid0.dds"), 0);
-	TintTextureOnIndex(ASSETPATH("Assets/Graphics/Textures/Shared/orchid0.dds"), 1);
-	//TintTextureOnIndex(ASSETPATH("Assets/Graphics/Textures/Shared/blue.dds"), 2);
-	TintTextureOnIndex(ASSETPATH("Assets/Graphics/Textures/Shared/orchid2.dds"), 3);
+	//TintTextureOnIndex(ASSETPATH("Assets/Graphics/Textures/Shared/orchid0.dds"), 0);
+	//TintTextureOnIndex(ASSETPATH("Assets/Graphics/Textures/Shared/orchid0.dds"), 1);
+	////TintTextureOnIndex(ASSETPATH("Assets/Graphics/Textures/Shared/blue.dds"), 2);
+	//TintTextureOnIndex(ASSETPATH("Assets/Graphics/Textures/Shared/orchid2.dds"), 3);
 }
 
 CModelComponent::~CModelComponent()
@@ -303,7 +303,7 @@ namespace cModelComponent_jsonKeys
 	constexpr char keyEmissive[9]	 = "Emissive";
 	constexpr char keyTints[6]		 = "Tints";
 	constexpr char keyTexture[8]	 = "Texture";
-	constexpr char keyModelPath[11]  = "Model Path";
+	constexpr char keyModelPath[11]  = "Model path";
 }
 bool CModelComponent::SerializeTintData(const std::string& aTintDataPath)
 {
@@ -406,7 +406,7 @@ bool CModelComponent::DeserializeTintData(const std::string & aTintDataPath)
 
 	myModelPath = document.HasMember(keyModelPath) ? document[keyModelPath].GetString() : "";
 
-	assert(document[keyTints].IsArray() && std::string(std::string(keyTints) + " is not an array in: " + aTintDataPath).c_str());
+	/*assert(document[keyTints].IsArray() && std::string(std::string(keyTints) + " is not an array in: " + aTintDataPath).c_str());*/// I don't want crashes for every file that is missing this.
 	if (!document[keyTints].IsArray())
 		return false;
 
@@ -424,11 +424,13 @@ bool CModelComponent::DeserializeTintData(const std::string & aTintDataPath)
 			std::string texturePath = tintObject[keyTexture].GetString();
 			if (texturePath.length() > 0)
 				myTints[i].myTexture.Init(texturePath);
+			else
+				myTints[i].myTexture.Clear();
 		}
 	}
 
-	assert(document[keyEmissive].IsObject() && std::string( std::string(keyEmissive) + " is not an object in: " + aTintDataPath).c_str());
-	if (!document[keyEmissive].IsObject())
+	/*assert(document.HasMember(keyEmissive) && std::string( std::string(keyEmissive) + " is not an object in: " + aTintDataPath).c_str());*/// I don't want crashes for every file that is missing this.
+	if (!document.HasMember(keyEmissive))
 		return false;
 
 	auto emissiveObject = document[keyEmissive].GetObjectW();

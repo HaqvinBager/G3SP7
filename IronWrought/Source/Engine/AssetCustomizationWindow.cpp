@@ -28,7 +28,10 @@ ImGuiWindow::CAssetCustomizationWindow::CAssetCustomizationWindow(const char* aN
 	, myShowLoadCustomizationFile(false)
 	, myShowSaveCustomizationFile(false)
 	, myShowOverwriteCustomizationFile(false)
+	, myShowTextureBrowser(false)
 	, myReplaceFBX(true)
+	, myCurrentTextureSlot(0)
+
 {
 	ZeroMemory(myPrimaryTint, 4);
 	ZeroMemory(mySecondaryTint, 4);
@@ -89,6 +92,31 @@ void ImGuiWindow::CAssetCustomizationWindow::OnInspectorGUI()
 			model.Tint4(Vector4(myAccentTint));
 			model.Emissive(Vector4(myEmissiveTint));
 		}
+
+		for (short i = 0; i < NUMBER_OF_TINT_SLOTS; ++i)
+		{
+			std::string texture = "Texture" + std::to_string(i + 1);
+			if (ImGui::Button(texture.c_str())) { myShowTextureBrowser = true; myCurrentTextureSlot = i; } 
+			ImGui::SameLine();
+			ImGui::Text(myTexturePaths[i].GetPath().c_str());
+		}
+
+		//if (ImGui::Button("Texture 1")) { myShowTextureBrowser = true; myCurrentTextureSlot = 0; } 
+		//ImGui::SameLine();
+		//ImGui::Text(myTexturePaths[0].GetPath().c_str());
+
+		//if (ImGui::Button("Texture 2")) { myShowTextureBrowser = true; myCurrentTextureSlot = 1; } 
+		//ImGui::SameLine();
+		//ImGui::Text(myTexturePaths[1].GetPath().c_str());
+
+		//if (ImGui::Button("Texture 3")) { myShowTextureBrowser = true; myCurrentTextureSlot = 2; } 
+		//ImGui::SameLine();
+		//ImGui::Text(myTexturePaths[2].GetPath().c_str());
+
+		//if (ImGui::Button("Texture 4")) { myShowTextureBrowser = true; myCurrentTextureSlot = 3; } 
+		//ImGui::SameLine();
+		//ImGui::Text(myTexturePaths[3].GetPath().c_str());
+
 
 		ImGui::Spacing();
 		ImGui::TextColored(COLOR_TEXT_LABEL, "Current FBX:"); ImGui::SameLine();
@@ -190,6 +218,11 @@ void ImGuiWindow::CAssetCustomizationWindow::LoadCustomizationFile()
 				myAccentTint[0]	   = accents.x;		myAccentTint[1]    = accents.y;		myAccentTint[2]    = accents.z;	  myAccentTint[3]    = accents.w;
 				myEmissiveTint[0]  = emissive.x;	myEmissiveTint[1]  = emissive.y;	myEmissiveTint[2]  = emissive.z;  myEmissiveTint[3]  = emissive.w;
 
+				for (int j = 0; j < NUMBER_OF_TINT_SLOTS; ++j)
+				{
+					myTexturePaths[j].UpdatePath(model->TexturePathOnIndex(j));
+				}
+
 				mySelectedJSON = std::move(myJSONPaths[i]);
 				mySelectedFBX.myDisplayName = CutToFileNameOnly(mySelectedFBX.myPath);
 				myShowLoadCustomizationFile = false;
@@ -257,6 +290,58 @@ void ImGuiWindow::CAssetCustomizationWindow::SaveOverwriteFile()
 
 		if (ImGui::Button("No", ImVec2(width, 0.0f)))
 			myShowOverwriteCustomizationFile = false;
+	}
+	ImGui::End();
+}
+
+void ImGuiWindow::CAssetCustomizationWindow::TextureBrowser()
+{
+	const std::string path = ASSETPATH("Assets/Graphics/Textures/Shared/");
+	myShowTextureBrowser = GetPathsByExtension(path, ".dds", myTexturePathsInFolder, !myTexturePathsInFolder.empty());
+	ImGui::Begin("Select .dds texture.", &myShowTextureBrowser, ImGuiWindowFlags_NoCollapse);
+	{
+		ImGui::TextColored(COLOR_TEXT_LABEL, std::string("Folder: " + path).c_str());
+		ImGui::BeginChild("Scrolling", ImVec2(250.f,400.f), false,  ImGuiWindowFlags_NoScrollWithMouse);
+		for (size_t i = 0; i < myTexturePathsInFolder.size(); ++i)
+		{
+			bool selected = false;
+			ImGui::Selectable(myTexturePathsInFolder[i].myDisplayName.c_str(), &selected);
+			if (selected)
+			{
+				if (myGameObject->GetComponent<CModelComponent>())
+				{
+					if (myReplaceFBX)
+						ModelHelperFunctions::ReplaceModelAndLoadTints(myGameObject, myJSONPaths[i].myPath, mySelectedFBX.myPath);
+					else
+						myGameObject->GetComponent<CModelComponent>()->DeserializeTintData(myJSONPaths[i].myPath);
+				}
+				else
+					ModelHelperFunctions::AddModelComponentWithTintsFromData(myGameObject, myJSONPaths[i].myPath, mySelectedFBX.myPath);
+
+				CModelComponent* model = myGameObject->GetComponent<CModelComponent>();
+				Vector4 primary		= model->Tint1();
+				Vector4 secondary	= model->Tint2();
+				Vector4 tertiary	= model->Tint3();
+				Vector4 accents		= model->Tint4();
+				Vector4 emissive	= model->Emissive();
+				myPrimaryTint[0]   = primary.x;		myPrimaryTint[1]   = primary.y;		myPrimaryTint[2]   = primary.z;   myPrimaryTint[3]   = primary.w;
+				mySecondaryTint[0] = secondary.x;	mySecondaryTint[1] = secondary.y;	mySecondaryTint[2] = secondary.z; mySecondaryTint[3] = secondary.w;
+				myTertiaryTint[0]  = tertiary.x;	myTertiaryTint[1]  = tertiary.y;	myTertiaryTint[2]  = tertiary.z;  myTertiaryTint[3]  = tertiary.w;
+				myAccentTint[0]	   = accents.x;		myAccentTint[1]    = accents.y;		myAccentTint[2]    = accents.z;	  myAccentTint[3]    = accents.w;
+				myEmissiveTint[0]  = emissive.x;	myEmissiveTint[1]  = emissive.y;	myEmissiveTint[2]  = emissive.z;  myEmissiveTint[3]  = emissive.w;
+
+				for (int j = 0; j < NUMBER_OF_TINT_SLOTS; ++j)
+				{
+					myTexturePaths[j].UpdatePath(model->TexturePathOnIndex(j));
+				}
+
+				mySelectedJSON = std::move(myJSONPaths[i]);
+				mySelectedFBX.myDisplayName = CutToFileNameOnly(mySelectedFBX.myPath);
+				myShowLoadCustomizationFile = false;
+				myJSONPaths.clear();
+			}
+		}
+		ImGui::EndChild();
 	}
 	ImGui::End();
 }

@@ -13,6 +13,7 @@ public:
 
 	void Init(const std::string& aTexturePath);
 	void Init(const char* aTexturePath);
+	void Clear();
 
 	ID3D11ShaderResourceView* ShaderResource();
 	ID3D11ShaderResourceView* const* ConstShaderResource();
