@@ -5,6 +5,7 @@
 #include "Engine.h"
 #include "Scene.h"
 #include <iostream>
+#include <imgui.h>
 
 IronWroughtImGui::CCameraSetting::CCameraSetting(const char* aName)
 	: CWindow(aName)

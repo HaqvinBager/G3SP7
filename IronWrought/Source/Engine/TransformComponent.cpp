@@ -52,6 +52,12 @@ DirectX::SimpleMath::Vector3 CTransformComponent::Position() const
 	return myLocalTransform.Translation();
 }
 
+DirectX::SimpleMath::Vector3 CTransformComponent::WorldPosition() const
+{
+	return myWorldTransform.Translation();
+	//return DirectX::SimpleMath::Vector3();
+}
+
 void CTransformComponent::Rotation(DirectX::SimpleMath::Vector3 aRotation)
 {
 	Vector3 tempTranslation = myLocalTransform.Translation();

@@ -52,7 +52,7 @@ CUnityFactory::~CUnityFactory()
 //	aScene.MainCamera(camera->GetComponent<CCameraComponent>());
 //	CGameObject* envLight = CreateGameObject(aData.myDirectionalLight);
 //	aScene.AddInstance(envLight);
-//	aScene.EnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnvironmentLight());
+//	aScene.EnvironmentLight(envLight->GetComponent<CEnvironmentLightComponent>()->GetEnvironmentLight());
 //	return true;
 //}
 
@@ -64,7 +64,7 @@ CUnityFactory::~CUnityFactory()
 //
 //	CGameObject* envLight = CreateGameObject(aData.myDirectionalLight);
 //	aScene.AddInstance(envLight);
-//	aScene.EnvironmentLight(envLight->GetComponent<CEnviromentLightComponent>()->GetEnvironmentLight());
+//	aScene.EnvironmentLight(envLight->GetComponent<CEnvironmentLightComponent>()->GetEnvironmentLight());
 //
 //	for (const auto& pointLightData : aData.myPointLightData)
 //	{
@@ -149,7 +149,7 @@ CUnityFactory::~CUnityFactory()
 //CGameObject* CUnityFactory::CreateGameObject(const SDirectionalLightData& aData)
 //{
 //	CGameObject* gameObject = new CGameObject(1);
-//	gameObject->AddComponent<CEnviromentLightComponent>(*gameObject, aData.myColor, aData.myIntensity, aData.myDirection);
+//	gameObject->AddComponent<CEnvironmentLightComponent>(*gameObject, aData.myColor, aData.myIntensity, aData.myDirection);
 //	return std::move(gameObject);
 //}
 

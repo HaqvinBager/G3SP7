@@ -62,7 +62,7 @@ void CVFXRenderer::Render(CCameraComponent* aCamera, std::vector<CGameObject*>& 
 		auto& effects = component->GetVFXEffects();
 		for (unsigned int j = 0; j < effects.size(); ++j)
 		{
-			auto effect = effects[j];
+			auto& effect = effects[j];
 
 			const std::vector<CVFXBase*>& vfxBases = effect->GetVFXBases();
 			if (vfxBases.empty())

@@ -39,7 +39,7 @@ CInGameState::~CInGameState() {}
 
 void CInGameState::Awake()
 {
-	CJsonReader::Get()->Init();
+		CJsonReader::Get()->InitFromGenerated();
 	CScene* scene = CSceneManager::CreateEmpty();
 	TEMP_VFX(scene);
 	//CEnemyComponent::CreateEnemy(ASSETPATH("Assets/Graphics/Character/Enemy/CH_E_Robot_SK.fbx"), 2.0f, 10.0f);
@@ -52,11 +52,16 @@ void CInGameState::Awake()
 
 void CInGameState::Start()
 {
+	//CScene* scene = CSceneManager::CreateEmpty();
+	//TEMP_VFX(scene);
 
-
+	//CEngine::GetInstance()->AddScene(myState, scene);
+	CEngine::GetInstance()->SetActiveScene(myState);
 	TEMP_VFX(&CEngine::GetInstance()->GetActiveScene());
 
-	myExitLevel = false;	
+	CEngine::GetInstance()->SetActiveScene(myState);
+
+	myExitLevel = false;
 }
 
 void CInGameState::Stop()
@@ -66,21 +71,7 @@ void CInGameState::Stop()
 
 void CInGameState::Update()
 {
-	CEngine::GetInstance()->GetPhysx().Simulate();
-	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
-	{
-		gameObject->Update();
-	}
 
-	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
-	{
-		gameObject->LateUpdate();
-	}
-
-	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
-	{
-		gameObject->LateUpdate();
-	}
 
 	if (Input::GetInstance()->IsKeyPressed(VK_ESCAPE))
 	{
@@ -262,6 +253,10 @@ void TEMP_VFX(CScene* aScene)
 	static int id = 500;
 	CGameObject* abilityObject = new CGameObject(id++);
 	abilityObject->AddComponent<CVFXSystemComponent>(*abilityObject, ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystem_ToLoad.json"));
+
+	//abilityObject->Awake();
+	//abilityObject->Start();
+
 	aScene->AddInstance(abilityObject);
 	aScene->SetVFXTester(abilityObject);
 }

@@ -5,6 +5,7 @@
 #include "SpriteInstance.h"
 #include "EngineDefines.h"
 #include "PhysXWrapper.h"
+#include "PostMaster.h"
 
 class CModelComponent;
 class CCamera;
@@ -29,10 +30,11 @@ class CPlayerControllerComponent;
 
 typedef std::pair<unsigned int, std::array<CPointLight*, LIGHTCOUNT>> LightPair;
 
-class CScene {
+class CScene : public IObserver {
 	friend class CEngine;
+	friend class CBootUpState;
 	friend class CInGameState;
-	friend class CMenuState;
+	friend class CMainMenuState;
 public:
 //SETUP START
 	CScene(const unsigned int aGameObjectCount = 0);
@@ -40,16 +42,35 @@ public:
 
 	//static CScene* GetInstance();
 	bool Init();
-	bool InitNavMesh(std::string aPath);
-	bool InitCanvas(std::string aPath);
+	bool InitNavMesh(const std::string& aPath);
+	bool InitCanvas(const std::string& aPath);
+	bool ReInitCanvas(const std::string& aPath);
+
+	
 //SETUP END
+
+//UPDATE
+public:
+	void Awake();
+	void Start();
+	void Update();
+	void Receive(const SMessage& aMessage) override;
+
+private:
+	void InitAnyNewComponents();
+	void CallStartOnNewComponents();
+	void CallAwakeOnNewComponents();
+//UPDATE END
+
 public:
 //SETTERS START
 	void MainCamera(CCameraComponent* aMainCamera);
 	void Player(CGameObject* aPlayerObject);
 	bool EnvironmentLight(CEnvironmentLight* anEnvironmentLight);
 	void ShouldRenderLineInstance(const bool aShouldRender);
+#ifdef _DEBUG
 	bool ShouldRenderLineInstance() { return myShouldRenderLineInstance; }
+#endif
 	void UpdateCanvas();
 //SETTERS END
 public:
@@ -115,6 +136,8 @@ public:
 	bool RemoveInstance(CBoxLight* aBoxLight);
 	bool RemoveInstance(CAnimatedUIElement* anAnimatedUIElement);
 	bool RemoveInstance(CGameObject* aGameObject);
+	bool RemoveInstance(CSpriteInstance* aSpriteInstance);
+	bool RemoveInstance(CTextInstance* aTextInstance);
 //REMOVE SPECIFIC INSTANCE END
 //CLEAR SCENE OF INSTANCES START
 	bool ClearPointLights();
@@ -147,6 +170,11 @@ private:
 	std::unordered_map<int, CGameObject*> myIDGameObjectMap;
 	std::unordered_map<size_t, std::vector<CComponent*>> myComponentMap;
 	std::unordered_map<ERenderOrder, std::vector<CSpriteInstance*>> mySpriteInstances;
+
+	std::queue<CComponent*> myAwakeComponents;
+	std::queue<CComponent*> myStartComponents;
+
+
 //CONTAINERS END
 private:
 //POINTERS START

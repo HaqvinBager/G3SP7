@@ -7,6 +7,8 @@
 #include <algorithm>
 #include "PlayerControllerComponent.h"
 #include "CharacterController.h"
+#include "LineFactory.h"
+#include "LineInstance.h"
 
 #define PI 3.14159265f
 
@@ -41,7 +43,7 @@ void CCameraControllerComponent::Start()
 
 void CCameraControllerComponent::Update()
 {
-#ifdef  _DEBUG	
+#ifdef  _DEBUG
 	// TEMPORARY
 	if (Input::GetInstance()->IsKeyPressed(VK_F1))
 	{
@@ -54,7 +56,7 @@ void CCameraControllerComponent::Update()
 		{
 			myCameraMode = myPrevCameraMode;
 		}
-		
+
 		if (myCameraMode == ECameraMode::UnlockCursor)
 			CEngine::GetInstance()->GetWindowHandler()->ShowAndUnlockCursor();
 		else
@@ -73,14 +75,14 @@ void CCameraControllerComponent::Update()
 #endif
 	switch (myCameraMode)
 	{
-		case ECameraMode::MenuCam: 
+		case ECameraMode::MenuCam:
 			break;
 
-		case ECameraMode::FreeCam: 
+		case ECameraMode::FreeCam:
 			UpdateFreeCam();
 			break;
 
-		case ECameraMode::PlayerFirstPerson: 
+		case ECameraMode::PlayerFirstPerson:
 			UpdatePlayerFirstPerson();
 			break;
 
@@ -129,8 +131,8 @@ void CCameraControllerComponent::UpdatePlayerFirstPerson()
 	myYaw	= WrapAngle(myYaw + (dx * myMouseRotationSpeed * dt));
 	myPitch = std::clamp(myPitch + (dy * myMouseRotationSpeed * dt), ToDegrees(-PI / 2.0f), ToDegrees(PI / 2.0f));
 
-	myYaw = Lerp(myOldYaw, myYaw, 0.6f);
-	myPitch = Lerp(myOldPitch, myPitch, 0.6f);
+	myYaw = LerpDegrees(myOldYaw, myYaw, 0.6f);
+	myPitch = LerpDegrees(myOldPitch, myPitch, 0.6f);
 
 	GameObject().myTransform->Rotation({ myPitch, myYaw, 0});
 

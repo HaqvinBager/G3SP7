@@ -7,6 +7,8 @@ class CTextInstance;
 class CAnimatedUIElement;
 class CScene;
 
+#include "JsonReader.h"
+
 class CCanvas : public IObserver
 {
 public:
@@ -15,6 +17,7 @@ public:
 
 public:
 	void Init(std::string aFilePath, CScene& aScene, bool addToScene = true);
+	void ReInit(std::string aFilePath, CScene& aScene, bool addToScene = true);
 	void Update();
 
 public:
@@ -32,11 +35,20 @@ public:
 	std::vector<CAnimatedUIElement*> GetAnimatedUI() { return myAnimatedUIs; }
 
 private:
+	bool InitButton(const rapidjson::GenericObject<false, rapidjson::Value>& aRapidObject, const int& anIndex, CScene& aScene);
+	bool InitText(const rapidjson::GenericObject<false, rapidjson::Value>& aRapidObject, const int& anIndex);
+	bool InitAnimatedElement(const rapidjson::GenericObject<false, rapidjson::Value>& aRapidObject, const int& anIndex, CScene& aScene);
+	bool InitBackground(const std::string& aPath);
+	bool InitSprite(const rapidjson::GenericObject<false, rapidjson::Value>& aRapidObject, const int& anIndex);
+	bool InitMessageTypes(const rapidjson::GenericArray<false, rapidjson::Value>& aRapidArray);
+
+private:
 	bool myIsEnabled;
 	CSpriteInstance* myBackground;
 
+	std::vector<CTextInstance*> myButtonTexts;
+	std::vector<CButton*>		myButtons;
 	std::vector<CAnimatedUIElement*> myAnimatedUIs;
-	std::vector<CButton*> myButtons;
 	std::vector<CSpriteInstance*> mySprites;
 	std::vector<CTextInstance*> myTexts;
 	std::vector<EMessageType> myMessageTypes;

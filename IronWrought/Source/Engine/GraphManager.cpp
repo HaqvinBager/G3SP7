@@ -344,7 +344,7 @@ void CGraphManager::LoadTreeFromFile()
 					int UID = nodeInstance["UID"].GetInt();
 					object->myUID.SetUID(UID);
 					object->myNodeType = CNodeTypeCollector::GetNodeTypeFromID(nodeType);
-
+					object->CheckIfInputNode();
 
 					object->myEditorPosition[0] = static_cast<float>(nodeInstance["Position"]["X"].GetInt());
 					object->myEditorPosition[1] = static_cast<float>(nodeInstance["Position"]["Y"].GetInt());
@@ -462,6 +462,7 @@ void CGraphManager::LoadNodesFromClipboard()
 		CNodeInstance* object = new CNodeInstance(this, true);
 		int nodeType = nodeInstance["NodeType"].GetInt();
 		object->myNodeType = CNodeTypeCollector::GetNodeTypeFromID(nodeType);
+		object->CheckIfInputNode();
 
 		if (i == 0)
 		{
@@ -1556,6 +1557,7 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 						node = new CNodeInstance(this);
 
 						node->myNodeType = found[i];
+						node->CheckIfInputNode();
 						node->ConstructUniquePins();
 						ed::SetNodePosition(node->myUID.AsInt(), newNodePostion);
 						node->myHasSetEditorPosition = true;
@@ -1604,10 +1606,11 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 							CNodeType* type = category.second[i];
 							if (ImGui::MenuItem(type->NodeName().c_str()))
 							{
-								node = new CNodeInstance(this);
+								node = new CNodeInstance(this, true);
 
 								//int nodeType = i;
 								node->myNodeType = type;
+								node->CheckIfInputNode();
 								node->ConstructUniquePins();
 								ed::SetNodePosition(node->myUID.AsInt(), newNodePostion);
 								node->myHasSetEditorPosition = true;

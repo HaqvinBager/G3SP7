@@ -229,6 +229,9 @@
     <FxCompile Include="SpotLightVertexShader.hlsl">
       <Filter>Shaders\SpotLight</Filter>
     </FxCompile>
+    <FxCompile Include="FullscreenPixelShader_FXAA.hlsl">
+      <Filter>Shaders\Fullscreen</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimationComponent.cpp">
@@ -836,6 +839,12 @@
     <ClCompile Include="PlayerControlWindow.cpp">
       <Filter>Imgui\Windows</Filter>
     </ClCompile>
+    <ClCompile Include="BoxColliderComponent.cpp">
+      <Filter>GameObject and Component\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="SphereColliderComponent.cpp" />
+    <ClCompile Include="NodeTypeAddForce.cpp" />
+    <ClCompile Include="GravityGloveEditor.cpp" />
     <ClCompile Include="BoxLight.cpp">
       <Filter>Light</Filter>
     </ClCompile>
@@ -1541,6 +1550,12 @@
     <ClInclude Include="VFXEditorWindow.h">
       <Filter>Imgui\Windows</Filter>
     </ClInclude>
+    <ClInclude Include="BoxColliderComponent.h">
+      <Filter>GameObject and Component\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="SphereColliderComponent.h" />
+    <ClInclude Include="NodeTypeAddForce.h" />
+    <ClInclude Include="GravityGloveEditor.h" />
     <ClInclude Include="BoxLight.h">
       <Filter>Light</Filter>
     </ClInclude>
@@ -1555,6 +1570,9 @@
     </ClInclude>
     <ClInclude Include="LightRenderer.h">
       <Filter>Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="hasher.h">
+      <Filter>Imgui\Node Editor\Utilities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

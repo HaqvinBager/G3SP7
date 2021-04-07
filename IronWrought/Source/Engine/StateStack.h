@@ -6,7 +6,10 @@ class CState;
 class CStateStack {
 public:
 	enum class EState {
+		BootUp,
+		MainMenu,
 		InGame,
+		PauseMenu,
 		NoState
 	};
 

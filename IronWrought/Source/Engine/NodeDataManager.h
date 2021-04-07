@@ -1,5 +1,6 @@
 #pragma once
-#include <map>
+//#include <map>
+#include "hasher.h"
 class CNodeDataManager
 {
 public:
@@ -33,11 +34,11 @@ public:
 	template <typename T>
 	T GetData(const std::string& aNodeTypeName)
 	{
-		std::hash<std::string> hasher;
-		size_t hash = hasher(aNodeTypeName);
+		/*std::hash<std::string> hasher;*/
+		size_t hash = Hasher::GetHashValue(aNodeTypeName);//hasher(aNodeTypeName);
 		for (auto& data : myNodeData)
 		{
-			if (hasher(data.myNodeTypeName) == hash)
+			if (Hasher::GetHashValue(data.myNodeTypeName) == hash)
 			{
 				return *(reinterpret_cast<T*>(data.myData));
 			}
@@ -48,12 +49,12 @@ public:
 	template <typename T>
 	void SetData(const std::string& aNodeTypeName, const EDataType& aDataType, const T& aValue)
 	{
-		std::hash<std::string> hasher;
-		size_t hash = hasher(aNodeTypeName);
+		/*std::hash<std::string> hasher;*/
+		size_t hash = Hasher::GetHashValue(aNodeTypeName);//hasher(aNodeTypeName);
 
 		for (size_t i = 0; i < myNodeData.size(); ++i)
 		{
-			if (hasher(myNodeData[i].myNodeTypeName) == hash)
+			if (Hasher::GetHashValue(myNodeData[i].myNodeTypeName) == hash)
 			{
 				*(reinterpret_cast<T*>(myNodeData[i].myData)) = aValue;
 				return;
