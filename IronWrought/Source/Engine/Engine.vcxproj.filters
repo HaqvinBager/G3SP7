@@ -763,7 +763,6 @@
     <ClCompile Include="NodeTypeAudioPlayResearcherReactionExplosives.cpp">
       <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
     </ClCompile>
-    <ClCompile Include="NodeTypeListTest.cpp" />
     <ClCompile Include="VFXEffect.cpp">
       <Filter>VFX</Filter>
     </ClCompile>
@@ -778,9 +777,6 @@
     </ClCompile>
     <ClCompile Include="NodeTypeVariableSetVector3.cpp">
       <Filter>Imgui\Node Editor\Nodes\Variables\Set</Filter>
-    </ClCompile>
-    <ClCompile Include="NodeTypeAudioPlayResearcherEvent.cpp">
-      <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
     </ClCompile>
     <ClCompile Include="NodeTypeAudioPlaySFX.cpp">
       <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
@@ -816,7 +812,6 @@
     <ClCompile Include="NodeTypeGameObjectMoveToPosition.cpp">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClCompile>
-    <ClCompile Include="NodeTypeActionPatrol.cpp" />
     <ClCompile Include="NodeTypeGameObjectGetChildPosition.cpp">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClCompile>
@@ -835,7 +830,6 @@
     <ClCompile Include="NodeTypePlayerGetPosition.cpp">
       <Filter>Imgui\Node Editor\Nodes\Player</Filter>
     </ClCompile>
-    <ClCompile Include="NodeTypeEnemySpawn.cpp" />
     <ClCompile Include="PlayerControlWindow.cpp">
       <Filter>Imgui\Windows</Filter>
     </ClCompile>
@@ -843,7 +837,6 @@
       <Filter>GameObject and Component\Component</Filter>
     </ClCompile>
     <ClCompile Include="SphereColliderComponent.cpp" />
-    <ClCompile Include="NodeTypeAddForce.cpp" />
     <ClCompile Include="GravityGloveEditor.cpp" />
     <ClCompile Include="BoxLight.cpp">
       <Filter>Light</Filter>
@@ -861,6 +854,18 @@
       <Filter>Renderers</Filter>
     </ClCompile>
     <ClCompile Include="CharacterReportCallback.cpp" />
+    <ClCompile Include="NodeTypeAudioPlayResearcherEvent.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeActionPatrol.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Decision Tree\Action</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeAddForce.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeEnemySpawn.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1466,7 +1471,6 @@
     <ClInclude Include="NodeTypeAudioPlayResearcherReactionExplosives.h">
       <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
     </ClInclude>
-    <ClInclude Include="NodeTypeListTest.h" />
     <ClInclude Include="VFXEffect.h">
       <Filter>VFX</Filter>
     </ClInclude>
@@ -1481,9 +1485,6 @@
     </ClInclude>
     <ClInclude Include="NodeTypeVariableSetVector3.h">
       <Filter>Imgui\Node Editor\Nodes\Variables\Set</Filter>
-    </ClInclude>
-    <ClInclude Include="NodeTypeAudioPlayResearcherEvent.h">
-      <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeAudioPlaySFX.h">
       <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
@@ -1525,7 +1526,6 @@
     <ClInclude Include="NodeTypeGameObjectMoveToPosition.h">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClInclude>
-    <ClInclude Include="NodeTypeActionPatrol.h" />
     <ClInclude Include="Interop.h">
       <Filter>Imgui\Blueprints</Filter>
     </ClInclude>
@@ -1544,7 +1544,6 @@
     <ClInclude Include="NodeTypePlayerGetPosition.h">
       <Filter>Imgui\Node Editor\Nodes\Player</Filter>
     </ClInclude>
-    <ClInclude Include="NodeTypeEnemySpawn.h" />
     <ClInclude Include="PlayerControlWindow.h">
       <Filter>Imgui\Windows</Filter>
     </ClInclude>
@@ -1555,7 +1554,6 @@
       <Filter>GameObject and Component\Component</Filter>
     </ClInclude>
     <ClInclude Include="SphereColliderComponent.h" />
-    <ClInclude Include="NodeTypeAddForce.h" />
     <ClInclude Include="GravityGloveEditor.h" />
     <ClInclude Include="BoxLight.h">
       <Filter>Light</Filter>
@@ -1576,6 +1574,18 @@
       <Filter>Imgui\Node Editor\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="CharacterReportCallback.h" />
+    <ClInclude Include="NodeTypeAudioPlayResearcherEvent.h">
+      <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeActionPatrol.h">
+      <Filter>Imgui\Node Editor\Nodes\Decision Tree\Action</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeAddForce.h">
+      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeEnemySpawn.h">
+      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">

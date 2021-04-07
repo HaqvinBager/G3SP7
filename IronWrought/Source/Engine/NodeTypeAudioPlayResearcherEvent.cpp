@@ -8,7 +8,7 @@
 CNodeTypeAudioPlayResearcherEvent::CNodeTypeAudioPlayResearcherEvent()
 {
 	myPins.push_back(SPin("", SPin::EPinTypeInOut::EPinTypeInOut_IN));
-	myPins.push_back(SPin("Clip", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EStringListIndexed));
+	myPins.push_back(SPin("Clip", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EInt));
 	//std::vector<std::string> list = { "DoorEventVerticalSlice\0", "IntroVerticalSlice\0" };
 	//CNodeDataManager::Get()->SetData("Play Researcher Event", CNodeDataManager::EDataType::EStringList, list);
 }
@@ -22,6 +22,14 @@ int CNodeTypeAudioPlayResearcherEvent::OnEnter(CNodeInstance* aTriggeringNodeIns
 	GetDataOnPin(aTriggeringNodeInstance, 1, outType, someData, outSize); // Get data on pin index 1, this index is relative to what you push in the constructor
 	int input = NodeData::Get<int>(someData);
 
+	if (input < 0)
+	{
+		input = 0;
+	}
+	else if (input > myMaxValue)
+	{
+		input = myMaxValue;
+	}
 
 	CMainSingleton::PostMaster().Send({ EMessageType::PlayResearcherEvent, &input });
 
