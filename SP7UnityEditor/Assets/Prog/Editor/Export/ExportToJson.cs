@@ -109,8 +109,12 @@ public static class Json
         if (objectWithInstanceID == null)
             return false;
 
-        if (objectWithInstanceID.isStatic != aIsStatic)
-            return false;
+
+        //if(!objectWithInstanceID.GetComponent<Collider>())
+        //{
+            if (objectWithInstanceID.isStatic != aIsStatic)
+                return false;
+        //}
 
         var prefabAssetType = PrefabUtility.GetPrefabAssetType(objectWithInstanceID);
         if (PrefabUtility.GetPrefabAssetType(objectWithInstanceID) != PrefabAssetType.Regular &&

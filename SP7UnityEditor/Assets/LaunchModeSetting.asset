@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0e0fa9779762bc4d92903fb09fde18b, type: 3}
   m_Name: LaunchModeSetting
   m_EditorClassIdentifier: 
-  launchMode: 4
+  launchMode: 0
   mylauncherData:
   - myExePath: Launcher_Debug.exe
     myWorkingDirectoryPath: ..\IronWrought\Bin\

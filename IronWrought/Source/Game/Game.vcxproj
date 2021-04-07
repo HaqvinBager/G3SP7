@@ -171,6 +171,7 @@
     <ClInclude Include="InGameState.h" />
     <ClInclude Include="MainMenuState.h" />
     <ClInclude Include="NavMeshComponent.h" />
+    <ClInclude Include="PauseMenuState.h" />
     <ClInclude Include="PlayerComponent.h" />
     <ClInclude Include="PlayerControllerComponent.h" />
     <ClInclude Include="PopupTextService.h" />
@@ -194,6 +195,7 @@
     <ClCompile Include="InGameState.cpp" />
     <ClCompile Include="MainMenuState.cpp" />
     <ClCompile Include="NavMeshComponent.cpp" />
+    <ClCompile Include="PauseMenuState.cpp" />
     <ClCompile Include="PlayerComponent.cpp" />
     <ClCompile Include="PlayerControllerComponent.cpp" />
     <ClCompile Include="PopupTextService.cpp" />

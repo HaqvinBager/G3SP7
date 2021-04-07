@@ -2,17 +2,20 @@
 #include "CharacterController.h"
 #include "PhysXWrapper.h"
 #include "Engine.h"
+#include "TransformComponent.h"
 
 using namespace physx;
 
-CCharacterController::CCharacterController(const Vector3 aPosition, const float aRadius, const float aHeight)
+CCharacterController::CCharacterController(const Vector3 aPosition, const float aRadius, const float aHeight, CTransformComponent* aUserData)
 {
     PxCapsuleControllerDesc desc;
     desc.position = {aPosition.x, aPosition.y, aPosition.z};
     desc.height = aHeight;
     desc.radius = aRadius;
     desc.material = CEngine::GetInstance()->GetPhysx().CreateMaterial(CPhysXWrapper::materialfriction::basic);
-    desc.stepOffset = 0.1f;
+    desc.stepOffset = 0.0f;
+    desc.reportCallback = CEngine::GetInstance()->GetPhysx().GetCharacterReportBack();
+    desc.userData = aUserData;
     myController = CEngine::GetInstance()->GetPhysx().GetControllerManager()->createController(desc);
 }
 

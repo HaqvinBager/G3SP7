@@ -52,8 +52,6 @@ void CInGameState::Start()
 	CEngine::GetInstance()->SetActiveScene(myState);
 	TEMP_VFX(&CEngine::GetInstance()->GetActiveScene());
 
-	CEngine::GetInstance()->SetActiveScene(myState);
-
 	myExitLevel = false;
 }
 
@@ -65,13 +63,13 @@ void CInGameState::Stop()
 void CInGameState::Update()
 {
 
+	IRONWROUGHT->GetActiveScene().UpdateCanvas();
 
 	if (Input::GetInstance()->IsKeyPressed(VK_ESCAPE))
 	{
-		myStateStack.PopTopAndPush(CStateStack::EState::InGame);
+		myStateStack.PushState(CStateStack::EState::PauseMenu);
 	}
 
-	IRONWROUGHT->GetActiveScene().UpdateCanvas();
 }
 
 void CInGameState::ReceiveEvent(const EInputEvent aEvent)
@@ -247,8 +245,8 @@ void TEMP_VFX(CScene* aScene)
 	CGameObject* abilityObject = new CGameObject(id++);
 	abilityObject->AddComponent<CVFXSystemComponent>(*abilityObject, ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystem_ToLoad.json"));
 
-	abilityObject->Awake();
-	abilityObject->Start();
+	//abilityObject->Awake();
+	//abilityObject->Start();
 
 	aScene->AddInstance(abilityObject);
 	aScene->SetVFXTester(abilityObject);

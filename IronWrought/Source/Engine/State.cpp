@@ -6,4 +6,5 @@ CState::CState(CStateStack& aStateStack, const CStateStack::EState aState): mySt
 }
 
 CState::~CState() {
+
 }

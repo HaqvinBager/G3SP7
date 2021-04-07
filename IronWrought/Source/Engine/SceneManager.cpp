@@ -24,6 +24,13 @@
 #include "animationLoader.h"
 #include "AnimationComponent.h"
 
+
+#include <ppl.h>
+#include <concurrent_unordered_map.h>
+#include <concurrent_vector.h>
+
+
+CScene* CSceneManager::ourLastInstantiatedScene = nullptr;
 CSceneManager::CSceneManager()
 {
 }
@@ -34,6 +41,8 @@ CSceneManager::~CSceneManager()
 
 CScene* CSceneManager::CreateEmpty()
 {
+	CScene* emptyScene = Instantiate();
+
 	CGameObject* camera = new CGameObject(0);
 	camera->AddComponent<CCameraComponent>(*camera);//Default Fov is 70.0f
 	camera->AddComponent<CCameraControllerComponent>(*camera); //Default speed is 2.0f
@@ -45,7 +54,6 @@ CScene* CSceneManager::CreateEmpty()
 	envLight->GetComponent<CEnvironmentLightComponent>()->GetEnvironmentLight()->SetColor({ 0.f, 0.f, 0.f });
 	envLight->GetComponent<CEnvironmentLightComponent>()->GetEnvironmentLight()->SetDirection({ 0.0f,1.0f,1.0f });
 
-	CScene* emptyScene = new CScene(2);
 	emptyScene->AddInstance(camera);
 	emptyScene->MainCamera(camera->GetComponent<CCameraComponent>());
 	emptyScene->EnvironmentLight(envLight->GetComponent<CEnvironmentLightComponent>()->GetEnvironmentLight());
@@ -58,16 +66,20 @@ CScene* CSceneManager::CreateEmpty()
 
 CScene* CSceneManager::CreateScene(const std::string& aSceneJson)
 {
-	//CScene* scene = CreateEmpty();
+	CScene* scene = Instantiate(); //CreateEmpty();
 
-	CGameObject* camera = new CGameObject(0);
-	camera->AddComponent<CCameraComponent>(*camera);//Default Fov is 70.0f
-	camera->AddComponent<CCameraControllerComponent>(*camera); //Default speed is 2.0f
-	camera->myTransform->Position({ 0.0f, 1.0f, 0.0f });
+	//SSceneSetup sceneSetup = {};
+	//auto iter = sceneSetup.myGameObjects.push_back(new CGameObject(0));
+	//(*iter)->AddComponent<CCameraComponent>();
+	//CScene* scene = Instantiate();
 
-	CScene* scene = new CScene(2);
-	scene->AddInstance(camera);
-	scene->MainCamera(camera->GetComponent<CCameraComponent>());
+	//CGameObject* camera = new CGameObject(0);
+	//camera->AddComponent<CCameraComponent>(*camera);//Default Fov is 70.0f
+	//camera->AddComponent<CCameraControllerComponent>(*camera); //Default speed is 2.0f
+	//camera->myTransform->Position({ 0.0f, 1.0f, 0.0f });
+
+	//scene->AddInstance(camera);
+	//scene->MainCamera(camera->GetComponent<CCameraComponent>());
 
 	const auto doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + aSceneJson + "/" + aSceneJson + ".json"));
 	if(doc.HasParseError())
@@ -77,19 +89,18 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneJson)
 		return nullptr;
 
  	SVertexPaintCollection vertexPaintData = CBinReader::LoadVertexPaintCollection(doc["Root"].GetString());
-
 	const auto& scenes = doc.GetObjectW()["Scenes"].GetArray();
 	for (const auto& sceneData : scenes)
 	{
 		if (AddGameObjects(*scene, sceneData["Ids"].GetArray()))
 		{
 			SetTransforms(*scene, sceneData["transforms"].GetArray());
-			AddModelComponents(*scene, sceneData["models"].GetArray());
-			SetVertexPaintedColors(*scene, sceneData["vertexColors"].GetArray(), vertexPaintData);
 			AddDirectionalLight(*scene, sceneData["directionalLight"].GetObjectW());
 			AddPointLights(*scene, sceneData["lights"].GetArray());
-			AddDecalComponents(*scene, sceneData["decals"].GetArray());
 			AddInstancedModelComponents(*scene, sceneData["instancedModels"].GetArray());
+			AddModelComponents(*scene, sceneData["models"].GetArray());
+			SetVertexPaintedColors(*scene, sceneData["vertexColors"].GetArray(), vertexPaintData);
+			AddDecalComponents(*scene, sceneData["decals"].GetArray());
 			AddCollider(*scene, sceneData["colliders"].GetArray());
 		}
 	}
@@ -110,6 +121,16 @@ CScene* CSceneManager::CreateMenuScene(const std::string& aSceneName, const std:
 	scene->InitCanvas(aCanvasPath);
 
 	return scene;
+}
+
+CScene* CSceneManager::Instantiate()
+{
+	if (ourLastInstantiatedScene != nullptr)
+		CMainSingleton::PostMaster().Unsubscribe(EMessageType::ComponentAdded, ourLastInstantiatedScene); 
+	
+	ourLastInstantiatedScene = new CScene(); //Creates a New scene and Leaves total ownership of the Previous scene over to the hands of Engine!
+	CMainSingleton::PostMaster().Subscribe(EMessageType::ComponentAdded, ourLastInstantiatedScene);
+	return ourLastInstantiatedScene;
 }
 
 bool CSceneManager::AddGameObjects(CScene& aScene, RapidArray someData)
@@ -144,7 +165,6 @@ void CSceneManager::SetTransforms(CScene& aScene, RapidArray someData)
 
 void CSceneManager::AddModelComponents(CScene& aScene, RapidArray someData)
 {
-
 	for (const auto& m : someData) {
 		const int instanceId = m["instanceID"].GetInt();
 		CGameObject* gameObject = aScene.FindObjectWithID(instanceId);
@@ -336,6 +356,7 @@ void CSceneManager::AddCollider(CScene& aScene, RapidArray someData)
 			gameObject->AddComponent<CRigidBodyComponent>(*gameObject);
 
 		ColliderType colliderType = static_cast<ColliderType>(c["colliderType"].GetInt());
+		bool isStatic = c.HasMember("isStatic") ? c["isStatic"].GetBool() : false;
 
 		Vector3 posOffset;
 		posOffset.x = c["positionOffest"]["x"].GetFloat();
@@ -349,20 +370,20 @@ void CSceneManager::AddCollider(CScene& aScene, RapidArray someData)
 			boxSize.x = c["boxSize"]["x"].GetFloat();
 			boxSize.y = c["boxSize"]["y"].GetFloat();
 			boxSize.z = c["boxSize"]["z"].GetFloat();
-			gameObject->AddComponent<CBoxColliderComponent>(*gameObject, posOffset, boxSize);
+			gameObject->AddComponent<CBoxColliderComponent>(*gameObject, posOffset, boxSize, isStatic);
 		}
 			break;
 		case ColliderType::SphereCollider:
 		{
 			float radius = c["sphereRadius"].GetFloat();
-			gameObject->AddComponent<CSphereColliderComponent>(*gameObject, posOffset, radius);
+			gameObject->AddComponent<CSphereColliderComponent>(*gameObject, posOffset, radius, isStatic);
 		}
 			break;
 		case ColliderType::CapsuleCollider:
 		{
 			float radius = c["capsuleRadius"].GetFloat();
 			float height = c["capsuleHeight"].GetFloat();
-			gameObject->AddComponent<CCapsuleColliderComponent>(*gameObject, posOffset, radius, height);
+			gameObject->AddComponent<CCapsuleColliderComponent>(*gameObject, posOffset, radius, height, isStatic);
 		}
 		break;
 		}
@@ -385,10 +406,22 @@ CSceneFactory* CSceneFactory::Get()
 	return ourInstance;
 }
 
-void CSceneFactory::LoadSceneAsync(const std::string& aSceneName, std::function<void(std::string)> onComplete)
+void CSceneFactory::LoadScene(const std::string& aSceneName, const CStateStack::EState aState, std::function<void(std::string)> onComplete)
+{
+	CScene* loadedScene = CSceneManager::CreateScene(aSceneName);
+
+	CEngine::GetInstance()->AddScene(aState, loadedScene);
+	CEngine::GetInstance()->SetActiveScene(aState);
+
+	if (onComplete != nullptr)
+		onComplete(aSceneName);
+}
+
+void CSceneFactory::LoadSceneAsync(const std::string& aSceneName, const CStateStack::EState aState, std::function<void(std::string)> onComplete)
 {
 	myOnComplete = onComplete;
 	myLastSceneName = aSceneName;
+	myLastLoadedState = aState;
 	myFuture = std::async(std::launch::async, &CSceneManager::CreateScene, aSceneName);
 }
 
@@ -403,8 +436,8 @@ void CSceneFactory::Update()
 			return;
 		}
 
-		CEngine::GetInstance()->AddScene(CStateStack::EState::InGame, loadedScene);
-		CEngine::GetInstance()->SetActiveScene(CStateStack::EState::InGame);
+		CEngine::GetInstance()->AddScene(myLastLoadedState, loadedScene);
+		CEngine::GetInstance()->SetActiveScene(myLastLoadedState);
 		myOnComplete(myLastSceneName);
 	}
 }

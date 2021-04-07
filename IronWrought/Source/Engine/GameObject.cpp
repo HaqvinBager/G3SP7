@@ -8,23 +8,25 @@ CGameObject::CGameObject(const int aInstanceID)
 	: myInstanceID(aInstanceID)
 	, myIsStatic(false)
 {
-	myTransform = new CTransformComponent(*this);
-	myComponents.emplace_back(myTransform);
+	myComponents.push_back(std::make_unique<CTransformComponent>(*this));
+	myTransform = static_cast<CTransformComponent*>(myComponents.back().get());
+	//myTransform = std::make_unique<CTransformComponent>();// std::make_unique<CTransformComponent>(*this);	
 	myIsActive = true;
 }
 
 CGameObject::~CGameObject()
 {
-	for (size_t i = 0; i < myComponents.size(); ++i)
-	{
-		delete myComponents[i];
-		myComponents[i] = nullptr;
-	}
+	//for (size_t i = 0; i < myComponents.size(); ++i)
+	//{
+	//	delete myComponents[i];
+	//	myComponents[i] = nullptr;
+	//}
 	myComponents.clear();
 }
 
 void CGameObject::Awake()
 {
+
 	for (size_t i = 0; i < myComponents.size(); ++i)
 	{
 		myComponents[i]->Awake();
@@ -39,7 +41,7 @@ void CGameObject::Start()
 {
 	for (size_t i = 0; i < myComponents.size(); ++i)
 	{
-		if (CBehaviour* behaviour = dynamic_cast<CBehaviour*>(myComponents[i]))
+		if (CBehaviour* behaviour = dynamic_cast<CBehaviour*>(myComponents[i].get()))
 		{
 			if (behaviour->Enabled()) {
 				myComponents[i]->Start();
@@ -55,7 +57,7 @@ void CGameObject::Update()
 {
 	for (size_t i = 0; i < myComponents.size(); ++i)
 	{
-		if (CBehaviour* behaviour = dynamic_cast<CBehaviour*>(myComponents[i]))
+		if (CBehaviour* behaviour = dynamic_cast<CBehaviour*>(myComponents[i].get()))
 		{
 			if (behaviour->Enabled()) {
 				myComponents[i]->Update();
@@ -79,7 +81,7 @@ void CGameObject::Collided(CGameObject& aCollidedGameObject)
 {
 	for (size_t i = 0; i < myComponents.size(); ++i)
 	{
-		if (CBehaviour* behaviour = dynamic_cast<CBehaviour*>(myComponents[i]))
+		if (CBehaviour* behaviour = dynamic_cast<CBehaviour*>(myComponents[i].get()))
 		{
 			if (behaviour->Enabled()) {
 				myComponents[i]->Collided(&aCollidedGameObject);
