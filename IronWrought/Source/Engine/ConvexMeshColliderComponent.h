@@ -4,12 +4,13 @@
 namespace physx
 {
 	class PxShape;
+	class PxMaterial;
 }
 
 class CConvexMeshColliderComponent : public CBehaviour
 {
 public:
-	CConvexMeshColliderComponent(CGameObject& aParent);
+	CConvexMeshColliderComponent(CGameObject& aParent, physx::PxMaterial* aMaterial = nullptr);
 	~CConvexMeshColliderComponent() override;
 
 	void Awake() override;
@@ -22,7 +23,10 @@ public:
 	void SetShape(physx::PxShape* aShape);
 	const physx::PxShape* GetShape() { return myShape; }
 
+	const physx::PxMaterial* GetMaterial() { return myMaterial; }
+
 private:
 	physx::PxShape* myShape;
+	physx::PxMaterial* myMaterial;
 };
 

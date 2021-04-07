@@ -6,10 +6,14 @@
 #include "Engine.h"
 #include "Scene.h"
 
-CConvexMeshColliderComponent::CConvexMeshColliderComponent(CGameObject& aParent)
+CConvexMeshColliderComponent::CConvexMeshColliderComponent(CGameObject& aParent, PxMaterial* aMaterial)
 	: CBehaviour(aParent)
 	, myShape(nullptr)
+	, myMaterial(aMaterial)
 {
+	if (myMaterial == nullptr) {
+		myMaterial = CEngine::GetInstance()->GetPhysx().CreateMaterial(CPhysXWrapper::materialfriction::basic);
+	}
 }
 
 CConvexMeshColliderComponent::~CConvexMeshColliderComponent()

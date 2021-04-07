@@ -220,6 +220,11 @@ PxMaterial* CPhysXWrapper::CreateMaterial(materialfriction amaterial)
 	return nullptr;
 }
 
+PxMaterial* CPhysXWrapper::CreateCustomMaterial(const float& aDynamicFriction, const float& aStaticFriction, const float& aBounciness)
+{
+	return myPhysics->createMaterial((PxReal)aDynamicFriction, (PxReal)aStaticFriction, (PxReal)aBounciness);
+}
+
 void CPhysXWrapper::Simulate()
 {
 	if (GetPXScene() != nullptr) {
@@ -302,7 +307,7 @@ void CPhysXWrapper::Cooking(const std::vector<CGameObject*>& gameObjectsToCook, 
 
 			PxConvexMeshGeometry pMeshGeometry(pxMesh);
 
-			PxShape* convexShape = myPhysics->createShape(pMeshGeometry, *CreateMaterial(CPhysXWrapper::materialfriction::basic), true);
+			PxShape* convexShape = myPhysics->createShape(pMeshGeometry, *gameObjectsToCook[i]->GetComponent<CConvexMeshColliderComponent>()->GetMaterial(), true);
 			gameObjectsToCook[i]->GetComponent<CConvexMeshColliderComponent>()->SetShape(convexShape);
 		}
 

@@ -43,6 +43,7 @@ public:
 
 	PxRaycastBuffer Raycast(Vector3 origin, Vector3 direction, float distance);
 	PxMaterial* CreateMaterial(materialfriction amaterial);
+	PxMaterial* CreateCustomMaterial(const float& aDynamicFriction, const float& aStaticFriction, const float& aBounciness);
 	CRigidDynamicBody* CreateDynamicRigidbody(const CTransformComponent& aTransform);
 	CRigidDynamicBody* CreateDynamicRigidbody(const PxTransform& aTransform);
 

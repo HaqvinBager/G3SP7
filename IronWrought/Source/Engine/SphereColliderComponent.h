@@ -4,12 +4,13 @@
 namespace physx
 {
 	class PxShape;
+	class PxMaterial;
 }
 
 class CSphereColliderComponent : public CBehaviour
 {
 public:
-	CSphereColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const float& aRadius, bool aIsStatic = false);
+	CSphereColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const float& aRadius, bool aIsStatic = false, physx::PxMaterial* aMaterial = nullptr);
 	~CSphereColliderComponent() override;
 
 	void Awake() override;
@@ -21,6 +22,7 @@ public:
 
 private:
 	physx::PxShape* myShape;
+	physx::PxMaterial* myMaterial;
 	Vector3 myPositionOffset;
 	float myRadius;
 };
