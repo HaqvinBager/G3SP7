@@ -24,7 +24,7 @@ CGame::~CGame()
 void CGame::Init()
 {
 #ifdef NDEBUG
-	InitRealGame();// May crash - Aki 2021 04 06
+	InitRealGame();
 #else
 	InitDev();
 #endif
@@ -44,14 +44,14 @@ void CGame::InitDev()
 		{
 			//CStateStack::EState::LoadLevel,
 			CStateStack::EState::InGame,
-			CStateStack::EState::PauseMenu
+			CStateStack::EState::PauseMenu,
+			CStateStack::EState::MainMenu
 		},
 		CStateStack::EState::InGame);
 }
 
 void CGame::InitRealGame()
 {
-	// Currently we wish to only have an InGame and PauseMenu state (preprod - 05 JAN)
 	myStateStack.Awake(
 		{
 			CStateStack::EState::BootUp,

@@ -21,8 +21,9 @@
 using namespace rapidjson;
 
 CCanvas::CCanvas() :
-	myBackground(nullptr),
-	myIsEnabled(true)
+	myBackground(nullptr)
+	, myIsEnabled(true)
+	, myIsHUDCanvas(false)
 {
 }
 
@@ -30,7 +31,9 @@ CCanvas::~CCanvas()
 {
 	UnsubscribeToMessages();
 	myMessageTypes.clear();
-	delete myBackground;
+
+	// Scene takes ownership.
+	/*delete myBackground;
 	myBackground = nullptr;
 
 	CScene& scene = IRONWROUGHT_ACTIVE_SCENE;
@@ -69,6 +72,52 @@ CCanvas::~CCanvas()
 	for (size_t i = 0; i < myTexts.size(); ++i)
 	{
 		scene.RemoveInstance(myTexts[i]);
+		delete myTexts[i];
+		myTexts[i] = nullptr;
+	}
+	myTexts.clear();*/
+}
+
+void CCanvas::ClearFromScene(CScene& aScene)
+{
+	aScene.RemoveInstance(myBackground);
+	delete myBackground;
+	myBackground = nullptr;
+
+	for (size_t i = 0; i < myAnimatedUIs.size(); ++i)
+	{
+		aScene.RemoveInstance(myAnimatedUIs[i]);
+		delete myAnimatedUIs[i];
+		myAnimatedUIs[i] = nullptr;
+	}
+	myAnimatedUIs.clear();
+
+	for (size_t i = 0; i < myButtons.size(); ++i)
+	{
+		delete myButtons[i];
+		myButtons[i] = nullptr;
+	}
+	myButtons.clear();
+
+	for (size_t i = 0; i < mySprites.size(); ++i)
+	{
+		aScene.RemoveInstance(mySprites[i]);
+		delete mySprites[i];
+		mySprites[i] = nullptr;
+	}
+	mySprites.clear();
+
+	for (size_t i = 0; i < myButtonTexts.size(); ++i)
+	{
+		aScene.RemoveInstance(myButtonTexts[i]);
+		delete myButtonTexts[i];
+		myButtonTexts[i] = nullptr;
+	}
+	myButtonTexts.clear();
+
+	for (size_t i = 0; i < myTexts.size(); ++i)
+	{
+		aScene.RemoveInstance(myTexts[i]);
 		delete myTexts[i];
 		myTexts[i] = nullptr;
 	}
@@ -304,6 +353,19 @@ void CCanvas::ReInit(std::string aFilePath, CScene& aScene, bool addToScene)
 
 void CCanvas::Update()
 {
+	if (myIsHUDCanvas)
+	{
+		if (Input::GetInstance()->IsMousePressed(Input::EMouseButton::Left))
+		{
+			mySprites[0]->PlayAnimation(0);
+		}
+
+		if (Input::GetInstance()->IsMouseReleased(Input::EMouseButton::Left))
+		{
+			mySprites[0]->PlayAnimation(0, false, true);
+		}
+	}
+
 	for (unsigned int i = 0; i < mySprites.size(); ++i)
 	{
 		mySprites[i]->Update();

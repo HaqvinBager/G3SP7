@@ -119,13 +119,13 @@ CButton::CButton(SButtonData& someData, CScene& aScene)
 CButton::~CButton()
 {
 	// Scene should handle the deletion... ? / Aki 2021/01/04
-	IRONWROUGHT->GetActiveScene().RemoveInstance(mySprites.at(static_cast<size_t>(EButtonState::Idle)));
-	IRONWROUGHT->GetActiveScene().RemoveInstance(mySprites.at(static_cast<size_t>(EButtonState::Hover)));
-	IRONWROUGHT->GetActiveScene().RemoveInstance(mySprites.at(static_cast<size_t>(EButtonState::Click)));
-
-	delete mySprites.at(static_cast<size_t>(EButtonState::Idle));
-	delete mySprites.at(static_cast<size_t>(EButtonState::Hover));
-	delete mySprites.at(static_cast<size_t>(EButtonState::Click));
+//	IRONWROUGHT->GetActiveScene().RemoveInstance(mySprites.at(static_cast<size_t>(EButtonState::Idle)));
+//	IRONWROUGHT->GetActiveScene().RemoveInstance(mySprites.at(static_cast<size_t>(EButtonState::Hover)));
+//	IRONWROUGHT->GetActiveScene().RemoveInstance(mySprites.at(static_cast<size_t>(EButtonState::Click)));
+//
+//	delete mySprites.at(static_cast<size_t>(EButtonState::Idle));
+//	delete mySprites.at(static_cast<size_t>(EButtonState::Hover));
+//	delete mySprites.at(static_cast<size_t>(EButtonState::Click));
 }
 
 void CButton::Init(SButtonData& someData, CScene& aScene)
