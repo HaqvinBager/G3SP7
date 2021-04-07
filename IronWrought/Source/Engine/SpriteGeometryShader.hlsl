@@ -28,8 +28,13 @@ void main(
     for (unsigned int index = 0; index < 4; index++)
     {
         GeometryToPixel vertex;
-        vertex.myPosition = inputVertex.myPosition;
-        vertex.myPosition.xy += offset[index] * inputVertex.mySize * aspectRatioDivider;
+        vertex.myPosition = 0.0f;
+        vertex.myPosition += inputVertex.myPosition;
+        vertex.myPosition.xy += offset[index] * inputVertex.mySize;
+        float2 intermediate = vertex.myPosition.xy;
+        vertex.myPosition.x = intermediate.x * cos(inputVertex.myRotation) - intermediate.y * sin(inputVertex.myRotation);
+        vertex.myPosition.y = intermediate.x * sin(inputVertex.myRotation) + intermediate.y * cos(inputVertex.myRotation);
+        vertex.myPosition.xy *= aspectRatioDivider;
         vertex.myColor = inputVertex.myColor;
         vertex.myUV = uv[index];
         output.Append(vertex);

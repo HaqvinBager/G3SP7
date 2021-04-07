@@ -314,6 +314,14 @@ void CCanvas::Update()
 		mySprites[0]->PlayAnimation(0, false, true);
 	}
 
+	if (!mySprites[0]->GetShouldAnimate() && !INPUT->IsMouseDown(Input::EMouseButton::Left))
+	{
+		mySprites[0]->PlayAnimation(1, true);
+	}
+	else if (!mySprites[0]->GetShouldAnimate()){
+		mySprites[0]->Rotate(CTimer::Dt()*720.0f);
+	}
+
 	for (unsigned int i = 0; i < mySprites.size(); ++i)
 	{
 		mySprites[i]->Update();
@@ -499,6 +507,7 @@ bool CCanvas::InitSprite(const rapidjson::GenericObject<false, rapidjson::Value>
 			data.myVerticalStartingPosition = animations[i]["VerticalStartingPos"].GetFloat();
 			data.myNumberOfFrames = animations[i]["NumberOfFrames"].GetInt();
 			data.mySpeedInFramesPerSecond = animations[i]["FramesPerSecond"].GetFloat();
+			data.myRotationSpeedInSeconds = animations[i]["RotationSpeedPerSecond"].GetFloat();
 			spriteAnimations.push_back(data);
 		}
 	}
