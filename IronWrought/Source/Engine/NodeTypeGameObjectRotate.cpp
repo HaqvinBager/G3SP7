@@ -35,7 +35,7 @@ int CNodeTypeGameObjectRotate::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 	//float z = NodeData::Get<float>(someData) * CTimer::Dt() * 3.14159265f / 180.0f;
 
 	DirectX::SimpleMath::Quaternion currentRotation = gameObject->myTransform->Rotation();
-	DirectX::SimpleMath::Quaternion rotation = DirectX::SimpleMath::Quaternion::CreateFromYawPitchRoll(newRotation.x, newRotation.y, newRotation.z);
+	DirectX::SimpleMath::Quaternion rotation = DirectX::SimpleMath::Quaternion::CreateFromYawPitchRoll(newRotation.y, newRotation.x, newRotation.z);
 	rotation *= currentRotation;
 	gameObject->myTransform->Rotation(rotation);
 
