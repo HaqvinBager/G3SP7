@@ -307,7 +307,6 @@ void CEngine::SetActiveScene(const CStateStack::EState aState)
 
 CScene& CEngine::GetActiveScene()
 {
-
 	//ENGINE_BOOL_POPUP(mySceneMap[myActiveState], "The Scene you tried to Get was nullptr!");
 	return *mySceneMap[myActiveState];
 }
@@ -323,8 +322,10 @@ void CEngine::RemoveScene(CStateStack::EState aState)
 	if (mySceneMap.find(aState) == mySceneMap.end())
 		return;
 
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::ComponentAdded, mySceneMap.at(aState)); 
 	delete mySceneMap.at(aState);
 	mySceneMap.at(aState) = nullptr;
+	mySceneMap.erase(aState);
 }
 
 void CEngine::ClearModelFactory()
