@@ -38,12 +38,14 @@ public:
 	std::vector<EMessageType> GetMessagesToSend() { return myMessagesToSend; }
 
 private:
+	CButton();
 	CButton(SButtonData& someData, CScene& aScene);
 	~CButton();
+	void Init(SButtonData& someData, CScene& aScene);
 
 private:
 	std::vector<EMessageType> myMessagesToSend;
-	std::array<CSpriteInstance*, 3> mySprites;
+	std::array<CSpriteInstance*, 3> mySprites = { nullptr, nullptr, nullptr };
 	SUIRect myRect;
 	EButtonState myState;
 	bool myEnabled;

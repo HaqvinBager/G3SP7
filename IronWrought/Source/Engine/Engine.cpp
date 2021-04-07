@@ -332,6 +332,15 @@ void CEngine::ClearModelFactory()
 	myModelFactory->ClearFactory();
 }
 
+void CEngine::ShowCursor()
+{
+	myWindowHandler->ShowAndUnlockCursor();
+}
+void CEngine::HideCursor()
+{
+	myWindowHandler->HideAndLockCursor();
+}
+
 void CEngine::LoadGraph(const std::string& aSceneName)
 {
 	myGraphManager->Load(aSceneName);

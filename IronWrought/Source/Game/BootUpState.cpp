@@ -11,6 +11,8 @@
 
 #include <JsonReader.h>
 
+#include <Input.h>
+
 CBootUpState::CBootUpState(CStateStack& aStateStack, const CStateStack::EState aState)
 	: CState(aStateStack, aState)
 	, myTimer(0.0f)
@@ -55,6 +57,7 @@ void CBootUpState::Start()
 void CBootUpState::Stop()
 {
 	myLogos.clear();
+	CEngine::GetInstance()->RemoveScene(myState);
 }
 
 void CBootUpState::Update()
@@ -83,11 +86,22 @@ void CBootUpState::Update()
 
 		if (myLogoToRender >= myLogos.size())
 		{
-			myStateStack.PopTopAndPush(CStateStack::EState::InGame);
+			myStateStack.PopTopAndPush(CStateStack::EState::MainMenu);
 			return;
 		}
 
 		myLogos[myLogoToRender]->SetShouldRender(true);
+	}
+
+	if (INPUT->IsKeyDown(VK_SPACE))
+	{
+		myLogoToRender++;
+
+		if (myLogoToRender >= myLogos.size())
+		{
+			myStateStack.PopTopAndPush(CStateStack::EState::MainMenu);
+			return;
+		}
 	}
 }
 

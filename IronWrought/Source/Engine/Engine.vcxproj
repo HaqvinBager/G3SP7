@@ -193,6 +193,11 @@
     <ClInclude Include="AudioChannel.h" />
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Behaviour.h" />
+    <ClInclude Include="BoxColliderComponent.h" />
+    <ClInclude Include="CharacterReportCallback.h" />
+    <ClInclude Include="GravityGloveEditor.h" />
+    <ClInclude Include="NodeTypeAddForce.h" />
+    <ClInclude Include="SphereColliderComponent.h" />
     <ClInclude Include="BoxLight.h" />
     <ClInclude Include="BoxLightComponent.h" />
     <ClInclude Include="CameraSetting.h" />
@@ -425,6 +430,11 @@
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="AudioChannel.cpp" />
     <ClCompile Include="AudioManager.cpp" />
+    <ClCompile Include="BoxColliderComponent.cpp" />
+    <ClCompile Include="CharacterReportCallback.cpp" />
+    <ClCompile Include="GravityGloveEditor.cpp" />
+    <ClCompile Include="NodeTypeAddForce.cpp" />
+    <ClCompile Include="SphereColliderComponent.cpp" />
     <ClCompile Include="BoxLight.cpp" />
     <ClCompile Include="BoxLightComponent.cpp" />
     <ClCompile Include="LightRenderer.cpp" />
@@ -818,6 +828,11 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="FullscreenPixelShader_FXAA.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="FullscreenPixelShader_GammaCorrection.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>

@@ -37,6 +37,8 @@
 #include <vector>
 #include <memory>
 #include <utility>
+#include "MainSingleton.h"
+#include "PostMaster.h"
 
 class CTransformComponent;
 class CComponent;
@@ -83,7 +85,8 @@ public:
 	void IsStatic(const bool aIsStatic) { myIsStatic = aIsStatic; }
 
 private:
-	std::vector<CComponent*> myComponents;
+	std::vector<std::unique_ptr<CComponent>> myComponents;
+	//std::vector<CComponent*> myComponents;
 	bool myIsActive;
 	bool myIsStatic;
 	const int myInstanceID;
@@ -92,9 +95,14 @@ private:
 template<class T, typename... Args >
 T* CGameObject::AddComponent(Args&&... aParams)
 {
-	myComponents.emplace_back(std::move(new T(std::forward<Args>(aParams)...)));
-	return dynamic_cast<T*>(myComponents.back());
+	myComponents.push_back(std::make_unique<T>(std::forward<Args>(aParams)...));
+	CMainSingleton::PostMaster().Send({ EMessageType::ComponentAdded, myComponents.back().get() });
+	//std::function<void()>([this](CComponent* aComponent) { aComponent->Awake(); }) }
+	return dynamic_cast<T*>(myComponents.back().get());
 }
+
+//myComponents.emplace_back(std::move(new T(*this, std::forward<Args>(aParams)...)));
+//myComponents.back()->myParent = *this;
 
 template<class T>
 inline void CGameObject::RemoveComponent()
@@ -105,9 +113,9 @@ inline void CGameObject::RemoveComponent()
 		if (type == typeid(*myComponents[i]))
 		{
 			std::swap(myComponents[i], myComponents[myComponents.size() - 1]);
-			delete myComponents[myComponents.size() - 1];
-			myComponents[myComponents.size() - 1] = nullptr;
 			myComponents.pop_back();
+			//myComponents[myComponents.size() - 1];
+			//myComponents[myComponents.size() - 1] = nullptr;
 		}
 	}
 }
@@ -120,7 +128,7 @@ inline T* CGameObject::GetComponent() const
 	{
 		if (type == typeid(*myComponents[i]))
 		{
-			return dynamic_cast<T*>(myComponents[i]);
+			return dynamic_cast<T*>(myComponents[i].get());
 		}
 	}
 	//throw std::exception("Component is missing.");

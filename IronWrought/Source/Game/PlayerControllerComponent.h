@@ -6,6 +6,7 @@ class CCharacterController;
 class CGameObject;
 class CCameraControllerComponent;
 class CPlayerAnimationController;
+class CPlayerComponent;
 class CPlayerControllerComponent : public CComponent, public IInputObserver
 {
 public:
@@ -24,7 +25,11 @@ public:
 	void SetControllerPosition(const Vector3& aPos);
 	void Crouch();
 
+	void ResetPlayerPosition();
+
 	CCharacterController* GetCharacterController();
+
+	const Vector3 GetLinearVelocity();
 
 	const float WalkSpeed() const { return myWalkSpeed; }
 	void WalkSpeed(const float aSpeed) { myWalkSpeed = aSpeed; }
@@ -38,6 +43,7 @@ public:
 private:
 	CCharacterController* myController;
 	CPlayerAnimationController* myAnimationComponentController;
+	CPlayerComponent* myPlayerComponent;
 	// A.k.a the players eyes :U // Shortcut to access for freecam toggle, Aki 12/3/2021
 	CCameraControllerComponent* myCamera;
 	//CGameObject* myFaceMesh;

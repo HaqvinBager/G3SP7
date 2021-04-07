@@ -13,6 +13,7 @@
 #include "CameraControllerComponent.h"
 
 #include "PlayerAnimationController.h"
+#include "PlayerComponent.h"
 
 // TEMP
 static const float gPretendObjectDistanceFromPlayer = 5.0f;// TEMP
@@ -43,8 +44,8 @@ CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, 
 	INPUT_MAPPER->AddObserver(EInputEvent::ResetEntities, this);
 	INPUT_MAPPER->AddObserver(EInputEvent::SetResetPointEntities, this);
 
-	myController = CEngine::GetInstance()->GetPhysx().CreateCharacterController(gameObject.myTransform->Position(), myColliderRadius, myColliderHeightStanding);
-	GameObject().myTransform->Position(myController->GetPosition());// This is a test / Aki 2021 03 12 
+	myController = CEngine::GetInstance()->GetPhysx().CreateCharacterController(gameObject.myTransform->Position(), myColliderRadius, myColliderHeightStanding, GameObject().myTransform);
+	GameObject().myTransform->Position(myController->GetPosition());// This is a test / Aki 2021 03 12
 
 	GameObject().myTransform->FetchChildren()[0]->Position({ 0.0f, myCameraPosYStanding, myCameraPosZ });
 	GameObject().myTransform->FetchChildren()[0]->Rotation({ 0.0f, 0.0f, 0.0f });
@@ -78,6 +79,7 @@ void CPlayerControllerComponent::Awake()
 void CPlayerControllerComponent::Start()
 {
 	myRespawnPosition = myController->GetPosition();
+
 }
 
 void CPlayerControllerComponent::Update()
@@ -88,7 +90,16 @@ void CPlayerControllerComponent::Update()
 #endif
 	Move({0.0f, myMovement.y, 0.0f});
 	//Move(myMovement * mySpeed);
-	
+
+	/*if (myPlayerComponent->getIsAlive() == false)
+	{
+		myController->SetPosition(myRespawnPosition);
+		GameObject().myTransform->Position(myController->GetPosition());
+
+		myPlayerComponent->setIsAlive(true);
+		myPlayerComponent->resetHealth();
+	}*/
+
 	if (myHasJumped == true)
 	{
 		myMovement.y = myJumpHeight;
@@ -99,17 +110,23 @@ void CPlayerControllerComponent::Update()
 	{
 		myMovement.y -= myFallSpeed * CTimer::Dt();
 	}
-	
+
 	if (myIsJumping == false)
 	{
 		myMovement.y = myMovement.y >-0.0f ? myMovement.y - myFallSpeed : myMovement.y;
 	}
-
+	//std::cout << "Velocity X: " <<  myController->GetController().getActor()->getLinearVelocity().x << "Velocity Y: " << myController->GetController().getActor()->getLinearVelocity().y << "Velocity Z: " << myController->GetController().getActor()->getLinearVelocity().z << std::endl;;
 	GameObject().myTransform->Position(myController->GetPosition());
 	gPretendObjectCurrentDistance = max(gPretendObjectCurrentDistance -  CTimer::Dt() * 12.0f, 0.0f);
 	myAnimationComponentController->UpdateBlendValue(min(gPretendObjectCurrentDistance / gPretendObjectDistanceFromPlayer, 1.0f));
-
 	myAnimationComponentController->Update();
+
+	if (Input::GetInstance()->IsKeyPressed('R'))
+	{
+
+		myController->SetPosition(myRespawnPosition);
+
+	}
 }
 
 void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
@@ -185,13 +202,13 @@ void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
 
 	myMovement.y = y;
 	Move(myMovement * mySpeed);
-	myMovement = { 0.f, myMovement.y,0.f };	
+	myMovement = { 0.f, myMovement.y,0.f };
 }
 
 void CPlayerControllerComponent::Move(Vector3 aDir)
 {
 	physx::PxControllerCollisionFlags collisionflag = myController->GetController().move({aDir.x, aDir.y, aDir.z}, 0, CTimer::Dt(), 0);
-	if (collisionflag == physx::PxControllerCollisionFlag::eCOLLISION_DOWN) 
+	if (collisionflag == physx::PxControllerCollisionFlag::eCOLLISION_DOWN)
 	{
 		myCanJump = true;
 		if(aDir.x != 0.0f || aDir.z != 0.0f)
@@ -224,7 +241,19 @@ void CPlayerControllerComponent::Crouch()
 	}
 }
 
+void CPlayerControllerComponent::ResetPlayerPosition()
+{
+	myController->SetPosition(myRespawnPosition);
+}
+
 CCharacterController* CPlayerControllerComponent::GetCharacterController()
 {
 	return myController;
+}
+
+const Vector3 CPlayerControllerComponent::GetLinearVelocity()
+{
+	const PxVec3 pxVec3 = myController->GetController().getActor()->getLinearVelocity();
+	//const Vector3& vec3 = {pxVec3.x, pxVec3.y, pxVec3.z};
+	return {pxVec3.x, pxVec3.y, pxVec3.z};
 }

@@ -1,17 +1,23 @@
 #include "stdafx.h"
 #include "StateStack.h"
 #include "State.h"
-#include <InGameState.h>
-#include <BootUpState.h>
 #include "Engine.h"
+
+#include <BootUpState.h>
+#include <MainMenuState.h>
+#include <InGameState.h>
+#include <PauseMenuState.h>
 
 CStateStack::~CStateStack()
 {
-	while (!myStateStack.empty())// change this
+	auto it = myStateMap.begin();
+	while (it != myStateMap.end())
 	{
-		delete myStateStack.top();
-		myStateStack.pop();
+		delete it->second;
+		it->second = nullptr;
+		++it;
 	}
+
 }
 
 bool CStateStack::Awake(std::initializer_list<CStateStack::EState> someStates, const EState aStartState)
@@ -24,8 +30,16 @@ bool CStateStack::Awake(std::initializer_list<CStateStack::EState> someStates, c
 			myStateMap[state] = new CBootUpState(*this);
 			myStateMap[state]->Awake();
 			break;
+		case CStateStack::EState::MainMenu:
+			myStateMap[state] = new CMainMenuState(*this);
+			myStateMap[state]->Awake();
+			break;
 		case CStateStack::EState::InGame:
 			myStateMap[state] = new CInGameState(*this);
+			myStateMap[state]->Awake();
+			break;
+		case CStateStack::EState::PauseMenu:
+			myStateMap[state] = new CPauseMenuState(*this);
 			myStateMap[state]->Awake();
 			break;
 		default:
@@ -51,7 +65,7 @@ bool CStateStack::PopState()
 {
 	ENGINE_ERROR_BOOL_MESSAGE(!myStateStack.empty(), "Trying to pop an empty stack");
 	myStateStack.top()->Stop();
-	CEngine::GetInstance()->RemoveScene(myStateStack.top()->myState);
+	/*CEngine::GetInstance()->RemoveScene(myStateStack.top()->myState);*/
 	myStateStack.pop();
 	return true;
 }
