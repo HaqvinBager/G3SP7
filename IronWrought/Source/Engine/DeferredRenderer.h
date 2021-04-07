@@ -22,10 +22,12 @@ public:
 	bool Init(CDirectXFramework* aFramework);
 
 	void GenerateGBuffer(CCameraComponent* aCamera, std::vector<CGameObject*>& aGameObjectList, std::vector<CGameObject*>& aInstancedGameObjectList);
-	void Render(CCameraComponent* aCamera, CEnvironmentLight* anEnvironmentLight);
-	void Render(CCameraComponent* aCamera, std::vector<CPointLight*>& aPointLightList);
-	void Render(CCameraComponent* aCamera, std::vector<CSpotLight*>& aSpotLightList);
-	void RenderVolumetricLight(CCameraComponent* aCamera, CEnvironmentLight* anEnvironmentLight);
+	//void Render(CCameraComponent* aCamera, CEnvironmentLight* anEnvironmentLight);
+	//void Render(CCameraComponent* aCamera, std::vector<CPointLight*>& aPointLightList);
+	//void Render(CCameraComponent* aCamera, std::vector<CSpotLight*>& aSpotLightList);
+	//void RenderVolumetricLight(CCameraComponent* aCamera, CEnvironmentLight* anEnvironmentLight);
+	void RenderSkybox(CCameraComponent* aCamera, CEnvironmentLight* anEnvironmentLight);
+
 
 	bool ToggleRenderPass();
 
@@ -92,6 +94,10 @@ private:
 		/*SlimMatrix44*/Matrix myBones[64];
 	} myBoneBufferData;
 
+	struct SSkyboxTransformData {
+		Matrix myCameraViewProjection;
+	} mySkyboxTransformData;
+
 	static_assert((sizeof(SBoneBufferData) % 16) == 0, "SBoneBufferData size not padded correctly");
 
 private:
@@ -105,6 +111,7 @@ private:
 	ID3D11Buffer* myPointLightBuffer;
 	ID3D11Buffer* mySpotLightBuffer;
 	ID3D11Buffer* myBoneBuffer;
+	ID3D11Buffer* mySkyboxTransformBuffer;
 
 	ID3D11Buffer* myPointLightVertexBuffer;
 	ID3D11Buffer* myPointLightIndexBuffer;
@@ -121,6 +128,7 @@ private:
 
 	ID3D11VertexShader* myPointLightVertexShader;
 	ID3D11VertexShader* mySpotLightVertexShader;
+	ID3D11VertexShader* mySkyboxVertexShader;
 // Geometry shaders.
 	ID3D11GeometryShader* myPointLightGeometryShader;
 	ID3D11GeometryShader* mySpotLightGeometryShader;
@@ -131,6 +139,7 @@ private:
 	ID3D11PixelShader* myPointLightShader;
 	ID3D11PixelShader* mySpotLightShader;
 	ID3D11PixelShader* myDirectionalVolumetricLightShader;
+	ID3D11PixelShader* mySkyboxPixelShader;
 // Samplers.
 	ID3D11SamplerState* mySamplerState;
 	ID3D11SamplerState* myShadowSampler;
@@ -146,5 +155,13 @@ private:
 	UINT myPointLightNumberOfIndices;
 	UINT myPointLightStride;
 	UINT myPointLightOffset;
+
+	ID3D11Buffer* mySkyboxVertexBuffer;
+	ID3D11Buffer* mySkyboxIndexBuffer;
+	ID3D11InputLayout* mySkyboxInputLayout;
+	UINT mySkyboxNumberOfVertices;
+	UINT mySkyboxNumberOfIndices;
+	UINT mySkyboxStride;
+	UINT mySkyboxOffset;
 };
 

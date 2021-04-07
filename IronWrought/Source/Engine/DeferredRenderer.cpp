@@ -28,6 +28,7 @@ CDeferredRenderer::CDeferredRenderer()
 	, myLightBuffer(nullptr)
 	, myPointLightBuffer(nullptr)
 	, mySpotLightBuffer(nullptr)
+	, mySkyboxTransformBuffer(nullptr)
 	, myPointLightVertexBuffer(nullptr)
 	, myPointLightIndexBuffer(nullptr)
 	, mySpotLightVertexBuffer(nullptr)
@@ -38,6 +39,7 @@ CDeferredRenderer::CDeferredRenderer()
 	, myVertexPaintModelVertexShader(nullptr)
 	, myPointLightVertexShader(nullptr)
 	, mySpotLightVertexShader(nullptr)
+	, mySkyboxVertexShader(nullptr)
 	, myPointLightGeometryShader(nullptr)
 	, mySpotLightGeometryShader(nullptr)
 	, myEnvironmentLightShader(nullptr)
@@ -46,6 +48,7 @@ CDeferredRenderer::CDeferredRenderer()
 	, mySpotLightShader(nullptr)
 	, myVertexPaintPixelShader(nullptr)
 	, myDirectionalVolumetricLightShader(nullptr)
+	, mySkyboxPixelShader(nullptr)
 	, mySamplerState(nullptr)
 	, myShadowSampler(nullptr)
 	, myCurrentGBufferPixelShader(nullptr)
@@ -60,6 +63,13 @@ CDeferredRenderer::CDeferredRenderer()
 	, myPointLightNumberOfIndices(0)
 	, myPointLightStride(0)
 	, myPointLightOffset(0)
+	, mySkyboxVertexBuffer(nullptr)
+	, mySkyboxIndexBuffer(nullptr)
+	, mySkyboxInputLayout(nullptr)
+	, mySkyboxNumberOfVertices(0)
+	, mySkyboxNumberOfIndices(0)
+	, mySkyboxStride(0)
+	, mySkyboxOffset(0)
 
 {}
 
@@ -97,6 +107,9 @@ bool CDeferredRenderer::Init(CDirectXFramework* aFramework)
 
 	bufferDescription.ByteWidth = static_cast<UINT>(sizeof(SBoneBufferData) + (16 - (sizeof(SBoneBufferData) % 16)));
 	ENGINE_HR_BOOL_MESSAGE(device->CreateBuffer(&bufferDescription, nullptr, &myBoneBuffer), "Bone Buffer could not be created.");
+
+	bufferDescription.ByteWidth = sizeof(SSkyboxTransformData);
+	ENGINE_HR_BOOL_MESSAGE(device->CreateBuffer(&bufferDescription, nullptr, &mySkyboxTransformBuffer), "Skybox Transform Buffer could not be created.");
 
 	//Vertex Setup
 	struct SpotLightVertex
@@ -246,6 +259,92 @@ bool CDeferredRenderer::Init(CDirectXFramework* aFramework)
 	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
 
 	ENGINE_HR_BOOL_MESSAGE(device->CreateSamplerState(&samplerDesc, &myShadowSampler), "Shadow Sampler could not be created.");
+
+#pragma region Skybox
+	// Skybox
+	struct SkyboxVertex
+	{
+		float x, y, z;
+	} vertices[24] = {
+		// X      Y      Z    
+		{ -0.5f, -0.5f, -0.5f },
+		{  0.5f, -0.5f, -0.5f },
+		{ -0.5f,  0.5f, -0.5f },
+		{  0.5f,  0.5f, -0.5f },
+		{ -0.5f, -0.5f,  0.5f },
+		{  0.5f, -0.5f,  0.5f },
+		{ -0.5f,  0.5f,  0.5f },
+		{  0.5f,  0.5f,  0.5f },
+		// X      Y      Z    
+		{ -0.5f, -0.5f, -0.5f },
+		{ -0.5f,  0.5f, -0.5f },
+		{ -0.5f, -0.5f,  0.5f },
+		{ -0.5f,  0.5f,  0.5f },
+		{  0.5f, -0.5f, -0.5f },
+		{  0.5f,  0.5f, -0.5f },
+		{  0.5f, -0.5f,  0.5f },
+		{  0.5f,  0.5f,  0.5f },
+		// X      Y      Z    
+		{ -0.5f, -0.5f, -0.5f },
+		{  0.5f, -0.5f, -0.5f },
+		{ -0.5f, -0.5f,  0.5f },
+		{  0.5f, -0.5f,  0.5f },
+		{ -0.5f,  0.5f, -0.5f },
+		{  0.5f,  0.5f, -0.5f },
+		{ -0.5f,  0.5f,  0.5f },
+		{  0.5f,  0.5f,  0.5f }
+	};
+	unsigned int indices[36] = {
+		0,2,1,
+		2,3,1,
+		4,5,7,
+		4,7,6,
+		8,10,9,
+		10,11,9,
+		12,13,15,
+		12,15,14,
+		16,17,18,
+		18,17,19,
+		20,23,21,
+		20,22,23
+	};
+
+	D3D11_BUFFER_DESC skyboxVertexBufferDesc = { 0 };
+	skyboxVertexBufferDesc.ByteWidth = sizeof(vertices);
+	skyboxVertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	skyboxVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
+	D3D11_SUBRESOURCE_DATA skyboxSubVertexResourceData = { 0 };
+	skyboxSubVertexResourceData.pSysMem = vertices;
+
+	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateBuffer(&skyboxVertexBufferDesc, &skyboxSubVertexResourceData, &mySkyboxVertexBuffer), "Skybox Vertex Buffer could not be created.");
+
+	D3D11_BUFFER_DESC skyboxIndexBufferDesc = { 0 };
+	skyboxIndexBufferDesc.ByteWidth = sizeof(indices);
+	skyboxIndexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	skyboxIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+
+	D3D11_SUBRESOURCE_DATA skyboxIndexSubresourceData = { 0 };
+	skyboxIndexSubresourceData.pSysMem = indices;
+
+	ENGINE_HR_BOOL_MESSAGE(aFramework->GetDevice()->CreateBuffer(&skyboxIndexBufferDesc, &skyboxIndexSubresourceData, &mySkyboxIndexBuffer), "Skybox Index Buffer could not be created.");
+
+	mySkyboxNumberOfVertices = static_cast<UINT>(sizeof(vertices) / sizeof(SkyboxVertex));
+	mySkyboxNumberOfIndices = static_cast<UINT>(sizeof(indices) / sizeof(UINT));
+	mySkyboxStride = sizeof(SkyboxVertex);
+	mySkyboxOffset = 0;
+
+	Graphics::CreateVertexShader("Shaders/SkyboxVertexShader.cso", aFramework, &mySkyboxVertexShader, vsData);
+	Graphics::CreatePixelShader("Shaders/SkyboxPixelShader.cso", aFramework, &mySkyboxPixelShader);
+
+	D3D11_INPUT_ELEMENT_DESC skyboxLayout[] =
+	{
+		{"POSITION"	,	0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+	};
+	ENGINE_HR_MESSAGE(aFramework->GetDevice()->CreateInputLayout(skyboxLayout, sizeof(skyboxLayout) / sizeof(D3D11_INPUT_ELEMENT_DESC), vsData.data(), vsData.size(), &mySkyboxInputLayout), "Skybox Input Layout could not be created.");
+
+	// Skybox
+#pragma endregion
 
 	return true;
 }
@@ -424,213 +523,239 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 	myContext->PSSetShaderResources(11, 1, &nullView);// DN4
 	myObjectBufferData.myNumberOfDetailNormals = 0;// Making sure to reset it!
 }
+//
+//void CDeferredRenderer::Render(CCameraComponent* aCamera, CEnvironmentLight* anEnvironmentLight)
+//{
+//	SM::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
+//	myFrameBufferData.myCameraPosition = SM::Vector4{ cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f };
+//	myFrameBufferData.myToCameraSpace = cameraMatrix.Invert();
+//	myFrameBufferData.myToWorldFromCamera = cameraMatrix;
+//	myFrameBufferData.myToProjectionSpace = aCamera->GetProjection();
+//	myFrameBufferData.myToCameraFromProjection = aCamera->GetProjection().Invert();
+//	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
+//
+//	myContext->PSSetConstantBuffers(0, 1, &myFrameBuffer);
+//	ID3D11ShaderResourceView* environmentLightShaderResource = *anEnvironmentLight->GetCubeMap();
+//	myContext->PSSetShaderResources(0, 1, &environmentLightShaderResource);
+//
+//	// Update lightbufferdata and fill lightbuffer
+//	myLightBufferData.myDirectionalLightDirection = anEnvironmentLight->GetDirection();
+//	myLightBufferData.myDirectionalLightColor = anEnvironmentLight->GetColor();
+//	myLightBufferData.myDirectionalLightPosition = anEnvironmentLight->GetShadowPosition();
+//	myLightBufferData.myToDirectionalLightView = anEnvironmentLight->GetShadowView();
+//	myLightBufferData.myToDirectionalLightProjection = anEnvironmentLight->GetShadowProjection();
+//	BindBuffer(myLightBuffer, myLightBufferData, "Light Buffer");
+//	myContext->PSSetConstantBuffers(2, 1, &myLightBuffer);
+//
+//	myContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+//	myContext->IASetInputLayout(nullptr);
+//	myContext->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
+//	myContext->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0);
+//
+//	myContext->GSSetShader(nullptr, nullptr, 0);
+//
+//	myContext->VSSetShader(myFullscreenShader, nullptr, 0);
+//
+//	if(myCurrentRenderPassShader)
+//		myContext->PSSetShader(myRenderPassShaders[myRenderPassIndex], nullptr, 0);
+//	else
+//		myContext->PSSetShader(myEnvironmentLightShader, nullptr, 0);
+//
+//	myContext->PSSetSamplers(0, 1, &mySamplerState);
+//	myContext->PSSetSamplers(1, 1, &myShadowSampler);
+//
+//	myContext->Draw(3, 0);
+//	CRenderManager::myNumberOfDrawCallsThisFrame++;
+//}
+//
+//void CDeferredRenderer::Render(CCameraComponent* aCamera, std::vector<CPointLight*>& aPointLightList)
+//{
+//	if (myCurrentRenderPassShader)
+//		return;
+//
+//	if (aPointLightList.empty())
+//		return;
+//
+//	SM::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
+//	myFrameBufferData.myCameraPosition = SM::Vector4{ cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f };
+//	myFrameBufferData.myToCameraSpace = cameraMatrix.Invert();
+//	myFrameBufferData.myToWorldFromCamera = cameraMatrix;
+//	myFrameBufferData.myToProjectionSpace = aCamera->GetProjection();
+//	myFrameBufferData.myToCameraFromProjection = aCamera->GetProjection().Invert();
+//	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
+//	myContext->VSSetConstantBuffers(0, 1, &myFrameBuffer);
+//	myContext->GSSetConstantBuffers(0, 1, &myFrameBuffer);
+//	myContext->PSSetConstantBuffers(0, 1, &myFrameBuffer);
+//
+//	//myContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+//	myContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+//	myContext->IASetInputLayout(myPointLightInputLayout);
+//	myContext->IASetVertexBuffers(0, 1, &myPointLightVertexBuffer, &myPointLightStride, &myPointLightOffset);
+//	myContext->IASetIndexBuffer(myPointLightIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+//
+//	Matrix transform = {};
+//	//UINT stride = sizeof(Vector4);
+//	//UINT offset = 0;
+//
+//	for (CPointLight* currentInstance : aPointLightList) {
+//		transform.Translation(currentInstance->GetPosition());
+//		myObjectBufferData.myToWorld = transform;
+//
+//		BindBuffer(myObjectBuffer, myObjectBufferData, "Point Light Object Buffer");
+//		myContext->VSSetConstantBuffers(1, 1, &myObjectBuffer);
+//		
+//		//Update pointlightbufferdata and fill pointlightbuffer
+//		const SM::Vector3& position = currentInstance->GetPosition();
+//		const SM::Vector3& color = currentInstance->GetColor();
+//		myPointLightBufferData.myToWorldSpace = currentInstance->GetWorldMatrix();
+//		myPointLightBufferData.myPositionAndRange = { position.x, position.y, position.z, currentInstance->GetRange() };
+//		myPointLightBufferData.myColorAndIntensity = { color.x, color.y, color.z, currentInstance->GetIntensity() };
+//
+//		BindBuffer(myPointLightBuffer, myPointLightBufferData, "Point Light Buffer");
+//		myContext->VSSetConstantBuffers(3, 1, &myPointLightBuffer);
+//		myContext->PSSetConstantBuffers(3, 1, &myPointLightBuffer);
+//		//myContext->GSSetConstantBuffers(3, 1, &myPointLightBuffer);
+//
+//		myContext->VSSetShader(myPointLightVertexShader, nullptr, 0);
+//		//myContext->GSSetShader(myPointLightGeometryShader, nullptr, 0);
+//
+//		myContext->PSSetShader(myPointLightShader, nullptr, 0);
+//		myContext->PSSetSamplers(0, 1, &mySamplerState);
+//
+//		//myContext->Draw(1, 0);
+//		myContext->DrawIndexed(myPointLightNumberOfIndices, 0, 0);
+//		CRenderManager::myNumberOfDrawCallsThisFrame++;
+//	}
+//
+//	myContext->GSSetShader(nullptr, nullptr, 0);
+//}
+//
+//void CDeferredRenderer::Render(CCameraComponent* aCamera, std::vector<CSpotLight*>& aSpotLightList) 
+//{
+//	if (myCurrentRenderPassShader)
+//		return;
+//
+//	if (aSpotLightList.empty())
+//		return;
+//
+//	SM::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
+//	myFrameBufferData.myCameraPosition = SM::Vector4{ cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f };
+//	myFrameBufferData.myToCameraSpace = cameraMatrix.Invert();
+//	myFrameBufferData.myToWorldFromCamera = cameraMatrix;
+//	myFrameBufferData.myToProjectionSpace = aCamera->GetProjection();
+//	myFrameBufferData.myToCameraFromProjection = aCamera->GetProjection().Invert();
+//	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
+//	myContext->VSSetConstantBuffers(0, 1, &myFrameBuffer);
+//	myContext->GSSetConstantBuffers(0, 1, &myFrameBuffer);
+//	myContext->PSSetConstantBuffers(0, 1, &myFrameBuffer);
+//
+//	Matrix transform = {};
+//	UINT stride = sizeof(Vector4);
+//	UINT offset = 0;
+//
+//	for (CSpotLight* currentInstance : aSpotLightList) {
+//		transform.Translation(currentInstance->GetPosition());
+//		myObjectBufferData.myToWorld = transform;
+//
+//		BindBuffer(myObjectBuffer, myObjectBufferData, "Spot Light Object Buffer");
+//		myContext->VSSetConstantBuffers(1, 1, &myObjectBuffer);
+//
+//		const SM::Vector3& position = currentInstance->GetPosition();
+//		const SM::Vector3& color = currentInstance->GetColor();
+//		const Vector3& direction = currentInstance->GetDirection();
+//		mySpotLightBufferData.myToWorldSpace = currentInstance->GetWorldMatrix();
+//		mySpotLightBufferData.myToViewSpace = currentInstance->GetViewMatrix();
+//		mySpotLightBufferData.myToProjectionSpace = currentInstance->GetProjectionMatrix();
+//		mySpotLightBufferData.myPositionAndRange = { position.x, position.y, position.z, currentInstance->GetRange() };
+//		mySpotLightBufferData.myColorAndIntensity = { color.x, color.y, color.z, currentInstance->GetIntensity() };
+//		mySpotLightBufferData.myDirectionAndAngleExponent = { direction.x, direction.y, direction.z, currentInstance->GetAngleExponent() };
+//		mySpotLightBufferData.myDirectionNormal1 = currentInstance->GetDirectionNormal1();
+//		mySpotLightBufferData.myDirectionNormal2 = currentInstance->GetDirectionNormal2();
+//
+//		BindBuffer(mySpotLightBuffer, mySpotLightBufferData, "Spot Light Buffer");
+//		myContext->PSSetConstantBuffers(3, 1, &mySpotLightBuffer);
+//		myContext->GSSetConstantBuffers(3, 1, &mySpotLightBuffer);
+//
+//		myContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+//		myContext->IASetInputLayout(myPointLightInputLayout);								// Probably fine, generate geometry in the same way
+//		myContext->IASetVertexBuffers(0, 1, &myPointLightVertexBuffer, &stride, &offset);
+//		myContext->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0);
+//
+//		myContext->VSSetShader(mySpotLightVertexShader, nullptr, 0);
+//		myContext->GSSetShader(mySpotLightGeometryShader, nullptr, 0);
+//
+//		myContext->PSSetShader(mySpotLightShader, nullptr, 0);
+//		myContext->PSSetSamplers(0, 1, &mySamplerState);
+//
+//		myContext->Draw(1, 0);
+//		CRenderManager::myNumberOfDrawCallsThisFrame++;
+//	}
+//
+//	myContext->GSSetShader(nullptr, nullptr, 0);
+//}
+//
+//void CDeferredRenderer::RenderVolumetricLight(CCameraComponent* aCamera, CEnvironmentLight* anEnvironmentLight)
+//{
+//	SM::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
+//	myFrameBufferData.myCameraPosition = SM::Vector4{ cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f };
+//	myFrameBufferData.myToCameraSpace = cameraMatrix.Invert();
+//	myFrameBufferData.myToWorldFromCamera = cameraMatrix;
+//	myFrameBufferData.myToProjectionSpace = aCamera->GetProjection();
+//	myFrameBufferData.myToCameraFromProjection = aCamera->GetProjection().Invert();
+//	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
+//
+//	myContext->PSSetConstantBuffers(0, 1, &myFrameBuffer);
+//
+//	// Update lightbufferdata and fill lightbuffer
+//	myLightBufferData.myDirectionalLightDirection = anEnvironmentLight->GetDirection();
+//	myLightBufferData.myDirectionalLightColor = anEnvironmentLight->GetColor();
+//	myLightBufferData.myDirectionalLightPosition = anEnvironmentLight->GetShadowPosition();
+//	myLightBufferData.myToDirectionalLightView = anEnvironmentLight->GetShadowView();
+//	myLightBufferData.myToDirectionalLightProjection = anEnvironmentLight->GetShadowProjection(); // Actual projection
+//	BindBuffer(myLightBuffer, myLightBufferData, "Light Buffer");
+//	myContext->PSSetConstantBuffers(1, 1, &myLightBuffer);
+//
+//	myContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+//	myContext->IASetInputLayout(nullptr);
+//	myContext->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
+//	myContext->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0);
+//
+//	myContext->GSSetShader(nullptr, nullptr, 0);
+//
+//	myContext->VSSetShader(myFullscreenShader, nullptr, 0);
+//
+//	myContext->PSSetShader(myDirectionalVolumetricLightShader, nullptr, 0);
+//
+//	myContext->PSSetSamplers(0, 1, &mySamplerState);
+//	myContext->PSSetSamplers(1, 1, &myShadowSampler);
+//
+//	myContext->Draw(3, 0);
+//	CRenderManager::myNumberOfDrawCallsThisFrame++;
+//}
 
-void CDeferredRenderer::Render(CCameraComponent* aCamera, CEnvironmentLight* anEnvironmentLight)
+void CDeferredRenderer::RenderSkybox(CCameraComponent* aCamera, CEnvironmentLight* anEnvironmentLight)
 {
-	SM::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
-	myFrameBufferData.myCameraPosition = SM::Vector4{ cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f };
-	myFrameBufferData.myToCameraSpace = cameraMatrix.Invert();
-	myFrameBufferData.myToWorldFromCamera = cameraMatrix;
-	myFrameBufferData.myToProjectionSpace = aCamera->GetProjection();
-	myFrameBufferData.myToCameraFromProjection = aCamera->GetProjection().Invert();
-	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
+	mySkyboxTransformData.myCameraViewProjection = aCamera->GetViewMatrix() * aCamera->GetProjection();
+	mySkyboxTransformData.myCameraViewProjection = mySkyboxTransformData.myCameraViewProjection.Transpose();
+	BindBuffer(mySkyboxTransformBuffer, mySkyboxTransformData, "Skybox Transform Buffer");
+	myContext->VSSetConstantBuffers(0, 1, &mySkyboxTransformBuffer);
 
-	myContext->PSSetConstantBuffers(0, 1, &myFrameBuffer);
 	ID3D11ShaderResourceView* environmentLightShaderResource = *anEnvironmentLight->GetCubeMap();
 	myContext->PSSetShaderResources(0, 1, &environmentLightShaderResource);
 
-	// Update lightbufferdata and fill lightbuffer
-	myLightBufferData.myDirectionalLightDirection = anEnvironmentLight->GetDirection();
-	myLightBufferData.myDirectionalLightColor = anEnvironmentLight->GetColor();
-	myLightBufferData.myDirectionalLightPosition = anEnvironmentLight->GetShadowPosition();
-	myLightBufferData.myToDirectionalLightView = anEnvironmentLight->GetShadowView();
-	myLightBufferData.myToDirectionalLightProjection = anEnvironmentLight->GetShadowProjection();
-	BindBuffer(myLightBuffer, myLightBufferData, "Light Buffer");
-	myContext->PSSetConstantBuffers(2, 1, &myLightBuffer);
-
 	myContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	myContext->IASetInputLayout(nullptr);
-	myContext->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
-	myContext->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0);
+	myContext->IASetInputLayout(mySkyboxInputLayout);
+	myContext->IASetVertexBuffers(0, 1, &mySkyboxVertexBuffer, &mySkyboxStride, &mySkyboxOffset);
+	myContext->IASetIndexBuffer(mySkyboxIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
 	myContext->GSSetShader(nullptr, nullptr, 0);
 
-	myContext->VSSetShader(myFullscreenShader, nullptr, 0);
-
-	if(myCurrentRenderPassShader)
-		myContext->PSSetShader(myRenderPassShaders[myRenderPassIndex], nullptr, 0);
-	else
-		myContext->PSSetShader(myEnvironmentLightShader, nullptr, 0);
+	myContext->VSSetShader(mySkyboxVertexShader, nullptr, 0);
+	myContext->PSSetShader(mySkyboxPixelShader, nullptr, 0);
 
 	myContext->PSSetSamplers(0, 1, &mySamplerState);
-	myContext->PSSetSamplers(1, 1, &myShadowSampler);
 
-	myContext->Draw(3, 0);
-	CRenderManager::myNumberOfDrawCallsThisFrame++;
-}
-
-void CDeferredRenderer::Render(CCameraComponent* aCamera, std::vector<CPointLight*>& aPointLightList)
-{
-	if (myCurrentRenderPassShader)
-		return;
-
-	if (aPointLightList.empty())
-		return;
-
-	SM::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
-	myFrameBufferData.myCameraPosition = SM::Vector4{ cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f };
-	myFrameBufferData.myToCameraSpace = cameraMatrix.Invert();
-	myFrameBufferData.myToWorldFromCamera = cameraMatrix;
-	myFrameBufferData.myToProjectionSpace = aCamera->GetProjection();
-	myFrameBufferData.myToCameraFromProjection = aCamera->GetProjection().Invert();
-	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
-	myContext->VSSetConstantBuffers(0, 1, &myFrameBuffer);
-	myContext->GSSetConstantBuffers(0, 1, &myFrameBuffer);
-	myContext->PSSetConstantBuffers(0, 1, &myFrameBuffer);
-
-	//myContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
-	myContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	myContext->IASetInputLayout(myPointLightInputLayout);
-	myContext->IASetVertexBuffers(0, 1, &myPointLightVertexBuffer, &myPointLightStride, &myPointLightOffset);
-	myContext->IASetIndexBuffer(myPointLightIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-
-	Matrix transform = {};
-	//UINT stride = sizeof(Vector4);
-	//UINT offset = 0;
-
-	for (CPointLight* currentInstance : aPointLightList) {
-		transform.Translation(currentInstance->GetPosition());
-		myObjectBufferData.myToWorld = transform;
-
-		BindBuffer(myObjectBuffer, myObjectBufferData, "Point Light Object Buffer");
-		myContext->VSSetConstantBuffers(1, 1, &myObjectBuffer);
-		
-		//Update pointlightbufferdata and fill pointlightbuffer
-		const SM::Vector3& position = currentInstance->GetPosition();
-		const SM::Vector3& color = currentInstance->GetColor();
-		myPointLightBufferData.myToWorldSpace = currentInstance->GetWorldMatrix();
-		myPointLightBufferData.myPositionAndRange = { position.x, position.y, position.z, currentInstance->GetRange() };
-		myPointLightBufferData.myColorAndIntensity = { color.x, color.y, color.z, currentInstance->GetIntensity() };
-
-		BindBuffer(myPointLightBuffer, myPointLightBufferData, "Point Light Buffer");
-		myContext->VSSetConstantBuffers(3, 1, &myPointLightBuffer);
-		myContext->PSSetConstantBuffers(3, 1, &myPointLightBuffer);
-		//myContext->GSSetConstantBuffers(3, 1, &myPointLightBuffer);
-
-		myContext->VSSetShader(myPointLightVertexShader, nullptr, 0);
-		//myContext->GSSetShader(myPointLightGeometryShader, nullptr, 0);
-
-		myContext->PSSetShader(myPointLightShader, nullptr, 0);
-		myContext->PSSetSamplers(0, 1, &mySamplerState);
-
-		//myContext->Draw(1, 0);
-		myContext->DrawIndexed(myPointLightNumberOfIndices, 0, 0);
-		CRenderManager::myNumberOfDrawCallsThisFrame++;
-	}
-
-	myContext->GSSetShader(nullptr, nullptr, 0);
-}
-
-void CDeferredRenderer::Render(CCameraComponent* aCamera, std::vector<CSpotLight*>& aSpotLightList) 
-{
-	if (myCurrentRenderPassShader)
-		return;
-
-	if (aSpotLightList.empty())
-		return;
-
-	SM::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
-	myFrameBufferData.myCameraPosition = SM::Vector4{ cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f };
-	myFrameBufferData.myToCameraSpace = cameraMatrix.Invert();
-	myFrameBufferData.myToWorldFromCamera = cameraMatrix;
-	myFrameBufferData.myToProjectionSpace = aCamera->GetProjection();
-	myFrameBufferData.myToCameraFromProjection = aCamera->GetProjection().Invert();
-	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
-	myContext->VSSetConstantBuffers(0, 1, &myFrameBuffer);
-	myContext->GSSetConstantBuffers(0, 1, &myFrameBuffer);
-	myContext->PSSetConstantBuffers(0, 1, &myFrameBuffer);
-
-	Matrix transform = {};
-	UINT stride = sizeof(Vector4);
-	UINT offset = 0;
-
-	for (CSpotLight* currentInstance : aSpotLightList) {
-		transform.Translation(currentInstance->GetPosition());
-		myObjectBufferData.myToWorld = transform;
-
-		BindBuffer(myObjectBuffer, myObjectBufferData, "Spot Light Object Buffer");
-		myContext->VSSetConstantBuffers(1, 1, &myObjectBuffer);
-
-		const SM::Vector3& position = currentInstance->GetPosition();
-		const SM::Vector3& color = currentInstance->GetColor();
-		const Vector3& direction = currentInstance->GetDirection();
-		mySpotLightBufferData.myToWorldSpace = currentInstance->GetWorldMatrix();
-		mySpotLightBufferData.myToViewSpace = currentInstance->GetViewMatrix();
-		mySpotLightBufferData.myToProjectionSpace = currentInstance->GetProjectionMatrix();
-		mySpotLightBufferData.myPositionAndRange = { position.x, position.y, position.z, currentInstance->GetRange() };
-		mySpotLightBufferData.myColorAndIntensity = { color.x, color.y, color.z, currentInstance->GetIntensity() };
-		mySpotLightBufferData.myDirectionAndAngleExponent = { direction.x, direction.y, direction.z, currentInstance->GetAngleExponent() };
-		mySpotLightBufferData.myDirectionNormal1 = currentInstance->GetDirectionNormal1();
-		mySpotLightBufferData.myDirectionNormal2 = currentInstance->GetDirectionNormal2();
-
-		BindBuffer(mySpotLightBuffer, mySpotLightBufferData, "Spot Light Buffer");
-		myContext->PSSetConstantBuffers(3, 1, &mySpotLightBuffer);
-		myContext->GSSetConstantBuffers(3, 1, &mySpotLightBuffer);
-
-		myContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
-		myContext->IASetInputLayout(myPointLightInputLayout);								// Probably fine, generate geometry in the same way
-		myContext->IASetVertexBuffers(0, 1, &myPointLightVertexBuffer, &stride, &offset);
-		myContext->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0);
-
-		myContext->VSSetShader(mySpotLightVertexShader, nullptr, 0);
-		myContext->GSSetShader(mySpotLightGeometryShader, nullptr, 0);
-
-		myContext->PSSetShader(mySpotLightShader, nullptr, 0);
-		myContext->PSSetSamplers(0, 1, &mySamplerState);
-
-		myContext->Draw(1, 0);
-		CRenderManager::myNumberOfDrawCallsThisFrame++;
-	}
-
-	myContext->GSSetShader(nullptr, nullptr, 0);
-}
-
-void CDeferredRenderer::RenderVolumetricLight(CCameraComponent* aCamera, CEnvironmentLight* anEnvironmentLight)
-{
-	SM::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
-	myFrameBufferData.myCameraPosition = SM::Vector4{ cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f };
-	myFrameBufferData.myToCameraSpace = cameraMatrix.Invert();
-	myFrameBufferData.myToWorldFromCamera = cameraMatrix;
-	myFrameBufferData.myToProjectionSpace = aCamera->GetProjection();
-	myFrameBufferData.myToCameraFromProjection = aCamera->GetProjection().Invert();
-	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
-
-	myContext->PSSetConstantBuffers(0, 1, &myFrameBuffer);
-
-	// Update lightbufferdata and fill lightbuffer
-	myLightBufferData.myDirectionalLightDirection = anEnvironmentLight->GetDirection();
-	myLightBufferData.myDirectionalLightColor = anEnvironmentLight->GetColor();
-	myLightBufferData.myDirectionalLightPosition = anEnvironmentLight->GetShadowPosition();
-	myLightBufferData.myToDirectionalLightView = anEnvironmentLight->GetShadowView();
-	myLightBufferData.myToDirectionalLightProjection = anEnvironmentLight->GetShadowProjection(); // Actual projection
-	BindBuffer(myLightBuffer, myLightBufferData, "Light Buffer");
-	myContext->PSSetConstantBuffers(1, 1, &myLightBuffer);
-
-	myContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	myContext->IASetInputLayout(nullptr);
-	myContext->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
-	myContext->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0);
-
-	myContext->GSSetShader(nullptr, nullptr, 0);
-
-	myContext->VSSetShader(myFullscreenShader, nullptr, 0);
-
-	myContext->PSSetShader(myDirectionalVolumetricLightShader, nullptr, 0);
-
-	myContext->PSSetSamplers(0, 1, &mySamplerState);
-	myContext->PSSetSamplers(1, 1, &myShadowSampler);
-
-	myContext->Draw(3, 0);
+	myContext->DrawIndexed(mySkyboxNumberOfIndices, 0, 0);
 	CRenderManager::myNumberOfDrawCallsThisFrame++;
 }
 
@@ -686,6 +811,10 @@ bool CDeferredRenderer::LoadRenderPassPixelShaders(ID3D11Device* aDevice)
 	ENGINE_HR_MESSAGE(aDevice->CreatePixelShader(psData.data(), psData.size(), nullptr, &myRenderPassGBuffer), "Renderpass GBuffer could not be created.");
 
 	return true;
+}
+
+void CDeferredRenderer::RenderSkybox(CCameraComponent* aCamera, CEnvironmentLight* anEnvironmentLight)
+{
 }
 
 bool CDeferredRenderer::ToggleRenderPass()

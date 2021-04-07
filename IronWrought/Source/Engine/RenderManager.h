@@ -69,6 +69,7 @@ private:
 	CFullscreenTexture myVolumetricBlurTexture;
 	CFullscreenTexture myDownsampledDepth;
 	CFullscreenTexture myTonemappedTexture;
+	CFullscreenTexture myAntiAliasedTexture;
 	CGBuffer myGBuffer;
 	CGBuffer myGBufferCopy;
 
