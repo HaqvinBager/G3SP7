@@ -7,36 +7,47 @@
 #include "RigidDynamicBody.h"
 #include "TransformComponent.h"
 
-CBoxColliderComponent::CBoxColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const Vector3& aBoxSize, bool aIsStatic)
+CBoxColliderComponent::CBoxColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const Vector3& aBoxSize, bool aIsStatic, PxMaterial* aMaterial)
 	: CBehaviour(aParent)
 	, myShape(nullptr)
 	, myPositionOffset(aPositionOffset)
 	, myBoxSize(aBoxSize)
-	, created(false)
+	, myMaterial(aMaterial)
 {
+	if (myMaterial == nullptr) {
+		myMaterial = CEngine::GetInstance()->GetPhysx().CreateMaterial(CPhysXWrapper::materialfriction::basic);
+	}
 	aIsStatic;
 }
 
 CBoxColliderComponent::~CBoxColliderComponent()
 {
-	created = false;
 }
 
 void CBoxColliderComponent::Awake()
 {
-	myShape = CEngine::GetInstance()->GetPhysx().GetPhysics()->createShape(physx::PxBoxGeometry(myBoxSize.x / 2.f, myBoxSize.y / 2.f, myBoxSize.z / 2.f), *CEngine::GetInstance()->GetPhysx().CreateMaterial(CPhysXWrapper::materialfriction::metal), true);
+	CreateBoxCollider();
+}
+
+void CBoxColliderComponent::Start()
+{
+}
+
+void CBoxColliderComponent::Update()
+{
+}
+
+void CBoxColliderComponent::CreateBoxCollider()
+{
+	myShape = CEngine::GetInstance()->GetPhysx().GetPhysics()->createShape(physx::PxBoxGeometry(myBoxSize.x / 2.f, myBoxSize.y / 2.f, myBoxSize.z / 2.f), *myMaterial, true);
 	myShape->setLocalPose({ myPositionOffset.x, myPositionOffset.y, myPositionOffset.z });
-	myShape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, true);
+	//myShape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, true);
 	CRigidBodyComponent* rigidBody = nullptr;
 	if (GameObject().TryGetComponent(&rigidBody))
 	{
 		rigidBody->AttachShape(myShape);
-		physx::PxRigidDynamic& dynamic = rigidBody->GetDynamicRigidBody()->GetBody();
-		dynamic.setMass(3.f);
-		dynamic.setCMassLocalPose({ myPositionOffset.x, myPositionOffset.y, myPositionOffset.z });
-		dynamic.putToSleep();
-		dynamic.setMaxLinearVelocity(10.f);
-		created = true;
+		rigidBody->GetDynamicRigidBody()->GetBody();
+		//dynamic.setMaxLinearVelocity(10.f);
 	}
 	else
 	{
@@ -48,16 +59,10 @@ void CBoxColliderComponent::Awake()
 
 		PxVec3 pos = { translation.x, translation.y, translation.z };
 		PxQuat pxQuat = { quat.x, quat.y, quat.z, quat.w };
-		CEngine::GetInstance()->GetPhysx().GetPhysics()->createRigidStatic({ pos, pxQuat });
+		PxRigidStatic* actor = CEngine::GetInstance()->GetPhysx().GetPhysics()->createRigidStatic({ pos, pxQuat });
+		actor->attachShape(*myShape);
+		CEngine::GetInstance()->GetPhysx().GetPXScene()->addActor(*actor);
 	}
-}
-
-void CBoxColliderComponent::Start()
-{
-}
-
-void CBoxColliderComponent::Update()
-{
 }
 
 void CBoxColliderComponent::OnEnable()

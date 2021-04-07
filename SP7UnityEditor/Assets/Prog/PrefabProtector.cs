@@ -24,9 +24,18 @@ public class PrefabProtector : MonoBehaviour
             }
         }
 
-        if (TryGetComponent(out MeshCollider collider))
+        if (TryGetComponent(out Collider collider))
         {
-            collider.sharedMesh = GetComponentInChildren<MeshFilter>().sharedMesh;
+            if (collider.GetType() == typeof(MeshCollider))
+            {
+                MeshCollider meshCollider = collider as MeshCollider;
+                meshCollider.sharedMesh = GetComponentInChildren<MeshFilter>().sharedMesh;
+            }
+
+            if (GetComponent<Rigidbody>() == null)
+            {
+                gameObject.AddComponent<Rigidbody>();
+            }
         }
     }
 }

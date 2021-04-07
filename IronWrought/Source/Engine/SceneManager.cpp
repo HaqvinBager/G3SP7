@@ -15,6 +15,7 @@
 #include "BoxColliderComponent.h"
 #include "SphereColliderComponent.h"
 #include "CapsuleColliderComponent.h"
+#include "ConvexMeshColliderComponent.h"
 #include <GravityGloveComponent.h>
 //#include <iostream>
 
@@ -351,17 +352,31 @@ void CSceneManager::AddCollider(CScene& aScene, RapidArray someData)
 		int id = c["instanceID"].GetInt();
 		CGameObject* gameObject = aScene.FindObjectWithID(id);
 
-		CRigidBodyComponent* rigidBody = gameObject->GetComponent<CRigidBodyComponent>();
-		if (rigidBody == nullptr)
-			gameObject->AddComponent<CRigidBodyComponent>(*gameObject);
-
 		ColliderType colliderType = static_cast<ColliderType>(c["colliderType"].GetInt());
 		bool isStatic = c.HasMember("isStatic") ? c["isStatic"].GetBool() : false;
+
+		CRigidBodyComponent* rigidBody = gameObject->GetComponent<CRigidBodyComponent>();
+		if (rigidBody == nullptr && isStatic == false) {
+			float mass = c["mass"].GetFloat();
+			Vector3 localCenterMass;
+			localCenterMass.x = c["localMassPosition"]["x"].GetFloat();
+			localCenterMass.y = c["localMassPosition"]["y"].GetFloat();
+			localCenterMass.z = c["localMassPosition"]["z"].GetFloat();
+			Vector3 inertiaTensor;
+			inertiaTensor.x = c["inertiaTensor"]["x"].GetFloat();
+			inertiaTensor.y = c["inertiaTensor"]["y"].GetFloat();
+			inertiaTensor.z = c["inertiaTensor"]["z"].GetFloat();
+			gameObject->AddComponent<CRigidBodyComponent>(*gameObject, mass, localCenterMass, inertiaTensor);
+		}
 
 		Vector3 posOffset;
 		posOffset.x = c["positionOffest"]["x"].GetFloat();
 		posOffset.y = c["positionOffest"]["y"].GetFloat();
 		posOffset.z = c["positionOffest"]["z"].GetFloat();
+
+		float dynamicFriction = c["dynamicFriction"].GetFloat();
+		float staticFriction = c["staticFriction"].GetFloat();
+		float bounciness = c["bounciness"].GetFloat();
 
 		switch (colliderType) {
 		case ColliderType::BoxCollider:
@@ -370,20 +385,25 @@ void CSceneManager::AddCollider(CScene& aScene, RapidArray someData)
 			boxSize.x = c["boxSize"]["x"].GetFloat();
 			boxSize.y = c["boxSize"]["y"].GetFloat();
 			boxSize.z = c["boxSize"]["z"].GetFloat();
-			gameObject->AddComponent<CBoxColliderComponent>(*gameObject, posOffset, boxSize, isStatic);
+			gameObject->AddComponent<CBoxColliderComponent>(*gameObject, posOffset, boxSize, isStatic, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(dynamicFriction, staticFriction, bounciness));
 		}
 			break;
 		case ColliderType::SphereCollider:
 		{
 			float radius = c["sphereRadius"].GetFloat();
-			gameObject->AddComponent<CSphereColliderComponent>(*gameObject, posOffset, radius, isStatic);
+			gameObject->AddComponent<CSphereColliderComponent>(*gameObject, posOffset, radius, isStatic, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(dynamicFriction, staticFriction, bounciness));
 		}
 			break;
 		case ColliderType::CapsuleCollider:
 		{
 			float radius = c["capsuleRadius"].GetFloat();
 			float height = c["capsuleHeight"].GetFloat();
-			gameObject->AddComponent<CCapsuleColliderComponent>(*gameObject, posOffset, radius, height, isStatic);
+			gameObject->AddComponent<CCapsuleColliderComponent>(*gameObject, posOffset, radius, height, isStatic, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(dynamicFriction, staticFriction, bounciness));
+		}
+		break;
+		case ColliderType::MeshCollider:
+		{
+			gameObject->AddComponent<CConvexMeshColliderComponent>(*gameObject, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(dynamicFriction, staticFriction, bounciness));
 		}
 		break;
 		}
