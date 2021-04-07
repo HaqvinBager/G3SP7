@@ -355,23 +355,23 @@ void CCanvas::Update()
 {
 	if (myIsHUDCanvas)
 	{
-		if (Input::GetInstance()->IsMousePressed(Input::EMouseButton::Left))
+		if (Input::GetInstance()->IsMousePressed(Input::EMouseButton::Right))
 		{
 			mySprites[0]->PlayAnimation(0);
 		}
 
-		if (Input::GetInstance()->IsMouseReleased(Input::EMouseButton::Left))
+		if (Input::GetInstance()->IsMouseReleased(Input::EMouseButton::Right))
 		{
 			mySprites[0]->PlayAnimation(0, false, true);
 		}
-	}
 
-	if (!mySprites[0]->GetShouldAnimate() && !INPUT->IsMouseDown(Input::EMouseButton::Left))
-	{
-		mySprites[0]->PlayAnimation(1, true);
-	}
-	else if (!mySprites[0]->GetShouldAnimate()){
-		mySprites[0]->Rotate(CTimer::Dt()*720.0f);
+		if (!mySprites[0]->GetShouldAnimate() && !INPUT->IsMouseDown(Input::EMouseButton::Right))
+		{
+			mySprites[0]->PlayAnimation(1, true);
+		}
+		else if (!mySprites[0]->GetShouldAnimate()){
+			mySprites[0]->Rotate(CTimer::Dt()*720.0f);
+		}
 	}
 
 	for (unsigned int i = 0; i < mySprites.size(); ++i)
