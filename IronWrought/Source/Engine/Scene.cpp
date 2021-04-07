@@ -166,6 +166,12 @@ bool CScene::ReInitCanvas(const std::string& aPath)
 	return true;
 }
 
+void CScene::CanvasIsHUD()
+{
+	if (myCanvas)
+		myCanvas->IsHUDCanvas(true);
+}
+
 //No longer needed due to Components Awake being called via EMessageType "AddComponent"
 void CScene::Awake()
 {

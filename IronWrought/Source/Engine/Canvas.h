@@ -16,6 +16,9 @@ public:
 	~CCanvas();
 	void ClearFromScene(CScene& aScene);
 
+	void IsHUDCanvas(const bool& aIsHUDCanvas) { myIsHUDCanvas = aIsHUDCanvas; }
+	const bool IsHUDCanvas() { return myIsHUDCanvas; }
+
 public:
 	void Init(std::string aFilePath, CScene& aScene, bool addToScene = true);
 	void ReInit(std::string aFilePath, CScene& aScene, bool addToScene = true);
@@ -53,4 +56,6 @@ private:
 	std::vector<CSpriteInstance*> mySprites;
 	std::vector<CTextInstance*> myTexts;
 	std::vector<EMessageType> myMessageTypes;
+
+	bool myIsHUDCanvas;
 };

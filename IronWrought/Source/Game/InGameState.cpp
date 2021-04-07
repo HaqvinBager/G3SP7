@@ -48,6 +48,7 @@ void CInGameState::Start()
 	
 	CEngine::GetInstance()->SetActiveScene(myState);
 	TEMP_VFX(&CEngine::GetInstance()->GetActiveScene());
+	IRONWROUGHT->GetActiveScene().CanvasIsHUD();
 
 	myExitLevel = false;
 }
