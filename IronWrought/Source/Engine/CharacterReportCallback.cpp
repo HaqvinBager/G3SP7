@@ -26,7 +26,7 @@ void CCharacterReportCallback::onShapeHit(const physx::PxControllerShapeHit& hit
 						float m = other->GetMass();
 						//använder normalen istället för velocity för det puttas bättre åt de håll man går in i
 						Vector3 f = { (m * (v / CTimer::Dt())) };
-						other->AddForce(f);
+						other->AddForce(f / 2.f);
 						//other->GetDynamicRigidBody()->GetBody().setMaxLinearVelocity(10.f);
 						//F = m * (v - v0/t - t0) or F = m * (v/t) because v0 and t0 is almost always 0 in this case
 						//m = mass
