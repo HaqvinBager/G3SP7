@@ -137,6 +137,9 @@ void ImGuiWindow::CAssetCustomizationWindow::OnInspectorGUI()
 		if (myShowOverwriteCustomizationFile)
 			SaveOverwriteFile();
 
+		if (myShowTextureBrowser)
+			TextureBrowser();
+
 		ImGui::SetWindowSize(Name(), ImVec2(0, 0));// Prohibits resize and sets size to fit all items. Magic :o
 	}
 	ImGui::End();
@@ -308,37 +311,13 @@ void ImGuiWindow::CAssetCustomizationWindow::TextureBrowser()
 			ImGui::Selectable(myTexturePathsInFolder[i].myDisplayName.c_str(), &selected);
 			if (selected)
 			{
-				if (myGameObject->GetComponent<CModelComponent>())
-				{
-					if (myReplaceFBX)
-						ModelHelperFunctions::ReplaceModelAndLoadTints(myGameObject, myJSONPaths[i].myPath, mySelectedFBX.myPath);
-					else
-						myGameObject->GetComponent<CModelComponent>()->DeserializeTintData(myJSONPaths[i].myPath);
-				}
-				else
-					ModelHelperFunctions::AddModelComponentWithTintsFromData(myGameObject, myJSONPaths[i].myPath, mySelectedFBX.myPath);
+				myTexturePaths[myCurrentTextureSlot].UpdatePath(std::move(myTexturePathsInFolder[i].myDisplayName));
 
 				CModelComponent* model = myGameObject->GetComponent<CModelComponent>();
-				Vector4 primary		= model->Tint1();
-				Vector4 secondary	= model->Tint2();
-				Vector4 tertiary	= model->Tint3();
-				Vector4 accents		= model->Tint4();
-				Vector4 emissive	= model->Emissive();
-				myPrimaryTint[0]   = primary.x;		myPrimaryTint[1]   = primary.y;		myPrimaryTint[2]   = primary.z;   myPrimaryTint[3]   = primary.w;
-				mySecondaryTint[0] = secondary.x;	mySecondaryTint[1] = secondary.y;	mySecondaryTint[2] = secondary.z; mySecondaryTint[3] = secondary.w;
-				myTertiaryTint[0]  = tertiary.x;	myTertiaryTint[1]  = tertiary.y;	myTertiaryTint[2]  = tertiary.z;  myTertiaryTint[3]  = tertiary.w;
-				myAccentTint[0]	   = accents.x;		myAccentTint[1]    = accents.y;		myAccentTint[2]    = accents.z;	  myAccentTint[3]    = accents.w;
-				myEmissiveTint[0]  = emissive.x;	myEmissiveTint[1]  = emissive.y;	myEmissiveTint[2]  = emissive.z;  myEmissiveTint[3]  = emissive.w;
+				model->TintTextureOnIndex(std::move(myTexturePathsInFolder[i].myPath), myCurrentTextureSlot);
 
-				for (int j = 0; j < NUMBER_OF_TINT_SLOTS; ++j)
-				{
-					myTexturePaths[j].UpdatePath(model->TexturePathOnIndex(j));
-				}
-
-				mySelectedJSON = std::move(myJSONPaths[i]);
-				mySelectedFBX.myDisplayName = CutToFileNameOnly(mySelectedFBX.myPath);
-				myShowLoadCustomizationFile = false;
-				myJSONPaths.clear();
+				myShowTextureBrowser = false;
+				myTexturePathsInFolder.clear();
 			}
 		}
 		ImGui::EndChild();
