@@ -9,7 +9,7 @@ namespace physx
 class CCapsuleColliderComponent : public CBehaviour
 {
 public:
-	CCapsuleColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const float& aRadius, const float& aHeight);
+	CCapsuleColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const float& aRadius, const float& aHeight, bool aIsStatic = false);
 	~CCapsuleColliderComponent() override;
 
 public:

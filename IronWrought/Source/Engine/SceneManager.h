@@ -13,7 +13,8 @@ enum class ColliderType {
 	none = 0,
 	BoxCollider = 1,
 	SphereCollider = 2,
-	CapsuleCollider = 3
+	CapsuleCollider = 3,
+	MeshColllider = 4
 };
 
 //struct SSceneSetup {

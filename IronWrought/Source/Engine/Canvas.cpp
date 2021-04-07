@@ -304,6 +304,11 @@ void CCanvas::ReInit(std::string aFilePath, CScene& aScene, bool addToScene)
 
 void CCanvas::Update()
 {
+	for (unsigned int i = 0; i < mySprites.size(); ++i)
+	{
+		mySprites[i]->Update();
+	}
+
 	if (myButtons.size() <= 0)
 		return;
 
@@ -467,7 +472,30 @@ bool CCanvas::InitSprite(const rapidjson::GenericObject<false, rapidjson::Value>
 	if (aRapidObject.HasMember("Scale Y"))
 		scale.y = aRapidObject["Scale Y"].GetFloat();
 
-	mySprites[anIndex]->Init(CSpriteFactory::GetInstance()->GetSprite(ASSETPATH(aRapidObject["Path"].GetString())), scale);
+	std::vector<SSpriteSheetPositionData> spriteAnimations;
+	if (aRapidObject.HasMember("Animations"))
+	{
+		auto animations = aRapidObject["Animations"].GetArray();
+		for (unsigned int i = 0; i < animations.Size(); ++i)
+		{
+			SSpriteSheetPositionData data;
+			data.myAnimationName = animations[i]["Name"].GetString();
+			data.mySpriteWidth = animations[i]["FrameWidth"].GetFloat();
+			data.mySpriteHeight = animations[i]["FrameHeight"].GetFloat();
+			data.myVerticalStartingPosition = animations[i]["VerticalStartingPos"].GetFloat();
+			data.myNumberOfFrames = animations[i]["NumberOfFrames"].GetInt();
+			data.mySpeedInFramesPerSecond = animations[i]["FramesPerSecond"].GetFloat();
+			spriteAnimations.push_back(data);
+		}
+	}
+
+	if (spriteAnimations.empty())
+		mySprites[anIndex]->Init(CSpriteFactory::GetInstance()->GetSprite(ASSETPATH(aRapidObject["Path"].GetString())), scale);
+	else 
+	{
+		mySprites[anIndex]->Init(CSpriteFactory::GetInstance()->GetSprite(ASSETPATH(aRapidObject["Path"].GetString())), spriteAnimations, scale);
+	}
+
 	mySprites[anIndex]->SetPosition(
 		{ aRapidObject["Position X"].GetFloat() 
 		, aRapidObject["Position Y"].GetFloat() 

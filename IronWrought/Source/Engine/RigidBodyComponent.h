@@ -37,6 +37,8 @@ public:
 	void SetPosition(const Vector3& aPos);
 
 	void AttachShape(physx::PxShape* aShape);
+
+	const float GetMass();
 	
 	CRigidDynamicBody* GetDynamicRigidBody() { return myDynamicRigidBody; }
 private:

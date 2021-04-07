@@ -14,6 +14,7 @@
 #include "CharacterController.h"
 #include <PlayerControllerComponent.h>
 #include "RigidBodyComponent.h"
+#include "CharacterReportCallback.h"
 
 PxFilterFlags contactReportFilterShader(PxFilterObjectAttributes attributes0, PxFilterData filterData0,
 	PxFilterObjectAttributes attributes1, PxFilterData filterData1,
@@ -76,8 +77,8 @@ bool CPhysXWrapper::Init()
 	if (!myPhysicsVisualDebugger) {
 		return false;
 	}
+	//Omg är det såhär vi kopplar vårt program till PVD Debuggern?! :D
 	PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate("localhost", 5425, 10);
-	//PxPvdTransport* transport = PxDefaultPvdFileTransportCreate("Test.pxd2");
 	myPhysicsVisualDebugger->connect(*transport, PxPvdInstrumentationFlag::eALL);
 	PxTolerancesScale scale;
 	scale.length = 1;
@@ -90,6 +91,7 @@ bool CPhysXWrapper::Init()
 
 	// All collisions gets pushed to this class
 	myContactReportCallback = new CContactReportCallback();
+	myCharacterReportCallback = new CCharacterReportCallback();
     return true;
 }
 
@@ -97,7 +99,7 @@ PxScene* CPhysXWrapper::CreatePXScene(CScene* aScene)
 {
 	PxSceneDesc sceneDesc(myPhysics->getTolerancesScale());
 	sceneDesc.gravity = PxVec3(0.0f, -9.82f, 0.0f);
-	myDispatcher = PxDefaultCpuDispatcherCreate(2);
+	myDispatcher = PxDefaultCpuDispatcherCreate(1);
 	sceneDesc.cpuDispatcher = myDispatcher;
 	sceneDesc.filterShader = contactReportFilterShader;
 	sceneDesc.simulationEventCallback = myContactReportCallback;
@@ -113,6 +115,10 @@ PxScene* CPhysXWrapper::CreatePXScene(CScene* aScene)
 		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);
 		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
 	}
+	myControllerManager = PxCreateControllerManager(*pXScene);
+	myPXScenes[aScene] = pXScene;
+	return pXScene;
+}
 
 	// Create a basic setup for a scene - contain the rodents in a invisible cage
 	/*PxMaterial* myMaterial myPXMaterial = CreateMaterial(CPhysXWrapper::materialfriction::basic);*/
@@ -124,12 +130,9 @@ PxScene* CPhysXWrapper::CreatePXScene(CScene* aScene)
 //pXScene->setVisualizationParameter(PxVisualizationParameter::eSCALE, 1.0f);
 //pXScene->setVisualizationParameter(PxVisualizationParameter::eACTOR_AXES, 2.0f);
 
-	/*myControllerManagers[pXScene]*/myControllerManager = PxCreateControllerManager(*pXScene);
+	/*myControllerManagers[pXScene]*/
 
-	myPXScenes[aScene] = pXScene;
 
-	return pXScene;
-}
 
 PxScene* CPhysXWrapper::GetPXScene()
 {
@@ -241,9 +244,9 @@ CRigidDynamicBody* CPhysXWrapper::CreateDynamicRigidbody(const PxTransform& aTra
 	return dynamicBody;
 }
 
-CCharacterController* CPhysXWrapper::CreateCharacterController(const Vector3& aPos, const float& aRadius, const float& aHeight)
+CCharacterController* CPhysXWrapper::CreateCharacterController(const Vector3& aPos, const float& aRadius, const float& aHeight, CTransformComponent* aUserData)
 {
-	CCharacterController* characterController = new CCharacterController(aPos, aRadius, aHeight);
+	CCharacterController* characterController = new CCharacterController(aPos, aRadius, aHeight, aUserData);
 	return characterController;
 }
 

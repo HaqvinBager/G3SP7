@@ -10,6 +10,9 @@ CSpriteInstance::CSpriteInstance(CScene& aScene, bool aAddToScene)
 	, myRenderOrder(ERenderOrder::BackgroundLayer)
 	, myShouldRender(true)
 	, myShouldAnimate(false)
+	, myAnimationTimer(0.0f)
+	, myCurrentAnimationIndex(0)
+	, myCurrentAnimationFrame(0)
 {
 	if (aAddToScene)
 		aScene.AddInstance(this);
@@ -39,7 +42,7 @@ bool CSpriteInstance::Init(CSprite* aSprite, const Vector2& aScale)
 	return true;
 }
 
-bool CSpriteInstance::Init(CSprite* aSprite, const SSpriteSheetPositionData& /*someSpriteSheetPositionData*/, const Vector2& aScale)
+bool CSpriteInstance::Init(CSprite* aSprite, const std::vector<SSpriteSheetPositionData>& someSpriteSheetPositionData, const Vector2& aScale)
 {
 	if (!aSprite) {
 		return false;
@@ -49,8 +52,38 @@ bool CSpriteInstance::Init(CSprite* aSprite, const SSpriteSheetPositionData& /*s
 	this->SetSize(aScale);
 	myRenderOrder = ERenderOrder::ForegroundLayer;
 
+	Vector2 sheetDimensions = aSprite->GetSpriteData().myDimensions;
 
+	for (unsigned int i = 0; i < someSpriteSheetPositionData.size(); ++i)
+	{
+		myAnimationData.emplace_back();
+		auto& animationDataToLoad = someSpriteSheetPositionData.back();
+		myAnimationData.back().myAnimationName = animationDataToLoad.myAnimationName;
+		myAnimationData.back().myFramesOffset = static_cast<int>(myAnimationFrames.size());
+		myAnimationData.back().myNumberOfFrames = animationDataToLoad.myNumberOfFrames;
+		myAnimationData.back().myFramesPerSecond = animationDataToLoad.mySpeedInFramesPerSecond;
 
+		for (unsigned int j = 0; j < static_cast<unsigned int>(animationDataToLoad.myNumberOfFrames); ++j)
+		{
+			myAnimationFrames.emplace_back();
+			auto& currentUV = myAnimationFrames.back();
+			currentUV.x = (animationDataToLoad.mySpriteWidth * j) / sheetDimensions.x; // Left
+			currentUV.y = (animationDataToLoad.myVerticalStartingPosition) / sheetDimensions.y; // Up
+			currentUV.z = (animationDataToLoad.mySpriteWidth * (j + 1)) / sheetDimensions.x; // Right
+			currentUV.w = (animationDataToLoad.myVerticalStartingPosition + animationDataToLoad.mySpriteHeight) / sheetDimensions.y; // Down
+		}
+	}
+
+	myShouldAnimate = !myAnimationFrames.empty();
+
+	if (myShouldAnimate)
+	{
+		Vector2 frameSize = { someSpriteSheetPositionData.back().mySpriteWidth,  someSpriteSheetPositionData.back().mySpriteHeight };
+		Vector2 scaleProportions = (frameSize / sheetDimensions);
+		this->SetSize(aScale * scaleProportions);
+
+		this->SetUVRect(myAnimationFrames[0]);
+	}
 
 	return true;
 }
@@ -71,6 +104,53 @@ void CSpriteInstance::SetShouldRender(bool aBool)
 
 void CSpriteInstance::Update()
 {
+	if (!myShouldAnimate)
+		return;
+
+	if ((myAnimationTimer += CTimer::Dt()) > (1.0f / myAnimationData[myCurrentAnimationIndex].myFramesPerSecond))
+	{
+		myAnimationTimer = 0.0f; // doing it properly doesn't seem to work, as CTimer is not marked at the start of this state
+		myCurrentAnimationFrame++;
+		if (myCurrentAnimationFrame > (myAnimationData[myCurrentAnimationIndex].myNumberOfFrames + myAnimationData[myCurrentAnimationIndex].myFramesOffset - 1))
+		{
+			myCurrentAnimationFrame = myAnimationData[myCurrentAnimationIndex].myFramesOffset;
+		}
+		this->SetUVRect(myAnimationFrames[myCurrentAnimationFrame]);
+	}
+}
+
+void CSpriteInstance::PlayAnimation(unsigned int anIndex, bool aShouldLoop, bool aShouldBeReversed)
+{
+	if (anIndex >= myAnimationData.size())
+		return;
+
+	myCurrentAnimationIndex = anIndex;
+	myCurrentAnimationFrame = myAnimationData[myCurrentAnimationIndex].myFramesOffset;
+	myShouldLoopAnimation = aShouldLoop;
+	myShouldReverseAnimation = aShouldBeReversed;
+	myShouldAnimate = true;
+}
+
+void CSpriteInstance::PlayAnimation(std::string aName, bool aShouldLoop, bool aShouldBeReversed)
+{
+	unsigned int newIndex = 99999;
+	for (unsigned int i = 0; i < myAnimationData.size(); ++i)
+	{
+		if (myAnimationData[i].myAnimationName.find(aName) != std::string::npos)
+		{
+			newIndex = i;
+			break;
+		}
+	}
+
+	if (newIndex >= myAnimationData.size())
+		return;
+
+	myCurrentAnimationIndex = newIndex;
+	myCurrentAnimationFrame = myAnimationData[myCurrentAnimationIndex].myFramesOffset;
+	myShouldLoopAnimation = aShouldLoop;
+	myShouldReverseAnimation = aShouldBeReversed;
+	myShouldAnimate = true;
 }
 
 void CSpriteInstance::SetRenderOrder(ERenderOrder aRenderOrder)

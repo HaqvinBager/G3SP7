@@ -5,6 +5,12 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class PrefabProtector : MonoBehaviour
 {
+
+    private void OnValidate()
+    {
+       
+    }
+
     private void Update()
     {
         if (transform.childCount > 0)
@@ -16,6 +22,11 @@ public class PrefabProtector : MonoBehaviour
                 transform.GetChild(0).localScale = Vector3.one;
                 transform.GetChild(0).hasChanged = false;
             }
+        }
+
+        if (TryGetComponent(out MeshCollider collider))
+        {
+            collider.sharedMesh = GetComponentInChildren<MeshFilter>().sharedMesh;
         }
     }
 }
