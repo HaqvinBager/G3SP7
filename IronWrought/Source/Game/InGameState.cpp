@@ -45,18 +45,17 @@ void CInGameState::Awake()
 
 void CInGameState::Start()
 {
-	//CScene* scene = CSceneManager::CreateEmpty();
-	//TEMP_VFX(scene);
-
-	//CEngine::GetInstance()->AddScene(myState, scene);
+	
 	CEngine::GetInstance()->SetActiveScene(myState);
 	TEMP_VFX(&CEngine::GetInstance()->GetActiveScene());
+	IRONWROUGHT->GetActiveScene().CanvasIsHUD();
 
 	myExitLevel = false;
 }
 
 void CInGameState::Stop()
 {
+	IRONWROUGHT->RemoveScene(myState);
 	CMainSingleton::CollisionManager().ClearColliders();
 }
 
