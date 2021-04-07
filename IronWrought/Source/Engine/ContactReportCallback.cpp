@@ -42,14 +42,14 @@ void CContactReportCallback::onConstraintBreak(physx::PxConstraintInfo* constrai
 	(count);
 }
 
-void CContactReportCallback::onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* /*pairs*/, physx::PxU32 /*nbPairs*/)
+void CContactReportCallback::onContact(const physx::PxContactPairHeader& /*pairHeader*/, const physx::PxContactPair* /*pairs*/, physx::PxU32 /*nbPairs*/)
 {
 	// Walls don't uses userData. Only feedback when hamsters collide
-	if (pairHeader.actors[0]->userData != nullptr && pairHeader.actors[1]->userData != nullptr)
-	{
+	//if (pairHeader.actors[0]->userData != nullptr && pairHeader.actors[1]->userData != nullptr)
+	//{
 		// Implement what is to happen when two objects collide
-		const std::string* firstRodent = static_cast<std::string*>(pairHeader.actors[0]->userData);
-		const std::string* secondRodent = static_cast<std::string*>(pairHeader.actors[1]->userData);
+		//const std::string* firstRodent = static_cast<std::string*>(pairHeader.actors[0]->userData);
+		//const std::string* secondRodent = static_cast<std::string*>(pairHeader.actors[1]->userData);
 		
 		/*CTransformComponent* firstTransform = (CTransformComponent*)pairHeader.actors[0]->userData;
 		CTransformComponent* secondTransform = (CTransformComponent*)pairHeader.actors[1]->userData;
@@ -75,6 +75,6 @@ void CContactReportCallback::onContact(const physx::PxContactPairHeader& pairHea
 		//		//t = time
 		//	
 		//}
-		std::cout << (*firstRodent) << " puffed " << (*secondRodent) << std::endl;
-	}
+	//	std::cout << (*firstRodent) << " puffed " << (*secondRodent) << std::endl;
+	//}
 }
