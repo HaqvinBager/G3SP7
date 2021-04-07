@@ -55,12 +55,18 @@ void CSeek::SetTarget(CTransformComponent* aTarget) {
 	myTarget = aTarget;
 }
 
-CAttack::CAttack() {
+CAttack::CAttack() : myDamage(1.0f) {
 }
 
 CAttack::~CAttack(){
 }
 
-void CAttack::Attack() {
+Vector3 CAttack::Update(Vector3 /*aPosition*/)
+{
+
+	return Vector3();
+}
+
+void CAttack::DoAttack() {
 
 }

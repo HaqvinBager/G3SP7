@@ -16,6 +16,7 @@
 #include "SphereColliderComponent.h"
 #include "CapsuleColliderComponent.h"
 #include <GravityGloveComponent.h>
+#include <EnemyComponent.h>
 //#include <iostream>
 
 #include <BinReader.h>
@@ -103,6 +104,7 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneJson)
 			SetVertexPaintedColors(*scene, sceneData["vertexColors"].GetArray(), vertexPaintData);
 			AddDecalComponents(*scene, sceneData["decals"].GetArray());
 			AddCollider(*scene, sceneData["colliders"].GetArray());
+			AddEnemyComponents(*scene, sceneData["enemies"].GetArray());
 		}
 	}
 
@@ -341,27 +343,21 @@ void CSceneManager::AddPlayer(CScene& aScene/*, RapidObject someData*/)
 	aScene.Player(player);
 }
 
-void CSceneManager::CreateEnemy(CScene& aScene, RapidArray someData)
+void CSceneManager::AddEnemyComponents(CScene& aScene, RapidArray someData)
 {
-	for (const auto& m : someData) {
+	for (const auto& m : someData)
+	{
 		const int instanceId = m["instanceID"].GetInt();
 		CGameObject* gameObject = aScene.FindObjectWithID(instanceId);
 		if (!gameObject)
 			continue;
 
-		const int assetId = m["assetID"].GetInt();
-		if (CJsonReader::Get()->HasAssetPath(assetId))
-		{
-			gameObject->AddComponent<CModelComponent>(*gameObject, ASSETPATH(CJsonReader::Get()->GetAssetPath(assetId)));
-		}
-
-		const float speed = m["Speed"].GetFloat();
-		if (CJsonReader::Get()->HasAssetPath(assetId)) {
-
-		}
-		const float radius = m["Radius"].GetFloat();
-		if (CJsonReader::Get()->HasAssetPath(assetId)) {
-		}
+		SEnemySetting settings;
+		settings.myDistance = m["distance"].GetFloat();
+		settings.myRadius= m["radius"].GetFloat();
+		settings.mySpeed= m["speed"].GetFloat();
+		gameObject->AddComponent<CEnemyComponent>(*gameObject, settings);
+	}
 }
 
 void CSceneManager::AddCollider(CScene& aScene, RapidArray someData)
@@ -371,7 +367,8 @@ void CSceneManager::AddCollider(CScene& aScene, RapidArray someData)
 	//	return;
 
 	//const auto& colliders = doc.GetObjectW()["colliders"].GetArray();
-	for (const auto& c : someData) {
+	for (const auto& c : someData)
+	{
 		int id = c["instanceID"].GetInt();
 		CGameObject* gameObject = aScene.FindObjectWithID(id);
 
@@ -386,29 +383,31 @@ void CSceneManager::AddCollider(CScene& aScene, RapidArray someData)
 		posOffset.y = c["positionOffest"]["y"].GetFloat();
 		posOffset.z = c["positionOffest"]["z"].GetFloat();
 
-		switch (colliderType) {
-		case ColliderType::BoxCollider:
+		switch (colliderType)
 		{
-			Vector3 boxSize;
-			boxSize.x = c["boxSize"]["x"].GetFloat();
-			boxSize.y = c["boxSize"]["y"].GetFloat();
-			boxSize.z = c["boxSize"]["z"].GetFloat();
-			gameObject->AddComponent<CBoxColliderComponent>(*gameObject, posOffset, boxSize);
-		}
+		case ColliderType::BoxCollider:
+			{
+				Vector3 boxSize;
+				boxSize.x = c["boxSize"]["x"].GetFloat();
+				boxSize.y = c["boxSize"]["y"].GetFloat();
+				boxSize.z = c["boxSize"]["z"].GetFloat();
+				gameObject->AddComponent<CBoxColliderComponent>(*gameObject, posOffset, boxSize);
+			}
 			break;
 		case ColliderType::SphereCollider:
-		{
-			float radius = c["sphereRadius"].GetFloat();
-			gameObject->AddComponent<CSphereColliderComponent>(*gameObject, posOffset, radius);
-		}
+			{
+				float radius = c["sphereRadius"].GetFloat();
+				gameObject->AddComponent<CSphereColliderComponent>(*gameObject, posOffset, radius);
+			}
 			break;
 		case ColliderType::CapsuleCollider:
-		{
-			float radius = c["capsuleRadius"].GetFloat();
-			float height = c["capsuleHeight"].GetFloat();
-			gameObject->AddComponent<CCapsuleColliderComponent>(*gameObject, posOffset, radius, height);
+			{
+				float radius = c["capsuleRadius"].GetFloat();
+				float height = c["capsuleHeight"].GetFloat();
+				gameObject->AddComponent<CCapsuleColliderComponent>(*gameObject, posOffset, radius, height);
+			}
+			break;
 		}
-		break;
 	}
 }
 
