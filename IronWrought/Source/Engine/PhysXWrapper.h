@@ -56,6 +56,7 @@ public:
   //merge conflict 8/3/2021
 	//void DebugLines();
 	void Cooking(const std::vector<CGameObject*>& gameObjectsToCook, CScene* aScene);
+	physx::PxShape* CookObject(CGameObject& aGameObject);
 
 private:
 

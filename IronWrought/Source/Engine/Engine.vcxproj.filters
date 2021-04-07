@@ -861,6 +861,7 @@
       <Filter>Renderers</Filter>
     </ClCompile>
     <ClCompile Include="CharacterReportCallback.cpp" />
+    <ClCompile Include="ConvexMeshColliderComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1576,6 +1577,7 @@
       <Filter>Imgui\Node Editor\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="CharacterReportCallback.h" />
+    <ClInclude Include="ConvexMeshColliderComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">

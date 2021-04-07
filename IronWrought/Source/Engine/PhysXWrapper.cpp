@@ -15,6 +15,7 @@
 #include <PlayerControllerComponent.h>
 #include "RigidBodyComponent.h"
 #include "CharacterReportCallback.h"
+#include "ConvexMeshColliderComponent.h"
 
 PxFilterFlags contactReportFilterShader(PxFilterObjectAttributes attributes0, PxFilterData filterData0,
 	PxFilterObjectAttributes attributes1, PxFilterData filterData1,
@@ -270,44 +271,38 @@ PxControllerManager* CPhysXWrapper::GetControllerManager()
 void CPhysXWrapper::Cooking(const std::vector<CGameObject*>& gameObjectsToCook, CScene* aScene)
 {
 	for (int i = 0; i < gameObjectsToCook.size(); ++i) {
-		/*if (gameObjectsToCook[i]->GetComponent<CModelComponent>() && !gameObjectsToCook[i]->GetComponent<CPlayerControllerComponent>()) {
+		/*if (gameObjectsToCook[i]->GetComponent<CModelComponent>() && gameObjectsToCook[i]->GetComponent<CConvexMeshColliderComponent>()) {
 			std::vector<PxVec3> verts(gameObjectsToCook[i]->GetComponent<CModelComponent>()->GetMyModel()->GetModelData().myMeshFilter.myVertecies.size());
-			for (auto y = 0; y < gameObjectsToCook[i]->GetComponent<CModelComponent>()->GetMyModel()->GetModelData().myMeshFilter.myVertecies.size(); ++y) {
-				Vector3 vec = gameObjectsToCook[i]->GetComponent<CModelComponent>()->GetMyModel()->GetModelData().myMeshFilter.myVertecies[y];
-				verts[y] = PxVec3(vec.x, vec.y, vec.z);
+
+			for (auto z = 0; z < gameObjectsToCook[i]->GetComponent<CModelComponent>()->GetMyModel()->GetModelData().myMeshFilter.myVertecies.size(); ++z) {
+				Vector3 vec = gameObjectsToCook[i]->GetComponent<CModelComponent>()->GetMyModel()->GetModelData().myMeshFilter.myVertecies[z];
+				verts[z] = PxVec3(vec.x, vec.y, vec.z);
 			}
 
-		// Comment if (!gameObjectsToCook[i]->IsStatic()) to make everything in the level get mesh colliders.
-		if (!gameObjectsToCook[i]->IsStatic())
-			continue;
+			PxConvexMeshDesc meshDesc;
+			meshDesc.points.count = (PxU32)verts.size();
+			meshDesc.points.stride = sizeof(PxVec3);
+			meshDesc.points.data = verts.data();
+			meshDesc.flags = PxConvexFlag::eCOMPUTE_CONVEX;
 
-			PxTriangleMeshGeometry pMeshGeometry(pxMesh);
+			std::vector<unsigned int> indexes = gameObjectsToCook[i]->GetComponent<CModelComponent>()->GetMyModel()->GetModelData().myMeshFilter.myIndexes;
+			meshDesc.indices.count = (PxU32)indexes.size();
+			meshDesc.indices.stride = sizeof(PxU32);
+			meshDesc.indices.data = indexes.data();
 
-			if (gameObjectsToCook[i]->GetComponent<CRigidBodyComponent>()) {
+			PxDefaultMemoryOutputStream writeBuffer;
+			PxConvexMeshCookingResult::Enum result;
+			myCooking->cookConvexMesh(meshDesc, writeBuffer, &result);
 
-				PxShape* shape = myPhysics->createShape(pMeshGeometry, *CreateMaterial(CPhysXWrapper::materialfriction::basic), true);
-				gameObjectsToCook[i]->GetComponent<CRigidBodyComponent>()->AttachShape(shape);
-			}
-			else {
-				PxRigidStatic* actor = myPhysics->createRigidStatic({ 0.f, 0.f, 0.f });
-				PxShape* shape = myPhysics->createShape(pMeshGeometry, *CreateMaterial(CPhysXWrapper::materialfriction::basic), true);
-				actor->attachShape(*shape);
+			PxDefaultMemoryInputData readBuffer(writeBuffer.getData(), writeBuffer.getSize());
+			PxConvexMesh* pxMesh = myPhysics->createConvexMesh(readBuffer);
 
-				DirectX::SimpleMath::Vector3 translation;
-				DirectX::SimpleMath::Vector3 scale;
-				DirectX::SimpleMath::Quaternion quat;
-				DirectX::SimpleMath::Matrix transform = gameObjectsToCook[i]->myTransform->GetLocalMatrix();
-				transform.Decompose(scale, quat, translation);
-				PxVec3 pos = { translation.x, translation.y, translation.z };
-				PxQuat pxQuat = { quat.x, quat.y, quat.z, quat.w };
+			PxConvexMeshGeometry pMeshGeometry(pxMesh);
 
-				actor->setGlobalPose({ pos, pxQuat });
+			PxShape* convexShape = myPhysics->createShape(pMeshGeometry, *CreateMaterial(CPhysXWrapper::materialfriction::basic), true);
+			gameObjectsToCook[i]->GetComponent<CConvexMeshColliderComponent>()->SetShape(convexShape);
+		}*/
 
-				aScene->PXScene()->addActor(*actor);
-			}
-
-		}
-		else*/
 		if (gameObjectsToCook[i]->GetComponent<CInstancedModelComponent>() &&
 			!gameObjectsToCook[i]->GetComponent<CPlayerControllerComponent>()) {
 
@@ -399,4 +394,38 @@ void CPhysXWrapper::Cooking(const std::vector<CGameObject*>& gameObjectsToCook, 
 			aScene->PXScene()->addActor(*actor);
 		}*/
 	}
+}
+
+physx::PxShape* CPhysXWrapper::CookObject(CGameObject& aGameObject)
+{
+	std::vector<PxVec3> verts(aGameObject.GetComponent<CModelComponent>()->GetMyModel()->GetModelData().myMeshFilter.myVertecies.size());
+
+	for (auto z = 0; z < aGameObject.GetComponent<CModelComponent>()->GetMyModel()->GetModelData().myMeshFilter.myVertecies.size(); ++z) {
+		Vector3 vec = aGameObject.GetComponent<CModelComponent>()->GetMyModel()->GetModelData().myMeshFilter.myVertecies[z];
+		verts[z] = PxVec3(vec.x, vec.y, vec.z);
+	}
+
+	PxConvexMeshDesc meshDesc;
+	meshDesc.points.count = (PxU32)verts.size();
+	meshDesc.points.stride = sizeof(PxVec3);
+	meshDesc.points.data = verts.data();
+	meshDesc.flags = PxConvexFlag::eCOMPUTE_CONVEX /*| PxConvexFlag::eDISABLE_MESH_VALIDATION | PxConvexFlag::eFAST_INERTIA_COMPUTATION*/;
+
+	std::vector<unsigned int> indexes = aGameObject.GetComponent<CModelComponent>()->GetMyModel()->GetModelData().myMeshFilter.myIndexes;
+	meshDesc.indices.count = (PxU32)indexes.size() / (PxU32)3;
+	meshDesc.indices.stride = 3 * sizeof(PxU32);
+	meshDesc.indices.data = indexes.data();
+
+	PxDefaultMemoryOutputStream writeBuffer;
+	PxConvexMeshCookingResult::Enum result;
+	myCooking->cookConvexMesh(meshDesc, writeBuffer, &result);
+
+	PxDefaultMemoryInputData readBuffer(writeBuffer.getData(), writeBuffer.getSize());
+	PxConvexMesh* pxMesh = myPhysics->createConvexMesh(readBuffer);
+
+	PxConvexMeshGeometry pMeshGeometry(pxMesh);
+
+	PxShape* convexShape = myPhysics->createShape(pMeshGeometry, *CreateMaterial(CPhysXWrapper::materialfriction::basic), true);
+	//aGameObject->GetComponent<CConvexMeshColliderComponent>()->SetShape(convexShape);
+	return convexShape;
 }

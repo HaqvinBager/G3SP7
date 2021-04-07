@@ -6,6 +6,8 @@ namespace physx
 	class PxShape;
 }
 
+class CScene;
+
 class CBoxColliderComponent : public CBehaviour
 {
 public:
@@ -16,12 +18,13 @@ public:
 	void Start() override;
 	void Update() override;
 
+	void CreateBoxCollider();
+
 	void OnEnable() override;
 	void OnDisable() override;
 private:
 	physx::PxShape* myShape;
 	Vector3 myPositionOffset;
 	Vector3 myBoxSize;
-	bool created;
 };
 

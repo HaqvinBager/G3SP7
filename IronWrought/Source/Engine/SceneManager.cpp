@@ -15,6 +15,7 @@
 #include "BoxColliderComponent.h"
 #include "SphereColliderComponent.h"
 #include "CapsuleColliderComponent.h"
+#include "ConvexMeshColliderComponent.h"
 #include <GravityGloveComponent.h>
 //#include <iostream>
 
@@ -331,12 +332,13 @@ void CSceneManager::AddCollider(CScene& aScene, RapidArray someData)
 		int id = c["instanceID"].GetInt();
 		CGameObject* gameObject = aScene.FindObjectWithID(id);
 
-		CRigidBodyComponent* rigidBody = gameObject->GetComponent<CRigidBodyComponent>();
-		if (rigidBody == nullptr)
-			gameObject->AddComponent<CRigidBodyComponent>(*gameObject);
-
 		ColliderType colliderType = static_cast<ColliderType>(c["colliderType"].GetInt());
 		bool isStatic = c.HasMember("isStatic") ? c["isStatic"].GetBool() : false;
+
+		CRigidBodyComponent* rigidBody = gameObject->GetComponent<CRigidBodyComponent>();
+		if (rigidBody == nullptr && isStatic == false)
+			gameObject->AddComponent<CRigidBodyComponent>(*gameObject);
+
 
 		Vector3 posOffset;
 		posOffset.x = c["positionOffest"]["x"].GetFloat();
@@ -364,6 +366,11 @@ void CSceneManager::AddCollider(CScene& aScene, RapidArray someData)
 			float radius = c["capsuleRadius"].GetFloat();
 			float height = c["capsuleHeight"].GetFloat();
 			gameObject->AddComponent<CCapsuleColliderComponent>(*gameObject, posOffset, radius, height, isStatic);
+		}
+		break;
+		case ColliderType::MeshCollider:
+		{
+			gameObject->AddComponent<CConvexMeshColliderComponent>(*gameObject);
 		}
 		break;
 		}
