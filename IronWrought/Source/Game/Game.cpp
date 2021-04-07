@@ -18,12 +18,13 @@ CGame::CGame()
 
 CGame::~CGame()
 {
+	/*std::cout << __FUNCTION__ << std::endl;*/ // Aki 2021 04 06 to test something, ok to remove
 }
 
 void CGame::Init()
 {
 #ifdef NDEBUG
-	InitRealGame();
+	InitRealGame();// May crash - Aki 2021 04 06
 #else
 	InitDev();
 #endif
@@ -42,7 +43,8 @@ void CGame::InitDev()
 	myStateStack.Awake(
 		{
 			//CStateStack::EState::LoadLevel,
-			CStateStack::EState::InGame
+			CStateStack::EState::InGame,
+			CStateStack::EState::PauseMenu
 		},
 		CStateStack::EState::InGame);
 }
@@ -54,7 +56,8 @@ void CGame::InitRealGame()
 		{
 			CStateStack::EState::BootUp,
 			CStateStack::EState::MainMenu,
-			CStateStack::EState::InGame
+			CStateStack::EState::InGame,
+			CStateStack::EState::PauseMenu
 		},
 		CStateStack::EState::BootUp);
 }

@@ -52,8 +52,6 @@ void CInGameState::Start()
 	CEngine::GetInstance()->SetActiveScene(myState);
 	TEMP_VFX(&CEngine::GetInstance()->GetActiveScene());
 
-	CEngine::GetInstance()->SetActiveScene(myState);
-
 	myExitLevel = false;
 }
 
@@ -65,13 +63,13 @@ void CInGameState::Stop()
 void CInGameState::Update()
 {
 
+	IRONWROUGHT->GetActiveScene().UpdateCanvas();
 
 	if (Input::GetInstance()->IsKeyPressed(VK_ESCAPE))
 	{
-		myStateStack.PopTopAndPush(CStateStack::EState::InGame);
+		myStateStack.PushState(CStateStack::EState::PauseMenu);
 	}
 
-	IRONWROUGHT->GetActiveScene().UpdateCanvas();
 }
 
 void CInGameState::ReceiveEvent(const EInputEvent aEvent)
