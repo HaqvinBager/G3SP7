@@ -15,6 +15,7 @@ CPlayerComponent::CPlayerComponent(CGameObject& gameObject)
 
 	: CComponent(gameObject),
 	myHealth(100.0f), 
+	myMaxHealth(100.0f),
 	isAlive(true)
 {
 	//CMainSingleton::PostMaster().Subscribe(EMessageType::PlayerHealthChanged, this);
@@ -39,16 +40,18 @@ void CPlayerComponent::Start()
 void CPlayerComponent::Update()
 {
 
-	if (Input::GetInstance()->IsKeyPressed('K'))
-	{
-		
-		myHealth -= 20;
-		//std::cout << myHealth << std::endl;
+	//if (Input::GetInstance()->IsKeyPressed('K'))
+	//{
+	//	
+	//	myHealth -= 20;
+	//	//std::cout << myHealth << std::endl;
 
-		CMainSingleton::PostMaster().Send({ EMessageType::PlayerHealthChanged, nullptr });
+	//	myHealthPercentage = (myHealth / myMaxHealth);
+
+	//	CMainSingleton::PostMaster().Send({ EMessageType::PlayerHealthChanged, &myHealthPercentage });
 
 
-	}
+	//}
 	if (myHealth <= 0)
 	{
 		setIsAlive(false);
