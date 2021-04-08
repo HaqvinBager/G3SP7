@@ -38,10 +38,10 @@ void CGravityGloveComponent::Start()
 
 void CGravityGloveComponent::Update()
 {
-	if (Input::GetInstance()->IsMousePressed(Input::EMouseButton::Left)) {
+	if (Input::GetInstance()->IsMousePressed(Input::EMouseButton::Right)) {
 		Pull();
 	}
-	if (Input::GetInstance()->IsMousePressed(Input::EMouseButton::Right)) {
+	if (Input::GetInstance()->IsMousePressed(Input::EMouseButton::Left)) {
 		Push();
 	}
 
@@ -110,6 +110,20 @@ void CGravityGloveComponent::Push()
 		myCurrentTarget->GetDynamicRigidBody()->GetBody().setMaxLinearVelocity(100.f);
 		myCurrentTarget->AddForce(-GameObject().myTransform->GetWorldMatrix().Forward(), mySettings.myPushForce * myCurrentTarget->GetMass(), EForceMode::EImpulse);
 		myCurrentTarget = nullptr;
+	} else {
+		Vector3 start = GameObject().myTransform->GetWorldMatrix().Translation();
+		Vector3 dir = -GameObject().myTransform->GetWorldMatrix().Forward();
+		PxRaycastBuffer hit = CEngine::GetInstance()->GetPhysx().Raycast(start, dir, mySettings.myMaxDistance);
+		if (hit.getNbAnyHits() > 0)
+		{
+			CTransformComponent* transform = (CTransformComponent*)hit.getAnyHit(0).actor->userData;
+			if (transform == nullptr)
+				return;
+			CRigidBodyComponent* target = transform->GetComponent<CRigidBodyComponent>();
+			if (target) {
+				target->AddForce(-GameObject().myTransform->GetWorldMatrix().Forward(), mySettings.myPushForce * target->GetMass(), EForceMode::EImpulse);
+			}
+		}
 	}
 }
 
