@@ -14,31 +14,40 @@ CNodeTypeGameObjectGetRotation::CNodeTypeGameObjectGetRotation()
 int CNodeTypeGameObjectGetRotation::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 {
 	CGameObject* gameObject = IRONWROUGHT_ACTIVE_SCENE.FindObjectWithID(aTriggeringNodeInstance->GraphManager()->GetCurrentBlueprintInstanceID());
-	Quaternion quaternionRotation = gameObject->myTransform->Rotation();
-    Vector3 eulerRotation;
+	Quaternion quaternion = gameObject->myTransform->Rotation();
+    Vector3 rotation;
+    Matrix transform = Matrix::CreateFromQuaternion(quaternion);
 
-    //copy from Wikipedia
-    float sinr_cosp = 2 * (quaternionRotation.w * quaternionRotation.x + quaternionRotation.y * quaternionRotation.z);
-    float cosr_cosp = 1 - 2 * (quaternionRotation.x * quaternionRotation.x + quaternionRotation.y * quaternionRotation.y);
-    eulerRotation.x = std::atan2(sinr_cosp, cosr_cosp);
+    const float RD_TO_DEG = 180 / 3.141592f;
+    //float h, p, b; // angles in degrees
 
-    // pitch (y-axis rotation)
-    float sinp = 2 * (quaternionRotation.w * quaternionRotation.y - quaternionRotation.z * quaternionRotation.x);
-    if (std::abs(sinp) >= 1)
-        eulerRotation.y = std::copysign(3.141592f / 2.0f, sinp); // use 90 degrees if out of range
-    else
-        eulerRotation.y = std::asin(sinp);
+    // extract pitch
+    float sinP = -transform._23;
+    if (sinP >= 1) {
+        rotation.x = 90;
+    }       // pole
+    else if (sinP <= -1) {
+        rotation.x = -90;
+    } // pole
+    else {
+        rotation.x = asinf(sinP) * RD_TO_DEG;
+    }
 
-    // yaw (z-axis rotation)
-    float siny_cosp = 2 * (quaternionRotation.w * quaternionRotation.z + quaternionRotation.x * quaternionRotation.y);
-    float cosy_cosp = 1 - 2 * (quaternionRotation.y * quaternionRotation.y + quaternionRotation.z * quaternionRotation.z);
-    eulerRotation.z = std::atan2(siny_cosp, cosy_cosp);
+    // extract heading and bank
+    if (sinP < -0.9999 || sinP > 0.9999) { // account for small angle errors
+        rotation.y = atan2f(-transform._31, transform._11) * RD_TO_DEG;
+        rotation.z = 0;
+    }
+    else {
+        rotation.y = atan2f(transform._13, transform._33) * RD_TO_DEG;
+        rotation.z = atan2f(transform._21, transform._22) * RD_TO_DEG;
+    }
 
-    eulerRotation *= 180.0f / 3.141592f;
+    //r *= 360.0f / 3.141592f;
 
 	std::vector<SPin>& pins = aTriggeringNodeInstance->GetPins();
 	DeclareDataOnPinIfNecessary<Vector3>(pins[0]);
-	memcpy(pins[0].myData, &eulerRotation, sizeof(Vector3));
+	memcpy(pins[0].myData, &rotation, sizeof(Vector3));
 
 	return -1;
 }
