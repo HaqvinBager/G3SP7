@@ -101,6 +101,17 @@ public class ExportModel
                         link.instanceID = prefabParent.transform.GetInstanceID();
                         modelCollection.models.Add(link);
                     }
+                }else if(renderer.GetType() == typeof(SkinnedMeshRenderer))
+                {
+                    SkinnedMeshRenderer skinnedRenderer = renderer as SkinnedMeshRenderer;
+
+                    ModelLink link = new ModelLink();
+                    link.instanceID = renderer.transform.parent.parent.GetInstanceID();
+
+                    string rigPath = PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(skinnedRenderer);
+                    GameObject sourceAsset = AssetDatabase.LoadAssetAtPath<GameObject>(rigPath);
+                    link.assetID = sourceAsset.transform.GetInstanceID();
+                    modelCollection.models.Add(link);
                 }
             }           
         }

@@ -17,10 +17,12 @@
 #include "CapsuleColliderComponent.h"
 #include "ConvexMeshColliderComponent.h"
 #include <GravityGloveComponent.h>
+#include <EnemyComponent.h>
 //#include <iostream>
 
 #include <BinReader.h>
 #include <PlayerControllerComponent.h>
+#include <AIController.h>
 #include <PlayerComponent.h>
 #include "animationLoader.h"
 #include "AnimationComponent.h"
@@ -103,6 +105,7 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneJson)
 			SetVertexPaintedColors(*scene, sceneData["vertexColors"].GetArray(), vertexPaintData);
 			AddDecalComponents(*scene, sceneData["decals"].GetArray());
 			AddCollider(*scene, sceneData["colliders"].GetArray());
+			AddEnemyComponents(*scene, sceneData["enemies"].GetArray());
 		}
 	}
 
@@ -127,8 +130,8 @@ CScene* CSceneManager::CreateMenuScene(const std::string& aSceneName, const std:
 CScene* CSceneManager::Instantiate()
 {
 	if (ourLastInstantiatedScene != nullptr)
-		CMainSingleton::PostMaster().Unsubscribe(EMessageType::ComponentAdded, ourLastInstantiatedScene); 
-	
+		CMainSingleton::PostMaster().Unsubscribe(EMessageType::ComponentAdded, ourLastInstantiatedScene);
+
 	ourLastInstantiatedScene = new CScene(); //Creates a New scene and Leaves total ownership of the Previous scene over to the hands of Engine!
 	CMainSingleton::PostMaster().Subscribe(EMessageType::ComponentAdded, ourLastInstantiatedScene);
 	return ourLastInstantiatedScene;
@@ -341,6 +344,24 @@ void CSceneManager::AddPlayer(CScene& aScene/*, RapidObject someData*/)
 	aScene.Player(player);
 }
 
+void CSceneManager::AddEnemyComponents(CScene& aScene, RapidArray someData)
+{
+	for (const auto& m : someData)
+	{
+		const int instanceId = m["instanceID"].GetInt();
+		CGameObject* gameObject = aScene.FindObjectWithID(instanceId);
+		if (!gameObject)
+			continue;
+
+		SEnemySetting settings;
+		settings.myDistance = m["distance"].GetFloat();
+		settings.myRadius= m["radius"].GetFloat();
+		settings.mySpeed= m["speed"].GetFloat();
+		settings.myHealth = m["health"].GetFloat();
+		gameObject->AddComponent<CEnemyComponent>(*gameObject, settings);
+	}
+}
+
 void CSceneManager::AddCollider(CScene& aScene, RapidArray someData)
 {
 	//const auto& doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + aJsonFileName));
@@ -348,7 +369,8 @@ void CSceneManager::AddCollider(CScene& aScene, RapidArray someData)
 	//	return;
 
 	//const auto& colliders = doc.GetObjectW()["colliders"].GetArray();
-	for (const auto& c : someData) {
+	for (const auto& c : someData)
+	{
 		int id = c["instanceID"].GetInt();
 		CGameObject* gameObject = aScene.FindObjectWithID(id);
 

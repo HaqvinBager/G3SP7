@@ -4,16 +4,25 @@
 class CAIController;
 class CCharacterController;
 class CGameObject;
+
+struct SEnemySetting {
+	float mySpeed;	//= 10.0f;
+	float myDistance;//= 0.0f;
+	float myRadius;	//= 0.0015f;
+	float myHealth;
+};
+
 class CEnemyComponent : public CComponent
 {
 public:
 	enum class EBehaviour {
 		Patrol,
-		Seek
+		Seek,
+		Attack
 	};
 
 public:
-	CEnemyComponent(CGameObject& aParent);
+	CEnemyComponent(CGameObject& aParent, const SEnemySetting& someSettings);
 	~CEnemyComponent() override;
 
 	void Awake() override;
@@ -25,9 +34,9 @@ private:
 	CCharacterController* myController;
 	std::vector<CAIController*> myBehaviours;
 	EBehaviour myCurrentState;
-	float mySpeed;
+	CGameObject* myEnemy;
 	CGameObject* myPlayer;
-	float myDistance;
-	float myRadius;
+	SEnemySetting mySettings;
+	
 };
 
