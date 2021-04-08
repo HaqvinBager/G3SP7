@@ -2,6 +2,8 @@
 #include "MathHelpers.hlsli"
 #include "DetailNormalHelpers.hlsli"
 
+static float emissiveStrength = 20.0f;
+
 float4 PixelShader_WorldPosition(float2 uv)
 {   
     // World Pos texture // Deprecated
@@ -228,7 +230,7 @@ float GBuffer_PerceptualRoughness(float2 uv)
 float GBuffer_Emissive(float2 uv)
 {   
     float emissive = materialTextureGBuffer.Sample(defaultSampler, uv).b;
-    return emissive;
+    return emissive * emissiveStrength;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -286,8 +288,8 @@ float3 ShadowFactor(float3 worldPosition, float3 lightPosition, float4x4 lightVi
         {
             //2048.0f * 4.0f,
             float3 off;
-            off.x = x / (2048.0f * 4.0f);
-            off.y = y / (2048.0f * 4.0f);
+            off.x = x / (2048.0f /** 4.0f*/);
+            off.y = y / (2048.0f /** 4.0f*/);
             off.z = 0.0f;
             total += SampleShadowPos(viewCoords + off);
         }
