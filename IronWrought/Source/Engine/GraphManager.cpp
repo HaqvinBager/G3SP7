@@ -72,9 +72,6 @@ void CGraphManager::Load(const std::string& aSceneName)
 	if (doc.HasParseError())
 		return;
 
-	//size_t lastSlash = aSceneName.find_last_of(".");
-	//std::string sceneName = aSceneName.substr(0, lastSlash);
-
 	// Create Scene folder.
 	mySceneFolder = "Imgui/NodeScripts/" + aSceneName + "/";
 	//Om denna Blueprint redan finns ska vi bara spara undan den som nyckel
@@ -105,7 +102,6 @@ void CGraphManager::Load(const std::string& aSceneName)
 				std::string key = bluePrint["type"].GetString();
 				SGraph graph;
 				myGraphs.push_back(graph);
-				//myKeys.push_back(key);
 
 				for (const auto& jsonGameObjectID : bluePrint["instances"].GetArray())
 				{
@@ -183,7 +179,6 @@ void CGraphManager::Clear()
 	}
 	myGraphs.clear();
 	myCurrentGraph = nullptr;
-	//myCurrentBluePrintInstance;
 	CNodeDataManager::Get()->ClearStoredData();
 }
 
@@ -308,10 +303,17 @@ SPin::EPinType LoadPinData(NodeDataPtr& someDataToCopy, rapidjson::Value& someDa
 	}
 	else if (someData.IsArray())
 	{
-		someDataToCopy = new int;
-		int test = someData.GetInt();
-		memcpy(someDataToCopy, &test, sizeof(int));
-		return SPin::EPinType::EInt;
+		someDataToCopy = new Vector3;
+		Vector3 test;
+		auto values = someData.GetArray();
+
+		test.x = values[0].GetFloat();
+		test.y = values[1].GetFloat();
+		test.z = values[2].GetFloat();
+
+		//int test = someData.GetInt();
+		memcpy(someDataToCopy, &test, sizeof(Vector3));
+		return SPin::EPinType::EVector3;
 	}
 	return SPin::EPinType::EUnknown;
 }
@@ -549,7 +551,6 @@ std::vector<CGameObject*> CGraphManager::GetCurrentGameObjectChildren()
 {
 	CScene& scene = CEngine::GetInstance()->GetActiveScene();
 	std::vector<CGameObject*> gameObjects = {};
-	//gameObjects.push_back(scene.FindObjectWithID(myCurrentBluePrintInstance.rootID));
 	for (int i = 1; i < myCurrentBluePrintInstance.childrenIDs.size(); ++i)
 		gameObjects.push_back(scene.FindObjectWithID(myCurrentBluePrintInstance.childrenIDs[i]));
 
@@ -809,105 +810,6 @@ void CGraphManager::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInstance
 		ImGui::PopID();
 		break;
 	}
-	//case SPin::EPinType::EStringList:
-	//{
-	//	if (!aPin.myData)
-	//	{
-	//		aPin.myData = new char[128];
-	//		static_cast<char*>(aPin.myData)[0] = '\0';
-	//	}
-
-	//	ImGui::PushID(aPin.myUID.AsInt());
-	//	ImGui::PushItemWidth(100.0f);
-	//	if (aNodeInstance->IsPinConnected(aPin))
-	//	{
-	//		DrawPinIcon(aPin, true, 255);
-	//	}
-	//	else
-	//	{
-	//		static bool pressed = false;
-	//		std::vector<std::string> item = CNodeDataManager::Get()->GetData<std::vector<std::string>>(aNodeInstance->GetNodeName());
-	//		std::string selected = static_cast<char*>(aPin.myData);
-
-	//		if (pressed)
-	//		{
-	//			ImGui::SetNextWindowPos({ ImGui::GetMousePos().x + aNodeInstance->myEditorPosition[0], ImGui::GetMousePos().y + aNodeInstance->myEditorPosition[1] });
-	//		}
-
-	//		if (!myRunScripts)
-	//		{
-	//			if (ImGui::BeginCombo("##combo", selected.c_str()))
-	//			{
-	//				pressed = true;
-	//				int index = -1;
-	//				for (int n = 0; n < item.size(); n++)
-	//				{
-	//					if (ImGui::Selectable(item[n].c_str(), index == n))
-	//					{
-	//						char* input = item[n].data();
-	//						selected = input;
-	//						size_t size = strlen(input) + 1;
-	//						memcpy(aPin.myData, input, size);
-	//					}
-	//				}
-	//				ImGui::EndCombo();
-	//			}
-	//		}
-	//		pressed = false;
-	//	}
-	//	ImGui::PopItemWidth();
-
-	//	ImGui::PopID();
-	//	break;
-	//}
-	//case SPin::EPinType::EStringListIndexed:
-	//{
-	//	if (!aPin.myData)
-	//	{
-	//		aPin.myData = new char[128];
-	//		static_cast<char*>(aPin.myData)[0] = '\0';
-	//	}
-
-	//	ImGui::PushID(aPin.myUID.AsInt());
-	//	ImGui::PushItemWidth(100.0f);
-	//	if (aNodeInstance->IsPinConnected(aPin))
-	//	{
-	//		DrawPinIcon(aPin, true, 255);
-	//	}
-	//	else
-	//	{
-	//		static bool pressed = false;
-	//		std::vector<std::string> item = CNodeDataManager::Get()->GetData<std::vector<std::string>>(aNodeInstance->GetNodeName());
-	//		int selected = *static_cast<int*>(aPin.myData);
-	//		if (selected < 0) selected = 0;
-
-	//		if (pressed)
-	//		{
-	//			ImGui::SetNextWindowPos({ ImGui::GetMousePos().x + aNodeInstance->myEditorPosition[0], ImGui::GetMousePos().y + aNodeInstance->myEditorPosition[1] });
-	//		}
-	//		if (!myRunScripts)
-	//		{
-	//			if (ImGui::BeginCombo("##combo", item[selected].c_str())) // The second parameter is the label previewed before opening the combo.
-	//			{
-	//				pressed = true;
-	//				int index = -1;
-	//				for (int n = 0; n < item.size(); n++)
-	//				{
-	//					if (ImGui::Selectable(item[n].c_str(), index == n))
-	//					{
-	//						memcpy(aPin.myData, &n, sizeof(int));
-	//					}
-	//				}
-	//				ImGui::EndCombo();
-	//			}
-	//		}
-	//		pressed = false;
-	//	}
-	//	ImGui::PopItemWidth();
-
-	//	ImGui::PopID();
-	//	break;
-	//}
 	case SPin::EPinType::EUnknown:
 	{
 		if (!myRunScripts)
@@ -1127,9 +1029,6 @@ void CGraphManager::WillBeCyclic(CNodeInstance* aFirst, CNodeInstance* /*aSecond
 
 void CGraphManager::PreFrame(float aDeltaTime)
 {
-	static float timer = 0;
-	timer += aDeltaTime;
-	//static std::string currentScript = "Current: " + myCurrentKey;
 	if (myRenderGraph)
 	{
 		auto& io = ImGui::GetIO();
@@ -1169,22 +1068,13 @@ void CGraphManager::PreFrame(float aDeltaTime)
 
 	CreateNewDataNode();
 
-	if (myRunScripts)
-		ReTriggerUpdatingTrees();
-
 	for (auto& nodeInstance : myCurrentGraph->myNodeInstances)
 	{
 		nodeInstance->DebugUpdate();
 		nodeInstance->VisualUpdate(aDeltaTime);
 	}
 
-	static float outRate = 60;
-
-	if (timer > (1.0f / outRate))
-	{
-		ReTriggerUpdatingTrees();
-		timer = 0;
-	}
+	ReTriggerUpdatingTrees();
 
 	if (myRenderGraph)
 	{
@@ -1417,7 +1307,6 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 										myUndoCommands.push({ ECommandAction::EAddLink, firstNode, secondNode, myCurrentGraph->myLinks.back(), 0 });
 
 										mySave = true;
-										/*ReTriggerTree();*/
 									}
 								}
 							}
@@ -1518,9 +1407,6 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 			unsigned short noOfCustomTypes = CNodeTypeCollector::GetNodeTypeCount(CNodeType::ENodeType::ECustom);
 			unsigned short noOfChildTypes = CNodeTypeCollector::GetNodeTypeCount(CNodeType::ENodeType::EChild);
 
-			//CNodeType** childTypes = CNodeTypeCollector::GetAllChildNodeTypes(myCurrentGraph->myChildrenKey);
-			//unsigned short noOfChildTypes = CNodeTypeCollector::GetChildNodeTypeCount(myCurrentGraph->myChildrenKey);
-
 			std::map< std::string, std::vector<CNodeType*>> cats;
 			for (int i = 0; i < noOfDefaultTypes; i++)
 			{
@@ -1534,16 +1420,11 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 				if (customTypes[i]->GetNodeTypeCategory() == "New Node Type")
 					noVariablesCreated = false;
 			}
-			
+
 			for (int i = 0; i < noOfChildTypes; i++)
 			{
 				cats[childTypes[i]->GetNodeTypeCategory()].push_back(childTypes[i]);
 			}
-
-			//for (int i = 0; i < noOfChildTypes; i++)
-			//{
-			//	cats[childTypes[i]->GetNodeTypeCategory()].push_back(childTypes[i]);
-			//}
 
 			if (noVariablesCreated)
 			{
@@ -1551,7 +1432,6 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 				cats["Delete Node Type"].push_back(nullptr);
 			}
 
-			//Fix so it actually shows search results #Haqbun
 			ImGui::PushItemWidth(100.0f);
 			ImGui::InputText("##edit", (char*)myMenuSearchField, 127);
 			if (mySearchFokus)
@@ -1667,12 +1547,6 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 												{
 													CNodeInstance* firstNode = GetNodeFromPinID(static_cast<unsigned int>(link.myFromPinID));
 													CNodeInstance* secondNode = GetNodeFromPinID(static_cast<unsigned int>(link.myToPinID));
-													//if (!firstNode)
-													//	continue;
-													//if (!secondNode)
-													//	continue;
-													/*assert(firstNode);
-													assert(secondNode);*/
 
 													firstNode->RemoveLinkToVia(secondNode, static_cast<unsigned int>(link.myFromPinID));
 													secondNode->RemoveLinkToVia(firstNode, static_cast<unsigned int>(link.myToPinID));
@@ -1688,12 +1562,6 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 												{
 													CNodeInstance* firstNode = GetNodeFromPinID(static_cast<unsigned int>(link.myFromPinID));
 													CNodeInstance* secondNode = GetNodeFromPinID(static_cast<unsigned int>(link.myToPinID));
-													//if (!firstNode)
-													//	continue;
-													//if (!secondNode)
-													//	continue;
-													////assert(firstNode);
-													////assert(secondNode);
 
 													firstNode->RemoveLinkToVia(secondNode, static_cast<unsigned int>(link.myFromPinID));
 													secondNode->RemoveLinkToVia(firstNode, static_cast<unsigned int>(link.myToPinID));
@@ -1811,7 +1679,6 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 							myCurrentGraph->myLinks.push_back({ command.myEditorLinkInfo.myID, command.myEditorLinkInfo.myInputID, command.myEditorLinkInfo.myOutputID });
 						else
 							myCurrentGraph->myLinks.push_back({ command.myEditorLinkInfo.myID, command.myEditorLinkInfo.myOutputID, command.myEditorLinkInfo.myInputID });
-						//ReTriggerTree();
 						break;
 					default:
 						break;
@@ -1859,7 +1726,6 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 							myCurrentGraph->myLinks.push_back({ command.myEditorLinkInfo.myID, command.myEditorLinkInfo.myInputID, command.myEditorLinkInfo.myOutputID });
 						else
 							myCurrentGraph->myLinks.push_back({ command.myEditorLinkInfo.myID, command.myEditorLinkInfo.myOutputID, command.myEditorLinkInfo.myInputID });
-						//ReTriggerTree();
 						break;
 					default:
 						break;

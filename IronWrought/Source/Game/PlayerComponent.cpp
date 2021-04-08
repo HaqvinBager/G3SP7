@@ -39,16 +39,16 @@ void CPlayerComponent::Start()
 void CPlayerComponent::Update()
 {
 
-	if (Input::GetInstance()->IsKeyPressed('K'))
-	{
-		
-		myHealth -= 20;
-		//std::cout << myHealth << std::endl;
+	//if (Input::GetInstance()->IsKeyPressed('K'))
+	//{
+	//	
+	//	myHealth -= 20;
+	//	//std::cout << myHealth << std::endl;
 
-		CMainSingleton::PostMaster().Send({ EMessageType::PlayerHealthChanged, nullptr });
+	//	CMainSingleton::PostMaster().Send({ EMessageType::PlayerHealthChanged, nullptr });
 
 
-	}
+	//}
 	if (myHealth <= 0)
 	{
 		setIsAlive(false);
