@@ -558,6 +558,14 @@ void CLightRenderer::RenderVolumetric(CCameraComponent* aCamera, std::vector<CPo
 		myContext->VSSetConstantBuffers(3, 1, &myPointLightBuffer);
 		myContext->PSSetConstantBuffers(3, 1, &myPointLightBuffer);
 
+		myVolumetricLightBufferData.myNumberOfSamplesReciprocal = (1.0f / 16.0f);
+		myVolumetricLightBufferData.myLightPower = 1000000.0f;
+		myVolumetricLightBufferData.myScatteringProbability = 0.0001f;
+		myVolumetricLightBufferData.myHenyeyGreensteinGValue = 0.0f;
+
+		BindBuffer(myVolumetricLightBuffer, myVolumetricLightBufferData, "Volumetric Light Buffer");
+		myContext->PSSetConstantBuffers(4, 1, &myVolumetricLightBuffer);
+
 		myContext->VSSetShader(myPointLightVertexShader, nullptr, 0);
 
 		myContext->PSSetShader(myPointVolumetricLightShader, nullptr, 0);
