@@ -24,7 +24,17 @@
           "FrameHeight": 240.0,
           "VerticalStartingPos": 0.0,
           "NumberOfFrames": 7,
-          "FramesPerSecond": 60
+          "FramesPerSecond": 60,
+          "RotationSpeedPerSecond": 720.0
+        },
+        {
+          "Name": "Idle",
+          "FrameWidth": 240.0,
+          "FrameHeight": 240.0,
+          "VerticalStartingPos": 0.0,
+          "NumberOfFrames": 1,
+          "FramesPerSecond": 1,
+          "RotationSpeedPerSecond": -90.0
         }
       ]
     },

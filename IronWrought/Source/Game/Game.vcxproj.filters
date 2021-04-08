@@ -84,18 +84,15 @@
     <ClInclude Include="PauseMenuState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="EnemyAnimationController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AIBehavior.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AIBehaviorComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="UnityFactory.cpp">
@@ -150,6 +147,9 @@
       <Filter>State Stack</Filter>
     </ClCompile>
     <ClCompile Include="PauseMenuState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyAnimationController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

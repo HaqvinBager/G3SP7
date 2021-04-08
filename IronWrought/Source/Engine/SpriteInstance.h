@@ -17,6 +17,7 @@ struct SSpriteSheetPositionData
 	float mySpriteHeight;
 	float myVerticalStartingPosition;
 	float mySpeedInFramesPerSecond;
+	float myRotationSpeedInSeconds;
 	int myNumberOfFrames;
 
 	std::string myAnimationName = "";
@@ -27,6 +28,7 @@ struct SSpriteAnimationData
 	int myFramesOffset;
 	int myNumberOfFrames;
 	float myFramesPerSecond;
+	float myRotationSpeedInSeconds;
 	std::string myAnimationName;
 };
 
@@ -44,6 +46,8 @@ public:
 	void SetColor(DirectX::SimpleMath::Vector4 aColor);
 	void SetUVRect(DirectX::SimpleMath::Vector4 aUVRect);
 	void SetSize(DirectX::SimpleMath::Vector2 aSize);
+	void SetRotation(float aRotation);
+	void Rotate(float aRotation);
 	void SetShouldRender(bool aBool);
 
 	void Update();
@@ -56,7 +60,9 @@ public:
 	const DirectX::SimpleMath::Vector4 GetColor() const { return myColor; }
 	const DirectX::SimpleMath::Vector4 GetUVRect() const { return myUVRect; }
 	const DirectX::SimpleMath::Vector2 GetSize() const { return mySize; }
+	const float GetRotation() const { return myRotation; }
 	bool GetShouldRender() const { return myShouldRender; }
+	bool GetShouldAnimate() const { return myShouldAnimate; }
 	CSprite* GetSprite() const { return mySprite; }
 
 	ERenderOrder GetRenderOrder() const { return myRenderOrder; }
@@ -69,6 +75,7 @@ private:
 	DirectX::SimpleMath::Vector4 myColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 	DirectX::SimpleMath::Vector4 myUVRect = { 0.0f, 0.0f, 1.0f, 1.0f };
 	DirectX::SimpleMath::Vector2 mySize = { 1.0f, 1.0f };
+	float myRotation;
 	CSprite* mySprite;
 	ERenderOrder myRenderOrder;
 	float myAnimationTimer;

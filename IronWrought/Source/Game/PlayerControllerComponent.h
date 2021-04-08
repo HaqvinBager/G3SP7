@@ -10,7 +10,7 @@ class CPlayerComponent;
 class CPlayerControllerComponent : public CComponent, public IInputObserver
 {
 public:
-	CPlayerControllerComponent(CGameObject& gameObject, const float aWalkSpeed = 0.06f, const float aCrouchSpeed = 0.03f);
+	CPlayerControllerComponent(CGameObject& gameObject, const float aWalkSpeed = 0.03f, const float aCrouchSpeed = 0.03f);
 	~CPlayerControllerComponent() override;
 
 	void Awake() override;

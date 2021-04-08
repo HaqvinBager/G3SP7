@@ -25,20 +25,6 @@ Vector3 CPatrol::Update(Vector3 aPosition)
 	return direction;
 }
 
-CSeek::CSeek()
-{
-}
-
-Vector3 CSeek::Update(Vector3 aPosition)//aPostion == EnemyRobot Position
-{
-	Vector3 direction =   myTarget->Position() - aPosition;
-	return direction;
-}
-
-void CSeek::SetTarget(CTransformComponent* aTarget) {
-	myTarget = aTarget;
-}
-
 bool CPatrol::CheckIfOverlap(Vector3 aFirstPosition, Vector3 aSecondPosition)
 {
 	float y = aFirstPosition.y - 0.85f;
@@ -53,4 +39,34 @@ bool CPatrol::CheckIfOverlap(Vector3 aFirstPosition, Vector3 aSecondPosition)
 		return false;
 
 	return true;
+}
+
+CSeek::CSeek()
+{
+}
+
+Vector3 CSeek::Update(Vector3 aPosition)//aPostion == EnemyRobot Position
+{
+	Vector3 direction = myTarget->Position() - aPosition;
+	return direction;
+}
+
+void CSeek::SetTarget(CTransformComponent* aTarget) {
+	myTarget = aTarget;
+}
+
+CAttack::CAttack() : myDamage(1.0f) {
+}
+
+CAttack::~CAttack(){
+}
+
+Vector3 CAttack::Update(Vector3 /*aPosition*/)
+{
+
+	return Vector3();
+}
+
+void CAttack::DoAttack() {
+
 }

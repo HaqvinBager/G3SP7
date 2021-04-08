@@ -33,6 +33,7 @@ public:
 
 private:
 	void Clear(DirectX::SimpleMath::Vector4 aClearColor);
+	void InitRenderTextures(CWindowHandler* aWindowHandler);
 
 private:
 	void RenderBloom();

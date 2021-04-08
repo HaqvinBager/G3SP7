@@ -13,6 +13,10 @@ CSpriteInstance::CSpriteInstance(CScene& aScene, bool aAddToScene)
 	, myAnimationTimer(0.0f)
 	, myCurrentAnimationIndex(0)
 	, myCurrentAnimationFrame(0)
+	, myCurrentAnimationSpeed(1.0f / 60.0f)
+	, myRotation(0.0f)
+	, myShouldLoopAnimation(false)
+	, myShouldReverseAnimation(false)
 {
 	if (aAddToScene)
 		aScene.AddInstance(this);
@@ -22,6 +26,13 @@ CSpriteInstance::CSpriteInstance()
 	, myRenderOrder(ERenderOrder::BackgroundLayer)
 	, myShouldRender(true)
 	, myShouldAnimate(false)
+	, myAnimationTimer(0.0f)
+	, myCurrentAnimationIndex(0)
+	, myCurrentAnimationFrame(0)
+	, myCurrentAnimationSpeed(1.0f / 60.0f)
+	, myRotation(0.0f)
+	, myShouldLoopAnimation(false)
+	, myShouldReverseAnimation(false)
 {
 }
 
@@ -57,11 +68,12 @@ bool CSpriteInstance::Init(CSprite* aSprite, const std::vector<SSpriteSheetPosit
 	for (unsigned int i = 0; i < someSpriteSheetPositionData.size(); ++i)
 	{
 		myAnimationData.emplace_back();
-		auto& animationDataToLoad = someSpriteSheetPositionData.back();
+		auto& animationDataToLoad = someSpriteSheetPositionData[i];
 		myAnimationData.back().myAnimationName = animationDataToLoad.myAnimationName;
 		myAnimationData.back().myFramesOffset = static_cast<int>(myAnimationFrames.size());
 		myAnimationData.back().myNumberOfFrames = animationDataToLoad.myNumberOfFrames;
 		myAnimationData.back().myFramesPerSecond = animationDataToLoad.mySpeedInFramesPerSecond;
+		myAnimationData.back().myRotationSpeedInSeconds = animationDataToLoad.myRotationSpeedInSeconds;
 
 		for (unsigned int j = 0; j < static_cast<unsigned int>(animationDataToLoad.myNumberOfFrames); ++j)
 		{
@@ -97,6 +109,20 @@ void CSpriteInstance::SetSize(DirectX::SimpleMath::Vector2 aSize)
 	mySize *= aSize;
 }
 
+void CSpriteInstance::SetRotation(float aRotation)
+{
+	myRotation = aRotation;
+	if (myRotation < 0.0f)
+		myRotation = 360.0f - myRotation;
+	if (myRotation > 360.0f)
+		myRotation = 0.0f + myRotation;
+}
+
+void CSpriteInstance::Rotate(float aRotation)
+{
+	myRotation += aRotation;
+}
+
 void CSpriteInstance::SetShouldRender(bool aBool)
 {
 	myShouldRender = aBool;
@@ -104,8 +130,15 @@ void CSpriteInstance::SetShouldRender(bool aBool)
 
 void CSpriteInstance::Update()
 {
+	//this->Rotate(CTimer::Dt()*360.0f/*sinf(CTimer::Time())*90.0f*/);
+
 	if (!myShouldAnimate)
 		return;
+
+	if (!myShouldReverseAnimation)
+		this->Rotate(myAnimationData[myCurrentAnimationIndex].myRotationSpeedInSeconds * CTimer::Dt());
+	else 
+		this->Rotate(-myAnimationData[myCurrentAnimationIndex].myRotationSpeedInSeconds * CTimer::Dt());
 
 	if ((myAnimationTimer += CTimer::Dt()) > (1.0f / myAnimationData[myCurrentAnimationIndex].myFramesPerSecond))
 	{
@@ -119,7 +152,10 @@ void CSpriteInstance::Update()
 				myShouldAnimate = myShouldLoopAnimation;
 
 				if (!myShouldAnimate)
+				{
+					//this->SetRotation(0.0f);
 					return;
+				}
 
 				myCurrentAnimationFrame = myAnimationData[myCurrentAnimationIndex].myFramesOffset;
 			}
@@ -132,7 +168,10 @@ void CSpriteInstance::Update()
 				myShouldAnimate = myShouldLoopAnimation;
 				
 				if (!myShouldAnimate)
+				{
+					//this->SetRotation(0.0f);
 					return;
+				}
 				
 				myCurrentAnimationFrame = (myAnimationData[myCurrentAnimationIndex].myNumberOfFrames + myAnimationData[myCurrentAnimationIndex].myFramesOffset - 1);
 			}

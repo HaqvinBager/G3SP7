@@ -866,6 +866,7 @@
     <ClCompile Include="NodeTypeEnemySpawn.cpp">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClCompile>
+    <ClCompile Include="ConvexMeshColliderComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1586,6 +1587,7 @@
     <ClInclude Include="NodeTypeEnemySpawn.h">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClInclude>
+    <ClInclude Include="ConvexMeshColliderComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">

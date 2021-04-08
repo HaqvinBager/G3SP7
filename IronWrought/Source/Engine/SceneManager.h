@@ -14,7 +14,7 @@ enum class ColliderType {
 	BoxCollider = 1,
 	SphereCollider = 2,
 	CapsuleCollider = 3,
-	MeshColllider = 4
+	MeshCollider = 4
 };
 
 //struct SSceneSetup {
@@ -44,7 +44,7 @@ private:
 	static void AddDecalComponents(CScene& aScene, RapidArray someData);
 	static void AddCollider(CScene& aScene, RapidArray someData);
 	static void AddPlayer(CScene& aScene);
-
+	static void AddEnemyComponents(CScene& aScene, RapidArray someData);
 	static CScene* ourLastInstantiatedScene;
 };
 
