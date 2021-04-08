@@ -225,6 +225,12 @@ void CCameraControllerComponent::UpdateOrbitCam()
 		myOrbitCenter = myOrbitCenter + Vector3(DirectX::XMVector3Transform({0.0f,(dy * panningSpeed * dt), 0.0f }, cameraRight));
 	}
 
+	if (INPUT->IsKeyDown('F'))
+	{
+		myOrbitCenter = Vector3(0.0f);
+		myOrbitRadius = 10.0f;
+	}
+
 	Vector3 viewPos = DirectX::XMVector3Transform(
 		DirectX::XMVectorSet(0.0f, 0.0f, -myOrbitRadius, 0.0f),
 		DirectX::XMMatrixRotationRollPitchYaw(phiRadians, thetaRadians, 0.0f)
