@@ -44,11 +44,6 @@ namespace ImGuiWindow
 
 	private:
 		std::array<DirectX::SimpleMath::Vector4, NUMBER_OF_TINT_SLOTS> myTints;
-		//float myPrimaryTint[4];
-		//float mySecondaryTint[4];
-		//float myTertiaryTint[4];
-		//float myAccentTint[4];
-		/*float myEmissiveTint[4];*/
 		DirectX::SimpleMath::Vector4 myEmissive;
 		std::array<std::string, NUMBER_OF_TINT_SLOTS> myCurrentTextures;
 

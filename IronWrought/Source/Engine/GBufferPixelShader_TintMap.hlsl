@@ -30,7 +30,7 @@ GBufferOutput main(VertexModelToPixel input)
     float emissive = PixelShader_Emissive(vertToPixel.myUV);
     if (emissive < 0.99f)
     {
-        float blendFactor = 0.65f * (1 - emissive);
+        float blendFactor = 0.5f * (1 - emissive);
         float tint1BlendFactor = tintMap.r * blendFactor;
         float tint2BlendFactor = tintMap.g * blendFactor;
         float tint3BlendFactor = tintMap.b * blendFactor;

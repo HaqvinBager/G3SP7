@@ -33,12 +33,6 @@ ImGuiWindow::CAssetCustomizationWindow::CAssetCustomizationWindow(const char* aN
 	, myCurrentTextureSlot(0)
 
 {
-	//ZeroMemory(myPrimaryTint, 4);
-	//ZeroMemory(mySecondaryTint, 4);
-	//ZeroMemory(myTertiaryTint, 4);
-	//ZeroMemory(myAccentTint, 4);
-	//ZeroMemory(myEmissiveTint, 4);
-
 	ZeroMemory(myJSONFileName, AssetCustomizationWindow::JSONNameBufferSize);
 }
 
@@ -52,7 +46,7 @@ void ImGuiWindow::CAssetCustomizationWindow::OnEnable()
 	if (myGameObject)
 		return;
 	myGameObject = new CGameObject(98789);
-	IRONWROUGHT->GetActiveScene().AddInstance(myGameObject);
+	CEngine::GetInstance()->GetActiveScene().AddInstance(myGameObject);
 }
 
 void ImGuiWindow::CAssetCustomizationWindow::OnInspectorGUI()
@@ -83,7 +77,7 @@ void ImGuiWindow::CAssetCustomizationWindow::OnInspectorGUI()
 		for (unsigned short i = 0; i < NUMBER_OF_TINT_SLOTS; ++i)
 		{
 			std::string title = ": Color " + std::to_string(i + 1);
-			if (ImGui::Button(std::string("Reset" + title).c_str()))
+			if (ImGui::Button(std::string("Clear" + title).c_str()))
 				myTints[i] = Vector4(1.0f);
 			ImGui::SameLine();
 			ImGui::ColorEdit4(title.c_str(), &myTints[i].x); 
@@ -91,7 +85,7 @@ void ImGuiWindow::CAssetCustomizationWindow::OnInspectorGUI()
 
 		ImGuiSpacing(1);
 
-		if (ImGui::Button("Reset: Emissive"))
+		if (ImGui::Button("Clear: Emissive"))
 			myEmissive = Vector4(1.0f);
 		ImGui::SameLine();
 		ImGui::ColorEdit4(": Emissive", &myEmissive.x);
@@ -101,17 +95,17 @@ void ImGuiWindow::CAssetCustomizationWindow::OnInspectorGUI()
 		if (myGameObject->GetComponent<CModelComponent>())
 		{
 			auto& model = *myGameObject->GetComponent<CModelComponent>();
-			model.Tint1(myTints[0]);
-			model.Tint2(myTints[1]);
-			model.Tint3(myTints[2]);
-			model.Tint4(myTints[3]);
+			for (unsigned short i = 0; i < NUMBER_OF_TINT_SLOTS; ++i)
+			{
+				model.TintOnIndex(myTints[i], i);
+			}
 			model.Emissive(myEmissive);
 		}
 
 		for (unsigned short i = 0; i < NUMBER_OF_TINT_SLOTS; ++i)
 		{
 			std::string title = "Texture " + std::to_string(i + 1);
-			if (ImGui::Button(std::string("Reset: " + title).c_str()))
+			if (ImGui::Button(std::string("Clear: " + title).c_str()))
 				ClearTexture(i);
 			ImGui::SameLine();
 			if (ImGui::Button(title.c_str())) { myShowTextureBrowser = true; myCurrentTextureSlot = i; } 
@@ -223,16 +217,6 @@ void ImGuiWindow::CAssetCustomizationWindow::LoadCustomizationFile()
 					myTints[slot] = model.TintOnIndex(slot);
 				}
 				myEmissive = model.Emissive();
-				//Vector4 primary		= model->Tint1();
-				//Vector4 secondary	= model->Tint2();
-				//Vector4 tertiary	= model->Tint3();
-				//Vector4 accents		= model->Tint4();
-				//Vector4 emissive	= model->Emissive();
-				//myPrimaryTint[0]   = primary.x;		myPrimaryTint[1]   = primary.y;		myPrimaryTint[2]   = primary.z;   myPrimaryTint[3]   = primary.w;
-				//mySecondaryTint[0] = secondary.x;	mySecondaryTint[1] = secondary.y;	mySecondaryTint[2] = secondary.z; mySecondaryTint[3] = secondary.w;
-				//myTertiaryTint[0]  = tertiary.x;	myTertiaryTint[1]  = tertiary.y;	myTertiaryTint[2]  = tertiary.z;  myTertiaryTint[3]  = tertiary.w;
-				//myAccentTint[0]	   = accents.x;		myAccentTint[1]    = accents.y;		myAccentTint[2]    = accents.z;	  myAccentTint[3]    = accents.w;
-				//myEmissiveTint[0]  = emissive.x;	myEmissiveTint[1]  = emissive.y;	myEmissiveTint[2]  = emissive.z;  myEmissiveTint[3]  = emissive.w;
 
 				for (int j = 0; j < NUMBER_OF_TINT_SLOTS; ++j)
 				{
@@ -391,11 +375,6 @@ void ImGuiWindow::CAssetCustomizationWindow::ClearAll()
 		const float resetValue = 1.0f;
 		for (unsigned short i = 0; i < NUMBER_OF_TINT_SLOTS; ++i)
 		{
-			//myPrimaryTint[i]	= resetValue;
-			//mySecondaryTint[i]	= resetValue;
-			//myTertiaryTint[i]	= resetValue;
-			//myAccentTint[i]		= resetValue;
-			//myEmissiveTint[i]	= resetValue;
 			myTints[i] = Vector4(resetValue);
 			model.TintOnIndex(myTints[i], i);
 			ClearTexture(i);

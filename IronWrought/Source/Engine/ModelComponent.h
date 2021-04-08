@@ -8,7 +8,7 @@
 class CGameObject;
 class CModel;
 
-#define NUMBER_OF_TINT_SLOTS 4
+constexpr short NUMBER_OF_TINT_SLOTS = 4;
 
 class CModelComponent : public CBehaviour
 {
