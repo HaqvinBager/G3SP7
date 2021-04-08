@@ -52,7 +52,6 @@ CScene::CScene(const unsigned int aGameObjectCount)
 	, myGrid(nullptr)
 #endif
 {
-	//CMainSingleton::PostMaster().Subscribe(EMessageType::ComponentAdded, this);
 	myGameObjects.reserve(aGameObjectCount);
 	myPXScene = CEngine::GetInstance()->GetPhysx().CreatePXScene(this);
 
