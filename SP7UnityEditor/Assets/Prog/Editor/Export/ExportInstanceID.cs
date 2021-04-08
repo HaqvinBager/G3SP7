@@ -23,7 +23,21 @@ public class ExportInstanceID
             //Denna funktion tar in det objekt vi loopar igenom just nu, kan t.ex vara en "pointLight" från en GameObject.FindObjectsOfType<Light>();
             //out GameObject prefabParent == Parenten (prefab-parent) som denna tillhör! Alltså ska pointlights ligga som children i en tom Prefab! 
             //(Som med alla andra objekt!)
-            if (Json.TryIsValidExport(transform, out GameObject prefabParent))
+            if(transform.TryGetComponent(out Collider collider))
+            {
+                if (sceneIDCollection.Ids.Exists(e => e == transform.GetInstanceID()))
+                    continue;
+                sceneIDCollection.Ids.Add(transform.GetInstanceID());
+
+                if (transform.name.Contains("BP_"))
+                {
+                    foreach (Transform childTransform in transform)
+                    {
+                        sceneIDCollection.Ids.Add(childTransform.GetInstanceID());
+                    }
+                }
+            }   
+            else if (Json.TryIsValidExport(transform, out GameObject prefabParent))
             {
                 //Kollar bara om vi redan har lagt till denna id (Eftersom vi kollar Parent & Child objekt,
                 //Men bara vill spara Parent Object ID:et

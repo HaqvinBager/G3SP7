@@ -26,6 +26,7 @@ enum class EButtonState {
 
 class CButton {
 	friend CCanvas;
+	friend class CWidget;
 public:
 	void OnHover();
 	void OnClickDown();
@@ -36,6 +37,9 @@ public:
 	void CheckMouseCollision(DirectX::SimpleMath::Vector2 aScreenSpacePosition);
 
 	std::vector<EMessageType> GetMessagesToSend() { return myMessagesToSend; }
+
+	void Enabled(const bool& anIsEnabled);
+	inline const bool Enabled();
 
 private:
 	CButton();

@@ -42,10 +42,9 @@ void CGame::InitDev()
 {
 	myStateStack.Awake(
 		{
-			//CStateStack::EState::LoadLevel,
-			CStateStack::EState::InGame,
+			CStateStack::EState::MainMenu,
 			CStateStack::EState::PauseMenu,
-			CStateStack::EState::MainMenu
+			CStateStack::EState::InGame //This order works, but if InGame is not last in the list we risk getting a crash (pointers to components are still ghosting around).
 		},
 		CStateStack::EState::InGame);
 }
@@ -56,8 +55,8 @@ void CGame::InitRealGame()
 		{
 			CStateStack::EState::BootUp,
 			CStateStack::EState::MainMenu,
-			CStateStack::EState::InGame,
-			CStateStack::EState::PauseMenu
+			CStateStack::EState::PauseMenu,
+			CStateStack::EState::InGame
 		},
 		CStateStack::EState::BootUp);
 }

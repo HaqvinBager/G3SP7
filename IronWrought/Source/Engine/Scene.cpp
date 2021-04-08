@@ -52,7 +52,6 @@ CScene::CScene(const unsigned int aGameObjectCount)
 	, myGrid(nullptr)
 #endif
 {
-	//CMainSingleton::PostMaster().Subscribe(EMessageType::ComponentAdded, this);
 	myGameObjects.reserve(aGameObjectCount);
 	myPXScene = CEngine::GetInstance()->GetPhysx().CreatePXScene(this);
 
@@ -76,7 +75,6 @@ CScene::~CScene()
 	delete myEnvironmentLight;
 	myEnvironmentLight = nullptr;
 
-	//myCanvas->ClearFromScene(*this);
 	delete myCanvas;
 	myCanvas = nullptr;
 
@@ -778,7 +776,6 @@ bool CScene::ClearGameObjects()
 
 bool CScene::ClearSprites()
 {
-	//Canvas has already Deleted these Objects Axel Savage 2021-04-05
 	for (UINT i = 0; i < mySpriteInstances.size() - 1; ++i)
 	{
 		for (auto& sprite : mySpriteInstances[static_cast<ERenderOrder>(i)])
