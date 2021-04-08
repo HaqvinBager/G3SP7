@@ -4,10 +4,10 @@
 #include "Scene.h"
 
 #include "GameObject.h"
-#include "ModelComponent.h"
 #include "ModelHelperFunctions.h"
 
 #include <filesystem>
+
 const std::string CutToFileNameOnly(const std::string& aString)
 {
 	size_t lastSlashIndex = aString.find_last_of("\\/");
@@ -33,11 +33,11 @@ ImGuiWindow::CAssetCustomizationWindow::CAssetCustomizationWindow(const char* aN
 	, myCurrentTextureSlot(0)
 
 {
-	ZeroMemory(myPrimaryTint, 4);
-	ZeroMemory(mySecondaryTint, 4);
-	ZeroMemory(myTertiaryTint, 4);
-	ZeroMemory(myAccentTint, 4);
-	ZeroMemory(myEmissiveTint, 4);
+	//ZeroMemory(myPrimaryTint, 4);
+	//ZeroMemory(mySecondaryTint, 4);
+	//ZeroMemory(myTertiaryTint, 4);
+	//ZeroMemory(myAccentTint, 4);
+	//ZeroMemory(myEmissiveTint, 4);
 
 	ZeroMemory(myJSONFileName, AssetCustomizationWindow::JSONNameBufferSize);
 }
@@ -52,9 +52,9 @@ void ImGuiWindow::CAssetCustomizationWindow::OnEnable()
 	if (myGameObject)
 		return;
 	myGameObject = new CGameObject(98789);
-	IRONWROUGHT_ACTIVE_SCENE.AddInstance(myGameObject);
+	IRONWROUGHT->GetActiveScene().AddInstance(myGameObject);
 }
-bool g_myShowPopUp = false;
+
 void ImGuiWindow::CAssetCustomizationWindow::OnInspectorGUI()
 {
 	ImGui::Begin(Name(), Open(), ImGuiWindowFlags_MenuBar);
@@ -78,52 +78,60 @@ void ImGuiWindow::CAssetCustomizationWindow::OnInspectorGUI()
 			ImGui::EndMenuBar();
 		}
 
-		ImGui::ColorEdit4(": Color 1, Primary", myPrimaryTint);
-		ImGui::ColorEdit4(": Color 2, Secondary", mySecondaryTint);
-		ImGui::ColorEdit4(": Color 3, Tertiary", myTertiaryTint);
-		ImGui::ColorEdit4(": Color 4, Accents", myAccentTint);
-		ImGui::ColorEdit4(": Color 5, Emissive", myEmissiveTint);
+		const short verticalSpacesSeparatingBlocks = 3;
+
+		for (unsigned short i = 0; i < NUMBER_OF_TINT_SLOTS; ++i)
+		{
+			std::string title = ": Color " + std::to_string(i + 1);
+			if (ImGui::Button(std::string("Reset" + title).c_str()))
+				myTints[i] = Vector4(1.0f);
+			ImGui::SameLine();
+			ImGui::ColorEdit4(title.c_str(), &myTints[i].x); 
+		}
+
+		ImGuiSpacing(1);
+
+		if (ImGui::Button("Reset: Emissive"))
+			myEmissive = Vector4(1.0f);
+		ImGui::SameLine();
+		ImGui::ColorEdit4(": Emissive", &myEmissive.x);
+		
+		ImGuiSpacing(verticalSpacesSeparatingBlocks);
+
 		if (myGameObject->GetComponent<CModelComponent>())
 		{
 			auto& model = *myGameObject->GetComponent<CModelComponent>();
-			model.Tint1(Vector4(myPrimaryTint));
-			model.Tint2(Vector4(mySecondaryTint));
-			model.Tint3(Vector4(myTertiaryTint));
-			model.Tint4(Vector4(myAccentTint));
-			model.Emissive(Vector4(myEmissiveTint));
+			model.Tint1(myTints[0]);
+			model.Tint2(myTints[1]);
+			model.Tint3(myTints[2]);
+			model.Tint4(myTints[3]);
+			model.Emissive(myEmissive);
 		}
 
-		for (short i = 0; i < NUMBER_OF_TINT_SLOTS; ++i)
+		for (unsigned short i = 0; i < NUMBER_OF_TINT_SLOTS; ++i)
 		{
-			std::string texture = "Texture" + std::to_string(i + 1);
-			if (ImGui::Button(texture.c_str())) { myShowTextureBrowser = true; myCurrentTextureSlot = i; } 
+			std::string title = "Texture " + std::to_string(i + 1);
+			if (ImGui::Button(std::string("Reset: " + title).c_str()))
+				ClearTexture(i);
 			ImGui::SameLine();
-			ImGui::Text(myTexturePaths[i].GetPath().c_str());
+			if (ImGui::Button(title.c_str())) { myShowTextureBrowser = true; myCurrentTextureSlot = i; } 
+			ImGui::SameLine();
+			ImGui::Text(myCurrentTextures[i].c_str());		
 		}
 
-		//if (ImGui::Button("Texture 1")) { myShowTextureBrowser = true; myCurrentTextureSlot = 0; } 
-		//ImGui::SameLine();
-		//ImGui::Text(myTexturePaths[0].GetPath().c_str());
 
-		//if (ImGui::Button("Texture 2")) { myShowTextureBrowser = true; myCurrentTextureSlot = 1; } 
-		//ImGui::SameLine();
-		//ImGui::Text(myTexturePaths[1].GetPath().c_str());
+		ImGuiSpacing(verticalSpacesSeparatingBlocks);
 
-		//if (ImGui::Button("Texture 3")) { myShowTextureBrowser = true; myCurrentTextureSlot = 2; } 
-		//ImGui::SameLine();
-		//ImGui::Text(myTexturePaths[2].GetPath().c_str());
-
-		//if (ImGui::Button("Texture 4")) { myShowTextureBrowser = true; myCurrentTextureSlot = 3; } 
-		//ImGui::SameLine();
-		//ImGui::Text(myTexturePaths[3].GetPath().c_str());
-
-
-		ImGui::Spacing();
 		ImGui::TextColored(COLOR_TEXT_LABEL, "Current FBX:"); ImGui::SameLine();
 		ImGui::Text(mySelectedFBX.myDisplayName.c_str());
 		ImGui::Spacing();
 		ImGui::TextColored(COLOR_TEXT_LABEL, "Current JSON:"); ImGui::SameLine();
 		ImGui::Text(mySelectedJSON.myDisplayName.c_str());
+
+		ImGuiSpacing(verticalSpacesSeparatingBlocks);
+
+		if (ImGui::Button("Clear Colors & Textures")) 
+			ClearAll();
 
 		if (myShowLoadAsset)
 			LoadAsset();
@@ -209,21 +217,26 @@ void ImGuiWindow::CAssetCustomizationWindow::LoadCustomizationFile()
 				else
 					ModelHelperFunctions::AddModelComponentWithTintsFromData(myGameObject, myJSONPaths[i].myPath, mySelectedFBX.myPath);
 
-				CModelComponent* model = myGameObject->GetComponent<CModelComponent>();
-				Vector4 primary		= model->Tint1();
-				Vector4 secondary	= model->Tint2();
-				Vector4 tertiary	= model->Tint3();
-				Vector4 accents		= model->Tint4();
-				Vector4 emissive	= model->Emissive();
-				myPrimaryTint[0]   = primary.x;		myPrimaryTint[1]   = primary.y;		myPrimaryTint[2]   = primary.z;   myPrimaryTint[3]   = primary.w;
-				mySecondaryTint[0] = secondary.x;	mySecondaryTint[1] = secondary.y;	mySecondaryTint[2] = secondary.z; mySecondaryTint[3] = secondary.w;
-				myTertiaryTint[0]  = tertiary.x;	myTertiaryTint[1]  = tertiary.y;	myTertiaryTint[2]  = tertiary.z;  myTertiaryTint[3]  = tertiary.w;
-				myAccentTint[0]	   = accents.x;		myAccentTint[1]    = accents.y;		myAccentTint[2]    = accents.z;	  myAccentTint[3]    = accents.w;
-				myEmissiveTint[0]  = emissive.x;	myEmissiveTint[1]  = emissive.y;	myEmissiveTint[2]  = emissive.z;  myEmissiveTint[3]  = emissive.w;
+				CModelComponent& model = *myGameObject->GetComponent<CModelComponent>();
+				for (unsigned short slot = 0; slot < NUMBER_OF_TINT_SLOTS; ++slot)
+				{
+					myTints[slot] = model.TintOnIndex(slot);
+				}
+				myEmissive = model.Emissive();
+				//Vector4 primary		= model->Tint1();
+				//Vector4 secondary	= model->Tint2();
+				//Vector4 tertiary	= model->Tint3();
+				//Vector4 accents		= model->Tint4();
+				//Vector4 emissive	= model->Emissive();
+				//myPrimaryTint[0]   = primary.x;		myPrimaryTint[1]   = primary.y;		myPrimaryTint[2]   = primary.z;   myPrimaryTint[3]   = primary.w;
+				//mySecondaryTint[0] = secondary.x;	mySecondaryTint[1] = secondary.y;	mySecondaryTint[2] = secondary.z; mySecondaryTint[3] = secondary.w;
+				//myTertiaryTint[0]  = tertiary.x;	myTertiaryTint[1]  = tertiary.y;	myTertiaryTint[2]  = tertiary.z;  myTertiaryTint[3]  = tertiary.w;
+				//myAccentTint[0]	   = accents.x;		myAccentTint[1]    = accents.y;		myAccentTint[2]    = accents.z;	  myAccentTint[3]    = accents.w;
+				//myEmissiveTint[0]  = emissive.x;	myEmissiveTint[1]  = emissive.y;	myEmissiveTint[2]  = emissive.z;  myEmissiveTint[3]  = emissive.w;
 
 				for (int j = 0; j < NUMBER_OF_TINT_SLOTS; ++j)
 				{
-					myTexturePaths[j].UpdatePath(model->TexturePathOnIndex(j));
+					myCurrentTextures[j] = CutToFileNameOnly(model.TexturePathOnIndex(j));
 				}
 
 				mySelectedJSON = std::move(myJSONPaths[i]);
@@ -300,24 +313,24 @@ void ImGuiWindow::CAssetCustomizationWindow::SaveOverwriteFile()
 void ImGuiWindow::CAssetCustomizationWindow::TextureBrowser()
 {
 	const std::string path = ASSETPATH("Assets/Graphics/Textures/Shared/");
-	myShowTextureBrowser = GetPathsByExtension(path, ".dds", myTexturePathsInFolder, !myTexturePathsInFolder.empty());
+	myShowTextureBrowser = GetPathsByExtension(path, ".dds", myTexturePaths, !myTexturePaths.empty());
 	ImGui::Begin("Select .dds texture.", &myShowTextureBrowser, ImGuiWindowFlags_NoCollapse);
 	{
 		ImGui::TextColored(COLOR_TEXT_LABEL, std::string("Folder: " + path).c_str());
 		ImGui::BeginChild("Scrolling", ImVec2(250.f,400.f), false,  ImGuiWindowFlags_NoScrollWithMouse);
-		for (size_t i = 0; i < myTexturePathsInFolder.size(); ++i)
+		for (size_t i = 0; i < myTexturePaths.size(); ++i)
 		{
 			bool selected = false;
-			ImGui::Selectable(myTexturePathsInFolder[i].myDisplayName.c_str(), &selected);
+			ImGui::Selectable(myTexturePaths[i].myDisplayName.c_str(), &selected);
 			if (selected)
 			{
-				myTexturePaths[myCurrentTextureSlot].UpdatePath(std::move(myTexturePathsInFolder[i].myDisplayName));
+				myCurrentTextures[myCurrentTextureSlot] = std::move(myTexturePaths[i].myDisplayName);
 
-				CModelComponent* model = myGameObject->GetComponent<CModelComponent>();
-				model->TintTextureOnIndex(std::move(myTexturePathsInFolder[i].myPath), myCurrentTextureSlot);
+				CModelComponent& model = *myGameObject->GetComponent<CModelComponent>();
+				model.TintTextureOnIndex(std::move(myTexturePaths[i].myPath), myCurrentTextureSlot);
 
 				myShowTextureBrowser = false;
-				myTexturePathsInFolder.clear();
+				myTexturePaths.clear();
 			}
 		}
 		ImGui::EndChild();
@@ -368,4 +381,41 @@ void ImGuiWindow::CAssetCustomizationWindow::SaveJSON(const std::string& aCustom
 	mySelectedJSON.myDisplayName = myJSONFileName;
 
 	ZeroMemory(myJSONFileName, AssetCustomizationWindow::JSONNameBufferSize);
+}
+
+void ImGuiWindow::CAssetCustomizationWindow::ClearAll()
+{
+	if (myGameObject->GetComponent<CModelComponent>())
+	{
+		CModelComponent& model = *myGameObject->GetComponent<CModelComponent>();
+		const float resetValue = 1.0f;
+		for (unsigned short i = 0; i < NUMBER_OF_TINT_SLOTS; ++i)
+		{
+			//myPrimaryTint[i]	= resetValue;
+			//mySecondaryTint[i]	= resetValue;
+			//myTertiaryTint[i]	= resetValue;
+			//myAccentTint[i]		= resetValue;
+			//myEmissiveTint[i]	= resetValue;
+			myTints[i] = Vector4(resetValue);
+			model.TintOnIndex(myTints[i], i);
+			ClearTexture(i);
+		}
+		myEmissive = Vector4(resetValue);
+		model.Emissive(myEmissive);
+	}
+}
+
+void ImGuiWindow::CAssetCustomizationWindow::ClearTexture(const int& anIndex)
+{
+	CModelComponent& model = *myGameObject->GetComponent<CModelComponent>();
+	myCurrentTextures[anIndex] = "";
+	model.ClearTextureOnIndex(anIndex);
+}
+
+void ImGuiWindow::CAssetCustomizationWindow::ImGuiSpacing(const short& aNrOf)
+{
+	for (short i = 0; i < aNrOf; ++i)
+	{
+		ImGui::Spacing();
+	}
 }

@@ -251,6 +251,12 @@ const std::string& CModelComponent::TexturePathOnIndex(const int& anIndex)
 	return myTints[index].myTexture.TexturePath();
 }
 
+void CModelComponent::ClearTextureOnIndex(const int& anIndex)
+{
+	const int index = TintsBoundsCheck(anIndex);
+	myTints[index].myTexture.Clear();
+}
+
 bool CModelComponent::SetTintTextures(std::vector<CModelComponent::STintData>& aVectorWithTintTextures)
 {
 	myTints = std::move(aVectorWithTintTextures);

@@ -71,6 +71,8 @@ public:
 	const std::string& TextureNameOnIndex(const int& anIndex);
 	const std::string& TexturePathOnIndex(const int& anIndex);
 
+	void ClearTextureOnIndex(const int& anIndex);
+
 	struct STintData
 	{
 		CTextureWrapperID3D11 myTexture;

@@ -1,6 +1,8 @@
 #pragma once
 #include "Window.h"
 
+#include "ModelComponent.h"
+
 class CGameObject;
 namespace ImGuiWindow
 {
@@ -8,34 +10,6 @@ namespace ImGuiWindow
 	{
 		constexpr int JSONNameBufferSize = 256;
 	}
-
-	class CTexturePath
-	{
-	public:
-		CTexturePath(): myHasChanged(true), myPath(""){}
-		~CTexturePath() {}
-
-		void UpdatePath(const std::string& aPath)
-		{
-			myPath = aPath;
-			myHasChanged = true;
-		}
-
-		const std::string& GetPath()
-		{
-			myHasChanged = false;
-			return myPath;
-		}
-
-		inline const bool HasChanged()
-		{
-			return myHasChanged;
-		}
-
-	private:
-		bool myHasChanged = false;
-		std::string myPath;
-	};
 
 	class CAssetCustomizationWindow : public CWindow
 	{
@@ -63,13 +37,20 @@ namespace ImGuiWindow
 
 		void SaveJSON(const std::string& aCustomPath = "");
 
+		void ClearAll();
+		void ClearTexture(const int& anIndex);
+
+		inline void ImGuiSpacing(const short& aNrOf);
+
 	private:
-		float myPrimaryTint[4];
-		float mySecondaryTint[4];
-		float myTertiaryTint[4];
-		float myAccentTint[4];
-		float myEmissiveTint[4];
-		std::array<CTexturePath, 4> myTexturePaths;
+		std::array<DirectX::SimpleMath::Vector4, NUMBER_OF_TINT_SLOTS> myTints;
+		//float myPrimaryTint[4];
+		//float mySecondaryTint[4];
+		//float myTertiaryTint[4];
+		//float myAccentTint[4];
+		/*float myEmissiveTint[4];*/
+		DirectX::SimpleMath::Vector4 myEmissive;
+		std::array<std::string, NUMBER_OF_TINT_SLOTS> myCurrentTextures;
 
 
 		CGameObject* myGameObject;
@@ -78,7 +59,7 @@ namespace ImGuiWindow
 		char myJSONFileName[AssetCustomizationWindow::JSONNameBufferSize];
 		std::vector<SAssetInfo> myFBXAssetPaths;
 		std::vector<SAssetInfo> myJSONPaths;
-		std::vector<SAssetInfo> myTexturePathsInFolder;
+		std::vector<SAssetInfo> myTexturePaths;
 
 		bool myShowLoadAsset;
 		bool myShowLoadCustomizationFile;
