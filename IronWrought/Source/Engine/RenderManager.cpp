@@ -74,7 +74,7 @@ bool CRenderManager::ReInit(CDirectXFramework* aFramework, CWindowHandler* aWind
 void CRenderManager::InitRenderTextures(CWindowHandler* aWindowHandler)
 {
 	myIntermediateDepth = myFullscreenTextureFactory.CreateDepth(aWindowHandler->GetResolution(), DXGI_FORMAT_R24G8_TYPELESS);
-	myEnvironmentShadowDepth = myFullscreenTextureFactory.CreateDepth({ 2048.0f * 4.0f, 2048.0f * 4.0f }, DXGI_FORMAT_R32_TYPELESS);
+	myEnvironmentShadowDepth = myFullscreenTextureFactory.CreateDepth({ 2048.0f/* * 4.0f*/, 2048.0f/* * 4.0f*/ }, DXGI_FORMAT_R32_TYPELESS);
 	myBoxLightShadowDepth = myFullscreenTextureFactory.CreateDepth(aWindowHandler->GetResolution(), DXGI_FORMAT_R32_TYPELESS);
 	myDepthCopy = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R32_FLOAT);
 	myDownsampledDepth = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution() / 2.0f, DXGI_FORMAT_R32_FLOAT);
