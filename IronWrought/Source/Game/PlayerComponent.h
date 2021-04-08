@@ -27,6 +27,8 @@ private:
 	CPlayerControllerComponent* myPlayerController;
 
 	float myHealth;
+	float myMaxHealth;
+	float myHealthPercentage;
 	bool isAlive = true;
 };
 

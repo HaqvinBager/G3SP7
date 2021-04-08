@@ -76,6 +76,10 @@ public:
 		{
 			return "STRING";
 		}
+		else if (aPin.myVariableType == SPin::EPinType::EVector3)
+		{
+			return "VECTOR3";
+		}
 		return "";
 	}
 
@@ -110,6 +114,15 @@ public:
 			else if (aPin.myVariableType == SPin::EPinType::EString)
 			{
 				aWriter.String((char*)aPin.myData);
+			}
+			else if (aPin.myVariableType == SPin::EPinType::EVector3)
+			{
+				Vector3 data = NodeData::Get<Vector3>(aPin.myData);
+				aWriter.StartArray();
+				aWriter.Double(static_cast<double>(data.x));
+				aWriter.Double(static_cast<double>(data.y));
+				aWriter.Double(static_cast<double>(data.z));
+				aWriter.EndArray();
 			}
 			else
 			{

@@ -1,4 +1,9 @@
 {
+  "Pivot X -1.0 to 1.0": 0.0,
+  "Pivot Y -1.0 to 1.0": 0.0,
+  "Postion X -1.0 to 1.0": 0.0,
+  "Position Y -1.0 to 1.0": 0.0,
+
   "Buttons": [
     {
       "Text": "",
@@ -17,7 +22,8 @@
       "Idle Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_IDLE.dds",
       "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_HOVER.dds",
       "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_CLICK.dds",
-      "Messages": [ 6 ]
+      "Messages": [ 6 ],
+      "Sub Canvas Toggle Index": [ 1 ]
     },
     {
       "Text": "",
@@ -34,7 +40,8 @@
       "Idle Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_IDLE.dds",
       "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_HOVER.dds",
       "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_CLICK.dds",
-      "Messages": [ 4 ]
+      "Messages": [ 4 ],
+      "Sub Canvas Toggle": [ 2 ]
     },
     {
       "Text": "",
@@ -105,5 +112,8 @@
 
   "PostmasterEvents": {
     "Events": [ ]
-  }
+  },
+
+  "Widgets":[
+  ]
 }

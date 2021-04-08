@@ -31,8 +31,8 @@ bool CEnvironmentLight::Init(CDirectXFramework* aFramework, std::string aFilePat
 	myDirection = { 0.0f, 1.0f, 0.0f, 0.0f };
 	myShadowmapViewMatrix = DirectX::XMMatrixLookAtLH(myPosition, myPosition - myDirection, Vector3::Up);
 
-	myShadowcastSize = /*{ 32.0f, 32.0f }*/{64.0f, 64.0f};
-	myShadowTextureSize = { 2048.0f * 4.0f, 2048.0f * 4.0f };
+	myShadowcastSize = /*{ 32.0f, 32.0f }*/{ 64.0f, 64.0f };
+	myShadowTextureSize = { 2048.0f/* * 4.0f*/, 2048.0f/* * 4.0f*/ };
 
 	myShadowmapProjectionMatrix = DirectX::XMMatrixOrthographicLH(myShadowcastSize.x, myShadowcastSize.y, -40.0f, 40.0f);
 

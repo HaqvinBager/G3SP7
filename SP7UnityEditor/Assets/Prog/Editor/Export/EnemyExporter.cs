@@ -2,17 +2,29 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyExporter : MonoBehaviour
-{
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
+
+[System.Serializable]
+public struct EnemyCollection
+{
+    public List<Enemy> enemies;
+}
+
+public class EnemyExporter 
+{
+    public static EnemyCollection Export(string aSceneName)
     {
-        
+
+        EnemyCollection collection = new EnemyCollection();
+        collection.enemies = new List<Enemy>();
+
+        EnemySettings[] allEnemies = GameObject.FindObjectsOfType<EnemySettings>();
+        foreach(EnemySettings enemy in allEnemies)
+        {
+            enemy.settings.instanceID = enemy.transform.GetInstanceID();
+            collection.enemies.Add(enemy.settings);
+        }
+
+        return collection;
     }
 }

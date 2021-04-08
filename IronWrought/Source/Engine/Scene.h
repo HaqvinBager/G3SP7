@@ -48,7 +48,6 @@ public:
 	bool ReInitCanvas(const std::string& aPath);
 	void CanvasIsHUD();
 
-	
 //SETUP END
 
 //UPDATE
