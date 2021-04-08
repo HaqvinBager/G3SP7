@@ -189,6 +189,7 @@ void CSpriteInstance::PlayAnimation(unsigned int anIndex, bool aShouldLoop, bool
 	myCurrentAnimationIndex = anIndex;
 	myShouldLoopAnimation = aShouldLoop;
 	myShouldReverseAnimation = aShouldBeReversed;
+	myAnimationTimer = 0.0f;
 	
 	if (!myShouldReverseAnimation)
 		myCurrentAnimationFrame = myAnimationData[myCurrentAnimationIndex].myFramesOffset;
