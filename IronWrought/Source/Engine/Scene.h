@@ -35,6 +35,7 @@ class CScene : public IObserver {
 	friend class CBootUpState;
 	friend class CInGameState;
 	friend class CMainMenuState;
+	friend class CPauseMenuState;
 public:
 //SETUP START
 	CScene(const unsigned int aGameObjectCount = 0);
@@ -45,6 +46,7 @@ public:
 	bool InitNavMesh(const std::string& aPath);
 	bool InitCanvas(const std::string& aPath);
 	bool ReInitCanvas(const std::string& aPath);
+	void CanvasIsHUD();
 
 	
 //SETUP END

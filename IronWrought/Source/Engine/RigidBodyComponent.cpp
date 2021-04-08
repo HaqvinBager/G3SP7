@@ -11,9 +11,12 @@
 //{
 //}
 
-CRigidBodyComponent::CRigidBodyComponent(CGameObject& aParent)
+CRigidBodyComponent::CRigidBodyComponent(CGameObject& aParent, const float& aMass, const Vector3& aLocalCenterMass, const Vector3& aInertiaTensor)
 	: CComponent(aParent)
 	, myDynamicRigidBody(nullptr)
+	, myMass(aMass)
+	, myLocalCenterMass(aLocalCenterMass)
+	, myInertiaTensor(aInertiaTensor)
 {
 }
 
@@ -25,6 +28,9 @@ CRigidBodyComponent::~CRigidBodyComponent()
 void CRigidBodyComponent::Awake()
 {
 	myDynamicRigidBody = CEngine::GetInstance()->GetPhysx().CreateDynamicRigidbody(*GameObject().myTransform);
+	myDynamicRigidBody->GetBody().setMass(myMass);
+	myDynamicRigidBody->GetBody().setMassSpaceInertiaTensor({ myInertiaTensor.x, myInertiaTensor.y, myInertiaTensor.z });
+	myDynamicRigidBody->GetBody().setCMassLocalPose({myLocalCenterMass.x, myLocalCenterMass.y, myLocalCenterMass.z});
 	myDynamicRigidBody->GetBody().userData = (void*)GameObject().myTransform;
 }
 
@@ -52,11 +58,20 @@ void CRigidBodyComponent::AddForce(const Vector3& aNormalizedDirection, const fl
 	AddForce(PxVec3(aDirectionWithForce.x, aDirectionWithForce.y, aDirectionWithForce.z), aForceMode);
 }
 
+void CRigidBodyComponent::AddAngularForce(const Vector3& aAngularForce, const EForceMode aForceMode)
+{
+	PxVec3 angularForce = PxVec3(aAngularForce.x, aAngularForce.y, aAngularForce.z);
+	myDynamicRigidBody->GetBody().addTorque(angularForce, (PxForceMode::Enum)aForceMode);
+
+}
+
+void CRigidBodyComponent::SetAngularVelocity(const Vector3& aVelocity)
+{
+	myDynamicRigidBody->GetBody().setAngularVelocity({ aVelocity.x, aVelocity.y, aVelocity.z });
+}
+
 void CRigidBodyComponent::AddForce(const physx::PxVec3& aDirectionAndForce, const EForceMode aForceMode)
 {
-	//myDynamicRigidBody->GetBody().setForceAndTorque({ 0.f, 0.f, 0.f }, { 0.f, 0.f, 0.f }, PxForceMode::eIMPULSE);
-	//myDynamicRigidBody->GetBody().setForceAndTorque(aDirectionAndForce, { 0.f, 0.f, 0.f }, PxForceMode::eIMPULSE);
-
 	myDynamicRigidBody->GetBody().addForce(aDirectionAndForce, (PxForceMode::Enum)aForceMode);
 }
 
@@ -66,6 +81,12 @@ void CRigidBodyComponent::AttachShape(physx::PxShape* aShape)
 	if (status) {
 		//CEngine::GetInstance()->GetActiveScene().PXScene()->addActor(myDynamicRigidBody->GetBody());
 	}
+}
+
+const float CRigidBodyComponent::GetMass()
+{
+	PxReal mass = myDynamicRigidBody->GetBody().getMass();
+	return {mass};
 }
 
 void CRigidBodyComponent::SetPosition(const Vector3& aPos) {

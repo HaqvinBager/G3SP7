@@ -9,6 +9,7 @@ struct VertexToGeometry
     float4 myColor : COLOR;
     float4 myUVRect : UVRECT;
     float2 mySize : SIZE;
+    float myRotation : ROTATION;
 };
 
 struct GeometryToPixel
@@ -29,7 +30,8 @@ cbuffer ObjectBuffer : register(b0)
     float4 myColor;
     float4 myUVRect;
     float2 mySize;
-    float2 objectBufferPadding;
+    float myRotation;
+    float objectBufferPadding;
 };
 
 cbuffer TextureScrollBuffer : register(b1)

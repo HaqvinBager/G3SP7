@@ -25,7 +25,8 @@ int CNodeTypeGameObjectSetRotation::OnEnter(CNodeInstance* aTriggeringNodeInstan
 	size_t outSize = 0;
 
 	GetDataOnPin(aTriggeringNodeInstance, 2, outType, someData, outSize);
-	Vector3 newRotation = NodeData::Get<Vector3>(someData);
+	Vector3 data = NodeData::Get<Vector3>(someData);
+	Quaternion newRotation = Quaternion::CreateFromYawPitchRoll(data.y, data.x, data.z);
 
 	//GetDataOnPin(aTriggeringNodeInstance, 3, outType, someData, outSize);
 	//float y = NodeData::Get<float>(someData);

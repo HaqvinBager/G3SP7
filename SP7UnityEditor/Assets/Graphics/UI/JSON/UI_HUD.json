@@ -12,11 +12,31 @@
 
   "Sprites": [
     {
-      "Path": "Assets/Graphics/UI/HUD/UI_HUD_Crosshair.dds",
+      "Path": "Assets/Graphics/UI/HUD/UI_HUD_Crosshair_Animation.dds",
       "Position X": 0.0,
       "Position Y": 0.0,
       "Scale X": 0.35,
-      "Scale Y": 0.35
+      "Scale Y": 0.35,
+      "Animations": [
+        {
+          "Name": "Shoot",
+          "FrameWidth": 240.0,
+          "FrameHeight": 240.0,
+          "VerticalStartingPos": 0.0,
+          "NumberOfFrames": 7,
+          "FramesPerSecond": 60,
+          "RotationSpeedPerSecond": 720.0
+        },
+        {
+          "Name": "Idle",
+          "FrameWidth": 240.0,
+          "FrameHeight": 240.0,
+          "VerticalStartingPos": 0.0,
+          "NumberOfFrames": 1,
+          "FramesPerSecond": 1,
+          "RotationSpeedPerSecond": -90.0
+        }
+      ]
     },
     {
       "Path": "Assets/Graphics/UI/HUD/UI_HUD_TopLine_test.dds",

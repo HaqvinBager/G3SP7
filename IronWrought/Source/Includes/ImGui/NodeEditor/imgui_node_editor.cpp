@@ -2053,6 +2053,8 @@ ed::Control ed::EditorContext::BuildControl(bool allowOffscreen)
         {
             if (!pin->m_IsLive) continue;
 
+            if ((pin->m_Bounds.Min.x <= 0.0f && pin->m_Bounds.Min.y <= 0.0f) || (pin->m_Bounds.Max.x <= 0.0f && pin->m_Bounds.Max.y <= 0.0f)) continue;
+
             checkInteractionsInArea(pin->m_ID, pin->m_Bounds, pin);
         }
 

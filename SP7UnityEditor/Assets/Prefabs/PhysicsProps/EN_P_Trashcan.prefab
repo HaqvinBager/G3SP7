@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3497634263547106985}
   - component: {fileID: 8365870753926171062}
+  - component: {fileID: 6489982900573086155}
   m_Layer: 0
   m_Name: EN_P_Trashcan
   m_TagString: Untagged
@@ -44,6 +45,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd91b596918d5b947b34fe83a610f47e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!64 &6489982900573086155
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8209893856098250383}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 78112863029652238, guid: 6c312a98d446cce48ac8da1b10fafbb5, type: 3}
 --- !u!1001 &4299378203204956220
 PrefabInstance:
   m_ObjectHideFlags: 0

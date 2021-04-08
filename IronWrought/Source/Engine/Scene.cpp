@@ -76,6 +76,7 @@ CScene::~CScene()
 	delete myEnvironmentLight;
 	myEnvironmentLight = nullptr;
 
+	//myCanvas->ClearFromScene(*this);
 	delete myCanvas;
 	myCanvas = nullptr;
 
@@ -162,6 +163,12 @@ bool CScene::ReInitCanvas(const std::string& aPath)
 
 	myCanvas->ReInit(aPath, *this);
 	return true;
+}
+
+void CScene::CanvasIsHUD()
+{
+	if (myCanvas)
+		myCanvas->IsHUDCanvas(true);
 }
 
 //No longer needed due to Components Awake being called via EMessageType "AddComponent"
@@ -736,25 +743,24 @@ bool CScene::ClearLineInstances()
 bool CScene::ClearAnimatedUIElement()
 {
 	//Canvas has already Deleted these Objects Axel Savage 2021-04-05
+	for (size_t i = 0; i < myAnimatedUIElements.size(); ++i)
+	{
+		delete myAnimatedUIElements[i];
+		myAnimatedUIElements[i] = nullptr;
+	}
 	myAnimatedUIElements.clear();
-	//for (size_t i = 0; i < myAnimatedUIElements.size(); ++i)
-	//{
-	//	delete myAnimatedUIElements[i];
-	//	myAnimatedUIElements[i] = nullptr;
-	//}
-	//myAnimatedUIElements.clear();
 	return false;
 }
 
 bool CScene::ClearTextInstances()
 {
 	//Canvas has already Deleted these Objects Axel Savage 2021-04-05
+	for (auto& text : myTexts)
+	{
+		delete text;
+		text = nullptr;
+	}
 	myTexts.clear();
-	//for (auto& text : myTexts)
-	//{
-	//	delete text;
-	//	text = nullptr;
-	//}
 
 	return false;
 }
@@ -773,18 +779,16 @@ bool CScene::ClearGameObjects()
 bool CScene::ClearSprites()
 {
 	//Canvas has already Deleted these Objects Axel Savage 2021-04-05
+	for (UINT i = 0; i < mySpriteInstances.size() - 1; ++i)
+	{
+		for (auto& sprite : mySpriteInstances[static_cast<ERenderOrder>(i)])
+		{
+			delete sprite;
+			sprite = nullptr;
+		}
+	}
 	mySpriteInstances.clear();
-
-	//for (UINT i = 0; i < mySpriteInstances.size() - 1; ++i)
-	//{
-	//	for (auto& sprite : mySpriteInstances[static_cast<ERenderOrder>(i)])
-	//	{
-	//		delete sprite;
-	//		sprite = nullptr;
-	//	}
-	//}
-	//
-
+	
 	return true;
 }
 //CLEAR SCENE OF INSTANCES END

@@ -8,10 +8,12 @@ namespace physx
 
 }
 
+class CTransformComponent;
+
 class CCharacterController
 {
 public:
-    CCharacterController(const Vector3 aPosition, const float aRadius = 0.6f, const float aHeight = 1.8f);
+    CCharacterController(const Vector3 aPosition, const float aRadius = 0.6f, const float aHeight = 1.8f, CTransformComponent* userData = nullptr);
     physx::PxController& GetController();
 
     Vector3 GetPosition() const;

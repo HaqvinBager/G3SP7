@@ -38,7 +38,8 @@ private:
 		DirectX::SimpleMath::Vector4 myColor;
 		DirectX::SimpleMath::Vector4 myUVRect;
 		DirectX::SimpleMath::Vector2 mySize;
-		float padding[2];
+		float myRotation;
+		float padding;
 	} myObjectBufferData;
 
 	struct STextureScrollingData {

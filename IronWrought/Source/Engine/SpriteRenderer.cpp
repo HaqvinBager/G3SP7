@@ -84,6 +84,7 @@ void CSpriteRenderer::Render(std::vector<CSpriteInstance*>& aSpriteList)
         myObjectBufferData.myColor = instance->GetColor();
         myObjectBufferData.myUVRect = instance->GetUVRect();
         myObjectBufferData.mySize = instance->GetSize();
+        myObjectBufferData.myRotation = DirectX::XMConvertToRadians(instance->GetRotation());
 
         BindBuffer(myObjectBuffer, myObjectBufferData, "Object Buffer");
 
@@ -119,7 +120,6 @@ void CSpriteRenderer::Render(std::vector<CAnimatedUIElement*>& someAnimatedEleme
     for (unsigned int instanceIndex = 0; instanceIndex < someAnimatedElements.size(); ++instanceIndex)
     {
         SAnimatedSpriteData* data = someAnimatedElements[instanceIndex]->myData;
-
         CSpriteInstance* instance = someAnimatedElements[instanceIndex]->mySpriteInstance;
         CSprite* sprite = instance->GetSprite();
 
@@ -127,6 +127,7 @@ void CSpriteRenderer::Render(std::vector<CAnimatedUIElement*>& someAnimatedEleme
         myObjectBufferData.myColor = instance->GetColor();
         myObjectBufferData.myUVRect = instance->GetUVRect();
         myObjectBufferData.mySize = instance->GetSize();
+        myObjectBufferData.myRotation = DirectX::XMConvertToRadians(instance->GetRotation());
 
         BindBuffer(myObjectBuffer, myObjectBufferData, "Object Buffer");
 

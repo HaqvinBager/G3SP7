@@ -21,8 +21,9 @@
 using namespace rapidjson;
 
 CCanvas::CCanvas() :
-	myBackground(nullptr),
-	myIsEnabled(true)
+	myBackground(nullptr)
+	, myIsEnabled(true)
+	, myIsHUDCanvas(false)
 {
 }
 
@@ -30,11 +31,16 @@ CCanvas::~CCanvas()
 {
 	UnsubscribeToMessages();
 	myMessageTypes.clear();
-	delete myBackground;
+
+	// Scene takes ownership.
+	/*delete myBackground;
 	myBackground = nullptr;
+
+	CScene& scene = IRONWROUGHT_ACTIVE_SCENE;
 
 	for (size_t i = 0; i < myAnimatedUIs.size(); ++i)
 	{
+		scene.RemoveInstance(myAnimatedUIs[i]);
 		delete myAnimatedUIs[i];
 		myAnimatedUIs[i] = nullptr;
 	}
@@ -49,13 +55,15 @@ CCanvas::~CCanvas()
 
 	for (size_t i = 0; i < mySprites.size(); ++i)
 	{
-			delete mySprites[i];
-			mySprites[i] = nullptr;
+		scene.RemoveInstance(mySprites[i]);
+		delete mySprites[i];
+		mySprites[i] = nullptr;
 	}
 	mySprites.clear();
 
 	for (size_t i = 0; i < myButtonTexts.size(); ++i)
 	{
+		scene.RemoveInstance(myButtonTexts[i]);
 		delete myButtonTexts[i];
 		myButtonTexts[i] = nullptr;
 	}
@@ -63,8 +71,55 @@ CCanvas::~CCanvas()
 
 	for (size_t i = 0; i < myTexts.size(); ++i)
 	{
-			delete myTexts[i];
-			myTexts[i] = nullptr;
+		scene.RemoveInstance(myTexts[i]);
+		delete myTexts[i];
+		myTexts[i] = nullptr;
+	}
+	myTexts.clear();*/
+}
+
+void CCanvas::ClearFromScene(CScene& aScene)
+{
+	aScene.RemoveInstance(myBackground);
+	delete myBackground;
+	myBackground = nullptr;
+
+	for (size_t i = 0; i < myAnimatedUIs.size(); ++i)
+	{
+		aScene.RemoveInstance(myAnimatedUIs[i]);
+		delete myAnimatedUIs[i];
+		myAnimatedUIs[i] = nullptr;
+	}
+	myAnimatedUIs.clear();
+
+	for (size_t i = 0; i < myButtons.size(); ++i)
+	{
+		delete myButtons[i];
+		myButtons[i] = nullptr;
+	}
+	myButtons.clear();
+
+	for (size_t i = 0; i < mySprites.size(); ++i)
+	{
+		aScene.RemoveInstance(mySprites[i]);
+		delete mySprites[i];
+		mySprites[i] = nullptr;
+	}
+	mySprites.clear();
+
+	for (size_t i = 0; i < myButtonTexts.size(); ++i)
+	{
+		aScene.RemoveInstance(myButtonTexts[i]);
+		delete myButtonTexts[i];
+		myButtonTexts[i] = nullptr;
+	}
+	myButtonTexts.clear();
+
+	for (size_t i = 0; i < myTexts.size(); ++i)
+	{
+		aScene.RemoveInstance(myTexts[i]);
+		delete myTexts[i];
+		myTexts[i] = nullptr;
 	}
 	myTexts.clear();
 }
@@ -298,6 +353,32 @@ void CCanvas::ReInit(std::string aFilePath, CScene& aScene, bool addToScene)
 
 void CCanvas::Update()
 {
+	if (myIsHUDCanvas)
+	{
+		if (Input::GetInstance()->IsMousePressed(Input::EMouseButton::Right))
+		{
+			mySprites[0]->PlayAnimation(0);
+		}
+
+		if (Input::GetInstance()->IsMouseReleased(Input::EMouseButton::Right))
+		{
+			mySprites[0]->PlayAnimation(0, false, true);
+		}
+
+		if (!mySprites[0]->GetShouldAnimate() && !INPUT->IsMouseDown(Input::EMouseButton::Right))
+		{
+			mySprites[0]->PlayAnimation(1, true);
+		}
+		else if (!mySprites[0]->GetShouldAnimate()){
+			mySprites[0]->Rotate(CTimer::Dt()*720.0f);
+		}
+	}
+
+	for (unsigned int i = 0; i < mySprites.size(); ++i)
+	{
+		mySprites[i]->Update();
+	}
+
 	if (myButtons.size() <= 0)
 		return;
 
@@ -461,7 +542,31 @@ bool CCanvas::InitSprite(const rapidjson::GenericObject<false, rapidjson::Value>
 	if (aRapidObject.HasMember("Scale Y"))
 		scale.y = aRapidObject["Scale Y"].GetFloat();
 
-	mySprites[anIndex]->Init(CSpriteFactory::GetInstance()->GetSprite(ASSETPATH(aRapidObject["Path"].GetString())), scale);
+	std::vector<SSpriteSheetPositionData> spriteAnimations;
+	if (aRapidObject.HasMember("Animations"))
+	{
+		auto animations = aRapidObject["Animations"].GetArray();
+		for (unsigned int i = 0; i < animations.Size(); ++i)
+		{
+			SSpriteSheetPositionData data;
+			data.myAnimationName = animations[i]["Name"].GetString();
+			data.mySpriteWidth = animations[i]["FrameWidth"].GetFloat();
+			data.mySpriteHeight = animations[i]["FrameHeight"].GetFloat();
+			data.myVerticalStartingPosition = animations[i]["VerticalStartingPos"].GetFloat();
+			data.myNumberOfFrames = animations[i]["NumberOfFrames"].GetInt();
+			data.mySpeedInFramesPerSecond = animations[i]["FramesPerSecond"].GetFloat();
+			data.myRotationSpeedInSeconds = animations[i]["RotationSpeedPerSecond"].GetFloat();
+			spriteAnimations.push_back(data);
+		}
+	}
+
+	if (spriteAnimations.empty())
+		mySprites[anIndex]->Init(CSpriteFactory::GetInstance()->GetSprite(ASSETPATH(aRapidObject["Path"].GetString())), scale);
+	else 
+	{
+		mySprites[anIndex]->Init(CSpriteFactory::GetInstance()->GetSprite(ASSETPATH(aRapidObject["Path"].GetString())), spriteAnimations, scale);
+	}
+
 	mySprites[anIndex]->SetPosition(
 		{ aRapidObject["Position X"].GetFloat() 
 		, aRapidObject["Position Y"].GetFloat() 

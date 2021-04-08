@@ -57,6 +57,7 @@ void CBootUpState::Start()
 void CBootUpState::Stop()
 {
 	myLogos.clear();
+	CEngine::GetInstance()->RemoveScene(myState);
 }
 
 void CBootUpState::Update()

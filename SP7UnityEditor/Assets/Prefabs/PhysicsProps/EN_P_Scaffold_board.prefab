@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7650989540654137890}
   - component: {fileID: 8929280378990131464}
+  - component: {fileID: 5422165102604457014}
   m_Layer: 0
   m_Name: EN_P_Scaffold_board
   m_TagString: Untagged
@@ -44,6 +45,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd91b596918d5b947b34fe83a610f47e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!65 &5422165102604457014
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 604630486759642095}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.7138125, y: 0.06303936, z: 3.0399547}
+  m_Center: {x: -0.34956974, y: 0.020440966, z: -1.5049958}
 --- !u!1001 &5161659223813138715
 PrefabInstance:
   m_ObjectHideFlags: 0

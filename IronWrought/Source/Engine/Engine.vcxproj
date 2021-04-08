@@ -194,6 +194,8 @@
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Behaviour.h" />
     <ClInclude Include="BoxColliderComponent.h" />
+    <ClInclude Include="CharacterReportCallback.h" />
+    <ClInclude Include="ConvexMeshColliderComponent.h" />
     <ClInclude Include="GravityGloveEditor.h" />
     <ClInclude Include="NodeTypeAddForce.h" />
     <ClInclude Include="SphereColliderComponent.h" />
@@ -235,7 +237,6 @@
     <ClInclude Include="NodeTypeGameObjectMove.h" />
     <ClInclude Include="NodeTypeGameObjectRotate.h" />
     <ClInclude Include="NodeTypeGameObjectSetRotation.h" />
-    <ClInclude Include="NodeTypeListTest.h" />
     <ClInclude Include="NodeTypeMathGreater.h" />
     <ClInclude Include="NodeTypeStartGetCustom.h" />
     <ClInclude Include="NodeTypeStartKeyboardInput.h" />
@@ -430,6 +431,8 @@
     <ClCompile Include="AudioChannel.cpp" />
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="BoxColliderComponent.cpp" />
+    <ClCompile Include="CharacterReportCallback.cpp" />
+    <ClCompile Include="ConvexMeshColliderComponent.cpp" />
     <ClCompile Include="GravityGloveEditor.cpp" />
     <ClCompile Include="NodeTypeAddForce.cpp" />
     <ClCompile Include="SphereColliderComponent.cpp" />
@@ -469,7 +472,6 @@
     <ClCompile Include="NodeTypeGameObjectMove.cpp" />
     <ClCompile Include="NodeTypeGameObjectRotate.cpp" />
     <ClCompile Include="NodeTypeGameObjectSetRotation.cpp" />
-    <ClCompile Include="NodeTypeListTest.cpp" />
     <ClCompile Include="NodeTypeMathGreater.cpp" />
     <ClCompile Include="NodeTypeStartGetCustom.cpp" />
     <ClCompile Include="NodeTypeStartKeyboardInput.cpp" />

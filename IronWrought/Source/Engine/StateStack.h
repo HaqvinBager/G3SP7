@@ -21,7 +21,8 @@ public:
 	CState* GetTop() { return myStateStack.top(); }
 	bool PushState(const EState aState);
 	bool PopState();
-	bool PopUntil(const EState aState);
+	// Returns FALSE if the StateStack is empty.
+	bool PopUntil(const EState aState, const bool& anAllowError = true);
 	bool PopTopAndPush(const EState aState);
 
 	bool Update();

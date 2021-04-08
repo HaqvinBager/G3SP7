@@ -7,5 +7,6 @@ VertexToGeometry main(VertexInput input)
     output.myColor = myColor;
     output.myUVRect = myUVRect;
     output.mySize = mySize;
+    output.myRotation = myRotation;
 	return output;
 }

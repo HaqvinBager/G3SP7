@@ -52,33 +52,30 @@ void CInGameState::Awake()
 
 void CInGameState::Start()
 {
-	//CScene* scene = CSceneManager::CreateEmpty();
-	//TEMP_VFX(scene);
-
-	//CEngine::GetInstance()->AddScene(myState, scene);
+	
 	CEngine::GetInstance()->SetActiveScene(myState);
 	TEMP_VFX(&CEngine::GetInstance()->GetActiveScene());
-
-	CEngine::GetInstance()->SetActiveScene(myState);
+	IRONWROUGHT->GetActiveScene().CanvasIsHUD();
 
 	myExitLevel = false;
 }
 
 void CInGameState::Stop()
 {
+	IRONWROUGHT->RemoveScene(myState);
 	CMainSingleton::CollisionManager().ClearColliders();
 }
 
 void CInGameState::Update()
 {
 
+	IRONWROUGHT->GetActiveScene().UpdateCanvas();
 
 	if (Input::GetInstance()->IsKeyPressed(VK_ESCAPE))
 	{
-		myStateStack.PopTopAndPush(CStateStack::EState::InGame);
+		myStateStack.PushState(CStateStack::EState::PauseMenu);
 	}
 
-	IRONWROUGHT->GetActiveScene().UpdateCanvas();
 }
 
 void CInGameState::ReceiveEvent(const EInputEvent aEvent)

@@ -6,7 +6,7 @@
 #include "Scene.h"
 #include <GravityGloveComponent.h>
 
-IronWroughtImGui::CGravityGloveEditor::CGravityGloveEditor(const char* aName) 
+IronWroughtImGui::CGravityGloveEditor::CGravityGloveEditor(const char* aName)
 	: CWindow(aName)
 {
 }
@@ -21,7 +21,7 @@ void IronWroughtImGui::CGravityGloveEditor::OnEnable()
 
 	if (myGlove != nullptr)
 	{
-		//myValues["Push Force"] = &myGlove->mySettings.myPushForce;// serializedData.myPushForce;
+		myValues["Push Force"] = &myGlove->mySettings.myPushForce;// serializedData.myPushForce;
 		//myValues["Max Push Force"] = &myGlove->mySettings.myMaxPushForce;
 		//myValues["Minimum Velocity On Arrive"] = &myGlove->mySettings.myDistanceToMaxLinearVelocity;
 		myValues["Max Distance"] = &myGlove->mySettings.myMaxDistance;

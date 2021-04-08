@@ -1,7 +1,7 @@
 #pragma once
 #include "NodeTypes.h"
-#include <unordered_map>
-//class CNodeData;
+#include "hasher.h"
+#include "NodeDataManager.h"
 
 class CUID
 {
@@ -127,6 +127,13 @@ struct SPin
 class CNodeType
 {
 public:
+	enum class ENodeType
+	{
+		EDefault,
+		ECustom,
+		EChild
+	};
+
 	virtual void ClearNodeInstanceFromMap(class CNodeInstance* aTriggeringNodeInstance);
 	int DoEnter(class CNodeInstance* aTriggeringNodeInstance);
 	std::string NodeName() { return myNodeName; }
@@ -155,6 +162,7 @@ public:
 	virtual void DebugUpdate(class CNodeInstance*) {}
 
 	int myID = -1;
+	ENodeType myNodeType = ENodeType::EDefault;
 
 protected:
 	template <class T>
@@ -192,63 +200,123 @@ public:
 
 	static void PopulateTypes();
 
-	static CNodeType* GetNodeTypeFromID(unsigned int aClassID)
+	static CNodeType* GetNodeTypeFromID(unsigned int aClassID, CNodeType::ENodeType aNodeType = CNodeType::ENodeType::EDefault)
 	{
-		return myTypes[aClassID]; // 1:1 to nodetype enum
+		switch (aNodeType)
+		{
+		case CNodeType::ENodeType::EDefault:
+			return myDefaultTypes[aClassID];
+		case CNodeType::ENodeType::ECustom:
+			return myCustomTypes[aClassID];
+		case CNodeType::ENodeType::EChild:
+			return myChildTypes[aClassID];
+		}
+
+		return nullptr;
 	}
-	static CNodeType** GetAllNodeTypes()
+
+	static CNodeType** GetAllNodeTypes(CNodeType::ENodeType aNodeType = CNodeType::ENodeType::EDefault)
 	{
-		return myTypes; // 1:1 to nodetype enum
+		switch (aNodeType)
+		{
+		case CNodeType::ENodeType::EDefault:
+			return myDefaultTypes;
+		case CNodeType::ENodeType::ECustom:
+			return myCustomTypes;
+		case CNodeType::ENodeType::EChild:
+			return myChildTypes;
+		}
+
+		return nullptr;
 	}
-	static unsigned short GetNodeTypeCount()
+
+	static unsigned short GetNodeTypeCount(CNodeType::ENodeType aNodeType = CNodeType::ENodeType::EDefault)
 	{
-		return myTypeCounter; // 1:1 to nodetype enum
+		switch (aNodeType)
+		{
+		case CNodeType::ENodeType::EDefault:
+			return myDefaultTypeCounter;
+		case CNodeType::ENodeType::ECustom:
+			return myCustomTypeCounter;
+		case CNodeType::ENodeType::EChild:
+			return myChildTypeCounter;
+		}
+		 // 1:1 to nodetype enum
+		return NULL;
 	}
+
 	template <class T>
-	static void RegisterType(const std::string& aNodeName)
+	static void RegisterType(const std::string& aNodeName, CNodeType::ENodeType aNodeType = CNodeType::ENodeType::EDefault)
 	{
-		myTypes[myTypeCounter] = new T;
-		myTypes[myTypeCounter]->myID = myTypeCounter;
-		myTypes[myTypeCounter]->NodeName(aNodeName);
-		myTypeCounter++;
+		if (aNodeType == CNodeType::ENodeType::EDefault)
+		{
+			myDefaultTypes[myDefaultTypeCounter] = new T;
+			myDefaultTypes[myDefaultTypeCounter]->myID = myDefaultTypeCounter;
+			myDefaultTypes[myDefaultTypeCounter]->NodeName(aNodeName);
+			myDefaultTypes[myDefaultTypeCounter]->myNodeType = aNodeType;
+			myDefaultTypeCounter++;
+		}
+		else if (aNodeType == CNodeType::ENodeType::EChild)
+		{
+			myChildTypes[myChildTypeCounter] = new T;
+			myChildTypes[myChildTypeCounter]->myID = myChildTypeCounter;
+			myChildTypes[myChildTypeCounter]->NodeName(aNodeName);
+			myChildTypes[myChildTypeCounter]->myNodeType = aNodeType;
+			myChildTypeCounter++;
+		}
 	}
+
 	template <class T>
 	static void RegisterDataType(const std::string& aNodeName, const std::string& aNodeDataKey)
 	{
-		myTypes[myTypeCounter] = new T;
-		myTypes[myTypeCounter]->myID = myTypeCounter;
-		myTypes[myTypeCounter]->NodeName(aNodeName);
-		myTypes[myTypeCounter]->NodeDataKey(aNodeDataKey);
-		myTypeCounter++;
+		myCustomTypes[myCustomTypeCounter] = new T;
+		myCustomTypes[myCustomTypeCounter]->myID = myCustomTypeCounter;
+		myCustomTypes[myCustomTypeCounter]->NodeName(aNodeName);
+		myCustomTypes[myCustomTypeCounter]->NodeDataKey(aNodeDataKey);
+		myCustomTypes[myCustomTypeCounter]->myNodeType = CNodeType::ENodeType::ECustom;
+		myCustomTypeCounter++;
+	}
+
+	static void DeregisterDataType(const std::string& aNodeName, const std::string& aNodeDataKey)
+	{
+		int i;
+
+		size_t hash = Hasher::GetHashValue(aNodeName);
+
+		for (i = 0; i < myCustomTypeCounter; ++i)
+		{
+			if (Hasher::GetHashValue(myCustomTypes[i]->NodeName()) == hash)
+			{
+				break;
+			}
+		}
+
+		if (i < myCustomTypeCounter)
+		{
+			for (int j = i; j < myCustomTypeCounter; ++j)
+			{
+				myCustomTypes[j] = myCustomTypes[j + 1];
+				
+				if (myCustomTypes[j] == NULL)
+					break;
+				
+				myCustomTypes[j]->myID--;
+			}
+			--myCustomTypeCounter;
+			CNodeDataManager::Get()->RemoveData(aNodeDataKey);
+		}
 	}
 
 	static void RegisterNewDataType(const std::string& aNodeName, unsigned int aType);
+	static void DegisterCustomDataType(const std::string& aNodeName);
 
-	static CNodeType* myTypes[128];
-	static unsigned short myTypeCounter;
+	static CNodeType* myDefaultTypes[128];
+	static CNodeType* myCustomTypes[128];
+	static CNodeType* myChildTypes[128];
+	static unsigned short myDefaultTypeCounter;
+	static unsigned short myCustomTypeCounter;
+	static unsigned short myChildTypeCounter;
 
 public:
-	//static CNodeType* GetChildNodeTypeFromID(std::string aKey, unsigned int aClassID)
-	//{
-	//	return myChildNodeTypesMap[aKey].myTypes[aClassID]; // 1:1 to nodetype enum
-	//}
-	//static CNodeType** GetAllChildNodeTypes(std::string aKey)
-	//{
-	//	return myChildNodeTypesMap[aKey].myTypes; // 1:1 to nodetype enum
-	//}
-	//static unsigned short GetChildNodeTypeCount(std::string aKey)
-	//{
-	//	return myChildNodeTypesMap[aKey].myTypeCounter; // 1:1 to nodetype enum
-	//}
-	//template <class T>
-	//static void RegisterChildType(std::string aKey, const std::string& aNodeName)
-	//{
-	//	myChildNodeTypesMap[aKey].myTypes[myChildNodeTypesMap[aKey].myTypeCounter] = new T;
-	//	myChildNodeTypesMap[aKey].myTypes[myChildNodeTypesMap[aKey].myTypeCounter]->myID = myChildNodeTypesMap[aKey].myTypeCounter;
-	//	myChildNodeTypesMap[aKey].myTypes[myChildNodeTypesMap[aKey].myTypeCounter]->NodeName(aNodeName);
-	//	myChildNodeTypesMap[aKey].myTypeCounter++;
-	//}
-
 	static void RegisterChildNodeTypes(std::string aKey, const unsigned int anIndex, int aGOID);
-	//static std::unordered_map<std::string, SNodeTypeData> myChildNodeTypesMap;
 };

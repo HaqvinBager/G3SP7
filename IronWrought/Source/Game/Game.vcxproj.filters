@@ -81,6 +81,12 @@
     <ClInclude Include="MainMenuState.h">
       <Filter>State Stack</Filter>
     </ClInclude>
+    <ClInclude Include="PauseMenuState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyAnimationController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp">
@@ -139,6 +145,12 @@
     </ClCompile>
     <ClCompile Include="MainMenuState.cpp">
       <Filter>State Stack</Filter>
+    </ClCompile>
+    <ClCompile Include="PauseMenuState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyAnimationController.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

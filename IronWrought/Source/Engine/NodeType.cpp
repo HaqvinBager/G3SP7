@@ -57,7 +57,6 @@
 #include "NodeTypeAudioPlayRobotIdle.h"
 #include "NodeTypeAudioPlayRobotPatrolling.h"
 #include "NodeTypeAudioPlayRobotSearching.h"
-#include "NodeTypeListTest.h"
 #include "NodeTypeVFXPlayVFX.h"
 #include "NodeTypeVFXStopVFX.h"
 #include "NodeTypeAudioPlayResearcherEvent.h"
@@ -75,8 +74,15 @@
 #include "Engine.h"
 #include "NodeDataManager.h"
 
-CNodeType* CNodeTypeCollector::myTypes[128];
-unsigned short CNodeTypeCollector::myTypeCounter = 0;
+
+CNodeType* CNodeTypeCollector::myDefaultTypes[128];
+CNodeType* CNodeTypeCollector::myCustomTypes[128];
+CNodeType* CNodeTypeCollector::myChildTypes[128];
+unsigned short CNodeTypeCollector::myDefaultTypeCounter = 0;
+unsigned short CNodeTypeCollector::myCustomTypeCounter = 0;
+unsigned short CNodeTypeCollector::myChildTypeCounter = 0;
+//CNodeType* CNodeTypeCollector::myTypes[128];
+//unsigned short CNodeTypeCollector::myTypeCounter = 0;
 //std::unordered_map<std::string, SNodeTypeData> CNodeTypeCollector::myChildNodeTypesMap;
 
 std::vector<unsigned int> CUID::myAllUIDs;
@@ -136,7 +142,6 @@ void CNodeTypeCollector::PopulateTypes()
 	RegisterType<CNodeTypeAudioPlayRobotIdle>("Play Robot Idle");
 	RegisterType<CNodeTypeAudioPlayRobotPatrolling>("Play Robot Patrolling");
 	RegisterType<CNodeTypeAudioPlayRobotSearching>("Play Robot Searching");
-	RegisterType<CNodeTypeListTest>("List Test");
 	RegisterType<CNodeTypeVFXPlayVFX>("Play VFX");
 	RegisterType<CNodeTypeVFXStopVFX>("Stop VFX");
 	RegisterType<CNodeTypeAudioPlayResearcherEvent>("Play Researcher Event");
@@ -191,11 +196,17 @@ void CNodeTypeCollector::RegisterNewDataType(const std::string& aNodeName, unsig
 	}
 }
 
+void CNodeTypeCollector::DegisterCustomDataType(const std::string& aNodeName)
+{
+	DeregisterDataType("Set: " + aNodeName, aNodeName);
+	DeregisterDataType("Get: " + aNodeName, aNodeName);
+}
+
 void CNodeTypeCollector::RegisterChildNodeTypes(std::string aKey, const unsigned int anIndex, int aGOID)
 {
 	//int poop = aGOID;
 	std::string name = "Get " + aKey + " Child " + std::to_string(anIndex) + " Position";
-	RegisterType<CNodeTypeGameObjectGetChildPosition>(name);
+	RegisterType<CNodeTypeGameObjectGetChildPosition>(name, CNodeType::ENodeType::EChild);
 	CNodeDataManager::Get()->SetData(name, CNodeDataManager::EDataType::EChildNodeData, aGOID);
 }
 

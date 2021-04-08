@@ -1,0 +1,93 @@
+{
+  "Max Number Of Particles": 50,
+  "Spawn Rate": 26.700000762939454,
+  "Lifetime": 1.600000023841858,
+  "Speed": 0.8700000047683716,
+  "Start Color R": 1.0,
+  "Start Color G": 1.0,
+  "Start Color B": 1.0,
+  "Start Color A": 1.0,
+  "End Color R": 1.0,
+  "End Color G": 1.0,
+  "End Color B": 1.0,
+  "End Color A": 0.0,
+  "Start Size": 0.009999999776482582,
+  "End Size": 0.05000000074505806,
+  "Start Direction X": 0.0,
+  "Start Direction Y": 0.0,
+  "Start Direction Z": 0.0,
+  "End Direction X": 0.0,
+  "End Direction Y": 0.30000001192092898,
+  "End Direction Z": 0.0,
+  "Lifetime Minimum Offset": -1.0,
+  "Lifetime Maximum Offset": 1.0,
+  "Speed Minimum Offset": -0.5,
+  "Speed Maximum Offset": 0.5,
+  "Offset Spawn Position X Randomize From": -0.20000000298023225,
+  "Offset Spawn Position X Randomize To": 0.0,
+  "Offset Spawn Position Y Randomize From": -0.30000001192092898,
+  "Offset Spawn Position Y Randomize To": 0.30000001192092898,
+  "Offset Spawn Position Z Randomize From": -0.20000000298023225,
+  "Offset Spawn Position Z Randomize To": 0.0,
+  "Spawn Direction X Randomize From": -0.30000001192092898,
+  "Spawn Direction X Randomize To": 0.30000001192092898,
+  "Spawn Direction Y Randomize From": -0.10000000149011612,
+  "Spawn Direction Y Randomize To": 0.20000000298023225,
+  "Spawn Direction Z Randomize From": -0.4000000059604645,
+  "Spawn Direction Z Randomize To": 0.30000001192092898,
+  "Texture Path": "Assets/Graphics/VFX/Texture/lightning_particle2.dds",
+  "Color Curve": [
+    {
+      "x": 0.0,
+      "y": 0.004999995231628418
+    },
+    {
+      "x": 0.20999999344348908,
+      "y": 0.5049999952316284
+    },
+    {
+      "x": 0.6899999976158142,
+      "y": 0.36500000953674319
+    },
+    {
+      "x": 1.0,
+      "y": 1.0
+    }
+  ],
+  "Size Curve": [
+    {
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "x": 0.7950000166893005,
+      "y": 0.5099999904632568
+    },
+    {
+      "x": 1.0,
+      "y": 1.0
+    },
+    {
+      "x": -1.0,
+      "y": 1.0
+    }
+  ],
+  "Direction Curve": [
+    {
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "x": 0.10499999672174454,
+      "y": 0.4049999713897705
+    },
+    {
+      "x": 0.7300000190734863,
+      "y": 0.5699999928474426
+    },
+    {
+      "x": 1.0,
+      "y": 0.75
+    }
+  ]
+}
