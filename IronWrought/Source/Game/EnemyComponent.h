@@ -9,6 +9,7 @@ struct SEnemySetting {
 	float mySpeed;	//= 10.0f;
 	float myDistance;//= 0.0f;
 	float myRadius;	//= 0.0015f;
+	float myHealth;
 };
 
 class CEnemyComponent : public CComponent

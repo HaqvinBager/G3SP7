@@ -357,6 +357,7 @@ void CSceneManager::AddEnemyComponents(CScene& aScene, RapidArray someData)
 		settings.myDistance = m["distance"].GetFloat();
 		settings.myRadius= m["radius"].GetFloat();
 		settings.mySpeed= m["speed"].GetFloat();
+		settings.myHealth = m["health"].GetFloat();
 		gameObject->AddComponent<CEnemyComponent>(*gameObject, settings);
 	}
 }

@@ -29,20 +29,20 @@ void CEnemyComponent::Awake()
 
 void CEnemyComponent::Start()
 {
-	
+
 	myPlayer = CEngine::GetInstance()->GetActiveScene().Player();
-	myBehaviours.push_back(new CPatrol(
+	/*myBehaviours.push_back(new CPatrol(
 		{
 			{ 20.0f,0.0f, 0.0f },
 			{ 20.0f,0.0f, 10.0f },
 			{ 0.0f,0.0f, 0.0f }
-		}));
+		}));*/
 
 	CSeek* seekBehaviour = new CSeek();
 	seekBehaviour->SetTarget(myPlayer->myTransform);
-	myBehaviours.push_back(seekBehaviour);
+	//myBehaviours.push_back(seekBehaviour);
 
-	myBehaviours.push_back(new CAttack());
+	//myBehaviours.push_back(new CAttack());
 }
 
 void CEnemyComponent::Update()//får bestämma vilket behaviour vi vill köra i denna Update()!!!
@@ -63,9 +63,9 @@ void CEnemyComponent::Update()//får bestämma vilket behaviour vi vill köra i den
 	else {//patrol
 		SetState(EBehaviour::Patrol);
 	}
-	Vector3 newDirection = myBehaviours[static_cast<int>(myCurrentState)]->Update(GameObject().myTransform->Position());
-	myController->Move(newDirection, mySettings.mySpeed);
-	GameObject().myTransform->Position(myController->GetPosition());
+	//Vector3 newDirection = myBehaviours[static_cast<int>(myCurrentState)]->Update(GameObject().myTransform->Position());
+	//myController->Move(newDirection, mySettings.mySpeed);
+	//GameObject().myTransform->Position(myController->GetPosition());
 }
 
 void CEnemyComponent::SetState(EBehaviour aState)
