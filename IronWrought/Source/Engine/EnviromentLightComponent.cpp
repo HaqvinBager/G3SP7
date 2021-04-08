@@ -11,7 +11,7 @@ CEnviromentLightComponent::CEnviromentLightComponent(CGameObject& aParent, Direc
 	myEnvironmentLight = CLightFactory::GetInstance()->CreateEnvironmentLight(ASSETPATH("Assets/Cubemaps/output_pmrem.dds"));
 	myEnvironmentLight->SetColor(aColor);
 	myEnvironmentLight->SetIntensity(anIntensity);
-	//not sure if this work! We want to set the direction of this transform!
+
 	aParent.myTransform->Transform().Forward(aDirection);
 	myEnvironmentLight->SetDirection(aParent.myTransform->Transform().Forward());
 	myEnvironmentLight->SetPosition({ /*20.0f*/0.0f, 0.0f, 0.0f });

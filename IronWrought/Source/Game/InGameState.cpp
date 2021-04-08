@@ -78,6 +78,7 @@ void CInGameState::Update()
 	//mySpotlight->GetComponent<CSpotLightComponent>()->GetSpotLight()->SetWideness(abs(sinf(CTimer::Time())));
 	//mySpotlight->GetComponent<CSpotLightComponent>()->GetSpotLight()->SetPosition({ 0.0f, abs(sinf(CTimer::Time())), 0.0f });
 	//myBoxLight->GetComponent<CBoxLightComponent>()->GetBoxLight()->SetRotation({ 90.0f * sinf(CTimer::Time()), 0.0f, 0.0f });
+	//IRONWROUGHT->GetActiveScene().EnvironmentLight()->SetDirection({ 0.0f, 1.0f, sinf(CTimer::Time())*0.8f });
 
 	CEngine::GetInstance()->GetPhysx().Simulate();
 	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
@@ -139,23 +140,23 @@ void CInGameState::TEMP_Sponza(CScene* aScene)
 	//mySpotlight = spotLight;
 	//aScene->AddInstance(spotLight->GetComponent<CSpotLightComponent>()->GetSpotLight());
 
-	//CGameObject* pointLight = new CGameObject(13314);
-	//Vector3 pointColor = { 1.0f, 1.0f, 1.0f };
-	//pointLight->myTransform->Position({ 0.0f, 1.0f, 2.0f });
-	//pointLight->AddComponent<CPointLightComponent>(*pointLight, 1.0f, pointColor, 10.0f);
-	//auto pl = pointLight->GetComponent<CPointLightComponent>()->GetPointLight();
-	//pl->SetIntensity(10.0f);
-	//pl->SetPosition({ 0.0f, 1.0f, 2.0f });
-	//pl->SetColor(pointColor);
-	//aScene->AddInstance(pointLight->GetComponent<CPointLightComponent>()->GetPointLight());
+	CGameObject* pointLight = new CGameObject(13314);
+	Vector3 pointColor = { 1.0f, 0.5f, 1.0f };
+	pointLight->myTransform->Position({ 0.0f, 1.0f, 2.0f });
+	pointLight->AddComponent<CPointLightComponent>(*pointLight, 1.0f, pointColor, 10.0f);
+	auto pl = pointLight->GetComponent<CPointLightComponent>()->GetPointLight();
+	pl->SetIntensity(10.0f);
+	pl->SetPosition({ 0.0f, 1.0f, 2.0f });
+	pl->SetColor(pointColor);
+	aScene->AddInstance(pointLight->GetComponent<CPointLightComponent>()->GetPointLight());
 
 	//CGameObject* boxLight = new CGameObject(414111);
-	//boxLight->myTransform->Position({ -2.0f, 2.0f, -0.0f });
+	//boxLight->myTransform->Position({ -2.0f, 1.0f, -0.0f });
 
 	//Vector3 boxColor = { 0.0f, 1.0f, 1.0f };
 	//Vector3 boxDirection = { 0.0f, -1.0f, 0.0f };
 	//auto component = boxLight->AddComponent<CBoxLightComponent>(*boxLight, boxDirection, boxColor, 5.0f, 5.0f);
-	//component->GetBoxLight()->SetArea({ 2.5f, 2.5f });
+	//component->GetBoxLight()->SetArea({ 1.0f, 1.0f });
 	//component->GetBoxLight()->SetRotation({ 45.0f, 0.0f, 0.0f });
 	//myBoxLight = boxLight;
 	//aScene->AddInstance(boxLight->GetComponent<CBoxLightComponent>()->GetBoxLight());
