@@ -42,16 +42,12 @@ void CPlayerComponent::Update()
 
 	//if (Input::GetInstance()->IsKeyPressed('K'))
 	//{
-	//	
 	//	myHealth -= 20;
 	//	//std::cout << myHealth << std::endl;
-
 	//	myHealthPercentage = (myHealth / myMaxHealth);
-
 	//	CMainSingleton::PostMaster().Send({ EMessageType::PlayerHealthChanged, &myHealthPercentage });
-
-
 	//}
+
 	if (myHealth <= 0)
 	{
 		setIsAlive(false);
