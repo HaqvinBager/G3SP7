@@ -93,7 +93,7 @@ void CBootUpState::Update()
 		myLogos[myLogoToRender]->SetShouldRender(true);
 	}
 
-	if (INPUT->IsKeyDown(VK_SPACE))
+	if (INPUT->IsKeyPressed(VK_SPACE))
 	{
 		myLogoToRender++;
 
