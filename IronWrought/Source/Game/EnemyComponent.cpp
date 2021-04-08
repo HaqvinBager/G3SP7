@@ -53,11 +53,14 @@ void CEnemyComponent::Update()//får bestämma vilket behaviour vi vill köra i den
 		((myPlayer->myTransform->Position().z - GameObject().myTransform->Position().z) * ((myPlayer->myTransform->Position().z - GameObject().myTransform->Position().z))));*/
 	mySettings.myDistance = Vector3::DistanceSquared(myPlayer->myTransform->Position(), GameObject().myTransform->Position());
 
+	
+
 	if (mySettings.myRadius * mySettings.myRadius >= mySettings.myDistance) {//seek
-		SetState(EBehaviour::Seek);
-		float attackDistance = 2.0f; //example will probably be more complicated in the future; 
+		//SetState(EBehaviour::Seek);
+	float attackDistance = 2.0f; //example will probably be more complicated in the future; 
 		if (mySettings.myDistance <= attackDistance) {
-			SetState(EBehaviour::Attack);
+		 //	SetState(EBehaviour::Attack); 
+			/*TakeDamage();*/
 		}
 	}
 	else {//patrol
@@ -66,6 +69,13 @@ void CEnemyComponent::Update()//får bestämma vilket behaviour vi vill köra i den
 	//Vector3 newDirection = myBehaviours[static_cast<int>(myCurrentState)]->Update(GameObject().myTransform->Position());
 	//myController->Move(newDirection, mySettings.mySpeed);
 	//GameObject().myTransform->Position(myController->GetPosition());
+}
+
+void CEnemyComponent::TakeDamage()
+{
+	mySettings.myHealth -= 5.0f;
+
+	std::cout << mySettings.myHealth << std::endl;
 }
 
 void CEnemyComponent::SetState(EBehaviour aState)

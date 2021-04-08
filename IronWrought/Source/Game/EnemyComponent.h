@@ -8,7 +8,7 @@ class CGameObject;
 struct SEnemySetting {
 	float mySpeed;	//= 10.0f;
 	float myDistance;//= 0.0f;
-	float myRadius;	//= 0.0015f;
+	float myRadius;	//= 10.0f;
 	float myHealth;
 };
 
@@ -18,7 +18,8 @@ public:
 	enum class EBehaviour {
 		Patrol,
 		Seek,
-		Attack
+		Attack,
+		TakeDamage
 	};
 
 public:
@@ -28,6 +29,7 @@ public:
 	void Awake() override;
 	void Start() override;
 	void Update()override;
+	void TakeDamage();
 	void SetState(EBehaviour aState);
 	const EBehaviour GetState()const;
 private:
