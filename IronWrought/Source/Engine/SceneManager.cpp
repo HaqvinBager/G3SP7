@@ -69,7 +69,7 @@ CScene* CSceneManager::CreateEmpty()
 
 CScene* CSceneManager::CreateScene(const std::string& aSceneJson)
 {
-	CScene* scene = Instantiate(); //CreateEmpty();
+	CScene* scene = Instantiate();
 
 	//SSceneSetup sceneSetup = {};
 	//auto iter = sceneSetup.myGameObjects.push_back(new CGameObject(0));
@@ -129,6 +129,7 @@ CScene* CSceneManager::CreateMenuScene(const std::string& aSceneName, const std:
 
 CScene* CSceneManager::Instantiate()
 {
+	// Depending on the order in which we Awake() different states/ scenes are created some states/scenes that should not listen to ComponentAdded might do so and will cause issues. / Aki 2021 04 08
 	if (ourLastInstantiatedScene != nullptr)
 		CMainSingleton::PostMaster().Unsubscribe(EMessageType::ComponentAdded, ourLastInstantiatedScene);
 

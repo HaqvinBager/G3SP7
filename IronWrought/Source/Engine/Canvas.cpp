@@ -11,7 +11,6 @@
 #include "Input.h"
 #include "SpriteFactory.h"
 #include "Sprite.h"
-#include "MainSingleton.h"
 #include "Engine.h"
 #include "Scene.h"
 
@@ -32,7 +31,14 @@ CCanvas::~CCanvas()
 	UnsubscribeToMessages();
 	myMessageTypes.clear();
 
-	// Scene takes ownership.
+	for (size_t i = 0; i < myButtons.size(); ++i)
+	{
+		delete myButtons[i];
+		myButtons[i] = nullptr;
+	}
+	myButtons.clear();
+
+	// Scene takes ownership of sprites/ texts etc.
 	/*delete myBackground;
 	myBackground = nullptr;
 
@@ -76,6 +82,28 @@ CCanvas::~CCanvas()
 		myTexts[i] = nullptr;
 	}
 	myTexts.clear();*/
+}
+
+inline const Vector2& CCanvas::Position() const
+{
+	return myPosition;
+}
+
+inline void CCanvas::Position(const Vector2& aPosition)
+{
+	myPosition = aPosition;
+	// Go through everything and set positions relative to new position
+}
+
+inline const Vector2& CCanvas::Pivot() const
+{
+	return myPivot;
+}
+
+inline void CCanvas::Pivot(const Vector2& aPivot)
+{
+	myPivot = aPivot;
+	// Go through everything and set positions relative to new pivot
 }
 
 void CCanvas::ClearFromScene(CScene& aScene)
@@ -124,12 +152,14 @@ void CCanvas::ClearFromScene(CScene& aScene)
 	myTexts.clear();
 }
 
-void CCanvas::Init(std::string aFilePath, CScene& aScene, bool addToScene)
+void CCanvas::Init(const std::string& aFilePath, CScene& aScene, bool addToScene, const Vector2& aParentPivot, const Vector2& aParentPosition)
 {
 	Document document = CJsonReader::Get()->LoadDocument(aFilePath);
 
 	if (document.HasParseError())
 		return;
+
+	InitPivotAndPos(document.GetObjectW(), aParentPivot, aParentPosition);
 
 	if (document.HasMember("Buttons"))
 	{
@@ -183,15 +213,20 @@ void CCanvas::Init(std::string aFilePath, CScene& aScene, bool addToScene)
 		InitMessageTypes(document["PostmasterEvents"]["Events"].GetArray());
 	}
 
+	if (document.HasMember("Widgets"))
+	{
+		InitWidgets(document["Widgets"].GetArray(), aScene);
+	}
 }
 
-void CCanvas::ReInit(std::string aFilePath, CScene& aScene, bool addToScene)
+void CCanvas::ReInit(const std::string& aFilePath, CScene& aScene, bool addToScene, const Vector2& aParentPivot, const Vector2& aParentPosition)
 {
-	std::cout << __FUNCTION__ << std::endl;
 	Document document = CJsonReader::Get()->LoadDocument(aFilePath);
 
 	if (document.HasParseError())
 		return;
+
+	InitPivotAndPos(document.GetObjectW(), aParentPivot, aParentPosition);
 
 	if (document.HasMember("Buttons"))
 	{
@@ -349,6 +384,39 @@ void CCanvas::ReInit(std::string aFilePath, CScene& aScene, bool addToScene)
 	{
 		InitMessageTypes(document["PostmasterEvents"]["Events"].GetArray());
 	}
+
+	if (document.HasMember("Widgets"))
+	{
+		auto widgetsArray = document["Widgets"].GetArray();
+		int currentSize = (int)myWidgets.size();
+		int newSize = (int)widgetsArray.Size();
+		int difference = currentSize - newSize;
+
+		if (difference > 0)// There are fewer items than before.
+		{
+			CScene& scene = IRONWROUGHT->GetActiveScene();
+			for (int i = newSize; i < currentSize; ++i)
+			{
+				myWidgets[i]->ClearFromScene(scene);
+				delete myWidgets[i];
+				myWidgets[i] = nullptr;
+				myWidgets.pop_back();
+			}
+			currentSize = newSize;
+		}
+		else if (difference < 0)// There are more items than before.
+		{
+			for (int i = currentSize; i < newSize; ++i)
+			{
+				myWidgets.push_back(new CCanvas());
+				myWidgets[i]->Init(ASSETPATH(widgetsArray[i]["Path"].GetString()), aScene, true, myPivot, myPosition);
+			}
+		}
+		for (int i = 0; i < currentSize; ++i)
+		{
+			myWidgets[i]->ReInit(ASSETPATH(widgetsArray[i]["Path"].GetString()), aScene, true, myPivot, myPosition);
+		}
+	}
 }
 
 void CCanvas::Update()
@@ -409,14 +477,18 @@ void CCanvas::Receive(const SMessage& aMessage)
 {
 	switch (aMessage.myMessageType)
 	{
-	case EMessageType::PlayerHealthChanged:
-		if (myAnimatedUIs[0])
-		{
-			myAnimatedUIs[0]->Level(*static_cast<float*>(aMessage.data));
-		}
-		break;
-	default:
-		break;
+		case EMessageType::PlayerHealthChanged:
+			if (myAnimatedUIs.size() > 0)
+			{
+				if (myAnimatedUIs[0])
+				{
+					myAnimatedUIs[0]->Level(*static_cast<float*>(aMessage.data));
+				}
+			}
+			break;
+
+		default:
+			break;
 	}
 }
 
@@ -447,16 +519,38 @@ void CCanvas::SetEnabled(bool isEnabled)
 	{
 		myIsEnabled = isEnabled;
 
-		for (auto button : myButtons)
-		{
-			button->myEnabled = myIsEnabled;
-		}
+		for (auto& button : myButtons)
+			button->Enabled(myIsEnabled);
 
-		for (auto sprite : mySprites)
-		{
+		for (auto& text : myButtonTexts)
+			text->SetShouldRender(myIsEnabled);
+
+		for (auto& sprite : mySprites)
 			sprite->SetShouldRender(myIsEnabled);
-		}
+
+		for (auto& text : myTexts)
+			text->SetShouldRender(myIsEnabled);
+
+		for (auto& animUI : myAnimatedUIs)
+			animUI->SetShouldRender(myIsEnabled);
+
+		myBackground->SetShouldRender(myIsEnabled);
+
+		for (auto& widget : myWidgets)
+			widget->SetEnabled(myIsEnabled);
 	}
+}
+
+bool CCanvas::InitPivotAndPos(const rapidjson::GenericObject<false, rapidjson::Value>& aRapidObject, const Vector2& aParentPivot, const Vector2& aParentPosition)
+{
+	myPivot.x = aRapidObject.HasMember("Pivot X") ? aRapidObject["Pivot X"].GetFloat() : 0.0f;
+	myPivot.y = aRapidObject.HasMember("Pivot Y") ? aRapidObject["Pivot Y"].GetFloat() : 0.0f;
+	myPosition.x = aRapidObject.HasMember("Position X") ? aRapidObject["Position X"].GetFloat() : 0.0f;
+	myPosition.y = aRapidObject.HasMember("Position Y") ? aRapidObject["Position Y"].GetFloat() : 0.0f;
+
+	myPivot += aParentPivot;
+	myPosition += aParentPosition + myPivot;
+	return true;
 }
 
 bool CCanvas::InitButton(const rapidjson::GenericObject<false, rapidjson::Value>& aRapidObject, const int& anIndex, CScene& aScene)
@@ -465,6 +559,7 @@ bool CCanvas::InitButton(const rapidjson::GenericObject<false, rapidjson::Value>
 	myButtonTexts[anIndex]->SetText(aRapidObject["Text"].GetString());
 	myButtonTexts[anIndex]->SetColor({ aRapidObject["Text Color R"].GetFloat(), aRapidObject["Text Color G"].GetFloat(), aRapidObject["Text Color B"].GetFloat(), 1.0f });
 	Vector2 pos = { aRapidObject["Text Position X"].GetFloat(), aRapidObject["Text Position Y"].GetFloat() };
+	pos += myPosition;
 	myButtonTexts[anIndex]->SetPosition(pos);
 	myButtonTexts[anIndex]->SetPivot({ aRapidObject["Text Pivot X"].GetFloat(), aRapidObject["Text Pivot Y"].GetFloat() });
 
@@ -478,6 +573,8 @@ bool CCanvas::InitButton(const rapidjson::GenericObject<false, rapidjson::Value>
 		data.myPosition.y = aRapidObject["Sprite Position Y"].GetFloat();
 	else
 		data.myPosition.y = pos.y;
+
+	data.myPosition += myPosition;
 
 	data.myDimensions = { aRapidObject["Pixel Width"].GetFloat(), aRapidObject["Pixel Height"].GetFloat() };
 	data.mySpritePaths.at(0) = ASSETPATH(aRapidObject["Idle Sprite Path"].GetString());
@@ -502,7 +599,9 @@ bool CCanvas::InitText(const rapidjson::GenericObject<false, rapidjson::Value>& 
 	myTexts[anIndex]->Init(CTextFactory::GetInstance()->GetText(ASSETPATH(aRapidObject["FontAndFontSize"].GetString())));
 	myTexts[anIndex]->SetText(aRapidObject["Text"].GetString());
 	myTexts[anIndex]->SetColor({ aRapidObject["Color R"].GetFloat(), aRapidObject["Color G"].GetFloat(), aRapidObject["Color B"].GetFloat(), 1.0f });
-	myTexts[anIndex]->SetPosition({ aRapidObject["Position X"].GetFloat(), aRapidObject["Position Y"].GetFloat() });
+	Vector2 position = { aRapidObject["Position X"].GetFloat(), aRapidObject["Position Y"].GetFloat() };
+	position += myPosition;
+	myTexts[anIndex]->SetPosition(position);
 	myTexts[anIndex]->SetPivot({ aRapidObject["Pivot X"].GetFloat(), aRapidObject["Pivot Y"].GetFloat() });
 
 	return true;
@@ -517,7 +616,7 @@ bool CCanvas::InitAnimatedElement(const rapidjson::GenericObject<false, rapidjso
 
 	float sx = aRapidObject["Scale X"].GetFloat();
 	float sy = aRapidObject["Scale Y"].GetFloat();
-	myAnimatedUIs[anIndex]->SetPosition({ x, y });
+	myAnimatedUIs[anIndex]->SetPosition(Vector2( x, y ) + myPosition);
 	myAnimatedUIs[anIndex]->SetScale({ sx, sy });
 
 	if (aRapidObject.HasMember("Level")) {
@@ -567,11 +666,7 @@ bool CCanvas::InitSprite(const rapidjson::GenericObject<false, rapidjson::Value>
 		mySprites[anIndex]->Init(CSpriteFactory::GetInstance()->GetSprite(ASSETPATH(aRapidObject["Path"].GetString())), spriteAnimations, scale);
 	}
 
-	mySprites[anIndex]->SetPosition(
-		{ aRapidObject["Position X"].GetFloat() 
-		, aRapidObject["Position Y"].GetFloat() 
-		}
-	);
+	mySprites[anIndex]->SetPosition(Vector2(aRapidObject["Position X"].GetFloat(), aRapidObject["Position Y"].GetFloat()) + myPosition);
 
 	return true;
 }
@@ -587,6 +682,23 @@ bool CCanvas::InitMessageTypes(const rapidjson::GenericArray<false, rapidjson::V
 		myMessageTypes[j] = static_cast<EMessageType>(aRapidArray[j].GetInt());
 	}
 	SubscribeToMessages();
+
+	return true;
+}
+
+bool CCanvas::InitWidgets(const rapidjson::GenericArray<false, rapidjson::Value>& aRapidArray, CScene& aScene)
+{
+	if (!myWidgets.empty())
+		return false;
+
+	if (aRapidArray.Size() <= 0)
+		return false;
+
+	myWidgets.resize((size_t)aRapidArray.Size(), new CCanvas());
+	for (int i = 0; i < myWidgets.size(); ++i)
+	{
+		myWidgets[i]->Init(ASSETPATH(aRapidArray[i]["Path"].GetString()), aScene, true, myPivot, myPosition);
+	}
 
 	return true;
 }

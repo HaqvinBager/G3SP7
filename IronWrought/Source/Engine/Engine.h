@@ -67,6 +67,7 @@ public:
 	const CStateStack::EState AddScene(const CStateStack::EState aState, CScene* aScene);
 	void SetActiveScene(const CStateStack::EState aState);
 	CScene& GetActiveScene();
+	inline const bool IsActiveScene(const CStateStack::EState& aState);
 	
 	CPhysXWrapper& GetPhysx() { return *myPhysxWrapper; }
 
@@ -83,6 +84,9 @@ public:
 	void ShowCursor();
 	void HideCursor();
 	void LoadGraph(const std::string& aSceneName);
+
+private:
+	void AllScenesToInactive();
 
 private:
 	static CEngine* ourInstance;
