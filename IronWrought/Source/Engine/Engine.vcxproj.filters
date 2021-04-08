@@ -867,6 +867,7 @@
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClCompile>
     <ClCompile Include="ConvexMeshColliderComponent.cpp" />
+    <ClCompile Include="NodeTypeGameObjectRotateDegrees.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1588,6 +1589,7 @@
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClInclude>
     <ClInclude Include="ConvexMeshColliderComponent.h" />
+    <ClInclude Include="NodeTypeGameObjectRotateDegrees.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">

@@ -289,13 +289,13 @@ void CAnimationController::ReadNodeHeirarchy(
 		aiMatrix4x4::Scaling(Scaling0 * myBlendingTime + Scaling1 * (1.f - myBlendingTime), ScalingM);
 
 		// Interpolate rotation and generate rotation transformation matrix
-		aiQuaternion RotationQ0;
-		CalcInterpolatedRotation(RotationQ0, time0, pNodeAnim0);
+		aiQuaternion Rotationb;
+		CalcInterpolatedRotation(Rotationb, time0, pNodeAnim0);
 		aiQuaternion RotationQ1;
 		CalcInterpolatedRotation(RotationQ1, time1, pNodeAnim1);
 		aiMatrix4x4 RotationM;
 		aiQuaternion RotationQ;
-		aiQuaternion::Interpolate(RotationQ, RotationQ1, RotationQ0, myBlendingTime);
+		aiQuaternion::Interpolate(RotationQ, RotationQ1, Rotationb, myBlendingTime);
 		InitM4FromM3(RotationM, RotationQ.GetMatrix());
 
 		// Interpolate translation and generate translation transformation matrix
