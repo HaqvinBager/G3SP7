@@ -288,7 +288,8 @@ void CRenderManager::Render(CScene& aScene)
 	myForwardRenderer.RenderLineInstances(maincamera, lineInstances);
 
 	// Alpha stage for objects in World 3D space
-	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_ALPHABLEND);
+	//myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_ALPHABLEND);
+	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_DISABLE);
 	myRenderStateManager.SetDepthStencilState(CRenderStateManager::DepthStencilStates::DEPTHSTENCILSTATE_DEFAULT);
 	//myRenderStateManager.SetDepthStencilState(CRenderStateManager::DepthStencilStates::DEPTHSTENCILSTATE_ONLYREAD);
 
@@ -308,6 +309,7 @@ void CRenderManager::Render(CScene& aScene)
 	myForwardRenderer.Render(environmentlight, pointlights, maincamera, gameObjectsWithAlpha);
 
 	//VFX
+	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_ALPHABLEND);
 	myRenderStateManager.SetDepthStencilState(CRenderStateManager::DepthStencilStates::DEPTHSTENCILSTATE_ONLYREAD);
 	myRenderStateManager.SetRasterizerState(CRenderStateManager::RasterizerStates::RASTERIZERSTATE_NOFACECULLING);
 	myVFXRenderer.Render(maincamera, gameObjects);
