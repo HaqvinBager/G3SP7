@@ -95,6 +95,16 @@ void CBootUpState::Update()
 
 	if (INPUT->IsKeyPressed(VK_SPACE))
 	{
+		//myLogoToRender++;
+
+		//if (myLogoToRender >= myLogos.size())
+		//{
+		//	myStateStack.PopTopAndPush(CStateStack::EState::MainMenu);
+		//	return;
+		//}
+		myTimer = 0.0f;
+
+		myLogos[myLogoToRender]->SetShouldRender(false);
 		myLogoToRender++;
 
 		if (myLogoToRender >= myLogos.size())
@@ -102,6 +112,8 @@ void CBootUpState::Update()
 			myStateStack.PopTopAndPush(CStateStack::EState::MainMenu);
 			return;
 		}
+
+		myLogos[myLogoToRender]->SetShouldRender(true);
 	}
 }
 

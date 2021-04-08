@@ -45,7 +45,6 @@ void CInGameState::Awake()
 	//CEnemyComponent::CreateEnemy(ASSETPATH("Assets/Graphics/Character/Enemy/CH_E_Robot_SK.fbx"), 2.0f, 10.0f);
 	//scene->AddInstance(model);
 	CEngine::GetInstance()->AddScene(myState, scene);
-	CEngine::GetInstance()->SetActiveScene(myState);
 	CMainSingleton::PostMaster().Subscribe("LoadScene", this);
 }
 
