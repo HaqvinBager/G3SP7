@@ -30,7 +30,7 @@ int CNodeTypeGameObjectRotateDegrees::OnEnter(CNodeInstance* aTriggeringNodeInst
 	Vector3 input = NodeData::Get<Vector3>(someData) * (3.14159265f / 180.0f);
 
 	Quaternion a = gameObject->myTransform->Rotation();
-	Quaternion b = Quaternion::CreateFromYawPitchRoll(input.y, input.x, input.z);
+	Quaternion b = Quaternion::CreateFromYawPitchRoll(input.y, input.x, input.z) * gameObject->myTransform->Rotation();
 	Quaternion r;
 	Quaternion::Slerp(a, b, t, r);
 	gameObject->myTransform->Rotation(r);
