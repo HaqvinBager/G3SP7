@@ -10,7 +10,7 @@
 #include "LineFactory.h"
 #include "LineInstance.h"
 
-#define PI 3.14159265f
+
 
 CCameraControllerComponent::CCameraControllerComponent(CGameObject& aGameObject, float aCameraMoveSpeed, ECameraMode aCameraMode, char aToggleFreeCam, Vector3 aOffset)
 	: CComponent(aGameObject),
@@ -104,46 +104,17 @@ CGameObject* CCameraControllerComponent::CreatePlayerFirstPersonCamera(CGameObje
 	return camera;
 }
 
-float WrapAngle(float anAngle)
-{
-	return fmodf(anAngle, 360.0f);
-}
-
-float ToDegrees(float anAngleInRadians)
-{
-	return anAngleInRadians * (180.0f / PI);
-}
-
-float ToRadians(float anAngleInDegrees)
-{
-	return anAngleInDegrees * (PI / 180.0f);
-}
-
 void CCameraControllerComponent::UpdatePlayerFirstPerson()
 {
-	const float dt = CTimer::Dt();
-	float dx = static_cast<float>(Input::GetInstance()->MouseRawDeltaX());
-	float dy = static_cast<float>(Input::GetInstance()->MouseRawDeltaY());
-
-	float myOldYaw = myYaw;
-	float myOldPitch = myPitch;
-
-	myYaw	= WrapAngle(myYaw + (dx * myMouseRotationSpeed * dt));
-	myPitch = std::clamp(myPitch + (dy * myMouseRotationSpeed * dt), ToDegrees(-PI / 2.0f), ToDegrees(PI / 2.0f));
-
-	myYaw = LerpDegrees(myOldYaw, myYaw, 0.6f);
-	myPitch = LerpDegrees(myOldPitch, myPitch, 0.6f);
-
-	GameObject().myTransform->Rotation({ myPitch, myYaw, 0});
-
-	if (CEngine::GetInstance()->GetWindowHandler()->CursorLocked()) {
-		auto screenDimensions = CEngine::GetInstance()->GetWindowHandler()->GetResolution();
-		Input::GetInstance()->SetMouseScreenPosition(static_cast<int>(screenDimensions.x / 2.0f), static_cast<int>(screenDimensions.y / 2.0f));
-	}
+	Vector2 input = Input::GetInstance()->GetAxisRaw();
+	RotateTransformWithYawAndPitch(input);
 }
 
 void CCameraControllerComponent::UpdateFreeCam()
 {
+	Vector2 input = Input::GetInstance()->GetAxisRaw();
+	RotateTransformWithYawAndPitch(input);
+
 	const float dt = CTimer::Dt();
 	float verticalMoveSpeedModifier = 1.5f;
 	DirectX::SimpleMath::Vector3 cameraMovementInput(0, 0, 0);
@@ -153,25 +124,23 @@ void CCameraControllerComponent::UpdateFreeCam()
 	cameraMovementInput.x = Input::GetInstance()->IsKeyDown('A') ? -myCameraMoveSpeed : cameraMovementInput.x;
 	cameraMovementInput.y = Input::GetInstance()->IsKeyDown('E') ?	myCameraMoveSpeed * verticalMoveSpeedModifier : cameraMovementInput.y;
 	cameraMovementInput.y = Input::GetInstance()->IsKeyDown('Q') ? -myCameraMoveSpeed * verticalMoveSpeedModifier : cameraMovementInput.y;
-
-	float dx = static_cast<float>(Input::GetInstance()->MouseRawDeltaX());
-	float dy = static_cast<float>(Input::GetInstance()->MouseRawDeltaY());
-
-	myYaw = WrapAngle(myYaw + (dx * myMouseRotationSpeed * dt));
-	myPitch = std::clamp(myPitch + (dy * myMouseRotationSpeed * dt), ToDegrees(-PI / 2.0f), ToDegrees(PI / 2.0f));
-
 	GameObject().myTransform->MoveLocal(cameraMovementInput * myCameraMoveSpeed * dt);
-	GameObject().myTransform->Rotation({ myPitch, myYaw, 0});
+}
 
-	if (CEngine::GetInstance()->GetWindowHandler()->CursorLocked()) {
-		auto screenDimensions = CEngine::GetInstance()->GetWindowHandler()->GetResolution();
-		Input::GetInstance()->SetMouseScreenPosition(static_cast<int>(screenDimensions.x / 2.0f), static_cast<int>(screenDimensions.y / 2.0f));
-	}
+void CCameraControllerComponent::RotateTransformWithYawAndPitch(const Vector2& someInput)
+{
+	float sensitivity = 0.25f; //TestVärde, Kändes  okej på min Dator! Bra å testa på andras datorer! /Axel Savage 2021-04-09 14:00
+	myYaw = WrapAngle(myYaw + (someInput.x * sensitivity));
+	myPitch = std::clamp(myPitch + (someInput.y * sensitivity), ToDegrees(-PI / 2.0f), ToDegrees(PI / 2.0f));
+	GameObject().myTransform->Rotation({ myPitch, myYaw, 0 });
 }
 void CCameraControllerComponent::SetCameraMoveSpeed(float aCameraMoveSpeed) {
 	myCameraMoveSpeed = aCameraMoveSpeed;
 }
 
+
+
 float CCameraControllerComponent::GetCameraMoveSpeed() {
 	return myCameraMoveSpeed;
 }
+

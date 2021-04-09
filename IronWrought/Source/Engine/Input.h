@@ -32,6 +32,8 @@ public:
 	bool MoveUp();
 	bool MoveDown();
 
+	DirectX::SimpleMath::Vector2 GetAxisRaw();
+
 	bool IsKeyDown(WPARAM wParam);
 	bool IsKeyPressed(WPARAM wParam);
 	bool IsKeyReleased(WPARAM wParam);
