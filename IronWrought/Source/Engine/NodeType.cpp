@@ -57,7 +57,6 @@
 #include "NodeTypeAudioPlayRobotIdle.h"
 #include "NodeTypeAudioPlayRobotPatrolling.h"
 #include "NodeTypeAudioPlayRobotSearching.h"
-#include "NodeTypeListTest.h"
 #include "NodeTypeVFXPlayVFX.h"
 #include "NodeTypeVFXStopVFX.h"
 #include "NodeTypeAudioPlayResearcherEvent.h"
@@ -70,6 +69,7 @@
 #include "NodeTypeStartSphereOnTriggerEnter.h"
 #include "NodeTypeStartSphereOnTriggerExit.h"
 #include "NodeTypePlayerGetPosition.h"
+#include "NodeTypeGameObjectRotateDegrees.h"
 #include "NodeTypeEnemySpawn.h"
 #include "Scene.h"
 #include "Engine.h"
@@ -143,7 +143,6 @@ void CNodeTypeCollector::PopulateTypes()
 	RegisterType<CNodeTypeAudioPlayRobotIdle>("Play Robot Idle");
 	RegisterType<CNodeTypeAudioPlayRobotPatrolling>("Play Robot Patrolling");
 	RegisterType<CNodeTypeAudioPlayRobotSearching>("Play Robot Searching");
-	RegisterType<CNodeTypeListTest>("List Test");
 	RegisterType<CNodeTypeVFXPlayVFX>("Play VFX");
 	RegisterType<CNodeTypeVFXStopVFX>("Stop VFX");
 	RegisterType<CNodeTypeAudioPlayResearcherEvent>("Play Researcher Event");
@@ -156,6 +155,7 @@ void CNodeTypeCollector::PopulateTypes()
 	RegisterType<CNodeTypeStartSphereOnTriggerEnter>("Sphere On Trigger Enter");
 	RegisterType<CNodeTypeStartSphereOnTriggerExit>("Sphere On Trigger Exit");
 	RegisterType<CNodeTypePlayerGetPosition>("Player Get Position");
+	RegisterType<CNodeTypeGameObjectRotateDegrees>("Rotate Object To Face");
 	//RegisterType<CNodeTypeEnemySpawn>("Spawn Enemies"); // Enabled only when testing, not ready for use yet. 23/3 Aki
 }
 

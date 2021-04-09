@@ -23,6 +23,7 @@
 
 #include <TextFactory.h>
 #include <TextInstance.h>
+#include "EnemyComponent.h"
 
 void TEMP_VFX(CScene* aScene);
 void TEMP_DeferredRenderingTests(CScene* aScene);
@@ -39,24 +40,27 @@ CInGameState::~CInGameState() {}
 void CInGameState::Awake()
 {
 	CJsonReader::Get()->InitFromGenerated();
+	CScene* scene = CSceneManager::CreateEmpty();
+	TEMP_VFX(scene);
+	//CEnemyComponent::CreateEnemy(ASSETPATH("Assets/Graphics/Character/Enemy/CH_E_Robot_SK.fbx"), 2.0f, 10.0f);
+	//scene->AddInstance(model);
+	CEngine::GetInstance()->AddScene(myState, scene);
 	CMainSingleton::PostMaster().Subscribe("LoadScene", this);
 }
 
 
 void CInGameState::Start()
 {
-	//CScene* scene = CSceneManager::CreateEmpty();
-	//TEMP_VFX(scene);
-
-	//CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);
 	TEMP_VFX(&CEngine::GetInstance()->GetActiveScene());
+	IRONWROUGHT->GetActiveScene().CanvasIsHUD();
 
 	myExitLevel = false;
 }
 
 void CInGameState::Stop()
 {
+	IRONWROUGHT->RemoveScene(myState);
 	CMainSingleton::CollisionManager().ClearColliders();
 }
 

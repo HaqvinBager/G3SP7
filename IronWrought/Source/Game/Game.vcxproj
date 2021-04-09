@@ -165,6 +165,7 @@
     <ClInclude Include="CharacterControllerComponent.h" />
     <ClInclude Include="CollisionEventComponent.h" />
     <ClInclude Include="DialogueSystem.h" />
+    <ClInclude Include="EnemyAnimationController.h" />
     <ClInclude Include="EnemyComponent.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GravityGloveComponent.h" />
@@ -181,14 +182,13 @@
     <ClInclude Include="UnityFactory.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AIBehavior.cpp" />
-    <ClCompile Include="AIBehaviorComponent.cpp" />
     <ClCompile Include="AIController.cpp" />
     <ClCompile Include="BootUpState.cpp" />
     <ClCompile Include="CameraControllerComponent.cpp" />
     <ClCompile Include="CharacterControllerComponent.cpp" />
     <ClCompile Include="CollisionEventComponent.cpp" />
     <ClCompile Include="DialogueSystem.cpp" />
+    <ClCompile Include="EnemyAnimationController.cpp" />
     <ClCompile Include="EnemyComponent.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GravityGloveComponent.cpp" />

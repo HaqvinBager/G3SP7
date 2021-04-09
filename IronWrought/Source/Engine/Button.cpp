@@ -105,6 +105,21 @@ void CButton::CheckMouseCollision(DirectX::SimpleMath::Vector2 aScreenSpacePosit
 		}
 	}
 }
+void CButton::Enabled(const bool& anIsEnabled)
+{
+	if (myEnabled != anIsEnabled)
+	{
+		myEnabled = anIsEnabled;
+		for (auto& sprite : mySprites)
+		{
+			sprite->SetShouldRender(myEnabled);
+		}
+	}
+}
+inline const bool CButton::Enabled()
+{
+	return myEnabled;
+}
 CButton::CButton()
 	: myState(EButtonState::Idle)
 	, myEnabled(false)
@@ -119,13 +134,14 @@ CButton::CButton(SButtonData& someData, CScene& aScene)
 CButton::~CButton()
 {
 	// Scene should handle the deletion... ? / Aki 2021/01/04
-	IRONWROUGHT->GetActiveScene().RemoveInstance(mySprites.at(static_cast<size_t>(EButtonState::Idle)));
-	IRONWROUGHT->GetActiveScene().RemoveInstance(mySprites.at(static_cast<size_t>(EButtonState::Hover)));
-	IRONWROUGHT->GetActiveScene().RemoveInstance(mySprites.at(static_cast<size_t>(EButtonState::Click)));
-
-	delete mySprites.at(static_cast<size_t>(EButtonState::Idle));
-	delete mySprites.at(static_cast<size_t>(EButtonState::Hover));
-	delete mySprites.at(static_cast<size_t>(EButtonState::Click));
+	// Scene handles the deletion. 2021/04/08
+//	IRONWROUGHT->GetActiveScene().RemoveInstance(mySprites.at(static_cast<size_t>(EButtonState::Idle)));
+//	IRONWROUGHT->GetActiveScene().RemoveInstance(mySprites.at(static_cast<size_t>(EButtonState::Hover)));
+//	IRONWROUGHT->GetActiveScene().RemoveInstance(mySprites.at(static_cast<size_t>(EButtonState::Click)));
+//
+//	delete mySprites.at(static_cast<size_t>(EButtonState::Idle));
+//	delete mySprites.at(static_cast<size_t>(EButtonState::Hover));
+//	delete mySprites.at(static_cast<size_t>(EButtonState::Click));
 }
 
 void CButton::Init(SButtonData& someData, CScene& aScene)

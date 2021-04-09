@@ -157,7 +157,11 @@ SAnimatedSpriteData* CSpriteFactory::LoadVFXSprite(std::string aFilePath)
 
 	// ASSUMES A SQUARE MASK (equal width & height)
 	spriteData->maskOffset = (1.0f - (document["Mask Width"].GetFloat() / GetTextureDimensions(textureFiveShaderResourceView).x)) / 2.0f;
-	spriteData->randomOffset = Random(0.0f, 2.0f);
+	spriteData->randomOffset = Random
+	(
+		document.HasMember("Random Offset Min") ? document["Random Offset Min"].GetFloat() : 0.0f
+	  , document.HasMember("Random Offset Max") ? document["Random Offset Max"].GetFloat() : 0.0f
+	);
 
 	spriteData->myPixelShader = pixelShader;
 	spriteData->myTexture[0] = textureOneShaderResourceView;

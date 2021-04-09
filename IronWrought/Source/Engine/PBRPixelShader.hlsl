@@ -34,6 +34,9 @@ PixelOutPut main(VertexToPixel input)
     
     float3 toEye = normalize(cameraPosition.xyz - input.myWorldPosition.xyz);
     float4 albedo = PixelShader_Color(input).myColor.rgba;
+    
+    clip(albedo.a - 0.5f);
+    
     //albedo.rgb = GammaToLinear(albedo.rgb);
     float3 normal = PixelShader_Normal(input).myColor.xyz;
     

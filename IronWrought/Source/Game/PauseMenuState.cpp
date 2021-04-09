@@ -68,10 +68,11 @@ void CPauseMenuState::Receive(const SMessage& aMessage)
 	{
 		case EMessageType::MainMenu:
 		{
-			// This is wip, 2021 04 06. Don't uncomment yet - Aki
-			//this->myStateStack.PopUntil(CStateStack::EState::MainMenu);
-			//this->myStateStack.GetTop()->Start();
-			std::cout << __FUNCTION__ << ": Going to Main Menu from Pause is a WIP :/\n";
+			if (this->myStateStack.PopUntil(CStateStack::EState::MainMenu, false) == false)
+			{
+				// This is used when InitDevMode has been called in CGame
+				this->myStateStack.PushState(CStateStack::EState::MainMenu);
+			}
 		}break;
 
 		case EMessageType::Resume:

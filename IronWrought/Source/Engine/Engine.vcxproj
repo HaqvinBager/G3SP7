@@ -198,6 +198,7 @@
     <ClInclude Include="ConvexMeshColliderComponent.h" />
     <ClInclude Include="GravityGloveEditor.h" />
     <ClInclude Include="NodeTypeAddForce.h" />
+    <ClInclude Include="NodeTypeGameObjectRotateDegrees.h" />
     <ClInclude Include="SphereColliderComponent.h" />
     <ClInclude Include="BoxLight.h" />
     <ClInclude Include="BoxLightComponent.h" />
@@ -237,7 +238,6 @@
     <ClInclude Include="NodeTypeGameObjectMove.h" />
     <ClInclude Include="NodeTypeGameObjectRotate.h" />
     <ClInclude Include="NodeTypeGameObjectSetRotation.h" />
-    <ClInclude Include="NodeTypeListTest.h" />
     <ClInclude Include="NodeTypeMathGreater.h" />
     <ClInclude Include="NodeTypeStartGetCustom.h" />
     <ClInclude Include="NodeTypeStartKeyboardInput.h" />
@@ -436,6 +436,7 @@
     <ClCompile Include="ConvexMeshColliderComponent.cpp" />
     <ClCompile Include="GravityGloveEditor.cpp" />
     <ClCompile Include="NodeTypeAddForce.cpp" />
+    <ClCompile Include="NodeTypeGameObjectRotateDegrees.cpp" />
     <ClCompile Include="SphereColliderComponent.cpp" />
     <ClCompile Include="BoxLight.cpp" />
     <ClCompile Include="BoxLightComponent.cpp" />
@@ -473,7 +474,6 @@
     <ClCompile Include="NodeTypeGameObjectMove.cpp" />
     <ClCompile Include="NodeTypeGameObjectRotate.cpp" />
     <ClCompile Include="NodeTypeGameObjectSetRotation.cpp" />
-    <ClCompile Include="NodeTypeListTest.cpp" />
     <ClCompile Include="NodeTypeMathGreater.cpp" />
     <ClCompile Include="NodeTypeStartGetCustom.cpp" />
     <ClCompile Include="NodeTypeStartKeyboardInput.cpp" />

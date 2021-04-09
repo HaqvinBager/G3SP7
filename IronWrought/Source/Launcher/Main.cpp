@@ -8,6 +8,7 @@
 #include "EngineException.h"
 #include "DL_Debug.h"
 
+#include <iostream>
 //#define USE_ALLOCATION_METRICS
 
 #ifdef _DEBUG
@@ -175,8 +176,6 @@ void RunGame(LPWSTR lpCmdLine)
 			}
 		}
 
-		
-
 		PrintMemoryUsage();
 		engine.BeginFrame();
 		if (!game.Update())
@@ -214,8 +213,10 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 	//	ENGINE_ERROR_BOOL_MESSAGE(false, "Program crashed! A minidump was created at Bin/Crashes, please tell a programmer.");
 	//}
 		// Aki 2021 04 06, ok to remove
-		//SetForegroundWindow(GetConsoleWindow());
-		//system("pause");
+		SetForegroundWindow(GetConsoleWindow());
+
+		std::cout << "\n ******************************************* \nEngine shutdown! OK to close window :)\n";
+		system("pause");
 #ifdef USE_CONSOLE_COMMAND
 	CloseConsole();
 #endif

@@ -3,10 +3,10 @@
     {
       "Path": "Assets/Graphics/UI/JSON/UI_HUD_Health.json",
       "Position X": 0.0,
-      "Position Y": -0.915,
+      "Position Y": -0.93,
       "Level": 1.0,
-      "Scale X": 0.66,
-      "Scale Y": 0.66
+      "Scale X": 1.0,
+      "Scale Y": 1.0
     }
   ],
 
@@ -23,17 +23,39 @@
           "FrameWidth": 240.0,
           "FrameHeight": 240.0,
           "VerticalStartingPos": 0.0,
+          "FrameOffset": 0,
           "NumberOfFrames": 7,
-          "FramesPerSecond": 30
+          "FramesPerSecond": 60,
+          "RotationSpeedPerSecond": 720.0
+        },
+        {
+          "Name": "Idle",
+          "FrameWidth": 240.0,
+          "FrameHeight": 240.0,
+          "VerticalStartingPos": 0.0,
+          "FrameOffset": 0,
+          "NumberOfFrames": 1,
+          "FramesPerSecond": 1,
+          "RotationSpeedPerSecond": -90.0
+        },
+        {
+          "Name": "Hold",
+          "FrameWidth": 240.0,
+          "FrameHeight": 240.0,
+          "VerticalStartingPos": 0.0,
+          "FrameOffset": 6,
+          "NumberOfFrames": 1,
+          "FramesPerSecond": 60,
+          "RotationSpeedPerSecond": 720.0
         }
       ]
     },
     {
-      "Path": "Assets/Graphics/UI/HUD/UI_HUD_TopLine_test.dds",
+      "Path": "Assets/Graphics/UI/HUD/UI_HUD_newLine.dds",
       "Position X": 0.0,
-      "Position Y": -0.965,
-      "Scale Y": 0.7,
-      "Scale X": 0.7
+      "Position Y": -0.9,
+      "Scale Y": 1.0,
+      "Scale X": 1.0
     }
   ],
 

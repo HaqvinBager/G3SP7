@@ -44,7 +44,7 @@ private:
 	static void AddDecalComponents(CScene& aScene, RapidArray someData);
 	static void AddCollider(CScene& aScene, RapidArray someData);
 	static void AddPlayer(CScene& aScene);
-
+	static void AddEnemyComponents(CScene& aScene, RapidArray someData);
 	static CScene* ourLastInstantiatedScene;
 };
 

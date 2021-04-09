@@ -10,6 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 7488288225197211300}
   - component: {fileID: 3863519478415331204}
+  - component: {fileID: 4942257060551441741}
+  - component: {fileID: 2859668158938093939}
+  - component: {fileID: 8230202234791551701}
   m_Layer: 0
   m_Name: EN_P_CoffeBrewer
   m_TagString: Untagged
@@ -44,6 +47,45 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd91b596918d5b947b34fe83a610f47e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!65 &4942257060551441741
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5675741489571661778}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.58167964, y: 0.26254535, z: 0.233453}
+  m_Center: {x: 0.0020506084, y: 0.4528513, z: 0.00072355196}
+--- !u!65 &2859668158938093939
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5675741489571661778}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.5826671, y: 0.07233083, z: 0.22998658}
+  m_Center: {x: 0, y: 0.035261333, z: 0.00055499}
+--- !u!65 &8230202234791551701
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5675741489571661778}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.21491724, y: 0.244685, z: 0.18205601}
+  m_Center: {x: 0.13448635, y: 0.19701907, z: -0.0012466945}
 --- !u!1001 &5296951330424973558
 PrefabInstance:
   m_ObjectHideFlags: 0

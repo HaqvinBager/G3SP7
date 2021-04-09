@@ -2,6 +2,8 @@
 #include "MathHelpers.hlsli"
 #include "DetailNormalHelpers.hlsli"
 
+static float emissiveStrength = 20.0f;
+
 PixelOutPut PixelShader_Color(VertexToPixel input)
 {
     PixelOutPut output;
@@ -103,7 +105,7 @@ PixelOutPut PixelShader_Emissive(VertexToPixel input)
 {
     PixelOutPut output;
     PixelOutPut material = PixelShader_Material(input);
-    output.myColor.rgb = material.myColor.bbb;
+    output.myColor.rgb = material.myColor.bbb * emissiveStrength;
     output.myColor.a = 1.0f;
     return output;
 }

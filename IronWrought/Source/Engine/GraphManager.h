@@ -46,17 +46,6 @@ public:
 	const int GetCurrentBlueprintInstanceID() const;
 
 private:
-	ImTextureID HeaderTextureID();
-	void WillBeCyclic(CNodeInstance* aFirst, CNodeInstance* aSecond, bool& aIsCyclic, CNodeInstance* aBase);
-
-	CNodeInstance* GetNodeFromPinID(unsigned int anID);
-	CNodeInstance* GetNodeFromNodeID(unsigned int anID);
-	void DrawTypeSpecificPin(struct SPin& aPin, CNodeInstance* aNodeInstance);
-
-	void CreateNewDataNode();
-	void LoadDataNodesFromFile();
-
-private:
 	struct SEditorLinkInfo
 	{
 		ed::LinkId myID;
@@ -87,7 +76,6 @@ private:
 		//void Undo();
 	};
 
-private:
 	struct SGraph
 	{
 		std::vector<CNodeInstance*> myNodeInstances;
@@ -99,6 +87,22 @@ private:
 
 		void Clear();
 	};
+private:
+
+	ImTextureID HeaderTextureID();
+	void WillBeCyclic(CNodeInstance* aFirst, CNodeInstance* aSecond, bool& aIsCyclic, CNodeInstance* aBase);
+
+	CNodeInstance* GetNodeFromPinID(unsigned int anID);
+	CNodeInstance* GetNodeFromNodeID(unsigned int anID);
+	void DrawTypeSpecificPin(struct SPin& aPin, CNodeInstance* aNodeInstance);
+
+	void CreateNewDataNode();
+	void LoadDataNodesFromFile();
+
+
+
+private:
+
 
 	std::vector<SGraph> myGraphs;
 	SGraph* myCurrentGraph;
