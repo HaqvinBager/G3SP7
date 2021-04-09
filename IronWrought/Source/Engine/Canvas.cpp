@@ -28,6 +28,7 @@ CCanvas::CCanvas() :
 
 CCanvas::~CCanvas()
 {
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::UpdateCrosshair, this);
 	UnsubscribeToMessages();
 	myMessageTypes.clear();
 
@@ -423,24 +424,24 @@ void CCanvas::Update()
 {
 	if (myIsHUDCanvas)
 	{
-		if (Input::GetInstance()->IsMousePressed(Input::EMouseButton::Right))
-		{
-			mySprites[0]->PlayAnimation(0);
-		}
+		//if (Input::GetInstance()->IsMousePressed(Input::EMouseButton::Right))
+		//{
+		//	mySprites[0]->PlayAnimation(0);
+		//}
+		//
+		//if (Input::GetInstance()->IsMouseReleased(Input::EMouseButton::Right))
+		//{
+		//	mySprites[0]->PlayAnimation(0, false, true);
+		//}
 
-		if (Input::GetInstance()->IsMouseReleased(Input::EMouseButton::Right))
-		{
-			mySprites[0]->PlayAnimation(0, false, true);
-		}
-
-		if (!mySprites[0]->GetShouldAnimate() && !INPUT->IsMouseDown(Input::EMouseButton::Right))
-		{
-			mySprites[0]->PlayAnimation(1, true);
-		}
-		else if (!mySprites[0]->GetShouldAnimate())
-		{
-			mySprites[0]->PlayAnimation(2, true);
-		}
+		//if (!mySprites[0]->GetShouldAnimate() && !INPUT->IsMouseDown(Input::EMouseButton::Right))
+		//{
+		//	mySprites[0]->PlayAnimation(1, true);
+		//}
+		//else if (!mySprites[0]->GetShouldAnimate())
+		//{
+		//	mySprites[0]->PlayAnimation(2, true);
+		//}
 	}
 
 	for (unsigned int i = 0; i < mySprites.size(); ++i)
@@ -476,20 +477,48 @@ void CCanvas::Update()
 
 void CCanvas::Receive(const SMessage& aMessage)
 {
-	switch (aMessage.myMessageType)
+	if (myIsHUDCanvas)
 	{
-		case EMessageType::PlayerHealthChanged:
-			if (myAnimatedUIs.size() > 0)
+		switch (aMessage.myMessageType)
+		{
+			case EMessageType::PlayerHealthChanged:
 			{
-				if (myAnimatedUIs[0])
+				if (myAnimatedUIs.size() > 0)
 				{
-					myAnimatedUIs[0]->Level(*static_cast<float*>(aMessage.data));
+					if (myAnimatedUIs[0])
+						myAnimatedUIs[0]->Level(*static_cast<float*>(aMessage.data));
 				}
-			}
-			break;
+			}break;
 
-		default:
+			case EMessageType::UpdateCrosshair:
+			{
+				if (mySprites.empty())
+					return;
+				PostMaster::SCrossHairData* aData = reinterpret_cast<PostMaster::SCrossHairData*>(aMessage.data);
+				mySprites[0]->PlayAnimationUsingInternalData(aData->myIndex, aData->myShouldBeReversed);
+			}break;
+			
+			default:
+				break;
+		}
+	}
+	else
+	{
+		//switch (aMessage.myMessageType)
+		//{
+		//	default:
+		//	break;
+		//}
+	}
+
+	// Not sure how we are supposed to handle this:
+	for (auto& messageType : myMessageTypes)
+	{
+		if (aMessage.myMessageType == messageType)
+		{
+			// ???
 			break;
+		}
 	}
 }
 
@@ -657,8 +686,14 @@ bool CCanvas::InitSprite(const rapidjson::GenericObject<false, rapidjson::Value>
 			data.myFramesOffset = animations[i]["FrameOffset"].GetInt();
 			data.mySpeedInFramesPerSecond = animations[i]["FramesPerSecond"].GetFloat();
 			data.myRotationSpeedInSeconds = animations[i]["RotationSpeedPerSecond"].GetFloat();
+			data.myIsLooping = animations[i].HasMember("ShouldLoop") ? animations[i]["ShouldLoop"].GetBool() : false;
+			data.myTransitionToIndex = animations[i].HasMember("TransitionIndex") ? animations[i]["TransitionIndex"].GetInt() : -1;
+			data.myReverseTransitionToIndex = animations[i].HasMember("ReverseTransitionIndex") ? animations[i]["ReverseTransitionIndex"].GetInt() : -1;
 			spriteAnimations.push_back(data);
 		}
+		// Due to being used for both Init and Reinit we need to make sure we do not add to observer list twice
+		CMainSingleton::PostMaster().Unsubscribe(EMessageType::UpdateCrosshair, this);
+		CMainSingleton::PostMaster().Subscribe(EMessageType::UpdateCrosshair, this);
 	}
 
 	if (spriteAnimations.empty())

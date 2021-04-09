@@ -5,6 +5,7 @@
 #include "Observer.h"
 #include <string>
 #include <queue>
+#include "PostMasterStructs.h"
 
 
 class CPostMaster

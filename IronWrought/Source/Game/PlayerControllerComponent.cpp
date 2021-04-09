@@ -16,7 +16,7 @@
 #include "PlayerComponent.h"
 
 // TEMP
-static const float gPretendObjectDistanceFromPlayer = 5.0f;// TEMP
+static const float gPretendObjectDistanceFromPlayer = 10.0f;// TEMP
 // TEMP
 static float gPretendObjectCurrentDistance = 0.0f;// TEMP
 
@@ -123,9 +123,7 @@ void CPlayerControllerComponent::Update()
 
 	if (Input::GetInstance()->IsKeyPressed('R'))
 	{
-
 		myController->SetPosition(myRespawnPosition);
-
 	}
 }
 
@@ -180,9 +178,11 @@ void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
 			break;
 
 		case EInputEvent::Pull:
+		{
 			myAnimationComponentController->Pull(gPretendObjectCurrentDistance, gPretendObjectDistanceFromPlayer);
 			gPretendObjectCurrentDistance = min(gPretendObjectCurrentDistance + CTimer::Dt() * 24.0f, gPretendObjectDistanceFromPlayer);
-			break;
+		}break;
+
 		case EInputEvent::Push:
 			myAnimationComponentController->Push();
 			gPretendObjectCurrentDistance = 0.0f;
