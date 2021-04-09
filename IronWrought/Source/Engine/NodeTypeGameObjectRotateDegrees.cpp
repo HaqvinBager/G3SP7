@@ -48,19 +48,19 @@ int CNodeTypeGameObjectRotateDegrees::OnEnter(CNodeInstance* aTriggeringNodeInst
 	bool stopMovingW = false;
 	bool stopMoving = false;
 
-	if (((b.x - r.x) < 0.1f && (b.x - r.x) > -0.1f))
+	if (((b.x - r.x) < 0.01f && (b.x - r.x) > -0.01f))
 	{
 		stopMovingX = true;
 	}
-	if (((b.y - r.y) <  0.1f && (b.y - r.y) > -0.1f))
+	if (((b.y - r.y) <  0.01f && (b.y - r.y) > -0.01f))
 	{
 		stopMovingY = true;
 	}
-	if (((b.z - r.z) < 0.1f && (b.z - r.z) > -0.1f))
+	if (((b.z - r.z) < 0.01f && (b.z - r.z) > -0.01f))
 	{
 		stopMovingZ = true;
 	}
-	if (((b.w - r.w) < 0.1f && (b.w - r.w) > -0.1f))
+	if (((b.w - r.w) < 0.01f && (b.w - r.w) > -0.01f))
 	{
 		stopMovingW = true;
 	}
