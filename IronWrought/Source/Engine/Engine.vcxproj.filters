@@ -1590,6 +1590,9 @@
     </ClInclude>
     <ClInclude Include="ConvexMeshColliderComponent.h" />
     <ClInclude Include="NodeTypeGameObjectRotateDegrees.h" />
+    <ClInclude Include="PostMasterStructs.h">
+      <Filter>Post Master</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">

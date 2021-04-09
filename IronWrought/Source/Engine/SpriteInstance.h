@@ -1,5 +1,6 @@
 #pragma once
 #include <SimpleMath.h>// Added for ModelViewer solution, gave error here... :/
+#include "PostMasterStructs.h"
 
 class CSprite;
 class CScene;
@@ -20,16 +21,22 @@ struct SSpriteSheetPositionData
 	float myRotationSpeedInSeconds;
 	int myFramesOffset;
 	int myNumberOfFrames;
+	int myTransitionToIndex;
+	int myReverseTransitionToIndex;
+	bool myIsLooping;
 
 	std::string myAnimationName = "";
 };
 
 struct SSpriteAnimationData
 {
-	int myFramesOffset;
-	int myNumberOfFrames;
 	float myFramesPerSecond;
 	float myRotationSpeedInSeconds;
+	int myFramesOffset;
+	int myNumberOfFrames;
+	int myTransitionToIndex;
+	int myReverseTransitionToIndex;
+	bool myIsLooping;
 	std::string myAnimationName;
 };
 
@@ -54,6 +61,8 @@ public:
 	void Update();
 
 	void PlayAnimation(unsigned int anIndex, bool aShouldLoop = false, bool aShouldBeReversed = false);
+	void PlayAnimationUsingInternalData(const unsigned int& anIndex, const bool& aShouldBeReversed = false);
+	void PlayAnimation(PostMaster::SCrossHairData& aData);
 	void PlayAnimation(std::string aName, bool aShouldLoop = false, bool aShouldBeReversed = false);
 
 public:

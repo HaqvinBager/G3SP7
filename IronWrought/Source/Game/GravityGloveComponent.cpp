@@ -39,11 +39,25 @@ void CGravityGloveComponent::Start()
 void CGravityGloveComponent::Update()
 {
 	if (Input::GetInstance()->IsMousePressed(Input::EMouseButton::Left)) {
-		Pull();
-	}
-	if (Input::GetInstance()->IsMousePressed(Input::EMouseButton::Right)) {
+		PostMaster::SCrossHairData data;
+		data.myIndex = 0;
+		data.myShouldBeReversed = true;
+		CMainSingleton::PostMaster().Send({ EMessageType::UpdateCrosshair, &data });
 		Push();
 	}
+	if (Input::GetInstance()->IsMousePressed(Input::EMouseButton::Right)) {
+		PostMaster::SCrossHairData data;
+		data.myIndex = 0;
+		CMainSingleton::PostMaster().Send({ EMessageType::UpdateCrosshair, &data });
+		Pull();
+	}
+
+	// Crosshair Animations:
+	//	Shoot = 0 , Spin-open and Spin-close (Spin-open => reversed = true)
+	//	Idle = 1
+	//	Hold = 2
+	//	Spin-close : Idle -> Hold
+	//	Spin-open  : Hold -> Idle
 
 	if (myCurrentTarget != nullptr)
 	{
@@ -91,7 +105,6 @@ void CGravityGloveComponent::Pull()
 		
 		myCurrentTarget = transform->GetComponent<CRigidBodyComponent>();
 
-
 	#ifdef _DEBUG
 		CLineInstance* myLine = new CLineInstance();
 		CLineInstance* myLine2 = new CLineInstance();
@@ -107,6 +120,11 @@ void CGravityGloveComponent::Pull()
 void CGravityGloveComponent::Push()
 {
 	if (myCurrentTarget != nullptr) {
+		PostMaster::SCrossHairData data;
+		data.myIndex = 0;
+		data.myShouldBeReversed = true;
+		CMainSingleton::PostMaster().Send({ EMessageType::UpdateCrosshair, &data });
+
 		myCurrentTarget->GetDynamicRigidBody()->GetBody().setMaxLinearVelocity(100.f);
 		myCurrentTarget->AddForce(-GameObject().myTransform->GetWorldMatrix().Forward(), mySettings.myPushForce * myCurrentTarget->GetMass(), EForceMode::EImpulse);
 		myCurrentTarget = nullptr;
