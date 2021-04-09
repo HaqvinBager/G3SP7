@@ -58,10 +58,20 @@ void CDecalFactory::ClearDecal(std::string aFilePath)
 CDecal* CDecalFactory::LoadDecal(std::string aFilePath)
 {
     std::array<ID3D11ShaderResourceView*, 3> decalMaterial = CMainSingleton::MaterialHandler().RequestDecal(aFilePath);
-
+    
     CDecal::SDecalData decalData;
     decalData.myMaterial = decalMaterial;
     decalData.myMaterialName = aFilePath;
+
+    if (!decalMaterial[1])
+    {
+        decalData.myShouldRenderMaterial = false;
+    }
+
+    if (!decalMaterial[2])
+    {
+        decalData.myShouldRenderNormals = false;
+    }
 
     CDecal* decal = new CDecal();
     decal->Init(decalData);

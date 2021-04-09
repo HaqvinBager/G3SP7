@@ -79,9 +79,9 @@ bool CSpriteInstance::Init(CSprite* aSprite, const std::vector<SSpriteSheetPosit
 		{
 			myAnimationFrames.emplace_back();
 			auto& currentUV = myAnimationFrames.back();
-			currentUV.x = (animationDataToLoad.mySpriteWidth * j) / sheetDimensions.x; // Left
+			currentUV.x = (animationDataToLoad.mySpriteWidth * (j + animationDataToLoad.myFramesOffset)) / sheetDimensions.x; // Left
 			currentUV.y = (animationDataToLoad.myVerticalStartingPosition) / sheetDimensions.y; // Up
-			currentUV.z = (animationDataToLoad.mySpriteWidth * (j + 1)) / sheetDimensions.x; // Right
+			currentUV.z = (animationDataToLoad.mySpriteWidth * (j + animationDataToLoad.myFramesOffset + 1)) / sheetDimensions.x; // Right
 			currentUV.w = (animationDataToLoad.myVerticalStartingPosition + animationDataToLoad.mySpriteHeight) / sheetDimensions.y; // Down
 		}
 	}
@@ -189,6 +189,7 @@ void CSpriteInstance::PlayAnimation(unsigned int anIndex, bool aShouldLoop, bool
 	myCurrentAnimationIndex = anIndex;
 	myShouldLoopAnimation = aShouldLoop;
 	myShouldReverseAnimation = aShouldBeReversed;
+	myAnimationTimer = 0.0f;
 	
 	if (!myShouldReverseAnimation)
 		myCurrentAnimationFrame = myAnimationData[myCurrentAnimationIndex].myFramesOffset;

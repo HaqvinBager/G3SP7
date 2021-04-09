@@ -14,7 +14,7 @@
 #include "CharacterController.h"
 #include <PlayerControllerComponent.h>
 #include "RigidBodyComponent.h"
-#include "CharacterReportCallback.h"
+#include "PlayerReportCallback.h"
 #include "ConvexMeshColliderComponent.h"
 
 PxFilterFlags contactReportFilterShader(PxFilterObjectAttributes attributes0, PxFilterData filterData0,
@@ -92,7 +92,7 @@ bool CPhysXWrapper::Init()
 
 	// All collisions gets pushed to this class
 	myContactReportCallback = new CContactReportCallback();
-	myCharacterReportCallback = new CCharacterReportCallback();
+	myCharacterReportCallback = new CPlayerReportCallback();
     return true;
 }
 

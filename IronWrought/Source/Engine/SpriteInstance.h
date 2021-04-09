@@ -18,6 +18,7 @@ struct SSpriteSheetPositionData
 	float myVerticalStartingPosition;
 	float mySpeedInFramesPerSecond;
 	float myRotationSpeedInSeconds;
+	int myFramesOffset;
 	int myNumberOfFrames;
 
 	std::string myAnimationName = "";
