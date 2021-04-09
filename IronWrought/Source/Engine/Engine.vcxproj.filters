@@ -871,7 +871,9 @@
     <ClCompile Include="ConvexMeshColliderComponent.cpp">
       <Filter>GameObject and Component\Component</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerReportCallback.cpp" />
+    <ClCompile Include="PlayerReportCallback.cpp">
+      <Filter>PhysX</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1597,7 +1599,9 @@
     <ClInclude Include="ConvexMeshColliderComponent.h">
       <Filter>GameObject and Component\Component</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerReportCallback.h" />
+    <ClInclude Include="PlayerReportCallback.h">
+      <Filter>PhysX</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">
