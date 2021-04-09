@@ -2,7 +2,7 @@
 
 class CCameraComponent;
 class CGameObject;
-
+#define PI 3.14159265f
 class CCameraControllerComponent : public CComponent
 {
 public:
@@ -26,8 +26,25 @@ public:
 	void SetCameraMode(const ECameraMode& aCameraMode) { myCameraMode = aCameraMode; }
 	const bool IsFreeCamMode() const { return (myCameraMode == ECameraMode::FreeCam); }
 	const bool IsCursorUnlocked() const { return (myCameraMode == ECameraMode::UnlockCursor); }
+	void RotateTransformWithYawAndPitch(const Vector2& aInput);
+
 
 public:
+	float WrapAngle(float anAngle)
+	{
+		return fmodf(anAngle, 360.0f);
+	}
+
+	float ToDegrees(float anAngleInRadians)
+	{
+		return anAngleInRadians * (180.0f / PI);
+	}
+
+	float ToRadians(float anAngleInDegrees)
+	{
+		return anAngleInDegrees * (PI / 180.0f);
+	}
+
 	float Lerp(float a, float b, float t)
 	{
 		return a + t * (b - a);

@@ -27,6 +27,7 @@ public:
 	~CWindowHandler();
 
 	const HWND GetWindowHandle() const;
+	DirectX::SimpleMath::Vector2 GetCenterPosition();
 	DirectX::SimpleMath::Vector2 GetResolution();
 	const float GetResolutionScale() const;
 	void SetWindowTitle(std::string aString);

@@ -139,8 +139,21 @@ const HWND CWindowHandler::GetWindowHandle() const
     return myWindowHandle;
 }
 
+DirectX::SimpleMath::Vector2 CWindowHandler::GetCenterPosition()
+{
+    Vector2 center = {};
+    RECT rect = { 0 };
+    if (GetWindowRect(myWindowHandle, &rect))
+    {
+        center.x = (rect.right - rect.left) * 0.5f;
+        center.y = (rect.bottom - rect.top) * 0.5f;
+    }
+    return center;
+}
+
 DirectX::SimpleMath::Vector2 CWindowHandler::GetResolution()
 {
+
     return *myResolution;
 }
 
