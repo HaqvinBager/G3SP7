@@ -236,10 +236,10 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 		if (modelData.myTintMap)
 		{
 			myCurrentGBufferPixelShader = myGBufferPixelShader_TintMap;
-			myObjectBufferData.myTint1 = modelComponent->Tint1();
-			myObjectBufferData.myTint2 = modelComponent->Tint2();
-			myObjectBufferData.myTint3 = modelComponent->Tint3();
-			myObjectBufferData.myTint4 = modelComponent->Tint4();
+			for (unsigned short i = 0; i < NUMBER_OF_TINT_SLOTS; ++i)
+			{
+				myObjectBufferData.myTints[i] = modelComponent->TintOnIndex(i);
+			}
 			myObjectBufferData.myEmissive = modelComponent->Emissive();
 
 			auto tintTextures = modelComponent->GetConstTintTextures();

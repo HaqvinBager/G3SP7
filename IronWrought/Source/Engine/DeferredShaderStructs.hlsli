@@ -66,17 +66,14 @@ cbuffer FrameBuffer : register(b0)
     float4 cameraPosition;
 }
 
+#define NUMBER_OF_TINT_SLOTS 4
 cbuffer ObjectBuffer : register(b1)
 {
     float4x4 toWorld;
     unsigned int myNumberOfDetailNormals;
     unsigned int myNumberOfTextureSets;
     // padding/unused 8-bytes
-    // Create a separate shaderstructs.hlsli for tinted
-    float4 myTint1;
-    float4 myTint2;
-    float4 myTint3;
-    float4 myTint4;
+    float4 myTints[NUMBER_OF_TINT_SLOTS];
     float4 myEmissive;
 }
 

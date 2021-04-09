@@ -30,21 +30,19 @@ GBufferOutput main(VertexModelToPixel input)
     float emissive = PixelShader_Emissive(vertToPixel.myUV);
     if (emissive < 0.99f)
     {
-        float blendFactor = 0.5f * (1 - emissive);
-        float tint1BlendFactor = tintMap.r * blendFactor;
-        float tint2BlendFactor = tintMap.g * blendFactor;
-        float tint3BlendFactor = tintMap.b * blendFactor;
-        float tint4BlendFactor = tintMap.a * blendFactor;
-    
-        albedo = lerp(albedo, SampleTintTextureAlbedo(0, vertToPixel.myUV).rgb, tint1BlendFactor);
-        albedo = lerp(albedo, SampleTintTextureAlbedo(1, vertToPixel.myUV).rgb, tint2BlendFactor);
-        albedo = lerp(albedo, SampleTintTextureAlbedo(2, vertToPixel.myUV).rgb, tint3BlendFactor);
-        albedo = lerp(albedo, SampleTintTextureAlbedo(3, vertToPixel.myUV).rgb, tint4BlendFactor);
+        float blendFactor = 0.5f * (1 - emissive);        
+        float tintBlendFactor[NUMBER_OF_TINT_SLOTS];
+        tintBlendFactor[0] = tintMap.r;
+        tintBlendFactor[1] = tintMap.g;
+        tintBlendFactor[2] = tintMap.b;
+        tintBlendFactor[3] = tintMap.a;
         
-        albedo = lerp(albedo, myTint1.rgb, tint1BlendFactor * myTint1.a);
-        albedo = lerp(albedo, myTint2.rgb, tint2BlendFactor * myTint2.a);
-        albedo = lerp(albedo, myTint3.rgb, tint3BlendFactor * myTint3.a);
-        albedo = lerp(albedo, myTint4.rgb, tint4BlendFactor * myTint4.a);
+        for (int i = 0; i < NUMBER_OF_TINT_SLOTS; ++i)
+        {
+            tintBlendFactor[i] *= blendFactor;
+            albedo = lerp(albedo, SampleTintTextureAlbedo(i, vertToPixel.myUV).rgb, tintBlendFactor[i]);
+            albedo = lerp(albedo, myTints[i].rgb, tintBlendFactor[i] * myTints[i].a);
+        }
     }
     else
     {

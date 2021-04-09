@@ -55,10 +55,7 @@ private:
 		unsigned int myNumberOfDetailNormals;
 		unsigned int myNumberOfTextureSets;
 		unsigned int myPaddington[2];
-		Vector4 myTint1;//Using vector 4 because there will be padding when Vector3 is used.
-		Vector4 myTint2;
-		Vector4 myTint3;
-		Vector4 myTint4;
+		Vector4 myTints[4];
 		Vector4 myEmissive;
 	} myObjectBufferData;
 
