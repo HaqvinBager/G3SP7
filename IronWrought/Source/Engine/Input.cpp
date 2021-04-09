@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Input.h"
 #include "imgui.h"
+#include "Engine.h"
 
 Input* Input::GetInstance()
 {
@@ -172,6 +173,20 @@ bool Input::IsKeyPressed(WPARAM wParam) {
 
 bool Input::IsKeyReleased(WPARAM wParam) {
 	return (!myKeyDown[wParam]) && myKeyDownLast[wParam];
+}
+
+DirectX::SimpleMath::Vector2 Input::GetAxisRaw()
+{
+	POINT p;
+	GetCursorPos(&p);
+	Vector2 currentPos = {
+		static_cast<float>(p.x),
+		static_cast<float>(p.y)
+	};
+	Vector2 center = CEngine::GetInstance()->GetWindowHandler()->GetCenterPosition();
+	SetCursorPos(static_cast<int>(center.x), static_cast<int>(center.y));
+	Vector2 axisRaw = currentPos - center;
+	return axisRaw;
 }
 
 int Input::MouseX() {
