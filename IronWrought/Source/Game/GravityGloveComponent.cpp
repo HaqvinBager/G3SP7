@@ -19,7 +19,7 @@ CGravityGloveComponent::CGravityGloveComponent(CGameObject& aParent, CTransformC
 	mySettings.myMinPushForce = 10.0f;
 	mySettings.myMinPullForce = 1.5f;
 
-	mySettings.myMaxDistance = 10.0f;
+	mySettings.myMaxDistance = 50.0f;
 	mySettings.myCurrentDistanceInverseLerp = 0.0f;
 }
 
@@ -43,21 +43,17 @@ void CGravityGloveComponent::Update()
 		data.myIndex = 0;
 		data.myShouldBeReversed = true;
 		CMainSingleton::PostMaster().Send({ EMessageType::UpdateCrosshair, &data });
+
 		Push();
 	}
 	if (Input::GetInstance()->IsMousePressed(Input::EMouseButton::Right)) {
 		PostMaster::SCrossHairData data;
 		data.myIndex = 0;
+		
 		CMainSingleton::PostMaster().Send({ EMessageType::UpdateCrosshair, &data });
+
 		Pull();
 	}
-
-	// Crosshair Animations:
-	//	Shoot = 0 , Spin-open and Spin-close (Spin-open => reversed = true)
-	//	Idle = 1
-	//	Hold = 2
-	//	Spin-close : Idle -> Hold
-	//	Spin-open  : Hold -> Idle
 
 	if (myCurrentTarget != nullptr)
 	{
@@ -69,8 +65,11 @@ void CGravityGloveComponent::Update()
 
 		if (mySettings.myCurrentDistanceInverseLerp < 0.1f)
 		{
-			myCurrentTarget->SetPosition(myGravitySlot->WorldPosition());
-			myCurrentTarget->GetDynamicRigidBody()->GetBody().setMaxLinearVelocity(1.0f);
+			//myCurrentTarget->SetPosition(myGravitySlot->WorldPosition());
+			//myCurrentTarget->SetRotation(myCurrentTarget->GetComponent<CTransformComponent>()->Rotation());
+			myCurrentTarget->SetGlobalPose(myGravitySlot->WorldPosition(), myCurrentTarget->GetComponent<CTransformComponent>()->Rotation());
+			myCurrentTarget->SetLinearVelocity({ 0.f, 0.f, 0.f });
+			myCurrentTarget->SetAngularVelocity({ 0.f, 0.f, 0.f });
 		}
 		else
 		{
@@ -90,6 +89,12 @@ void CGravityGloveComponent::Pull()
 	{
 		myCurrentTarget->GetDynamicRigidBody()->GetBody().setMaxLinearVelocity(100.f);
 		myCurrentTarget = nullptr;
+
+		PostMaster::SCrossHairData data;
+		data.myIndex = 0;
+		data.myShouldBeReversed = true;
+		CMainSingleton::PostMaster().Send({ EMessageType::UpdateCrosshair, &data });
+
 		return;
 	}
 
@@ -97,6 +102,22 @@ void CGravityGloveComponent::Pull()
 	Vector3 dir = -GameObject().myTransform->GetWorldMatrix().Forward();
 
 	PxRaycastBuffer hit = CEngine::GetInstance()->GetPhysx().Raycast(start, dir, mySettings.myMaxDistance);
+//	std::vector<CGameObject*> gameobjects = CEngine::GetInstance()->GetActiveScene().ActiveGameObjects();
+
+	/*for (int i = 0; i < gameobjects.size(); ++i) {
+		if (gameobjects[i]->GetComponent<CRigidBodyComponent>()) {
+			Vector3 pos = gameobjects[i]->myTransform->Position();
+			pos -= start;
+			pos.Normalize();
+			dir.Normalize();
+			float lookPrecentage = dir.Dot(pos);
+			std::cout << i << ": " << lookPrecentage << std::endl;
+			if (lookPrecentage > 0.99f && lookPrecentage > 0.f) {
+				myCurrentTarget = gameobjects[i]->GetComponent<CRigidBodyComponent>();
+			}
+		}
+	}*/
+
 	if (hit.getNbAnyHits() > 0)
 	{
 		CTransformComponent* transform = (CTransformComponent*)hit.getAnyHit(0).actor->userData;
@@ -128,6 +149,20 @@ void CGravityGloveComponent::Push()
 		myCurrentTarget->GetDynamicRigidBody()->GetBody().setMaxLinearVelocity(100.f);
 		myCurrentTarget->AddForce(-GameObject().myTransform->GetWorldMatrix().Forward(), mySettings.myPushForce * myCurrentTarget->GetMass(), EForceMode::EImpulse);
 		myCurrentTarget = nullptr;
+	} else {
+		Vector3 start = GameObject().myTransform->GetWorldMatrix().Translation();
+		Vector3 dir = -GameObject().myTransform->GetWorldMatrix().Forward();
+		PxRaycastBuffer hit = CEngine::GetInstance()->GetPhysx().Raycast(start, dir, mySettings.myMaxDistance);
+		if (hit.getNbAnyHits() > 0)
+		{
+			CTransformComponent* transform = (CTransformComponent*)hit.getAnyHit(0).actor->userData;
+			if (transform == nullptr)
+				return;
+			CRigidBodyComponent* target = transform->GetComponent<CRigidBodyComponent>();
+			if (target) {
+				target->AddForce(-GameObject().myTransform->GetWorldMatrix().Forward(), mySettings.myPushForce * target->GetMass(), EForceMode::EImpulse);
+			}
+		}
 	}
 }
 
