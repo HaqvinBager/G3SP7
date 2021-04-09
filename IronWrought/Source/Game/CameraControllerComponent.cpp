@@ -43,6 +43,9 @@ void CCameraControllerComponent::Start()
 
 void CCameraControllerComponent::Update()
 {
+	if (!CEngine::GetInstance()->GetWindowHandler()->CursorLocked())
+		return;
+
 #ifdef  _DEBUG
 	// TEMPORARY
 	if (Input::GetInstance()->IsKeyPressed(VK_F1))
