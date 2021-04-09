@@ -7,6 +7,9 @@
 #include <concurrent_unordered_map.h>
 #include <concurrent_vector.h>
 
+#include <future>
+
+
 struct SVertexPaintCollection;
 
 enum class ColliderType {
@@ -48,8 +51,10 @@ private:
 	static CScene* ourLastInstantiatedScene;
 };
 
+struct CSceneSetup {
+	concurrency::concurrent_vector<CGameObject*> myGameObjects;
+};
 
-#include <future>
 class CSceneFactory {
 	friend class CEngine;
 public:
