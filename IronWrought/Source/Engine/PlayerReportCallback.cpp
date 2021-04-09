@@ -1,11 +1,11 @@
 #include "stdafx.h"
-#include "CharacterReportCallback.h"
+#include "PlayerReportCallback.h"
 #include "TransformComponent.h"
 #include "RigidBodyComponent.h"
 #include <PlayerControllerComponent.h>
 #include "RigidDynamicBody.h"
 
-void CCharacterReportCallback::onShapeHit(const physx::PxControllerShapeHit& hit)
+void CPlayerReportCallback::onShapeHit(const physx::PxControllerShapeHit& hit)
 {
 	//CTransformComponent* transform = (CTransformComponent*)hit.actor->userData;
 	/*CRigidBodyComponent* rigid = transform->GameObject().GetComponent<CRigidBodyComponent>();
@@ -43,11 +43,11 @@ void CCharacterReportCallback::onShapeHit(const physx::PxControllerShapeHit& hit
 	}
 }
 
-void CCharacterReportCallback::onControllerHit(const physx::PxControllersHit& /*hit*/)
+void CPlayerReportCallback::onControllerHit(const physx::PxControllersHit& /*hit*/)
 {
 }
 
-void CCharacterReportCallback::onObstacleHit(const physx::PxControllerObstacleHit& /*hit*/)
+void CPlayerReportCallback::onObstacleHit(const physx::PxControllerObstacleHit& /*hit*/)
 {
 	/*CTransformComponent* transform = (CTransformComponent*)hit.controller->getActor()->userData;
 	CRigidBodyComponent* rigid = transform->GameObject().GetComponent<CRigidBodyComponent>();

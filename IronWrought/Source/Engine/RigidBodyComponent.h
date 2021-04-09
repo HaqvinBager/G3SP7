@@ -36,8 +36,11 @@ public:
 	void AddForce(const Vector3& aDirection, const float aForce, const EForceMode aForceMode = EForceMode::EForce);
 	void AddAngularForce(const Vector3& aAngularForce, const EForceMode aForceMode = EForceMode::EForce);
 	void SetAngularVelocity(const Vector3& aVelocity);
+	void SetLinearVelocity(const Vector3& aVelocity);
 
 	void SetPosition(const Vector3& aPos);
+	void SetRotation(const Quaternion& aRot);
+	void SetGlobalPose(const Vector3& aPos, const Quaternion& aRot);
 
 	void AttachShape(physx::PxShape* aShape);
 
