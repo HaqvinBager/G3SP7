@@ -6,10 +6,17 @@ class CSprite;
 class CScene;
 
 enum class ERenderOrder {
-	BackgroundLayer,
+	//BackgroundLayer,
+	//Layer1,
+	//ForegroundLayer,
+	//PauseLayer
+	Layer0,
 	Layer1,
-	ForegroundLayer,
-	PauseLayer
+	Layer2,
+	Layer3,
+	Layer4,
+	Layer5,
+	Layer6
 };
 
 struct SSpriteSheetPositionData

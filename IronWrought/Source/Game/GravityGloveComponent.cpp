@@ -138,13 +138,11 @@ void CGravityGloveComponent::Pull()
 	//myCurrentTarget->SetPosition(myGravitySlot->WorldPosition());
 }
 
+#include "CameraComponent.h"
 void CGravityGloveComponent::Push()
 {
 	if (myCurrentTarget != nullptr) {
-		PostMaster::SCrossHairData data;
-		data.myIndex = 0;
-		data.myShouldBeReversed = true;
-		CMainSingleton::PostMaster().Send({ EMessageType::UpdateCrosshair, &data });
+		IRONWROUGHT->GetActiveScene().MainCamera()->SetTrauma(0.25f); // plz enable camera movement without moving player for shake??? ::)) Nico 2021-04-09
 
 		myCurrentTarget->GetDynamicRigidBody()->GetBody().setMaxLinearVelocity(100.f);
 		myCurrentTarget->AddForce(-GameObject().myTransform->GetWorldMatrix().Forward(), mySettings.myPushForce * myCurrentTarget->GetMass(), EForceMode::EImpulse);

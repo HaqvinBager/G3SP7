@@ -23,6 +23,7 @@ CCanvas::CCanvas() :
 	myBackground(nullptr)
 	, myIsEnabled(true)
 	, myIsHUDCanvas(false)
+	, myCurrentRenderLayer(0)
 {
 }
 
@@ -153,7 +154,7 @@ void CCanvas::ClearFromScene(CScene& aScene)
 	myTexts.clear();
 }
 
-void CCanvas::Init(const std::string& aFilePath, CScene& aScene, bool addToScene, const Vector2& aParentPivot, const Vector2& aParentPosition)
+void CCanvas::Init(const std::string& aFilePath, CScene& aScene, bool addToScene, const Vector2& aParentPivot, const Vector2& aParentPosition, const unsigned int& aSpriteRenderLayerOffset)
 {
 	Document document = CJsonReader::Get()->LoadDocument(aFilePath);
 
@@ -162,72 +163,7 @@ void CCanvas::Init(const std::string& aFilePath, CScene& aScene, bool addToScene
 
 	InitPivotAndPos(document.GetObjectW(), aParentPivot, aParentPosition);
 
-	if (document.HasMember("Buttons"))
-	{
-		auto buttonDataArray = document["Buttons"].GetArray();
-		for (unsigned int i = 0; i < buttonDataArray.Size(); ++i)
-		{
-			myButtonTexts.emplace_back(new CTextInstance(aScene, addToScene));
-			myButtons.emplace_back(new CButton());
-			InitButton(buttonDataArray[i].GetObjectW(), i, aScene);
-		}
-	}
-
-	if (document.HasMember("Texts"))
-	{
-		auto textDataArray = document["Texts"].GetArray();
-		for (unsigned int i = 0; i < textDataArray.Size(); ++i)
-		{
-			myTexts.emplace_back(new CTextInstance(aScene, addToScene));
-			InitText(textDataArray[i].GetObjectW(), i);
-		}
-	}
-
-	if (document.HasMember("Animated UI Elements"))
-	{
-		auto animatedDataArray = document["Animated UI Elements"].GetArray();
-		for (unsigned int i = 0; i < animatedDataArray.Size(); ++i)
-		{
-			myAnimatedUIs.emplace_back(new CAnimatedUIElement(ASSETPATH(animatedDataArray[i]["Path"].GetString()), aScene, addToScene));
-			InitAnimatedElement(animatedDataArray[i].GetObjectW(), i, aScene);
-		}
-	}
-
-	if (document.HasMember("Background"))
-	{
-		myBackground = new CSpriteInstance(aScene, addToScene);
-		InitBackground(ASSETPATH(document["Background"]["Path"].GetString()));
-	}
-
-	if (document.HasMember("Sprites"))
-	{
-		auto spriteDataArray = document["Sprites"].GetArray();
-		for (unsigned int i = 0; i < spriteDataArray.Size(); ++i)
-		{
-			mySprites.emplace_back(new CSpriteInstance(aScene, addToScene));
-			InitSprite(spriteDataArray[i].GetObjectW(), i);
-		}
-	}
-
-	if (document.HasMember("PostmasterEvents"))
-	{
-		InitMessageTypes(document["PostmasterEvents"]["Events"].GetArray());
-	}
-
-	if (document.HasMember("Widgets"))
-	{
-		InitWidgets(document["Widgets"].GetArray(), aScene);
-	}
-}
-
-void CCanvas::ReInit(const std::string& aFilePath, CScene& aScene, bool addToScene, const Vector2& aParentPivot, const Vector2& aParentPosition)
-{
-	Document document = CJsonReader::Get()->LoadDocument(aFilePath);
-
-	if (document.HasParseError())
-		return;
-
-	InitPivotAndPos(document.GetObjectW(), aParentPivot, aParentPosition);
+	myCurrentRenderLayer = aSpriteRenderLayerOffset;
 
 	if (document.HasMember("Buttons"))
 	{
@@ -236,15 +172,7 @@ void CCanvas::ReInit(const std::string& aFilePath, CScene& aScene, bool addToSce
 		int currentSize = (int)myButtons.size();
 		int newSize = (int)buttonDataArray.Size();
 		int difference = currentSize - newSize;
-		/*
-		current - new = difference
-			* Same:
-				5 - 5 = 0
-			 * More:
-				5 - 6 = -1
-			 * Less:
-				5 - 4 = 1
-		*/
+
 		if (difference > 0)// There are fewer items than before.
 		{
 			CScene& scene = IRONWROUGHT->GetActiveScene();
@@ -268,11 +196,13 @@ void CCanvas::ReInit(const std::string& aFilePath, CScene& aScene, bool addToSce
 				myButtonTexts.emplace_back(new CTextInstance(aScene, addToScene));
 				myButtons.emplace_back(new CButton());
 				InitButton(buttonDataArray[i].GetObjectW(), i, aScene);
+				myButtons.back()->SetRenderLayer(static_cast<ERenderOrder>(2 + myCurrentRenderLayer));
 			}
 		}
 		for (int i = 0; i < currentSize; ++i)
 		{
 			InitButton(buttonDataArray[i].GetObjectW(), i, aScene);
+			myButtons[i]->SetRenderLayer(static_cast<ERenderOrder>(2 + myCurrentRenderLayer));
 		}
 	}
 
@@ -335,17 +265,20 @@ void CCanvas::ReInit(const std::string& aFilePath, CScene& aScene, bool addToSce
 			{
 				myAnimatedUIs.emplace_back(new CAnimatedUIElement(aScene, addToScene));
 				InitAnimatedElement(animatedDataArray[i].GetObjectW(), i, aScene);
+				myAnimatedUIs.back()->SetRenderLayer(static_cast<ERenderOrder>(2 + myCurrentRenderLayer));
 			}
 		}
 		for (int i = 0; i < currentSize; ++i)
 		{
 			InitAnimatedElement(animatedDataArray[i].GetObjectW(), i, aScene);
+			myAnimatedUIs.back()->SetRenderLayer(static_cast<ERenderOrder>(2 + myCurrentRenderLayer));
 		}
 	}
 
 	if (document.HasMember("Background"))
 	{
-		InitBackground(ASSETPATH(document["Background"]["Path"].GetString()));
+		InitBackground(ASSETPATH(document["Background"]["Path"].GetString()), aScene);
+		myBackground->SetRenderOrder(static_cast<ERenderOrder>(0 + myCurrentRenderLayer));
 	}
 
 	if (document.HasMember("Sprites"))
@@ -372,12 +305,14 @@ void CCanvas::ReInit(const std::string& aFilePath, CScene& aScene, bool addToSce
 			for (int i = currentSize; i < newSize; ++i)
 			{
 				mySprites.emplace_back(new CSpriteInstance(aScene, addToScene));
-				InitAnimatedElement(spriteDataArray[i].GetObjectW(), i, aScene);
+				InitSprite(spriteDataArray[i].GetObjectW(), i);
+				mySprites.back()->SetRenderOrder(static_cast<ERenderOrder>(2 + myCurrentRenderLayer));
 			}
 		}
 		for (int i = 0; i < currentSize; ++i)
 		{
 			InitSprite(spriteDataArray[i].GetObjectW(), i);
+			mySprites.back()->SetRenderOrder(static_cast<ERenderOrder>(2 + myCurrentRenderLayer));
 		}
 	}
 
@@ -410,40 +345,18 @@ void CCanvas::ReInit(const std::string& aFilePath, CScene& aScene, bool addToSce
 			for (int i = currentSize; i < newSize; ++i)
 			{
 				myWidgets.push_back(new CCanvas());
-				myWidgets[i]->Init(ASSETPATH(widgetsArray[i]["Path"].GetString()), aScene, true, myPivot, myPosition);
+				myWidgets[i]->Init(ASSETPATH(widgetsArray[i]["Path"].GetString()), aScene, true, myPivot, myPosition, 3);
 			}
 		}
 		for (int i = 0; i < currentSize; ++i)
 		{
-			myWidgets[i]->ReInit(ASSETPATH(widgetsArray[i]["Path"].GetString()), aScene, true, myPivot, myPosition);
+			myWidgets[i]->Init(ASSETPATH(widgetsArray[i]["Path"].GetString()), aScene, true, myPivot, myPosition, 3);
 		}
 	}
 }
 
 void CCanvas::Update()
 {
-	if (myIsHUDCanvas)
-	{
-		//if (Input::GetInstance()->IsMousePressed(Input::EMouseButton::Right))
-		//{
-		//	mySprites[0]->PlayAnimation(0);
-		//}
-		//
-		//if (Input::GetInstance()->IsMouseReleased(Input::EMouseButton::Right))
-		//{
-		//	mySprites[0]->PlayAnimation(0, false, true);
-		//}
-
-		//if (!mySprites[0]->GetShouldAnimate() && !INPUT->IsMouseDown(Input::EMouseButton::Right))
-		//{
-		//	mySprites[0]->PlayAnimation(1, true);
-		//}
-		//else if (!mySprites[0]->GetShouldAnimate())
-		//{
-		//	mySprites[0]->PlayAnimation(2, true);
-		//}
-	}
-
 	for (unsigned int i = 0; i < mySprites.size(); ++i)
 	{
 		mySprites[i]->Update();
@@ -656,10 +569,14 @@ bool CCanvas::InitAnimatedElement(const rapidjson::GenericObject<false, rapidjso
 	return true;
 }
 
-bool CCanvas::InitBackground(const std::string& aPath)
+bool CCanvas::InitBackground(const std::string& aPath, CScene& aScene)
 {
+	if (!myBackground)
+		myBackground = new CSpriteInstance(aScene);
+
 	myBackground->Init(CSpriteFactory::GetInstance()->GetSprite(aPath));
-	myBackground->SetRenderOrder(ERenderOrder::BackgroundLayer);
+	myBackground->SetRenderOrder(ERenderOrder::Layer0);
+	myBackground->SetPosition(myPosition);
 	return true;
 }
 
