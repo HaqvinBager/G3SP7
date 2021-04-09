@@ -34,11 +34,6 @@ CModelComponent::CModelComponent(CGameObject& aParent, const std::string& aFBXPa
 
 	HasTintMap(myModel->GetModelData().myTintMap != nullptr);
 	myEmissive = Vector4(1.0f);
-
-	//TintTextureOnIndex(ASSETPATH("Assets/Graphics/Textures/Shared/orchid0.dds"), 0);
-	//TintTextureOnIndex(ASSETPATH("Assets/Graphics/Textures/Shared/orchid0.dds"), 1);
-	////TintTextureOnIndex(ASSETPATH("Assets/Graphics/Textures/Shared/blue.dds"), 2);
-	//TintTextureOnIndex(ASSETPATH("Assets/Graphics/Textures/Shared/orchid2.dds"), 3);
 }
 
 CModelComponent::~CModelComponent()
