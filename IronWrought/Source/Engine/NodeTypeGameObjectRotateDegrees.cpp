@@ -20,6 +20,13 @@ int CNodeTypeGameObjectRotateDegrees::OnEnter(CNodeInstance* aTriggeringNodeInst
 {
 	CGameObject* gameObject = IRONWROUGHT_ACTIVE_SCENE.FindObjectWithID(aTriggeringNodeInstance->GraphManager()->GetCurrentBlueprintInstanceID());
 
+	const auto searchResult = myRotations.find(gameObject->InstanceID());
+
+	if (myRotations.end() == searchResult)
+	{
+		myRotations[gameObject->InstanceID()] = gameObject->myTransform->Rotation();
+	}
+
 	SPin::EPinType outType;
 	NodeDataPtr someData = nullptr;
 	size_t outSize = 0;
@@ -30,9 +37,9 @@ int CNodeTypeGameObjectRotateDegrees::OnEnter(CNodeInstance* aTriggeringNodeInst
 	Vector3 input = NodeData::Get<Vector3>(someData) * (3.14159265f / 180.0f);
 
 	Quaternion a = gameObject->myTransform->Rotation();
-	Quaternion b = Quaternion::CreateFromYawPitchRoll(input.y, input.x, input.z) * gameObject->myTransform->Rotation();
+	Quaternion b = Quaternion::CreateFromYawPitchRoll(input.y, input.x, input.z) * myRotations[gameObject->InstanceID()];
 	Quaternion r;
-	Quaternion::Slerp(a, b, t, r);
+	Quaternion::Lerp(a, b, t, r);
 	gameObject->myTransform->Rotation(r);
 
 	return 1;
