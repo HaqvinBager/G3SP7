@@ -12,6 +12,7 @@ public struct Enemy
     public float distance;
     public float radius;
     public float health;
+    public List<Transform> points;
 }
 
 public class EnemySettings : MonoBehaviour

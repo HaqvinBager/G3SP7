@@ -10,6 +10,9 @@ struct SEnemySetting {
 	float myDistance;//= 0.0f;
 	float myRadius;	//= 10.0f;
 	float myHealth;
+
+
+	std::vector<int> myPatrolGameObjectIds;
 };
 
 class CEnemyComponent : public CComponent

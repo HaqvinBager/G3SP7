@@ -53,7 +53,7 @@ public class ExportInstanceID
                         sceneIDCollection.Ids.Add(childTransform.GetInstanceID());
                     }
                 }
-            }    
+            }
         }
 
         sceneIDCollection.sceneName = aSceneName;
