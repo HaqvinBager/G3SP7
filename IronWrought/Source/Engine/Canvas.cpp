@@ -283,7 +283,7 @@ void CCanvas::Init(const std::string& aFilePath, CScene& aScene, bool addToScene
 
 	if (document.HasMember("Sprites"))
 	{
-		auto spriteDataArray = document["Animated UI Elements"].GetArray();
+		auto spriteDataArray = document["Sprites"].GetArray();
 		int currentSize = (int)mySprites.size();
 		int newSize = (int)spriteDataArray.Size();
 		int difference = currentSize - newSize;
