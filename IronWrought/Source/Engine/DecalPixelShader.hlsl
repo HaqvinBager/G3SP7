@@ -46,7 +46,7 @@ GBufferOutput main(VertexToPixel input)
     float2 decalUV = objectPosition.xy + 0.5f;
     decalUV.y *= -1.0f;
     float4 color = colorTexture.Sample(defaultSampler, decalUV).rgba;
-    clip(color.a - alphaClipThreshold);
+    //clip(color.a - alphaClipThreshold);
     
     output.myNormal = float4(gBufferNormalTexture.Sample(defaultSampler, screenSpaceUV).rgb, color.a);
     output.myVertexNormal = float4(gBufferVertexNormalTexture.Sample(defaultSampler, screenSpaceUV).rgb, color.a);
