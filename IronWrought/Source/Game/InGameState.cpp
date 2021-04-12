@@ -55,16 +55,18 @@ CInGameState::~CInGameState(){}
 
 void CInGameState::Awake(){}
 
+std::vector<CGameObject*> myGos;
 void CInGameState::Start()
 {
 	CJsonReader::Get()->Init();
 	CScene* scene = CSceneManager::CreateEmpty();
 	scene->AddPXScene(CEngine::GetInstance()->GetPhysx().CreatePXScene());
 
-	constexpr int nrOfModels = 3;
+	constexpr int nrOfModels = 8;
 	constexpr float offsetX = 2.0f;
 	float minX = -offsetX;
 	std::vector<CModelComponent*> models;
+	
 	models.reserve(nrOfModels);
 	for (int i = 0; i < nrOfModels; ++i)
 	{
@@ -72,12 +74,35 @@ void CInGameState::Start()
 		models.push_back(go->AddComponent<CModelComponent>(*go, ASSETPATH("Assets/Graphics/TintedModels/Pokeball/pokeball.fbx")));
 		go->myTransform->Position({ minX, -3.0f, 0.0f });
 		minX += offsetX;
+		myGos.emplace_back(go);
 		scene->AddInstance(go);
 	}
+	float yPos = -1.0f;
+	models[0]->GetComponent<CModelComponent>()->DeserializeTintData(ASSETPATH("Assets/Graphics/TintedModels/Data/blue.json"));
+	models[0]->GameObject().myTransform->Position({ -2.0f, yPos, 0.0f });
+	models[1]->GetComponent<CModelComponent>()->DeserializeTintData(ASSETPATH("Assets/Graphics/TintedModels/Data/flower.json"));
+	models[1]->GameObject().myTransform->Position({ -2.0f, yPos, 2.0f });
+	models[2]->GetComponent<CModelComponent>()->DeserializeTintData(ASSETPATH("Assets/Graphics/TintedModels/Data/flowerNone.json"));
+	models[2]->GameObject().myTransform->Position({ -2.0f, yPos, -2.0f });
 
-	models[0]->GetComponent<CModelComponent>()->DeserializeTintData(ASSETPATH("Assets/Graphics/TintedModels/Data/rgbw.json"));
-	models[1]->GetComponent<CModelComponent>()->DeserializeTintData(ASSETPATH("Assets/Graphics/TintedModels/Data/qck.json"));
-	models[2]->GetComponent<CModelComponent>()->DeserializeTintData(ASSETPATH("Assets/Graphics/TintedModels/Data/premier.json"));
+	models[3]->GetComponent<CModelComponent>()->DeserializeTintData(ASSETPATH("Assets/Graphics/TintedModels/Data/none.json"));
+	models[3]->GameObject().myTransform->Position({ 2.0f, yPos, 0.0f });
+	models[4]->GetComponent<CModelComponent>()->DeserializeTintData(ASSETPATH("Assets/Graphics/TintedModels/Data/qck.json"));
+	models[4]->GameObject().myTransform->Position({ 2.0f, yPos, 2.0f });
+	models[5]->GetComponent<CModelComponent>()->DeserializeTintData(ASSETPATH("Assets/Graphics/TintedModels/Data/premier.json"));
+	models[5]->GameObject().myTransform->Position({ 2.0f, yPos, -2.0f });
+
+	models[6]->GetComponent<CModelComponent>()->DeserializeTintData(ASSETPATH("Assets/Graphics/TintedModels/Data/rgbw.json"));
+	models[6]->GameObject().myTransform->Position({ 0.0f, yPos, 2.0f });
+	models[7]->GetComponent<CModelComponent>()->DeserializeTintData(ASSETPATH("Assets/Graphics/TintedModels/Data/rgbw2.json"));
+	models[7]->GameObject().myTransform->Position({ 0.0f, yPos, -2.0f });
+	//models[8]->GetComponent<CModelComponent>()->DeserializeTintData(ASSETPATH("Assets/Graphics/TintedModels/Data/premierOrchid.json"));
+	//models[8]->GameObject().myTransform->Position({ 0.0f, 0.5f, 0.0f });
+
+	for (auto& go : myGos)
+	{
+		go->myTransform->Rotate({ 0.0f, 0.33f,0.0f });
+	}
 
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CEngine::GetInstance()->SetActiveScene(myState);

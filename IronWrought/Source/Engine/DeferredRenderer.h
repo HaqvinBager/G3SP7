@@ -56,7 +56,7 @@ private:
 		unsigned int myNumberOfTextureSets;
 		unsigned int myPaddington[2];
 		Vector4 myTints[4];
-		Vector4 myEmissive;
+		Vector4 myEmissive = {1.0f,1.0f,1.0f,1.0f};
 	} myObjectBufferData;
 
 	struct SLightBufferData 

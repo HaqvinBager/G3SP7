@@ -176,7 +176,12 @@ inline constexpr float Lerp(const float& a, const float& b, const float& t)
 
 void CCameraControllerComponent::UpdateOrbitCam()
 {
-	bool hideCursor = false;
+	bool hideCursor = static_cast<bool>(GetAsyncKeyState(VK_LMENU));
+	if (INPUT->IsKeyDown('F'))
+	{
+		myOrbitCenter = Vector3(0.0f);
+		myOrbitRadius = 10.0f;
+	}
 
 	const float dt = CTimer::Dt();
 
@@ -184,64 +189,44 @@ void CCameraControllerComponent::UpdateOrbitCam()
 	const float dx = static_cast<float>(Input::GetInstance()->MouseRawDeltaX());
 	if (INPUT->IsMouseDown(Input::EMouseButton::Left) && GetAsyncKeyState(VK_LMENU))
 	{
-		hideCursor = true;
 		const float rotationSpeed = 150.0f;
 		myPhi	+= (dy * rotationSpeed * dt);
 		myTheta += (dx * rotationSpeed * dt);
 	}
 	myPhi = std::clamp(myPhi, -89.0f, 89.0f);
 	//theta = std::clamp(theta, -360.0f, 360.0f);// If rotation around equator should be limited.
-	myOrbitRadius = std::clamp(myOrbitRadius, 0.1f, 80.0f);// Can't be zero:  EyePosition == FocusPosition is not allowed DirectX::XMMatrixLookAtLH(EyePosition, FocusPosition, UpDirection)
-	float phiRadians = ToRadians(myPhi);
+	myOrbitRadius = std::clamp(myOrbitRadius, 0.1f, 80.0f);
+	float phiRadians   = ToRadians(myPhi);
 	float thetaRadians = ToRadians(myTheta);
 
-	
+	float newOrbitRadius = myOrbitRadius;
 	if (INPUT->IsMouseDown(Input::EMouseButton::Right) && GetAsyncKeyState(VK_LMENU))
 	{
-		hideCursor = true;
 		const float zoomSpeed = 20.0f;
-		const float newOrbitRadius = myOrbitRadius + (dx * zoomSpeed * dt);
-		myOrbitRadius = Lerp(myOrbitRadius, newOrbitRadius, 0.5f);// Attempt at smooth scrolling
+		newOrbitRadius = myOrbitRadius + (dx * zoomSpeed * dt);
 	}
 	else
 	{
 		const float scrollSpeed = 10.0f;
 		const float scroll = -static_cast<float>(INPUT->MouseWheel());
-		const float newOrbitRadius = myOrbitRadius + (scroll * scrollSpeed * dt);
-		myOrbitRadius = Lerp(myOrbitRadius, newOrbitRadius, 0.5f);// Attempt at smooth scrolling
-		//myOrbitRadius += (scroll * zoomSpeed * dt);
+		newOrbitRadius = myOrbitRadius + (scroll * scrollSpeed * dt);
 	}
+	myOrbitRadius = Lerp(myOrbitRadius, newOrbitRadius, 0.5f);
 
 	if (INPUT->IsMouseDown(Input::EMouseButton::Middle))
 	{
-		hideCursor = true;
 		const float panningSpeed = 10.0f;
-
 		const Matrix& cameraTransform = GameObject().myTransform->Transform();
 		Matrix cameraRight = Matrix::CreateFromAxisAngle(cameraTransform.Right(), phiRadians);
 		Matrix cameraUp = Matrix::CreateFromAxisAngle(cameraTransform.Up(), thetaRadians);
-
 		myOrbitCenter = myOrbitCenter + Vector3(DirectX::XMVector3Transform({(-dx * panningSpeed * dt), 0.0f, 0.0f }, cameraUp));
 		myOrbitCenter = myOrbitCenter + Vector3(DirectX::XMVector3Transform({0.0f,(dy * panningSpeed * dt), 0.0f }, cameraRight));
 	}
 
-	if (INPUT->IsKeyDown('F'))
-	{
-		myOrbitCenter = Vector3(0.0f);
-		myOrbitRadius = 10.0f;
-	}
-
-	Vector3 viewPos = DirectX::XMVector3Transform(
-		DirectX::XMVectorSet(0.0f, 0.0f, -myOrbitRadius, 0.0f),
-		DirectX::XMMatrixRotationRollPitchYaw(phiRadians, thetaRadians, 0.0f)
-	);
+	Vector3 viewPos = DirectX::XMVector3Transform(DirectX::XMVectorSet(0.0f, 0.0f, -myOrbitRadius, 0.0f), DirectX::XMMatrixRotationRollPitchYaw(phiRadians, thetaRadians, 0.0f));
 	viewPos = viewPos + myOrbitCenter;
-	Matrix view = DirectX::XMMatrixLookAtLH(
-		viewPos, myOrbitCenter,
-		DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f)
-	);
+	Matrix view = DirectX::XMMatrixLookAtLH(viewPos, myOrbitCenter, DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
 
-	//view = view * DirectX::XMMatrixRotationRollPitchYaw(pitch, -yaw, roll);// Allows camera rotation around itself.
 	view = view.Invert();
 	GameObject().myTransform->Transform(view);
 

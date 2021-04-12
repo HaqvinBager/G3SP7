@@ -51,18 +51,14 @@ private:
 	float myMouseRotationSpeed;
 	union
 	{
-		float myPitch;
-		float myTheta;//Rotates the camera around the origin, rotation around the equator. Used for Orbit Camera.
+		float myPitch;// Used for First Person Camera
+		float myTheta;// Used for Orbit Camera.
 	};
 	union
 	{
-		float myYaw;
-		float myPhi;//Rotates the camera around the origin, rotation towards north and southpole. Used for Orbit Camera.
+		float myYaw;// Used for First Person Camera
+		float myPhi;//Used for Orbit Camera.
 	};
-	float myOrbitRadius;// Distance from origin 
+	float myOrbitRadius;
 	Vector3 myOrbitCenter;
-	// Not used.
-	//float myOrbitPitch;
-	//float myOrbitYaw;
-	//float myOrbitRoll;
 };

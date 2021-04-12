@@ -407,7 +407,6 @@ bool CModelComponent::DeserializeTintData(const std::string & aTintDataPath)
 
 	myModelPath = document.HasMember(keyModelPath) ? document[keyModelPath].GetString() : "";
 
-	/*assert(document[keyTints].IsArray() && std::string(std::string(keyTints) + " is not an array in: " + aTintDataPath).c_str());*/// I don't want crashes for every file that is missing this.
 	if (!document[keyTints].IsArray())
 		return false;
 
@@ -430,7 +429,6 @@ bool CModelComponent::DeserializeTintData(const std::string & aTintDataPath)
 		}
 	}
 
-	/*assert(document.HasMember(keyEmissive) && std::string( std::string(keyEmissive) + " is not an object in: " + aTintDataPath).c_str());*/// I don't want crashes for every file that is missing this.
 	if (!document.HasMember(keyEmissive))
 		return false;
 
