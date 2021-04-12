@@ -121,10 +121,12 @@ void CPlayerControllerComponent::Update()
 	myAnimationComponentController->UpdateBlendValue(min(gPretendObjectCurrentDistance / gPretendObjectDistanceFromPlayer, 1.0f));
 	myAnimationComponentController->Update();
 
+#ifdef _DEBUG
 	if (Input::GetInstance()->IsKeyPressed('R'))
 	{
 		myController->SetPosition(myRespawnPosition);
 	}
+#endif // _DEBUG
 }
 
 void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
