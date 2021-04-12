@@ -102,6 +102,7 @@ void CInputMapper::UpdateKeyboardInput()
 	{
 		TranslateActionToEvent(IInputObserver::EInputAction::CTRL);
 	}
+#ifdef _DEBUG
 	if (myInput->IsKeyPressed(VK_F5))
 	{
 		TranslateActionToEvent(IInputObserver::EInputAction::KeyF5);
@@ -110,6 +111,7 @@ void CInputMapper::UpdateKeyboardInput()
 	{
 		TranslateActionToEvent(IInputObserver::EInputAction::KeyF8);
 	}
+#endif // DEBUG
 }
 
 void CInputMapper::UpdateMouseInput()
