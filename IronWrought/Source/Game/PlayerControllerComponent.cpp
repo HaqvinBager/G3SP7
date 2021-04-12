@@ -15,6 +15,9 @@
 #include "PlayerAnimationController.h"
 #include "PlayerComponent.h"
 
+#include "RigidBodyComponent.h"
+#include "RigidDynamicBody.h"
+
 // TEMP
 static const float gPretendObjectDistanceFromPlayer = 10.0f;// TEMP
 // TEMP
@@ -287,21 +290,18 @@ const Vector3 CPlayerControllerComponent::GetLinearVelocity()
 }
 
 
-void CPlayerControllerComponent::LadderEnter()
+void CPlayerControllerComponent::LadderEnter(CRigidBodyComponent* aLadder)
 {
+	myLadder = aLadder;
 	myIsOnLadder = !myIsOnLadder;
 }
-
 
 void CPlayerControllerComponent::LadderUpdate()
 {
 	//Bestämmer när myIsOnladder sätts till false
-
 	//Göra så att vi går upp och ner för Ladder när vi trycker på W eller S
-
 	if (Input::GetInstance()->IsKeyPressed('K'))
-	{
-		
+	{		
 		myIsOnLadder = false;
 	}
 }

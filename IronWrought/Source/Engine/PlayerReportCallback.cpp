@@ -39,7 +39,7 @@ void CPlayerReportCallback::onShapeHit(const physx::PxControllerShapeHit& hit)
 							}
 							else
 							{
-								playerTransform->GetComponent<CPlayerControllerComponent>()->LadderEnter();
+								playerTransform->GetComponent<CPlayerControllerComponent>()->LadderEnter(nullptr);
 							}
 						}
 					}

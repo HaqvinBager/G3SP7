@@ -1,7 +1,7 @@
 #pragma once
 #include "Component.h"
 #include "InputObserver.h"
-
+class CRigidBodyComponent;
 class CCharacterController;
 class CGameObject;
 class CCameraControllerComponent;
@@ -40,7 +40,7 @@ public:
 	const float FallSpeed() const { return myFallSpeed; }
 	void FallSpeed(const float aSpeed) { myFallSpeed = aSpeed; }
 
-	void LadderEnter();
+	void LadderEnter(CRigidBodyComponent* ladderEnter);
 private:
 	void LadderUpdate();
 
@@ -66,7 +66,7 @@ private:
 	float myJumpHeight;
 	float myFallSpeed;
 
-	
+	CRigidBodyComponent* myLadder;
 
 	// 0.6f is player width from GDD
 	const float myColliderRadius = 0.6f * 0.5f;
