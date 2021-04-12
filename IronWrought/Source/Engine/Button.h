@@ -52,6 +52,7 @@ private:
 
 private:
 	std::vector<EMessageType> myMessagesToSend;
+	std::vector<std::string> myMessageData;
 	std::array<CSpriteInstance*, 3> mySprites = { nullptr, nullptr, nullptr };
 	SUIRect myRect;
 	EButtonState myState;

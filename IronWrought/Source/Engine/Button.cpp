@@ -171,7 +171,7 @@ void CButton::Init(SButtonData& someData, CScene& aScene)
 		}
 
 		mySprites.at(i)->Init(spriteFactory.GetSprite(someData.mySpritePaths.at(i)));
-		mySprites.at(i)->SetRenderOrder(ERenderOrder::Layer2);
+		mySprites.at(i)->SetRenderOrder(ERenderOrder::Layer2);// Potentionaly an issue, should be based of the parent canvas layer
 		mySprites.at(i)->SetPosition({ someData.myPosition.x, someData.myPosition.y });
 
 		if(addToScene)

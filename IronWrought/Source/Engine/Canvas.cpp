@@ -24,6 +24,7 @@ CCanvas::CCanvas() :
 	, myIsEnabled(true)
 	, myIsHUDCanvas(false)
 	, myCurrentRenderLayer(0)
+	, myLevelToLoad("Level_1-1")
 {
 }
 
@@ -371,6 +372,39 @@ void CCanvas::Update()
 	if (myButtons.size() <= 0)
 		return;
 
+	if (myWidgets.size() > 0)// This is a quick solution. Nothing to keep.
+	{
+		for (unsigned short i = 0; i < myWidgets.size(); ++i)
+		{
+			switch (i)
+			{
+				case 0:
+					if(myWidgets[i]->GetEnabled())
+						myLevelToLoad = "Level_1-1";
+				break;
+
+				case 1:
+					if(myWidgets[i]->GetEnabled())
+						myLevelToLoad = "Level_1-2";
+				break;
+
+				case 2:
+					if(myWidgets[i]->GetEnabled())
+						myLevelToLoad = "Level_2-1";
+				break;
+
+				case 3:
+					if(myWidgets[i]->GetEnabled())
+						myLevelToLoad = "Level_2-2";
+				break;
+
+				default:
+				break;
+						
+			}
+		}
+	}
+
 	DirectX::SimpleMath::Vector2 mousePos = { static_cast<float>(Input::GetInstance()->MouseX()), static_cast<float>(Input::GetInstance()->MouseY()) };
 	for (unsigned int i = 0; i < myButtons.size(); ++i)
 	{
@@ -381,7 +415,7 @@ void CCanvas::Update()
 	{
 		for (unsigned int i = 0; i < myButtons.size(); ++i)
 		{
-			myButtons[i]->Click(true, nullptr);
+			myButtons[i]->Click(true, &myLevelToLoad);
 		}
 	}
 
@@ -389,7 +423,7 @@ void CCanvas::Update()
 	{
 		for (unsigned int i = 0; i < myButtons.size(); ++i)
 		{
-			myButtons[i]->Click(false, nullptr);
+			myButtons[i]->Click(false, &myLevelToLoad);
 		}
 	}
 }
@@ -407,7 +441,8 @@ void CCanvas::Receive(const SMessage& aMessage)
 					if (myAnimatedUIs[0])
 						myAnimatedUIs[0]->Level(*static_cast<float*>(aMessage.data));
 				}
-			}break;
+			}
+			break;
 
 			case EMessageType::UpdateCrosshair:
 			{
@@ -415,7 +450,8 @@ void CCanvas::Receive(const SMessage& aMessage)
 					return;
 				PostMaster::SCrossHairData* aData = reinterpret_cast<PostMaster::SCrossHairData*>(aMessage.data);
 				mySprites[0]->PlayAnimationUsingInternalData(aData->myIndex, aData->myShouldBeReversed);
-			}break;
+			}
+			break;
 			
 			default:
 				break;
@@ -530,12 +566,12 @@ bool CCanvas::InitButton(const rapidjson::GenericObject<false, rapidjson::Value>
 	data.mySpritePaths.at(1) = ASSETPATH(aRapidObject["Hover Sprite Path"].GetString());
 	data.mySpritePaths.at(2) = ASSETPATH(aRapidObject["Click Sprite Path"].GetString());
 
-	auto messageDataArray = aRapidObject["Messages"].GetArray();
-	data.myMessagesToSend.resize(messageDataArray.Size());
+	auto messagesArray = aRapidObject["Messages"].GetArray();
+	data.myMessagesToSend.resize(messagesArray.Size());
 
-	for (unsigned int j = 0; j < messageDataArray.Size(); ++j)
+	for (unsigned int j = 0; j < messagesArray.Size(); ++j)
 	{
-		data.myMessagesToSend[j] = static_cast<EMessageType>(messageDataArray[j].GetInt());
+		data.myMessagesToSend[j] = static_cast<EMessageType>(messagesArray[j].GetInt());
 	}
 
 	myButtons[anIndex]->Init(data, aScene);

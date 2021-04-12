@@ -4,6 +4,13 @@
 #include "SceneManager.h"
 #include "GameObject.h"
 
+#include "JsonReader.h"
+#include "Scene.h"
+#include "Engine.h"
+#include "FolderUtility.h"
+#include "MainSingleton.h"
+#include "PostMaster.h"
+
 CMainMenuState::CMainMenuState(CStateStack& aStateStack, const CStateStack::EState aState)
 	: CState(aStateStack, aState)
 	, myTimeToQuit(false)
@@ -46,17 +53,20 @@ void CMainMenuState::Update()
 
 	IRONWROUGHT->GetActiveScene().UpdateCanvas();
 
+#ifndef NDEBUG
 	if (INPUT->IsKeyPressed('R'))
 	{
 		IRONWROUGHT->GetActiveScene().ReInitCanvas(ASSETPATH("Assets/Graphics/UI/JSON/UI_MainMenu.json"));
 	}
+#endif
 
 	if(myTimeToQuit)
 		this->myStateStack.PopState();
 }
 
 void CMainMenuState::Receive(const SStringMessage& /*aMessage*/)
-{}
+{
+}
 
 void CMainMenuState::Receive(const SMessage& aMessage)
 {
@@ -64,6 +74,8 @@ void CMainMenuState::Receive(const SMessage& aMessage)
 	{
 		case EMessageType::StartGame:
 		{
+			std::string scene = *reinterpret_cast<std::string*>(aMessage.data);
+			CSceneFactory::Get()->LoadScene(scene, CStateStack::EState::InGame, [this](std::string aJson) { CMainMenuState::OnComplete(aJson); });
 			this->myStateStack.PushState(CStateStack::EState::InGame);
 		}break;
 
@@ -74,4 +86,14 @@ void CMainMenuState::Receive(const SMessage& aMessage)
 
 		default: break;
 	}
+}
+
+void CMainMenuState::OnComplete(std::string aSceneThatHasBeenSuccessfullyLoaded)
+{
+#ifdef _DEBUG
+	std::cout << "Scene Load Complete!" << aSceneThatHasBeenSuccessfullyLoaded << std::endl;
+#endif
+
+	CEngine::GetInstance()->LoadGraph(aSceneThatHasBeenSuccessfullyLoaded);
+	CMainSingleton::PostMaster().Send({ "LoadScene", nullptr });
 }
