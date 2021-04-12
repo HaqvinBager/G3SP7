@@ -112,7 +112,7 @@ void IronWroughtImGui::CVFXEditorWindow::SaveToFile()
 	writer.EndArray();
 	writer.EndObject();
 
-	std::ofstream of(ASSETPATH(mySaveDestination).c_str());
+	std::ofstream of(ASSETPATH(mySaveDestination));
 	of << s.GetString();
 
 	of.close();

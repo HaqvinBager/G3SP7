@@ -51,10 +51,10 @@ void CEnemyComponent::Update()//får bestämma vilket behaviour vi vill köra i den
 		(myPlayer->myTransform->Position().x - GameObject().myTransform->Position().x) * ((myPlayer->myTransform->Position().x - GameObject().myTransform->Position().x)) +
 		((myPlayer->myTransform->Position().y - GameObject().myTransform->Position().y) * ((myPlayer->myTransform->Position().y - GameObject().myTransform->Position().y))) +
 		((myPlayer->myTransform->Position().z - GameObject().myTransform->Position().z) * ((myPlayer->myTransform->Position().z - GameObject().myTransform->Position().z))));*/
-	mySettings.myDistance = Vector3::DistanceSquared(myPlayer->myTransform->Position(), GameObject().myTransform->Position());
+	if(myPlayer)
+		mySettings.myDistance = Vector3::DistanceSquared(myPlayer->myTransform->Position(), GameObject().myTransform->Position());
 
 	
-
 	if (mySettings.myRadius * mySettings.myRadius >= mySettings.myDistance) {//seek
 		//SetState(EBehaviour::Seek);
 	float attackDistance = 2.0f; //example will probably be more complicated in the future; 

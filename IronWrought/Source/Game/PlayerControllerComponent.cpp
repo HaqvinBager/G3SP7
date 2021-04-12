@@ -88,7 +88,16 @@ void CPlayerControllerComponent::Update()
 	if (myCamera->IsFreeCamMode() || myCamera->IsCursorUnlocked())
 		return;
 #endif
-	Move({0.0f, myMovement.y, 0.0f});
+
+	if (myIsOnLadder)
+	{
+		LadderUpdate();
+	}
+	else
+	{
+		Move({0.0f, myMovement.y, 0.0f});
+	}
+
 	//Move(myMovement * mySpeed);
 
 	/*if (myPlayerComponent->getIsAlive() == false)
@@ -201,19 +210,38 @@ void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
 	}
 
 	myMovement.y = y;
-	Move(myMovement * mySpeed);
-	myMovement = { 0.f, myMovement.y,0.f };
+
+	if (myIsOnLadder)
+	{
+		myMovement.y = myMovement.z;
+		myMovement.z = 0.0f;
+		//myMovement = { 0.f, myMovement.y,0.f };
+		Move(myMovement * mySpeed);
+	}
+	else
+	{
+		Move(myMovement * mySpeed);
+		myMovement = { 0.f, myMovement.y,0.f };
+	}
 }
 
 void CPlayerControllerComponent::Move(Vector3 aDir)
 {
 	physx::PxControllerCollisionFlags collisionflag = myController->GetController().move({aDir.x, aDir.y, aDir.z}, 0, CTimer::Dt(), 0);
+
+	if (collisionflag != physx::PxControllerCollisionFlag::eCOLLISION_DOWN )
+	{
+		myCanJump = false;
+		
+	}
+
 	if (collisionflag == physx::PxControllerCollisionFlag::eCOLLISION_DOWN)
 	{
 		myCanJump = true;
 		if(aDir.x != 0.0f || aDir.z != 0.0f)
 			myAnimationComponentController->Walk();
 	}
+
 }
 
 void CPlayerControllerComponent::SetControllerPosition(const Vector3& aPos)
@@ -256,4 +284,24 @@ const Vector3 CPlayerControllerComponent::GetLinearVelocity()
 	const PxVec3 pxVec3 = myController->GetController().getActor()->getLinearVelocity();
 	//const Vector3& vec3 = {pxVec3.x, pxVec3.y, pxVec3.z};
 	return {pxVec3.x, pxVec3.y, pxVec3.z};
+}
+
+
+void CPlayerControllerComponent::LadderEnter()
+{
+	myIsOnLadder = !myIsOnLadder;
+}
+
+
+void CPlayerControllerComponent::LadderUpdate()
+{
+	//Bestämmer när myIsOnladder sätts till false
+
+	//Göra så att vi går upp och ner för Ladder när vi trycker på W eller S
+
+	if (Input::GetInstance()->IsKeyPressed('K'))
+	{
+		
+		myIsOnLadder = false;
+	}
 }

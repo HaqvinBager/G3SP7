@@ -116,10 +116,19 @@ void CButton::Enabled(const bool& anIsEnabled)
 		}
 	}
 }
+
 inline const bool CButton::Enabled()
 {
 	return myEnabled;
 }
+
+void CButton::SetRenderLayer(const ERenderOrder& aRenderLayer)
+{
+	mySprites[0]->SetRenderOrder(aRenderLayer);
+	mySprites[1]->SetRenderOrder(aRenderLayer);
+	mySprites[2]->SetRenderOrder(aRenderLayer);
+}
+
 CButton::CButton()
 	: myState(EButtonState::Idle)
 	, myEnabled(false)
@@ -151,7 +160,6 @@ void CButton::Init(SButtonData& someData, CScene& aScene)
 	myEnabled = true;
 	myIsMouseHover = false;
 
-
 	CSpriteFactory& spriteFactory = *CSpriteFactory::GetInstance();
 	for (unsigned int i = 0; i < mySprites.max_size(); ++i) 
 	{
@@ -163,7 +171,7 @@ void CButton::Init(SButtonData& someData, CScene& aScene)
 		}
 
 		mySprites.at(i)->Init(spriteFactory.GetSprite(someData.mySpritePaths.at(i)));
-		mySprites.at(i)->SetRenderOrder(ERenderOrder::ForegroundLayer);
+		mySprites.at(i)->SetRenderOrder(ERenderOrder::Layer2);
 		mySprites.at(i)->SetPosition({ someData.myPosition.x, someData.myPosition.y });
 
 		if(addToScene)

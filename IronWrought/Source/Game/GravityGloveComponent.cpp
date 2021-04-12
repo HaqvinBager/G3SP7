@@ -38,20 +38,17 @@ void CGravityGloveComponent::Start()
 
 void CGravityGloveComponent::Update()
 {
-	if (Input::GetInstance()->IsMousePressed(Input::EMouseButton::Left)) {
-		PostMaster::SCrossHairData data;
+	if (Input::GetInstance()->IsMousePressed(Input::EMouseButton::Left))
+	{
+		PostMaster::SCrossHairData data; // Wind down
 		data.myIndex = 0;
 		data.myShouldBeReversed = true;
 		CMainSingleton::PostMaster().Send({ EMessageType::UpdateCrosshair, &data });
 
 		Push();
 	}
-	if (Input::GetInstance()->IsMousePressed(Input::EMouseButton::Right)) {
-		PostMaster::SCrossHairData data;
-		data.myIndex = 0;
-		
-		CMainSingleton::PostMaster().Send({ EMessageType::UpdateCrosshair, &data });
-
+	if (Input::GetInstance()->IsMousePressed(Input::EMouseButton::Right))
+	{
 		Pull();
 	}
 
@@ -90,7 +87,7 @@ void CGravityGloveComponent::Pull()
 		myCurrentTarget->GetDynamicRigidBody()->GetBody().setMaxLinearVelocity(100.f);
 		myCurrentTarget = nullptr;
 
-		PostMaster::SCrossHairData data;
+		PostMaster::SCrossHairData data; // Wind down
 		data.myIndex = 0;
 		data.myShouldBeReversed = true;
 		CMainSingleton::PostMaster().Send({ EMessageType::UpdateCrosshair, &data });
@@ -122,9 +119,27 @@ void CGravityGloveComponent::Pull()
 	{
 		CTransformComponent* transform = (CTransformComponent*)hit.getAnyHit(0).actor->userData;
 		if (transform == nullptr)
+		{
+			PostMaster::SCrossHairData data; // Wind down
+			data.myIndex = 0;
+			data.myShouldBeReversed = true;
+			CMainSingleton::PostMaster().Send({ EMessageType::UpdateCrosshair, &data });
 			return;
-		
-		myCurrentTarget = transform->GetComponent<CRigidBodyComponent>();
+		}
+
+		CRigidBodyComponent* rigidbody = nullptr;
+		if (transform->GameObject().TryGetComponent<CRigidBodyComponent>(&rigidbody))
+		{
+			if (!rigidbody->IsKinematic()) {
+				myCurrentTarget = rigidbody;
+				PostMaster::SCrossHairData data; // Wind Up
+				data.myIndex = 0;
+				CMainSingleton::PostMaster().Send({ EMessageType::UpdateCrosshair, &data });
+			 }
+		}
+
+		//myCurrentTarget = transform->GetComponent<CRigidBodyComponent>();
+
 
 	#ifdef _DEBUG
 		CLineInstance* myLine = new CLineInstance();
@@ -138,13 +153,11 @@ void CGravityGloveComponent::Pull()
 	//myCurrentTarget->SetPosition(myGravitySlot->WorldPosition());
 }
 
+#include "CameraComponent.h"
 void CGravityGloveComponent::Push()
 {
 	if (myCurrentTarget != nullptr) {
-		PostMaster::SCrossHairData data;
-		data.myIndex = 0;
-		data.myShouldBeReversed = true;
-		CMainSingleton::PostMaster().Send({ EMessageType::UpdateCrosshair, &data });
+		IRONWROUGHT->GetActiveScene().MainCamera()->SetTrauma(0.25f); // plz enable camera movement without moving player for shake??? ::)) Nico 2021-04-09
 
 		myCurrentTarget->GetDynamicRigidBody()->GetBody().setMaxLinearVelocity(100.f);
 		myCurrentTarget->AddForce(-GameObject().myTransform->GetWorldMatrix().Forward(), mySettings.myPushForce * myCurrentTarget->GetMass(), EForceMode::EImpulse);
@@ -158,9 +171,11 @@ void CGravityGloveComponent::Push()
 			CTransformComponent* transform = (CTransformComponent*)hit.getAnyHit(0).actor->userData;
 			if (transform == nullptr)
 				return;
+
 			CRigidBodyComponent* target = transform->GetComponent<CRigidBodyComponent>();
-			if (target) {
-				target->AddForce(-GameObject().myTransform->GetWorldMatrix().Forward(), mySettings.myPushForce * target->GetMass(), EForceMode::EImpulse);
+			if (target != nullptr) {
+				if(!target->IsKinematic())
+					target->AddForce(-GameObject().myTransform->GetWorldMatrix().Forward(), mySettings.myPushForce * target->GetMass(), EForceMode::EImpulse);
 			}
 		}
 	}

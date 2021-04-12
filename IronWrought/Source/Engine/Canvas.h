@@ -26,8 +26,7 @@ public:
 	inline void Pivot(const Vector2&);
 
 public:
-	void Init(const std::string& aFilePath, CScene& aScene, bool addToScene = true, const Vector2& aParentPivot = { 0.0f,0.0f }, const Vector2& aParentPosition = { 0.0f,0.0f });
-	void ReInit(const std::string& aFilePath, CScene& aScene, bool addToScene = true, const Vector2& aParentPivot = { 0.0f,0.0f }, const Vector2& aParentPosition = { 0.0f,0.0f });
+	void Init(const std::string& aFilePath, CScene& aScene, bool addToScene = true, const Vector2& aParentPivot = { 0.0f,0.0f }, const Vector2& aParentPosition = { 0.0f,0.0f }, const unsigned int& aSpriteRenderLayerOffset = 0);
 	void Update();
 
 public:
@@ -49,7 +48,7 @@ private:
 	bool InitButton(const rapidjson::GenericObject<false, rapidjson::Value>& aRapidObject, const int& anIndex, CScene& aScene);
 	bool InitText(const rapidjson::GenericObject<false, rapidjson::Value>& aRapidObject, const int& anIndex);
 	bool InitAnimatedElement(const rapidjson::GenericObject<false, rapidjson::Value>& aRapidObject, const int& anIndex, CScene& aScene);
-	bool InitBackground(const std::string& aPath);
+	bool InitBackground(const std::string& aPath, CScene& aScene);
 	bool InitSprite(const rapidjson::GenericObject<false, rapidjson::Value>& aRapidObject, const int& anIndex);
 	bool InitMessageTypes(const rapidjson::GenericArray<false, rapidjson::Value>& aRapidArray);
 	bool InitWidgets(const rapidjson::GenericArray<false, rapidjson::Value>& aRapidArray, CScene& aScene);
@@ -67,6 +66,8 @@ private:
 	std::vector<CTextInstance*>		 myTexts;
 	std::vector<EMessageType>		 myMessageTypes;
 	std::vector<CCanvas*>			 myWidgets;
+
+	unsigned int myCurrentRenderLayer;
 
 	bool myIsHUDCanvas;
 };

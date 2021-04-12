@@ -1,19 +1,24 @@
 #include "stdafx.h"
 #include "ImguiManager.h"
+#ifdef _DEBUG
 #include <imgui.h>
+#endif // _DEBUG
+#include "GraphManager.h"
+#include <psapi.h>
+#ifdef _DEBUG
 #include "Engine.h"
 #include "Scene.h"
 #include "SceneManager.h"
-#include "GraphManager.h"
 #include "RenderManager.h"
-#include <psapi.h>
 #include "JsonReader.h"
 #include "ImGuiWindows.h"
-
 #include "PostMaster.h"
+#endif // _DEBUG
+
 
 //#pragma comment(lib, "psapi.lib")
 
+#ifdef _DEBUG
 static ImFont* ImGui_LoadFont(ImFontAtlas& atlas, const char* name, float size, const ImVec2& displayOffset = ImVec2(0, 0))
 {
 	char* windir = nullptr;
@@ -42,9 +47,11 @@ static ImFont* ImGui_LoadFont(ImFontAtlas& atlas, const char* name, float size, 
 	return font;
 }
 ImFontAtlas myFontAtlas;
+#endif // DEBUG
 
 CImguiManager::CImguiManager() : myGraphManagerIsFullscreen(false), myIsEnabled(false), myScriptsStatus("Scripts Off"), myGraphManager(nullptr)
 {
+#ifdef _DEBUG
 	ImGui::DebugCheckVersionAndDataLayout("1.80 WIP", sizeof(ImGuiIO), sizeof(ImGuiStyle), sizeof(ImVec2), sizeof(ImVec4), sizeof(ImDrawVert), sizeof(unsigned int));
 	ImGui::CreateContext();
 	ImGui::StyleColorsDark();
@@ -65,6 +72,7 @@ CImguiManager::CImguiManager() : myGraphManagerIsFullscreen(false), myIsEnabled(
 
 	CMainSingleton::PostMaster().Subscribe(EMessageType::CursorHideAndLock, this);
 	CMainSingleton::PostMaster().Subscribe(EMessageType::CursorShowAndUnlock, this);
+#endif // _DEBUG
 }
 
 CImguiManager::~CImguiManager()
@@ -72,7 +80,9 @@ CImguiManager::~CImguiManager()
 	//delete myGraphManager;
 	//myGraphManager = nullptr;
 	myGraphManager = nullptr;
+#ifdef _DEBUG
 	ImGui::DestroyContext();
+#endif
 }
 
 void CImguiManager::Init(CGraphManager* aGraphManager)
@@ -82,6 +92,7 @@ void CImguiManager::Init(CGraphManager* aGraphManager)
 
 void CImguiManager::Update()
 {
+#ifdef _DEBUG
 	if (myIsEnabled)
 	{
 		ImGui::BeginMainMenuBar();
@@ -108,6 +119,8 @@ void CImguiManager::Update()
 	}
 	
 	DebugWindow();
+#endif
+
 	myGraphManager->Update();
 
 	//if (Input::GetInstance()->IsKeyPressed(VK_F1))
@@ -120,6 +133,7 @@ void CImguiManager::Update()
 
 void CImguiManager::DebugWindow()
 {
+#ifdef _DEBUG
 	if (ImGui::Begin("Debug info", nullptr))
 	{
 		ImGui::Text("Framerate: %.0f", ImGui::GetIO().Framerate);
@@ -127,8 +141,10 @@ void CImguiManager::DebugWindow()
 		ImGui::Text(GetDrawCalls().c_str());
 	}
 	ImGui::End();
+#endif // DEBUG
 }
 
+#ifdef _DEBUG
 void CImguiManager::Receive(const SMessage& aMessage)
 {
 	if (aMessage.myMessageType == EMessageType::CursorHideAndLock)
@@ -144,6 +160,7 @@ void CImguiManager::Receive(const SMessage& aMessage)
 			myGraphManager->ToggleShouldRenderGraph();
 	}
 }
+#endif // _DEBUG
 
 //void CImguiManager::LevelSelect()
 //{
@@ -186,6 +203,9 @@ void CImguiManager::Receive(const SMessage& aMessage)
 
 const std::string CImguiManager::GetSystemMemory()
 {
+#ifdef _DEBUG
+
+
 	// From TGA2D
 	PROCESS_MEMORY_COUNTERS memCounter;
 	BOOL result = GetProcessMemoryInfo(GetCurrentProcess(),
@@ -207,13 +227,24 @@ const std::string CImguiManager::GetSystemMemory()
 	mem.append("Mb)");
 
 	return mem;
+#else
+	return "";
+#endif
+	// _DEBUG
+
 }
 
 const std::string CImguiManager::GetDrawCalls()
 {
+#ifdef _DEBUG
+
+
 	std::string drawCalls = "Draw Calls: ";
 	drawCalls.append(std::to_string(CRenderManager::myNumberOfDrawCallsThisFrame));
 	return drawCalls;
+#else
+	return "";
+#endif // _DEBUG
 }
 
 //void CImguiManager::LevelsToSelectFrom(std::vector<std::string> someLevelsToSelectFrom)
