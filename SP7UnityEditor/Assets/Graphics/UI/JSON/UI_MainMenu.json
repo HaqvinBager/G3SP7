@@ -1,8 +1,8 @@
 {
-  "Pivot X -1.0 to 1.0": 0.0,
-  "Pivot Y -1.0 to 1.0": 0.0,
-  "Postion X -1.0 to 1.0": 0.0,
-  "Position Y -1.0 to 1.0": 0.0,
+  "Pivot X": 0.0,
+  "Pivot Y": 0.0,
+  "Postion X": 0.0,
+  "Position Y": 0.0,
 
   "Buttons": [
     {
@@ -41,7 +41,7 @@
       "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_HOVER.dds",
       "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_CLICK.dds",
       "Messages": [ 4 ],
-      "Sub Canvas Toggle": [ 2 ]
+      "Sub Canvas Toggle": [ 0 ]
     },
     {
       "Text": "",
@@ -61,39 +61,39 @@
       "Messages": [ 3 ]
     },
     {
-        "Text": "",
-        "FontAndFontSize": "Assets/Fonts/MorrisRoman42",
-        "Text Position X": 0.0,
-        "Text Position Y": 0.475,
-        "Text Pivot X": 0.0,
-        "Text Pivot Y": 0.0,
-        "Text Color R": 1.5,
-        "Text Color G": 0.7,
-        "Text Color B": 0.0,
-        "Pixel Width": 320.0,
-        "Pixel Height": 60.0,
-        "Idle Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_IDLE.dds",
-        "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_HOVER.dds",
-        "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_CLICK.dds",
-        "Messages": [ 8 ]
-      },
-      {
-        "Text": "",
-        "FontAndFontSize": "Assets/Fonts/MorrisRoman42",
-        "Text Position X": 0.0,
-        "Text Position Y": 0.6,
-        "Text Pivot X": 0.0,
-        "Text Pivot Y": 0.0,
-        "Text Color R": 1.5,
-        "Text Color G": 0.7,
-        "Text Color B": 0.0,
-        "Pixel Width": 320.0,
-        "Pixel Height": 60.0,
-        "Idle Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_IDLE.dds",
-        "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_HOVER.dds",
-        "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_CLICK.dds",
-        "Messages": [ 12 ]
-      }
+      "Text": "",
+      "FontAndFontSize": "Assets/Fonts/MorrisRoman42",
+      "Text Position X": 0.0,
+      "Text Position Y": 0.475,
+      "Text Pivot X": 0.0,
+      "Text Pivot Y": 0.0,
+      "Text Color R": 1.5,
+      "Text Color G": 0.7,
+      "Text Color B": 0.0,
+      "Pixel Width": 320.0,
+      "Pixel Height": 60.0,
+      "Idle Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_IDLE.dds",
+      "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_HOVER.dds",
+      "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_CLICK.dds",
+      "Messages": [ 8 ]
+    },
+    {
+      "Text": "",
+      "FontAndFontSize": "Assets/Fonts/MorrisRoman42",
+      "Text Position X": 0.0,
+      "Text Position Y": 0.6,
+      "Text Pivot X": 0.0,
+      "Text Pivot Y": 0.0,
+      "Text Color R": 1.5,
+      "Text Color G": 0.7,
+      "Text Color B": 0.0,
+      "Pixel Width": 320.0,
+      "Pixel Height": 60.0,
+      "Idle Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_IDLE.dds",
+      "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_HOVER.dds",
+      "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_CLICK.dds",
+      "Messages": [ 12 ]
+    }
   ],
 
   "Texts": [
@@ -111,9 +111,9 @@
   ],
 
   "PostmasterEvents": {
-    "Events": [ ]
+    "Events": []
   },
 
-  "Widgets":[
+  "Widgets": [
   ]
 }

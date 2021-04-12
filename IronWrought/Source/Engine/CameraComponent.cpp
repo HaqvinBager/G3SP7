@@ -46,7 +46,7 @@ void CCameraComponent::Awake()
 	myFadingPlane = new CSpriteInstance();
 	myFadingPlane->Init(CSpriteFactory::GetInstance()->GetSprite(document["Fade Screen Path"].GetString()));
 	myFadingPlane->SetSize({ 15.1f, 8.5f });
-	myFadingPlane->SetRenderOrder(ERenderOrder::PauseLayer);
+	myFadingPlane->SetRenderOrder(ERenderOrder::Layer3);
 	myFadingPlane->SetShouldRender(false);
 }
 

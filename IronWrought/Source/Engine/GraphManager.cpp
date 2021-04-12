@@ -880,49 +880,48 @@ void CGraphManager::CreateNewDataNode()
 
 			for (unsigned int i = 0; i < CNodeTypeCollector::GetNodeTypeCount(CNodeType::ENodeType::EChild); ++i)
 			{
-				if (!hasCreatedNewVariable)
+				if (CNodeTypeCollector::GetAllNodeTypes(CNodeType::ENodeType::EChild)[i]->NodeName() == buffer)
 				{
-					if (CNodeTypeCollector::GetAllNodeTypes(CNodeType::ENodeType::EChild)[i]->NodeName() == buffer)
-					{
-						break;
-					}
-					else
-					{
-						if (myNewVariableType == "Float")
-						{
-							float nullValue = 0.0f;
-							CNodeTypeCollector::RegisterNewDataType(buffer, static_cast<int>(CNodeDataManager::EDataType::EFloat));
-							CNodeDataManager::Get()->SetData(buffer, CNodeDataManager::EDataType::EFloat, nullValue);
-						}
-						else if (myNewVariableType == "Int")
-						{
-							int nullValue = 0;
-							CNodeTypeCollector::RegisterNewDataType(buffer, static_cast<int>(CNodeDataManager::EDataType::EInt));
-							CNodeDataManager::Get()->SetData(buffer, CNodeDataManager::EDataType::EInt, nullValue);
-						}
-						else if (myNewVariableType == "Bool")
-						{
-							bool nullValue = false;
-							CNodeTypeCollector::RegisterNewDataType(buffer, static_cast<int>(CNodeDataManager::EDataType::EBool));
-							CNodeDataManager::Get()->SetData(buffer, CNodeDataManager::EDataType::EBool, nullValue);
-						}
-						else if (myNewVariableType == "Start")
-						{
-							bool nullValue = false;
-							CNodeTypeCollector::RegisterNewDataType(buffer, static_cast<int>(CNodeDataManager::EDataType::EStart));
-							CNodeDataManager::Get()->SetData(buffer, CNodeDataManager::EDataType::EStart, nullValue);
-						}
-						else if (myNewVariableType == "Vector 3")
-						{
-							Vector3 nullValue = { 0.0f,0.0f,0.0f };
-							CNodeTypeCollector::RegisterNewDataType(buffer, static_cast<int>(CNodeDataManager::EDataType::EVector3));
-							CNodeDataManager::Get()->SetData(buffer, CNodeDataManager::EDataType::EVector3, nullValue);
-						}
-						myCustomDataNodes.push_back(buffer);
-						CNodeDataManager::Get()->SaveDataTypesToJson();
-						hasCreatedNewVariable = true;
-					}
+					hasCreatedNewVariable = true;
+					break;
 				}
+			}
+			if (!hasCreatedNewVariable)
+			{
+				if (myNewVariableType == "Float")
+				{
+					float nullValue = 0.0f;
+					CNodeTypeCollector::RegisterNewDataType(buffer, static_cast<int>(CNodeDataManager::EDataType::EFloat));
+					CNodeDataManager::Get()->SetData(buffer, CNodeDataManager::EDataType::EFloat, nullValue);
+				}
+				else if (myNewVariableType == "Int")
+				{
+					int nullValue = 0;
+					CNodeTypeCollector::RegisterNewDataType(buffer, static_cast<int>(CNodeDataManager::EDataType::EInt));
+					CNodeDataManager::Get()->SetData(buffer, CNodeDataManager::EDataType::EInt, nullValue);
+				}
+				else if (myNewVariableType == "Bool")
+				{
+					bool nullValue = false;
+					CNodeTypeCollector::RegisterNewDataType(buffer, static_cast<int>(CNodeDataManager::EDataType::EBool));
+					CNodeDataManager::Get()->SetData(buffer, CNodeDataManager::EDataType::EBool, nullValue);
+				}
+				else if (myNewVariableType == "Start")
+				{
+					bool nullValue = false;
+					CNodeTypeCollector::RegisterNewDataType(buffer, static_cast<int>(CNodeDataManager::EDataType::EStart));
+					CNodeDataManager::Get()->SetData(buffer, CNodeDataManager::EDataType::EStart, nullValue);
+				}
+				else if (myNewVariableType == "Vector 3")
+				{
+					Vector3 nullValue = { 0.0f,0.0f,0.0f };
+					CNodeTypeCollector::RegisterNewDataType(buffer, static_cast<int>(CNodeDataManager::EDataType::EVector3));
+					CNodeDataManager::Get()->SetData(buffer, CNodeDataManager::EDataType::EVector3, nullValue);
+				}
+				myCustomDataNodes.push_back(buffer);
+				CNodeDataManager::Get()->SaveDataTypesToJson();
+				ZeroMemory(buffer, 64);
+				hasCreatedNewVariable = false;
 			}
 		}
 		ImGui::End();

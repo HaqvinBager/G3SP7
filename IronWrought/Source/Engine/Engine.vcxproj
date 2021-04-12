@@ -194,11 +194,13 @@
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Behaviour.h" />
     <ClInclude Include="BoxColliderComponent.h" />
-    <ClInclude Include="CharacterReportCallback.h" />
+    <ClInclude Include="NodeTypeUtilityInvertBool.h" />
+    <ClInclude Include="PlayerReportCallback.h" />
     <ClInclude Include="ConvexMeshColliderComponent.h" />
     <ClInclude Include="GravityGloveEditor.h" />
     <ClInclude Include="NodeTypeAddForce.h" />
     <ClInclude Include="NodeTypeGameObjectRotateDegrees.h" />
+    <ClInclude Include="PostMasterStructs.h" />
     <ClInclude Include="SphereColliderComponent.h" />
     <ClInclude Include="BoxLight.h" />
     <ClInclude Include="BoxLightComponent.h" />
@@ -432,7 +434,8 @@
     <ClCompile Include="AudioChannel.cpp" />
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="BoxColliderComponent.cpp" />
-    <ClCompile Include="CharacterReportCallback.cpp" />
+    <ClCompile Include="NodeTypeUtilityInvertBool.cpp" />
+    <ClCompile Include="PlayerReportCallback.cpp" />
     <ClCompile Include="ConvexMeshColliderComponent.cpp" />
     <ClCompile Include="GravityGloveEditor.cpp" />
     <ClCompile Include="NodeTypeAddForce.cpp" />

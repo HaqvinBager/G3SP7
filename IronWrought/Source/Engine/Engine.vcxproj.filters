@@ -836,7 +836,6 @@
     <ClCompile Include="BoxColliderComponent.cpp">
       <Filter>GameObject and Component\Component</Filter>
     </ClCompile>
-    <ClCompile Include="SphereColliderComponent.cpp" />
     <ClCompile Include="GravityGloveEditor.cpp" />
     <ClCompile Include="BoxLight.cpp">
       <Filter>Light</Filter>
@@ -853,7 +852,6 @@
     <ClCompile Include="LightRenderer.cpp">
       <Filter>Renderers</Filter>
     </ClCompile>
-    <ClCompile Include="CharacterReportCallback.cpp" />
     <ClCompile Include="NodeTypeAudioPlayResearcherEvent.cpp">
       <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
     </ClCompile>
@@ -866,8 +864,17 @@
     <ClCompile Include="NodeTypeEnemySpawn.cpp">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClCompile>
-    <ClCompile Include="ConvexMeshColliderComponent.cpp" />
     <ClCompile Include="NodeTypeGameObjectRotateDegrees.cpp" />
+    <ClCompile Include="SphereColliderComponent.cpp">
+      <Filter>GameObject and Component\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="ConvexMeshColliderComponent.cpp">
+      <Filter>GameObject and Component\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerReportCallback.cpp">
+      <Filter>PhysX</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeUtilityInvertBool.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1555,7 +1562,6 @@
     <ClInclude Include="BoxColliderComponent.h">
       <Filter>GameObject and Component\Component</Filter>
     </ClInclude>
-    <ClInclude Include="SphereColliderComponent.h" />
     <ClInclude Include="GravityGloveEditor.h" />
     <ClInclude Include="BoxLight.h">
       <Filter>Light</Filter>
@@ -1575,7 +1581,6 @@
     <ClInclude Include="hasher.h">
       <Filter>Imgui\Node Editor\Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="CharacterReportCallback.h" />
     <ClInclude Include="NodeTypeAudioPlayResearcherEvent.h">
       <Filter>Imgui\Node Editor\Nodes\Audio</Filter>
     </ClInclude>
@@ -1588,8 +1593,20 @@
     <ClInclude Include="NodeTypeEnemySpawn.h">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClInclude>
-    <ClInclude Include="ConvexMeshColliderComponent.h" />
     <ClInclude Include="NodeTypeGameObjectRotateDegrees.h" />
+    <ClInclude Include="PostMasterStructs.h">
+      <Filter>Post Master</Filter>
+    </ClInclude>
+    <ClInclude Include="SphereColliderComponent.h">
+      <Filter>GameObject and Component\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="ConvexMeshColliderComponent.h">
+      <Filter>GameObject and Component\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerReportCallback.h">
+      <Filter>PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeUtilityInvertBool.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">

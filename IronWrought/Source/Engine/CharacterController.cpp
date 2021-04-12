@@ -13,7 +13,7 @@ CCharacterController::CCharacterController(const Vector3 aPosition, const float 
     desc.height = aHeight;
     desc.radius = aRadius;
     desc.material = CEngine::GetInstance()->GetPhysx().CreateMaterial(CPhysXWrapper::materialfriction::basic);
-    desc.stepOffset = 0.0f;
+    desc.stepOffset = 0.05f;
     desc.reportCallback = CEngine::GetInstance()->GetPhysx().GetCharacterReportBack();
     desc.userData = aUserData;
     myController = CEngine::GetInstance()->GetPhysx().GetControllerManager()->createController(desc);

@@ -159,7 +159,7 @@ bool CScene::ReInitCanvas(const std::string& aPath)
 	if (!myCanvas)
 		InitCanvas(aPath);
 
-	myCanvas->ReInit(aPath, *this);
+	myCanvas->Init(aPath, *this);
 	return true;
 }
 

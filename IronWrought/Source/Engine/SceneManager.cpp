@@ -100,13 +100,13 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneJson)
 			SetTransforms(*scene, sceneData["transforms"].GetArray());
 			AddDirectionalLight(*scene, sceneData["directionalLight"].GetObjectW());
 			AddPointLights(*scene, sceneData["lights"].GetArray());
-			AddInstancedModelComponents(*scene, sceneData["instancedModels"].GetArray());
 			AddModelComponents(*scene, sceneData["models"].GetArray());
 			SetVertexPaintedColors(*scene, sceneData["vertexColors"].GetArray(), vertexPaintData);
 			AddDecalComponents(*scene, sceneData["decals"].GetArray());
 			AddCollider(*scene, sceneData["colliders"].GetArray());
 			AddEnemyComponents(*scene, sceneData["enemies"].GetArray());
 		}
+		AddInstancedModelComponents(*scene, sceneData["instancedModels"].GetArray());
 	}
 
 	CEngine::GetInstance()->GetPhysx().Cooking(scene->ActiveGameObjects(), scene);

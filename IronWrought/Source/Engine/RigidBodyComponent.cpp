@@ -70,6 +70,11 @@ void CRigidBodyComponent::SetAngularVelocity(const Vector3& aVelocity)
 	myDynamicRigidBody->GetBody().setAngularVelocity({ aVelocity.x, aVelocity.y, aVelocity.z });
 }
 
+void CRigidBodyComponent::SetLinearVelocity(const Vector3& aVelocity)
+{
+	myDynamicRigidBody->GetBody().setLinearVelocity({ aVelocity.x, aVelocity.y, aVelocity.z });
+}
+
 void CRigidBodyComponent::AddForce(const physx::PxVec3& aDirectionAndForce, const EForceMode aForceMode)
 {
 	myDynamicRigidBody->GetBody().addForce(aDirectionAndForce, (PxForceMode::Enum)aForceMode);
@@ -91,4 +96,28 @@ const float CRigidBodyComponent::GetMass()
 
 void CRigidBodyComponent::SetPosition(const Vector3& aPos) {
 	myDynamicRigidBody->GetBody().setGlobalPose({aPos.x, aPos.y, aPos.z});
+}
+
+void CRigidBodyComponent::SetRotation(const Quaternion& aRot)
+{
+	PxQuat quat;
+	quat.x = aRot.x;
+	quat.y = aRot.y;
+	quat.z = aRot.z;
+	quat.w = aRot.w;
+	myDynamicRigidBody->GetBody().setGlobalPose({ myDynamicRigidBody->GetPosition().x, myDynamicRigidBody->GetPosition().y, myDynamicRigidBody->GetPosition().z, quat });
+}
+
+void CRigidBodyComponent::SetGlobalPose(const Vector3& aPos, const Quaternion& aRot)
+{
+	PxVec3 pos;
+	pos.x = aPos.x;
+	pos.y = aPos.y;
+	pos.z = aPos.z;
+	PxQuat quat;
+	quat.x = aRot.x;
+	quat.y = aRot.y;
+	quat.z = aRot.z;
+	quat.w = aRot.w;
+	myDynamicRigidBody->GetBody().setGlobalPose({pos, quat});
 }

@@ -80,6 +80,11 @@ void CAnimatedUIElement::SetScale(const Vector2& aScale)
     mySpriteInstance->SetSize(aScale);
 }
 
+void CAnimatedUIElement::SetRenderLayer(const ERenderOrder& aRenderLayer)
+{
+    mySpriteInstance->SetRenderOrder(aRenderLayer);
+}
+
 CSpriteInstance* CAnimatedUIElement::GetInstance() const
 {
     return mySpriteInstance;

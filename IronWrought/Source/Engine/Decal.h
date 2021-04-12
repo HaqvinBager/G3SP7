@@ -7,6 +7,9 @@ public:
 		std::array<ID3D11ShaderResourceView*, 3> myMaterial {};
 		std::string myMaterialName = "";
 		float myAlphaClipThreshold = 0.0f;
+		bool myShouldRenderAlbedo = true;
+		bool myShouldRenderMaterial = true;
+		bool myShouldRenderNormals = true;
 	};
 
 public:

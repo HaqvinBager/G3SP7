@@ -7,7 +7,7 @@
 
 CSpriteInstance::CSpriteInstance(CScene& aScene, bool aAddToScene)
 	: mySprite(nullptr)
-	, myRenderOrder(ERenderOrder::BackgroundLayer)
+	, myRenderOrder(ERenderOrder::Layer0)
 	, myShouldRender(true)
 	, myShouldAnimate(false)
 	, myAnimationTimer(0.0f)
@@ -23,7 +23,7 @@ CSpriteInstance::CSpriteInstance(CScene& aScene, bool aAddToScene)
 }
 CSpriteInstance::CSpriteInstance()
 	: mySprite(nullptr)
-	, myRenderOrder(ERenderOrder::BackgroundLayer)
+	, myRenderOrder(ERenderOrder::Layer0)
 	, myShouldRender(true)
 	, myShouldAnimate(false)
 	, myAnimationTimer(0.0f)
@@ -48,7 +48,7 @@ bool CSpriteInstance::Init(CSprite* aSprite, const Vector2& aScale)
 
 	mySprite = aSprite;
 	this->SetSize(aScale);
-	myRenderOrder = ERenderOrder::ForegroundLayer;
+	myRenderOrder = ERenderOrder::Layer2;
 
 	return true;
 }
@@ -61,7 +61,7 @@ bool CSpriteInstance::Init(CSprite* aSprite, const std::vector<SSpriteSheetPosit
 
 	mySprite = aSprite;
 	this->SetSize(aScale);
-	myRenderOrder = ERenderOrder::ForegroundLayer;
+	myRenderOrder = ERenderOrder::Layer2;
 
 	Vector2 sheetDimensions = aSprite->GetSpriteData().myDimensions;
 
@@ -69,11 +69,16 @@ bool CSpriteInstance::Init(CSprite* aSprite, const std::vector<SSpriteSheetPosit
 	{
 		myAnimationData.emplace_back();
 		auto& animationDataToLoad = someSpriteSheetPositionData[i];
-		myAnimationData.back().myAnimationName = animationDataToLoad.myAnimationName;
-		myAnimationData.back().myFramesOffset = static_cast<int>(myAnimationFrames.size());
-		myAnimationData.back().myNumberOfFrames = animationDataToLoad.myNumberOfFrames;
-		myAnimationData.back().myFramesPerSecond = animationDataToLoad.mySpeedInFramesPerSecond;
-		myAnimationData.back().myRotationSpeedInSeconds = animationDataToLoad.myRotationSpeedInSeconds;
+		SSpriteAnimationData& spriteData = myAnimationData.back();
+		spriteData.myAnimationName = animationDataToLoad.myAnimationName;
+		spriteData.myFramesOffset = static_cast<int>(myAnimationFrames.size());
+		spriteData.myNumberOfFrames = animationDataToLoad.myNumberOfFrames;
+		spriteData.myFramesPerSecond = animationDataToLoad.mySpeedInFramesPerSecond;
+		spriteData.myRotationSpeedInSeconds = animationDataToLoad.myRotationSpeedInSeconds;
+
+		spriteData.myIsLooping = animationDataToLoad.myIsLooping;
+		spriteData.myTransitionToIndex = animationDataToLoad.myTransitionToIndex;
+		spriteData.myReverseTransitionToIndex = animationDataToLoad.myReverseTransitionToIndex;
 
 		for (unsigned int j = 0; j < static_cast<unsigned int>(animationDataToLoad.myNumberOfFrames); ++j)
 		{
@@ -96,6 +101,8 @@ bool CSpriteInstance::Init(CSprite* aSprite, const std::vector<SSpriteSheetPosit
 
 		//myShouldAnimate = true;
 	}
+
+
 
 	return true;
 }
@@ -150,10 +157,9 @@ void CSpriteInstance::Update()
 			if (myCurrentAnimationFrame > (myAnimationData[myCurrentAnimationIndex].myNumberOfFrames + myAnimationData[myCurrentAnimationIndex].myFramesOffset - 1))
 			{
 				myShouldAnimate = myShouldLoopAnimation;
-
 				if (!myShouldAnimate)
 				{
-					//this->SetRotation(0.0f);
+					PlayAnimationUsingInternalData(myAnimationData[myCurrentAnimationIndex].myTransitionToIndex);
 					return;
 				}
 
@@ -169,7 +175,7 @@ void CSpriteInstance::Update()
 				
 				if (!myShouldAnimate)
 				{
-					//this->SetRotation(0.0f);
+					PlayAnimationUsingInternalData(myAnimationData[myCurrentAnimationIndex].myReverseTransitionToIndex);
 					return;
 				}
 				
@@ -183,20 +189,43 @@ void CSpriteInstance::Update()
 
 void CSpriteInstance::PlayAnimation(unsigned int anIndex, bool aShouldLoop, bool aShouldBeReversed)
 {
-	if (anIndex >= myAnimationData.size())
+	if (anIndex >= myAnimationData.size() && anIndex < 0)
 		return;
 
 	myCurrentAnimationIndex = anIndex;
 	myShouldLoopAnimation = aShouldLoop;
 	myShouldReverseAnimation = aShouldBeReversed;
 	myAnimationTimer = 0.0f;
-	
+
 	if (!myShouldReverseAnimation)
 		myCurrentAnimationFrame = myAnimationData[myCurrentAnimationIndex].myFramesOffset;
 	else
 		myCurrentAnimationFrame = (myAnimationData[myCurrentAnimationIndex].myNumberOfFrames + myAnimationData[myCurrentAnimationIndex].myFramesOffset - 1);
 
 	myShouldAnimate = true;
+}
+
+void CSpriteInstance::PlayAnimationUsingInternalData(const unsigned int& anIndex, const bool& aShouldBeReversed)
+{
+	if (anIndex >= myAnimationData.size() && anIndex < 0)
+		return;
+
+	myCurrentAnimationIndex = anIndex;
+	myShouldLoopAnimation = myAnimationData[anIndex].myIsLooping;
+	myShouldReverseAnimation = aShouldBeReversed;
+	myAnimationTimer = 0.0f;
+
+	if (!myShouldReverseAnimation)
+		myCurrentAnimationFrame = myAnimationData[myCurrentAnimationIndex].myFramesOffset;
+	else
+		myCurrentAnimationFrame = (myAnimationData[myCurrentAnimationIndex].myNumberOfFrames + myAnimationData[myCurrentAnimationIndex].myFramesOffset - 1);
+
+	myShouldAnimate = true;
+}
+
+void CSpriteInstance::PlayAnimation(PostMaster::SCrossHairData& aData)
+{
+	PlayAnimation(aData.myIndex, aData.myShouldLoop, aData.myShouldLoop);
 }
 
 void CSpriteInstance::PlayAnimation(std::string aName, bool aShouldLoop, bool aShouldBeReversed)
