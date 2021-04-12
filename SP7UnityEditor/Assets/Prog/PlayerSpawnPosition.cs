@@ -4,15 +4,13 @@ using UnityEngine;
 
 public class PlayerSpawnPosition : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [Range(0.1f, 0.8f)]
+    public float sphereSize = 0.0f;
+
+    private void OnDrawGizmos()
     {
-        
+        Gizmos.color = Color.Lerp(Color.cyan, Color.green, 0.5f);
+        Gizmos.DrawSphere(transform.position, sphereSize);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

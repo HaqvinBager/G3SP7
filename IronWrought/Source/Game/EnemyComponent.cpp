@@ -46,21 +46,22 @@ void CEnemyComponent::Start()
 	//myBehaviours.push_back(new CAttack());
 }
 
-void CEnemyComponent::Update()//får bestämma vilket behaviour vi vill köra i denna Update()!!!
+void CEnemyComponent::Update()//fï¿½r bestï¿½mma vilket behaviour vi vill kï¿½ra i denna Update()!!!
 {
 	/*myDistance = sqrt(
 		(myPlayer->myTransform->Position().x - GameObject().myTransform->Position().x) * ((myPlayer->myTransform->Position().x - GameObject().myTransform->Position().x)) +
 		((myPlayer->myTransform->Position().y - GameObject().myTransform->Position().y) * ((myPlayer->myTransform->Position().y - GameObject().myTransform->Position().y))) +
 		((myPlayer->myTransform->Position().z - GameObject().myTransform->Position().z) * ((myPlayer->myTransform->Position().z - GameObject().myTransform->Position().z))));*/
-	mySettings.myDistance = Vector3::DistanceSquared(myPlayer->myTransform->Position(), GameObject().myTransform->Position());
+	if(myPlayer)
+		mySettings.myDistance = Vector3::DistanceSquared(myPlayer->myTransform->Position(), GameObject().myTransform->Position());
 
 	//myController->Move({ 0.0f, -0.098f, 0.0f }, 1.f);
 
 	if (mySettings.myRadius * mySettings.myRadius >= mySettings.myDistance) {//seek
 		//SetState(EBehaviour::Seek);
-	float attackDistance = 2.0f; //example will probably be more complicated in the future; 
+	float attackDistance = 2.0f; //example will probably be more complicated in the future;
 		if (mySettings.myDistance <= attackDistance) {
-		 //	SetState(EBehaviour::Attack); 
+		 //	SetState(EBehaviour::Attack);
 			/*TakeDamage();*/
 		}
 	}

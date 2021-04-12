@@ -7,7 +7,7 @@
 
 CSpriteInstance::CSpriteInstance(CScene& aScene, bool aAddToScene)
 	: mySprite(nullptr)
-	, myRenderOrder(ERenderOrder::BackgroundLayer)
+	, myRenderOrder(ERenderOrder::Layer0)
 	, myShouldRender(true)
 	, myShouldAnimate(false)
 	, myAnimationTimer(0.0f)
@@ -23,7 +23,7 @@ CSpriteInstance::CSpriteInstance(CScene& aScene, bool aAddToScene)
 }
 CSpriteInstance::CSpriteInstance()
 	: mySprite(nullptr)
-	, myRenderOrder(ERenderOrder::BackgroundLayer)
+	, myRenderOrder(ERenderOrder::Layer0)
 	, myShouldRender(true)
 	, myShouldAnimate(false)
 	, myAnimationTimer(0.0f)
@@ -48,7 +48,7 @@ bool CSpriteInstance::Init(CSprite* aSprite, const Vector2& aScale)
 
 	mySprite = aSprite;
 	this->SetSize(aScale);
-	myRenderOrder = ERenderOrder::ForegroundLayer;
+	myRenderOrder = ERenderOrder::Layer2;
 
 	return true;
 }
@@ -61,7 +61,7 @@ bool CSpriteInstance::Init(CSprite* aSprite, const std::vector<SSpriteSheetPosit
 
 	mySprite = aSprite;
 	this->SetSize(aScale);
-	myRenderOrder = ERenderOrder::ForegroundLayer;
+	myRenderOrder = ERenderOrder::Layer2;
 
 	Vector2 sheetDimensions = aSprite->GetSpriteData().myDimensions;
 

@@ -2,16 +2,15 @@
 #define LIGHTCOUNT 32
 #define SAFE_DELETE(aPointer) delete aPointer; aPointer = nullptr;
 
-//#define EXCELSIOR_COMPILE// If define disables using Unity Asset path prefix (UnityProject/Assets), enables Bin/Assets
-
-//#ifndef EXCELSIOR_COMPILE
-//#define ASSETPATH(path) std::string("../../SP7UnityEditor/").append(path)//UNITY
+// Uncomment before release.
+//#ifdef NDEBUG
+//#define EXCELSIOR_BUILD
 //#else
-//#define ASSETPATH(path) std::string (path) // EXCELSIOR
+////#define EXCELSIOR_BUILD // ! Manual toggle
 //#endif
 
-#ifdef EXCELSIOR
-#define ASSETPATH(path) std::string (path) // EXCELSIOR
+#ifdef EXCELSIOR_BUILD
+#define ASSETPATH(path) std::string(path).c_str() // EXCELSIOR
 #else
 #define ASSETPATH(path) std::string("../../SP7UnityEditor/").append(path)//UNITY
 #endif 

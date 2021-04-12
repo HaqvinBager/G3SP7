@@ -49,5 +49,6 @@ private:
 	DirectX::SimpleMath::Vector2* myResolution;
 	float myResolutionScale;
 	bool myCursorIsLocked;
+	bool myWindowIsInEditingMode;
 };
 

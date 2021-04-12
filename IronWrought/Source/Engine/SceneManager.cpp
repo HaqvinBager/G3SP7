@@ -95,6 +95,8 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneJson)
 	const auto& scenes = doc.GetObjectW()["Scenes"].GetArray();
 	for (const auto& sceneData : scenes)
 	{
+		std::string sceneName = sceneData["sceneName"].GetString();
+
 		if (AddGameObjects(*scene, sceneData["Ids"].GetArray()))
 		{
 			SetTransforms(*scene, sceneData["transforms"].GetArray());
@@ -105,12 +107,20 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneJson)
 			AddDecalComponents(*scene, sceneData["decals"].GetArray());
 			AddCollider(*scene, sceneData["colliders"].GetArray());
 			AddEnemyComponents(*scene, sceneData["enemies"].GetArray());
+
+			if (sceneName.find("Layout") != std::string::npos)//Om Unity Scene Namnet inneh�ller nyckelordet "Layout"
+			{
+				AddPlayer(*scene, sceneData["player"].GetObjectW());
+			}
 		}
 		AddInstancedModelComponents(*scene, sceneData["instancedModels"].GetArray());
 	}
 
+
+
+	//AddPlayer(*scene); //This add player does not read data from unity. (Yet..!) /Axel 2021-03-24
+
 	CEngine::GetInstance()->GetPhysx().Cooking(scene->ActiveGameObjects(), scene);
-	AddPlayer(*scene); //This add player does not read data from unity. (Yet..!) /Axel 2021-03-24
 
 	scene->InitCanvas(ASSETPATH("Assets/Graphics/UI/JSON/UI_HUD.json"));
 
@@ -299,7 +309,7 @@ void CSceneManager::AddDecalComponents(CScene& aScene, RapidArray someData)
 	}
 }
 
-void CSceneManager::AddPlayer(CScene& aScene/*, RapidObject someData*/)
+void CSceneManager::AddPlayer(CScene& aScene, RapidObject someData)
 {
 	/*CGameObject* player = nullptr;
 	if (!someData.HasMember("instanceID"))
@@ -311,12 +321,15 @@ void CSceneManager::AddPlayer(CScene& aScene/*, RapidObject someData*/)
 	/*}
 	else
 	{
-		player = aScene.FindObjectWithID(instanceID);
+		player =
 	}*/
 
-	CGameObject* player = new CGameObject(87);
+	int instanceID = someData["instanceID"].GetInt();
+	CGameObject* player = aScene.FindObjectWithID(instanceID);//new CGameObject(87);
 	//if (player == nullptr)
 	//	return;
+
+
 
 	CGameObject* camera = CCameraControllerComponent::CreatePlayerFirstPersonCamera(player);//new CGameObject(96);
 	CGameObject* model = new CGameObject(88);
@@ -336,7 +349,7 @@ void CSceneManager::AddPlayer(CScene& aScene/*, RapidObject someData*/)
 	player->AddComponent<CPlayerComponent>(*player);
 
 	player->AddComponent<CPlayerControllerComponent>(*player, 0.03f, 0.03f, CEngine::GetInstance()->GetPhysx().GetPlayerReportBack());// CPlayerControllerComponent constructor sets position of camera child object.
-	player->GetComponent<CPlayerControllerComponent>()->SetControllerPosition({ 0.f, 5.0f,0.0f });
+	//player->GetComponent<CPlayerControllerComponent>()->SetControllerPosition({ 0.f, 5.0f,0.0f });
 	aScene.AddInstance(player);
 	aScene.AddInstance(model);
 	aScene.AddInstance(camera);
@@ -377,6 +390,7 @@ void CSceneManager::AddCollider(CScene& aScene, RapidArray someData)
 
 		ColliderType colliderType = static_cast<ColliderType>(c["colliderType"].GetInt());
 		bool isStatic = c.HasMember("isStatic") ? c["isStatic"].GetBool() : false;
+		bool isKinematic = c.HasMember("isKinematic") ? c["isKinematic"].GetBool() : false;
 
 		CRigidBodyComponent* rigidBody = gameObject->GetComponent<CRigidBodyComponent>();
 		if (rigidBody == nullptr && isStatic == false) {
@@ -389,7 +403,7 @@ void CSceneManager::AddCollider(CScene& aScene, RapidArray someData)
 			inertiaTensor.x = c["inertiaTensor"]["x"].GetFloat();
 			inertiaTensor.y = c["inertiaTensor"]["y"].GetFloat();
 			inertiaTensor.z = c["inertiaTensor"]["z"].GetFloat();
-			gameObject->AddComponent<CRigidBodyComponent>(*gameObject, mass, localCenterMass, inertiaTensor);
+			gameObject->AddComponent<CRigidBodyComponent>(*gameObject, mass, localCenterMass, inertiaTensor, isKinematic);
 		}
 
 		Vector3 posOffset;
