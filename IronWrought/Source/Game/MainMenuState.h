@@ -19,6 +19,8 @@ public:
 	void Receive(const SStringMessage& aMessage) override;
 	void Receive(const SMessage& aMessage) override;
 
+	void OnComplete(std::string aSceneThatHasBeenSuccessfullyLoaded);
+
 private:
 	// More or less temp. / Aki 2021 04 06
 	bool myTimeToQuit;

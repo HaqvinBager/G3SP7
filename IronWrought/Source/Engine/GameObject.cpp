@@ -21,7 +21,8 @@ CGameObject::~CGameObject()
 	//	delete myComponents[i];
 	//	myComponents[i] = nullptr;
 	//}
-	myComponents.clear();
+	if(!myComponents.empty())
+		myComponents.clear();
 }
 
 void CGameObject::Awake()
