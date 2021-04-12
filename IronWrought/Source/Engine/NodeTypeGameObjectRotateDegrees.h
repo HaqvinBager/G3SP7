@@ -11,6 +11,7 @@ public:
 
 private:
 	std::map<int, Quaternion> myRotations;
+	std::map<int, Quaternion> myPreviousRotations;
 
 };
 

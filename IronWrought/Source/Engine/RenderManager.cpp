@@ -99,11 +99,13 @@ void CRenderManager::Render(CScene& aScene)
 {
 	CRenderManager::myNumberOfDrawCallsThisFrame = 0;
 
+#ifdef _DEBUG
 	if (Input::GetInstance()->IsKeyPressed(VK_F6))	
 	{
 		myDoFullRender = myDeferredRenderer.ToggleRenderPass();
 		//myDoFullRender = myForwardRenderer.ToggleRenderPass();
 	}
+#endif // DEBUG
 
 	myRenderStateManager.SetAllDefault();
 	myBackbuffer.ClearTexture(myClearColor);
@@ -328,8 +330,10 @@ void CRenderManager::Render(CScene& aScene)
 	myDeferredLightingTexture.SetAsResourceOnSlot(0);
 	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_TONEMAP);
 
+#ifdef _DEBUG
 	if (INPUT->IsKeyPressed(VK_F2))
 		myUseAntiAliasing = !myUseAntiAliasing;
+#endif // _DEBUG
 
 	// Anti-aliasing
 	if (myUseAntiAliasing)
