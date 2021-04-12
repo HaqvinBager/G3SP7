@@ -64,10 +64,12 @@ void CBoxColliderComponent::CreateBoxCollider()
 		PxRigidStatic* actor = CEngine::GetInstance()->GetPhysx().GetPhysics()->createRigidStatic({ pos, pxQuat });
 		actor->attachShape(*myShape);
 		CEngine::GetInstance()->GetPhysx().GetPXScene()->addActor(*actor);
-		PxShape* triggerShape;
-		actor->getShapes(&triggerShape, 1);
-		triggerShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
-		triggerShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
+		if (myIsTrigger) {
+			PxShape* triggerShape;
+			actor->getShapes(&triggerShape, 1);
+			triggerShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
+			triggerShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
+		}
 	}
 }
 
