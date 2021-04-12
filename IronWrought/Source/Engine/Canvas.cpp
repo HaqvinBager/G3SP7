@@ -353,6 +353,12 @@ void CCanvas::Init(const std::string& aFilePath, CScene& aScene, bool addToScene
 			myWidgets[i]->Init(ASSETPATH(widgetsArray[i]["Path"].GetString()), aScene, true, myPivot, myPosition, 3);
 		}
 	}
+
+	// To start Idle Crosshair Animation
+	if (mySprites.empty())
+		return;
+
+	mySprites[0]->PlayAnimationUsingInternalData(1);
 }
 
 void CCanvas::Update()

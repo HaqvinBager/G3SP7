@@ -1,6 +1,8 @@
 #pragma once
 
+#ifdef _DEBUG
 #include <imgui_node_editor.h>
+#endif // DEBUG
 #include <stack>
 #include <unordered_map>
 //#include "NodeData.h"
@@ -13,7 +15,10 @@ struct BluePrintInstance {
 	std::vector<int> childrenIDs;
 };
 
+#ifdef _DEBUG
 namespace ed = ax::NodeEditor;
+#endif // DEBUG
+
 class CGraphManager
 {
 public:
@@ -22,7 +27,7 @@ public:
 	void Clear();
 	void ReTriggerUpdatingTrees();
 
-	void PreFrame(float aDeltaTime);
+	void PreFrame();
 	void ConstructEditorTreeAndConnectLinks();
 	void PostFrame();
 
@@ -48,9 +53,11 @@ public:
 private:
 	struct SEditorLinkInfo
 	{
+#ifdef _DEBUG
 		ed::LinkId myID;
 		ed::PinId  myInputID;
 		ed::PinId  myOutputID;
+#endif
 	};
 
 	enum class ECommandAction {
@@ -80,7 +87,9 @@ private:
 	{
 		std::vector<CNodeInstance*> myNodeInstances;
 		std::vector<BluePrintInstance> myBluePrintInstances;
+#ifdef _DEBUG
 		ImVector<SEditorLinkInfo> myLinks;
+#endif
 		std::string myFolderPath;
 		std::string myChildrenKey;
 		unsigned int myNextLinkIdCounter = 100;
@@ -88,8 +97,11 @@ private:
 		void Clear();
 	};
 private:
+#ifdef _DEBUG
+
 
 	ImTextureID HeaderTextureID();
+#endif // _DEBUG
 	void WillBeCyclic(CNodeInstance* aFirst, CNodeInstance* aSecond, bool& aIsCyclic, CNodeInstance* aBase);
 
 	CNodeInstance* GetNodeFromPinID(unsigned int anID);
@@ -135,6 +147,10 @@ private:
 	bool myRenderGraph;
 	bool myRunScripts;
 	std::string mySceneFolder;
+
+#ifdef _DEBUG
 	ImTextureID myHeaderTextureID;
+#endif // _DEBUG
+
 	std::vector<std::string> myCustomDataNodes;
 };

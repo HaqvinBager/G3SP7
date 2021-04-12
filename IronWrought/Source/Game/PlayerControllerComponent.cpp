@@ -228,12 +228,20 @@ void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
 void CPlayerControllerComponent::Move(Vector3 aDir)
 {
 	physx::PxControllerCollisionFlags collisionflag = myController->GetController().move({aDir.x, aDir.y, aDir.z}, 0, CTimer::Dt(), 0);
+
+	if (collisionflag != physx::PxControllerCollisionFlag::eCOLLISION_DOWN )
+	{
+		myCanJump = false;
+		
+	}
+
 	if (collisionflag == physx::PxControllerCollisionFlag::eCOLLISION_DOWN)
 	{
 		myCanJump = true;
 		if(aDir.x != 0.0f || aDir.z != 0.0f)
 			myAnimationComponentController->Walk();
 	}
+
 }
 
 void CPlayerControllerComponent::SetControllerPosition(const Vector3& aPos)

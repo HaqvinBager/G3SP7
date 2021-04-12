@@ -38,20 +38,17 @@ void CGravityGloveComponent::Start()
 
 void CGravityGloveComponent::Update()
 {
-	if (Input::GetInstance()->IsMousePressed(Input::EMouseButton::Left)) {
-		PostMaster::SCrossHairData data;
+	if (Input::GetInstance()->IsMousePressed(Input::EMouseButton::Left))
+	{
+		PostMaster::SCrossHairData data; // Wind down
 		data.myIndex = 0;
 		data.myShouldBeReversed = true;
 		CMainSingleton::PostMaster().Send({ EMessageType::UpdateCrosshair, &data });
 
 		Push();
 	}
-	if (Input::GetInstance()->IsMousePressed(Input::EMouseButton::Right)) {
-		PostMaster::SCrossHairData data;
-		data.myIndex = 0;
-		
-		CMainSingleton::PostMaster().Send({ EMessageType::UpdateCrosshair, &data });
-
+	if (Input::GetInstance()->IsMousePressed(Input::EMouseButton::Right))
+	{
 		Pull();
 	}
 
@@ -90,7 +87,7 @@ void CGravityGloveComponent::Pull()
 		myCurrentTarget->GetDynamicRigidBody()->GetBody().setMaxLinearVelocity(100.f);
 		myCurrentTarget = nullptr;
 
-		PostMaster::SCrossHairData data;
+		PostMaster::SCrossHairData data; // Wind down
 		data.myIndex = 0;
 		data.myShouldBeReversed = true;
 		CMainSingleton::PostMaster().Send({ EMessageType::UpdateCrosshair, &data });
@@ -122,17 +119,27 @@ void CGravityGloveComponent::Pull()
 	{
 		CTransformComponent* transform = (CTransformComponent*)hit.getAnyHit(0).actor->userData;
 		if (transform == nullptr)
+		{
+			PostMaster::SCrossHairData data; // Wind down
+			data.myIndex = 0;
+			data.myShouldBeReversed = true;
+			CMainSingleton::PostMaster().Send({ EMessageType::UpdateCrosshair, &data });
 			return;
-		
+		}
+
 		CRigidBodyComponent* rigidbody = nullptr;
 		if (transform->GameObject().TryGetComponent<CRigidBodyComponent>(&rigidbody))
 		{
-			if (!rigidbody->IsKinematic())
+			if (!rigidbody->IsKinematic()) {
 				myCurrentTarget = rigidbody;
+				PostMaster::SCrossHairData data; // Wind Up
+				data.myIndex = 0;
+				CMainSingleton::PostMaster().Send({ EMessageType::UpdateCrosshair, &data });
+			 }
 		}
 
 		//myCurrentTarget = transform->GetComponent<CRigidBodyComponent>();
-		
+
 
 	#ifdef _DEBUG
 		CLineInstance* myLine = new CLineInstance();

@@ -3,9 +3,13 @@
 #include <array>
 #include <string>
 #include <rapidjson\document.h>
+
+#ifdef _DEBUG
 #include <imgui.h>
 #include <imgui_impl_dx11.h>
 #include <imgui_impl_win32.h>
+#endif
+
 #include <ScreenGrab.h>
 #include <DialogueSystem.h>
 #include <PopupTextService.h>
@@ -30,7 +34,9 @@
 #include "DecalFactory.h"
 
 #include "RenderManager.h"
+
 #include "ImguiManager.h"
+
 #include "AudioManager.h"
 #include "InputMapper.h"
 
@@ -84,7 +90,9 @@ CEngine::CEngine(): myRenderSceneActive(true)
 
 CEngine::~CEngine()
 {
+#ifdef _DEBUG
 	ImGui_ImplDX11_Shutdown();
+#endif
 
 	delete myWindowHandler;
 	myWindowHandler = nullptr;
@@ -154,8 +162,10 @@ bool CEngine::Init(CWindowHandler::SWindowData& someWindowData)
 {
 	ENGINE_ERROR_BOOL_MESSAGE(myWindowHandler->Init(someWindowData), "Window Handler could not be initialized.");
 	ENGINE_ERROR_BOOL_MESSAGE(myFramework->Init(myWindowHandler), "Framework could not be initialized.");
+#ifdef _DEBUG
 	ImGui_ImplWin32_Init(myWindowHandler->GetWindowHandle());
 	ImGui_ImplDX11_Init(myFramework->GetDevice(), myFramework->GetContext());
+#endif
 	myWindowHandler->SetInternalResolution();
 	ENGINE_ERROR_BOOL_MESSAGE(myModelFactory->Init(myFramework), "Model Factory could not be initiliazed.");
 	ENGINE_ERROR_BOOL_MESSAGE(myCameraFactory->Init(myWindowHandler), "Camera Factory could not be initialized.");
@@ -187,10 +197,12 @@ float CEngine::BeginFrame()
 	size_t decimalIndex = fpsString.find_first_of('.');
 	fpsString = fpsString.substr(0, decimalIndex);
 	myWindowHandler->SetWindowTitle("IronWrought | FPS: " + fpsString);
-#endif
+
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
+#endif
+
 	return CTimer::Mark();
 }
 
@@ -220,8 +232,11 @@ void CEngine::RenderFrame()
 
 void CEngine::EndFrame()
 {
+#ifdef _DEBUG
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+#endif // _DEBUG
+
 	myFramework->EndFrame();
 }
 

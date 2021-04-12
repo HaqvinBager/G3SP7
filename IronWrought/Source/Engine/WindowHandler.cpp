@@ -1,21 +1,26 @@
 #include "WindowHandler.h"
 #include "Input.h"
 #include "JsonReader.h"
+#ifdef _DEBUG
 #include "imgui_impl_win32.h"
-
+#endif
 #include "PostMaster.h"
 
+#ifdef _DEBUG
 IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+#endif // DEBUG
 
 LRESULT CWindowHandler::WinProc(_In_ HWND hwnd, _In_ UINT uMsg, _In_ WPARAM wParam, _In_ LPARAM lParam)
 {
     static CWindowHandler* windowHandler = nullptr;
     CREATESTRUCT* createStruct;
 
+#ifdef _DEBUG
     if (ImGui_ImplWin32_WndProcHandler(hwnd, uMsg, wParam, lParam))
     {
         return true;
     }
+#endif
 
     switch (uMsg)
     {
@@ -56,7 +61,9 @@ CWindowHandler::CWindowHandler()
 
 CWindowHandler::~CWindowHandler()
 {
+#ifdef _DEBUG
     ImGui_ImplWin32_Shutdown();
+#endif // _DEBUG
     LockCursor(false);
     myCursorIsLocked = false;
     myWindowIsInEditingMode = false;
@@ -128,7 +135,9 @@ bool CWindowHandler::Init(CWindowHandler::SWindowData someWindowData)
     //    0, 0, /*GetSystemMetrics(SM_CXSCREEN)*/1920, /*GetSystemMetrics(SM_CYSCREEN)*/1080,
     //    NULL, NULL, GetModuleHandle(nullptr), this);
 
+#ifdef _DEBUG
     ImGui_ImplWin32_Init(myWindowHandle);
+#endif // _DEBUG
 
     LockCursor(true);
 

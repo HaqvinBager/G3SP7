@@ -62,10 +62,12 @@ void CCameraControllerComponent::Update()
 		else
 			CEngine::GetInstance()->GetWindowHandler()->HideAndLockCursor();
 	}
+#endif
 	// ! TEMPORARY
 	if (!CEngine::GetInstance()->GetWindowHandler()->CursorLocked())
 		return;
 
+#ifdef  _DEBUG
 	if (Input::GetInstance()->IsKeyPressed(/*std::toupper(myToggleFreeCam)*/myToggleFreeCam)) {
 		myCameraMode = myCameraMode == ECameraMode::FreeCam ? ECameraMode::PlayerFirstPerson : ECameraMode::FreeCam;
 		// So that the camera returns to the parent gameobject on return to ECameraMode::PlayerFirstPerson
