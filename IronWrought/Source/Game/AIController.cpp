@@ -10,7 +10,6 @@ CPatrol::CPatrol(const std::vector<Vector3>& somePositions)
 
 Vector3 CPatrol::Update(Vector3 aPosition)
 {
-
 	if (CheckIfOverlap(aPosition, myPositions[myTarget]))
 	{
 		myTarget++;

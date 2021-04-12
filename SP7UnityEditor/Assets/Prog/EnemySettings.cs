@@ -17,5 +17,5 @@ public struct Enemy
 
 public class EnemySettings : MonoBehaviour
 {
-    public Enemy settings = new Enemy { speed = 10.0f, distance = 0.0f, radius = 0.0015f,  health = 10.0f };  
+    public Enemy settings = new Enemy { speed = 2.0f, distance = 0.0f, radius = 10.0f,  health = 10.0f };  
 }

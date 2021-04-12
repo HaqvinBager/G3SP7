@@ -6,10 +6,10 @@ class CCharacterController;
 class CGameObject;
 
 struct SEnemySetting {
-	float mySpeed;	//= 10.0f;
+	float mySpeed;	//= 0.1f;
 	float myDistance;//= 0.0f;
 	float myRadius;	//= 10.0f;
-	float myHealth;
+	float myHealth; //= 10.0f
 
 
 	std::vector<int> myPatrolGameObjectIds;
@@ -42,6 +42,8 @@ private:
 	CGameObject* myEnemy;
 	CGameObject* myPlayer;
 	SEnemySetting mySettings;
+	std::vector<Vector3> myPatrolPositions;
+	Quaternion myPatrolRotation;
 	
 };
 

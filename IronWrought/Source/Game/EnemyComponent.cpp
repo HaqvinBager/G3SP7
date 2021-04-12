@@ -30,12 +30,12 @@ void CEnemyComponent::Awake()
 void CEnemyComponent::Start()
 {
 	myPlayer = CEngine::GetInstance()->GetActiveScene().Player();
-	std::vector<Vector3> patrolPositions;
+	
 	for (const auto id : mySettings.myPatrolGameObjectIds) {
 		CTransformComponent* patrolTransform = CEngine::GetInstance()->GetActiveScene().FindObjectWithID(id)->myTransform;
-		patrolPositions.push_back(patrolTransform->Position());
+		myPatrolPositions.push_back(patrolTransform->Position()); 
 	}
-	myBehaviours.push_back(new CPatrol(patrolPositions));
+	myBehaviours.push_back(new CPatrol(myPatrolPositions));
 
 	CSeek* seekBehaviour = new CSeek();
 	seekBehaviour->SetTarget(myPlayer->myTransform);
@@ -45,13 +45,7 @@ void CEnemyComponent::Start()
 
 void CEnemyComponent::Update()//får bestämma vilket behaviour vi vill köra i denna Update()!!!
 {
-	/*myDistance = sqrt(
-		(myPlayer->myTransform->Position().x - GameObject().myTransform->Position().x) * ((myPlayer->myTransform->Position().x - GameObject().myTransform->Position().x)) +
-		((myPlayer->myTransform->Position().y - GameObject().myTransform->Position().y) * ((myPlayer->myTransform->Position().y - GameObject().myTransform->Position().y))) +
-		((myPlayer->myTransform->Position().z - GameObject().myTransform->Position().z) * ((myPlayer->myTransform->Position().z - GameObject().myTransform->Position().z))));*/
 	mySettings.myDistance = Vector3::DistanceSquared(myPlayer->myTransform->Position(), GameObject().myTransform->Position());
-
-	
 
 	if (mySettings.myRadius * mySettings.myRadius >= mySettings.myDistance) {//seek
 		SetState(EBehaviour::Seek);
@@ -65,6 +59,8 @@ void CEnemyComponent::Update()//får bestämma vilket behaviour vi vill köra i den
 		SetState(EBehaviour::Patrol);
 	}
 	Vector3 newDirection = myBehaviours[static_cast<int>(myCurrentState)]->Update(GameObject().myTransform->Position());
+	newDirection.Normalize();
+	GameObject().myTransform->Rotation(myPatrolRotation.CreateFromYawPitchRoll(newDirection.y, 0.0f, 0.0f));
 	myController->Move(newDirection, mySettings.mySpeed);
 	GameObject().myTransform->Position(myController->GetPosition());
 }
