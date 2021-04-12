@@ -43,7 +43,7 @@ private:
 	static void AddPointLights(CScene& aScene, RapidArray someData);
 	static void AddDecalComponents(CScene& aScene, RapidArray someData);
 	static void AddCollider(CScene& aScene, RapidArray someData);
-	static void AddPlayer(CScene& aScene);
+	static void AddPlayer(CScene& aScene, RapidObject someData);
 	static void AddEnemyComponents(CScene& aScene, RapidArray someData);
 	static CScene* ourLastInstantiatedScene;
 };
