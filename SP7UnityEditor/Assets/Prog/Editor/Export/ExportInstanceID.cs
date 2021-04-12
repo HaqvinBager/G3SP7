@@ -29,13 +29,13 @@ public class ExportInstanceID
                     continue;
                 sceneIDCollection.Ids.Add(transform.GetInstanceID());
 
-                if (transform.name.Contains("BP_"))
-                {
-                    foreach (Transform childTransform in transform)
-                    {
-                        sceneIDCollection.Ids.Add(childTransform.GetInstanceID());
-                    }
-                }
+                //if (transform.name.Contains("BP_"))
+                //{
+                //    foreach (Transform childTransform in transform)
+                //    {
+                //        sceneIDCollection.Ids.Add(childTransform.GetInstanceID());
+                //    }
+                //}
             }   
             else if (Json.TryIsValidExport(transform, out GameObject prefabParent))
             {
