@@ -42,11 +42,13 @@ void CBoxColliderComponent::CreateBoxCollider()
 	myShape = CEngine::GetInstance()->GetPhysx().GetPhysics()->createShape(physx::PxBoxGeometry(myBoxSize.x / 2.f, myBoxSize.y / 2.f, myBoxSize.z / 2.f), *myMaterial, true);
 	myShape->setLocalPose({ myPositionOffset.x, myPositionOffset.y, myPositionOffset.z });
 	//myShape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, true);
+
 	CRigidBodyComponent* rigidBody = nullptr;
 	if (GameObject().TryGetComponent(&rigidBody))
 	{
 		rigidBody->AttachShape(myShape);
 		rigidBody->GetDynamicRigidBody()->GetBody();
+
 		//dynamic.setMaxLinearVelocity(10.f);
 	}
 	else
@@ -62,6 +64,10 @@ void CBoxColliderComponent::CreateBoxCollider()
 		PxRigidStatic* actor = CEngine::GetInstance()->GetPhysx().GetPhysics()->createRigidStatic({ pos, pxQuat });
 		actor->attachShape(*myShape);
 		CEngine::GetInstance()->GetPhysx().GetPXScene()->addActor(*actor);
+		PxShape* triggerShape;
+		actor->getShapes(&triggerShape, 1);
+		triggerShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
+		triggerShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
 	}
 }
 
