@@ -124,7 +124,15 @@ void CGravityGloveComponent::Pull()
 		if (transform == nullptr)
 			return;
 		
-		myCurrentTarget = transform->GetComponent<CRigidBodyComponent>();
+		CRigidBodyComponent* rigidbody = nullptr;
+		if (transform->GameObject().TryGetComponent<CRigidBodyComponent>(&rigidbody))
+		{
+			if (!rigidbody->IsKinematic())
+				myCurrentTarget = rigidbody;
+		}
+
+		//myCurrentTarget = transform->GetComponent<CRigidBodyComponent>();
+		
 
 	#ifdef _DEBUG
 		CLineInstance* myLine = new CLineInstance();
@@ -156,9 +164,11 @@ void CGravityGloveComponent::Push()
 			CTransformComponent* transform = (CTransformComponent*)hit.getAnyHit(0).actor->userData;
 			if (transform == nullptr)
 				return;
+
 			CRigidBodyComponent* target = transform->GetComponent<CRigidBodyComponent>();
-			if (target) {
-				target->AddForce(-GameObject().myTransform->GetWorldMatrix().Forward(), mySettings.myPushForce * target->GetMass(), EForceMode::EImpulse);
+			if (target != nullptr) {
+				if(!target->IsKinematic())
+					target->AddForce(-GameObject().myTransform->GetWorldMatrix().Forward(), mySettings.myPushForce * target->GetMass(), EForceMode::EImpulse);
 			}
 		}
 	}

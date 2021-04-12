@@ -11,12 +11,13 @@
 //{
 //}
 
-CRigidBodyComponent::CRigidBodyComponent(CGameObject& aParent, const float& aMass, const Vector3& aLocalCenterMass, const Vector3& aInertiaTensor)
+CRigidBodyComponent::CRigidBodyComponent(CGameObject& aParent, const float& aMass, const Vector3& aLocalCenterMass, const Vector3& aInertiaTensor, const bool aIsKinematic)
 	: CComponent(aParent)
 	, myDynamicRigidBody(nullptr)
 	, myMass(aMass)
 	, myLocalCenterMass(aLocalCenterMass)
 	, myInertiaTensor(aInertiaTensor)
+	, myIsKinematic(aIsKinematic)
 {
 }
 
@@ -32,6 +33,7 @@ void CRigidBodyComponent::Awake()
 	myDynamicRigidBody->GetBody().setMassSpaceInertiaTensor({ myInertiaTensor.x, myInertiaTensor.y, myInertiaTensor.z });
 	myDynamicRigidBody->GetBody().setCMassLocalPose({myLocalCenterMass.x, myLocalCenterMass.y, myLocalCenterMass.z});
 	myDynamicRigidBody->GetBody().userData = (void*)GameObject().myTransform;
+	myDynamicRigidBody->GetBody().setRigidBodyFlag(physx::PxRigidBodyFlag::Enum::eKINEMATIC, myIsKinematic);
 }
 
 void CRigidBodyComponent::Start()
