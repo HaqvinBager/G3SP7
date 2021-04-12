@@ -1,4 +1,5 @@
 #pragma once
+#include "SpriteInstance.h"
 
 class CSpriteInstance;
 class CScene;
@@ -46,6 +47,8 @@ public:
 	void SetPosition(DirectX::SimpleMath::Vector2 aPosition);
 	void SetShouldRender(const bool aShouldRender);
 	void SetScale(const Vector2& aScale);
+
+	void SetRenderLayer(const ERenderOrder& aRenderLayer);
 
 public:
 	CSpriteInstance* GetInstance() const;

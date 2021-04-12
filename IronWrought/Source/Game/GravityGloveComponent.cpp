@@ -38,11 +38,18 @@ void CGravityGloveComponent::Start()
 
 void CGravityGloveComponent::Update()
 {
-	if (Input::GetInstance()->IsMousePressed(Input::EMouseButton::Right)) {
-		Pull();
-	}
-	if (Input::GetInstance()->IsMousePressed(Input::EMouseButton::Left)) {
+	if (Input::GetInstance()->IsMousePressed(Input::EMouseButton::Left)) 
+	{
+		PostMaster::SCrossHairData data; // Wind down
+		data.myIndex = 0;
+		data.myShouldBeReversed = true;
+		CMainSingleton::PostMaster().Send({ EMessageType::UpdateCrosshair, &data });
+
 		Push();
+	}
+	if (Input::GetInstance()->IsMousePressed(Input::EMouseButton::Right)) 
+	{
+		Pull();
 	}
 
 	if (myCurrentTarget != nullptr)
@@ -79,6 +86,12 @@ void CGravityGloveComponent::Pull()
 	{
 		myCurrentTarget->GetDynamicRigidBody()->GetBody().setMaxLinearVelocity(100.f);
 		myCurrentTarget = nullptr;
+
+		PostMaster::SCrossHairData data; // Wind down
+		data.myIndex = 0;
+		data.myShouldBeReversed = true;
+		CMainSingleton::PostMaster().Send({ EMessageType::UpdateCrosshair, &data });
+
 		return;
 	}
 
@@ -106,10 +119,19 @@ void CGravityGloveComponent::Pull()
 	{
 		CTransformComponent* transform = (CTransformComponent*)hit.getAnyHit(0).actor->userData;
 		if (transform == nullptr)
+		{
+			PostMaster::SCrossHairData data; // Wind down
+			data.myIndex = 0;
+			data.myShouldBeReversed = true;
+			CMainSingleton::PostMaster().Send({ EMessageType::UpdateCrosshair, &data });
 			return;
+		}
 		
-		myCurrentTarget = transform->GetComponent<CRigidBodyComponent>();
+		PostMaster::SCrossHairData data; // Wind Up
+		data.myIndex = 0;
+		CMainSingleton::PostMaster().Send({ EMessageType::UpdateCrosshair, &data });
 
+		myCurrentTarget = transform->GetComponent<CRigidBodyComponent>();
 
 	#ifdef _DEBUG
 		CLineInstance* myLine = new CLineInstance();
@@ -123,9 +145,12 @@ void CGravityGloveComponent::Pull()
 	//myCurrentTarget->SetPosition(myGravitySlot->WorldPosition());
 }
 
+#include "CameraComponent.h"
 void CGravityGloveComponent::Push()
 {
 	if (myCurrentTarget != nullptr) {
+		IRONWROUGHT->GetActiveScene().MainCamera()->SetTrauma(0.25f); // plz enable camera movement without moving player for shake??? ::)) Nico 2021-04-09
+
 		myCurrentTarget->GetDynamicRigidBody()->GetBody().setMaxLinearVelocity(100.f);
 		myCurrentTarget->AddForce(-GameObject().myTransform->GetWorldMatrix().Forward(), mySettings.myPushForce * myCurrentTarget->GetMass(), EForceMode::EImpulse);
 		myCurrentTarget = nullptr;

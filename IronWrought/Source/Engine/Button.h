@@ -1,5 +1,6 @@
 #pragma once
 #include "PostMaster.h"
+#include "SpriteInstance.h"
 
 class CCanvas;
 class CSpriteInstance;
@@ -26,7 +27,7 @@ enum class EButtonState {
 
 class CButton {
 	friend CCanvas;
-	friend class CWidget;
+
 public:
 	void OnHover();
 	void OnClickDown();
@@ -40,6 +41,8 @@ public:
 
 	void Enabled(const bool& anIsEnabled);
 	inline const bool Enabled();
+
+	void SetRenderLayer(const ERenderOrder& aRenderLayer);
 
 private:
 	CButton();

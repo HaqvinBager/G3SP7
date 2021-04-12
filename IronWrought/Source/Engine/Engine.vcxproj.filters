@@ -1594,6 +1594,9 @@
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeGameObjectRotateDegrees.h" />
+    <ClInclude Include="PostMasterStructs.h">
+      <Filter>Post Master</Filter>
+    </ClInclude>
     <ClInclude Include="SphereColliderComponent.h">
       <Filter>GameObject and Component\Component</Filter>
     </ClInclude>

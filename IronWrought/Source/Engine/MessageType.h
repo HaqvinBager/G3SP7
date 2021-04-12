@@ -51,5 +51,9 @@ enum class EMessageType
 
 	ComponentAdded,
 
+	UpdateCrosshair,
+
+	CameraShake,
+
 	Count
 };

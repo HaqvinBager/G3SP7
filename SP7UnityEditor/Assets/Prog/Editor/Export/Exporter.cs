@@ -43,6 +43,11 @@ public class Exporter
     [MenuItem("Export/Export Scene")]
     public static void Export()
     {
+        if(GameObject.FindObjectOfType<PlayerSpawnPosition>() == null)
+        {
+            Debug.LogError("Export Cancelled. Please place a PlayerSpawnPosition Prefab in your Layout Scene");
+            return;
+        }
 
         //string sceneName = SceneManager.GetActiveScene().name;
        // string baseSceneName = sceneName.Substring(0, sceneName.LastIndexOf('_') + 2);
@@ -117,8 +122,7 @@ public class Exporter
             data.player.instanceID = player.transform.GetInstanceID();
             data.player.childrenIDs = new List<int>();
             foreach (Transform child in player.transform)
-                data.player.childrenIDs.Add(child.GetInstanceID());
-            //Json.ExportToJson(data, aScene.name);
+                data.player.childrenIDs.Add(child.GetInstanceID());         
         }
         return data;
     }

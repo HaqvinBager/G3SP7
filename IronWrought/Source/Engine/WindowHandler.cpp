@@ -36,11 +36,11 @@ LRESULT CWindowHandler::WinProc(_In_ HWND hwnd, _In_ UINT uMsg, _In_ WPARAM wPar
             break;
 
         case WM_KILLFOCUS:
-            windowHandler->LockCursor(false);
+            windowHandler->LockCursor(false); // If we use this here the myWindowIsInEditingMode bool will be preserved
             break;
 
         case WM_SETFOCUS:
-            windowHandler->LockCursor(true);
+            windowHandler->myWindowIsInEditingMode ? windowHandler->LockCursor(false) : windowHandler->LockCursor(true);
             break;
 
         default:
@@ -56,6 +56,7 @@ CWindowHandler::CWindowHandler()
     myWindowHandle = 0;
     myResolutionScale = 1.0f;
     myCursorIsLocked = false;
+    myWindowIsInEditingMode = false;
 }
 
 CWindowHandler::~CWindowHandler()
@@ -65,6 +66,7 @@ CWindowHandler::~CWindowHandler()
 #endif // _DEBUG
     LockCursor(false);
     myCursorIsLocked = false;
+    myWindowIsInEditingMode = false;
     myWindowHandle = 0;
     delete myResolution;
     myResolution = nullptr;
@@ -184,6 +186,9 @@ void CWindowHandler::LockCursor(bool aShouldLock)
     if (aShouldLock)
     {
         while (::ShowCursor(FALSE) >= 0);
+
+        Vector2 center = GetCenterPosition();
+        SetCursorPos(static_cast<int>(center.x), static_cast<int>(center.y));
     }
     else {
         while (::ShowCursor(TRUE) < 0);
@@ -196,6 +201,11 @@ void CWindowHandler::HideAndLockCursor()
     while (::ShowCursor(FALSE) >= 0);
     SetCapture(myWindowHandle);
     myCursorIsLocked = true;
+    myWindowIsInEditingMode = false;
+
+    Vector2 center = GetCenterPosition();
+    SetCursorPos(static_cast<int>(center.x), static_cast<int>(center.y));
+    
     CMainSingleton::PostMaster().Send({ EMessageType::CursorHideAndLock, nullptr });
 }
 
@@ -204,6 +214,7 @@ void CWindowHandler::ShowAndUnlockCursor()
     while (::ShowCursor(TRUE) < 0);
     SetCapture(nullptr);
     myCursorIsLocked = false;
+    myWindowIsInEditingMode = true;
     CMainSingleton::PostMaster().Send({ EMessageType::CursorShowAndUnlock, nullptr });
 }
 
