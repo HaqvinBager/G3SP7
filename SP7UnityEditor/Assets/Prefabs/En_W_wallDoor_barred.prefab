@@ -14,7 +14,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!4 &6412989915285095717
 Transform:
@@ -24,7 +24,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 962488656423433541}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -2, y: 2, z: -0.10000023}
+  m_LocalPosition: {x: -2, y: 1.25, z: -0.10000023}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4554847938873541753}
@@ -45,7 +45,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!4 &2975412255659049649
 Transform:
@@ -146,6 +146,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: InvisibleWall
       objectReference: {fileID: 0}
+    - target: {fileID: 5270224700119544999, guid: 5efc2394befc0e74baf4d4e34400e8a6,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4294967295
+      objectReference: {fileID: 0}
     - target: {fileID: 6440199494546149526, guid: 5efc2394befc0e74baf4d4e34400e8a6,
         type: 3}
       propertyPath: m_Size.x
@@ -164,17 +169,17 @@ PrefabInstance:
     - target: {fileID: 6440199494546149526, guid: 5efc2394befc0e74baf4d4e34400e8a6,
         type: 3}
       propertyPath: m_Center.x
-      value: 0.0021145344
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6440199494546149526, guid: 5efc2394befc0e74baf4d4e34400e8a6,
         type: 3}
       propertyPath: m_Center.y
-      value: -0.72829103
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6440199494546149526, guid: 5efc2394befc0e74baf4d4e34400e8a6,
         type: 3}
       propertyPath: m_Center.z
-      value: -0.0016625822
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5efc2394befc0e74baf4d4e34400e8a6, type: 3}
@@ -256,6 +261,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: En_W_wallDoor_barred
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 5dc235cf7e1736446847dd2922021f10,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4294967295
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5dc235cf7e1736446847dd2922021f10, type: 3}
