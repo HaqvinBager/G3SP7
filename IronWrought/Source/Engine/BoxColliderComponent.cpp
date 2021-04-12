@@ -7,17 +7,17 @@
 #include "RigidDynamicBody.h"
 #include "TransformComponent.h"
 
-CBoxColliderComponent::CBoxColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const Vector3& aBoxSize, bool aIsStatic, PxMaterial* aMaterial)
+CBoxColliderComponent::CBoxColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const Vector3& aBoxSize, const bool aIsTrigger, PxMaterial* aMaterial)
 	: CBehaviour(aParent)
 	, myShape(nullptr)
 	, myPositionOffset(aPositionOffset)
 	, myBoxSize(aBoxSize)
 	, myMaterial(aMaterial)
+	, myIsTrigger(aIsTrigger)
 {
 	if (myMaterial == nullptr) {
 		myMaterial = CEngine::GetInstance()->GetPhysx().CreateMaterial(CPhysXWrapper::materialfriction::basic);
 	}
-	aIsStatic;
 }
 
 CBoxColliderComponent::~CBoxColliderComponent()

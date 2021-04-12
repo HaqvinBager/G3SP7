@@ -405,7 +405,7 @@ void CSceneManager::AddCollider(CScene& aScene, RapidArray someData)
 			inertiaTensor.x = c["inertiaTensor"]["x"].GetFloat();
 			inertiaTensor.y = c["inertiaTensor"]["y"].GetFloat();
 			inertiaTensor.z = c["inertiaTensor"]["z"].GetFloat();
-			gameObject->AddComponent<CRigidBodyComponent>(*gameObject, mass, localCenterMass, inertiaTensor, isKinematic, isTrigger);
+			gameObject->AddComponent<CRigidBodyComponent>(*gameObject, mass, localCenterMass, inertiaTensor, isKinematic);
 		}
 
 		Vector3 posOffset;
@@ -424,20 +424,20 @@ void CSceneManager::AddCollider(CScene& aScene, RapidArray someData)
 			boxSize.x = c["boxSize"]["x"].GetFloat();
 			boxSize.y = c["boxSize"]["y"].GetFloat();
 			boxSize.z = c["boxSize"]["z"].GetFloat();
-			gameObject->AddComponent<CBoxColliderComponent>(*gameObject, posOffset, boxSize, isStatic, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(dynamicFriction, staticFriction, bounciness));
+			gameObject->AddComponent<CBoxColliderComponent>(*gameObject, posOffset, boxSize, isTrigger, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(dynamicFriction, staticFriction, bounciness));
 		}
 			break;
 		case ColliderType::SphereCollider:
 		{
 			float radius = c["sphereRadius"].GetFloat();
-			gameObject->AddComponent<CSphereColliderComponent>(*gameObject, posOffset, radius, isStatic, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(dynamicFriction, staticFriction, bounciness));
+			gameObject->AddComponent<CSphereColliderComponent>(*gameObject, posOffset, radius, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(dynamicFriction, staticFriction, bounciness));
 		}
 			break;
 		case ColliderType::CapsuleCollider:
 		{
 			float radius = c["capsuleRadius"].GetFloat();
 			float height = c["capsuleHeight"].GetFloat();
-			gameObject->AddComponent<CCapsuleColliderComponent>(*gameObject, posOffset, radius, height, isStatic, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(dynamicFriction, staticFriction, bounciness));
+			gameObject->AddComponent<CCapsuleColliderComponent>(*gameObject, posOffset, radius, height, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(dynamicFriction, staticFriction, bounciness));
 		}
 		break;
 		case ColliderType::MeshCollider:
