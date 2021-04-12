@@ -61,7 +61,12 @@ public:
 	static CSceneFactory* Get();
 	void LoadScene(const std::string& aSceneName, const CStateStack::EState aState, std::function<void(std::string)> onComplete = nullptr);
 	void LoadSceneAsync(const std::string& aSceneName, const CStateStack::EState aState, std::function<void(std::string)> onComplete);
+	void Transition(const std::string& aFromScene, const std::string& aToScene, const std::string& aTransitionScene);
 	void Update();
+
+private:
+	void OnTransitionComplete();
+	CSceneSetup FillSceneAsync(const std::string& aSceneName, std::function<void()> onComplete);
 
 private:
 	CSceneFactory();
@@ -69,6 +74,9 @@ private:
 	static CSceneFactory* ourInstance;
 
 private:
+
+	std::future<CSceneSetup> myTransitionThread;
+
 	std::future<CScene*> myFuture;
 	std::function<void(std::string)> myOnComplete;
 	std::string myLastSceneName;

@@ -7,20 +7,24 @@
 
 void CContactReportCallback::onWake(physx::PxActor** actors, physx::PxU32 count)
 {
-	for (physx::PxU32 actorIndex = 0; actorIndex < count; actorIndex++)
-	{
-		const std::string* actorName = static_cast<std::string*>(actors[actorIndex]->userData);
-		std::cout << (*actorName) << " woke up and begun exploring the world" << std::endl;
-	}
+	actors;
+	count;
+	//for (physx::PxU32 actorIndex = 0; actorIndex < count; actorIndex++)
+	//{
+	//	const std::string* actorName = static_cast<std::string*>(actors[actorIndex]->userData);
+	//	std::cout << (*actorName) << " woke up and begun exploring the world" << std::endl;
+	//}
 }
 
 void CContactReportCallback::onSleep(physx::PxActor** actors, physx::PxU32 count)
 {
-	for (physx::PxU32 actorIndex = 0; actorIndex < count; actorIndex++)
-	{
-		const std::string* actorName = static_cast<std::string*>(actors[actorIndex]->userData);
-		std::cout << (*actorName) << " fell asleep and dreamt" << std::endl;
-	}
+	actors;
+	count;
+	//for (physx::PxU32 actorIndex = 0; actorIndex < count; actorIndex++)
+	//{
+	//	const std::string* actorName = static_cast<std::string*>(actors[actorIndex]->userData);
+	//	std::cout << (*actorName) << " fell asleep and dreamt" << std::endl;
+	//}
 }
 
 void CContactReportCallback::onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 count)

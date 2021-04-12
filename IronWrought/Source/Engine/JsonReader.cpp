@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "JsonReader.h"
 #include <filesystem>
+#include "ModelFactory.h"
 
 namespace fs = std::filesystem;
 
@@ -57,6 +58,16 @@ void CJsonReader::InitFromGenerated()
 	{
 		myPathsMap[vertexColor["id"].GetInt()] = vertexColor["path"].GetString();
 	}
+
+	for (const auto& path : myPathsMap)
+	{
+		std::string substr = path.second.substr(path.second.size() - 4, 4);
+		if (substr == ".fbx" && path.second.find("Animat") == std::string::npos)
+		{
+			CModelFactory::GetInstance()->GetModel(ASSETPATH(path.second));
+		}
+	}
+
 }
 
 const bool CJsonReader::HasAssetPath(const int anAssetID) const

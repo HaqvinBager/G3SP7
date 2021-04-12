@@ -85,13 +85,13 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneJson)
 	//scene->MainCamera(camera->GetComponent<CCameraComponent>());
 
 	const auto doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + aSceneJson + "/" + aSceneJson + ".json"));
-	if(doc.HasParseError())
+	if (doc.HasParseError())
 		return nullptr;
 
 	if (!doc.HasMember("Root"))
 		return nullptr;
 
- 	SVertexPaintCollection vertexPaintData = CBinReader::LoadVertexPaintCollection(doc["Root"].GetString());
+	SVertexPaintCollection vertexPaintData = CBinReader::LoadVertexPaintCollection(doc["Root"].GetString());
 	const auto& scenes = doc.GetObjectW()["Scenes"].GetArray();
 	for (const auto& sceneData : scenes)
 	{
@@ -153,7 +153,8 @@ bool CSceneManager::AddGameObjects(CScene& aScene, RapidArray someData)
 
 void CSceneManager::SetTransforms(CScene& aScene, RapidArray someData)
 {
-	for (const auto& t : someData) {
+	for (const auto& t : someData)
+	{
 		int id = t["instanceID"].GetInt();
 		CTransformComponent* transform = aScene.FindObjectWithID(id)->myTransform;
 		transform->Scale({ t["scale"]["x"].GetFloat(),
@@ -170,7 +171,8 @@ void CSceneManager::SetTransforms(CScene& aScene, RapidArray someData)
 
 void CSceneManager::AddModelComponents(CScene& aScene, RapidArray someData)
 {
-	for (const auto& m : someData) {
+	for (const auto& m : someData)
+	{
 		const int instanceId = m["instanceID"].GetInt();
 		CGameObject* gameObject = aScene.FindObjectWithID(instanceId);
 		if (!gameObject)
@@ -217,14 +219,16 @@ void CSceneManager::SetVertexPaintedColors(CScene& aScene, RapidArray someData, 
 
 void CSceneManager::AddInstancedModelComponents(CScene& aScene, RapidArray someData)
 {
-	for (const auto& i : someData) {
+	for (const auto& i : someData)
+	{
 		int assetID = i["assetID"].GetInt();
 		CGameObject* gameObject = new CGameObject(assetID);
 		gameObject->IsStatic(true);
 		std::vector<Matrix> instancedModelTransforms;
 		instancedModelTransforms.reserve(i["transforms"].GetArray().Size());
 
-		for (const auto& t : i["transforms"].GetArray()) {
+		for (const auto& t : i["transforms"].GetArray())
+		{
 			CGameObject temp(0);
 			CTransformComponent transform(temp);
 			transform.Scale({ t["scale"]["x"].GetFloat(),
@@ -261,19 +265,20 @@ void CSceneManager::AddDirectionalLight(CScene& aScene, RapidObject someData)
 		*gameObject,
 		someData["cubemapName"].GetString(),
 		Vector3(someData["r"].GetFloat(),
-			someData["g"].GetFloat(),
-			someData["b"].GetFloat()),
+		someData["g"].GetFloat(),
+		someData["b"].GetFloat()),
 		someData["intensity"].GetFloat(),
 		Vector3(someData["direction"]["x"].GetFloat(),
-			someData["direction"]["y"].GetFloat(),
-			someData["direction"]["z"].GetFloat())
-	);
+		someData["direction"]["y"].GetFloat(),
+		someData["direction"]["z"].GetFloat())
+		);
 	aScene.EnvironmentLight(gameObject->GetComponent<CEnvironmentLightComponent>()->GetEnvironmentLight());
 }
 
 void CSceneManager::AddPointLights(CScene& aScene, RapidArray someData)
 {
-	for (const auto& pointLight : someData) {
+	for (const auto& pointLight : someData)
+	{
 		const auto& id = pointLight["instanceID"].GetInt();
 
 		CGameObject* gameObject = aScene.FindObjectWithID(id);
@@ -293,7 +298,8 @@ void CSceneManager::AddPointLights(CScene& aScene, RapidArray someData)
 
 void CSceneManager::AddDecalComponents(CScene& aScene, RapidArray someData)
 {
-	for (const auto& decal : someData) {
+	for (const auto& decal : someData)
+	{
 		CGameObject* gameObject = aScene.FindObjectWithID(decal["instanceID"].GetInt());
 		gameObject->AddComponent<CDecalComponent>(*gameObject, decal["materialName"].GetString());
 	}
@@ -329,7 +335,7 @@ void CSceneManager::AddPlayer(CScene& aScene/*, RapidObject someData*/)
 	CGameObject* gravityGloveSlot = new CGameObject(99);
 	gravityGloveSlot->myTransform->Scale(0.1f);
 	gravityGloveSlot->myTransform->SetParent(camera->myTransform);
-	gravityGloveSlot->myTransform->Position({0.f, 0.f, 1.5f});
+	gravityGloveSlot->myTransform->Position({ 0.f, 0.f, 1.5f });
 	//std::string gravitytestpath = ASSETPATH("Assets/Graphics/Environmentprops/Static_props/EN_P_Tetrapod.fbx");
 	//gravityGloveSlot->AddComponent<CModelComponent>(*gravityGloveSlot, gravitytestpath);
 	camera->AddComponent<CGravityGloveComponent>(*camera, gravityGloveSlot->myTransform);
@@ -356,8 +362,8 @@ void CSceneManager::AddEnemyComponents(CScene& aScene, RapidArray someData)
 
 		SEnemySetting settings;
 		settings.myDistance = m["distance"].GetFloat();
-		settings.myRadius= m["radius"].GetFloat();
-		settings.mySpeed= m["speed"].GetFloat();
+		settings.myRadius = m["radius"].GetFloat();
+		settings.mySpeed = m["speed"].GetFloat();
 		settings.myHealth = m["health"].GetFloat();
 		gameObject->AddComponent<CEnemyComponent>(*gameObject, settings);
 	}
@@ -379,7 +385,8 @@ void CSceneManager::AddCollider(CScene& aScene, RapidArray someData)
 		bool isStatic = c.HasMember("isStatic") ? c["isStatic"].GetBool() : false;
 
 		CRigidBodyComponent* rigidBody = gameObject->GetComponent<CRigidBodyComponent>();
-		if (rigidBody == nullptr && isStatic == false) {
+		if (rigidBody == nullptr && isStatic == false)
+		{
 			float mass = c["mass"].GetFloat();
 			Vector3 localCenterMass;
 			localCenterMass.x = c["localMassPosition"]["x"].GetFloat();
@@ -401,34 +408,37 @@ void CSceneManager::AddCollider(CScene& aScene, RapidArray someData)
 		float staticFriction = c["staticFriction"].GetFloat();
 		float bounciness = c["bounciness"].GetFloat();
 
-		switch (colliderType) {
-		case ColliderType::BoxCollider:
+		switch (colliderType)
 		{
-			Vector3 boxSize;
-			boxSize.x = c["boxSize"]["x"].GetFloat();
-			boxSize.y = c["boxSize"]["y"].GetFloat();
-			boxSize.z = c["boxSize"]["z"].GetFloat();
-			gameObject->AddComponent<CBoxColliderComponent>(*gameObject, posOffset, boxSize, isStatic, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(dynamicFriction, staticFriction, bounciness));
-		}
+		case ColliderType::BoxCollider:
+			{
+				Vector3 boxSize;
+				boxSize.x = c["boxSize"]["x"].GetFloat();
+				boxSize.y = c["boxSize"]["y"].GetFloat();
+				boxSize.z = c["boxSize"]["z"].GetFloat();
+				CBoxColliderComponent* boxCollider = gameObject->AddComponent<CBoxColliderComponent>(*gameObject, posOffset, boxSize, isStatic, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(dynamicFriction, staticFriction, bounciness));
+				if (c.HasMember("isTrigger"))
+					boxCollider->IsTrigger(c["isTrigger"].GetBool());
+			}
 			break;
 		case ColliderType::SphereCollider:
-		{
-			float radius = c["sphereRadius"].GetFloat();
-			gameObject->AddComponent<CSphereColliderComponent>(*gameObject, posOffset, radius, isStatic, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(dynamicFriction, staticFriction, bounciness));
-		}
+			{
+				float radius = c["sphereRadius"].GetFloat();
+				gameObject->AddComponent<CSphereColliderComponent>(*gameObject, posOffset, radius, isStatic, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(dynamicFriction, staticFriction, bounciness));
+			}
 			break;
 		case ColliderType::CapsuleCollider:
-		{
-			float radius = c["capsuleRadius"].GetFloat();
-			float height = c["capsuleHeight"].GetFloat();
-			gameObject->AddComponent<CCapsuleColliderComponent>(*gameObject, posOffset, radius, height, isStatic, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(dynamicFriction, staticFriction, bounciness));
-		}
-		break;
+			{
+				float radius = c["capsuleRadius"].GetFloat();
+				float height = c["capsuleHeight"].GetFloat();
+				gameObject->AddComponent<CCapsuleColliderComponent>(*gameObject, posOffset, radius, height, isStatic, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(dynamicFriction, staticFriction, bounciness));
+			}
+			break;
 		case ColliderType::MeshCollider:
-		{
-			gameObject->AddComponent<CConvexMeshColliderComponent>(*gameObject, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(dynamicFriction, staticFriction, bounciness));
-		}
-		break;
+			{
+				gameObject->AddComponent<CConvexMeshColliderComponent>(*gameObject, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(dynamicFriction, staticFriction, bounciness));
+			}
+			break;
 		}
 	}
 }
@@ -483,4 +493,27 @@ void CSceneFactory::Update()
 		CEngine::GetInstance()->SetActiveScene(myLastLoadedState);
 		myOnComplete(myLastSceneName);
 	}
+}
+
+void CSceneFactory::Transition(const std::string& aFromScene, const std::string& aToScene, const std::string& aTransitionScene)
+{
+	aTransitionScene;
+	aToScene;
+	aFromScene;
+	//myTransitionThread = std::async(std::launch::async, &CSceneFactory::FillSceneAsync, aToScene, [this] () { OnTransitionComplete(); });
+
+}
+
+CSceneSetup CSceneFactory::FillSceneAsync(const std::string& aSceneName, std::function<void()> /*onComplete*/)
+{
+	aSceneName;
+	//OnComplete;
+	CSceneSetup setup;
+
+	return setup;
+}
+
+void CSceneFactory::OnTransitionComplete()
+{
+
 }

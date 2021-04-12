@@ -59,8 +59,15 @@ void CBoxColliderComponent::CreateBoxCollider()
 
 		PxVec3 pos = { translation.x, translation.y, translation.z };
 		PxQuat pxQuat = { quat.x, quat.y, quat.z, quat.w };
+		
 		PxRigidStatic* actor = CEngine::GetInstance()->GetPhysx().GetPhysics()->createRigidStatic({ pos, pxQuat });
+		if (myIsTrigger)
+		{
+			myShape->setFlag(PxShapeFlag::Enum::eSIMULATION_SHAPE, false);
+			myShape->setFlag(PxShapeFlag::Enum::eTRIGGER_SHAPE, true);
+		}
 		actor->attachShape(*myShape);
+		
 		CEngine::GetInstance()->GetPhysx().GetPXScene()->addActor(*actor);
 	}
 }

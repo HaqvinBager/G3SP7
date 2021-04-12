@@ -6,7 +6,7 @@
 #include "PostMaster.h"
 #include "Canvas.h"
 #include "PlayerControllerComponent.h"
-
+#include <SceneManager.h>
 
 
 
@@ -59,6 +59,11 @@ void CPlayerComponent::Update()
 		resetHealth();
 		setIsAlive(true);
 
+	}
+	if (Input::GetInstance()->IsKeyPressed('N'))
+	{
+		CSceneFactory::Get()->Transition("PhysXTest_1-1", "PhysXTest_1-2", "StreamPhysX_1-1_1-2");
+		//CMainSingleton::PostMaster().Send({ EMessageType::LoadLevel, "Load Level!" });
 	}
 }
 

@@ -20,6 +20,7 @@ public struct ColliderLink
     public float dynamicFriction;
     public float staticFriction;
     public float bounciness;
+    public bool isTrigger;
 }
 // 1 - BoxCollider
 // 2 - SphereCollider
@@ -53,6 +54,7 @@ public class ExportCollider : MonoBehaviour
                 ColliderLink link = new ColliderLink();
                 link.instanceID = collider.transform.GetInstanceID();
                 link.isStatic = collider.gameObject.isStatic;
+                link.isTrigger = collider.isTrigger;
 
                 Rigidbody rigidbody = collider.GetComponent<Rigidbody>();
                 link.mass = rigidbody.mass;

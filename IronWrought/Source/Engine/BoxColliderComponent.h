@@ -21,6 +21,9 @@ public:
 
 	void CreateBoxCollider();
 
+	const bool IsTrigger() const { return myIsTrigger; }
+	void IsTrigger(bool aState) { myIsTrigger = aState; }
+
 	void OnEnable() override;
 	void OnDisable() override;
 private:
@@ -28,5 +31,6 @@ private:
 	physx::PxMaterial* myMaterial;
 	Vector3 myPositionOffset;
 	Vector3 myBoxSize;
+	bool myIsTrigger;
 };
 

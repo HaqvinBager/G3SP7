@@ -43,8 +43,6 @@ void CCameraControllerComponent::Start()
 
 void CCameraControllerComponent::Update()
 {
-	if (!CEngine::GetInstance()->GetWindowHandler()->CursorLocked())
-		return;
 
 #ifdef  _DEBUG
 	// TEMPORARY
@@ -66,6 +64,8 @@ void CCameraControllerComponent::Update()
 			CEngine::GetInstance()->GetWindowHandler()->HideAndLockCursor();
 	}
 	// ! TEMPORARY
+	if (!CEngine::GetInstance()->GetWindowHandler()->CursorLocked())
+		return;
 
 	if (Input::GetInstance()->IsKeyPressed(/*std::toupper(myToggleFreeCam)*/myToggleFreeCam)) {
 		myCameraMode = myCameraMode == ECameraMode::FreeCam ? ECameraMode::PlayerFirstPerson : ECameraMode::FreeCam;
