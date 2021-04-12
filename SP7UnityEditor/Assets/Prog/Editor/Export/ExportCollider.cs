@@ -15,6 +15,7 @@ public struct ColliderLink
     public float capsuleRadius;
     public bool isStatic;
     public bool isKinematic;
+    public bool isTrigger;
     public float mass;
     public Vector3 localMassPosition;
     public Vector3 inertiaTensor;
@@ -55,6 +56,7 @@ public class ExportCollider : MonoBehaviour
                 ColliderLink link = new ColliderLink();
                 link.instanceID = collider.transform.GetInstanceID();
                 link.isStatic = collider.gameObject.isStatic;
+                link.isTrigger = collider.isTrigger;
 
                 Rigidbody rigidbody = collider.GetComponent<Rigidbody>();
                 link.mass = rigidbody.mass;

@@ -11,13 +11,14 @@
 //{
 //}
 
-CRigidBodyComponent::CRigidBodyComponent(CGameObject& aParent, const float& aMass, const Vector3& aLocalCenterMass, const Vector3& aInertiaTensor, const bool aIsKinematic)
+CRigidBodyComponent::CRigidBodyComponent(CGameObject& aParent, const float& aMass, const Vector3& aLocalCenterMass, const Vector3& aInertiaTensor, const bool aIsKinematic, const bool aIsTrigger)
 	: CComponent(aParent)
 	, myDynamicRigidBody(nullptr)
 	, myMass(aMass)
 	, myLocalCenterMass(aLocalCenterMass)
 	, myInertiaTensor(aInertiaTensor)
 	, myIsKinematic(aIsKinematic)
+	, myIsTrigger(aIsTrigger)
 {
 }
 
