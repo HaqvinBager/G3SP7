@@ -25,6 +25,7 @@ CCanvas::CCanvas() :
 	, myIsHUDCanvas(false)
 	, myCurrentRenderLayer(0)
 	, myLevelToLoad("Level_1-1")
+	, myCurrentWidgetIndex(-1)
 {
 }
 
@@ -347,11 +348,13 @@ void CCanvas::Init(const std::string& aFilePath, CScene& aScene, bool addToScene
 			{
 				myWidgets.push_back(new CCanvas());
 				myWidgets[i]->Init(ASSETPATH(widgetsArray[i]["Path"].GetString()), aScene, true, myPivot, myPosition, 3);
+				myWidgets[i]->SetEnabled(false);
 			}
 		}
 		for (int i = 0; i < currentSize; ++i)
 		{
 			myWidgets[i]->Init(ASSETPATH(widgetsArray[i]["Path"].GetString()), aScene, true, myPivot, myPosition, 3);
+			myWidgets[i]->SetEnabled(false);
 		}
 	}
 
@@ -426,6 +429,11 @@ void CCanvas::Update()
 			myButtons[i]->Click(false, &myLevelToLoad);
 		}
 	}
+
+	for (auto& widget : myWidgets)
+	{
+		widget->Update();
+	}
 }
 
 void CCanvas::Receive(const SMessage& aMessage)
@@ -450,20 +458,37 @@ void CCanvas::Receive(const SMessage& aMessage)
 					return;
 				PostMaster::SCrossHairData* aData = reinterpret_cast<PostMaster::SCrossHairData*>(aMessage.data);
 				mySprites[0]->PlayAnimationUsingInternalData(aData->myIndex, aData->myShouldBeReversed);
-			}
-			break;
-			
+			}break;
+
 			default:
 				break;
 		}
 	}
 	else
 	{
-		//switch (aMessage.myMessageType)
-		//{
-		//	default:
-		//	break;
-		//}
+		switch (aMessage.myMessageType)
+		{
+			case EMessageType::ToggleWidget:
+			{
+				if (myWidgets.empty())
+					return;
+
+				int index = *static_cast<int*>(aMessage.data);
+				if (index > -1 && index < myWidgets.size())
+				{
+					if (myCurrentWidgetIndex != -1)
+					{
+						myWidgets[myCurrentWidgetIndex]->SetEnabled(false);
+					}
+
+					myCurrentWidgetIndex = index;
+					myWidgets[myCurrentWidgetIndex]->SetEnabled(true);
+				}
+			}break;
+
+			default:
+			break;
+		}
 	}
 
 	// Not sure how we are supposed to handle this:
@@ -483,6 +508,8 @@ void CCanvas::SubscribeToMessages()
 	{
 		CMainSingleton::PostMaster().Subscribe(messageType, this);
 	}
+
+	CMainSingleton::PostMaster().Subscribe(EMessageType::ToggleWidget, this);
 }
 
 void CCanvas::UnsubscribeToMessages()
@@ -491,6 +518,8 @@ void CCanvas::UnsubscribeToMessages()
 	{
 		CMainSingleton::PostMaster().Unsubscribe(messageType, this);
 	}
+
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::ToggleWidget, this);
 }
 
 bool CCanvas::GetEnabled()
@@ -519,10 +548,11 @@ void CCanvas::SetEnabled(bool isEnabled)
 		for (auto& animUI : myAnimatedUIs)
 			animUI->SetShouldRender(myIsEnabled);
 
-		myBackground->SetShouldRender(myIsEnabled);
+		if(myBackground)
+			myBackground->SetShouldRender(myIsEnabled);
 
-		for (auto& widget : myWidgets)
-			widget->SetEnabled(myIsEnabled);
+		//for (auto& widget : myWidgets)
+		//	widget->SetEnabled(myIsEnabled);
 	}
 }
 
@@ -574,7 +604,11 @@ bool CCanvas::InitButton(const rapidjson::GenericObject<false, rapidjson::Value>
 		data.myMessagesToSend[j] = static_cast<EMessageType>(messagesArray[j].GetInt());
 	}
 
-	myButtons[anIndex]->Init(data, aScene);
+	data.myWidgetToToggleIndex = -1;
+	if (aRapidObject.HasMember("Sub Canvas Toggle Index"))
+		data.myWidgetToToggleIndex = aRapidObject["Sub Canvas Toggle Index"].GetInt();
+
+ 	myButtons[anIndex]->Init(data, aScene);
 
 	return true;
 }
@@ -694,6 +728,7 @@ bool CCanvas::InitWidgets(const rapidjson::GenericArray<false, rapidjson::Value>
 	for (int i = 0; i < myWidgets.size(); ++i)
 	{
 		myWidgets[i]->Init(ASSETPATH(aRapidArray[i]["Path"].GetString()), aScene, true, myPivot, myPosition);
+		myWidgets[i]->SetEnabled(false);
 	}
 
 	return true;

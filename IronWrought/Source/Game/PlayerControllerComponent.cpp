@@ -88,7 +88,16 @@ void CPlayerControllerComponent::Update()
 	if (myCamera->IsFreeCamMode() || myCamera->IsCursorUnlocked())
 		return;
 #endif
-	Move({0.0f, myMovement.y, 0.0f});
+
+	if (myIsOnLadder)
+	{
+		LadderUpdate();
+	}
+	else
+	{
+		Move({0.0f, myMovement.y, 0.0f});
+	}
+
 	//Move(myMovement * mySpeed);
 
 	/*if (myPlayerComponent->getIsAlive() == false)
@@ -126,7 +135,7 @@ void CPlayerControllerComponent::Update()
 	{
 		myController->SetPosition(myRespawnPosition);
 	}
-#endif
+#endif // _DEBUG
 }
 
 void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
@@ -198,8 +207,19 @@ void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
 	}
 
 	myMovement.y = y;
-	Move(myMovement * mySpeed);
-	myMovement = { 0.f, myMovement.y,0.f };
+
+	if (myIsOnLadder)
+	{
+		myMovement.y = myMovement.z;
+		myMovement.z = 0.0f;
+		//myMovement = { 0.f, myMovement.y,0.f };
+		Move(myMovement * mySpeed);
+	}
+	else
+	{
+		Move(myMovement * mySpeed);
+		myMovement = { 0.f, myMovement.y,0.f };
+	}
 }
 
 void CPlayerControllerComponent::Move(Vector3 aDir)
@@ -261,4 +281,24 @@ const Vector3 CPlayerControllerComponent::GetLinearVelocity()
 	const PxVec3 pxVec3 = myController->GetController().getActor()->getLinearVelocity();
 	//const Vector3& vec3 = {pxVec3.x, pxVec3.y, pxVec3.z};
 	return {pxVec3.x, pxVec3.y, pxVec3.z};
+}
+
+
+void CPlayerControllerComponent::LadderEnter()
+{
+	myIsOnLadder = !myIsOnLadder;
+}
+
+
+void CPlayerControllerComponent::LadderUpdate()
+{
+	//Best�mmer n�r myIsOnladder s�tts till false
+
+	//G�ra s� att vi g�r upp och ner f�r Ladder n�r vi trycker p� W eller S
+
+	if (Input::GetInstance()->IsKeyPressed('K'))
+	{
+		
+		myIsOnLadder = false;
+	}
 }

@@ -55,5 +55,7 @@ enum class EMessageType
 
 	CameraShake,
 
+	ToggleWidget,
+
 	Count
 };

@@ -48,19 +48,19 @@ int CNodeTypeGameObjectRotateDegrees::OnEnter(CNodeInstance* aTriggeringNodeInst
 	bool stopMovingW = false;
 	bool stopMoving = false;
 
-	if (((b.x - r.x) < 0.01f && (b.x - r.x) > -0.01f))
+	if (((myPreviousRotations[gameObject->InstanceID()].x - r.x) < 0.001f && (myPreviousRotations[gameObject->InstanceID()].x - r.x) > -0.001f))
 	{
 		stopMovingX = true;
 	}
-	if (((b.y - r.y) <  0.01f && (b.y - r.y) > -0.01f))
+	if (((myPreviousRotations[gameObject->InstanceID()].y - r.y) <  0.001f && (myPreviousRotations[gameObject->InstanceID()].y - r.y) > -0.001f))
 	{
 		stopMovingY = true;
 	}
-	if (((b.z - r.z) < 0.01f && (b.z - r.z) > -0.01f))
+	if (((myPreviousRotations[gameObject->InstanceID()].z - r.z) < 0.001f && (myPreviousRotations[gameObject->InstanceID()].z - r.z) > -0.001f))
 	{
 		stopMovingZ = true;
 	}
-	if (((b.w - r.w) < 0.01f && (b.w - r.w) > -0.01f))
+	if (((myPreviousRotations[gameObject->InstanceID()].w - r.w) < 0.001f && (myPreviousRotations[gameObject->InstanceID()].w - r.w) > -0.001f))
 	{
 		stopMovingW = true;
 	}
@@ -70,8 +70,11 @@ int CNodeTypeGameObjectRotateDegrees::OnEnter(CNodeInstance* aTriggeringNodeInst
 		stopMoving = true;
 	}
 
-	if(!stopMoving)
+	if (!stopMoving)
+	{
+		myPreviousRotations[gameObject->InstanceID()] = r;
 		gameObject->myTransform->Rotation(r);
+	}
 
 	std::vector<SPin>& pins = aTriggeringNodeInstance->GetPins();
 	DeclareDataOnPinIfNecessary<bool>(pins[3]);

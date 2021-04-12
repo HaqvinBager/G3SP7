@@ -14,12 +14,14 @@ public struct ColliderLink
     public float capsuleHeight;
     public float capsuleRadius;
     public bool isStatic;
+    public bool isKinematic;
     public float mass;
     public Vector3 localMassPosition;
     public Vector3 inertiaTensor;
     public float dynamicFriction;
     public float staticFriction;
     public float bounciness;
+
 }
 // 1 - BoxCollider
 // 2 - SphereCollider
@@ -58,6 +60,7 @@ public class ExportCollider : MonoBehaviour
                 link.mass = rigidbody.mass;
                 link.localMassPosition = rigidbody.centerOfMass;
                 link.inertiaTensor = rigidbody.inertiaTensor;
+                link.isKinematic = rigidbody.isKinematic;
 
                 link.dynamicFriction = collider.material.dynamicFriction;
                 link.staticFriction = collider.material.staticFriction;
