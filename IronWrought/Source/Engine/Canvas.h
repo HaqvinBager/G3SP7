@@ -70,4 +70,6 @@ private:
 	unsigned int myCurrentRenderLayer;
 
 	bool myIsHUDCanvas;
+
+	int myCurrentWidgetIndex;
 };

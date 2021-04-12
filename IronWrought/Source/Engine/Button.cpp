@@ -36,6 +36,11 @@ void CButton::OnClickUp(void* someData)
 	{
 		CMainSingleton::PostMaster().SendLate({ myMessagesToSend[i],  someData });
 	}
+
+	if (myWidgetToToggleIndex > -1)
+	{
+		CMainSingleton::PostMaster().SendLate({ EMessageType::ToggleWidget, &myWidgetToToggleIndex });
+	}
 }
 
 void CButton::OnLeave()
@@ -48,6 +53,9 @@ void CButton::OnLeave()
 
 void CButton::Click(bool anIsPressed, void* someData)
 {
+	if (!myEnabled)
+		return;
+
 	switch (myState)
 	{
 	case EButtonState::Hover:
@@ -70,6 +78,9 @@ void CButton::Click(bool anIsPressed, void* someData)
 
 void CButton::CheckMouseCollision(DirectX::SimpleMath::Vector2 aScreenSpacePosition)
 {
+	if (!myEnabled)
+		return;
+
 	if 
 		(!(
 			myRect.myBottom < aScreenSpacePosition.y ||
@@ -110,10 +121,11 @@ void CButton::Enabled(const bool& anIsEnabled)
 	if (myEnabled != anIsEnabled)
 	{
 		myEnabled = anIsEnabled;
-		for (auto& sprite : mySprites)
-		{
-			sprite->SetShouldRender(myEnabled);
-		}
+		//for (auto& sprite : mySprites)
+		//{
+			//sprite->SetShouldRender(myEnabled);
+		//}
+		mySprites.at(static_cast<size_t>(EButtonState::Idle))->SetShouldRender(myEnabled);
 	}
 }
 
@@ -133,6 +145,7 @@ CButton::CButton()
 	: myState(EButtonState::Idle)
 	, myEnabled(false)
 	, myIsMouseHover(false)
+	, myWidgetToToggleIndex(-1)
 {}
 
 CButton::CButton(SButtonData& someData, CScene& aScene)
@@ -181,7 +194,6 @@ void CButton::Init(SButtonData& someData, CScene& aScene)
 	mySprites.at(static_cast<size_t>(EButtonState::Hover))->SetShouldRender(false);
 	mySprites.at(static_cast<size_t>(EButtonState::Click))->SetShouldRender(false);
 
-
 	float windowWidth = CEngine::GetInstance()->GetWindowHandler()->GetResolution().x;
 	float windowHeight = CEngine::GetInstance()->GetWindowHandler()->GetResolution().y;
 
@@ -195,4 +207,6 @@ void CButton::Init(SButtonData& someData, CScene& aScene)
 	myRect.myBottom = normalizedPosition.y * windowHeight + spriteDimensions.y;
 	myRect.myLeft = normalizedPosition.x * windowWidth - spriteDimensions.x;
 	myRect.myRight = normalizedPosition.x * windowWidth + spriteDimensions.x;
+
+	myWidgetToToggleIndex = someData.myWidgetToToggleIndex;
 }

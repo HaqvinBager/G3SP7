@@ -13,6 +13,7 @@ struct SButtonData {
 	DirectX::SimpleMath::Vector2 myPosition;
 	DirectX::SimpleMath::Vector2 myDimensions;
 	std::string myText;
+	int myWidgetToToggleIndex;
 };
 
 struct SUIRect {
@@ -57,6 +58,7 @@ private:
 	EButtonState myState;
 	bool myEnabled;
 	bool myIsMouseHover;
+	int myWidgetToToggleIndex;
 	
 };
 

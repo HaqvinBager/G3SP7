@@ -8,36 +8,42 @@
     {
       "Text": "",
       "FontAndFontSize": "Assets/Fonts/MorrisRoman42",
-      "Text Position X": -0.2,
+      "Text Position X": 0.0,
       "Text Position Y": 0.0,
       "Text Pivot X": 0.0,
       "Text Pivot Y": 0.0,
       "Text Color R": 1.5,
       "Text Color G": 0.7,
       "Text Color B": 0.0,
-      "Pixel Width": 320.0,
-      "Pixel Height": 60.0,
+      "Pixel Width": 440.0,
+      "Pixel Height": 30.0,
+      "Sprite Position X": -0.5,
+      "Sprite Position Y": 0.15,
       "Idle Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_IDLE.dds",
-      "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_IDLE.dds",
-      "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_IDLE.dds",
-      "Messages": [ 6 ]
+      "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_HOVER.dds",
+      "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_CLICK.dds",
+      "Messages": [],
+      "Sub Canvas Toggle Index": 2
     },
     {
       "Text": "",
       "FontAndFontSize": "Assets/Fonts/MorrisRoman42",
-      "Text Position X": 0.2,
+      "Text Position X": 0.0,
       "Text Position Y": 0.0,
       "Text Pivot X": 0.0,
       "Text Pivot Y": 0.0,
       "Text Color R": 1.5,
       "Text Color G": 0.7,
       "Text Color B": 0.0,
-      "Pixel Width": 320.0,
-      "Pixel Height": 60.0,
+      "Pixel Width": 440.0,
+      "Pixel Height": 30.0,
+      "Sprite Position X": 0.5,
+      "Sprite Position Y": 0.15,
       "Idle Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_IDLE.dds",
-      "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_IDLE.dds",
-      "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_IDLE.dds",
-      "Messages": [ 4 ]
+      "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_HOVER.dds",
+      "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_CLICK.dds",
+      "Messages": [],
+      "Sub Canvas Toggle Index": 0
     }
   ],
 
@@ -48,7 +54,7 @@
   ],
 
   "Background": {
-    "Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_SettingsBackground.dds"
+    "Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/level22.dds"
   },
 
   "Sprites": [
