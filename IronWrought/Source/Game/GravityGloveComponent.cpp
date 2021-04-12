@@ -38,7 +38,7 @@ void CGravityGloveComponent::Start()
 
 void CGravityGloveComponent::Update()
 {
-	if (Input::GetInstance()->IsMousePressed(Input::EMouseButton::Left)) 
+	if (Input::GetInstance()->IsMousePressed(Input::EMouseButton::Left))
 	{
 		PostMaster::SCrossHairData data; // Wind down
 		data.myIndex = 0;
@@ -47,7 +47,7 @@ void CGravityGloveComponent::Update()
 
 		Push();
 	}
-	if (Input::GetInstance()->IsMousePressed(Input::EMouseButton::Right)) 
+	if (Input::GetInstance()->IsMousePressed(Input::EMouseButton::Right))
 	{
 		Pull();
 	}
@@ -126,12 +126,20 @@ void CGravityGloveComponent::Pull()
 			CMainSingleton::PostMaster().Send({ EMessageType::UpdateCrosshair, &data });
 			return;
 		}
-		
-		PostMaster::SCrossHairData data; // Wind Up
-		data.myIndex = 0;
-		CMainSingleton::PostMaster().Send({ EMessageType::UpdateCrosshair, &data });
 
-		myCurrentTarget = transform->GetComponent<CRigidBodyComponent>();
+		CRigidBodyComponent* rigidbody = nullptr;
+		if (transform->GameObject().TryGetComponent<CRigidBodyComponent>(&rigidbody))
+		{
+			if (!rigidbody->IsKinematic()) {
+				myCurrentTarget = rigidbody;
+				PostMaster::SCrossHairData data; // Wind Up
+				data.myIndex = 0;
+				CMainSingleton::PostMaster().Send({ EMessageType::UpdateCrosshair, &data });
+			 }
+		}
+
+		//myCurrentTarget = transform->GetComponent<CRigidBodyComponent>();
+
 
 	#ifdef _DEBUG
 		CLineInstance* myLine = new CLineInstance();
@@ -163,9 +171,11 @@ void CGravityGloveComponent::Push()
 			CTransformComponent* transform = (CTransformComponent*)hit.getAnyHit(0).actor->userData;
 			if (transform == nullptr)
 				return;
+
 			CRigidBodyComponent* target = transform->GetComponent<CRigidBodyComponent>();
-			if (target) {
-				target->AddForce(-GameObject().myTransform->GetWorldMatrix().Forward(), mySettings.myPushForce * target->GetMass(), EForceMode::EImpulse);
+			if (target != nullptr) {
+				if(!target->IsKinematic())
+					target->AddForce(-GameObject().myTransform->GetWorldMatrix().Forward(), mySettings.myPushForce * target->GetMass(), EForceMode::EImpulse);
 			}
 		}
 	}

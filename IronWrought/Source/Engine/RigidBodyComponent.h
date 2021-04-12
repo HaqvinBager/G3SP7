@@ -24,7 +24,7 @@ enum class EForceMode
 class CRigidBodyComponent : public CComponent
 {
 public:
-	CRigidBodyComponent(CGameObject& aParent, const float& aMass, const Vector3& aLocalCenterMass, const Vector3& aInertiaTensor);
+	CRigidBodyComponent(CGameObject& aParent, const float& aMass, const Vector3& aLocalCenterMass, const Vector3& aInertiaTensor, const bool aIsKinematic);
 
 	~CRigidBodyComponent() override;
 
@@ -44,6 +44,8 @@ public:
 
 	void AttachShape(physx::PxShape* aShape);
 
+	const bool IsKinematic() const { return myIsKinematic; }
+
 	const float GetMass();
 	
 	CRigidDynamicBody* GetDynamicRigidBody() { return myDynamicRigidBody; }
@@ -53,6 +55,7 @@ private:
 private:
 	CRigidDynamicBody* myDynamicRigidBody;
 	float myMass;
+	bool myIsKinematic;
 	Vector3 myLocalCenterMass;
 	Vector3 myInertiaTensor;
 };
