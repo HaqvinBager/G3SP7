@@ -39,7 +39,7 @@ void CPlayerComponent::Start()
 
 void CPlayerComponent::Update()
 {
-
+#ifdef _DEBUG
 	//if (Input::GetInstance()->IsKeyPressed('K'))
 	//{
 	//	myHealth -= 20;
@@ -47,6 +47,7 @@ void CPlayerComponent::Update()
 	//	myHealthPercentage = (myHealth / myMaxHealth);
 	//	CMainSingleton::PostMaster().Send({ EMessageType::PlayerHealthChanged, &myHealthPercentage });
 	//}
+#endif // DEBUG
 
 	if (myHealth <= 0)
 	{
