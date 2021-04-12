@@ -20,7 +20,7 @@ static const float gPretendObjectDistanceFromPlayer = 10.0f;// TEMP
 // TEMP
 static float gPretendObjectCurrentDistance = 0.0f;// TEMP
 
-CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, const float aWalkSpeed, const float aCrouchSpeed)
+CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, const float aWalkSpeed, const float aCrouchSpeed, physx::PxUserControllerHitReport* aHitReport)
 	: CComponent(gameObject)
 	, mySpeed(aWalkSpeed)
 	, myIsCrouching(false)
@@ -44,7 +44,7 @@ CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, 
 	INPUT_MAPPER->AddObserver(EInputEvent::ResetEntities, this);
 	INPUT_MAPPER->AddObserver(EInputEvent::SetResetPointEntities, this);
 
-	myController = CEngine::GetInstance()->GetPhysx().CreateCharacterController(gameObject.myTransform->Position(), myColliderRadius, myColliderHeightStanding, GameObject().myTransform);
+	myController = CEngine::GetInstance()->GetPhysx().CreateCharacterController(gameObject.myTransform->Position(), myColliderRadius, myColliderHeightStanding, GameObject().myTransform, aHitReport);
 	GameObject().myTransform->Position(myController->GetPosition());// This is a test / Aki 2021 03 12
 
 	GameObject().myTransform->FetchChildren()[0]->Position({ 0.0f, myCameraPosYStanding, myCameraPosZ });

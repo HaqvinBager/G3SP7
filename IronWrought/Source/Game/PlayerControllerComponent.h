@@ -7,10 +7,15 @@ class CGameObject;
 class CCameraControllerComponent;
 class CPlayerAnimationController;
 class CPlayerComponent;
+
+namespace physx {
+	class PxUserControllerHitReport;
+}
+
 class CPlayerControllerComponent : public CComponent, public IInputObserver
 {
 public:
-	CPlayerControllerComponent(CGameObject& gameObject, const float aWalkSpeed = 0.03f, const float aCrouchSpeed = 0.03f);
+	CPlayerControllerComponent(CGameObject& gameObject, const float aWalkSpeed = 0.03f, const float aCrouchSpeed = 0.03f, physx::PxUserControllerHitReport* aHitReport = nullptr);
 	~CPlayerControllerComponent() override;
 
 	void Awake() override;

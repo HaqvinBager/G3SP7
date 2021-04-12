@@ -9,14 +9,15 @@
 
 //EnemyComp
 
-CEnemyComponent::CEnemyComponent(CGameObject& aParent, const SEnemySetting& someSettings)
+CEnemyComponent::CEnemyComponent(CGameObject& aParent, const SEnemySetting& someSettings, physx::PxUserControllerHitReport* aHitReport)
 	: CComponent(aParent)
 	, myController(nullptr)
 	, myPlayer(nullptr)
+	, myEnemy(nullptr)
 	, myCurrentState(EBehaviour::Patrol)
 {
 	mySettings = someSettings;
-	myController = CEngine::GetInstance()->GetPhysx().CreateCharacterController(GameObject().myTransform->Position(), 0.6f * 0.5f, 1.8f * 0.5f);
+	myController = CEngine::GetInstance()->GetPhysx().CreateCharacterController(GameObject().myTransform->Position(), 0.6f * 0.5f, 1.8f * 0.5f, GameObject().myTransform, aHitReport);
 }
 
 CEnemyComponent::~CEnemyComponent()
@@ -53,7 +54,7 @@ void CEnemyComponent::Update()//får bestämma vilket behaviour vi vill köra i den
 		((myPlayer->myTransform->Position().z - GameObject().myTransform->Position().z) * ((myPlayer->myTransform->Position().z - GameObject().myTransform->Position().z))));*/
 	mySettings.myDistance = Vector3::DistanceSquared(myPlayer->myTransform->Position(), GameObject().myTransform->Position());
 
-	
+	//myController->Move({ 0.0f, -0.098f, 0.0f }, 1.f);
 
 	if (mySettings.myRadius * mySettings.myRadius >= mySettings.myDistance) {//seek
 		//SetState(EBehaviour::Seek);

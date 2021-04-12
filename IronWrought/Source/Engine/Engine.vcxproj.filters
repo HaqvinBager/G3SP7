@@ -875,6 +875,7 @@
       <Filter>PhysX</Filter>
     </ClCompile>
     <ClCompile Include="NodeTypeUtilityInvertBool.cpp" />
+    <ClCompile Include="EnemyReportCallback.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1607,6 +1608,7 @@
       <Filter>PhysX</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeUtilityInvertBool.h" />
+    <ClInclude Include="EnemyReportCallback.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">

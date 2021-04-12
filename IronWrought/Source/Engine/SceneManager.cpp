@@ -335,7 +335,7 @@ void CSceneManager::AddPlayer(CScene& aScene/*, RapidObject someData*/)
 	camera->AddComponent<CGravityGloveComponent>(*camera, gravityGloveSlot->myTransform);
 	player->AddComponent<CPlayerComponent>(*player);
 
-	player->AddComponent<CPlayerControllerComponent>(*player);// CPlayerControllerComponent constructor sets position of camera child object.
+	player->AddComponent<CPlayerControllerComponent>(*player, 0.03f, 0.03f, CEngine::GetInstance()->GetPhysx().GetPlayerReportBack());// CPlayerControllerComponent constructor sets position of camera child object.
 	player->GetComponent<CPlayerControllerComponent>()->SetControllerPosition({ 0.f, 5.0f,0.0f });
 	aScene.AddInstance(player);
 	aScene.AddInstance(model);
@@ -359,7 +359,7 @@ void CSceneManager::AddEnemyComponents(CScene& aScene, RapidArray someData)
 		settings.myRadius= m["radius"].GetFloat();
 		settings.mySpeed= m["speed"].GetFloat();
 		settings.myHealth = m["health"].GetFloat();
-		gameObject->AddComponent<CEnemyComponent>(*gameObject, settings);
+		gameObject->AddComponent<CEnemyComponent>(*gameObject, settings, CEngine::GetInstance()->GetPhysx().GetEnemyReportBack());
 	}
 }
 

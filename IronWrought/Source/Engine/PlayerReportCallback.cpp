@@ -12,10 +12,10 @@ void CPlayerReportCallback::onShapeHit(const physx::PxControllerShapeHit& hit)
 	if (rigid) {
 		std::cout << rigid->GameObject().InstanceID() << std::endl;
 	}*/
-	CTransformComponent* playerTransform = (CTransformComponent*)hit.controller->getUserData();
-	if (playerTransform) {
-		if (playerTransform->GameObject().GetComponent<CPlayerControllerComponent>()) {
-			if (hit.shape->getGeometryType() != physx::PxGeometryType::eTRIANGLEMESH) {
+	if (hit.actor->userData != nullptr) {
+		CTransformComponent* playerTransform = (CTransformComponent*)hit.controller->getUserData();
+		if (playerTransform) {
+			if (playerTransform->GameObject().GetComponent<CPlayerControllerComponent>()) {
 				CTransformComponent* objectTransform = (CTransformComponent*)hit.actor->userData;
 				CPlayerControllerComponent* player = playerTransform->GameObject().GetComponent<CPlayerControllerComponent>();
 				if (player) {
@@ -34,7 +34,6 @@ void CPlayerReportCallback::onShapeHit(const physx::PxControllerShapeHit& hit)
 							//v = velocity
 							//t = time
 
-							std::cout << "YES" << std::endl;
 						}
 					}
 				}

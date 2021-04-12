@@ -27,6 +27,7 @@ void CContactReportCallback::onTrigger(physx::PxTriggerPair* pairs, physx::PxU32
 {
 	(pairs);
 	(count);
+
 }
 
 void CContactReportCallback::onAdvance(const physx::PxRigidBody* const* bodyBuffer, const physx::PxTransform* poseBuffer, const physx::PxU32 count)

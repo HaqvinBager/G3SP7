@@ -16,6 +16,7 @@
 #include "RigidBodyComponent.h"
 #include "PlayerReportCallback.h"
 #include "ConvexMeshColliderComponent.h"
+#include "EnemyReportCallback.h"
 
 PxFilterFlags contactReportFilterShader(PxFilterObjectAttributes attributes0, PxFilterData filterData0,
 	PxFilterObjectAttributes attributes1, PxFilterData filterData1,
@@ -48,6 +49,8 @@ CPhysXWrapper::CPhysXWrapper()
 	myAllocator = nullptr;
 	myContactReportCallback = nullptr;
 	myControllerManager = nullptr;
+	myPlayerReportCallback = nullptr;
+	myEnemyReportCallback = nullptr;
 }
 
 CPhysXWrapper::~CPhysXWrapper()
@@ -92,7 +95,8 @@ bool CPhysXWrapper::Init()
 
 	// All collisions gets pushed to this class
 	myContactReportCallback = new CContactReportCallback();
-	myCharacterReportCallback = new CPlayerReportCallback();
+	myPlayerReportCallback = new CPlayerReportCallback();
+	myEnemyReportCallback = new CEnemyReportCallback();
     return true;
 }
 
@@ -253,9 +257,9 @@ CRigidDynamicBody* CPhysXWrapper::CreateDynamicRigidbody(const PxTransform& aTra
 	return dynamicBody;
 }
 
-CCharacterController* CPhysXWrapper::CreateCharacterController(const Vector3& aPos, const float& aRadius, const float& aHeight, CTransformComponent* aUserData)
+CCharacterController* CPhysXWrapper::CreateCharacterController(const Vector3& aPos, const float& aRadius, const float& aHeight, CTransformComponent* aUserData, physx::PxUserControllerHitReport* aHitReport)
 {
-	CCharacterController* characterController = new CCharacterController(aPos, aRadius, aHeight, aUserData);
+	CCharacterController* characterController = new CCharacterController(aPos, aRadius, aHeight, aUserData, aHitReport);
 	return characterController;
 }
 
