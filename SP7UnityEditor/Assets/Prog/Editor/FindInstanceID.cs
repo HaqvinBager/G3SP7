@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using UnityEngine.SceneManagement;
 
 public class FindInstanceID : EditorWindow
 {
@@ -18,20 +19,27 @@ public class FindInstanceID : EditorWindow
         findInstanceID = EditorGUILayout.IntField("Instance ID: ", findInstanceID);
         if (GUILayout.Button("Find"))
         {
-            Transform[] transforms = GameObject.FindObjectsOfType<Transform>();
-            foreach (Transform transform in transforms)
+            Scene currentActiveScene = SceneManager.GetActiveScene();
+            int count = SceneManager.sceneCount;
+            for(int i = 0; i < count; ++i)
             {
-                if(transform.GetInstanceID() == findInstanceID)
+                Scene test = SceneManager.GetSceneAt(i);
+                SceneManager.SetActiveScene(test);
+
+                Transform[] transforms = GameObject.FindObjectsOfType<Transform>();
+                foreach (Transform transform in transforms)
                 {
-                    transform.Ping();
-                    return;
+                    if (transform.GetInstanceID() == findInstanceID)
+                    {
+                        transform.Ping();
+                        SceneManager.SetActiveScene(currentActiveScene);
+                        Debug.Log("Found: " + transform.name, transform.gameObject);
+                        return;
+                    }
                 }
             }
-
+            SceneManager.SetActiveScene(currentActiveScene);
             Debug.Log("Did not find Instance ID: " + findInstanceID);
         }
-
-
-
     }
 }
