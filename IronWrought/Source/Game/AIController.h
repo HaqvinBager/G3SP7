@@ -26,7 +26,7 @@ class CSeek: public CAIController
 {
 public:
 	CSeek();
-	~CSeek()override {}
+	~CSeek()override { myTarget = nullptr; }
 	Vector3 Update(Vector3 aPosition) override;
 	void SetTarget(CTransformComponent* aTarget);
 private:

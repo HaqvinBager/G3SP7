@@ -100,6 +100,9 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneJson)
 		if (AddGameObjects(*scene, sceneData["Ids"].GetArray()))
 		{
 			SetTransforms(*scene, sceneData["transforms"].GetArray());
+			if(sceneData.HasMember("parents"))
+				SetParents(*scene, sceneData["parents"].GetArray());
+
 			AddDirectionalLight(*scene, sceneData["directionalLight"].GetObjectW());
 			AddPointLights(*scene, sceneData["lights"].GetArray());
 			AddModelComponents(*scene, sceneData["models"].GetArray());
@@ -175,6 +178,22 @@ void CSceneManager::SetTransforms(CScene& aScene, RapidArray someData)
 		transform->Rotation({ t["rotation"]["x"].GetFloat(),
 							  t["rotation"]["y"].GetFloat(),
 							  t["rotation"]["z"].GetFloat() });
+	}
+}
+
+void CSceneManager::SetParents(CScene& aScene, RapidArray someData)
+{
+	for (const auto& parent : someData)
+	{
+		int parentInstanceID = parent["parent"]["instanceID"].GetInt();
+		CTransformComponent* parentTransform = aScene.FindObjectWithID(parentInstanceID)->myTransform;
+
+		for (const auto& child : parent["children"].GetArray())
+		{
+			int childInstanceID = child["instanceID"].GetInt();
+			CTransformComponent* childTransform = aScene.FindObjectWithID(childInstanceID)->myTransform;
+			childTransform->SetParent(parentTransform);
+		}
 	}
 }
 
