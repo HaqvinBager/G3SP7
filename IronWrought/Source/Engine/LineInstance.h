@@ -40,6 +40,7 @@ public:
 	}
 	
 	void SetTransform(const DirectX::SimpleMath::Vector3& aPosition, const DirectX::SimpleMath::Vector3& aRotation);
+	void SetTransform(const DirectX::SimpleMath::Matrix& aMatrix);
 	void SetPosition(const DirectX::SimpleMath::Vector3& aPosition);
 	void SetRotation(const DirectX::SimpleMath::Vector3& aRotation);
 	void SetRotation(DirectX::SimpleMath::Quaternion aQuaternion);
