@@ -71,6 +71,14 @@ CScene::CScene(const unsigned int aGameObjectCount)
 
 CScene::~CScene()
 {
+	this->ClearGameObjects();
+	this->ClearPointLights();
+	this->ClearSpotLights();
+	this->ClearBoxLights();
+	this->ClearSprites();
+	this->ClearAnimatedUIElement();
+	this->ClearTextInstances();
+
 	myMainCamera = nullptr;
 	delete myEnvironmentLight;
 	myEnvironmentLight = nullptr;
@@ -81,13 +89,8 @@ CScene::~CScene()
 	myVFXTester = nullptr;
 	myPlayer = nullptr;
 
-	this->ClearGameObjects();
-	this->ClearPointLights();
-	this->ClearSpotLights();
-	this->ClearBoxLights();
-	this->ClearSprites();
-	this->ClearAnimatedUIElement();
-	this->ClearTextInstances();
+	myIDGameObjectMap.clear();
+	myComponentMap.clear();
 
 #ifdef _DEBUG
 	myGrid = nullptr;

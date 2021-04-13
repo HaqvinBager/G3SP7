@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "MainMenuState.h"
+#include "EngineDefines.h"
 
 #include "SceneManager.h"
 #include "GameObject.h"
@@ -75,6 +76,9 @@ void CMainMenuState::Receive(const SMessage& aMessage)
 		case EMessageType::StartGame:
 		{
 			std::string scene = *reinterpret_cast<std::string*>(aMessage.data);
+#ifdef _DEBUG
+			std::cout << __FUNCTION__ << " Loading scene: " << scene << std::endl;
+#endif
 			CSceneFactory::Get()->LoadScene(scene, CStateStack::EState::InGame, [this](std::string aJson) { CMainMenuState::OnComplete(aJson); });
 			this->myStateStack.PushState(CStateStack::EState::InGame);
 		}break;
@@ -91,7 +95,7 @@ void CMainMenuState::Receive(const SMessage& aMessage)
 void CMainMenuState::OnComplete(std::string aSceneThatHasBeenSuccessfullyLoaded)
 {
 #ifdef _DEBUG
-	std::cout << "Scene Load Complete!" << aSceneThatHasBeenSuccessfullyLoaded << std::endl;
+	std::cout << __FUNCTION__ << "Scene Load Complete!" << aSceneThatHasBeenSuccessfullyLoaded << std::endl;
 #endif
 
 	CEngine::GetInstance()->LoadGraph(aSceneThatHasBeenSuccessfullyLoaded);
