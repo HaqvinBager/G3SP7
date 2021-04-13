@@ -24,9 +24,9 @@ CGame::~CGame()
 void CGame::Init()
 {
 #ifdef NDEBUG
-	InitDev();
-#else
 	InitRealGame();
+#else
+	InitDev();
 #endif
 
 }
