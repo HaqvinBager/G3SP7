@@ -13,5 +13,7 @@ MonoBehaviour:
   m_Name: SG Level
   m_EditorClassIdentifier: 
   myScenes:
+  - sceneAsset: {fileID: 102900000, guid: ebcef00aec2767c4a888fb06d8ffc626, type: 3}
+    scenePath: Assets/Scenes/SG Asset Gym/Layout.unity
   - sceneAsset: {fileID: 102900000, guid: 006625c7fca36de479bb8e361ecdbf65, type: 3}
-    scenePath: Assets/Scenes/SG Asset Gym/Asset Gym.unity
+    scenePath: Assets/Scenes/SG Asset Gym/Level_Asset_Gym.unity
