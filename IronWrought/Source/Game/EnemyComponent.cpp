@@ -39,7 +39,8 @@ void CEnemyComponent::Start()
 		}));*/
 
 	CSeek* seekBehaviour = new CSeek();
-	seekBehaviour->SetTarget(myPlayer->myTransform);
+	if(myPlayer != nullptr)
+		seekBehaviour->SetTarget(myPlayer->myTransform);
 	//myBehaviours.push_back(seekBehaviour);
 
 	//myBehaviours.push_back(new CAttack());

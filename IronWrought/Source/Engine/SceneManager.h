@@ -35,6 +35,7 @@ private:
 
 	static bool AddGameObjects(CScene& aScene, RapidArray someData);
 	static void SetTransforms(CScene& aScene, RapidArray someData);
+	static void SetParents(CScene& aScene, RapidArray someData);
 	static void AddModelComponents(CScene& aScene, RapidArray someData);
 	static void SetVertexPaintedColors(CScene& aScene, RapidArray someData, const SVertexPaintCollection& vertexColorData);
 
