@@ -5,7 +5,7 @@ using UnityEditor;
 
 public class FindInstanceID : EditorWindow
 {
-    [MenuItem("Help/Find Instance ID")]
+    [MenuItem("IronWrought/Find Instance ID")]
     public static void Find()
     {
         EditorWindow.CreateWindow<FindInstanceID>();
