@@ -765,11 +765,17 @@ bool CScene::ClearTextInstances()
 
 bool CScene::ClearGameObjects()
 {
-	for (auto& gameObject : myGameObjects)
+	// So that we can see which index might be giving us issues.
+	for (size_t i = 0; i < myGameObjects.size(); ++i)
 	{
-		delete gameObject;
-		gameObject = nullptr;
+		delete myGameObjects[i];
+		myGameObjects[i] = nullptr;
 	}
+	//for (auto& gameObject : myGameObjects)
+	//{
+	//	delete gameObject;
+	//	gameObject = nullptr;
+	//}
 	myGameObjects.clear();
 	return true;
 }

@@ -151,11 +151,6 @@ void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
 	}
 #endif
 
-	if (myMovement.x != 0.0f || myMovement.z != 0.0f)
-	{
-		//myAnimationComponentController->Walk();
-	}
-
 	float y = myMovement.y;
 
 	switch (aEvent)
@@ -297,9 +292,9 @@ void CPlayerControllerComponent::LadderEnter()
 
 void CPlayerControllerComponent::LadderUpdate()
 {
-	//Bestämmer när myIsOnladder sätts till false
+	//Bestï¿½mmer nï¿½r myIsOnladder sï¿½tts till false
 
-	//Göra så att vi går upp och ner för Ladder när vi trycker på W eller S
+	//Gï¿½ra sï¿½ att vi gï¿½r upp och ner fï¿½r Ladder nï¿½r vi trycker pï¿½ W eller S
 
 	if (Input::GetInstance()->IsKeyPressed('K'))
 	{
