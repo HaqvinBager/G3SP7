@@ -172,6 +172,12 @@ void CScene::CanvasIsHUD()
 		myCanvas->IsHUDCanvas(true);
 }
 
+void CScene::DisableWidgetsOnCanvas()
+{
+	if (myCanvas)
+		myCanvas->DisableWidgets();
+}
+
 //No longer needed due to Components Awake being called via EMessageType "AddComponent"
 void CScene::Awake()
 {
@@ -207,6 +213,9 @@ void CScene::Update()
 
 	for (auto& gameObject : myGameObjects)
 		gameObject->LateUpdate();
+
+	if (myCanvas)
+		myCanvas->Update();
 }
 
 void CScene::InitAnyNewComponents()
@@ -276,13 +285,6 @@ void CScene::ShouldRenderLineInstance(const bool aShouldRender)
 #else
 	aShouldRender;
 #endif //  _DEBUG
-}
-void CScene::UpdateCanvas()
-{
-	if (myCanvas)
-	{
-		myCanvas->Update();
-	}
 }
 //SETTERS END
 //GETTERS START

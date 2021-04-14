@@ -71,19 +71,6 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneJson)
 {
 	CScene* scene = Instantiate();
 
-	//SSceneSetup sceneSetup = {};
-	//auto iter = sceneSetup.myGameObjects.push_back(new CGameObject(0));
-	//(*iter)->AddComponent<CCameraComponent>();
-	//CScene* scene = Instantiate();
-
-	//CGameObject* camera = new CGameObject(0);
-	//camera->AddComponent<CCameraComponent>(*camera);//Default Fov is 70.0f
-	//camera->AddComponent<CCameraControllerComponent>(*camera); //Default speed is 2.0f
-	//camera->myTransform->Position({ 0.0f, 1.0f, 0.0f });
-
-	//scene->AddInstance(camera);
-	//scene->MainCamera(camera->GetComponent<CCameraComponent>());
-
 	const auto doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + aSceneJson + "/" + aSceneJson + ".json"));
 	if(doc.HasParseError())
 		return nullptr;

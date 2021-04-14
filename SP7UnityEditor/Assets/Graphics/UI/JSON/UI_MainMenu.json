@@ -22,7 +22,8 @@
       "Idle Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_IDLE.dds",
       "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_HOVER.dds",
       "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_CLICK.dds",
-      "Messages": [ 6 ]
+      "Messages": [ 6 ],
+      "Sub Canvas Toggle Index": 4
     },
     {
       "Text": "",
@@ -126,6 +127,7 @@
     { "Path": "Assets/Graphics/UI/JSON/UI_MainMenu_Level_1-1.json" },
     { "Path": "Assets/Graphics/UI/JSON/UI_MainMenu_Level_1-2.json" },
     { "Path": "Assets/Graphics/UI/JSON/UI_MainMenu_Level_2-1.json" },
-    { "Path": "Assets/Graphics/UI/JSON/UI_MainMenu_Level_2-2.json" }
+    { "Path": "Assets/Graphics/UI/JSON/UI_MainMenu_Level_2-2.json" },
+    { "Path": "Assets/Graphics/UI/JSON/UI_LoadingScreen.json" }
   ]
 }

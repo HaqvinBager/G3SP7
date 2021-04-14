@@ -47,6 +47,8 @@ public:
 	bool InitCanvas(const std::string& aPath);
 	bool ReInitCanvas(const std::string& aPath);
 	void CanvasIsHUD();
+	/*void UpdateCanvas()*/;
+	void DisableWidgetsOnCanvas();
 
 //SETUP END
 
@@ -72,7 +74,7 @@ public:
 #ifdef _DEBUG
 	bool ShouldRenderLineInstance() { return myShouldRenderLineInstance; }
 #endif
-	void UpdateCanvas();
+	
 //SETTERS END
 public:
 	template <class T>

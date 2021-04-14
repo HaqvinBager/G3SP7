@@ -42,50 +42,11 @@ CCanvas::~CCanvas()
 	}
 	myButtons.clear();
 
-	// Scene takes ownership of sprites/ texts etc.
-	/*delete myBackground;
-	myBackground = nullptr;
-
-	CScene& scene = IRONWROUGHT_ACTIVE_SCENE;
-
-	for (size_t i = 0; i < myAnimatedUIs.size(); ++i)
+	for (size_t i = 0; i < myWidgets.size(); ++i)
 	{
-		scene.RemoveInstance(myAnimatedUIs[i]);
-		delete myAnimatedUIs[i];
-		myAnimatedUIs[i] = nullptr;
+		delete myWidgets[i];
+		myWidgets[i] = nullptr;
 	}
-	myAnimatedUIs.clear();
-
-	for (size_t i = 0; i < myButtons.size(); ++i)
-	{
-			delete myButtons[i];
-			myButtons[i] = nullptr;
-	}
-	myButtons.clear();
-
-	for (size_t i = 0; i < mySprites.size(); ++i)
-	{
-		scene.RemoveInstance(mySprites[i]);
-		delete mySprites[i];
-		mySprites[i] = nullptr;
-	}
-	mySprites.clear();
-
-	for (size_t i = 0; i < myButtonTexts.size(); ++i)
-	{
-		scene.RemoveInstance(myButtonTexts[i]);
-		delete myButtonTexts[i];
-		myButtonTexts[i] = nullptr;
-	}
-	myButtonTexts.clear();
-
-	for (size_t i = 0; i < myTexts.size(); ++i)
-	{
-		scene.RemoveInstance(myTexts[i]);
-		delete myTexts[i];
-		myTexts[i] = nullptr;
-	}
-	myTexts.clear();*/
 }
 
 inline const Vector2& CCanvas::Position() const
@@ -96,7 +57,7 @@ inline const Vector2& CCanvas::Position() const
 inline void CCanvas::Position(const Vector2& aPosition)
 {
 	myPosition = aPosition;
-	// Go through everything and set positions relative to new position
+	UpdatePositions();
 }
 
 inline const Vector2& CCanvas::Pivot() const
@@ -107,7 +68,8 @@ inline const Vector2& CCanvas::Pivot() const
 inline void CCanvas::Pivot(const Vector2& aPivot)
 {
 	myPivot = aPivot;
-	// Go through everything and set positions relative to new pivot
+	myPosition -= myPivot;
+	UpdatePositions();
 }
 
 void CCanvas::ClearFromScene(CScene& aScene)
@@ -473,6 +435,8 @@ void CCanvas::Receive(const SMessage& aMessage)
 				if (myWidgets.empty())
 					return;
 
+				DisableWidgets();
+
 				int index = *static_cast<int*>(aMessage.data);
 				if (index > -1 && index < myWidgets.size())
 				{
@@ -553,6 +517,15 @@ void CCanvas::SetEnabled(bool isEnabled)
 
 		//for (auto& widget : myWidgets)
 		//	widget->SetEnabled(myIsEnabled);
+	}
+}
+
+void CCanvas::DisableWidgets()
+{
+	for (auto& widget : myWidgets)
+	{
+		widget->SetEnabled(false);
+		widget->DisableWidgets();
 	}
 }
 
@@ -732,4 +705,44 @@ bool CCanvas::InitWidgets(const rapidjson::GenericArray<false, rapidjson::Value>
 	}
 
 	return true;
+}
+
+void CCanvas::UpdatePositions()
+{
+	for (auto& sprite : mySprites)
+	{
+		sprite->SetPosition(sprite->GetPosition() - myPosition);
+	}
+
+	for (auto& animated : myAnimatedUIs)
+	{
+		animated->SetPosition(animated->GetPosition() - myPosition);
+	}
+
+	for (auto& button : myButtons)
+	{
+		auto& sprite1 = button->mySprites[0];
+		auto& sprite2 = button->mySprites[1];
+		auto& sprite3 = button->mySprites[2];
+		sprite1->SetPosition(sprite1->GetPosition() - myPosition);
+		sprite2->SetPosition(sprite2->GetPosition() - myPosition);
+		sprite3->SetPosition(sprite3->GetPosition() - myPosition);
+	}
+
+	for (auto& text : myButtonTexts)
+	{
+		text->SetPosition(text->GetPosition() - myPosition);
+	}
+
+	for (auto& text : myTexts)
+	{
+		text->SetPosition(text->GetPosition() - myPosition);
+	}
+
+	myBackground->SetPosition(myBackground->GetPosition() - myPosition);
+
+	for (auto& canvas : myWidgets)
+	{
+		canvas->Position(canvas->Position() - myPosition);
+	}
 }

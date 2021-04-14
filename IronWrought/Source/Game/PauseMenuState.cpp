@@ -39,17 +39,15 @@ void CPauseMenuState::Stop()
 
 void CPauseMenuState::Update()
 {
-	IRONWROUGHT->ShowCursor();
-	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
-	{
-		gameObject->Update();
-	}
-	IRONWROUGHT->GetActiveScene().UpdateCanvas();
+	/*IRONWROUGHT->ShowCursor();*/
+	/*IRONWROUGHT->GetActiveScene().UpdateCanvas();*/
 
+#ifdef _DEBUG
 	if (INPUT->IsKeyPressed('R'))
 	{
 		IRONWROUGHT->GetActiveScene().ReInitCanvas(ASSETPATH("Assets/Graphics/UI/JSON/UI_PauseMenu.json"));
 	}
+#endif
 
 	if (Input::GetInstance()->IsKeyPressed(VK_ESCAPE))
 	{
@@ -70,15 +68,15 @@ void CPauseMenuState::Receive(const SMessage& aMessage)
 		{
 			if (this->myStateStack.PopUntil(CStateStack::EState::MainMenu, false) == false)
 			{
-				// This is used when InitDevMode has been called in CGame
+				// This is used when InitDevMode has been called in CGame.
 				this->myStateStack.PushState(CStateStack::EState::MainMenu);
 			}
 		}break;
 
 		case EMessageType::Resume:
 		{
-			this->myStateStack.PopState();
-			this->myStateStack.GetTop()->Start();
+			myStateStack.PopState();
+			myStateStack.GetTop()->Start();
 		}break;
 
 		default:break;

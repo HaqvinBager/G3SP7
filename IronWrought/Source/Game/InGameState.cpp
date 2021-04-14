@@ -54,8 +54,7 @@ void CInGameState::Start()
 {
 	CEngine::GetInstance()->SetActiveScene(myState);
 	IRONWROUGHT->GetActiveScene().CanvasIsHUD();
-	//TEMP_VFX(&CEngine::GetInstance()->GetActiveScene());
-
+	IRONWROUGHT->HideCursor();
 	myExitLevel = false;
 }
 
@@ -67,8 +66,7 @@ void CInGameState::Stop()
 
 void CInGameState::Update()
 {
-
-	IRONWROUGHT->GetActiveScene().UpdateCanvas();
+	/*IRONWROUGHT->GetActiveScene().UpdateCanvas();*/
 
 	if (Input::GetInstance()->IsKeyPressed(VK_ESCAPE))
 	{
