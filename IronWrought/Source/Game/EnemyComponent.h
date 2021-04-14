@@ -1,6 +1,6 @@
 #pragma once
 #include "Component.h"
-
+#define PI 3.14159265f
 class CAIController;
 class CCharacterController;
 class CGameObject;
@@ -35,6 +35,20 @@ public:
 	void TakeDamage();
 	void SetState(EBehaviour aState);
 	const EBehaviour GetState()const;
+
+
+public:
+	float WrapAngle(float anAngle)
+	{
+		return fmodf(anAngle, 360.0f);
+	}
+
+	float ToDegrees(float anAngleInRadians)
+	{
+		return anAngleInRadians * (180.0f / PI);
+	}
+
+
 private:
 	CCharacterController* myController;
 	std::vector<CAIController*> myBehaviours;
@@ -44,6 +58,8 @@ private:
 	SEnemySetting mySettings;
 	std::vector<Vector3> myPatrolPositions;
 	Quaternion myPatrolRotation;
+	float myYaw;
+	float myPitch;
 	
 };
 

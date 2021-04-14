@@ -17,6 +17,8 @@ CEnemyComponent::CEnemyComponent(CGameObject& aParent, const SEnemySetting& some
 {
 	mySettings = someSettings;
 	myController = CEngine::GetInstance()->GetPhysx().CreateCharacterController(GameObject().myTransform->Position(), 0.6f * 0.5f, 1.8f * 0.5f);
+	myPitch = 0.0f;
+	myYaw = 0.0f;
 }
 
 CEnemyComponent::~CEnemyComponent()
@@ -47,7 +49,7 @@ void CEnemyComponent::Update()//får bestämma vilket behaviour vi vill köra i den
 {
 	mySettings.myDistance = Vector3::DistanceSquared(myPlayer->myTransform->Position(), GameObject().myTransform->Position());
 
-	if (mySettings.myRadius * mySettings.myRadius >= mySettings.myDistance) {//seek
+	if (mySettings.myRadius * mySettings.myRadius >= mySettings.myDistance) {
 		SetState(EBehaviour::Seek);
 		//float attackDistance = 2.0f; //example will probably be more complicated in the future; 
 		//if (mySettings.myDistance <= attackDistance) {
@@ -55,12 +57,16 @@ void CEnemyComponent::Update()//får bestämma vilket behaviour vi vill köra i den
 			/*TakeDamage();*/
 		//}
 	}
-	else {//patrol
+	else {
 		SetState(EBehaviour::Patrol);
 	}
-	Vector3 newDirection = myBehaviours[static_cast<int>(myCurrentState)]->Update(GameObject().myTransform->Position());
-	newDirection.Normalize();
-	GameObject().myTransform->Rotation(myPatrolRotation.CreateFromYawPitchRoll(newDirection.y, 0.0f, 0.0f));
+	Vector3 newDirection = myBehaviours[static_cast<int>(myCurrentState)]->Update(GameObject().myTransform->Position()); // current
+	//DirectX::SimpleMath::Matrix::CreateFromAxisAngle(newDirection,);
+	//DirectX::SimpleMath::Matrix::CreateLookAt(, newDirection, {0.0f,1.0f,0.0f});
+	//GameObject().myTransform->Rotation(myPatrolRotation.CreateFromYawPitchRoll(newDirection.y, 0.0f, 0.0f));
+	myYaw = WrapAngle(myYaw + newDirection.x);
+	//myPitch = std::clamp((myPitch + newDirection.y), ToDegrees(-PI / 2.0f), ToDegrees(PI / 2.0f));
+	GameObject().myTransform->Rotation({ 0, myYaw, 0});
 	myController->Move(newDirection, mySettings.mySpeed);
 	GameObject().myTransform->Position(myController->GetPosition());
 }
