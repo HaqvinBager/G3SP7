@@ -101,6 +101,7 @@ bool CPhysXWrapper::Init()
 		return false;
 	}
 	//Omg är det såhär vi kopplar vårt program till PVD Debuggern?! :D
+	//ja!!
 	PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate("localhost", 5425, 10);
 	myPhysicsVisualDebugger->connect(*transport, PxPvdInstrumentationFlag::eALL);
 	PxTolerancesScale scale;

@@ -142,12 +142,12 @@ void CGravityGloveComponent::Pull()
 
 
 	#ifdef _DEBUG
-		CLineInstance* myLine = new CLineInstance();
-		CLineInstance* myLine2 = new CLineInstance();
-		myLine->Init(CLineFactory::GetInstance()->CreateLine(start, { hit.getAnyHit(0).position.x, hit.getAnyHit(0).position.y, hit.getAnyHit(0).position.z }, { 0,255,0,255 }));
-		myLine2->Init(CLineFactory::GetInstance()->CreateLine(start, start + (dir * 5.f), { 255,0,0,255 }));
-		CEngine::GetInstance()->GetActiveScene().AddInstance(myLine);
-		CEngine::GetInstance()->GetActiveScene().AddInstance(myLine2);
+		//CLineInstance* myLine = new CLineInstance();
+		//CLineInstance* myLine2 = new CLineInstance();
+		//myLine->Init(CLineFactory::GetInstance()->CreateLine(start, { hit.getAnyHit(0).position.x, hit.getAnyHit(0).position.y, hit.getAnyHit(0).position.z }, { 0,255,0,255 }));
+		//myLine2->Init(CLineFactory::GetInstance()->CreateLine(start, start + (dir * 5.f), { 255,0,0,255 }));
+		//CEngine::GetInstance()->GetActiveScene().AddInstance(myLine);
+		//CEngine::GetInstance()->GetActiveScene().AddInstance(myLine2);
 	#endif
 	}
 	//myCurrentTarget->SetPosition(myGravitySlot->WorldPosition());
