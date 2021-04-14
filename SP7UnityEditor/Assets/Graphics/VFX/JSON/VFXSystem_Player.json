@@ -1,0 +1,122 @@
+{
+  "VFXEffects": [
+    {
+      "Name": "Pull",
+      "VFXMeshes": [
+        {
+          "Path": "Assets/Graphics/VFX/JSON/Data/VFXMeshData_Beam.json",
+          "Offset X": 0.20000000298023225,
+          "Offset Y": -0.800000011920929,
+          "Offset Z": 0.0,
+          "Rotation X": 0.0,
+          "Rotation Y": -10.0,
+          "Rotation Z": 0.0,
+          "Scale X": 1.0,
+          "Scale Y": 1.0,
+          "Scale Z": 1.0,
+          "Rotate X per second": 0.0,
+          "Rotate Y per second": 0.0,
+          "Rotate Z per second": 0.0,
+          "Orbit": false,
+          "Delay": 0.0,
+          "Duration": 0.30000001192092898
+        },
+        {
+          "Path": "Assets/Graphics/VFX/JSON/Data/VFXMeshData_BigSprial.json",
+          "Offset X": 0.20000000298023225,
+          "Offset Y": -0.800000011920929,
+          "Offset Z": 0.0,
+          "Rotation X": 0.0,
+          "Rotation Y": -10.0,
+          "Rotation Z": 0.0,
+          "Scale X": 1.0,
+          "Scale Y": 1.0,
+          "Scale Z": 1.0,
+          "Rotate X per second": 0.0,
+          "Rotate Y per second": 0.0,
+          "Rotate Z per second": 0.0,
+          "Orbit": false,
+          "Delay": 0.0,
+          "Duration": 0.30000001192092898
+        },
+        {
+          "Path": "Assets/Graphics/VFX/JSON/Data/VFXMeshData_SmallSpiral.json",
+          "Offset X": 0.20000000298023225,
+          "Offset Y": -0.800000011920929,
+          "Offset Z": 0.0,
+          "Rotation X": 0.0,
+          "Rotation Y": -10.0,
+          "Rotation Z": 0.0,
+          "Scale X": 1.0,
+          "Scale Y": 1.0,
+          "Scale Z": 1.0,
+          "Rotate X per second": 0.0,
+          "Rotate Y per second": 0.0,
+          "Rotate Z per second": 0.0,
+          "Orbit": false,
+          "Delay": 0.0,
+          "Duration": 0.30000001192092898
+        }
+      ],
+      "ParticleSystems": [
+        {
+          "Path": "Assets/Graphics/VFX/JSON/Data/ParticleData_PullStar.json",
+          "Offset X": 0.0,
+          "Offset Y": -0.30000001192092898,
+          "Offset Z": 2.700000047683716,
+          "Rotation X": 0.0,
+          "Rotation Y": -10.0,
+          "Rotation Z": 0.0,
+          "Scale": 1.0,
+          "Rotate X per second": 0.0,
+          "Rotate Y per second": 0.0,
+          "Rotate Z per second": 0.0,
+          "Orbit": false,
+          "Delay": 0.0,
+          "Duration": 0.30000001192092898
+        }
+      ]
+    },
+    {
+      "Name": "Push",
+      "VFXMeshes": [
+        {
+          "Path": "Assets/Graphics/VFX/JSON/Data/VFXMeshData_Smallbeam.json",
+          "Offset X": 0.09000000357627869,
+          "Offset Y": -0.030000001192092897,
+          "Offset Z": -1.0999999046325684,
+          "Rotation X": 15.0,
+          "Rotation Y": 88.0,
+          "Rotation Z": 0.0,
+          "Scale X": 1.0,
+          "Scale Y": 1.0,
+          "Scale Z": 1.0,
+          "Rotate X per second": 0.0,
+          "Rotate Y per second": 0.0,
+          "Rotate Z per second": 0.0,
+          "Orbit": false,
+          "Delay": 0.0,
+          "Duration": 0.30000001192092898
+        }
+      ],
+      "ParticleSystems": [
+        {
+          "Path": "Assets/Graphics/VFX/JSON/Data/ParticleData_PullSpark.json",
+          "Offset X": 0.09000000357627869,
+          "Offset Y": -0.009999999776482582,
+          "Offset Z": -0.10000000149011612,
+          "Rotation X": 0.0,
+          "Rotation Y": 0.0,
+          "Rotation Z": 0.0,
+          "Scale": 1.0,
+          "Rotate X per second": 0.0,
+          "Rotate Y per second": 0.0,
+          "Rotate Z per second": 0.0,
+          "Orbit": false,
+          "Delay": 0.0,
+          "Duration": 0.30000001192092898
+        }
+      ]
+    }
+  ]
+}
