@@ -64,11 +64,11 @@ void CGraphManager::Load(const std::string& aSceneName)
 	//Scene = Data som relaterar till Just denna Scen, kan alltid n�s n�r Scene �r ig�ng
 	//Script = Data som relaterar till just detta script
 
-#ifdef DEBUG
+#ifdef _DEBUG
 	myRunScripts = false;
 #else
 	myRunScripts = true;
-#endif // DEBUG
+#endif // _DEBUG
 
 
 	if (!CNodeDataManager::Get())

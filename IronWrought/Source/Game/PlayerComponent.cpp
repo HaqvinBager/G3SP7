@@ -7,10 +7,6 @@
 #include "Canvas.h"
 #include "PlayerControllerComponent.h"
 
-
-
-
-
 CPlayerComponent::CPlayerComponent(CGameObject& gameObject) 
 
 	: CComponent(gameObject),
@@ -30,11 +26,13 @@ CPlayerComponent::~CPlayerComponent()
 
 void CPlayerComponent::Awake()
 {
+
 }
 
 void CPlayerComponent::Start()
 {
 	myPlayerController = GameObject().GetComponent<CPlayerControllerComponent>();
+	
 }
 
 void CPlayerComponent::Update()
@@ -78,4 +76,23 @@ void CPlayerComponent::setIsAlive(bool setAlive)
 void CPlayerComponent::resetHealth()
 {
 	myHealth = 100.0f;
+}
+
+void CPlayerComponent::Receive(const SMessage& aMessage)
+{
+	if (aMessage.myMessageType == EMessageType::LockPlayer)
+	{
+		std::cout << "Lock Player Triggered" << std::endl;
+		//myPlayerController->
+	}
+}
+
+void CPlayerComponent::OnEnable()
+{
+	CMainSingleton::PostMaster().Subscribe(EMessageType::LockPlayer, this);
+}
+
+void CPlayerComponent::OnDisable()
+{
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::LockPlayer, this);
 }

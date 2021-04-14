@@ -33,7 +33,6 @@ CCameraControllerComponent::~CCameraControllerComponent()
 void CCameraControllerComponent::Awake()
 {
 	myCamera = CEngine::GetInstance()->GetActiveScene().MainCamera();
-	CEngine::GetInstance()->GetWindowHandler()->HideAndLockCursor();
 }
 
 void CCameraControllerComponent::Start()
@@ -43,6 +42,10 @@ void CCameraControllerComponent::Start()
 
 void CCameraControllerComponent::Update()
 {
+	// ! TEMPORARY ???
+	if (!CEngine::GetInstance()->GetWindowHandler()->CursorLocked())
+		return;
+
 #ifdef  _DEBUG
 	// TEMPORARY
 	if (Input::GetInstance()->IsKeyPressed(VK_F1))
@@ -63,9 +66,6 @@ void CCameraControllerComponent::Update()
 			CEngine::GetInstance()->GetWindowHandler()->HideAndLockCursor();
 	}
 #endif
-	// ! TEMPORARY
-	if (!CEngine::GetInstance()->GetWindowHandler()->CursorLocked())
-		return;
 
 #ifdef  _DEBUG
 	if (Input::GetInstance()->IsKeyPressed(/*std::toupper(myToggleFreeCam)*/myToggleFreeCam)) {

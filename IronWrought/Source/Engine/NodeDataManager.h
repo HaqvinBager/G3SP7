@@ -20,6 +20,7 @@ public:
 		std::string myNodeTypeName;
 		void* myData;
 		EDataType myDataType;
+		bool myShouldSave;
 	};
 
 	~CNodeDataManager();
@@ -47,7 +48,7 @@ public:
 	}
 
 	template <typename T>
-	void SetData(const std::string& aNodeTypeName, const EDataType& aDataType, const T& aValue)
+	void SetData(const std::string& aNodeTypeName, const EDataType& aDataType, const T& aValue, const bool& aWouldLikeToSave = true)
 	{
 		/*std::hash<std::string> hasher;*/
 		size_t hash = Hasher::GetHashValue(aNodeTypeName);//hasher(aNodeTypeName);
@@ -61,7 +62,7 @@ public:
 			}
 		}
 
-		myNodeData.push_back({ aNodeTypeName, new T(aValue), aDataType });
+		myNodeData.push_back({ aNodeTypeName, new T(aValue), aDataType, aWouldLikeToSave });
 	}
 
 	void RemoveData(const std::string& aNodeTypeName)

@@ -72,19 +72,6 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneJson)
 {
 	CScene* scene = Instantiate();
 
-	//SSceneSetup sceneSetup = {};
-	//auto iter = sceneSetup.myGameObjects.push_back(new CGameObject(0));
-	//(*iter)->AddComponent<CCameraComponent>();
-	//CScene* scene = Instantiate();
-
-	//CGameObject* camera = new CGameObject(0);
-	//camera->AddComponent<CCameraComponent>(*camera);//Default Fov is 70.0f
-	//camera->AddComponent<CCameraControllerComponent>(*camera); //Default speed is 2.0f
-	//camera->myTransform->Position({ 0.0f, 1.0f, 0.0f });
-
-	//scene->AddInstance(camera);
-	//scene->MainCamera(camera->GetComponent<CCameraComponent>());
-
 	const auto doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + aSceneJson + "/" + aSceneJson + ".json"));
 	if(doc.HasParseError())
 		return nullptr;
@@ -110,6 +97,8 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneJson)
 			SetVertexPaintedColors(*scene, sceneData["vertexColors"].GetArray(), vertexPaintData);
 			AddDecalComponents(*scene, sceneData["decals"].GetArray());
 			AddCollider(*scene, sceneData["colliders"].GetArray());
+			if (sceneData.HasMember("triggerEvents"))
+				AddTriggerEvents(*scene, sceneData["triggerEvents"].GetArray());
 			AddEnemyComponents(*scene, sceneData["enemies"].GetArray());
 
 			if (sceneName.find("Layout") != std::string::npos)//Om Unity Scene Namnet innehåller nyckelordet "Layout"
@@ -448,6 +437,38 @@ void CSceneManager::AddCollider(CScene& aScene, RapidArray someData)
 			gameObject->AddComponent<CConvexMeshColliderComponent>(*gameObject, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(dynamicFriction, staticFriction, bounciness));
 		}
 		break;
+		}
+	}
+}
+
+/*
+triggerEvents :  [
+	{
+		"instanceID" : 1234,
+		"events" : [
+			"eventType" : 42
+		]
+		//evt lägga till collisionfilter : 5125
+	}
+]
+*/
+
+void CSceneManager::AddTriggerEvents(CScene& aScene, RapidArray someData)
+{
+	for (const auto& triggerEvent : someData)
+	{
+		int instanceID = triggerEvent["instanceID"].GetInt();
+		CGameObject* gameObject = aScene.FindObjectWithID(instanceID);
+
+		CBoxColliderComponent* triggerVolume = nullptr;
+		if (gameObject->TryGetComponent<CBoxColliderComponent>(&triggerVolume))
+		{
+			for (const auto& eventData : triggerEvent["events"].GetArray())
+			{
+				SMessage triggerMessage = {};
+				triggerMessage.myMessageType = static_cast<EMessageType>(eventData["eventType"].GetInt());
+				triggerVolume->RegisterEventTriggerMessage(triggerMessage);
+			}
 		}
 	}
 }

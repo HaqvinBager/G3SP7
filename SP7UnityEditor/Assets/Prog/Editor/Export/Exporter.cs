@@ -111,6 +111,7 @@ public class Exporter
         Json.AddToExport(ExportCollider.Export(aSceneName, instanceIDs.Ids));
         Json.AddToExport(EnemyExporter.Export(aSceneName));
         Json.AddToExport(ExportParents.Export(aSceneName));
+        Json.AddToExport(ExportEventTrigger.Export(aSceneName));
         Json.AddToExport(ExportInstancedModel.Export(aSceneName), true);
     }
 
