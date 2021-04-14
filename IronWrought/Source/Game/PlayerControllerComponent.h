@@ -45,7 +45,8 @@ public:
 	const float FallSpeed() const { return myFallSpeed; }
 	void FallSpeed(const float aSpeed) { myFallSpeed = aSpeed; }
 
-	void LadderEnter(CRigidBodyComponent* ladderEnter);
+	void LadderEnter();
+	void LadderExit();
 private:
 	void LadderUpdate();
 
@@ -60,10 +61,10 @@ private:
 	Vector3 myMovement;
 	float mySpeed;
 
-	bool myCanJump;
+	bool myIsGrounded;
 	bool myIsJumping;
 	bool myHasJumped;
-	bool myIsOnLadder;
+	bool myLadderHasTriggered;
 
 	bool myIsCrouching;
 	float myWalkSpeed;
@@ -71,7 +72,7 @@ private:
 	float myJumpHeight;
 	float myFallSpeed;
 
-	CRigidBodyComponent* myLadder;
+	//CRigidBodyComponent* myLadder;
 
 	// 0.6f is player width from GDD
 	const float myColliderRadius = 0.6f * 0.5f;

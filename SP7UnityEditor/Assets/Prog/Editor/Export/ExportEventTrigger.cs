@@ -6,13 +6,13 @@ using UnityEngine;
 public struct EventData
 {
     public Transform instanceID;
-    public List<EventType> eventTypes;
+    public string gameEvent;
 }
 
 [System.Serializable]
 public struct EventCollection
 {
-    public List<EventData> events;
+    public List<EventData> triggerEvents;
 }
 
 public class ExportEventTrigger 
@@ -21,7 +21,16 @@ public class ExportEventTrigger
     public static EventCollection Export(string aScene)
     {
         EventCollection collection = new EventCollection();
-        collection.events = new List<EventData>();
+        collection.triggerEvents = new List<EventData>();
+
+        IronEvent[] ironEvents = GameObject.FindObjectsOfType<IronEvent>();
+        foreach (IronEvent ironEvent in ironEvents)
+        {
+            collection.triggerEvents.Add(new EventData { 
+                instanceID = ironEvent.transform, 
+                gameEvent = ironEvent.eventObject.name 
+            });
+        }
 
         return collection;
     }

@@ -12,5 +12,5 @@ public enum IronEventType
 public class IronEvent : MonoBehaviour
 {
     public IronEventType eventType;
-    public BaseEvent eventObject;
+    public GameEvent eventObject;
 }
