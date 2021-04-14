@@ -16,6 +16,7 @@
 #include "RigidBodyComponent.h"
 #include "PlayerReportCallback.h"
 #include "ConvexMeshColliderComponent.h"
+#include "EnemyReportCallback.h"
 
 PxFilterFlags contactReportFilterShader(PxFilterObjectAttributes attributes0, PxFilterData filterData0,
 	PxFilterObjectAttributes attributes1, PxFilterData filterData1,
@@ -29,11 +30,30 @@ PxFilterFlags contactReportFilterShader(PxFilterObjectAttributes attributes0, Px
 	PX_UNUSED(constantBlock);
 
 	// all initial and persisting reports for everything, with per-point data
-	pairFlags = PxPairFlag::eCONTACT_DEFAULT
+	/*pairFlags = PxPairFlag::eCONTACT_DEFAULT
 		| PxPairFlag::eNOTIFY_TOUCH_FOUND
 		| PxPairFlag::eNOTIFY_TOUCH_PERSISTS
 		| PxPairFlag::eNOTIFY_CONTACT_POINTS
+		| PxPairFlag::eDETECT_CCD_CONTACT
+		| PxPairFlag::eTRIGGER_DEFAULT;
+
+	return PxFilterFlag::eDEFAULT;*/
+
+	if (PxFilterObjectIsTrigger(attributes0) || PxFilterObjectIsTrigger(attributes1))
+	{
+		pairFlags = PxPairFlag::eTRIGGER_DEFAULT;
+		return PxFilterFlag::eDEFAULT;
+	}
+	// generate contacts for all that were not filtered above
+	pairFlags = PxPairFlag::eCONTACT_DEFAULT | PxPairFlag::eNOTIFY_TOUCH_FOUND
+		| PxPairFlag::eNOTIFY_TOUCH_PERSISTS
+		| PxPairFlag::eNOTIFY_CONTACT_POINTS
 		| PxPairFlag::eDETECT_CCD_CONTACT;
+
+	// trigger the contact callback for pairs (A,B) where
+	// the filtermask of A contains the ID of B and vice versa.
+	if ((filterData0.word0 & filterData1.word1) && (filterData1.word0 & filterData0.word1))
+		pairFlags |= PxPairFlag::eNOTIFY_TOUCH_FOUND;
 
 	return PxFilterFlag::eDEFAULT;
 }
@@ -48,6 +68,8 @@ CPhysXWrapper::CPhysXWrapper()
 	myAllocator = nullptr;
 	myContactReportCallback = nullptr;
 	myControllerManager = nullptr;
+	myPlayerReportCallback = nullptr;
+	myEnemyReportCallback = nullptr;
 }
 
 CPhysXWrapper::~CPhysXWrapper()
@@ -79,6 +101,7 @@ bool CPhysXWrapper::Init()
 		return false;
 	}
 	//Omg är det såhär vi kopplar vårt program till PVD Debuggern?! :D
+	//ja!!
 	PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate("localhost", 5425, 10);
 	myPhysicsVisualDebugger->connect(*transport, PxPvdInstrumentationFlag::eALL);
 	PxTolerancesScale scale;
@@ -92,7 +115,8 @@ bool CPhysXWrapper::Init()
 
 	// All collisions gets pushed to this class
 	myContactReportCallback = new CContactReportCallback();
-	myCharacterReportCallback = new CPlayerReportCallback();
+	myPlayerReportCallback = new CPlayerReportCallback();
+	myEnemyReportCallback = new CEnemyReportCallback();
     return true;
 }
 
@@ -104,7 +128,7 @@ PxScene* CPhysXWrapper::CreatePXScene(CScene* aScene)
 	sceneDesc.cpuDispatcher = myDispatcher;
 	sceneDesc.filterShader = contactReportFilterShader;
 	sceneDesc.simulationEventCallback = myContactReportCallback;
-	sceneDesc.flags |= PxSceneFlag::eENABLE_CCD;
+	sceneDesc.flags = PxSceneFlag::eENABLE_CCD;
 
 
 	PxScene* pXScene = myPhysics->createScene(sceneDesc);
@@ -253,9 +277,9 @@ CRigidDynamicBody* CPhysXWrapper::CreateDynamicRigidbody(const PxTransform& aTra
 	return dynamicBody;
 }
 
-CCharacterController* CPhysXWrapper::CreateCharacterController(const Vector3& aPos, const float& aRadius, const float& aHeight, CTransformComponent* aUserData)
+CCharacterController* CPhysXWrapper::CreateCharacterController(const Vector3& aPos, const float& aRadius, const float& aHeight, CTransformComponent* aUserData, physx::PxUserControllerHitReport* aHitReport)
 {
-	CCharacterController* characterController = new CCharacterController(aPos, aRadius, aHeight, aUserData);
+	CCharacterController* characterController = new CCharacterController(aPos, aRadius, aHeight, aUserData, aHitReport);
 	return characterController;
 }
 

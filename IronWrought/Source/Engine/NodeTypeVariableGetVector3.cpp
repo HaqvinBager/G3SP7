@@ -27,7 +27,7 @@ int CNodeTypeVariableGetVector3::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 	if (!local)
 		output = CNodeDataManager::Get()->GetData<float*>(myNodeDataKey);
 	else
-		output = CNodeDataManager::Get()->GetData<float*>(std::to_string(gameObject->InstanceID()));
+		output = CNodeDataManager::Get()->GetData<float*>(myNodeDataKey + std::to_string(gameObject->InstanceID()));
 
 	std::vector<SPin>& pins = aTriggeringNodeInstance->GetPins();
 	DeclareDataOnPinIfNecessary<float*>(pins[0]);

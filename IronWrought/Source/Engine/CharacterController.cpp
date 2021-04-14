@@ -6,7 +6,7 @@
 
 using namespace physx;
 
-CCharacterController::CCharacterController(const Vector3 aPosition, const float aRadius, const float aHeight, CTransformComponent* aUserData)
+CCharacterController::CCharacterController(const Vector3 aPosition, const float aRadius, const float aHeight, CTransformComponent* aUserData, PxUserControllerHitReport* aHitReport)
 {
     PxCapsuleControllerDesc desc;
     desc.position = {aPosition.x, aPosition.y, aPosition.z};
@@ -14,7 +14,7 @@ CCharacterController::CCharacterController(const Vector3 aPosition, const float 
     desc.radius = aRadius;
     desc.material = CEngine::GetInstance()->GetPhysx().CreateMaterial(CPhysXWrapper::materialfriction::basic);
     desc.stepOffset = 0.05f;
-    desc.reportCallback = CEngine::GetInstance()->GetPhysx().GetCharacterReportBack();
+    desc.reportCallback = aHitReport;
     desc.userData = aUserData;
     myController = CEngine::GetInstance()->GetPhysx().GetControllerManager()->createController(desc);
 }
