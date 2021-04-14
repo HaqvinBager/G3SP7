@@ -33,7 +33,8 @@ void CMainMenuState::Awake()
 void CMainMenuState::Start()
 {
 	CEngine::GetInstance()->SetActiveScene(myState);
-	IRONWROUGHT->ShowCursor();
+	IRONWROUGHT->ShowCursor(false);
+	IRONWROUGHT->GetActiveScene().DisableWidgetsOnCanvas();
 	CMainSingleton::PostMaster().Subscribe(EMessageType::StartGame, this);
 	CMainSingleton::PostMaster().Subscribe(EMessageType::Quit, this);
 }
@@ -46,13 +47,13 @@ void CMainMenuState::Stop()
 
 void CMainMenuState::Update()
 {
-	IRONWROUGHT->ShowCursor();
-	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
-	{
-		gameObject->Update();
-	}
+	//IRONWROUGHT->UpdateScene(myState);// This is only for menu states.
+	//for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
+	//{
+	//	gameObject->Update();
+	//}
 
-	IRONWROUGHT->GetActiveScene().UpdateCanvas();
+	//IRONWROUGHT->GetActiveScene().UpdateCanvas();
 
 #ifndef NDEBUG
 	if (INPUT->IsKeyPressed('R'))
@@ -62,7 +63,7 @@ void CMainMenuState::Update()
 #endif
 
 	if(myTimeToQuit)
-		this->myStateStack.PopState();
+		myStateStack.PopState();
 }
 
 void CMainMenuState::Receive(const SStringMessage& /*aMessage*/)
@@ -79,8 +80,8 @@ void CMainMenuState::Receive(const SMessage& aMessage)
 #ifdef _DEBUG
 			std::cout << __FUNCTION__ << " Loading scene: " << scene << std::endl;
 #endif
-			CSceneFactory::Get()->LoadScene(scene, CStateStack::EState::InGame, [this](std::string aJson) { CMainMenuState::OnComplete(aJson); });
-			this->myStateStack.PushState(CStateStack::EState::InGame);
+			IRONWROUGHT->HideCursor();
+			CSceneFactory::Get()->LoadSceneAsync(scene, CStateStack::EState::InGame, [this](std::string aJson) { CMainMenuState::OnComplete(aJson); });
 		}break;
 
 		case EMessageType::Quit:
@@ -97,7 +98,6 @@ void CMainMenuState::OnComplete(std::string aSceneThatHasBeenSuccessfullyLoaded)
 #ifdef _DEBUG
 	std::cout << __FUNCTION__ << "Scene Load Complete!" << aSceneThatHasBeenSuccessfullyLoaded << std::endl;
 #endif
-
+	this->myStateStack.PushState(CStateStack::EState::InGame);
 	CEngine::GetInstance()->LoadGraph(aSceneThatHasBeenSuccessfullyLoaded);
-	CMainSingleton::PostMaster().Send({ "LoadScene", nullptr });
 }

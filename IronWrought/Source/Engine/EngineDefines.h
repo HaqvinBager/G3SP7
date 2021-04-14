@@ -14,3 +14,7 @@
 #else
 #define ASSETPATH(path) std::string("../../SP7UnityEditor/").append(path)//UNITY
 #endif 
+
+#define PLAYER_CAMERA_ID 1000
+#define PLAYER_MODEL_ID 1001
+#define PLAYER_GLOVE_ID 1002

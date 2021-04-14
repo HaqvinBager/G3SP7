@@ -172,6 +172,12 @@ void CScene::CanvasIsHUD()
 		myCanvas->IsHUDCanvas(true);
 }
 
+void CScene::DisableWidgetsOnCanvas()
+{
+	if (myCanvas)
+		myCanvas->DisableWidgets();
+}
+
 //No longer needed due to Components Awake being called via EMessageType "AddComponent"
 void CScene::Awake()
 {
@@ -207,6 +213,9 @@ void CScene::Update()
 
 	for (auto& gameObject : myGameObjects)
 		gameObject->LateUpdate();
+
+	if (myCanvas)
+		myCanvas->Update();
 }
 
 void CScene::InitAnyNewComponents()
@@ -276,13 +285,6 @@ void CScene::ShouldRenderLineInstance(const bool aShouldRender)
 #else
 	aShouldRender;
 #endif //  _DEBUG
-}
-void CScene::UpdateCanvas()
-{
-	if (myCanvas)
-	{
-		myCanvas->Update();
-	}
 }
 //SETTERS END
 //GETTERS START
@@ -453,6 +455,12 @@ std::vector<CGameObject*> CScene::CullGameObjects(CCameraComponent* aMainCamera)
 	std::vector<CGameObject*> culledGameObjects;
 	for (auto& gameObject : myGameObjects)
 	{
+		if (gameObject->InstanceID() == PLAYER_CAMERA_ID || gameObject->InstanceID() == PLAYER_MODEL_ID)
+		{
+			culledGameObjects.push_back(gameObject);
+			continue;
+		}
+
 		if (gameObject->GetComponent<CInstancedModelComponent>())
 		{
 			culledGameObjects.push_back(gameObject);
@@ -466,6 +474,8 @@ std::vector<CGameObject*> CScene::CullGameObjects(CCameraComponent* aMainCamera)
 		}
 	}
 	return culledGameObjects;
+
+	//return myGameObjects;
 }
 
 std::vector<CSpriteInstance*> CScene::CullSprites()

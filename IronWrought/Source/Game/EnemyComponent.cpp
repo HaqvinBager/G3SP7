@@ -10,14 +10,15 @@
 
 //EnemyComp
 
-CEnemyComponent::CEnemyComponent(CGameObject& aParent, const SEnemySetting& someSettings)
+CEnemyComponent::CEnemyComponent(CGameObject& aParent, const SEnemySetting& someSettings, physx::PxUserControllerHitReport* aHitReport)
 	: CComponent(aParent)
 	, myController(nullptr)
 	, myPlayer(nullptr)
+	, myEnemy(nullptr)
 	, myCurrentState(EBehaviour::Patrol)
 {
 	mySettings = someSettings;
-	myController = CEngine::GetInstance()->GetPhysx().CreateCharacterController(GameObject().myTransform->Position(), 0.6f * 0.5f, 1.8f * 0.5f);
+	myController = CEngine::GetInstance()->GetPhysx().CreateCharacterController(GameObject().myTransform->Position(), 0.6f * 0.5f, 1.8f * 0.5f, GameObject().myTransform, aHitReport);
 }
 
 CEnemyComponent::~CEnemyComponent()
@@ -49,7 +50,7 @@ void CEnemyComponent::Start()
 	this->GameObject().GetComponent<CVFXSystemComponent>()->EnableEffect(0);
 }
 
-void CEnemyComponent::Update()//får bestämma vilket behaviour vi vill köra i denna Update()!!!
+void CEnemyComponent::Update()//fï¿½r bestï¿½mma vilket behaviour vi vill kï¿½ra i denna Update()!!!
 {
 	/*myDistance = sqrt(
 		(myPlayer->myTransform->Position().x - GameObject().myTransform->Position().x) * ((myPlayer->myTransform->Position().x - GameObject().myTransform->Position().x)) +
@@ -58,12 +59,13 @@ void CEnemyComponent::Update()//får bestämma vilket behaviour vi vill köra i den
 	if(myPlayer)
 		mySettings.myDistance = Vector3::DistanceSquared(myPlayer->myTransform->Position(), GameObject().myTransform->Position());
 
-	
+	//myController->Move({ 0.0f, -0.098f, 0.0f }, 1.f);
+
 	if (mySettings.myRadius * mySettings.myRadius >= mySettings.myDistance) {//seek
 		//SetState(EBehaviour::Seek);
-	float attackDistance = 2.0f; //example will probably be more complicated in the future; 
+	float attackDistance = 2.0f; //example will probably be more complicated in the future;
 		if (mySettings.myDistance <= attackDistance) {
-		 //	SetState(EBehaviour::Attack); 
+		 //	SetState(EBehaviour::Attack);
 			/*TakeDamage();*/
 		}
 	}

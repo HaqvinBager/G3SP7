@@ -64,10 +64,10 @@ void CBootUpState::Update()
 {
 	myTimer += CTimer::Dt();
 
-	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
-	{
-		gameObject->Update();
-	}
+	//for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
+	//{
+	//	gameObject->Update();
+	//}
 
 	if (myTimer > myFadeOutStart)
 	{
@@ -86,6 +86,7 @@ void CBootUpState::Update()
 
 		if (myLogoToRender >= myLogos.size())
 		{
+			IRONWROUGHT->ShowCursor(false);
 			myStateStack.PopTopAndPush(CStateStack::EState::MainMenu);
 			return;
 		}

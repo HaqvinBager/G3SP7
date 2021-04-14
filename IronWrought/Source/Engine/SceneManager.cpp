@@ -72,19 +72,6 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneJson)
 {
 	CScene* scene = Instantiate();
 
-	//SSceneSetup sceneSetup = {};
-	//auto iter = sceneSetup.myGameObjects.push_back(new CGameObject(0));
-	//(*iter)->AddComponent<CCameraComponent>();
-	//CScene* scene = Instantiate();
-
-	//CGameObject* camera = new CGameObject(0);
-	//camera->AddComponent<CCameraComponent>(*camera);//Default Fov is 70.0f
-	//camera->AddComponent<CCameraControllerComponent>(*camera); //Default speed is 2.0f
-	//camera->myTransform->Position({ 0.0f, 1.0f, 0.0f });
-
-	//scene->AddInstance(camera);
-	//scene->MainCamera(camera->GetComponent<CCameraComponent>());
-
 	const auto doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + aSceneJson + "/" + aSceneJson + ".json"));
 	if(doc.HasParseError())
 		return nullptr;
@@ -114,16 +101,16 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneJson)
 				AddTriggerEvents(*scene, sceneData["triggerEvents"].GetArray());
 			AddEnemyComponents(*scene, sceneData["enemies"].GetArray());
 
-			if (sceneName.find("Layout") != std::string::npos)//Om Unity Scene Namnet innehåller nyckelordet "Layout"
+			if (sceneName.find("Layout") != std::string::npos)//Om Unity Scene Namnet innehï¿½ller nyckelordet "Layout"
 			{
 				AddPlayer(*scene, sceneData["player"].GetObjectW());
 			}
 		}
-		AddInstancedModelComponents(*scene, sceneData["instancedModels"].GetArray());		
+		AddInstancedModelComponents(*scene, sceneData["instancedModels"].GetArray());
 	}
 
-	
-	
+
+
 	//AddPlayer(*scene); //This add player does not read data from unity. (Yet..!) /Axel 2021-03-24
 
 	CEngine::GetInstance()->GetPhysx().Cooking(scene->ActiveGameObjects(), scene);
@@ -334,25 +321,31 @@ void CSceneManager::AddDecalComponents(CScene& aScene, RapidArray someData)
 void CSceneManager::AddPlayer(CScene& aScene, RapidObject someData)
 {
 	int instanceID = someData["instanceID"].GetInt();
-	CGameObject* player = aScene.FindObjectWithID(instanceID);//new CGameObject(87);
+	CGameObject* player = aScene.FindObjectWithID(instanceID);
 
-	CGameObject* camera = CCameraControllerComponent::CreatePlayerFirstPersonCamera(player);//new CGameObject(96);
-	CGameObject* model = new CGameObject(88);
+	Quaternion playerRot = player->myTransform->Rotation();
+
+	CGameObject* camera = CCameraControllerComponent::CreatePlayerFirstPersonCamera(player);//new CGameObject(1000);
+	camera->myTransform->Rotation(playerRot);
+	CGameObject* model = new CGameObject(PLAYER_MODEL_ID);
 	std::string modelPath = ASSETPATH("Assets/Graphics/Character/Main_Character/CH_PL_SK.fbx");
 	model->AddComponent<CModelComponent>(*model, modelPath);
 	model->myTransform->SetParent(camera->myTransform);
-	model->myTransform->Rotation({ 0.0f, 0.0f, 0.0f });
+	model->myTransform->Rotation(playerRot);
 	CAnimationComponent* animComp = AnimationLoader::AddAnimationsToGameObject(model, modelPath);
 	animComp->BlendToAnimation(1);
-	CGameObject* gravityGloveSlot = new CGameObject(99);
+	CGameObject* gravityGloveSlot = new CGameObject(PLAYER_GLOVE_ID);
 	gravityGloveSlot->myTransform->Scale(0.1f);
 	gravityGloveSlot->myTransform->SetParent(camera->myTransform);
 	gravityGloveSlot->myTransform->Position({0.f, 0.f, 1.5f});
+	gravityGloveSlot->myTransform->Rotation(playerRot);
 
 	camera->AddComponent<CGravityGloveComponent>(*camera, gravityGloveSlot->myTransform);
 	player->AddComponent<CPlayerComponent>(*player);
 
-	player->AddComponent<CPlayerControllerComponent>(*player);// CPlayerControllerComponent constructor sets position of camera child object.
+	player->AddComponent<CPlayerControllerComponent>(*player, 0.03f, 0.03f, CEngine::GetInstance()->GetPhysx().GetPlayerReportBack());// CPlayerControllerComponent constructor sets position of camera child object.
+
+	camera->AddComponent<CVFXSystemComponent>(*camera, ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystem_Player.json"));
 
 	aScene.AddInstance(model);
 	aScene.AddInstance(camera);
@@ -375,7 +368,7 @@ void CSceneManager::AddEnemyComponents(CScene& aScene, RapidArray someData)
 		settings.myRadius= m["radius"].GetFloat();
 		settings.mySpeed= m["speed"].GetFloat();
 		settings.myHealth = m["health"].GetFloat();
-		gameObject->AddComponent<CEnemyComponent>(*gameObject, settings);
+		gameObject->AddComponent<CEnemyComponent>(*gameObject, settings, CEngine::GetInstance()->GetPhysx().GetEnemyReportBack());
 
 		gameObject->AddComponent<CVFXSystemComponent>(*gameObject, ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystem_Enemy.json"));
 	}
@@ -396,6 +389,8 @@ void CSceneManager::AddCollider(CScene& aScene, RapidArray someData)
 		ColliderType colliderType = static_cast<ColliderType>(c["colliderType"].GetInt());
 		bool isStatic = c.HasMember("isStatic") ? c["isStatic"].GetBool() : false;
 		bool isKinematic = c.HasMember("isKinematic") ? c["isKinematic"].GetBool() : false;
+		bool isTrigger = c.HasMember("isTrigger") ? c["isTrigger"].GetBool() : false;
+
 
 		CRigidBodyComponent* rigidBody = gameObject->GetComponent<CRigidBodyComponent>();
 		if (rigidBody == nullptr && isStatic == false) {
@@ -427,20 +422,20 @@ void CSceneManager::AddCollider(CScene& aScene, RapidArray someData)
 			boxSize.x = c["boxSize"]["x"].GetFloat();
 			boxSize.y = c["boxSize"]["y"].GetFloat();
 			boxSize.z = c["boxSize"]["z"].GetFloat();
-			gameObject->AddComponent<CBoxColliderComponent>(*gameObject, posOffset, boxSize, isStatic, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(dynamicFriction, staticFriction, bounciness));
+			gameObject->AddComponent<CBoxColliderComponent>(*gameObject, posOffset, boxSize, isTrigger, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(dynamicFriction, staticFriction, bounciness));
 		}
 			break;
 		case ColliderType::SphereCollider:
 		{
 			float radius = c["sphereRadius"].GetFloat();
-			gameObject->AddComponent<CSphereColliderComponent>(*gameObject, posOffset, radius, isStatic, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(dynamicFriction, staticFriction, bounciness));
+			gameObject->AddComponent<CSphereColliderComponent>(*gameObject, posOffset, radius, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(dynamicFriction, staticFriction, bounciness));
 		}
 			break;
 		case ColliderType::CapsuleCollider:
 		{
 			float radius = c["capsuleRadius"].GetFloat();
 			float height = c["capsuleHeight"].GetFloat();
-			gameObject->AddComponent<CCapsuleColliderComponent>(*gameObject, posOffset, radius, height, isStatic, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(dynamicFriction, staticFriction, bounciness));
+			gameObject->AddComponent<CCapsuleColliderComponent>(*gameObject, posOffset, radius, height, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(dynamicFriction, staticFriction, bounciness));
 		}
 		break;
 		case ColliderType::MeshCollider:
@@ -459,7 +454,7 @@ triggerEvents :  [
 		"events" : [
 			"eventType" : 42
 		]
-		//evt lägga till collisionfilter : 5125
+		//evt lï¿½gga till collisionfilter : 5125
 	}
 ]
 */

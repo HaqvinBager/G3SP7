@@ -33,7 +33,6 @@ CCameraControllerComponent::~CCameraControllerComponent()
 void CCameraControllerComponent::Awake()
 {
 	myCamera = CEngine::GetInstance()->GetActiveScene().MainCamera();
-	CEngine::GetInstance()->GetWindowHandler()->HideAndLockCursor();
 }
 
 void CCameraControllerComponent::Start()
@@ -63,7 +62,8 @@ void CCameraControllerComponent::Update()
 			CEngine::GetInstance()->GetWindowHandler()->HideAndLockCursor();
 	}
 #endif
-	// ! TEMPORARY
+
+	// ! TEMPORARY ???
 	if (!CEngine::GetInstance()->GetWindowHandler()->CursorLocked())
 		return;
 
@@ -99,7 +99,7 @@ void CCameraControllerComponent::Update()
 
 CGameObject* CCameraControllerComponent::CreatePlayerFirstPersonCamera(CGameObject* aParentObject)
 {
-	CGameObject* camera = new CGameObject(1000);
+	CGameObject* camera = new CGameObject(PLAYER_CAMERA_ID);
 	camera->AddComponent<CCameraComponent>(*camera, 70.0f);
 	camera->AddComponent<CCameraControllerComponent>(*camera, 2.0f, ECameraMode::PlayerFirstPerson);
 	camera->myTransform->SetParent(aParentObject->myTransform);
