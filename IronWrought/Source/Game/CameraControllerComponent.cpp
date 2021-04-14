@@ -42,10 +42,6 @@ void CCameraControllerComponent::Start()
 
 void CCameraControllerComponent::Update()
 {
-	// ! TEMPORARY ???
-	if (!CEngine::GetInstance()->GetWindowHandler()->CursorLocked())
-		return;
-
 #ifdef  _DEBUG
 	// TEMPORARY
 	if (Input::GetInstance()->IsKeyPressed(VK_F1))
@@ -66,6 +62,10 @@ void CCameraControllerComponent::Update()
 			CEngine::GetInstance()->GetWindowHandler()->HideAndLockCursor();
 	}
 #endif
+
+	// ! TEMPORARY ???
+	if (!CEngine::GetInstance()->GetWindowHandler()->CursorLocked())
+		return;
 
 #ifdef  _DEBUG
 	if (Input::GetInstance()->IsKeyPressed(/*std::toupper(myToggleFreeCam)*/myToggleFreeCam)) {
@@ -99,7 +99,7 @@ void CCameraControllerComponent::Update()
 
 CGameObject* CCameraControllerComponent::CreatePlayerFirstPersonCamera(CGameObject* aParentObject)
 {
-	CGameObject* camera = new CGameObject(1000);
+	CGameObject* camera = new CGameObject(PLAYER_CAMERA_ID);
 	camera->AddComponent<CCameraComponent>(*camera, 70.0f);
 	camera->AddComponent<CCameraControllerComponent>(*camera, 2.0f, ECameraMode::PlayerFirstPerson);
 	camera->myTransform->SetParent(aParentObject->myTransform);
