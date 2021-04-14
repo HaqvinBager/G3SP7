@@ -3,7 +3,6 @@
 #include "NodeType.h"
 #include "NodeInstance.h"
 
-
 CNodeTypeStartKeyboardInput::CNodeTypeStartKeyboardInput()
 {
 	myPins.push_back(SPin("Key", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EString));
@@ -19,7 +18,8 @@ int CNodeTypeStartKeyboardInput::OnEnter(class CNodeInstance* aTriggeringNodeIns
 	GetDataOnPin(aTriggeringNodeInstance, 0, outType, someData, outSize);
 	std::string nodeInput = static_cast<char*>(someData);
 	//char input = reinterpret_cast<char>(keyboardInput.c_str());
-
+	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject();
+	gameObject;
 	int keyboardInput = 0;
 	if (nodeInput.size() <= 1)
 	{
@@ -49,15 +49,9 @@ int CNodeTypeStartKeyboardInput::OnEnter(class CNodeInstance* aTriggeringNodeIns
 		}
 	}
 
-	if (Input::GetInstance()->IsKeyPressed(keyboardInput) && !aTriggeringNodeInstance->myShouldTriggerAgain)
+	if (Input::GetInstance()->IsKeyPressed(keyboardInput))
 	{
-		aTriggeringNodeInstance->myShouldTriggerAgain = true;
 		return 1;
-	}
-
-	if (Input::GetInstance()->IsKeyReleased(keyboardInput))
-	{	
-		aTriggeringNodeInstance->myShouldTriggerAgain = false;
 	}
 
 	return -1;

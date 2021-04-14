@@ -19,7 +19,7 @@ CNodeTypeGameObjectMove::CNodeTypeGameObjectMove()
 
 int CNodeTypeGameObjectMove::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 {
-	CGameObject* gameObject = IRONWROUGHT_ACTIVE_SCENE.FindObjectWithID(aTriggeringNodeInstance->GraphManager()->GetCurrentBlueprintInstanceID());
+	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject();
 
 	SPin::EPinType outType;
 	NodeDataPtr someData = nullptr;

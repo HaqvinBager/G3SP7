@@ -2,9 +2,6 @@
 #include "NodeTypeVariableSetBool.h"
 #include "NodeInstance.h"
 #include "NodeDataManager.h"
-#include "Scene.h"
-#include "Engine.h"
-#include "GraphManager.h"
 
 CNodeTypeVariableSetBool::CNodeTypeVariableSetBool()
 {
@@ -17,7 +14,7 @@ CNodeTypeVariableSetBool::CNodeTypeVariableSetBool()
 
 int CNodeTypeVariableSetBool::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 {
-	CGameObject* gameObject = IRONWROUGHT_ACTIVE_SCENE.FindObjectWithID(aTriggeringNodeInstance->GraphManager()->GetCurrentBlueprintInstanceID());
+	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject();
 
 	SPin::EPinType outType;
 	NodeDataPtr someData = nullptr;

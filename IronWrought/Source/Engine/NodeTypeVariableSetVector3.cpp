@@ -2,9 +2,6 @@
 #include "NodeTypeVariableSetVector3.h"
 #include "NodeInstance.h"
 #include "NodeDataManager.h"
-#include "Scene.h"
-#include "Engine.h"
-#include "GraphManager.h"
 
 CNodeTypeVariableSetVector3::CNodeTypeVariableSetVector3()
 {
@@ -17,7 +14,7 @@ CNodeTypeVariableSetVector3::CNodeTypeVariableSetVector3()
 
 int CNodeTypeVariableSetVector3::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 {
-	CGameObject* gameObject = IRONWROUGHT_ACTIVE_SCENE.FindObjectWithID(aTriggeringNodeInstance->GraphManager()->GetCurrentBlueprintInstanceID());
+	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject();
 
 	SPin::EPinType outType;
 	NodeDataPtr someData = nullptr;
