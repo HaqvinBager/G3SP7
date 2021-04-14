@@ -173,12 +173,12 @@ PrefabInstance:
     - target: {fileID: 296339678349350826, guid: 5efc2394befc0e74baf4d4e34400e8a6,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 1.292
       objectReference: {fileID: 0}
     - target: {fileID: 296339678349350826, guid: 5efc2394befc0e74baf4d4e34400e8a6,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 0.693
       objectReference: {fileID: 0}
     - target: {fileID: 296339678349350826, guid: 5efc2394befc0e74baf4d4e34400e8a6,
         type: 3}
@@ -215,10 +215,35 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3649485081111920841, guid: 5efc2394befc0e74baf4d4e34400e8a6,
+        type: 3}
+      propertyPath: m_IsKinematic
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5270224700119544999, guid: 5efc2394befc0e74baf4d4e34400e8a6,
         type: 3}
       propertyPath: m_Name
       value: InvisibleWall
+      objectReference: {fileID: 0}
+    - target: {fileID: 5270224700119544999, guid: 5efc2394befc0e74baf4d4e34400e8a6,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6440199494546149526, guid: 5efc2394befc0e74baf4d4e34400e8a6,
+        type: 3}
+      propertyPath: m_Size.x
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6440199494546149526, guid: 5efc2394befc0e74baf4d4e34400e8a6,
+        type: 3}
+      propertyPath: m_Size.y
+      value: 2.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6440199494546149526, guid: 5efc2394befc0e74baf4d4e34400e8a6,
+        type: 3}
+      propertyPath: m_Size.z
+      value: 1.4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5efc2394befc0e74baf4d4e34400e8a6, type: 3}

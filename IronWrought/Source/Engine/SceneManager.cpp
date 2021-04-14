@@ -321,25 +321,31 @@ void CSceneManager::AddDecalComponents(CScene& aScene, RapidArray someData)
 void CSceneManager::AddPlayer(CScene& aScene, RapidObject someData)
 {
 	int instanceID = someData["instanceID"].GetInt();
-	CGameObject* player = aScene.FindObjectWithID(instanceID);//new CGameObject(87);
+	CGameObject* player = aScene.FindObjectWithID(instanceID);
 
-	CGameObject* camera = CCameraControllerComponent::CreatePlayerFirstPersonCamera(player);//new CGameObject(96);
-	CGameObject* model = new CGameObject(88);
+	Quaternion playerRot = player->myTransform->Rotation();
+
+	CGameObject* camera = CCameraControllerComponent::CreatePlayerFirstPersonCamera(player);//new CGameObject(1000);
+	camera->myTransform->Rotation(playerRot);
+	CGameObject* model = new CGameObject(PLAYER_MODEL_ID);
 	std::string modelPath = ASSETPATH("Assets/Graphics/Character/Main_Character/CH_PL_SK.fbx");
 	model->AddComponent<CModelComponent>(*model, modelPath);
 	model->myTransform->SetParent(camera->myTransform);
-	model->myTransform->Rotation({ 0.0f, 0.0f, 0.0f });
+	model->myTransform->Rotation(playerRot);
 	CAnimationComponent* animComp = AnimationLoader::AddAnimationsToGameObject(model, modelPath);
 	animComp->BlendToAnimation(1);
-	CGameObject* gravityGloveSlot = new CGameObject(99);
+	CGameObject* gravityGloveSlot = new CGameObject(PLAYER_GLOVE_ID);
 	gravityGloveSlot->myTransform->Scale(0.1f);
 	gravityGloveSlot->myTransform->SetParent(camera->myTransform);
 	gravityGloveSlot->myTransform->Position({0.f, 0.f, 1.5f});
+	gravityGloveSlot->myTransform->Rotation(playerRot);
 
 	camera->AddComponent<CGravityGloveComponent>(*camera, gravityGloveSlot->myTransform);
 	player->AddComponent<CPlayerComponent>(*player);
 
 	player->AddComponent<CPlayerControllerComponent>(*player);// CPlayerControllerComponent constructor sets position of camera child object.
+
+	camera->AddComponent<CVFXSystemComponent>(*camera, ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystem_Player.json"));
 
 	aScene.AddInstance(model);
 	aScene.AddInstance(camera);
