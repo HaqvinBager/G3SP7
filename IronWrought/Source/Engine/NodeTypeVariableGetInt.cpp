@@ -2,15 +2,33 @@
 #include "NodeTypeVariableGetInt.h"
 #include "NodeInstance.h"
 #include "NodeDataManager.h"
+#include "Scene.h"
+#include "Engine.h"
+#include "GraphManager.h"
 
 CNodeTypeVariableGetInt::CNodeTypeVariableGetInt()
 {
-	myPins.push_back(SPin("OUT", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EInt));
+	myPins.push_back(SPin("OUT", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EInt));		//0
+	myPins.push_back(SPin("Local", SPin::EPinTypeInOut::EPinTypeInOut_IN, SPin::EPinType::EBool));		//1
 }
 
 int CNodeTypeVariableGetInt::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 {
-	int output = CNodeDataManager::Get()->GetData<int>(myNodeDataKey);
+	CGameObject* gameObject = IRONWROUGHT_ACTIVE_SCENE.FindObjectWithID(aTriggeringNodeInstance->GraphManager()->GetCurrentBlueprintInstanceID());
+
+	SPin::EPinType outType;
+	NodeDataPtr someData = nullptr;
+	size_t outSize = 0;
+
+	GetDataOnPin(aTriggeringNodeInstance, 1, outType, someData, outSize);
+	bool local = NodeData::Get<bool>(someData);
+
+	int output;
+
+	if (!local)
+		output = CNodeDataManager::Get()->GetData<int>(myNodeDataKey);
+	else
+		output = CNodeDataManager::Get()->GetData<int>(std::to_string(gameObject->InstanceID()));
 
 	std::vector<SPin>& pins = aTriggeringNodeInstance->GetPins();
 	DeclareDataOnPinIfNecessary<int>(pins[0]);
