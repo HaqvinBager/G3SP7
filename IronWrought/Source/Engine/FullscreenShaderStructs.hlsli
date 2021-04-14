@@ -32,4 +32,5 @@ Texture2D fullscreenTexture5 : register(t4);
 SamplerState defaultSampler : register(s0);
 
 static const float2 resolution = float2(1600.0f, 900.0f) / 8.0f;
+static const float2 brokenScreenData = float2(-0.82f, -0.29f);
 static const float gaussianKernel5[5] = { 0.06136f, 0.24477f, 0.38774f, 0.24477f, 0.06136f };

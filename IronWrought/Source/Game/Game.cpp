@@ -27,6 +27,7 @@ void CGame::Init()
 	InitRealGame();
 #else
 	InitDev();
+	//InitRealGame();
 #endif
 
 }

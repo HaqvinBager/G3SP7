@@ -232,6 +232,9 @@
     <FxCompile Include="FullscreenPixelShader_FXAA.hlsl">
       <Filter>Shaders\Fullscreen</Filter>
     </FxCompile>
+    <FxCompile Include="FullscreenPixelShader_BrokenScreenEffect.hlsl">
+      <Filter>Shaders\Fullscreen</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimationComponent.cpp">

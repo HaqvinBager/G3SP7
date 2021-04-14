@@ -366,3 +366,8 @@ void CEngine::LoadGraph(const std::string& aSceneName)
 {
 	myGraphManager->Load(aSceneName);
 }
+
+void CEngine::SetBrokenScreen(bool aShouldSetBrokenScreen)
+{
+	myRenderManager->SetBrokenScreen(aShouldSetBrokenScreen);
+}

@@ -16,6 +16,7 @@
 #include "SphereColliderComponent.h"
 #include "CapsuleColliderComponent.h"
 #include "ConvexMeshColliderComponent.h"
+#include "VFXSystemComponent.h"
 #include <GravityGloveComponent.h>
 #include <EnemyComponent.h>
 //#include <iostream>
@@ -332,25 +333,8 @@ void CSceneManager::AddDecalComponents(CScene& aScene, RapidArray someData)
 
 void CSceneManager::AddPlayer(CScene& aScene, RapidObject someData)
 {
-	/*CGameObject* player = nullptr;
-	if (!someData.HasMember("instanceID"))
-		return;
-
-	const int instanceID = someData["instanceID"].GetInt();
-	if (instanceID == 0)
-	{*/
-	/*}
-	else
-	{
-		player = 
-	}*/
-
 	int instanceID = someData["instanceID"].GetInt();
 	CGameObject* player = aScene.FindObjectWithID(instanceID);//new CGameObject(87);
-	//if (player == nullptr)
-	//	return;
-
-
 
 	CGameObject* camera = CCameraControllerComponent::CreatePlayerFirstPersonCamera(player);//new CGameObject(96);
 	CGameObject* model = new CGameObject(88);
@@ -364,14 +348,12 @@ void CSceneManager::AddPlayer(CScene& aScene, RapidObject someData)
 	gravityGloveSlot->myTransform->Scale(0.1f);
 	gravityGloveSlot->myTransform->SetParent(camera->myTransform);
 	gravityGloveSlot->myTransform->Position({0.f, 0.f, 1.5f});
-	//std::string gravitytestpath = ASSETPATH("Assets/Graphics/Environmentprops/Static_props/EN_P_Tetrapod.fbx");
-	//gravityGloveSlot->AddComponent<CModelComponent>(*gravityGloveSlot, gravitytestpath);
+
 	camera->AddComponent<CGravityGloveComponent>(*camera, gravityGloveSlot->myTransform);
 	player->AddComponent<CPlayerComponent>(*player);
 
 	player->AddComponent<CPlayerControllerComponent>(*player);// CPlayerControllerComponent constructor sets position of camera child object.
-	/*player->GetComponent<CPlayerControllerComponent>()->SetControllerPosition({ 0.f, 5.0f,0.0f });*/
-	aScene.AddInstance(player);
+
 	aScene.AddInstance(model);
 	aScene.AddInstance(camera);
 	aScene.AddInstance(gravityGloveSlot);
@@ -394,6 +376,8 @@ void CSceneManager::AddEnemyComponents(CScene& aScene, RapidArray someData)
 		settings.mySpeed= m["speed"].GetFloat();
 		settings.myHealth = m["health"].GetFloat();
 		gameObject->AddComponent<CEnemyComponent>(*gameObject, settings);
+
+		gameObject->AddComponent<CVFXSystemComponent>(*gameObject, ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystem_Enemy.json"));
 	}
 }
 

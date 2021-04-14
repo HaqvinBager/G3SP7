@@ -63,6 +63,7 @@ bool CFullscreenRenderer::Init(CDirectXFramework* aFramework) {
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCRENSHADER_GAMMACORRECTION)] = "Shaders/FullscreenPixelShader_GammaCorrection.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCRENSHADER_GAMMACORRECTION_RENDERPASS)] = "Shaders/DeferredRenderPassFullscreenPixelShader_GammaCorrection.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_FXAA)] = "Shaders/FullscreenPixelShader_FXAA.cso";
+	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_BROKEN_SCREEN_EFFECT)] = "Shaders/FullscreenPixelShader_BrokenScreenEffect.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_DOWNSAMPLE_DEPTH)] = "Shaders/FullscreenPixelShader_DepthDownSample.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_DEPTH_AWARE_UPSAMPLING)] = "Shaders/FullscreenPixelShader_DepthAwareUpsample.cso";
 
