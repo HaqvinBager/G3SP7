@@ -37,6 +37,7 @@ public:
 public:
 	bool GetEnabled();
 	void SetEnabled(bool isEnabled);
+	void DisableWidgets();
 
 	std::vector<CButton*> GetButtons() { return myButtons; }
 	std::vector<CTextInstance*> GetTexts() { return myTexts; }
@@ -52,6 +53,8 @@ private:
 	bool InitSprite(const rapidjson::GenericObject<false, rapidjson::Value>& aRapidObject, const int& anIndex);
 	bool InitMessageTypes(const rapidjson::GenericArray<false, rapidjson::Value>& aRapidArray);
 	bool InitWidgets(const rapidjson::GenericArray<false, rapidjson::Value>& aRapidArray, CScene& aScene);
+
+	void UpdatePositions();
 
 private:
 	bool myIsEnabled;

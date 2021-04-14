@@ -35,8 +35,8 @@ public:
 	const bool CursorLocked() const;
 	void LockCursor(bool aShouldLock);
 
-	void HideAndLockCursor();
-	void ShowAndUnlockCursor();
+	void HideAndLockCursor(const bool& anIsInEditorMode = false);
+	void ShowAndUnlockCursor(const bool& anIsInEditorMode = true);
 
 private:
 	bool Init(CWindowHandler::SWindowData someWindowData);

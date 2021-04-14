@@ -12,6 +12,7 @@ void CPlayerReportCallback::onShapeHit(const physx::PxControllerShapeHit& hit)
 	if (rigid) {
 		std::cout << rigid->GameObject().InstanceID() << std::endl;
 	}*/
+								//anvï¿½nder normalen istï¿½llet fï¿½r velocity fï¿½r det puttas bï¿½ttre ï¿½t de hï¿½ll man gï¿½r in i
 	CTransformComponent* playerTransform = (CTransformComponent*)hit.controller->getUserData();
 	if (playerTransform) {
 		if (playerTransform->GameObject().GetComponent<CPlayerControllerComponent>()) {
@@ -23,13 +24,15 @@ void CPlayerReportCallback::onShapeHit(const physx::PxControllerShapeHit& hit)
 					if (objectTransform) {
 						Vector3 v = player->GetLinearVelocity();
 						Vector3 n = { hit.worldNormal.x, hit.worldNormal.y, hit.worldNormal.z };
+						float dot = n.Dot({0,1,0});
+						float angle = std::acos(dot) * (180.f/3.14f);
 						CRigidBodyComponent* other = objectTransform->GetComponent<CRigidBodyComponent>();
-						if (other != nullptr) {
+								//std::cout << angle << std::endl;
+						if (other != nullptr && angle > 50.f) {
 							if (!other->IsKinematic())
 							{
 								float m = other->GetMass();
-								//använder normalen istället för velocity för det puttas bättre åt de håll man går in i
-								Vector3 f = { (m * (v / CTimer::Dt())) };
+								Vector3 f = { (m * ((v - n)  / CTimer::Dt())) };
 								other->AddForce(f / 2.f);
 								//other->GetDynamicRigidBody()->GetBody().setMaxLinearVelocity(10.f);
 								//F = m * (v - v0/t - t0) or F = m * (v/t) because v0 and t0 is almost always 0 in this case
@@ -39,7 +42,7 @@ void CPlayerReportCallback::onShapeHit(const physx::PxControllerShapeHit& hit)
 							}
 							else
 							{
-								playerTransform->GetComponent<CPlayerControllerComponent>()->LadderEnter();
+								playerTransform->GetComponent<CPlayerControllerComponent>()->LadderEnter(nullptr);
 							}
 						}
 					}

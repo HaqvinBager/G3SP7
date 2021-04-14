@@ -220,7 +220,7 @@ void CVFXSystemComponent::LateUpdate()
 	GameObject().myTransform->GetWorldMatrix().Decompose(scale, quat, translation);
 
 	Matrix goTransform = GameObject().myTransform->Transform();
-	Vector3 goPos = GameObject().myTransform->Position();
+	Vector3 goPos = GameObject().myTransform->WorldPosition();
 
 	for (unsigned int j = 0; j < myEffects.size(); ++j)
 	{
@@ -267,10 +267,11 @@ void CVFXSystemComponent::OnEnable()
 {
 	Enabled(true);
 
-	for (auto& effect : myEffects)
-	{
-		effect->Enable();
-	}
+	// VFX should not start to play by default 
+	//for (auto& effect : myEffects) 
+	//{
+	//	effect->Enable();
+	//}
 }
 
 void CVFXSystemComponent::OnDisable()

@@ -196,12 +196,13 @@ void CWindowHandler::LockCursor(bool aShouldLock)
     aShouldLock ? SetCapture(myWindowHandle) : SetCapture(nullptr);
 }
 
-void CWindowHandler::HideAndLockCursor()
+void CWindowHandler::HideAndLockCursor(const bool& anIsInEditorMode)
 {
+    std::cout << __FUNCTION__ << std::endl;
     while (::ShowCursor(FALSE) >= 0);
     SetCapture(myWindowHandle);
     myCursorIsLocked = true;
-    myWindowIsInEditingMode = false;
+    myWindowIsInEditingMode = anIsInEditorMode;
 
     Vector2 center = GetCenterPosition();
     SetCursorPos(static_cast<int>(center.x), static_cast<int>(center.y));
@@ -209,12 +210,12 @@ void CWindowHandler::HideAndLockCursor()
     CMainSingleton::PostMaster().Send({ EMessageType::CursorHideAndLock, nullptr });
 }
 
-void CWindowHandler::ShowAndUnlockCursor()
+void CWindowHandler::ShowAndUnlockCursor(const bool& anIsInEditorMode)
 {
     while (::ShowCursor(TRUE) < 0);
     SetCapture(nullptr);
     myCursorIsLocked = false;
-    myWindowIsInEditingMode = true;
+    myWindowIsInEditingMode = anIsInEditorMode;
     CMainSingleton::PostMaster().Send({ EMessageType::CursorShowAndUnlock, nullptr });
 }
 

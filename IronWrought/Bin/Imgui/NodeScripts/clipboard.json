@@ -1,40 +1,39 @@
 {
     "UID_MAX": {
-        "Num": 219
+        "Num": 526
     },
     "NodeInstances": [
         {
-            "NodeType ID": 10,
-            "NodeType": 1,
-            "UID": 199,
+            "NodeType ID": 38,
+            "NodeType": 0,
+            "UID": 525,
             "Position": {
-                "X": 1548,
-                "Y": 681
+                "X": 2045,
+                "Y": 668
             },
             "Pins": [
                 {
                     "Index": 0,
-                    "UID": 204,
+                    "UID": 526,
                     "DATA": "",
                     "DATA_TYPE": ""
-                },
+                }
+            ]
+        },
+        {
+            "NodeType ID": 39,
+            "NodeType": 0,
+            "UID": 523,
+            "Position": {
+                "X": 3234,
+                "Y": 1404
+            },
+            "Pins": [
                 {
-                    "Index": 1,
-                    "UID": 205,
+                    "Index": 0,
+                    "UID": 524,
                     "DATA": "",
                     "DATA_TYPE": ""
-                },
-                {
-                    "Index": 2,
-                    "UID": 206,
-                    "DATA": false,
-                    "DATA_TYPE": "BOOL"
-                },
-                {
-                    "Index": 3,
-                    "UID": 207,
-                    "DATA": "",
-                    "DATA_TYPE": "BOOL"
                 }
             ]
         }

@@ -199,6 +199,7 @@
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Behaviour.h" />
     <ClInclude Include="BoxColliderComponent.h" />
+    <ClInclude Include="EnemyReportCallback.h" />
     <ClInclude Include="NodeTypeUtilityInvertBool.h" />
     <ClInclude Include="PlayerReportCallback.h" />
     <ClInclude Include="ConvexMeshColliderComponent.h" />
@@ -439,6 +440,7 @@
     <ClCompile Include="AudioChannel.cpp" />
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="BoxColliderComponent.cpp" />
+    <ClCompile Include="EnemyReportCallback.cpp" />
     <ClCompile Include="NodeTypeUtilityInvertBool.cpp" />
     <ClCompile Include="PlayerReportCallback.cpp" />
     <ClCompile Include="ConvexMeshColliderComponent.cpp" />
