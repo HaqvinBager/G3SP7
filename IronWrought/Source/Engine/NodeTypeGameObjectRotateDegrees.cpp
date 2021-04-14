@@ -26,6 +26,7 @@ int CNodeTypeGameObjectRotateDegrees::OnEnter(CNodeInstance* aTriggeringNodeInst
 	if (myRotations.end() == searchResult)
 	{
 		myRotations[currentID] = gameObject->myTransform->Rotation();
+		myIsFinished[currentID] = false;
 	}
 
 	SPin::EPinType outType;

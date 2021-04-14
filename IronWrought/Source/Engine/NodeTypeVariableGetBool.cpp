@@ -29,7 +29,7 @@ int CNodeTypeVariableGetBool::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 	if(!input)
 		output = CNodeDataManager::Get()->GetData<bool>(myNodeDataKey);
 	else
-		output = CNodeDataManager::Get()->GetData<bool>(std::to_string(gameObject->InstanceID()));
+		output = CNodeDataManager::Get()->GetData<bool>(myNodeDataKey + std::to_string(gameObject->InstanceID()));
 
 	std::vector<SPin>& pins = aTriggeringNodeInstance->GetPins();
 	DeclareDataOnPinIfNecessary<bool>(pins[0]);
