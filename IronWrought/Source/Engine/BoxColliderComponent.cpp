@@ -7,13 +7,13 @@
 #include "RigidDynamicBody.h"
 #include "TransformComponent.h"
 
-CBoxColliderComponent::CBoxColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const Vector3& aBoxSize, const bool /*aIsTrigger*/, PxMaterial* aMaterial)
+CBoxColliderComponent::CBoxColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const Vector3& aBoxSize, const bool aIsTrigger, PxMaterial* aMaterial)
 	: CBehaviour(aParent)
 	, myShape(nullptr)
 	, myPositionOffset(aPositionOffset)
 	, myBoxSize(aBoxSize)
 	, myMaterial(aMaterial)
-	/*, myIsTrigger(aIsTrigger)*/
+	, myIsTrigger(aIsTrigger)
 {
 	if (myMaterial == nullptr) {
 		myMaterial = CEngine::GetInstance()->GetPhysx().CreateMaterial(CPhysXWrapper::materialfriction::basic);
@@ -64,13 +64,28 @@ void CBoxColliderComponent::CreateBoxCollider()
 		PxRigidStatic* actor = CEngine::GetInstance()->GetPhysx().GetPhysics()->createRigidStatic({ pos, pxQuat });
 		actor->attachShape(*myShape);
 		CEngine::GetInstance()->GetPhysx().GetPXScene()->addActor(*actor);
-		//if (myIsTrigger) {
-		//	PxShape* triggerShape;
-		//	actor->getShapes(&triggerShape, 1);
-		//	triggerShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
-		//	triggerShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
-		//}
+		if (myIsTrigger) {
+			PxShape* triggerShape;
+			actor->getShapes(&triggerShape, 1);
+			triggerShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
+			triggerShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
+			actor->userData = (void*) this;
+		}
 	}
+}
+
+void CBoxColliderComponent::OnTriggerEnter()
+{
+	bool state = true;
+	SStringMessage message = { myEventMessage.c_str(), &state };
+	CMainSingleton::PostMaster().Send(message);
+}
+
+void CBoxColliderComponent::OnTriggerExit()
+{
+	bool state = false;
+	SStringMessage message = { myEventMessage.c_str(), &state };
+	CMainSingleton::PostMaster().Send(message);
 }
 
 void CBoxColliderComponent::OnEnable()

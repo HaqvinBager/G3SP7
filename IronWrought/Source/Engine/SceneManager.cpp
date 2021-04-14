@@ -73,13 +73,13 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneJson)
 	CScene* scene = Instantiate();
 
 	const auto doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + aSceneJson + "/" + aSceneJson + ".json"));
-	if(doc.HasParseError())
+	if (doc.HasParseError())
 		return nullptr;
 
 	if (!doc.HasMember("Root"))
 		return nullptr;
 
- 	SVertexPaintCollection vertexPaintData = CBinReader::LoadVertexPaintCollection(doc["Root"].GetString());
+	SVertexPaintCollection vertexPaintData = CBinReader::LoadVertexPaintCollection(doc["Root"].GetString());
 	const auto& scenes = doc.GetObjectW()["Scenes"].GetArray();
 	for (const auto& sceneData : scenes)
 	{
@@ -88,7 +88,7 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneJson)
 		if (AddGameObjects(*scene, sceneData["Ids"].GetArray()))
 		{
 			SetTransforms(*scene, sceneData["transforms"].GetArray());
-			if(sceneData.HasMember("parents"))
+			if (sceneData.HasMember("parents"))
 				SetParents(*scene, sceneData["parents"].GetArray());
 
 			AddDirectionalLight(*scene, sceneData["directionalLight"].GetObjectW());
@@ -156,7 +156,8 @@ bool CSceneManager::AddGameObjects(CScene& aScene, RapidArray someData)
 
 void CSceneManager::SetTransforms(CScene& aScene, RapidArray someData)
 {
-	for (const auto& t : someData) {
+	for (const auto& t : someData)
+	{
 		int id = t["instanceID"].GetInt();
 		CTransformComponent* transform = aScene.FindObjectWithID(id)->myTransform;
 		transform->Scale({ t["scale"]["x"].GetFloat(),
@@ -189,7 +190,8 @@ void CSceneManager::SetParents(CScene& aScene, RapidArray someData)
 
 void CSceneManager::AddModelComponents(CScene& aScene, RapidArray someData)
 {
-	for (const auto& m : someData) {
+	for (const auto& m : someData)
+	{
 		const int instanceId = m["instanceID"].GetInt();
 		CGameObject* gameObject = aScene.FindObjectWithID(instanceId);
 		if (!gameObject)
@@ -236,14 +238,16 @@ void CSceneManager::SetVertexPaintedColors(CScene& aScene, RapidArray someData, 
 
 void CSceneManager::AddInstancedModelComponents(CScene& aScene, RapidArray someData)
 {
-	for (const auto& i : someData) {
+	for (const auto& i : someData)
+	{
 		int assetID = i["assetID"].GetInt();
 		CGameObject* gameObject = new CGameObject(assetID);
 		gameObject->IsStatic(true);
 		std::vector<Matrix> instancedModelTransforms;
 		instancedModelTransforms.reserve(i["transforms"].GetArray().Size());
 
-		for (const auto& t : i["transforms"].GetArray()) {
+		for (const auto& t : i["transforms"].GetArray())
+		{
 			CGameObject temp(0);
 			CTransformComponent transform(temp);
 			transform.Scale({ t["scale"]["x"].GetFloat(),
@@ -280,19 +284,20 @@ void CSceneManager::AddDirectionalLight(CScene& aScene, RapidObject someData)
 		*gameObject,
 		someData["cubemapName"].GetString(),
 		Vector3(someData["r"].GetFloat(),
-			someData["g"].GetFloat(),
-			someData["b"].GetFloat()),
+		someData["g"].GetFloat(),
+		someData["b"].GetFloat()),
 		someData["intensity"].GetFloat(),
 		Vector3(someData["direction"]["x"].GetFloat(),
-			someData["direction"]["y"].GetFloat(),
-			someData["direction"]["z"].GetFloat())
-	);
+		someData["direction"]["y"].GetFloat(),
+		someData["direction"]["z"].GetFloat())
+		);
 	aScene.EnvironmentLight(gameObject->GetComponent<CEnvironmentLightComponent>()->GetEnvironmentLight());
 }
 
 void CSceneManager::AddPointLights(CScene& aScene, RapidArray someData)
 {
-	for (const auto& pointLight : someData) {
+	for (const auto& pointLight : someData)
+	{
 		const auto& id = pointLight["instanceID"].GetInt();
 
 		CGameObject* gameObject = aScene.FindObjectWithID(id);
@@ -312,7 +317,8 @@ void CSceneManager::AddPointLights(CScene& aScene, RapidArray someData)
 
 void CSceneManager::AddDecalComponents(CScene& aScene, RapidArray someData)
 {
-	for (const auto& decal : someData) {
+	for (const auto& decal : someData)
+	{
 		CGameObject* gameObject = aScene.FindObjectWithID(decal["instanceID"].GetInt());
 		gameObject->AddComponent<CDecalComponent>(*gameObject, decal["materialName"].GetString());
 	}
@@ -337,7 +343,7 @@ void CSceneManager::AddPlayer(CScene& aScene, RapidObject someData)
 	CGameObject* gravityGloveSlot = new CGameObject(PLAYER_GLOVE_ID);
 	gravityGloveSlot->myTransform->Scale(0.1f);
 	gravityGloveSlot->myTransform->SetParent(camera->myTransform);
-	gravityGloveSlot->myTransform->Position({0.f, 0.f, 1.5f});
+	gravityGloveSlot->myTransform->Position({ 0.f, 0.f, 1.5f });
 	gravityGloveSlot->myTransform->Rotation(playerRot);
 
 	camera->AddComponent<CGravityGloveComponent>(*camera, gravityGloveSlot->myTransform);
@@ -365,8 +371,8 @@ void CSceneManager::AddEnemyComponents(CScene& aScene, RapidArray someData)
 
 		SEnemySetting settings;
 		settings.myDistance = m["distance"].GetFloat();
-		settings.myRadius= m["radius"].GetFloat();
-		settings.mySpeed= m["speed"].GetFloat();
+		settings.myRadius = m["radius"].GetFloat();
+		settings.mySpeed = m["speed"].GetFloat();
 		settings.myHealth = m["health"].GetFloat();
 		gameObject->AddComponent<CEnemyComponent>(*gameObject, settings, CEngine::GetInstance()->GetPhysx().GetEnemyReportBack());
 
@@ -393,7 +399,8 @@ void CSceneManager::AddCollider(CScene& aScene, RapidArray someData)
 
 
 		CRigidBodyComponent* rigidBody = gameObject->GetComponent<CRigidBodyComponent>();
-		if (rigidBody == nullptr && isStatic == false) {
+		if (rigidBody == nullptr && isStatic == false)
+		{
 			float mass = c["mass"].GetFloat();
 			Vector3 localCenterMass;
 			localCenterMass.x = c["localMassPosition"]["x"].GetFloat();
@@ -415,34 +422,35 @@ void CSceneManager::AddCollider(CScene& aScene, RapidArray someData)
 		float staticFriction = c["staticFriction"].GetFloat();
 		float bounciness = c["bounciness"].GetFloat();
 
-		switch (colliderType) {
-		case ColliderType::BoxCollider:
+		switch (colliderType)
 		{
-			Vector3 boxSize;
-			boxSize.x = c["boxSize"]["x"].GetFloat();
-			boxSize.y = c["boxSize"]["y"].GetFloat();
-			boxSize.z = c["boxSize"]["z"].GetFloat();
-			gameObject->AddComponent<CBoxColliderComponent>(*gameObject, posOffset, boxSize, isTrigger, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(dynamicFriction, staticFriction, bounciness));
-		}
+		case ColliderType::BoxCollider:
+			{
+				Vector3 boxSize;
+				boxSize.x = c["boxSize"]["x"].GetFloat();
+				boxSize.y = c["boxSize"]["y"].GetFloat();
+				boxSize.z = c["boxSize"]["z"].GetFloat();
+				gameObject->AddComponent<CBoxColliderComponent>(*gameObject, posOffset, boxSize, isTrigger, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(dynamicFriction, staticFriction, bounciness));
+			}
 			break;
 		case ColliderType::SphereCollider:
-		{
-			float radius = c["sphereRadius"].GetFloat();
-			gameObject->AddComponent<CSphereColliderComponent>(*gameObject, posOffset, radius, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(dynamicFriction, staticFriction, bounciness));
-		}
+			{
+				float radius = c["sphereRadius"].GetFloat();
+				gameObject->AddComponent<CSphereColliderComponent>(*gameObject, posOffset, radius, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(dynamicFriction, staticFriction, bounciness));
+			}
 			break;
 		case ColliderType::CapsuleCollider:
-		{
-			float radius = c["capsuleRadius"].GetFloat();
-			float height = c["capsuleHeight"].GetFloat();
-			gameObject->AddComponent<CCapsuleColliderComponent>(*gameObject, posOffset, radius, height, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(dynamicFriction, staticFriction, bounciness));
-		}
-		break;
+			{
+				float radius = c["capsuleRadius"].GetFloat();
+				float height = c["capsuleHeight"].GetFloat();
+				gameObject->AddComponent<CCapsuleColliderComponent>(*gameObject, posOffset, radius, height, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(dynamicFriction, staticFriction, bounciness));
+			}
+			break;
 		case ColliderType::MeshCollider:
-		{
-			gameObject->AddComponent<CConvexMeshColliderComponent>(*gameObject, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(dynamicFriction, staticFriction, bounciness));
-		}
-		break;
+			{
+				gameObject->AddComponent<CConvexMeshColliderComponent>(*gameObject, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(dynamicFriction, staticFriction, bounciness));
+			}
+			break;
 		}
 	}
 }
@@ -463,18 +471,18 @@ void CSceneManager::AddTriggerEvents(CScene& aScene, RapidArray someData)
 {
 	for (const auto& triggerEvent : someData)
 	{
-		int instanceID = triggerEvent["instanceID"].GetInt();
+		int instanceID = triggerEvent["instanceID"]["instanceID"].GetInt();
 		CGameObject* gameObject = aScene.FindObjectWithID(instanceID);
 
 		CBoxColliderComponent* triggerVolume = nullptr;
 		if (gameObject->TryGetComponent<CBoxColliderComponent>(&triggerVolume))
 		{
-			for (const auto& eventData : triggerEvent["events"].GetArray())
-			{
-				SMessage triggerMessage = {};
-				triggerMessage.myMessageType = static_cast<EMessageType>(eventData["eventType"].GetInt());
-				triggerVolume->RegisterEventTriggerMessage(triggerMessage);
-			}
+			std::string eventData = triggerEvent["gameEvent"].GetString();
+			triggerVolume->RegisterEventTriggerMessage(eventData);
+			//SStringMessage triggerMessage = {};
+			//memcpy(&triggerMessage.myMessageType, &eventData[0], sizeof(char) * eventData.size());
+			//triggerMessage.myMessageType = eventData.c_str();
+
 		}
 	}
 }

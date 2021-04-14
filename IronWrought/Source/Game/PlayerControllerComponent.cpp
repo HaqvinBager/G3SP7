@@ -29,7 +29,7 @@ CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, 
 	, myIsCrouching(false)
 	, myWalkSpeed(aWalkSpeed)
 	, myCrouchSpeed(aCrouchSpeed)
-	, myCanJump(true)
+	, myIsGrounded(true)
 	, myHasJumped(false)
 	, myIsJumping(false)
 	, myJumpHeight(0.035f)
@@ -92,7 +92,7 @@ void CPlayerControllerComponent::Update()
 		return;
 #endif
 
-	if (myIsOnLadder)
+	if (myLadderHasTriggered)
 	{
 		LadderUpdate();
 	}
@@ -175,11 +175,11 @@ void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
 			myAnimationComponentController->Walk();
 			break;
 		case EInputEvent::Jump:
-			if (myCanJump == true)
+			if (myIsGrounded == true)
 			{
 				myHasJumped = true;
 				myIsJumping = true;
-				myCanJump = false;
+				myIsGrounded = false;
 			}
 			break;
 		case EInputEvent::Crouch:
@@ -211,7 +211,7 @@ void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
 
 	myMovement.y = y;
 
-	if (myIsOnLadder)
+	if (myLadderHasTriggered)
 	{
 		myMovement.y = myMovement.z;
 		myMovement.z = 0.0f;
@@ -231,13 +231,13 @@ void CPlayerControllerComponent::Move(Vector3 aDir)
 
 	if (collisionflag != physx::PxControllerCollisionFlag::eCOLLISION_DOWN )
 	{
-		myCanJump = false;
+		myIsGrounded = false;
 
 	}
 
 	if (collisionflag == physx::PxControllerCollisionFlag::eCOLLISION_DOWN)
 	{
-		myCanJump = true;
+		myIsGrounded = true;
 		if(aDir.x != 0.0f || aDir.z != 0.0f)
 			myAnimationComponentController->Walk();
 	}
@@ -286,21 +286,35 @@ const Vector3 CPlayerControllerComponent::GetLinearVelocity()
 	return {pxVec3.x, pxVec3.y, pxVec3.z};
 }
 
-
-void CPlayerControllerComponent::LadderEnter(CRigidBodyComponent* aLadder)
+void CPlayerControllerComponent::LadderEnter()
 {
-	myLadder = aLadder;
-	myIsOnLadder = !myIsOnLadder;
+	myLadderHasTriggered = true;
+}
+
+void CPlayerControllerComponent::LadderExit()
+{
+	myLadderHasTriggered = false;
 }
 
 void CPlayerControllerComponent::LadderUpdate()
 {
+	if (myLadderHasTriggered)
+	{
+		//Nuddar vi Marken?
+
+		//Försöker vi gå neråt?
+	}
+
 	//Best�mmer n�r myIsOnladder s�tts till false
 
 	//G�ra s� att vi g�r upp och ner f�r Ladder n�r vi trycker p� W eller S
-
-	if (Input::GetInstance()->IsKeyPressed('K'))
+	/*if (myIsGrounded && myMovement.LengthSquared() > 0.25f)
 	{
 		myIsOnLadder = false;
-	}
+	}*/
+
+	//if (Input::GetInstance()->IsKeyPressed('K'))
+	//{
+	//	myIsOnLadder = false;
+	//}
 }
