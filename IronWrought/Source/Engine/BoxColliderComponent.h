@@ -21,6 +21,9 @@ public:
 
 	void CreateBoxCollider();
 
+	void RegisterEventTriggerMessage(const SMessage& aMessage) { myTriggerMessages.push_back(aMessage); }
+	const std::vector<SMessage>& EventTriggerMessage() { return myTriggerMessages; }
+
 	void OnEnable() override;
 	void OnDisable() override;
 private:
@@ -28,5 +31,7 @@ private:
 	physx::PxMaterial* myMaterial;
 	Vector3 myPositionOffset;
 	Vector3 myBoxSize;
+
+	std::vector<SMessage> myTriggerMessages;
 };
 

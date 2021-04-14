@@ -13,6 +13,7 @@ struct SButtonData {
 	DirectX::SimpleMath::Vector2 myPosition;
 	DirectX::SimpleMath::Vector2 myDimensions;
 	std::string myText;
+	int myWidgetToToggleIndex;
 };
 
 struct SUIRect {
@@ -52,11 +53,13 @@ private:
 
 private:
 	std::vector<EMessageType> myMessagesToSend;
+	std::vector<std::string> myMessageData;
 	std::array<CSpriteInstance*, 3> mySprites = { nullptr, nullptr, nullptr };
 	SUIRect myRect;
 	EButtonState myState;
 	bool myEnabled;
 	bool myIsMouseHover;
+	int myWidgetToToggleIndex;
 	
 };
 

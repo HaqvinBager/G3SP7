@@ -232,6 +232,9 @@
     <FxCompile Include="FullscreenPixelShader_FXAA.hlsl">
       <Filter>Shaders\Fullscreen</Filter>
     </FxCompile>
+    <FxCompile Include="FullscreenPixelShader_BrokenScreenEffect.hlsl">
+      <Filter>Shaders\Fullscreen</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimationComponent.cpp">
@@ -864,7 +867,6 @@
     <ClCompile Include="NodeTypeEnemySpawn.cpp">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClCompile>
-    <ClCompile Include="NodeTypeGameObjectRotateDegrees.cpp" />
     <ClCompile Include="SphereColliderComponent.cpp">
       <Filter>GameObject and Component\Component</Filter>
     </ClCompile>
@@ -875,6 +877,9 @@
       <Filter>PhysX</Filter>
     </ClCompile>
     <ClCompile Include="NodeTypeUtilityInvertBool.cpp" />
+    <ClCompile Include="NodeTypeGameObjectRotateDegrees.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1593,7 +1598,6 @@
     <ClInclude Include="NodeTypeEnemySpawn.h">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClInclude>
-    <ClInclude Include="NodeTypeGameObjectRotateDegrees.h" />
     <ClInclude Include="PostMasterStructs.h">
       <Filter>Post Master</Filter>
     </ClInclude>
@@ -1607,6 +1611,9 @@
       <Filter>PhysX</Filter>
     </ClInclude>
     <ClInclude Include="NodeTypeUtilityInvertBool.h" />
+    <ClInclude Include="NodeTypeGameObjectRotateDegrees.h">
+      <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">

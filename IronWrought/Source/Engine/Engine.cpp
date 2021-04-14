@@ -3,9 +3,13 @@
 #include <array>
 #include <string>
 #include <rapidjson\document.h>
+
+#ifdef _DEBUG
 #include <imgui.h>
 #include <imgui_impl_dx11.h>
 #include <imgui_impl_win32.h>
+#endif
+
 #include <ScreenGrab.h>
 #include <DialogueSystem.h>
 #include <PopupTextService.h>
@@ -30,7 +34,9 @@
 #include "DecalFactory.h"
 
 #include "RenderManager.h"
+
 #include "ImguiManager.h"
+
 #include "AudioManager.h"
 #include "InputMapper.h"
 
@@ -84,7 +90,9 @@ CEngine::CEngine(): myRenderSceneActive(true)
 
 CEngine::~CEngine()
 {
+#ifdef _DEBUG
 	ImGui_ImplDX11_Shutdown();
+#endif
 
 	delete myWindowHandler;
 	myWindowHandler = nullptr;
@@ -154,8 +162,10 @@ bool CEngine::Init(CWindowHandler::SWindowData& someWindowData)
 {
 	ENGINE_ERROR_BOOL_MESSAGE(myWindowHandler->Init(someWindowData), "Window Handler could not be initialized.");
 	ENGINE_ERROR_BOOL_MESSAGE(myFramework->Init(myWindowHandler), "Framework could not be initialized.");
+#ifdef _DEBUG
 	ImGui_ImplWin32_Init(myWindowHandler->GetWindowHandle());
 	ImGui_ImplDX11_Init(myFramework->GetDevice(), myFramework->GetContext());
+#endif
 	myWindowHandler->SetInternalResolution();
 	ENGINE_ERROR_BOOL_MESSAGE(myModelFactory->Init(myFramework), "Model Factory could not be initiliazed.");
 	ENGINE_ERROR_BOOL_MESSAGE(myCameraFactory->Init(myWindowHandler), "Camera Factory could not be initialized.");
@@ -187,10 +197,12 @@ float CEngine::BeginFrame()
 	size_t decimalIndex = fpsString.find_first_of('.');
 	fpsString = fpsString.substr(0, decimalIndex);
 	myWindowHandler->SetWindowTitle("IronWrought | FPS: " + fpsString);
-#endif
+
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
+#endif
+
 	return CTimer::Mark();
 }
 
@@ -220,8 +232,11 @@ void CEngine::RenderFrame()
 
 void CEngine::EndFrame()
 {
+#ifdef _DEBUG
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+#endif // _DEBUG
+
 	myFramework->EndFrame();
 }
 
@@ -301,8 +316,8 @@ void CEngine::SetActiveScene(const CStateStack::EState aState)
 	}
 
 	CTimer::Mark();
-	mySceneMap[myActiveState]->Awake();
-	mySceneMap[myActiveState]->Start();
+	//mySceneMap[myActiveState]->Awake();// Unused
+	//mySceneMap[myActiveState]->Start();// Unused
 }
 
 CScene& CEngine::GetActiveScene()
@@ -314,6 +329,25 @@ CScene& CEngine::GetActiveScene()
 const bool CEngine::IsActiveScene(const CStateStack::EState& aState)
 {
 	return myActiveState == aState;
+}
+
+void CEngine::UpdateScene(const CStateStack::EState& aState)
+{
+	// Added by Aki as a test :P - Works, may be undesirable. // 2021 04 14
+
+	assert(mySceneMap.find(aState) != mySceneMap.end() && "No CScene exists!");
+	assert(mySceneMap[aState] != nullptr && "No CScene exists!");
+
+	if (mySceneMap.find(aState) == mySceneMap.end())
+		return;
+	if (!mySceneMap[aState])
+		return;
+
+	CScene& scene = *mySceneMap[aState];
+	for (auto& gameObject : scene.myGameObjects)
+	{
+		gameObject->Update();
+	}
 }
 
 void CEngine::ModelViewerSetScene(CScene* aScene)
@@ -338,16 +372,21 @@ void CEngine::ClearModelFactory()
 	myModelFactory->ClearFactory();
 }
 
-void CEngine::ShowCursor()
+void CEngine::ShowCursor(const bool& anIsInEditorMode)
 {
-	myWindowHandler->ShowAndUnlockCursor();
+	myWindowHandler->ShowAndUnlockCursor(anIsInEditorMode);
 }
-void CEngine::HideCursor()
+void CEngine::HideCursor(const bool& anIsInEditorMode)
 {
-	myWindowHandler->HideAndLockCursor();
+	myWindowHandler->HideAndLockCursor(anIsInEditorMode);
 }
 
 void CEngine::LoadGraph(const std::string& aSceneName)
 {
 	myGraphManager->Load(aSceneName);
+}
+
+void CEngine::SetBrokenScreen(bool aShouldSetBrokenScreen)
+{
+	myRenderManager->SetBrokenScreen(aShouldSetBrokenScreen);
 }

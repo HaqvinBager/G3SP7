@@ -38,8 +38,8 @@ public class ExportInstancedModel
         {
             if (Json.TryIsValidExport(meshFilter, out GameObject prefabParent, true))
             {
-                if (prefabParent.GetComponent<Collider>() != null)
-                    continue;
+                //if (prefabParent.GetComponent<Collider>() != null)
+                //    continue;
 
                 GameObject asset = PrefabUtility.GetCorrespondingObjectFromOriginalSource(meshFilter).gameObject;
                 if (asset == null)

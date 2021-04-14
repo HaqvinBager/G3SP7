@@ -68,7 +68,7 @@ public:
 	void SetActiveScene(const CStateStack::EState aState);
 	CScene& GetActiveScene();
 	inline const bool IsActiveScene(const CStateStack::EState& aState);
-	
+	void UpdateScene(const CStateStack::EState& aState);
 	CPhysXWrapper& GetPhysx() { return *myPhysxWrapper; }
 
 	void ModelViewerSetScene(CScene* aScene);
@@ -81,9 +81,11 @@ public:
 	void RemoveScene(CStateStack::EState aState);
 	void ClearModelFactory();
 
-	void ShowCursor();
-	void HideCursor();
+	void ShowCursor(const bool& anIsInEditorMode = true);
+	void HideCursor(const bool& anIsInEditorMode = false);
 	void LoadGraph(const std::string& aSceneName);
+
+	void SetBrokenScreen(bool aShouldSetBrokenScreen);
 
 private:
 	void AllScenesToInactive();

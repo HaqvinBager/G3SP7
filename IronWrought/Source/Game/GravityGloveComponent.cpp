@@ -38,20 +38,17 @@ void CGravityGloveComponent::Start()
 
 void CGravityGloveComponent::Update()
 {
-	if (Input::GetInstance()->IsMousePressed(Input::EMouseButton::Left)) {
-		PostMaster::SCrossHairData data;
+	if (Input::GetInstance()->IsMousePressed(Input::EMouseButton::Left))
+	{
+		PostMaster::SCrossHairData data; // Wind down
 		data.myIndex = 0;
 		data.myShouldBeReversed = true;
 		CMainSingleton::PostMaster().Send({ EMessageType::UpdateCrosshair, &data });
 
 		Push();
 	}
-	if (Input::GetInstance()->IsMousePressed(Input::EMouseButton::Right)) {
-		PostMaster::SCrossHairData data;
-		data.myIndex = 0;
-		
-		CMainSingleton::PostMaster().Send({ EMessageType::UpdateCrosshair, &data });
-
+	if (Input::GetInstance()->IsMousePressed(Input::EMouseButton::Right))
+	{
 		Pull();
 	}
 
@@ -90,7 +87,7 @@ void CGravityGloveComponent::Pull()
 		myCurrentTarget->GetDynamicRigidBody()->GetBody().setMaxLinearVelocity(100.f);
 		myCurrentTarget = nullptr;
 
-		PostMaster::SCrossHairData data;
+		PostMaster::SCrossHairData data; // Wind down
 		data.myIndex = 0;
 		data.myShouldBeReversed = true;
 		CMainSingleton::PostMaster().Send({ EMessageType::UpdateCrosshair, &data });
@@ -122,17 +119,35 @@ void CGravityGloveComponent::Pull()
 	{
 		CTransformComponent* transform = (CTransformComponent*)hit.getAnyHit(0).actor->userData;
 		if (transform == nullptr)
+		{
+			PostMaster::SCrossHairData data; // Wind down
+			data.myIndex = 0;
+			data.myShouldBeReversed = true;
+			CMainSingleton::PostMaster().Send({ EMessageType::UpdateCrosshair, &data });
 			return;
-		
-		myCurrentTarget = transform->GetComponent<CRigidBodyComponent>();
+		}
+
+		CRigidBodyComponent* rigidbody = nullptr;
+		if (transform->GameObject().TryGetComponent<CRigidBodyComponent>(&rigidbody))
+		{
+			if (!rigidbody->IsKinematic()) {
+				myCurrentTarget = rigidbody;
+				PostMaster::SCrossHairData data; // Wind Up
+				data.myIndex = 0;
+				CMainSingleton::PostMaster().Send({ EMessageType::UpdateCrosshair, &data });
+			 }
+		}
+
+		//myCurrentTarget = transform->GetComponent<CRigidBodyComponent>();
+
 
 	#ifdef _DEBUG
-		CLineInstance* myLine = new CLineInstance();
-		CLineInstance* myLine2 = new CLineInstance();
-		myLine->Init(CLineFactory::GetInstance()->CreateLine(start, { hit.getAnyHit(0).position.x, hit.getAnyHit(0).position.y, hit.getAnyHit(0).position.z }, { 0,255,0,255 }));
-		myLine2->Init(CLineFactory::GetInstance()->CreateLine(start, start + (dir * 5.f), { 255,0,0,255 }));
-		CEngine::GetInstance()->GetActiveScene().AddInstance(myLine);
-		CEngine::GetInstance()->GetActiveScene().AddInstance(myLine2);
+	//	CLineInstance* myLine = new CLineInstance();
+	//	CLineInstance* myLine2 = new CLineInstance();
+	//	myLine->Init(CLineFactory::GetInstance()->CreateLine(start, { hit.getAnyHit(0).position.x, hit.getAnyHit(0).position.y, hit.getAnyHit(0).position.z }, { 0,255,0,255 }));
+	//	myLine2->Init(CLineFactory::GetInstance()->CreateLine(start, start + (dir * 5.f), { 255,0,0,255 }));
+	//	CEngine::GetInstance()->GetActiveScene().AddInstance(myLine);
+	//	CEngine::GetInstance()->GetActiveScene().AddInstance(myLine2);
 	#endif
 	}
 	//myCurrentTarget->SetPosition(myGravitySlot->WorldPosition());
@@ -156,9 +171,11 @@ void CGravityGloveComponent::Push()
 			CTransformComponent* transform = (CTransformComponent*)hit.getAnyHit(0).actor->userData;
 			if (transform == nullptr)
 				return;
+
 			CRigidBodyComponent* target = transform->GetComponent<CRigidBodyComponent>();
-			if (target) {
-				target->AddForce(-GameObject().myTransform->GetWorldMatrix().Forward(), mySettings.myPushForce * target->GetMass(), EForceMode::EImpulse);
+			if (target != nullptr) {
+				if(!target->IsKinematic())
+					target->AddForce(-GameObject().myTransform->GetWorldMatrix().Forward(), mySettings.myPushForce * target->GetMass(), EForceMode::EImpulse);
 			}
 		}
 	}

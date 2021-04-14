@@ -24,6 +24,8 @@ CCanvas::CCanvas() :
 	, myIsEnabled(true)
 	, myIsHUDCanvas(false)
 	, myCurrentRenderLayer(0)
+	, myLevelToLoad("Level_1-1")
+	, myCurrentWidgetIndex(-1)
 {
 }
 
@@ -40,50 +42,11 @@ CCanvas::~CCanvas()
 	}
 	myButtons.clear();
 
-	// Scene takes ownership of sprites/ texts etc.
-	/*delete myBackground;
-	myBackground = nullptr;
-
-	CScene& scene = IRONWROUGHT_ACTIVE_SCENE;
-
-	for (size_t i = 0; i < myAnimatedUIs.size(); ++i)
+	for (size_t i = 0; i < myWidgets.size(); ++i)
 	{
-		scene.RemoveInstance(myAnimatedUIs[i]);
-		delete myAnimatedUIs[i];
-		myAnimatedUIs[i] = nullptr;
+		delete myWidgets[i];
+		myWidgets[i] = nullptr;
 	}
-	myAnimatedUIs.clear();
-
-	for (size_t i = 0; i < myButtons.size(); ++i)
-	{
-			delete myButtons[i];
-			myButtons[i] = nullptr;
-	}
-	myButtons.clear();
-
-	for (size_t i = 0; i < mySprites.size(); ++i)
-	{
-		scene.RemoveInstance(mySprites[i]);
-		delete mySprites[i];
-		mySprites[i] = nullptr;
-	}
-	mySprites.clear();
-
-	for (size_t i = 0; i < myButtonTexts.size(); ++i)
-	{
-		scene.RemoveInstance(myButtonTexts[i]);
-		delete myButtonTexts[i];
-		myButtonTexts[i] = nullptr;
-	}
-	myButtonTexts.clear();
-
-	for (size_t i = 0; i < myTexts.size(); ++i)
-	{
-		scene.RemoveInstance(myTexts[i]);
-		delete myTexts[i];
-		myTexts[i] = nullptr;
-	}
-	myTexts.clear();*/
 }
 
 inline const Vector2& CCanvas::Position() const
@@ -94,7 +57,7 @@ inline const Vector2& CCanvas::Position() const
 inline void CCanvas::Position(const Vector2& aPosition)
 {
 	myPosition = aPosition;
-	// Go through everything and set positions relative to new position
+	UpdatePositions();
 }
 
 inline const Vector2& CCanvas::Pivot() const
@@ -105,7 +68,8 @@ inline const Vector2& CCanvas::Pivot() const
 inline void CCanvas::Pivot(const Vector2& aPivot)
 {
 	myPivot = aPivot;
-	// Go through everything and set positions relative to new pivot
+	myPosition -= myPivot;
+	UpdatePositions();
 }
 
 void CCanvas::ClearFromScene(CScene& aScene)
@@ -346,13 +310,21 @@ void CCanvas::Init(const std::string& aFilePath, CScene& aScene, bool addToScene
 			{
 				myWidgets.push_back(new CCanvas());
 				myWidgets[i]->Init(ASSETPATH(widgetsArray[i]["Path"].GetString()), aScene, true, myPivot, myPosition, 3);
+				myWidgets[i]->SetEnabled(false);
 			}
 		}
 		for (int i = 0; i < currentSize; ++i)
 		{
 			myWidgets[i]->Init(ASSETPATH(widgetsArray[i]["Path"].GetString()), aScene, true, myPivot, myPosition, 3);
+			myWidgets[i]->SetEnabled(false);
 		}
 	}
+
+	// To start Idle Crosshair Animation
+	if (mySprites.empty())
+		return;
+
+	mySprites[0]->PlayAnimationUsingInternalData(1);
 }
 
 void CCanvas::Update()
@@ -365,6 +337,39 @@ void CCanvas::Update()
 	if (myButtons.size() <= 0)
 		return;
 
+	if (myWidgets.size() > 0)// This is a quick solution. Nothing to keep.
+	{
+		for (unsigned short i = 0; i < myWidgets.size(); ++i)
+		{
+			switch (i)
+			{
+				case 0:
+					if(myWidgets[i]->GetEnabled())
+						myLevelToLoad = "Level_1-1";
+				break;
+
+				case 1:
+					if(myWidgets[i]->GetEnabled())
+						myLevelToLoad = "Level_1-2";
+				break;
+
+				case 2:
+					if(myWidgets[i]->GetEnabled())
+						myLevelToLoad = "Level_2-1";
+				break;
+
+				case 3:
+					if(myWidgets[i]->GetEnabled())
+						myLevelToLoad = "Level_2-2";
+				break;
+
+				default:
+				break;
+						
+			}
+		}
+	}
+
 	DirectX::SimpleMath::Vector2 mousePos = { static_cast<float>(Input::GetInstance()->MouseX()), static_cast<float>(Input::GetInstance()->MouseY()) };
 	for (unsigned int i = 0; i < myButtons.size(); ++i)
 	{
@@ -375,7 +380,7 @@ void CCanvas::Update()
 	{
 		for (unsigned int i = 0; i < myButtons.size(); ++i)
 		{
-			myButtons[i]->Click(true, nullptr);
+			myButtons[i]->Click(true, &myLevelToLoad);
 		}
 	}
 
@@ -383,8 +388,13 @@ void CCanvas::Update()
 	{
 		for (unsigned int i = 0; i < myButtons.size(); ++i)
 		{
-			myButtons[i]->Click(false, nullptr);
+			myButtons[i]->Click(false, &myLevelToLoad);
 		}
+	}
+
+	for (auto& widget : myWidgets)
+	{
+		widget->Update();
 	}
 }
 
@@ -401,7 +411,8 @@ void CCanvas::Receive(const SMessage& aMessage)
 					if (myAnimatedUIs[0])
 						myAnimatedUIs[0]->Level(*static_cast<float*>(aMessage.data));
 				}
-			}break;
+			}
+			break;
 
 			case EMessageType::UpdateCrosshair:
 			{
@@ -410,18 +421,38 @@ void CCanvas::Receive(const SMessage& aMessage)
 				PostMaster::SCrossHairData* aData = reinterpret_cast<PostMaster::SCrossHairData*>(aMessage.data);
 				mySprites[0]->PlayAnimationUsingInternalData(aData->myIndex, aData->myShouldBeReversed);
 			}break;
-			
+
 			default:
 				break;
 		}
 	}
 	else
 	{
-		//switch (aMessage.myMessageType)
-		//{
-		//	default:
-		//	break;
-		//}
+		switch (aMessage.myMessageType)
+		{
+			case EMessageType::ToggleWidget:
+			{
+				if (myWidgets.empty())
+					return;
+
+				DisableWidgets();
+
+				int index = *static_cast<int*>(aMessage.data);
+				if (index > -1 && index < myWidgets.size())
+				{
+					if (myCurrentWidgetIndex != -1)
+					{
+						myWidgets[myCurrentWidgetIndex]->SetEnabled(false);
+					}
+
+					myCurrentWidgetIndex = index;
+					myWidgets[myCurrentWidgetIndex]->SetEnabled(true);
+				}
+			}break;
+
+			default:
+			break;
+		}
 	}
 
 	// Not sure how we are supposed to handle this:
@@ -441,6 +472,8 @@ void CCanvas::SubscribeToMessages()
 	{
 		CMainSingleton::PostMaster().Subscribe(messageType, this);
 	}
+
+	CMainSingleton::PostMaster().Subscribe(EMessageType::ToggleWidget, this);
 }
 
 void CCanvas::UnsubscribeToMessages()
@@ -449,6 +482,8 @@ void CCanvas::UnsubscribeToMessages()
 	{
 		CMainSingleton::PostMaster().Unsubscribe(messageType, this);
 	}
+
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::ToggleWidget, this);
 }
 
 bool CCanvas::GetEnabled()
@@ -477,10 +512,20 @@ void CCanvas::SetEnabled(bool isEnabled)
 		for (auto& animUI : myAnimatedUIs)
 			animUI->SetShouldRender(myIsEnabled);
 
-		myBackground->SetShouldRender(myIsEnabled);
+		if(myBackground)
+			myBackground->SetShouldRender(myIsEnabled);
 
-		for (auto& widget : myWidgets)
-			widget->SetEnabled(myIsEnabled);
+		//for (auto& widget : myWidgets)
+		//	widget->SetEnabled(myIsEnabled);
+	}
+}
+
+void CCanvas::DisableWidgets()
+{
+	for (auto& widget : myWidgets)
+	{
+		widget->SetEnabled(false);
+		widget->DisableWidgets();
 	}
 }
 
@@ -524,15 +569,19 @@ bool CCanvas::InitButton(const rapidjson::GenericObject<false, rapidjson::Value>
 	data.mySpritePaths.at(1) = ASSETPATH(aRapidObject["Hover Sprite Path"].GetString());
 	data.mySpritePaths.at(2) = ASSETPATH(aRapidObject["Click Sprite Path"].GetString());
 
-	auto messageDataArray = aRapidObject["Messages"].GetArray();
-	data.myMessagesToSend.resize(messageDataArray.Size());
+	auto messagesArray = aRapidObject["Messages"].GetArray();
+	data.myMessagesToSend.resize(messagesArray.Size());
 
-	for (unsigned int j = 0; j < messageDataArray.Size(); ++j)
+	for (unsigned int j = 0; j < messagesArray.Size(); ++j)
 	{
-		data.myMessagesToSend[j] = static_cast<EMessageType>(messageDataArray[j].GetInt());
+		data.myMessagesToSend[j] = static_cast<EMessageType>(messagesArray[j].GetInt());
 	}
 
-	myButtons[anIndex]->Init(data, aScene);
+	data.myWidgetToToggleIndex = -1;
+	if (aRapidObject.HasMember("Sub Canvas Toggle Index"))
+		data.myWidgetToToggleIndex = aRapidObject["Sub Canvas Toggle Index"].GetInt();
+
+ 	myButtons[anIndex]->Init(data, aScene);
 
 	return true;
 }
@@ -652,7 +701,48 @@ bool CCanvas::InitWidgets(const rapidjson::GenericArray<false, rapidjson::Value>
 	for (int i = 0; i < myWidgets.size(); ++i)
 	{
 		myWidgets[i]->Init(ASSETPATH(aRapidArray[i]["Path"].GetString()), aScene, true, myPivot, myPosition);
+		myWidgets[i]->SetEnabled(false);
 	}
 
 	return true;
+}
+
+void CCanvas::UpdatePositions()
+{
+	for (auto& sprite : mySprites)
+	{
+		sprite->SetPosition(sprite->GetPosition() - myPosition);
+	}
+
+	for (auto& animated : myAnimatedUIs)
+	{
+		animated->SetPosition(animated->GetPosition() - myPosition);
+	}
+
+	for (auto& button : myButtons)
+	{
+		auto& sprite1 = button->mySprites[0];
+		auto& sprite2 = button->mySprites[1];
+		auto& sprite3 = button->mySprites[2];
+		sprite1->SetPosition(sprite1->GetPosition() - myPosition);
+		sprite2->SetPosition(sprite2->GetPosition() - myPosition);
+		sprite3->SetPosition(sprite3->GetPosition() - myPosition);
+	}
+
+	for (auto& text : myButtonTexts)
+	{
+		text->SetPosition(text->GetPosition() - myPosition);
+	}
+
+	for (auto& text : myTexts)
+	{
+		text->SetPosition(text->GetPosition() - myPosition);
+	}
+
+	myBackground->SetPosition(myBackground->GetPosition() - myPosition);
+
+	for (auto& canvas : myWidgets)
+	{
+		canvas->Position(canvas->Position() - myPosition);
+	}
 }

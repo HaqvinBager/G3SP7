@@ -26,6 +26,7 @@ unsigned int CRenderManager::myNumberOfDrawCallsThisFrame = 0;
 CRenderManager::CRenderManager()
 	: myDoFullRender(true)
 	, myUseAntiAliasing(true)
+	, myUseBrokenScreenPass(false)
 	, myClearColor(0.5f, 0.5f, 0.5f, 1.0f)
 {
 }
@@ -99,11 +100,13 @@ void CRenderManager::Render(CScene& aScene)
 {
 	CRenderManager::myNumberOfDrawCallsThisFrame = 0;
 
+#ifdef _DEBUG
 	if (Input::GetInstance()->IsKeyPressed(VK_F6))	
 	{
 		myDoFullRender = myDeferredRenderer.ToggleRenderPass();
 		//myDoFullRender = myForwardRenderer.ToggleRenderPass();
 	}
+#endif // DEBUG
 
 	myRenderStateManager.SetAllDefault();
 	myBackbuffer.ClearTexture(myClearColor);
@@ -328,8 +331,10 @@ void CRenderManager::Render(CScene& aScene)
 	myDeferredLightingTexture.SetAsResourceOnSlot(0);
 	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_TONEMAP);
 
+#ifdef _DEBUG
 	if (INPUT->IsKeyPressed(VK_F2))
 		myUseAntiAliasing = !myUseAntiAliasing;
+#endif // _DEBUG
 
 	// Anti-aliasing
 	if (myUseAntiAliasing)
@@ -345,6 +350,16 @@ void CRenderManager::Render(CScene& aScene)
 	{
 		myBackbuffer.SetAsActiveTarget();
 		myTonemappedTexture.SetAsResourceOnSlot(0);
+	}
+
+	// Broken Screen
+	if (myUseBrokenScreenPass)
+	{
+		myAntiAliasedTexture.SetAsActiveTarget();
+		myTonemappedTexture.SetAsResourceOnSlot(0);
+		myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_BROKEN_SCREEN_EFFECT);
+		myBackbuffer.SetAsActiveTarget();
+		myAntiAliasedTexture.SetAsResourceOnSlot(0);
 	}
 
 	// Gamma correction
@@ -398,6 +413,11 @@ void CRenderManager::Release()
 	myVignetteTexture.ReleaseTexture();
 	myDeferredLightingTexture.ReleaseTexture();
 	//myGBuffer // Should something be released for the GBuffer?
+}
+
+void CRenderManager::SetBrokenScreen(bool aShouldSetBrokenScreen)
+{
+	myUseBrokenScreenPass = aShouldSetBrokenScreen;
 }
 
 void CRenderManager::Clear(DirectX::SimpleMath::Vector4 aClearColor)

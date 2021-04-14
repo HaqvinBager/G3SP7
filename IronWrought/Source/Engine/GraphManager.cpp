@@ -12,12 +12,14 @@
 #include <sstream>
 #include "NodeInstance.h"
 #include "NodeType.h"
+#include "NodeTypes.h"
+#ifdef _DEBUG
 #include <imgui_node_editor.h>
 #include "Drawing.h"
 #include "Widgets.h"
 #include "Interop.h"
-#include "NodeTypes.h"
 #include <imgui_impl_dx11.h>
+#endif
 #include "Input.h"
 #include <filesystem>
 #include "Scene.h"
@@ -28,15 +30,21 @@
 #include "NodeDataManager.h"
 
 using namespace rapidjson;
+#ifdef _DEBUG
+
 namespace ed = ax::NodeEditor;
 
 using namespace ax::Drawing;
 static ed::EditorContext* g_Context = nullptr;
+#endif
+
 CGraphManager::~CGraphManager()
 {
+#ifdef _DEBUG
 	delete myHeaderTextureID;
 	myHeaderTextureID = nullptr;
 	ed::DestroyEditor(g_Context);
+#endif
 }
 
 void CGraphManager::SGraph::Clear()
@@ -55,6 +63,13 @@ void CGraphManager::Load(const std::string& aSceneName)
 	//Global = Kan alltid n�s om programmet k�r
 	//Scene = Data som relaterar till Just denna Scen, kan alltid n�s n�r Scene �r ig�ng
 	//Script = Data som relaterar till just detta script
+
+#ifdef _DEBUG
+	myRunScripts = false;
+#else
+	myRunScripts = true;
+#endif // _DEBUG
+
 
 	if (!CNodeDataManager::Get())
 	{
@@ -152,11 +167,13 @@ void CGraphManager::Load(const std::string& aSceneName)
 	if (myGraphs.size() > 0)
 		myCurrentGraph = &myGraphs[0];
 	CNodeTypeCollector::PopulateTypes();
+#ifdef _DEBUG
 	myHeaderTextureID = nullptr;
 	ed::Config config;
 	std::string simple = "Imgui/NodeScripts/Simple.json";
 	config.SettingsFile = simple.c_str();
 	g_Context = ed::CreateEditor(&config);
+#endif
 	LoadDataNodesFromFile();
 	myMenuSearchField = new char[127];
 	memset(&myMenuSearchField[0], 0, sizeof(myMenuSearchField));
@@ -208,6 +225,7 @@ void CGraphManager::ReTriggerUpdatingTrees()
 
 void CGraphManager::SaveTreeToFile()
 {
+#ifdef _DEBUG
 	for (const auto& graph : myGraphs)
 	{
 
@@ -263,6 +281,7 @@ void CGraphManager::SaveTreeToFile()
 			of << s.GetString();
 		}
 	}
+#endif
 }
 
 SPin::EPinType LoadPinData(NodeDataPtr& someDataToCopy, rapidjson::Value& someData)
@@ -391,12 +410,13 @@ void CGraphManager::LoadTreeFromFile()
 
 					firstNode->AddLinkToVia(secondNode, inputID, Output, id);
 					secondNode->AddLinkToVia(firstNode, Output, inputID, id);
-
+#ifdef _DEBUG
 					graph.myLinks.push_back({ ed::LinkId(id), ed::PinId(inputID), ed::PinId(Output) });
 					if (graph.myNextLinkIdCounter < id + 1)
 					{
 						graph.myNextLinkIdCounter = id + 1;
 					}
+#endif
 				}
 			}
 		}
@@ -518,13 +538,16 @@ void CGraphManager::Update()
 	{
 		CGraphNodeTimerManager::Get()->Update();
 
-		PreFrame(CTimer::Dt());
+		PreFrame();
+#ifdef _DEBUG
+
 		if (myRenderGraph)
 		{
 			ConstructEditorTreeAndConnectLinks();
 			PostFrame();
 			ImGui::End();
 		}
+#endif // _DEBUG
 	}
 }
 
@@ -586,6 +609,7 @@ ImColor GetIconColor(SPin::EPinType type)
 	}
 };
 
+#ifdef _DEBUG
 void DrawPinIcon(const SPin& pin, bool connected, int alpha)
 {
 	IconType iconType;
@@ -623,6 +647,7 @@ void DrawPinIcon(const SPin& pin, bool connected, int alpha)
 	const int s_PinIconSize = 24;
 	ax::Widgets::Icon(ImVec2(s_PinIconSize, s_PinIconSize), iconType, connected, color, ImColor(32, 32, 32, alpha));
 };
+#endif
 
 CNodeInstance* CGraphManager::GetNodeFromNodeID(unsigned int anID)
 {
@@ -667,7 +692,7 @@ CNodeInstance* CGraphManager::GetNodeFromPinID(unsigned int anID)
 	return nullptr;
 }
 
-
+#ifdef _DEBUG
 void CGraphManager::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInstance)
 {
 	switch (aPin.myVariableType)
@@ -855,6 +880,7 @@ void CGraphManager::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInstance
 	}
 
 }
+#endif // _DEBUG
 
 void CGraphManager::CreateNewDataNode()
 {
@@ -981,6 +1007,7 @@ void CGraphManager::LoadDataNodesFromFile()
 	}
 }
 
+#ifdef _DEBUG
 ImTextureID CGraphManager::HeaderTextureID()
 {
 	if (!myHeaderTextureID)
@@ -989,6 +1016,7 @@ ImTextureID CGraphManager::HeaderTextureID()
 	}
 	return myHeaderTextureID;
 }
+#endif
 
 void CGraphManager::WillBeCyclic(CNodeInstance* aFirst, CNodeInstance* /*aSecond*/, bool& aIsCyclic, CNodeInstance* aBase)
 {
@@ -1026,8 +1054,9 @@ void CGraphManager::WillBeCyclic(CNodeInstance* aFirst, CNodeInstance* /*aSecond
 	}
 }
 
-void CGraphManager::PreFrame(float aDeltaTime)
+void CGraphManager::PreFrame()
 {
+#ifdef _DEBUG
 	if (myRenderGraph)
 	{
 		auto& io = ImGui::GetIO();
@@ -1064,22 +1093,24 @@ void CGraphManager::PreFrame(float aDeltaTime)
 		}
 		ImGui::End();
 	}
-
 	CreateNewDataNode();
 
 	for (auto& nodeInstance : myCurrentGraph->myNodeInstances)
 	{
 		nodeInstance->DebugUpdate();
-		nodeInstance->VisualUpdate(aDeltaTime);
+		nodeInstance->VisualUpdate(CTimer::Dt());
 	}
+#endif
 
 	ReTriggerUpdatingTrees();
 
+#ifdef _DEBUG
 	if (myRenderGraph)
 	{
 		ed::SetCurrentEditor(g_Context);
 		ed::Begin("My Editor", ImVec2(0.0, 0.0f));
 	}
+#endif
 }
 
 bool ArePinTypesCompatible(SPin& aFirst, SPin& aSecond)
@@ -1097,6 +1128,7 @@ bool ArePinTypesCompatible(SPin& aFirst, SPin& aSecond)
 
 void CGraphManager::ConstructEditorTreeAndConnectLinks()
 {
+#ifdef _DEBUG
 	for (auto& nodeInstance : myCurrentGraph->myNodeInstances)
 	{
 		if (!nodeInstance->myHasSetEditorPosition)
@@ -1736,10 +1768,12 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 			}
 		}
 	}
+#endif
 }
 
 void CGraphManager::PostFrame()
 {
+#ifdef _DEBUG
 	if (mySave)
 	{
 		mySave = false;
@@ -1759,4 +1793,5 @@ void CGraphManager::PostFrame()
 	myFlowsToBeShown.clear();
 	ed::End();
 	ed::SetCurrentEditor(nullptr);
+#endif
 }

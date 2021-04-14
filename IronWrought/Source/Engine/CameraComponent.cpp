@@ -11,12 +11,13 @@
 #include "MainSingleton.h"
 #include "JsonReader.h"
 
-
 CCameraComponent::CCameraComponent(CGameObject& aParent, const float aFoV/*, float aNearPlane, float aFarPlane, DirectX::SimpleMath::Vector2 aResolution*/)
 	: CComponent(aParent),myFoV(aFoV)
 {
-	myProjection = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(myFoV), (16.0f / 9.0f), 0.1f, 1000.0f);
+	myProjection = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(myFoV), (16.0f / 9.0f), 0.1f, 500.0f);
 	myView = DirectX::XMMatrixLookAtLH(GameObject().myTransform->Position(), Vector3::Forward, Vector3::Up);
+	
+	DirectX::BoundingFrustum::CreateFromMatrix(myViewFrustum, myProjection);
 
 	myTrauma = 0.0f;
 	myShake = 0.0f;
@@ -44,7 +45,7 @@ void CCameraComponent::Awake()
 	rapidjson::Document document = CJsonReader::Get()->LoadDocument("Json/Settings/CameraInit.json");
 
 	myFadingPlane = new CSpriteInstance();
-	myFadingPlane->Init(CSpriteFactory::GetInstance()->GetSprite(document["Fade Screen Path"].GetString()));
+	myFadingPlane->Init(CSpriteFactory::GetInstance()->GetSprite(ASSETPATH(document["Fade Screen Path"].GetString())));
 	myFadingPlane->SetSize({ 15.1f, 8.5f });
 	myFadingPlane->SetRenderOrder(ERenderOrder::Layer3);
 	myFadingPlane->SetShouldRender(false);
@@ -64,7 +65,6 @@ float LogEaseIn(float x) {
 
 void CCameraComponent::Update()
 {
-
 	if (myTrauma > 0.0f) {
 		myShakeTimer += CTimer::Dt();
 		myTrauma -= (1 / myDecayInSeconds) * CTimer::Dt();
@@ -123,7 +123,9 @@ void CCameraComponent::SetStartingRotation(DirectX::SimpleMath::Vector3 aRotatio
 void CCameraComponent::SetFoV(float aFoV)
 {
 	myFoV = aFoV;
-	myProjection = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(myFoV), (16.0f / 9.0f), 0.1f, 1000.0f);
+	myProjection = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(myFoV), (16.0f / 9.0f), 0.1f, 500.0f);
+	
+	DirectX::BoundingFrustum::CreateFromMatrix(myViewFrustum, myProjection);
 }
 
 float CCameraComponent::GetFoV()
@@ -156,6 +158,17 @@ const Matrix& CCameraComponent::GetViewMatrix()
 	return myView;
 }
 
+const DirectX::BoundingFrustum CCameraComponent::GetViewFrustum()
+{
+	DirectX::BoundingFrustum viewFrustum;
+	DirectX::XMVECTOR det;
+
+	myViewFrustum.Transform(viewFrustum, DirectX::XMMatrixInverse(&det, DirectX::XMMatrixLookAtLH(GameObject().myTransform->Position(), GameObject().myTransform->Position() - GameObject().myTransform->Transform().Forward(), GameObject().myTransform->Transform().Up())));
+	viewFrustum.Origin = GameObject().myTransform->WorldPosition();
+
+	return viewFrustum;
+}
+
 void CCameraComponent::Shake()
 {
 	myShake = myTrauma * myTrauma * myTrauma;
@@ -171,3 +184,80 @@ void CCameraComponent::Shake()
 		myShakeTimer -= 0.0167f;
 	}
 }
+
+
+// FRUSTUM CULLING DEBUG
+
+//myFrustumWireframe = new CLineInstance();
+//DirectX::XMFLOAT3 corners[8];
+//myViewFrustum.GetCorners(corners);
+//std::vector<Vector3> cornerList;
+//for (unsigned int i = 0; i < 8; ++i)
+//{
+//	cornerList.push_back(corners[i]);
+//}
+//
+//cornerList.push_back(corners[1]);
+//cornerList.push_back(corners[0]);
+//cornerList.push_back(corners[2]);
+//cornerList.push_back(corners[0]);
+//cornerList.push_back(corners[3]);
+//cornerList.push_back(corners[1]);
+//cornerList.push_back(corners[3]);
+//cornerList.push_back(corners[1]);
+//cornerList.push_back(corners[2]);
+//cornerList.push_back(corners[2]);
+//cornerList.push_back(corners[3]);
+//
+//cornerList.push_back(corners[4]);
+//cornerList.push_back(corners[5]);
+//cornerList.push_back(corners[4]);
+//cornerList.push_back(corners[6]);
+//cornerList.push_back(corners[4]);
+//cornerList.push_back(corners[7]);
+//cornerList.push_back(corners[5]);
+//cornerList.push_back(corners[7]);
+//cornerList.push_back(corners[5]);
+//cornerList.push_back(corners[6]);
+//cornerList.push_back(corners[6]);
+//cornerList.push_back(corners[7]);
+//
+//cornerList.push_back(corners[0]);
+//cornerList.push_back(corners[4]);
+//cornerList.push_back(corners[0]);
+//cornerList.push_back(corners[5]);
+//cornerList.push_back(corners[0]);
+//cornerList.push_back(corners[6]);
+//cornerList.push_back(corners[0]);
+//cornerList.push_back(corners[7]);
+//
+//cornerList.push_back(corners[1]);
+//cornerList.push_back(corners[4]);
+//cornerList.push_back(corners[1]);
+//cornerList.push_back(corners[5]);
+//cornerList.push_back(corners[1]);
+//cornerList.push_back(corners[6]);
+//cornerList.push_back(corners[1]);
+//cornerList.push_back(corners[7]);
+//
+//cornerList.push_back(corners[2]);
+//cornerList.push_back(corners[4]);
+//cornerList.push_back(corners[2]);
+//cornerList.push_back(corners[5]);
+//cornerList.push_back(corners[2]);
+//cornerList.push_back(corners[6]);
+//cornerList.push_back(corners[2]);
+//cornerList.push_back(corners[7]);
+//
+//cornerList.push_back(corners[3]);
+//cornerList.push_back(corners[4]);
+//cornerList.push_back(corners[3]);
+//cornerList.push_back(corners[5]);
+//cornerList.push_back(corners[3]);
+//cornerList.push_back(corners[6]);
+//cornerList.push_back(corners[3]);
+//cornerList.push_back(corners[7]);
+//
+//myFrustumWireframe->Init(CLineFactory::GetInstance()->CreatePolygon(cornerList));
+
+//	IRONWROUGHT->GetActiveScene().AddInstance(myFrustumWireframe);

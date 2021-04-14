@@ -18,9 +18,11 @@ CGameObject::~CGameObject()
 {
 	//for (size_t i = 0; i < myComponents.size(); ++i)
 	//{
-	//	delete myComponents[i];
-	//	myComponents[i] = nullptr;
+	//	//delete myComponents[i];
+	//	//myComponents[i] = nullptr;
+	//	myComponents[i].release();
 	//}
+	myTransform = nullptr;
 	myComponents.clear();
 }
 

@@ -37,6 +37,7 @@ public:
 public:
 	bool GetEnabled();
 	void SetEnabled(bool isEnabled);
+	void DisableWidgets();
 
 	std::vector<CButton*> GetButtons() { return myButtons; }
 	std::vector<CTextInstance*> GetTexts() { return myTexts; }
@@ -53,6 +54,8 @@ private:
 	bool InitMessageTypes(const rapidjson::GenericArray<false, rapidjson::Value>& aRapidArray);
 	bool InitWidgets(const rapidjson::GenericArray<false, rapidjson::Value>& aRapidArray, CScene& aScene);
 
+	void UpdatePositions();
+
 private:
 	bool myIsEnabled;
 	Vector2 myPosition;
@@ -67,7 +70,11 @@ private:
 	std::vector<EMessageType>		 myMessageTypes;
 	std::vector<CCanvas*>			 myWidgets;
 
+	std::string myLevelToLoad = ""; // Button - toggle sends level to load
+
 	unsigned int myCurrentRenderLayer;
 
 	bool myIsHUDCanvas;
+
+	int myCurrentWidgetIndex;
 };

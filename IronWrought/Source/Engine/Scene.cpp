@@ -71,6 +71,14 @@ CScene::CScene(const unsigned int aGameObjectCount)
 
 CScene::~CScene()
 {
+	this->ClearGameObjects();
+	this->ClearPointLights();
+	this->ClearSpotLights();
+	this->ClearBoxLights();
+	this->ClearSprites();
+	this->ClearAnimatedUIElement();
+	this->ClearTextInstances();
+
 	myMainCamera = nullptr;
 	delete myEnvironmentLight;
 	myEnvironmentLight = nullptr;
@@ -81,13 +89,8 @@ CScene::~CScene()
 	myVFXTester = nullptr;
 	myPlayer = nullptr;
 
-	this->ClearGameObjects();
-	this->ClearPointLights();
-	this->ClearSpotLights();
-	this->ClearBoxLights();
-	this->ClearSprites();
-	this->ClearAnimatedUIElement();
-	this->ClearTextInstances();
+	myIDGameObjectMap.clear();
+	myComponentMap.clear();
 
 #ifdef _DEBUG
 	myGrid = nullptr;
@@ -169,6 +172,12 @@ void CScene::CanvasIsHUD()
 		myCanvas->IsHUDCanvas(true);
 }
 
+void CScene::DisableWidgetsOnCanvas()
+{
+	if (myCanvas)
+		myCanvas->DisableWidgets();
+}
+
 //No longer needed due to Components Awake being called via EMessageType "AddComponent"
 void CScene::Awake()
 {
@@ -204,6 +213,9 @@ void CScene::Update()
 
 	for (auto& gameObject : myGameObjects)
 		gameObject->LateUpdate();
+
+	if (myCanvas)
+		myCanvas->Update();
 }
 
 void CScene::InitAnyNewComponents()
@@ -273,13 +285,6 @@ void CScene::ShouldRenderLineInstance(const bool aShouldRender)
 #else
 	aShouldRender;
 #endif //  _DEBUG
-}
-void CScene::UpdateCanvas()
-{
-	if (myCanvas)
-	{
-		myCanvas->Update();
-	}
 }
 //SETTERS END
 //GETTERS START
@@ -443,32 +448,26 @@ LightPair CScene::CullLightInstanced(CInstancedModelComponent* aModelType)
 	return pointLightPair;
 }
 
-std::vector<CGameObject*> CScene::CullGameObjects(CCameraComponent* /*aMainCamera*/)
+std::vector<CGameObject*> CScene::CullGameObjects(CCameraComponent* aMainCamera)
 {
-	//NEED TO MAKE A PROPPER CULLING?
-	return myGameObjects;
-	//using namespace DirectX::SimpleMath;
-	//Vector3 cameraPosition = aMainCamera->GameObject().myTransform->Transform().Translation();
-	//std::vector<CGameObject*> culledGameObjects;
-	//for (auto& gameObject : myGameObjects)
-	//{
-	//	if (!gameObject->Active())
-	//	{
-	//		continue;
-	//	}
-	//	if (gameObject->GetComponent<CInstancedModelComponent>())
-	//	{
-	//		culledGameObjects.emplace_back(gameObject);
-	//		continue;
-	//	}
-	//
-	//	float distanceToCameraSquared = Vector3::DistanceSquared(gameObject->GetComponent<CTransformComponent>()->Position(), cameraPosition);
-	//	if (distanceToCameraSquared < 10000.0f)
-	//	{
-	//		culledGameObjects.emplace_back(gameObject);
-	//	}
-	//}
-	//return culledGameObjects;
+	auto& viewFrustum = aMainCamera->GetViewFrustum();
+	DirectX::BoundingSphere currentSphere;
+	std::vector<CGameObject*> culledGameObjects;
+	for (auto& gameObject : myGameObjects)
+	{
+		if (gameObject->GetComponent<CInstancedModelComponent>())
+		{
+			culledGameObjects.push_back(gameObject);
+			continue;
+		}
+
+		currentSphere = DirectX::BoundingSphere(gameObject->myTransform->Position(), 14.0f);
+		if (viewFrustum.Intersects(currentSphere))
+		{
+			culledGameObjects.push_back(gameObject);
+		}
+	}
+	return culledGameObjects;
 }
 
 std::vector<CSpriteInstance*> CScene::CullSprites()
@@ -765,11 +764,17 @@ bool CScene::ClearTextInstances()
 
 bool CScene::ClearGameObjects()
 {
-	for (auto& gameObject : myGameObjects)
+	// So that we can see which index might be giving us issues.
+	for (size_t i = 0; i < myGameObjects.size(); ++i)
 	{
-		delete gameObject;
-		gameObject = nullptr;
+		delete myGameObjects[i];
+		myGameObjects[i] = nullptr;
 	}
+	//for (auto& gameObject : myGameObjects)
+	//{
+	//	delete gameObject;
+	//	gameObject = nullptr;
+	//}
 	myGameObjects.clear();
 	return true;
 }

@@ -28,7 +28,6 @@ void CGame::Init()
 #else
 	InitDev();
 #endif
-
 }
 
 bool CGame::Update()

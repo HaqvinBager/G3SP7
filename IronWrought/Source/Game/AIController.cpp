@@ -40,8 +40,9 @@ bool CPatrol::CheckIfOverlap(Vector3 aFirstPosition, Vector3 aSecondPosition)
 	return true;
 }
 
-CSeek::CSeek()
+CSeek::CSeek() :myTarget(nullptr)
 {
+	
 }
 
 Vector3 CSeek::Update(Vector3 aPosition)//aPostion == EnemyRobot Position

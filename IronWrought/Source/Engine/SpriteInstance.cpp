@@ -269,7 +269,7 @@ void CSpriteInstance::SetRenderOrder(ERenderOrder aRenderOrder)
 /// <param name="aPosition"></param>
 void CSpriteInstance::SetPosition(DirectX::SimpleMath::Vector2 aPosition)
 {
-	myPosition.x = aPosition.x;
+	myPosition.x = aPosition.x * (16.0f / 9.0f); // Did not feel like a problem before, is needed for UI / Nico 12/4 - 2021
 	myPosition.y = -aPosition.y;
 }
 

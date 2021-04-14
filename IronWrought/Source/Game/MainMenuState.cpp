@@ -1,8 +1,16 @@
 #include "stdafx.h"
 #include "MainMenuState.h"
+#include "EngineDefines.h"
 
 #include "SceneManager.h"
 #include "GameObject.h"
+
+#include "JsonReader.h"
+#include "Scene.h"
+#include "Engine.h"
+#include "FolderUtility.h"
+#include "MainSingleton.h"
+#include "PostMaster.h"
 
 CMainMenuState::CMainMenuState(CStateStack& aStateStack, const CStateStack::EState aState)
 	: CState(aStateStack, aState)
@@ -25,7 +33,8 @@ void CMainMenuState::Awake()
 void CMainMenuState::Start()
 {
 	CEngine::GetInstance()->SetActiveScene(myState);
-	IRONWROUGHT->ShowCursor();
+	IRONWROUGHT->ShowCursor(false);
+	IRONWROUGHT->GetActiveScene().DisableWidgetsOnCanvas();
 	CMainSingleton::PostMaster().Subscribe(EMessageType::StartGame, this);
 	CMainSingleton::PostMaster().Subscribe(EMessageType::Quit, this);
 }
@@ -38,25 +47,28 @@ void CMainMenuState::Stop()
 
 void CMainMenuState::Update()
 {
-	IRONWROUGHT->ShowCursor();
-	for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
-	{
-		gameObject->Update();
-	}
+	//IRONWROUGHT->UpdateScene(myState);// This is only for menu states.
+	//for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
+	//{
+	//	gameObject->Update();
+	//}
 
-	IRONWROUGHT->GetActiveScene().UpdateCanvas();
+	//IRONWROUGHT->GetActiveScene().UpdateCanvas();
 
+#ifndef NDEBUG
 	if (INPUT->IsKeyPressed('R'))
 	{
 		IRONWROUGHT->GetActiveScene().ReInitCanvas(ASSETPATH("Assets/Graphics/UI/JSON/UI_MainMenu.json"));
 	}
+#endif
 
 	if(myTimeToQuit)
-		this->myStateStack.PopState();
+		myStateStack.PopState();
 }
 
 void CMainMenuState::Receive(const SStringMessage& /*aMessage*/)
-{}
+{
+}
 
 void CMainMenuState::Receive(const SMessage& aMessage)
 {
@@ -64,7 +76,12 @@ void CMainMenuState::Receive(const SMessage& aMessage)
 	{
 		case EMessageType::StartGame:
 		{
-			this->myStateStack.PushState(CStateStack::EState::InGame);
+			std::string scene = *reinterpret_cast<std::string*>(aMessage.data);
+#ifdef _DEBUG
+			std::cout << __FUNCTION__ << " Loading scene: " << scene << std::endl;
+#endif
+			IRONWROUGHT->HideCursor();
+			CSceneFactory::Get()->LoadSceneAsync(scene, CStateStack::EState::InGame, [this](std::string aJson) { CMainMenuState::OnComplete(aJson); });
 		}break;
 
 		case EMessageType::Quit:
@@ -74,4 +91,13 @@ void CMainMenuState::Receive(const SMessage& aMessage)
 
 		default: break;
 	}
+}
+
+void CMainMenuState::OnComplete(std::string aSceneThatHasBeenSuccessfullyLoaded)
+{
+#ifdef _DEBUG
+	std::cout << __FUNCTION__ << "Scene Load Complete!" << aSceneThatHasBeenSuccessfullyLoaded << std::endl;
+#endif
+	this->myStateStack.PushState(CStateStack::EState::InGame);
+	CEngine::GetInstance()->LoadGraph(aSceneThatHasBeenSuccessfullyLoaded);
 }

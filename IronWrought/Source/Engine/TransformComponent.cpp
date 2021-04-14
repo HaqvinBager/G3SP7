@@ -203,12 +203,11 @@ void CTransformComponent::SetToOtherTransform(const DirectX::SimpleMath::Matrix&
 
 void CTransformComponent::SetParent(CTransformComponent* aParent)
 {
-	myLocalTransform = DirectX::XMMatrixMultiply(myLocalTransform, aParent->myWorldTransform.Invert());
+	myWorldTransform = DirectX::XMMatrixMultiply(myLocalTransform, aParent->myWorldTransform.Invert());
 	myParent = aParent;
 
 	//NEEDS TO BE VERIFIED //AXel Savage 2021/03/09
 	aParent->AddChild(this);
-
 }
 
 void CTransformComponent::RemoveParent()

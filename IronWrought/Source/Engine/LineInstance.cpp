@@ -35,6 +35,10 @@ void CLineInstance::SetTransform(const DirectX::SimpleMath::Vector3& aPosition, 
 	SetRotation(aRotation);
 	SetPosition(aPosition);
 }
+void CLineInstance::SetTransform(const DirectX::SimpleMath::Matrix& aMatrix)
+{
+	myTransform = aMatrix;
+}
 void CLineInstance::SetPosition(const DirectX::SimpleMath::Vector3& aPosition)
 {
 	if (!myIsActive)
