@@ -12,7 +12,7 @@ class CScene;
 class CBoxColliderComponent : public CBehaviour
 {
 public:
-	CBoxColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const Vector3& aBoxSize, bool aIsStatic = false, physx::PxMaterial* aMaterial = nullptr);
+	CBoxColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const Vector3& aBoxSize, const bool aIsTrigger, physx::PxMaterial* aMaterial = nullptr);
 	~CBoxColliderComponent() override;
 
 	void Awake() override;
@@ -34,4 +34,3 @@ private:
 
 	std::vector<SMessage> myTriggerMessages;
 };
-

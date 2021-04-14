@@ -101,16 +101,16 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneJson)
 				AddTriggerEvents(*scene, sceneData["triggerEvents"].GetArray());
 			AddEnemyComponents(*scene, sceneData["enemies"].GetArray());
 
-			if (sceneName.find("Layout") != std::string::npos)//Om Unity Scene Namnet innehåller nyckelordet "Layout"
+			if (sceneName.find("Layout") != std::string::npos)//Om Unity Scene Namnet innehï¿½ller nyckelordet "Layout"
 			{
 				AddPlayer(*scene, sceneData["player"].GetObjectW());
 			}
 		}
-		AddInstancedModelComponents(*scene, sceneData["instancedModels"].GetArray());		
+		AddInstancedModelComponents(*scene, sceneData["instancedModels"].GetArray());
 	}
 
-	
-	
+
+
 	//AddPlayer(*scene); //This add player does not read data from unity. (Yet..!) /Axel 2021-03-24
 
 	CEngine::GetInstance()->GetPhysx().Cooking(scene->ActiveGameObjects(), scene);
@@ -343,7 +343,7 @@ void CSceneManager::AddPlayer(CScene& aScene, RapidObject someData)
 	camera->AddComponent<CGravityGloveComponent>(*camera, gravityGloveSlot->myTransform);
 	player->AddComponent<CPlayerComponent>(*player);
 
-	player->AddComponent<CPlayerControllerComponent>(*player);// CPlayerControllerComponent constructor sets position of camera child object.
+	player->AddComponent<CPlayerControllerComponent>(*player, 0.03f, 0.03f, CEngine::GetInstance()->GetPhysx().GetPlayerReportBack());// CPlayerControllerComponent constructor sets position of camera child object.
 
 	camera->AddComponent<CVFXSystemComponent>(*camera, ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystem_Player.json"));
 
@@ -368,7 +368,7 @@ void CSceneManager::AddEnemyComponents(CScene& aScene, RapidArray someData)
 		settings.myRadius= m["radius"].GetFloat();
 		settings.mySpeed= m["speed"].GetFloat();
 		settings.myHealth = m["health"].GetFloat();
-		gameObject->AddComponent<CEnemyComponent>(*gameObject, settings);
+		gameObject->AddComponent<CEnemyComponent>(*gameObject, settings, CEngine::GetInstance()->GetPhysx().GetEnemyReportBack());
 
 		gameObject->AddComponent<CVFXSystemComponent>(*gameObject, ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystem_Enemy.json"));
 	}
@@ -389,6 +389,8 @@ void CSceneManager::AddCollider(CScene& aScene, RapidArray someData)
 		ColliderType colliderType = static_cast<ColliderType>(c["colliderType"].GetInt());
 		bool isStatic = c.HasMember("isStatic") ? c["isStatic"].GetBool() : false;
 		bool isKinematic = c.HasMember("isKinematic") ? c["isKinematic"].GetBool() : false;
+		bool isTrigger = c.HasMember("isTrigger") ? c["isTrigger"].GetBool() : false;
+
 
 		CRigidBodyComponent* rigidBody = gameObject->GetComponent<CRigidBodyComponent>();
 		if (rigidBody == nullptr && isStatic == false) {
@@ -420,20 +422,20 @@ void CSceneManager::AddCollider(CScene& aScene, RapidArray someData)
 			boxSize.x = c["boxSize"]["x"].GetFloat();
 			boxSize.y = c["boxSize"]["y"].GetFloat();
 			boxSize.z = c["boxSize"]["z"].GetFloat();
-			gameObject->AddComponent<CBoxColliderComponent>(*gameObject, posOffset, boxSize, isStatic, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(dynamicFriction, staticFriction, bounciness));
+			gameObject->AddComponent<CBoxColliderComponent>(*gameObject, posOffset, boxSize, isTrigger, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(dynamicFriction, staticFriction, bounciness));
 		}
 			break;
 		case ColliderType::SphereCollider:
 		{
 			float radius = c["sphereRadius"].GetFloat();
-			gameObject->AddComponent<CSphereColliderComponent>(*gameObject, posOffset, radius, isStatic, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(dynamicFriction, staticFriction, bounciness));
+			gameObject->AddComponent<CSphereColliderComponent>(*gameObject, posOffset, radius, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(dynamicFriction, staticFriction, bounciness));
 		}
 			break;
 		case ColliderType::CapsuleCollider:
 		{
 			float radius = c["capsuleRadius"].GetFloat();
 			float height = c["capsuleHeight"].GetFloat();
-			gameObject->AddComponent<CCapsuleColliderComponent>(*gameObject, posOffset, radius, height, isStatic, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(dynamicFriction, staticFriction, bounciness));
+			gameObject->AddComponent<CCapsuleColliderComponent>(*gameObject, posOffset, radius, height, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(dynamicFriction, staticFriction, bounciness));
 		}
 		break;
 		case ColliderType::MeshCollider:
@@ -452,7 +454,7 @@ triggerEvents :  [
 		"events" : [
 			"eventType" : 42
 		]
-		//evt lägga till collisionfilter : 5125
+		//evt lï¿½gga till collisionfilter : 5125
 	}
 ]
 */
