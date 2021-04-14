@@ -13,7 +13,7 @@ CNodeTypeGameObjectGetRotation::CNodeTypeGameObjectGetRotation()
 
 int CNodeTypeGameObjectGetRotation::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 {
-	CGameObject* gameObject = IRONWROUGHT_ACTIVE_SCENE.FindObjectWithID(aTriggeringNodeInstance->GraphManager()->GetCurrentBlueprintInstanceID());
+	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject();
 	Quaternion quaternion = gameObject->myTransform->Rotation();
     Vector3 rotation;
     Matrix transform = Matrix::CreateFromQuaternion(quaternion);

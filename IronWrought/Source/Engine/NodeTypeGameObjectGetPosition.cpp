@@ -15,7 +15,7 @@ CNodeTypeGameObjectGetPosition::CNodeTypeGameObjectGetPosition()
 
 int CNodeTypeGameObjectGetPosition::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 {
-	CGameObject* gameObject = IRONWROUGHT_ACTIVE_SCENE.FindObjectWithID(aTriggeringNodeInstance->GraphManager()->GetCurrentBlueprintInstanceID());
+	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject();
 	Vector3 position = gameObject->myTransform->Position();
 
 	std::vector<SPin>& pins = aTriggeringNodeInstance->GetPins();
