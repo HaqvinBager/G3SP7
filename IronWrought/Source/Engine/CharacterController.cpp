@@ -41,7 +41,7 @@ UINT8 CCharacterController::Move(const Vector3& aDir, float aSpeed)
     return myController->move({ aDir.x * aSpeed, aDir.y * aSpeed, aDir.z * aSpeed }, 0, CTimer::Dt(), 0);
 }
 
-const Vector3& CCharacterController::GetHitNormal()
+const Vector3 CCharacterController::GetHitNormal() const
 {
     return myPlayerReport->GetNormal();
 }

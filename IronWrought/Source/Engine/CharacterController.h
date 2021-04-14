@@ -21,7 +21,7 @@ public:
     Vector3 GetPosition() const;
     void SetPosition(const Vector3& aPosition);
     UINT8 Move(const Vector3& aDir, float aSpeed);
-    const Vector3& GetHitNormal();
+    const Vector3 GetHitNormal() const;
 
 private:
     physx::PxController* myController = nullptr;
