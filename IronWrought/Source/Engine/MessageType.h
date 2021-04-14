@@ -57,5 +57,8 @@ enum class EMessageType
 
 	ToggleWidget,
 
+	LockPlayer,
+
+
 	Count
 };
