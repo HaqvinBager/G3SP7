@@ -2,6 +2,7 @@
 #include "GravityGloveComponent.h"
 #include "RigidBodyComponent.h"
 #include "TransformComponent.h"
+#include "VFXSystemComponent.h"
 #include "PhysXWrapper.h"
 #include "LineFactory.h"
 #include "LineInstance.h"
@@ -135,7 +136,8 @@ void CGravityGloveComponent::Pull()
 				PostMaster::SCrossHairData data; // Wind Up
 				data.myIndex = 0;
 				CMainSingleton::PostMaster().Send({ EMessageType::UpdateCrosshair, &data });
-			 }
+				GameObject().GetComponent<CVFXSystemComponent>()->EnableEffect(0);
+			}
 		}
 
 		//myCurrentTarget = transform->GetComponent<CRigidBodyComponent>();
@@ -162,6 +164,7 @@ void CGravityGloveComponent::Push()
 		myCurrentTarget->GetDynamicRigidBody()->GetBody().setMaxLinearVelocity(100.f);
 		myCurrentTarget->AddForce(-GameObject().myTransform->GetWorldMatrix().Forward(), mySettings.myPushForce * myCurrentTarget->GetMass(), EForceMode::EImpulse);
 		myCurrentTarget = nullptr;
+		GameObject().GetComponent<CVFXSystemComponent>()->EnableEffect(1);
 	} else {
 		Vector3 start = GameObject().myTransform->GetWorldMatrix().Translation();
 		Vector3 dir = -GameObject().myTransform->GetWorldMatrix().Forward();
@@ -173,9 +176,13 @@ void CGravityGloveComponent::Push()
 				return;
 
 			CRigidBodyComponent* target = transform->GetComponent<CRigidBodyComponent>();
-			if (target != nullptr) {
-				if(!target->IsKinematic())
+			if (target != nullptr) 
+			{
+				if (!target->IsKinematic())
+				{
 					target->AddForce(-GameObject().myTransform->GetWorldMatrix().Forward(), mySettings.myPushForce * target->GetMass(), EForceMode::EImpulse);
+					GameObject().GetComponent<CVFXSystemComponent>()->EnableEffect(1);
+				}
 			}
 		}
 	}
