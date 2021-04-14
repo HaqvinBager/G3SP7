@@ -27,9 +27,7 @@ void CGame::Init()
 	InitRealGame();
 #else
 	InitDev();
-	//InitRealGame();
 #endif
-
 }
 
 bool CGame::Update()

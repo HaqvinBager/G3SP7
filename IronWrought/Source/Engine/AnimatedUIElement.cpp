@@ -65,6 +65,10 @@ float CAnimatedUIElement::Level() const
     return myLevel;
 }
 
+const DirectX::SimpleMath::Vector2 CAnimatedUIElement::GetPosition()
+{
+    return std::move(Vector2(mySpriteInstance->GetPosition().x, mySpriteInstance->GetPosition().y));
+}
 void CAnimatedUIElement::SetPosition(DirectX::SimpleMath::Vector2 aPosition)
 {
     mySpriteInstance->SetPosition(aPosition);

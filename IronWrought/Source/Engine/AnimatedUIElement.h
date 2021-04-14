@@ -45,6 +45,7 @@ public:
 	float Level() const;
 	
 	void SetPosition(DirectX::SimpleMath::Vector2 aPosition);
+	const DirectX::SimpleMath::Vector2 GetPosition();
 	void SetShouldRender(const bool aShouldRender);
 	void SetScale(const Vector2& aScale);
 
