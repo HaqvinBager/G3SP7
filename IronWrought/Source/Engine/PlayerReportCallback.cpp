@@ -40,10 +40,10 @@ void CPlayerReportCallback::onShapeHit(const physx::PxControllerShapeHit& hit)
 								//v = velocity
 								//t = time
 							}
-							else
-							{
-								playerTransform->GetComponent<CPlayerControllerComponent>()->LadderEnter(nullptr);
-							}
+							//else
+							//{
+							//	playerTransform->GetComponent<CPlayerControllerComponent>()->LadderEnter(nullptr);
+							//}
 						}
 					}
 				}
