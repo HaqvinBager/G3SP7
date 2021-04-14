@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   myChildren:
-  - {fileID: 0}
+  - {fileID: 8690537790186514095}
 --- !u!54 &1720557213296425457
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -108,7 +108,7 @@ PrefabInstance:
     - target: {fileID: 2504483392981943457, guid: 51a4ac931e0b677489c2945565208a38,
         type: 3}
       propertyPath: m_StaticEditorFlags
-      value: 4294967295
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2705251746683303840, guid: 51a4ac931e0b677489c2945565208a38,
         type: 3}
@@ -168,7 +168,7 @@ PrefabInstance:
     - target: {fileID: 5580213649939781868, guid: 51a4ac931e0b677489c2945565208a38,
         type: 3}
       propertyPath: m_StaticEditorFlags
-      value: 4294967295
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 51a4ac931e0b677489c2945565208a38, type: 3}
