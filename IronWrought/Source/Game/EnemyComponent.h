@@ -7,10 +7,9 @@ class CGameObject;
 
 struct SEnemySetting {
 	float mySpeed;	//= 0.1f;
-	float myDistance;//= 0.0f;
 	float myRadius;	//= 10.0f;
 	float myHealth; //= 10.0f
-
+	float myAttackDistance; //2.0f
 
 	std::vector<int> myPatrolGameObjectIds;
 };

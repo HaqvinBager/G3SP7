@@ -364,10 +364,10 @@ void CSceneManager::AddEnemyComponents(CScene& aScene, RapidArray someData)
 			continue;
 
 		SEnemySetting settings;
-		settings.myDistance = m["distance"].GetFloat();
 		settings.myRadius= m["radius"].GetFloat();
 		settings.mySpeed= m["speed"].GetFloat();
 		settings.myHealth = m["health"].GetFloat();
+		settings.myAttackDistance = m["attackDistance"].GetFloat();
 		for (const auto& point : m["points"].GetArray()) {
 			settings.myPatrolGameObjectIds.push_back(point["instanceID"].GetInt());
 		}

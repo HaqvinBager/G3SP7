@@ -50,52 +50,32 @@ void CEnemyComponent::Start()
 		seekBehaviour->SetTarget(myPlayer->myTransform);
 	//myBehaviours.push_back(seekBehaviour);
 
-	//myBehaviours.push_back(new CAttack());
+	myBehaviours.push_back(new CAttack());
 
 	this->GameObject().GetComponent<CVFXSystemComponent>()->EnableEffect(0);
 }
 
 void CEnemyComponent::Update()//får bestämma vilket behaviour vi vill köra i denna Update()!!!
 {
+	float distanceToPlayer = Vector3::DistanceSquared(myPlayer->myTransform->Position(), GameObject().myTransform->Position());
 
-	mySettings.myDistance = Vector3::DistanceSquared(myPlayer->myTransform->Position(), GameObject().myTransform->Position());
-
-	if (mySettings.myRadius * mySettings.myRadius >= mySettings.myDistance) {
+	if (mySettings.myRadius * mySettings.myRadius >= distanceToPlayer) {
 		SetState(EBehaviour::Seek);
-		//float attackDistance = 2.0f; //example will probably be more complicated in the future; 
-		//if (mySettings.myDistance <= attackDistance) {
-
-	/*myDistance = sqrt(
-		(myPlayer->myTransform->Position().x - GameObject().myTransform->Position().x) * ((myPlayer->myTransform->Position().x - GameObject().myTransform->Position().x)) +
-		((myPlayer->myTransform->Position().y - GameObject().myTransform->Position().y) * ((myPlayer->myTransform->Position().y - GameObject().myTransform->Position().y))) +
-		((myPlayer->myTransform->Position().z - GameObject().myTransform->Position().z) * ((myPlayer->myTransform->Position().z - GameObject().myTransform->Position().z))));*/
-		if (myPlayer)
-			mySettings.myDistance = Vector3::DistanceSquared(myPlayer->myTransform->Position(), GameObject().myTransform->Position());
-
-
-		if (mySettings.myRadius * mySettings.myRadius >= mySettings.myDistance) {//seek
-			//SetState(EBehaviour::Seek);
-			float attackDistance = 2.0f; //example will probably be more complicated in the future; 
-			if (mySettings.myDistance <= attackDistance) {
-
-				//	SetState(EBehaviour::Attack); 
-				   /*TakeDamage();*/
-			   //}
-			}
-			else {
-				SetState(EBehaviour::Patrol);
-			}
-			Vector3 newDirection = myBehaviours[static_cast<int>(myCurrentState)]->Update(GameObject().myTransform->Position()); // current
-			//DirectX::SimpleMath::Matrix::CreateFromAxisAngle(newDirection,);
-			//DirectX::SimpleMath::Matrix::CreateLookAt(, newDirection, {0.0f,1.0f,0.0f});
-			//GameObject().myTransform->Rotation(myPatrolRotation.CreateFromYawPitchRoll(newDirection.y, 0.0f, 0.0f));
-			myYaw = WrapAngle(myYaw + newDirection.x);
-			//myPitch = std::clamp((myPitch + newDirection.y), ToDegrees(-PI / 2.0f), ToDegrees(PI / 2.0f));
-			GameObject().myTransform->Rotation({ 0, myYaw, 0 });
-			myController->Move(newDirection, mySettings.mySpeed);
-			GameObject().myTransform->Position(myController->GetPosition());
+		if (distanceToPlayer <= mySettings.myAttackDistance * mySettings.myAttackDistance) {
+			SetState(EBehaviour::Attack);
 		}
 	}
+	else {
+		SetState(EBehaviour::Patrol);
+	}
+
+	Vector3 newDirection = myBehaviours[static_cast<int>(myCurrentState)]->Update(GameObject().myTransform->Position()); // current direction
+	
+	myYaw = WrapAngle(myYaw + newDirection.x);
+	myController->Move(newDirection, mySettings.mySpeed);
+	GameObject().myTransform->Rotation({ 0.0f,myYaw,0.0f });
+	GameObject().myTransform->Position(myController->GetPosition());
+	//GameObject().myTransform->MoveLocal(-newDirection * mySettings.mySpeed * CTimer::Dt());
 }
 
 void CEnemyComponent::TakeDamage()
