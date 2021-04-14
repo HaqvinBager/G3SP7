@@ -2,7 +2,7 @@
   "Pivot X": 0.0,
   "Pivot Y": 0.0,
   "Postion X": 0.0,
-  "Position Y": 0.0,
+  "Position Y": 0.3,
 
   "Buttons": [
     {
@@ -19,9 +19,9 @@
       "Pixel Height": 30.0,
       "Sprite Position X": -0.5,
       "Sprite Position Y": 0.15,
-      "Idle Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_ARROWLEFT.dds",
-      "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_ARROWLEFT_HOVER.dds",
-      "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_ARROWLEFT.dds",
+      "Idle Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_ARROWLEFT.dds",
+      "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_ARROWLEFT_HOVER.dds",
+      "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_ARROWLEFT.dds",
       "Messages": [],
       "Sub Canvas Toggle Index": 1 
     },
@@ -39,9 +39,9 @@
       "Pixel Height": 30.0,
       "Sprite Position X": 0.5,
       "Sprite Position Y": 0.15,
-      "Idle Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_ARROWRIGHT.dds",
-      "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_ARROWRIGHT_HOVER.dds",
-      "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_ARROWRIGHT.dds",
+      "Idle Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_ARROWRIGHT.dds",
+      "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_ARROWRIGHT_HOVER.dds",
+      "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_ARROWRIGHT.dds",
       "Messages": [],
       "Sub Canvas Toggle Index": 3
     }
@@ -54,7 +54,7 @@
   ],
 
   "Background": {
-    "Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/level21.dds"
+    "Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_LEVEL3.dds"
   },
 
   "Sprites": [

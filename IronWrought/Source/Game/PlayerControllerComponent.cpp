@@ -15,12 +15,15 @@
 #include "PlayerAnimationController.h"
 #include "PlayerComponent.h"
 
+#include "RigidBodyComponent.h"
+#include "RigidDynamicBody.h"
+
 // TEMP
 static const float gPretendObjectDistanceFromPlayer = 10.0f;// TEMP
 // TEMP
 static float gPretendObjectCurrentDistance = 0.0f;// TEMP
 
-CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, const float aWalkSpeed, const float aCrouchSpeed)
+CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, const float aWalkSpeed, const float aCrouchSpeed, physx::PxUserControllerHitReport* aHitReport)
 	: CComponent(gameObject)
 	, mySpeed(aWalkSpeed)
 	, myIsCrouching(false)
@@ -44,7 +47,7 @@ CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, 
 	INPUT_MAPPER->AddObserver(EInputEvent::ResetEntities, this);
 	INPUT_MAPPER->AddObserver(EInputEvent::SetResetPointEntities, this);
 
-	myController = CEngine::GetInstance()->GetPhysx().CreateCharacterController(gameObject.myTransform->Position(), myColliderRadius, myColliderHeightStanding, GameObject().myTransform);
+	myController = CEngine::GetInstance()->GetPhysx().CreateCharacterController(gameObject.myTransform->Position(), myColliderRadius, myColliderHeightStanding, GameObject().myTransform, aHitReport);
 	GameObject().myTransform->Position(myController->GetPosition());// This is a test / Aki 2021 03 12
 
 	GameObject().myTransform->FetchChildren()[0]->Position({ 0.0f, myCameraPosYStanding, myCameraPosZ });
@@ -229,7 +232,7 @@ void CPlayerControllerComponent::Move(Vector3 aDir)
 	if (collisionflag != physx::PxControllerCollisionFlag::eCOLLISION_DOWN )
 	{
 		myCanJump = false;
-		
+
 	}
 
 	if (collisionflag == physx::PxControllerCollisionFlag::eCOLLISION_DOWN)
@@ -284,11 +287,11 @@ const Vector3 CPlayerControllerComponent::GetLinearVelocity()
 }
 
 
-void CPlayerControllerComponent::LadderEnter()
+void CPlayerControllerComponent::LadderEnter(CRigidBodyComponent* aLadder)
 {
+	myLadder = aLadder;
 	myIsOnLadder = !myIsOnLadder;
 }
-
 
 void CPlayerControllerComponent::LadderUpdate()
 {
@@ -298,7 +301,6 @@ void CPlayerControllerComponent::LadderUpdate()
 
 	if (Input::GetInstance()->IsKeyPressed('K'))
 	{
-		
 		myIsOnLadder = false;
 	}
 }

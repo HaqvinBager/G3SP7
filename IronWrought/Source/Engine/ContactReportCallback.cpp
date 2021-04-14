@@ -27,6 +27,14 @@ void CContactReportCallback::onTrigger(physx::PxTriggerPair* pairs, physx::PxU32
 {
 	(pairs);
 	(count);
+	for (physx::PxU32 i = 0; i < count; i++)
+	{
+		std::cout << "trigger collided with trigger?" << std::endl;
+		// ignore pairs when shapes have been deleted
+		if (pairs[i].flags & (physx::PxTriggerPairFlag::eREMOVED_SHAPE_TRIGGER |
+			physx::PxTriggerPairFlag::eREMOVED_SHAPE_OTHER))
+			continue;
+	}
 }
 
 void CContactReportCallback::onAdvance(const physx::PxRigidBody* const* bodyBuffer, const physx::PxTransform* poseBuffer, const physx::PxU32 count)

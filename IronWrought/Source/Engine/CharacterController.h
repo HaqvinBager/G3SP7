@@ -5,7 +5,7 @@
 namespace physx
 {
     class PxController;
-
+    class PxUserControllerHitReport;
 }
 
 class CTransformComponent;
@@ -13,7 +13,7 @@ class CTransformComponent;
 class CCharacterController
 {
 public:
-    CCharacterController(const Vector3 aPosition, const float aRadius = 0.6f, const float aHeight = 1.8f, CTransformComponent* userData = nullptr);
+    CCharacterController(const Vector3 aPosition, const float aRadius = 0.6f, const float aHeight = 1.8f, CTransformComponent* userData = nullptr, physx::PxUserControllerHitReport* aHitReport = nullptr);
     physx::PxController& GetController();
 
     Vector3 GetPosition() const;
