@@ -448,32 +448,26 @@ LightPair CScene::CullLightInstanced(CInstancedModelComponent* aModelType)
 	return pointLightPair;
 }
 
-std::vector<CGameObject*> CScene::CullGameObjects(CCameraComponent* /*aMainCamera*/)
+std::vector<CGameObject*> CScene::CullGameObjects(CCameraComponent* aMainCamera)
 {
-	//NEED TO MAKE A PROPPER CULLING?
-	return myGameObjects;
-	//using namespace DirectX::SimpleMath;
-	//Vector3 cameraPosition = aMainCamera->GameObject().myTransform->Transform().Translation();
-	//std::vector<CGameObject*> culledGameObjects;
-	//for (auto& gameObject : myGameObjects)
-	//{
-	//	if (!gameObject->Active())
-	//	{
-	//		continue;
-	//	}
-	//	if (gameObject->GetComponent<CInstancedModelComponent>())
-	//	{
-	//		culledGameObjects.emplace_back(gameObject);
-	//		continue;
-	//	}
-	//
-	//	float distanceToCameraSquared = Vector3::DistanceSquared(gameObject->GetComponent<CTransformComponent>()->Position(), cameraPosition);
-	//	if (distanceToCameraSquared < 10000.0f)
-	//	{
-	//		culledGameObjects.emplace_back(gameObject);
-	//	}
-	//}
-	//return culledGameObjects;
+	auto& viewFrustum = aMainCamera->GetViewFrustum();
+	DirectX::BoundingSphere currentSphere;
+	std::vector<CGameObject*> culledGameObjects;
+	for (auto& gameObject : myGameObjects)
+	{
+		if (gameObject->GetComponent<CInstancedModelComponent>())
+		{
+			culledGameObjects.push_back(gameObject);
+			continue;
+		}
+
+		currentSphere = DirectX::BoundingSphere(gameObject->myTransform->Position(), 14.0f);
+		if (viewFrustum.Intersects(currentSphere))
+		{
+			culledGameObjects.push_back(gameObject);
+		}
+	}
+	return culledGameObjects;
 }
 
 std::vector<CSpriteInstance*> CScene::CullSprites()

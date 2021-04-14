@@ -85,6 +85,8 @@ public:
 	void HideCursor(const bool& anIsInEditorMode = false);
 	void LoadGraph(const std::string& aSceneName);
 
+	void SetBrokenScreen(bool aShouldSetBrokenScreen);
+
 private:
 	void AllScenesToInactive();
 
