@@ -16,6 +16,7 @@
 #include "SphereColliderComponent.h"
 #include "CapsuleColliderComponent.h"
 #include "ConvexMeshColliderComponent.h"
+#include "VFXSystemComponent.h"
 #include <GravityGloveComponent.h>
 #include <EnemyComponent.h>
 //#include <iostream>
@@ -100,12 +101,17 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneJson)
 		if (AddGameObjects(*scene, sceneData["Ids"].GetArray()))
 		{
 			SetTransforms(*scene, sceneData["transforms"].GetArray());
+			if(sceneData.HasMember("parents"))
+				SetParents(*scene, sceneData["parents"].GetArray());
+
 			AddDirectionalLight(*scene, sceneData["directionalLight"].GetObjectW());
 			AddPointLights(*scene, sceneData["lights"].GetArray());
 			AddModelComponents(*scene, sceneData["models"].GetArray());
 			SetVertexPaintedColors(*scene, sceneData["vertexColors"].GetArray(), vertexPaintData);
 			AddDecalComponents(*scene, sceneData["decals"].GetArray());
 			AddCollider(*scene, sceneData["colliders"].GetArray());
+			if (sceneData.HasMember("triggerEvents"))
+				AddTriggerEvents(*scene, sceneData["triggerEvents"].GetArray());
 			AddEnemyComponents(*scene, sceneData["enemies"].GetArray());
 
 			if (sceneName.find("Layout") != std::string::npos)//Om Unity Scene Namnet innehåller nyckelordet "Layout"
@@ -175,6 +181,22 @@ void CSceneManager::SetTransforms(CScene& aScene, RapidArray someData)
 		transform->Rotation({ t["rotation"]["x"].GetFloat(),
 							  t["rotation"]["y"].GetFloat(),
 							  t["rotation"]["z"].GetFloat() });
+	}
+}
+
+void CSceneManager::SetParents(CScene& aScene, RapidArray someData)
+{
+	for (const auto& parent : someData)
+	{
+		int parentInstanceID = parent["parent"]["instanceID"].GetInt();
+		CTransformComponent* parentTransform = aScene.FindObjectWithID(parentInstanceID)->myTransform;
+
+		for (const auto& child : parent["children"].GetArray())
+		{
+			int childInstanceID = child["instanceID"].GetInt();
+			CTransformComponent* childTransform = aScene.FindObjectWithID(childInstanceID)->myTransform;
+			childTransform->SetParent(parentTransform);
+		}
 	}
 }
 
@@ -311,25 +333,8 @@ void CSceneManager::AddDecalComponents(CScene& aScene, RapidArray someData)
 
 void CSceneManager::AddPlayer(CScene& aScene, RapidObject someData)
 {
-	/*CGameObject* player = nullptr;
-	if (!someData.HasMember("instanceID"))
-		return;
-
-	const int instanceID = someData["instanceID"].GetInt();
-	if (instanceID == 0)
-	{*/
-	/*}
-	else
-	{
-		player = 
-	}*/
-
 	int instanceID = someData["instanceID"].GetInt();
 	CGameObject* player = aScene.FindObjectWithID(instanceID);//new CGameObject(87);
-	//if (player == nullptr)
-	//	return;
-
-
 
 	CGameObject* camera = CCameraControllerComponent::CreatePlayerFirstPersonCamera(player);//new CGameObject(96);
 	CGameObject* model = new CGameObject(88);
@@ -343,14 +348,12 @@ void CSceneManager::AddPlayer(CScene& aScene, RapidObject someData)
 	gravityGloveSlot->myTransform->Scale(0.1f);
 	gravityGloveSlot->myTransform->SetParent(camera->myTransform);
 	gravityGloveSlot->myTransform->Position({0.f, 0.f, 1.5f});
-	//std::string gravitytestpath = ASSETPATH("Assets/Graphics/Environmentprops/Static_props/EN_P_Tetrapod.fbx");
-	//gravityGloveSlot->AddComponent<CModelComponent>(*gravityGloveSlot, gravitytestpath);
+
 	camera->AddComponent<CGravityGloveComponent>(*camera, gravityGloveSlot->myTransform);
 	player->AddComponent<CPlayerComponent>(*player);
 
 	player->AddComponent<CPlayerControllerComponent>(*player);// CPlayerControllerComponent constructor sets position of camera child object.
-	/*player->GetComponent<CPlayerControllerComponent>()->SetControllerPosition({ 0.f, 5.0f,0.0f });*/
-	aScene.AddInstance(player);
+
 	aScene.AddInstance(model);
 	aScene.AddInstance(camera);
 	aScene.AddInstance(gravityGloveSlot);
@@ -373,6 +376,8 @@ void CSceneManager::AddEnemyComponents(CScene& aScene, RapidArray someData)
 		settings.mySpeed= m["speed"].GetFloat();
 		settings.myHealth = m["health"].GetFloat();
 		gameObject->AddComponent<CEnemyComponent>(*gameObject, settings);
+
+		gameObject->AddComponent<CVFXSystemComponent>(*gameObject, ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystem_Enemy.json"));
 	}
 }
 
@@ -443,6 +448,38 @@ void CSceneManager::AddCollider(CScene& aScene, RapidArray someData)
 			gameObject->AddComponent<CConvexMeshColliderComponent>(*gameObject, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(dynamicFriction, staticFriction, bounciness));
 		}
 		break;
+		}
+	}
+}
+
+/*
+triggerEvents :  [
+	{
+		"instanceID" : 1234,
+		"events" : [
+			"eventType" : 42
+		]
+		//evt lägga till collisionfilter : 5125
+	}
+]
+*/
+
+void CSceneManager::AddTriggerEvents(CScene& aScene, RapidArray someData)
+{
+	for (const auto& triggerEvent : someData)
+	{
+		int instanceID = triggerEvent["instanceID"].GetInt();
+		CGameObject* gameObject = aScene.FindObjectWithID(instanceID);
+
+		CBoxColliderComponent* triggerVolume = nullptr;
+		if (gameObject->TryGetComponent<CBoxColliderComponent>(&triggerVolume))
+		{
+			for (const auto& eventData : triggerEvent["events"].GetArray())
+			{
+				SMessage triggerMessage = {};
+				triggerMessage.myMessageType = static_cast<EMessageType>(eventData["eventType"].GetInt());
+				triggerVolume->RegisterEventTriggerMessage(triggerMessage);
+			}
 		}
 	}
 }

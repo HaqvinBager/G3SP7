@@ -3,6 +3,7 @@
 #include "CharacterController.h"
 #include "AIController.h"
 #include "TransformComponent.h"
+#include "VFXSystemComponent.h"
 #include <Scene.h>
 #include "Engine.h"
 #include "PhysXWrapper.h"
@@ -39,10 +40,13 @@ void CEnemyComponent::Start()
 		}));*/
 
 	CSeek* seekBehaviour = new CSeek();
-	seekBehaviour->SetTarget(myPlayer->myTransform);
+	if(myPlayer != nullptr)
+		seekBehaviour->SetTarget(myPlayer->myTransform);
 	//myBehaviours.push_back(seekBehaviour);
 
 	//myBehaviours.push_back(new CAttack());
+
+	this->GameObject().GetComponent<CVFXSystemComponent>()->EnableEffect(0);
 }
 
 void CEnemyComponent::Update()//får bestämma vilket behaviour vi vill köra i denna Update()!!!

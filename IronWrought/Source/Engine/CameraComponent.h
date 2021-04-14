@@ -28,6 +28,8 @@ public:
 
 	const Matrix& GetViewMatrix();
 
+	const DirectX::BoundingFrustum GetViewFrustum();
+
 private:
 	void Shake();
 
@@ -35,6 +37,7 @@ private:
 	CSpriteInstance* myFadingPlane;
 	DirectX::SimpleMath::Matrix myProjection;
 	DirectX::SimpleMath::Matrix myView;
+	DirectX::BoundingFrustum myViewFrustum;
 	
 	DirectX::SimpleMath::Vector3 myStartingRotation;
 	DirectX::SimpleMath::Vector3 myMaxShakeRotation;

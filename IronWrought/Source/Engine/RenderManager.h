@@ -29,6 +29,9 @@ public:
 	void Release();
 
 public:
+	void SetBrokenScreen(bool aShouldSetBrokenScreen);
+
+public:
 	static unsigned int myNumberOfDrawCallsThisFrame;
 
 private:
@@ -79,5 +82,6 @@ private:
 	// Effectively used to toggle renderpasses and bloom. True == enable bloom, full render. False == disable bloom, isolated render pass
 	bool myDoFullRender;
 	bool myUseAntiAliasing;
+	bool myUseBrokenScreenPass;
 	//int myFrameCounter;// Used for a hack solution, can probably be removed
 };

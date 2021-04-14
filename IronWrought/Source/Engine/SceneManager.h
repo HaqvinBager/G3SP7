@@ -35,6 +35,7 @@ private:
 
 	static bool AddGameObjects(CScene& aScene, RapidArray someData);
 	static void SetTransforms(CScene& aScene, RapidArray someData);
+	static void SetParents(CScene& aScene, RapidArray someData);
 	static void AddModelComponents(CScene& aScene, RapidArray someData);
 	static void SetVertexPaintedColors(CScene& aScene, RapidArray someData, const SVertexPaintCollection& vertexColorData);
 
@@ -43,6 +44,7 @@ private:
 	static void AddPointLights(CScene& aScene, RapidArray someData);
 	static void AddDecalComponents(CScene& aScene, RapidArray someData);
 	static void AddCollider(CScene& aScene, RapidArray someData);
+	static void AddTriggerEvents(CScene& aScene, RapidArray someData);
 	static void AddPlayer(CScene& aScene, RapidObject someData);
 	static void AddEnemyComponents(CScene& aScene, RapidArray someData);
 	static CScene* ourLastInstantiatedScene;

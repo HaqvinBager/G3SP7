@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerSpawnPosition : MonoBehaviour
 {
     [Range(0.1f, 0.8f)]
-    public float sphereSize = 0.0f;
+    public float sphereSize = 0.45f;
 
     private void OnDrawGizmos()
     {

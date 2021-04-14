@@ -1,18 +1,16 @@
 #pragma once
 
 #include "Component.h"
+#include "Observer.h"
 
 class CGameObject;
 class CPlayerControllerComponent;
-class CPlayerComponent : public CComponent
+class CPlayerComponent : public CComponent, public IObserver
 {
 public:
 
 	CPlayerComponent(CGameObject& gameObject);
 	~CPlayerComponent();
-
-
-
 
 	void Awake() override;
 	void Start() override;
@@ -22,6 +20,11 @@ public:
 	void setIsAlive(bool setAlive);
 
 	void resetHealth();
+
+	void Receive(const SMessage& aMessage) override;
+
+	void OnEnable() override;
+	void OnDisable() override;
 
 private:
 	CPlayerControllerComponent* myPlayerController;
