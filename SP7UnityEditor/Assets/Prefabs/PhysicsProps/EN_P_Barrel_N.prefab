@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2184418355212092704}
   - component: {fileID: 270934717269668248}
   - component: {fileID: 8497249660583852654}
+  - component: {fileID: 8677433891612614950}
   m_Layer: 0
   m_Name: EN_P_Barrel_N
   m_TagString: Untagged
@@ -59,6 +60,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -847152564419535619, guid: bd97acb8e684e19459a3ae541bb3c4d8, type: 3}
+--- !u!54 &8677433891612614950
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4892244123611023633}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1001 &7055232175425597872
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -125,6 +142,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: EN_P_Barrel_N
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: bd97acb8e684e19459a3ae541bb3c4d8,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bd97acb8e684e19459a3ae541bb3c4d8, type: 3}

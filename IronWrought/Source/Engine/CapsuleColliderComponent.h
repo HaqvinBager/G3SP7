@@ -10,7 +10,7 @@ namespace physx
 class CCapsuleColliderComponent : public CBehaviour
 {
 public:
-	CCapsuleColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const float& aRadius, const float& aHeight, bool aIsStatic = false, physx::PxMaterial* aMaterial = nullptr);
+	CCapsuleColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const float& aRadius, const float& aHeight, physx::PxMaterial* aMaterial = nullptr);
 	~CCapsuleColliderComponent() override;
 
 public:
