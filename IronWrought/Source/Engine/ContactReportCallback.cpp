@@ -25,24 +25,46 @@ void CContactReportCallback::onSleep(physx::PxActor** actors, physx::PxU32 count
 	}
 }
 
+void CContactReportCallback::onTriggerEnter(physx::PxActor* trigger, physx::PxActor* other)
+{
+	(trigger);
+	(other);
+	CBoxColliderComponent* triggerVolume = (CBoxColliderComponent*)trigger->userData;
+	if (triggerVolume != nullptr)
+	{
+		triggerVolume->OnTriggerEnter();
+	}
+}
+
 void CContactReportCallback::onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 count)
 {
 	(pairs);
 	(count);
 	for (physx::PxU32 i = 0; i < count; i++)
 	{
-		CBoxColliderComponent* triggerVolume = (CBoxColliderComponent*)pairs[i].triggerActor->userData;
-		if (triggerVolume != nullptr)
-		{
-			triggerVolume->OnTriggerEnter();
+		if (pairs[i].status == physx::PxPairFlag::eNOTIFY_TOUCH_FOUND) {
+			onTriggerEnter(pairs[i].triggerActor, pairs[i].otherActor);
 		}
-
+		else if (pairs[i].status == physx::PxPairFlag::eNOTIFY_TOUCH_LOST) {
+			onTriggerExit(pairs[i].triggerActor, pairs[i].otherActor);
+		}
 
 		std::cout << "trigger collided with trigger?" << std::endl;
 		// ignore pairs when shapes have been deleted
 		if (pairs[i].flags & (physx::PxTriggerPairFlag::eREMOVED_SHAPE_TRIGGER |
 			physx::PxTriggerPairFlag::eREMOVED_SHAPE_OTHER))
 			continue;
+	}
+}
+
+void CContactReportCallback::onTriggerExit(physx::PxActor* trigger, physx::PxActor* other)
+{
+	(trigger);
+	(other);
+	CBoxColliderComponent* triggerVolume = (CBoxColliderComponent*)trigger->userData;
+	if (triggerVolume != nullptr)
+	{
+		triggerVolume->OnTriggerExit();
 	}
 }
 

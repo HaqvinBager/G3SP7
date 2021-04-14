@@ -14,6 +14,10 @@ void CPlayerReportCallback::onShapeHit(const physx::PxControllerShapeHit& hit)
 	}*/
 								//anv�nder normalen ist�llet f�r velocity f�r det puttas b�ttre �t de h�ll man g�r in i
 	CTransformComponent* playerTransform = (CTransformComponent*)hit.controller->getUserData();
+	if (hit.shape->getGeometryType() == physx::PxGeometryType::eTRIANGLEMESH) {
+		myHitNormal = hit.worldNormal;
+	}
+	
 	if (playerTransform) {
 		if (playerTransform->GameObject().GetComponent<CPlayerControllerComponent>()) {
 			if (hit.actor->userData != nullptr)
@@ -63,4 +67,9 @@ void CPlayerReportCallback::onObstacleHit(const physx::PxControllerObstacleHit& 
 	if (rigid) {
 		std::cout << rigid->GameObject().InstanceID() << std::endl;
 	}*/
+}
+
+const Vector3 CPlayerReportCallback::GetNormal() const
+{
+	return Vector3(myHitNormal.x, myHitNormal.y, myHitNormal.z);
 }

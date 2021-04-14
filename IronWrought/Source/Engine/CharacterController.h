@@ -8,6 +8,8 @@ namespace physx
     class PxUserControllerHitReport;
 }
 
+class CPlayerReportCallback;
+
 class CTransformComponent;
 
 class CCharacterController
@@ -19,8 +21,11 @@ public:
     Vector3 GetPosition() const;
     void SetPosition(const Vector3& aPosition);
     UINT8 Move(const Vector3& aDir, float aSpeed);
+    const Vector3& GetHitNormal();
+
 private:
     physx::PxController* myController = nullptr;
+    CPlayerReportCallback* myPlayerReport;
 };
 
 //#pragma once
