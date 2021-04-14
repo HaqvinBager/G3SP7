@@ -33,7 +33,7 @@ int CNodeTypeVariableSetFloat::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 	if (!local)
 		CNodeDataManager::Get()->SetData(myNodeDataKey, CNodeDataManager::EDataType::EFloat, input);
 	else
-		CNodeDataManager::Get()->SetData(std::to_string(gameObject->InstanceID()), CNodeDataManager::EDataType::EFloat, input);
+		CNodeDataManager::Get()->SetData(std::to_string(gameObject->InstanceID()), CNodeDataManager::EDataType::EFloat, input, false);
 
 	std::vector<SPin>& pins = aTriggeringNodeInstance->GetPins();
 	DeclareDataOnPinIfNecessary<float>(pins[3]);

@@ -104,55 +104,54 @@ void CNodeDataManager::SaveDataTypesToJson()
 	writer1.StartArray();
 	for (auto& data : myNodeData)
 	{
-		int ID = std::stoi(data.myNodeTypeName);
-		CGameObject* gameObject = IRONWROUGHT_ACTIVE_SCENE.FindObjectWithID(ID);
-		if (gameObject)
-			continue;
-
-		switch (data.myDataType)
+		if (data.myShouldSave)
 		{
-		case CNodeDataManager::EDataType::EFloat:
-			writer1.StartObject();
-			writer1.Key("Data key");
-			writer1.String(data.myNodeTypeName.c_str());
-			writer1.Key("Type");
-			writer1.String("Float");
-			writer1.EndObject();
-			break;
-		case CNodeDataManager::EDataType::EInt:
-			writer1.StartObject();
-			writer1.Key("Data key");
-			writer1.String(data.myNodeTypeName.c_str());
-			writer1.Key("Type");
-			writer1.String("Int");
-			writer1.EndObject();
-			break;
-		case CNodeDataManager::EDataType::EBool:
-			writer1.StartObject();
-			writer1.Key("Data key");
-			writer1.String(data.myNodeTypeName.c_str());
-			writer1.Key("Type");
-			writer1.String("Bool");
-			writer1.EndObject();
-			break;
-		case CNodeDataManager::EDataType::EStart:
-			writer1.StartObject();
-			writer1.Key("Data key");
-			writer1.String(data.myNodeTypeName.c_str());
-			writer1.Key("Type");
-			writer1.String("Start");
-			writer1.EndObject();
-			break;
-		case CNodeDataManager::EDataType::EVector3:
-			writer1.StartObject();
-			writer1.Key("Data key");
-			writer1.String(data.myNodeTypeName.c_str());
-			writer1.Key("Type");
-			writer1.String("Vector 3");
-			writer1.EndObject();
-			break;
-		default:
-			break;
+
+			switch (data.myDataType)
+			{
+			case CNodeDataManager::EDataType::EFloat:
+				writer1.StartObject();
+				writer1.Key("Data key");
+				writer1.String(data.myNodeTypeName.c_str());
+				writer1.Key("Type");
+				writer1.String("Float");
+				writer1.EndObject();
+				break;
+			case CNodeDataManager::EDataType::EInt:
+				writer1.StartObject();
+				writer1.Key("Data key");
+				writer1.String(data.myNodeTypeName.c_str());
+				writer1.Key("Type");
+				writer1.String("Int");
+				writer1.EndObject();
+				break;
+			case CNodeDataManager::EDataType::EBool:
+				writer1.StartObject();
+				writer1.Key("Data key");
+				writer1.String(data.myNodeTypeName.c_str());
+				writer1.Key("Type");
+				writer1.String("Bool");
+				writer1.EndObject();
+				break;
+			case CNodeDataManager::EDataType::EStart:
+				writer1.StartObject();
+				writer1.Key("Data key");
+				writer1.String(data.myNodeTypeName.c_str());
+				writer1.Key("Type");
+				writer1.String("Start");
+				writer1.EndObject();
+				break;
+			case CNodeDataManager::EDataType::EVector3:
+				writer1.StartObject();
+				writer1.Key("Data key");
+				writer1.String(data.myNodeTypeName.c_str());
+				writer1.Key("Type");
+				writer1.String("Vector 3");
+				writer1.EndObject();
+				break;
+			default:
+				break;
+			}
 		}
 	}
 
