@@ -455,6 +455,12 @@ std::vector<CGameObject*> CScene::CullGameObjects(CCameraComponent* aMainCamera)
 	std::vector<CGameObject*> culledGameObjects;
 	for (auto& gameObject : myGameObjects)
 	{
+		if (gameObject->InstanceID() == PLAYER_CAMERA_ID || gameObject->InstanceID() == PLAYER_MODEL_ID)
+		{
+			culledGameObjects.push_back(gameObject);
+			continue;
+		}
+
 		if (gameObject->GetComponent<CInstancedModelComponent>())
 		{
 			culledGameObjects.push_back(gameObject);
@@ -468,6 +474,8 @@ std::vector<CGameObject*> CScene::CullGameObjects(CCameraComponent* aMainCamera)
 		}
 	}
 	return culledGameObjects;
+
+	//return myGameObjects;
 }
 
 std::vector<CSpriteInstance*> CScene::CullSprites()
