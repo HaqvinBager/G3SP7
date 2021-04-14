@@ -78,21 +78,30 @@ void CPlayerComponent::resetHealth()
 	myHealth = 100.0f;
 }
 
-void CPlayerComponent::Receive(const SMessage& aMessage)
-{
-	if (aMessage.myMessageType == EMessageType::LockPlayer)
-	{
-		std::cout << "Lock Player Triggered" << std::endl;
-		//myPlayerController->
-	}
-}
 
 void CPlayerComponent::OnEnable()
 {
-	CMainSingleton::PostMaster().Subscribe(EMessageType::LockPlayer, this);
+	CMainSingleton::PostMaster().Subscribe("Ladder", this);
 }
 
 void CPlayerComponent::OnDisable()
 {
-	CMainSingleton::PostMaster().Unsubscribe(EMessageType::LockPlayer, this);
+	CMainSingleton::PostMaster().Unsubscribe("Ladder", this);
+}
+
+void CPlayerComponent::Receive(const SStringMessage& aMessage)
+{
+	std::string ladder = "Ladder";
+	if (aMessage.myMessageType == ladder)
+	{
+		bool* enter = static_cast<bool*>(aMessage.data);
+		if (*enter == true)
+		{
+			myPlayerController->LadderEnter();
+		}
+		else
+		{
+			myPlayerController->LadderExit();
+		}
+	}
 }

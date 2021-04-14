@@ -135,6 +135,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1400406856128089975, guid: f5b3533b9d5a72f47ba06c5ee27c7959,
         type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1400406856128089975, guid: f5b3533b9d5a72f47ba06c5ee27c7959,
+        type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4294967295
       objectReference: {fileID: 0}
@@ -1408,6 +1413,18 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 217372795}
   m_PrefabAsset: {fileID: 0}
+--- !u!134 &247930867
+PhysicMaterial:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  dynamicFriction: 0.6
+  staticFriction: 0.6
+  bounciness: 0
+  frictionCombine: 0
+  bounceCombine: 0
 --- !u!1001 &252245008
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2433,6 +2450,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: En_W_vent (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 496832820812941017, guid: fdce68ec3240a3340845fe31a06fdd12,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 496832820812941017, guid: fdce68ec3240a3340845fe31a06fdd12,
         type: 3}
@@ -7081,6 +7103,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7691249165099150223, guid: 317d0242055f94a4cbb5db1a21660023,
         type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7691249165099150223, guid: 317d0242055f94a4cbb5db1a21660023,
+        type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4294967295
       objectReference: {fileID: 0}
@@ -7508,6 +7535,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: EN_P_Scaffold_ladder
+      objectReference: {fileID: 0}
+    - target: {fileID: 6539252950466369425, guid: aeab9058cbdd2174eaf6265966ed4754,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6539252950466369425, guid: aeab9058cbdd2174eaf6265966ed4754,
         type: 3}
@@ -8328,6 +8360,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: En_W_wallCornerConcave_lv2 (67)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1582509524304971959, guid: 0d1d83a31d1d6ee4bb1b57b7cd54308e,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1582509524304971959, guid: 0d1d83a31d1d6ee4bb1b57b7cd54308e,
         type: 3}
@@ -11818,6 +11855,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8242258738617066641, guid: 1758ad43a34f9cd4fb65cd461fa33a9b,
         type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8242258738617066641, guid: 1758ad43a34f9cd4fb65cd461fa33a9b,
+        type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4294967295
       objectReference: {fileID: 0}
@@ -13540,6 +13582,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: En_W_wallCornerConcave_lv2 (62)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1582509524304971959, guid: 0d1d83a31d1d6ee4bb1b57b7cd54308e,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1582509524304971959, guid: 0d1d83a31d1d6ee4bb1b57b7cd54308e,
         type: 3}
@@ -15477,6 +15524,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7929109509541808496, guid: f829053df635dc2499801eaf3db6d04f,
+        type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 247930867}
+    - target: {fileID: 7929109509541808498, guid: f829053df635dc2499801eaf3db6d04f,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4294967295
+      objectReference: {fileID: 0}
     - target: {fileID: 7929109509541808510, guid: f829053df635dc2499801eaf3db6d04f,
         type: 3}
       propertyPath: m_LocalScale.x
@@ -15511,6 +15568,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Ladder
+      objectReference: {fileID: 0}
+    - target: {fileID: 7929740901422819562, guid: f829053df635dc2499801eaf3db6d04f,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f829053df635dc2499801eaf3db6d04f, type: 3}

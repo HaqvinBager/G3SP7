@@ -5,7 +5,7 @@
 
 class CGameObject;
 class CPlayerControllerComponent;
-class CPlayerComponent : public CComponent, public IObserver
+class CPlayerComponent : public CComponent, public IStringObserver
 {
 public:
 
@@ -21,7 +21,7 @@ public:
 
 	void resetHealth();
 
-	void Receive(const SMessage& aMessage) override;
+	void Receive(const SStringMessage& aMessage) override;
 
 	void OnEnable() override;
 	void OnDisable() override;
