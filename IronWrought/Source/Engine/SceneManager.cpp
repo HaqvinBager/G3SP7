@@ -16,6 +16,7 @@
 #include "SphereColliderComponent.h"
 #include "CapsuleColliderComponent.h"
 #include "ConvexMeshColliderComponent.h"
+#include "VFXSystemComponent.h"
 #include <GravityGloveComponent.h>
 #include <EnemyComponent.h>
 //#include <iostream>
@@ -373,6 +374,8 @@ void CSceneManager::AddEnemyComponents(CScene& aScene, RapidArray someData)
 		settings.mySpeed= m["speed"].GetFloat();
 		settings.myHealth = m["health"].GetFloat();
 		gameObject->AddComponent<CEnemyComponent>(*gameObject, settings);
+
+		gameObject->AddComponent<CVFXSystemComponent>(*gameObject, ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystem_Enemy.json"));
 	}
 }
 
