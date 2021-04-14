@@ -327,14 +327,14 @@ void CSceneManager::AddPlayer(CScene& aScene, RapidObject someData)
 
 	CGameObject* camera = CCameraControllerComponent::CreatePlayerFirstPersonCamera(player);//new CGameObject(1000);
 	camera->myTransform->Rotation(playerRot);
-	CGameObject* model = new CGameObject(1001);
+	CGameObject* model = new CGameObject(PLAYER_MODEL_ID);
 	std::string modelPath = ASSETPATH("Assets/Graphics/Character/Main_Character/CH_PL_SK.fbx");
 	model->AddComponent<CModelComponent>(*model, modelPath);
 	model->myTransform->SetParent(camera->myTransform);
 	model->myTransform->Rotation(playerRot);
 	CAnimationComponent* animComp = AnimationLoader::AddAnimationsToGameObject(model, modelPath);
 	animComp->BlendToAnimation(1);
-	CGameObject* gravityGloveSlot = new CGameObject(99);
+	CGameObject* gravityGloveSlot = new CGameObject(PLAYER_GLOVE_ID);
 	gravityGloveSlot->myTransform->Scale(0.1f);
 	gravityGloveSlot->myTransform->SetParent(camera->myTransform);
 	gravityGloveSlot->myTransform->Position({0.f, 0.f, 1.5f});
