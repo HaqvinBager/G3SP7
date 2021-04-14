@@ -30,16 +30,16 @@ public class IronEventEditor : Editor
         IronEventType activeEvent = (IronEventType) eventType.enumValueIndex;
         switch (activeEvent)
         {
-            case IronEventType.SoundEffectEvent:
-                OnInspectorGUISoundEffects();
-                break;
+           // case IronEventType.SoundEffectEvent:
+           //     OnInspectorGUISoundEffects();
+           //     break;
             case IronEventType.GameEvent:
                 OnInspectorGUIGameEvents();
                 break;
 
-            case IronEventType.VFXEvent:
-                OnInspectorGUIVFXEvents();
-                break;
+            //case IronEventType.VFXEvent:
+            //    OnInspectorGUIVFXEvents();
+            //    break;
         }
         serializedObject.ApplyModifiedProperties();
     }

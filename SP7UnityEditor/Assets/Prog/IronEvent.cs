@@ -4,9 +4,9 @@ using UnityEngine;
 
 public enum IronEventType
 {
-    SoundEffectEvent,
+    //SoundEffectEvent,
     GameEvent,
-    VFXEvent
+    //VFXEvent
 }
 
 public class IronEvent : MonoBehaviour
