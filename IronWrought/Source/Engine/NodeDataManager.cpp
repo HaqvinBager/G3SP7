@@ -9,6 +9,8 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include "Scene.h"
+#include "Engine.h"
 
 CNodeDataManager* CNodeDataManager::ourInstance = nullptr;
 
@@ -102,6 +104,11 @@ void CNodeDataManager::SaveDataTypesToJson()
 	writer1.StartArray();
 	for (auto& data : myNodeData)
 	{
+		int ID = std::stoi(data.myNodeTypeName);
+		CGameObject* gameObject = IRONWROUGHT_ACTIVE_SCENE.FindObjectWithID(ID);
+		if (gameObject)
+			continue;
+
 		switch (data.myDataType)
 		{
 		case CNodeDataManager::EDataType::EFloat:
