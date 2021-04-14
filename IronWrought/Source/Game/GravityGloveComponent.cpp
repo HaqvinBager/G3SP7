@@ -176,7 +176,7 @@ void CGravityGloveComponent::Push()
 				return;
 
 			CRigidBodyComponent* target = transform->GetComponent<CRigidBodyComponent>();
-			if (target != nullptr) 
+			if (target != nullptr)
 			{
 				if (!target->IsKinematic())
 				{
