@@ -345,6 +345,8 @@ void CSceneManager::AddPlayer(CScene& aScene, RapidObject someData)
 
 	player->AddComponent<CPlayerControllerComponent>(*player);// CPlayerControllerComponent constructor sets position of camera child object.
 
+	camera->AddComponent<CVFXSystemComponent>(*camera, ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystem_Player.json"));
+
 	aScene.AddInstance(model);
 	aScene.AddInstance(camera);
 	aScene.AddInstance(gravityGloveSlot);

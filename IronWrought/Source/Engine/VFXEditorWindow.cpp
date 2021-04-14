@@ -119,7 +119,7 @@ void IronWroughtImGui::CVFXEditorWindow::SaveToFile()
 
 	CGameObject* vfx = CEngine::GetInstance()->GetActiveScene().GetVFXTester();
 	vfx->GetComponent<CVFXSystemComponent>()->Init(ASSETPATH(mySaveDestination));
-	vfx->GetComponent<CVFXSystemComponent>()->EnableEffect(0);
+	vfx->GetComponent<CVFXSystemComponent>()->EnableEffect(myCurrentEffectIndex);
 }
 
 void IronWroughtImGui::CVFXEditorWindow::LoadFile(std::string aFilePath)
@@ -208,7 +208,7 @@ void IronWroughtImGui::CVFXEditorWindow::ShowMainMenu()
 
 				CGameObject* vfx = CEngine::GetInstance()->GetActiveScene().GetVFXTester();
 				vfx->GetComponent<CVFXSystemComponent>()->Init(ASSETPATH(mySaveDestination));
-				vfx->GetComponent<CVFXSystemComponent>()->EnableEffect(0);
+				vfx->GetComponent<CVFXSystemComponent>()->EnableEffect(myCurrentEffectIndex);
 			}
 			index++;
 		}
@@ -434,7 +434,7 @@ void IronWroughtImGui::CVFXEditorWindow::ShowVFXMeshWindow()
 
 		CGameObject* vfx = IRONWROUGHT->GetActiveScene().GetVFXTester();
 		vfx->GetComponent<CVFXSystemComponent>()->Init(ASSETPATH(mySaveDestination));
-		vfx->GetComponent<CVFXSystemComponent>()->EnableEffect(0);
+		vfx->GetComponent<CVFXSystemComponent>()->EnableEffect(myCurrentEffectIndex);
 	}
 	ImGui::Dummy(ImVec2(0.0f, 20.0f));
 
@@ -568,7 +568,7 @@ void IronWroughtImGui::CVFXEditorWindow::ShowParticleEffectWindow()
 
 			CGameObject* vfx = IRONWROUGHT->GetActiveScene().GetVFXTester();
 			vfx->GetComponent<CVFXSystemComponent>()->Init(ASSETPATH(mySaveDestination));
-			vfx->GetComponent<CVFXSystemComponent>()->EnableEffect(0);
+			vfx->GetComponent<CVFXSystemComponent>()->EnableEffect(myCurrentEffectIndex);
 		}
 
 		ImGui::End();
@@ -591,7 +591,7 @@ void IronWroughtImGui::CVFXEditorWindow::ShowParticleEffectWindow()
 
 		CGameObject* vfx = IRONWROUGHT->GetActiveScene().GetVFXTester();
 		vfx->GetComponent<CVFXSystemComponent>()->Init(ASSETPATH(mySaveDestination));
-		vfx->GetComponent<CVFXSystemComponent>()->EnableEffect(0);
+		vfx->GetComponent<CVFXSystemComponent>()->EnableEffect(myCurrentEffectIndex);
 	}
 	ImGui::Dummy(ImVec2(0.0f, 20.0f));
 
