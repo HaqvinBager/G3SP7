@@ -24,6 +24,8 @@ public:
 
 	void ReceiveEvent(const EInputEvent aEvent) override;
 
+	void ControllerUpdate();
+
 	void Move(Vector3 aDir);
 
 	//void AddFaceMesh(CGameObject* aGameObject);

@@ -32,7 +32,7 @@ CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, 
 	, myIsGrounded(true)
 	, myHasJumped(false)
 	, myIsJumping(false)
-	, myJumpHeight(0.035f)
+	, myJumpHeight(0.1f)
 	, myFallSpeed(0.098f)
 	, myMovement( Vector3(0.0f, -0.098f, 0.0f ))
 {
@@ -98,7 +98,7 @@ void CPlayerControllerComponent::Update()
 	}
 	else
 	{
-		Move({0.0f, myMovement.y, 0.0f});
+		//Move({0.0f, myMovement.y, 0.0f});
 	}
 
 	//Move(myMovement * mySpeed);
@@ -120,7 +120,7 @@ void CPlayerControllerComponent::Update()
 
 	if (myMovement.y >= -0.1f)
 	{
-		myMovement.y -= myFallSpeed * CTimer::Dt();
+		myMovement.y -= myFallSpeed * CTimer::FixedDt();
 	}
 
 	if (myIsJumping == false)
@@ -139,6 +139,8 @@ void CPlayerControllerComponent::Update()
 		myController->SetPosition(myRespawnPosition);
 	}
 #endif // _DEBUG
+	ControllerUpdate();
+	Move(myMovement * mySpeed);
 }
 
 void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
@@ -159,20 +161,20 @@ void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
 	switch (aEvent)
 	{
 		case EInputEvent::MoveForward:
-			myMovement = -myCamera->GameObject().myTransform->GetLocalMatrix().Forward();
-			myAnimationComponentController->Walk();
+			//myMovement = -myCamera->GameObject().myTransform->GetLocalMatrix().Forward();
+			//myAnimationComponentController->Walk();
 			break;
 		case EInputEvent::MoveBackward:
-			myMovement = -myCamera->GameObject().myTransform->GetLocalMatrix().Backward();
-			myAnimationComponentController->Walk();
+			//myMovement = -myCamera->GameObject().myTransform->GetLocalMatrix().Backward();
+			//myAnimationComponentController->Walk();
 			break;
 		case EInputEvent::MoveLeft:
-			myMovement = myCamera->GameObject().myTransform->GetLocalMatrix().Left();
-			myAnimationComponentController->Walk();
+			//myMovement = myCamera->GameObject().myTransform->GetLocalMatrix().Left();
+			//myAnimationComponentController->Walk();
 			break;
 		case EInputEvent::MoveRight:
-			myMovement = myCamera->GameObject().myTransform->GetLocalMatrix().Right();
-			myAnimationComponentController->Walk();
+			//myMovement = myCamera->GameObject().myTransform->GetLocalMatrix().Right();
+			//myAnimationComponentController->Walk();
 			break;
 		case EInputEvent::Jump:
 			if (myIsGrounded == true)
@@ -214,20 +216,49 @@ void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
 	if (myLadderHasTriggered)
 	{
 		myMovement.y = myMovement.z;
+		std::cout << myMovement.z << std::endl;
 		myMovement.z = 0.0f;
 		//myMovement = { 0.f, myMovement.y,0.f };
-		Move(myMovement * mySpeed);
+		//Move(myMovement * mySpeed);
 	}
 	else
 	{
-		Move(myMovement * mySpeed);
-		myMovement = { 0.f, myMovement.y,0.f };
+		//Move(myMovement * mySpeed);
 	}
+	//myMovement.y = 0.f;
+	//myMovement = { 0.f, myMovement.y,0.f };
+}
+
+void CPlayerControllerComponent::ControllerUpdate()
+{
+	DirectX::SimpleMath::Vector3 input(0, 0, 0);
+	DirectX::SimpleMath::Vector3 forward(0, 0, 0);
+	DirectX::SimpleMath::Vector3 right(0, 0, 0);
+	input.z += Input::GetInstance()->IsKeyDown('W') ? 1.f : 0.f;
+	input.z += Input::GetInstance()->IsKeyDown('S') ? -1.f : 0.f;
+	
+	input.x += Input::GetInstance()->IsKeyDown('D') ? 1.f : 0.f;
+	input.x += Input::GetInstance()->IsKeyDown('A') ? -1.f : 0.f;
+	myAnimationComponentController->Walk();
+
+	Vector3 dir = -myCamera->GameObject().myTransform->GetLocalMatrix().Forward();
+	Vector3 cross = dir.Cross(input);
+	float dot = cross.Dot(myCamera->GameObject().myTransform->GetLocalMatrix().Up());
+
+	//std::cout << "X: " << dir.x << " Z " << dir.y << std::endl;
+	std::cout << dot << std::endl;
+	//myMovement.y = Input::GetInstance()->IsKeyDown('E') ? myCameraMoveSpeed * verticalMoveSpeedModifier : cameraMovementInput.y;
+	//myMovement.y = Input::GetInstance()->IsKeyDown('Q') ? -myCameraMoveSpeed * verticalMoveSpeedModifier : cameraMovementInput.y;
+	//Vector3 dir = myController->GetPosition() - myCamera->GameObject().myTransform->GetLocalMatrix().Forward() * aInput.z;
+	//dir = dir + myCamera->GameObject().myTransform->GetLocalMatrix().Right() * aInput.x;
 }
 
 void CPlayerControllerComponent::Move(Vector3 aDir)
 {
-	physx::PxControllerCollisionFlags collisionflag = myController->GetController().move({aDir.x, aDir.y, aDir.z}, 0, CTimer::Dt(), 0);
+	//std::cout << "Gravity: " << myMovement.y << std::endl;
+	
+	//ir.x = aInput.x * -myCamera->GameObject().myTransform->GetLocalMatrix().Right();
+	physx::PxControllerCollisionFlags collisionflag = myController->GetController().move({ aDir.x, aDir.y, aDir.z}, 0, CTimer::FixedDt(), 0);
 
 	if (collisionflag != physx::PxControllerCollisionFlag::eCOLLISION_DOWN )
 	{
