@@ -527,6 +527,29 @@ void CCanvas::SetEnabled(bool isEnabled)
 	}
 }
 
+void CCanvas::ForceEnabled(const bool& anIsEnabled)
+{
+	myIsEnabled = anIsEnabled;
+
+	for (auto& button : myButtons)
+		button->Enabled(myIsEnabled);
+
+	for (auto& text : myButtonTexts)
+		text->SetShouldRender(myIsEnabled);
+
+	for (auto& sprite : mySprites)
+		sprite->SetShouldRender(myIsEnabled);
+
+	for (auto& text : myTexts)
+		text->SetShouldRender(myIsEnabled);
+
+	for (auto& animUI : myAnimatedUIs)
+		animUI->SetShouldRender(myIsEnabled);
+
+	if(myBackground)
+		myBackground->SetShouldRender(myIsEnabled);
+}
+
 void CCanvas::DisableWidgets(const int& anExceptionIndex)
 {
 	for (int i = 0; i < myWidgets.size(); ++i)

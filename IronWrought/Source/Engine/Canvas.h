@@ -37,6 +37,7 @@ public:
 public:
 	bool GetEnabled();
 	void SetEnabled(bool isEnabled);
+	void ForceEnabled(const bool& anIsEnabled);
 	void DisableWidgets(const int& anExceptionIndex = 999);
 
 	std::vector<CButton*> GetButtons() { return myButtons; }
