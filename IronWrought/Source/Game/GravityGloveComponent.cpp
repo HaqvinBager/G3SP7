@@ -115,8 +115,6 @@ void CGravityGloveComponent::Pull()
 			}
 		}
 	}*/
-	int anyhits = hit.getNbAnyHits();
-	std::cout << anyhits << std::endl;
 	if (hit.getNbAnyHits() > 0)
 	{
 		CTransformComponent* transform = (CTransformComponent*)hit.getAnyHit(0).actor->userData;

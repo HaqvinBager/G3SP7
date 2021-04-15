@@ -344,7 +344,7 @@ void CCanvas::Update()
 			switch (i)
 			{
 				case 0:
-					if(myWidgets[i]->GetEnabled())
+					
 						myLevelToLoad = "Level_1-1";
 				break;
 
@@ -363,7 +363,7 @@ void CCanvas::Update()
 						myLevelToLoad = "Level_2-2";
 				break;
 
-				case 6:
+				case 7:
 				{
 					if (!myWidgets[i]->GetEnabled())
 						continue;
@@ -602,13 +602,16 @@ bool CCanvas::InitButton(const rapidjson::GenericObject<false, rapidjson::Value>
 	data.mySpritePaths.at(0) = ASSETPATH(aRapidObject["Idle Sprite Path"].GetString());
 	data.mySpritePaths.at(1) = ASSETPATH(aRapidObject["Hover Sprite Path"].GetString());
 	data.mySpritePaths.at(2) = ASSETPATH(aRapidObject["Click Sprite Path"].GetString());
-
-	auto messagesArray = aRapidObject["Messages"].GetArray();
-	data.myMessagesToSend.resize(messagesArray.Size());
-
-	for (unsigned int j = 0; j < messagesArray.Size(); ++j)
+	
+	if (aRapidObject.HasMember("Messages"))
 	{
-		data.myMessagesToSend[j] = static_cast<EMessageType>(messagesArray[j].GetInt());
+		auto messagesArray = aRapidObject["Messages"].GetArray();
+		data.myMessagesToSend.resize(messagesArray.Size());
+
+		for (unsigned int j = 0; j < messagesArray.Size(); ++j)
+		{
+			data.myMessagesToSend[j] = static_cast<EMessageType>(messagesArray[j].GetInt());
+		}
 	}
 
 	data.myWidgetToToggleIndex = -1;
