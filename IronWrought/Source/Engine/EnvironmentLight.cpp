@@ -64,7 +64,7 @@ void CEnvironmentLight::SetDirection(DirectX::SimpleMath::Vector3 aDirection)
 	myDirection.y = aDirection.y;
 	myDirection.z = aDirection.z;
 
-	myShadowmapViewMatrix = DirectX::XMMatrixLookAtLH(myPosition, myPosition - myDirection, Vector3::Up);
+	myShadowmapViewMatrix = DirectX::XMMatrixLookAtLH(GetShadowPosition(), GetShadowPosition() - myDirection, Vector3::Up);
 }
 
 void CEnvironmentLight::SetColor(DirectX::SimpleMath::Vector3 aColor)
@@ -82,10 +82,7 @@ void CEnvironmentLight::SetIntensity(float anIntensity)
 void CEnvironmentLight::SetPosition(DirectX::SimpleMath::Vector3 aPosition)
 {
 	myPosition = DirectX::SimpleMath::Vector4(aPosition.x, aPosition.y, aPosition.z, 1.0f);
-	//Vector2 pixelSize = CEngine::GetInstance()->GetWindowHandler()->GetResolution();
-	//pixelSize.x = 1.0f / pixelSize.x;
-	//pixelSize.y = 1.0f / pixelSize.y;
-	myShadowmapViewMatrix = DirectX::XMMatrixLookAtLH(myPosition, myPosition - myDirection, Vector3::Up);
+	myShadowmapViewMatrix = DirectX::XMMatrixLookAtLH(GetShadowPosition(), GetShadowPosition() - myDirection, Vector3::Up);
 }
 
 DirectX::SimpleMath::Matrix CEnvironmentLight::GetShadowView() const
@@ -102,20 +99,20 @@ DirectX::SimpleMath::Matrix CEnvironmentLight::GetShadowProjection() const
 
 DirectX::SimpleMath::Vector4 CEnvironmentLight::GetShadowPosition() const
 {
-	return myPosition;
-	//DirectX::SimpleMath::Vector3 position = DirectX::SimpleMath::Vector3(myPosition);
-	//DirectX::SimpleMath::Vector2 unitsPerPixel = myShadowcastSize / myShadowTextureSize;
-	//DirectX::SimpleMath::Matrix shadowTransform = GetShadowTransform();
+	//return myPosition;
+	DirectX::SimpleMath::Vector3 position = DirectX::SimpleMath::Vector3(myPosition);
+	DirectX::SimpleMath::Vector2 unitsPerPixel = myShadowcastSize / myShadowTextureSize;
+	DirectX::SimpleMath::Matrix shadowTransform = GetShadowTransform();
 
-	//float rightStep = position.Dot(shadowTransform.Right());
-	//position -= rightStep * shadowTransform.Right();
-	//rightStep = floor(rightStep / unitsPerPixel.x) * unitsPerPixel.x;
-	//position += rightStep * shadowTransform.Right();
+	float rightStep = position.Dot(shadowTransform.Right());
+	position -= rightStep * shadowTransform.Right();
+	rightStep = floor(rightStep / unitsPerPixel.x) * unitsPerPixel.x;
+	position += rightStep * shadowTransform.Right();
 
-	//float upStep = position.Dot(shadowTransform.Up());
-	//position -= upStep * shadowTransform.Up();
-	//upStep = floor(upStep / unitsPerPixel.y) * unitsPerPixel.y;
-	//position += upStep * shadowTransform.Up();
+	float upStep = position.Dot(shadowTransform.Up());
+	position -= upStep * shadowTransform.Up();
+	upStep = floor(upStep / unitsPerPixel.y) * unitsPerPixel.y;
+	position += upStep * shadowTransform.Up();
 
-	//return DirectX::SimpleMath::Vector4(position.x, position.y, position.z, 1.0f);
+	return DirectX::SimpleMath::Vector4(position.x, position.y, position.z, 1.0f);
 }

@@ -31,8 +31,8 @@ private:
 private:
 	Matrix myShadowmapViewMatrix;
 	Matrix myShadowmapProjectionMatrix;
-	DirectX::SimpleMath::Vector2 myShadowcastSize = { 32.0f, 32.0f };
-	DirectX::SimpleMath::Vector2 myShadowTextureSize = { 2048.0f * 4.0f, 2048.0f * 4.0f };
+	DirectX::SimpleMath::Vector2 myShadowcastSize;
+	DirectX::SimpleMath::Vector2 myShadowTextureSize;
 
 	ID3D11ShaderResourceView* myCubeShaderResourceView = nullptr;
 	DirectX::SimpleMath::Vector4 myPosition;
