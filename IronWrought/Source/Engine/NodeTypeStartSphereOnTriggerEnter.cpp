@@ -26,22 +26,30 @@ int CNodeTypeStartSphereOnTriggerEnter::OnEnter(CNodeInstance* aTriggeringNodeIn
 	bool triggerOnce = NodeData::Get<bool>(someData);
 
 	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject();
-	const CTransformComponent& playerTransform = *IRONWROUGHT->GetActiveScene().Player()->myTransform;
-	float distanceSquared = Vector3::DistanceSquared(playerTransform.Position(), gameObject->myTransform->Position());
-	float radiusSquared = radius * radius;
-	
-	bool trigger = distanceSquared <= radiusSquared;
-	if (trigger && aTriggeringNodeInstance->myShouldTriggerAgain)
-	{	
-		aTriggeringNodeInstance->myShouldTriggerAgain = false;
-		return 2;
+	if(IRONWROUGHT->GetActiveScene().Player())
+	{
+		const CTransformComponent& playerTransform = *IRONWROUGHT->GetActiveScene().Player()->myTransform;
+		float distanceSquared = Vector3::DistanceSquared(playerTransform.Position(), gameObject->myTransform->Position());
+		float radiusSquared = radius * radius;
+
+		bool trigger = distanceSquared <= radiusSquared;
+		if (trigger && aTriggeringNodeInstance->myShouldTriggerAgain)
+		{	
+			aTriggeringNodeInstance->myShouldTriggerAgain = false;
+			return 2;
+		}
+		else
+		{
+			if (!trigger && !aTriggeringNodeInstance->myShouldTriggerAgain && !triggerOnce)
+			{
+				aTriggeringNodeInstance->myShouldTriggerAgain = true;
+			}
+			return -1;
+		}
 	}
 	else
 	{
-		if (!trigger && !aTriggeringNodeInstance->myShouldTriggerAgain && !triggerOnce)
-		{
-			aTriggeringNodeInstance->myShouldTriggerAgain = true;
-		}
 		return -1;
 	}
+
 }

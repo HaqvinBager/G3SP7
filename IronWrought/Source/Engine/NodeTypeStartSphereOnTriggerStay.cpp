@@ -15,20 +15,29 @@ int CNodeTypeStartSphereOnTriggerStay::OnEnter(class CNodeInstance* aTriggeringN
 {
 	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject();
 	Vector3 position = gameObject->myTransform->Position();
-	Vector3 playerPosition = CEngine::GetInstance()->GetActiveScene().Player()->myTransform->Position();
 
-	SPin::EPinType outType;
-	NodeDataPtr someData = nullptr;
-	size_t outSize = 0;
+	if (CEngine::GetInstance()->GetActiveScene().Player())
+	{
+		Vector3 playerPosition = CEngine::GetInstance()->GetActiveScene().Player()->myTransform->Position();
 
-	GetDataOnPin(aTriggeringNodeInstance, 0, outType, someData, outSize);
-	float radius = NodeData::Get<float>(someData);
-	radius *= radius;
-	float distance = Vector3::DistanceSquared(playerPosition, position);
-	aTriggeringNodeInstance->myShouldTriggerAgain = true;
+		SPin::EPinType outType;
+		NodeDataPtr someData = nullptr;
+		size_t outSize = 0;
 
-	if (distance < radius)
-		return 1;
+		GetDataOnPin(aTriggeringNodeInstance, 0, outType, someData, outSize);
+		float radius = NodeData::Get<float>(someData);
+		radius *= radius;
+		float distance = Vector3::DistanceSquared(playerPosition, position);
+		aTriggeringNodeInstance->myShouldTriggerAgain = true;
+
+		if (distance < radius)
+			return 1;
+		else
+			return -1;
+	}
 	else
+	{
 		return -1;
+	}
+
 }
