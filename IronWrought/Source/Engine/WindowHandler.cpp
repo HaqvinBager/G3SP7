@@ -40,7 +40,14 @@ LRESULT CWindowHandler::WinProc(_In_ HWND hwnd, _In_ UINT uMsg, _In_ WPARAM wPar
             break;
 
         case WM_SETFOCUS:
+#ifndef NDEBUG
             windowHandler->myWindowIsInEditingMode ? windowHandler->LockCursor(false) : windowHandler->LockCursor(true);
+#else
+        if (windowHandler->myGameIsInMenu)
+            windowHandler->ShowAndUnlockCursor();
+        else
+            windowHandler->HideAndLockCursor();
+#endif
             break;
 
         default:
@@ -93,7 +100,7 @@ bool CWindowHandler::Init(CWindowHandler::SWindowData someWindowData)
 
     HCURSOR customCursor = NULL;
     if (document.HasMember("Cursor Path")) 
-        customCursor = LoadCursorFromFileA(document["Cursor Path"].GetString());
+        customCursor = LoadCursorFromFileA(ASSETPATH(document["Cursor Path"].GetString()).c_str());
 
     if (customCursor == NULL) 
         customCursor = LoadCursor(nullptr, IDC_ARROW);
@@ -217,6 +224,11 @@ void CWindowHandler::ShowAndUnlockCursor(const bool& anIsInEditorMode)
     myCursorIsLocked = false;
     myWindowIsInEditingMode = anIsInEditorMode;
     CMainSingleton::PostMaster().Send({ EMessageType::CursorShowAndUnlock, nullptr });
+}
+
+void CWindowHandler::GameIsInMenu(const bool& aIsInMenu)
+{
+    myGameIsInMenu = aIsInMenu;
 }
 
 void CWindowHandler::SetInternalResolution()

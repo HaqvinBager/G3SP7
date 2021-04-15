@@ -38,6 +38,8 @@ public:
 	void HideAndLockCursor(const bool& anIsInEditorMode = false);
 	void ShowAndUnlockCursor(const bool& anIsInEditorMode = true);
 
+	void GameIsInMenu(const bool& aIsInMenu);
+
 private:
 	bool Init(CWindowHandler::SWindowData someWindowData);
 	void SetInternalResolution();
@@ -50,5 +52,6 @@ private:
 	float myResolutionScale;
 	bool myCursorIsLocked;
 	bool myWindowIsInEditingMode;
+	bool myGameIsInMenu;
 };
 

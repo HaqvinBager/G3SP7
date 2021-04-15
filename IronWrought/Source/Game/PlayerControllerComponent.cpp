@@ -127,6 +127,9 @@ void CPlayerControllerComponent::Update()
 #endif // _DEBUG
 	ControllerUpdate();
 
+
+
+
 	//myMovement = { 0,0,0 };
 }
 
@@ -231,6 +234,16 @@ void CPlayerControllerComponent::ControllerUpdate()
 	float y = myMovement.y;
 	myMovement = (horizontal + vertical) * mySpeed;
 	myMovement.y = y;
+
+
+	if (myIsGrounded)
+	{
+		if(horizontal.LengthSquared() > 0.0f || vertical.LengthSquared() > 0.0f)
+			myAnimationComponentController->Walk();
+			//myAnimationComponentController->Walk
+		//if (myMovement.x != 0.0f || myMovement.z != 0.0f)
+	}
+
 }
 
 void CPlayerControllerComponent::Move(Vector3 aDir)
@@ -249,8 +262,6 @@ void CPlayerControllerComponent::Move(Vector3 aDir)
 	if (collisionflag == physx::PxControllerCollisionFlag::eCOLLISION_DOWN)
 	{
 		myIsGrounded = true;
-		if(aDir.x != 0.0f || aDir.z != 0.0f)
-			myAnimationComponentController->Walk();
 	}
 
 }
