@@ -218,6 +218,12 @@ void CScene::Update()
 		myCanvas->Update();
 }
 
+void CScene::FixedUpdate()
+{
+	for (auto& gameObject : myGameObjects)
+		gameObject->FixedUpdate();
+}
+
 void CScene::InitAnyNewComponents()
 {
 	CallAwakeOnNewComponents();

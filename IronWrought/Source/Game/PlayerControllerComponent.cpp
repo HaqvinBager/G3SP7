@@ -33,8 +33,8 @@ CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, 
 	, myHasJumped(false)
 	, myIsJumping(false)
 	, myJumpHeight(0.4f)
-	, myFallSpeed(0.098f)
-	, myMovement( Vector3(0.0f, -0.098f, 0.0f ))
+	, myFallSpeed(0.98f)
+	, myMovement( Vector3(0.0f, -0.98f, 0.0f ))
 {
 	INPUT_MAPPER->AddObserver(EInputEvent::MoveForward,		this);
 	INPUT_MAPPER->AddObserver(EInputEvent::MoveBackward,	this);
@@ -112,21 +112,7 @@ void CPlayerControllerComponent::Update()
 		myPlayerComponent->resetHealth();
 	}*/
 
-	if (myHasJumped == true)
-	{
-		myMovement.y = myJumpHeight;
-		myHasJumped = false;
-	}
 
-	if (myMovement.y >= -0.1f)
-	{
-		myMovement.y -= myFallSpeed * CTimer::FixedDt();
-	}
-
-	if (myIsJumping == false)
-	{
-		myMovement.y = myMovement.y >-0.0f ? myMovement.y - myFallSpeed : myMovement.y;
-	}
 	//std::cout << "Velocity X: " <<  myController->GetController().getActor()->getLinearVelocity().x << "Velocity Y: " << myController->GetController().getActor()->getLinearVelocity().y << "Velocity Z: " << myController->GetController().getActor()->getLinearVelocity().z << std::endl;;
 	GameObject().myTransform->Position(myController->GetPosition());
 	gPretendObjectCurrentDistance = max(gPretendObjectCurrentDistance -  CTimer::Dt() * 12.0f, 0.0f);
@@ -140,8 +126,32 @@ void CPlayerControllerComponent::Update()
 	}
 #endif // _DEBUG
 	ControllerUpdate();
-	Move(myMovement * mySpeed);
+
 	//myMovement = { 0,0,0 };
+}
+
+void CPlayerControllerComponent::FixedUpdate()
+{
+	if (myHasJumped == true)
+	{
+		myMovement.y = myJumpHeight;
+		myHasJumped = false;
+	}
+
+	//if (myMovement.y >= -0.1f)
+	//{
+	//}
+
+	if (!myIsGrounded)
+	{
+		myMovement.y -= myFallSpeed * CTimer::FixedDt();
+	}
+
+	if (myIsJumping == false)
+	{
+		myMovement.y = myMovement.y > -0.0f ? myMovement.y - myFallSpeed : myMovement.y;
+	}
+	Move(myMovement * mySpeed);
 }
 
 void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
@@ -161,22 +171,6 @@ void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
 
 	switch (aEvent)
 	{
-		case EInputEvent::MoveForward:
-			//myMovement = -myCamera->GameObject().myTransform->GetLocalMatrix().Forward();
-			//myAnimationComponentController->Walk();
-			break;
-		case EInputEvent::MoveBackward:
-			//myMovement = -myCamera->GameObject().myTransform->GetLocalMatrix().Backward();
-			//myAnimationComponentController->Walk();
-			break;
-		case EInputEvent::MoveLeft:
-			//myMovement = myCamera->GameObject().myTransform->GetLocalMatrix().Left();
-			//myAnimationComponentController->Walk();
-			break;
-		case EInputEvent::MoveRight:
-			//myMovement = myCamera->GameObject().myTransform->GetLocalMatrix().Right();
-			//myAnimationComponentController->Walk();
-			break;
 		case EInputEvent::Jump:
 			if (myIsGrounded == true)
 			{
@@ -232,31 +226,11 @@ void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
 
 void CPlayerControllerComponent::ControllerUpdate()
 {
-	/*DirectX::SimpleMath::Vector3 input(0, 0, 0);
-	DirectX::SimpleMath::Vector3 forward(0, 0, 0);
-	DirectX::SimpleMath::Vector3 right(0, 0, 0);
-	input.z += Input::GetInstance()->IsKeyDown('W') ? 1.f : 0.f;
-	input.z += Input::GetInstance()->IsKeyDown('S') ? -1.f : 0.f;
-	
-	input.x += Input::GetInstance()->IsKeyDown('D') ? 1.f : 0.f;
-	input.x += Input::GetInstance()->IsKeyDown('A') ? -1.f : 0.f;
-	myAnimationComponentController->Walk();
-
-	Vector3 dir = -myCamera->GameObject().myTransform->GetLocalMatrix().Right();
-	Vector3 cross = dir.Cross(input);
-	cross.Cross(myCamera->GameObject().myTransform->GetLocalMatrix().Up());
-	myMovement = cross;*/
-	//std::cout << "X: " << dir.x << " Z " << dir.y << std::endl;
-	//std::cout << "X: " << cross.x << "Y: " << cross.y << "Z: " << cross.z << std::endl;
-	Vector3 horizontal =	-GameObject().myTransform->GetLocalMatrix().Right() * Input::GetInstance()->GetAxis(Input::EAxis::Horizontal);
+	Vector3 horizontal = -GameObject().myTransform->GetLocalMatrix().Right() * Input::GetInstance()->GetAxis(Input::EAxis::Horizontal);
 	Vector3 vertical =	-GameObject().myTransform->GetLocalMatrix().Forward() * Input::GetInstance()->GetAxis(Input::EAxis::Vertical);
 	float y = myMovement.y;
-	myMovement = (horizontal + vertical) /* * mySpeed*/;
+	myMovement = (horizontal + vertical) * mySpeed;
 	myMovement.y = y;
-	//myMovement.y = Input::GetInstance()->IsKeyDown('E') ? myCameraMoveSpeed * verticalMoveSpeedModifier : cameraMovementInput.y;
-	//myMovement.y = Input::GetInstance()->IsKeyDown('Q') ? -myCameraMoveSpeed * verticalMoveSpeedModifier : cameraMovementInput.y;
-	//Vector3 dir = myController->GetPosition() - myCamera->GameObject().myTransform->GetLocalMatrix().Forward() * aInput.z;
-	//dir = dir + myCamera->GameObject().myTransform->GetLocalMatrix().Right() * aInput.x;
 }
 
 void CPlayerControllerComponent::Move(Vector3 aDir)

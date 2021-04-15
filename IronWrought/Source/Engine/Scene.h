@@ -57,6 +57,7 @@ public:
 	void Awake();
 	void Start();
 	void Update();
+	void FixedUpdate();
 	void Receive(const SMessage& aMessage) override;
 
 private:

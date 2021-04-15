@@ -15,12 +15,13 @@ namespace physx {
 class CPlayerControllerComponent : public CComponent, public IInputObserver
 {
 public:
-	CPlayerControllerComponent(CGameObject& gameObject, const float aWalkSpeed = 0.1f, const float aCrouchSpeed = 0.05f, physx::PxUserControllerHitReport* aHitReport = nullptr);
+	CPlayerControllerComponent(CGameObject& gameObject, const float aWalkSpeed = 0.314f, const float aCrouchSpeed = 0.13f, physx::PxUserControllerHitReport* aHitReport = nullptr);
 	~CPlayerControllerComponent() override;
 
 	void Awake() override;
 	void Start() override;
 	void Update() override;
+	void FixedUpdate() override;
 
 	void ReceiveEvent(const EInputEvent aEvent) override;
 
