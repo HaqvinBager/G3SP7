@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d184d122156d96b4c9a8a1a955cc3186, type: 3}
+  m_Name: Stream_2-1_2-2_Scenes
+  m_EditorClassIdentifier: 
+  myScenes:
+  - sceneAsset: {fileID: 102900000, guid: b66c7a8eca37f684787130b2f5defe19, type: 3}
+    scenePath: Assets/Scenes/Stream_2-1_2-2/Stream_2-1-2-2_Layout.unity
+  - sceneAsset: {fileID: 102900000, guid: aceb3949da556ce43a4f8df3bfcf1b26, type: 3}
+    scenePath: Assets/Scenes/Stream_2-1_2-2/Stream_2-1-2-2_Scripts.unity
+  - sceneAsset: {fileID: 102900000, guid: 03085decedb084543b8e4683e59910b3, type: 3}
+    scenePath: Assets/Scenes/Stream_2-1_2-2/Stream_2-1_2-2_Environment.unity
+  - sceneAsset: {fileID: 102900000, guid: d9d44124e840d52449f44f33e0f44218, type: 3}
+    scenePath: Assets/Scenes/Stream_2-1_2-2/Stream_2-1_2-2_Interactable_props.unity

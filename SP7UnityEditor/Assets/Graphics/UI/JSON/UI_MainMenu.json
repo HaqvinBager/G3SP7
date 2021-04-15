@@ -118,66 +118,11 @@
 
   "Sprites": [
     {
-      "Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/DontUseMe.dds",
+      "Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/Menu_IAM_LOGO.dds",
       "Position X": 0.0,
       "Position Y": -0.5,
       "Scale X": 1.0,
-      "Scale Y": 1.0,
-      "Animations": [
-        {
-          "Name": "First",
-          "FrameWidth": 512.0,
-          "FrameHeight": 512.0,
-          "VerticalStartingPos": 0.0,
-          "FrameOffset": 0,
-          "NumberOfFrames": 1,
-          "FramesPerSecond": 60,
-          "RotationSpeedPerSecond": 0.0,
-          "ShouldLoop": false,
-          "TransitionIndex": 2,
-          "ReverseTransitionIndex": 1
-        },
-        {
-          "Name": "Second",
-          "FrameWidth": 512.0,
-          "FrameHeight": 512.0,
-          "VerticalStartingPos": 0.0,
-          "FrameOffset": 1,
-          "NumberOfFrames": 1,
-          "FramesPerSecond": 60,
-          "RotationSpeedPerSecond": 0.0,
-          "ShouldLoop": false,
-          "TransitionIndex": 2,
-          "ReverseTransitionIndex": 1
-        },
-        {
-          "Name": "Third",
-          "FrameWidth": 512.0,
-          "FrameHeight": 512.0,
-          "VerticalStartingPos": 0.0,
-          "FrameOffset": 2,
-          "NumberOfFrames": 1,
-          "FramesPerSecond": 60,
-          "RotationSpeedPerSecond": 0.0,
-          "ShouldLoop": false,
-          "TransitionIndex": 2,
-          "ReverseTransitionIndex": 1
-        },
-        {
-          "Name": "Fourth",
-          "FrameWidth": 512.0,
-          "FrameHeight": 512.0,
-          "VerticalStartingPos": 0.0,
-          "FrameOffset": 3,
-          "NumberOfFrames": 1,
-          "FramesPerSecond": 60,
-          "RotationSpeedPerSecond": 100.0,
-          "ShouldLoop": false,
-          "TransitionIndex": 2,
-          "ReverseTransitionIndex": 1
-        }
-      ]
-      
+      "Scale Y": 1.0   
     }
   ],
 

@@ -212,11 +212,13 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 	//	CEngine::GetInstance()->CrashWithScreenShot(subPath);
 	//	ENGINE_ERROR_BOOL_MESSAGE(false, "Program crashed! A minidump was created at Bin/Crashes, please tell a programmer.");
 	//}
+#ifndef NDEBUG
 		// Aki 2021 04 06, ok to remove
 		SetForegroundWindow(GetConsoleWindow());
 
 		std::cout << "\n ******************************************* \nEngine shutdown! OK to close window :)\n";
 		system("pause");
+#endif
 #ifdef USE_CONSOLE_COMMAND
 	CloseConsole();
 #endif
