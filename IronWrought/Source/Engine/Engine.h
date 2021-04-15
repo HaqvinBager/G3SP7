@@ -89,6 +89,7 @@ public:
 
 private:
 	void AllScenesToInactive();
+	void CheckIfMenuState(const CStateStack::EState& aState);
 
 private:
 	static CEngine* ourInstance;
