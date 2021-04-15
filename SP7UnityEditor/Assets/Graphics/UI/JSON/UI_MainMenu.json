@@ -21,9 +21,9 @@
       "Sprite Position Y": 0.7,
       "Idle Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_STARTGAME.dds",
       "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_STARTGAME_HOVER.dds",
-      "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_STARTGAME_HOVER.dds",
+      "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_STARTGAME.dds",
       "Messages": [ 6 ],
-      "Sub Canvas Toggle Index": 4
+      "Sub Canvas Toggle Index": 6
     },
     {
       "Text": "",
@@ -35,13 +35,13 @@
       "Text Color R": 1.5,
       "Text Color G": 0.7,
       "Text Color B": 0.0,
-      "Pixel Width": 440.0,
-      "Pixel Height": 30.0,
-      "Sprite Position X": -0.8,
-      "Sprite Position Y": -0.15,
-      "Idle Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_IDLE.dds",
-      "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_HOVER.dds",
-      "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_CLICK.dds",
+      "Pixel Width": 256.0,
+      "Pixel Height": 64.0,
+      "Sprite Position X": -0.535,
+      "Sprite Position Y": -0.135,
+      "Idle Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_LEVELSELECT.dds",
+      "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_LEVELSELECT_HOVER.dds",
+      "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_LEVELSELECT_HOVER.dds",
       "Messages": [],
       "Sub Canvas Toggle Index": 0
     },
@@ -59,10 +59,11 @@
       "Pixel Height": 64.0,
       "Sprite Position X": -0.175,
       "Sprite Position Y": -0.135,
-      "Idle Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_SETTINGS.dds",
-      "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_SETTINGS_HOVER.dds",
-      "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_SETTINGS_HOVER.dds",
-      "Messages": []
+      "Idle Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_RESOLUTION.dds",
+      "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_RESOLUTION_HOVER.dds",
+      "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_RESOLUTION_HOVER.dds",
+      "Messages": [],
+      "Sub Canvas Toggle Index": 4
     },
     {
       "Text": "",
@@ -81,7 +82,8 @@
       "Idle Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_CREDITS.dds",
       "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_CREDITS_HOVER.dds",
       "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_CREDITS_HOVER.dds",
-      "Messages": []
+      "Messages": [],
+      "Sub Canvas Toggle Index": 5
     },
     {
       "Text": "",
@@ -115,6 +117,68 @@
   },
 
   "Sprites": [
+    {
+      "Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/DontUseMe.dds",
+      "Position X": 0.0,
+      "Position Y": -0.5,
+      "Scale X": 1.0,
+      "Scale Y": 1.0,
+      "Animations": [
+        {
+          "Name": "First",
+          "FrameWidth": 512.0,
+          "FrameHeight": 512.0,
+          "VerticalStartingPos": 0.0,
+          "FrameOffset": 0,
+          "NumberOfFrames": 1,
+          "FramesPerSecond": 60,
+          "RotationSpeedPerSecond": 0.0,
+          "ShouldLoop": false,
+          "TransitionIndex": 2,
+          "ReverseTransitionIndex": 1
+        },
+        {
+          "Name": "Second",
+          "FrameWidth": 512.0,
+          "FrameHeight": 512.0,
+          "VerticalStartingPos": 0.0,
+          "FrameOffset": 1,
+          "NumberOfFrames": 1,
+          "FramesPerSecond": 60,
+          "RotationSpeedPerSecond": 0.0,
+          "ShouldLoop": false,
+          "TransitionIndex": 2,
+          "ReverseTransitionIndex": 1
+        },
+        {
+          "Name": "Third",
+          "FrameWidth": 512.0,
+          "FrameHeight": 512.0,
+          "VerticalStartingPos": 0.0,
+          "FrameOffset": 2,
+          "NumberOfFrames": 1,
+          "FramesPerSecond": 60,
+          "RotationSpeedPerSecond": 0.0,
+          "ShouldLoop": false,
+          "TransitionIndex": 2,
+          "ReverseTransitionIndex": 1
+        },
+        {
+          "Name": "Fourth",
+          "FrameWidth": 512.0,
+          "FrameHeight": 512.0,
+          "VerticalStartingPos": 0.0,
+          "FrameOffset": 3,
+          "NumberOfFrames": 1,
+          "FramesPerSecond": 60,
+          "RotationSpeedPerSecond": 100.0,
+          "ShouldLoop": false,
+          "TransitionIndex": 2,
+          "ReverseTransitionIndex": 1
+        }
+      ]
+      
+    }
   ],
 
   "PostmasterEvents": {
@@ -126,6 +190,8 @@
     { "Path": "Assets/Graphics/UI/JSON/UI_MainMenu_Level_1-2.json" },
     { "Path": "Assets/Graphics/UI/JSON/UI_MainMenu_Level_2-1.json" },
     { "Path": "Assets/Graphics/UI/JSON/UI_MainMenu_Level_2-2.json" },
+    { "Path": "Assets/Graphics/UI/JSON/UI_MainMenu_Settings.json" },
+    { "Path": "Assets/Graphics/UI/JSON/UI_MainMenu_Credits.json" },
     { "Path": "Assets/Graphics/UI/JSON/UI_LoadingScreen.json" }
   ]
 }

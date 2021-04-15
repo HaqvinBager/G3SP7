@@ -467,7 +467,7 @@ std::vector<CGameObject*> CScene::CullGameObjects(CCameraComponent* aMainCamera)
 			continue;
 		}
 
-		currentSphere = DirectX::BoundingSphere(gameObject->myTransform->Position(), 14.0f);
+		currentSphere = DirectX::BoundingSphere(gameObject->myTransform->Position(), 24.0f);
 		if (viewFrustum.Intersects(currentSphere))
 		{
 			culledGameObjects.push_back(gameObject);

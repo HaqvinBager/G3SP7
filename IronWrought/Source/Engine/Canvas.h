@@ -37,7 +37,7 @@ public:
 public:
 	bool GetEnabled();
 	void SetEnabled(bool isEnabled);
-	void DisableWidgets();
+	void DisableWidgets(const int& anExceptionIndex = 999);
 
 	std::vector<CButton*> GetButtons() { return myButtons; }
 	std::vector<CTextInstance*> GetTexts() { return myTexts; }
