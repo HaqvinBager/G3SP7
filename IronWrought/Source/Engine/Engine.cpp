@@ -315,6 +315,8 @@ void CEngine::SetActiveScene(const CStateStack::EState aState)
 		AddScene(myActiveState, CSceneManager::CreateEmpty());
 	}
 
+	CheckIfMenuState(aState);
+
 	CTimer::Mark();
 	//mySceneMap[myActiveState]->Awake();// Unused
 	//mySceneMap[myActiveState]->Start();// Unused
@@ -384,6 +386,32 @@ void CEngine::HideCursor(const bool& anIsInEditorMode)
 void CEngine::LoadGraph(const std::string& aSceneName)
 {
 	myGraphManager->Load(aSceneName);
+}
+
+void CEngine::CheckIfMenuState(const CStateStack::EState& aState)
+{
+	bool isInMenu = true;
+	switch (aState)
+	{
+		case CStateStack::EState::BootUp:
+			isInMenu = false;
+			break;
+
+		case CStateStack::EState::InGame:
+			isInMenu = false;
+			break;
+
+		case CStateStack::EState::MainMenu:
+			isInMenu = true;
+			break;
+
+		case CStateStack::EState::PauseMenu:
+			isInMenu = true;
+			break;
+
+		default:break;
+	}
+	myWindowHandler->GameIsInMenu(isInMenu);
 }
 
 void CEngine::SetBrokenScreen(bool aShouldSetBrokenScreen)
