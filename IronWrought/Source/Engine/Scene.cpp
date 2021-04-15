@@ -178,6 +178,17 @@ void CScene::DisableWidgetsOnCanvas()
 		myCanvas->DisableWidgets();
 }
 
+void CScene::CanvasToggle(const bool& anIsEnabled, const bool& anIsForceEnable)
+{
+	if (myCanvas)
+	{
+		if (anIsForceEnable)
+			myCanvas->ForceEnabled(anIsEnabled);
+		else
+			myCanvas->SetEnabled(anIsEnabled);
+	}
+}
+
 //No longer needed due to Components Awake being called via EMessageType "AddComponent"
 void CScene::Awake()
 {
@@ -216,6 +227,12 @@ void CScene::Update()
 
 	if (myCanvas)
 		myCanvas->Update();
+}
+
+void CScene::FixedUpdate()
+{
+	for (auto& gameObject : myGameObjects)
+		gameObject->FixedUpdate();
 }
 
 void CScene::InitAnyNewComponents()
@@ -467,7 +484,7 @@ std::vector<CGameObject*> CScene::CullGameObjects(CCameraComponent* aMainCamera)
 			continue;
 		}
 
-		currentSphere = DirectX::BoundingSphere(gameObject->myTransform->Position(), 14.0f);
+		currentSphere = DirectX::BoundingSphere(gameObject->myTransform->Position(), 24.0f);
 		if (viewFrustum.Intersects(currentSphere))
 		{
 			culledGameObjects.push_back(gameObject);

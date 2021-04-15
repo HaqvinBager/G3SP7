@@ -264,7 +264,7 @@ PxMaterial* CPhysXWrapper::CreateCustomMaterial(const float& aDynamicFriction, c
 void CPhysXWrapper::Simulate()
 {
 	if (GetPXScene() != nullptr) {
-		GetPXScene()->simulate(CTimer::Dt());
+		GetPXScene()->simulate(CTimer::FixedDt());
 		GetPXScene()->fetchResults(true);
 	}
 }

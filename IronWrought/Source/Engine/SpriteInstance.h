@@ -82,6 +82,8 @@ public:
 	bool GetShouldAnimate() const { return myShouldAnimate; }
 	CSprite* GetSprite() const { return mySprite; }
 
+	inline const bool HasAnimations() const { return myAnimationFrames.size() > 0; }
+
 	ERenderOrder GetRenderOrder() const { return myRenderOrder; }
 	void SetRenderOrder(ERenderOrder aRenderOrder);
 

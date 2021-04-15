@@ -71,6 +71,14 @@ void CGameObject::Update()
 	}
 }
 
+void CGameObject::FixedUpdate()
+{
+	for (size_t i = 0; i < myComponents.size(); ++i)
+	{
+		myComponents[i]->FixedUpdate();
+	}
+}
+
 void CGameObject::LateUpdate()
 {
 	for (size_t i = 0; i < myComponents.size(); ++i)

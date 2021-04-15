@@ -2,62 +2,63 @@
   "Pivot X": 0.0,
   "Pivot Y": 0.0,
   "Postion X": 0.0,
-  "Position Y": 0.0,
+  "Position Y": 0.14,
 
   "Buttons": [
     {
       "Text": "",
       "FontAndFontSize": "Assets/Fonts/MorrisRoman42",
-      "Text Position X": -0.2,
+      "Text Position X": -0.5,
       "Text Position Y": 0.0,
       "Text Pivot X": 0.0,
       "Text Pivot Y": 0.0,
       "Text Color R": 1.5,
       "Text Color G": 0.7,
       "Text Color B": 0.0,
-      "Pixel Width": 320.0,
-      "Pixel Height": 60.0,
-      "Idle Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_IDLE.dds",
-      "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_IDLE.dds",
-      "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_IDLE.dds",
-      "Messages": [ 6 ]
+      "Pixel Width": 256.0,
+      "Pixel Height": 64.0,
+      "Idle Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_1280x720.dds",
+      "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_1280x720_HOVER.dds",
+      "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_1280x720.dds",
+      "Messages": [ 24 ],
+      "Sub Canvas Toggle Index": 4
     },
     {
       "Text": "",
       "FontAndFontSize": "Assets/Fonts/MorrisRoman42",
-      "Text Position X": 0.2,
+      "Text Position X": 0.0,
       "Text Position Y": 0.0,
       "Text Pivot X": 0.0,
       "Text Pivot Y": 0.0,
       "Text Color R": 1.5,
       "Text Color G": 0.7,
       "Text Color B": 0.0,
-      "Pixel Width": 320.0,
-      "Pixel Height": 60.0,
-      "Idle Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_IDLE.dds",
-      "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_IDLE.dds",
-      "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_UI_BUTTON_IDLE.dds",
-      "Messages": [ 4 ]
+      "Pixel Width": 256.0,
+      "Pixel Height": 64.0,
+      "Idle Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_1600x900.dds",
+      "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_1600x900_HOVER.dds",
+      "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_1600x900.dds",
+      "Messages": [ 25 ],
+      "Sub Canvas Toggle Index": 4
     }
-  ],
-
-  "Texts": [
-  ],
-
-  "Animated UI Elements": [
-  ],
-
-  "Background": {
-    "Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/PLACEHOLDER_SettingsBackground.dds"
-  },
-
-  "Sprites": [
-  ],
-
-  "PostmasterEvents": {
-    "Events": []
-  },
-
-  "Widgets": [
+    ,
+    {
+      "Text": "",
+      "FontAndFontSize": "Assets/Fonts/MorrisRoman42",
+      "Text Position X": 0.5,
+      "Text Position Y": 0.0,
+      "Text Pivot X": 0.0,
+      "Text Pivot Y": 0.0,
+      "Text Color R": 1.5,
+      "Text Color G": 0.7,
+      "Text Color B": 0.0,
+      "Pixel Width": 256.0,
+      "Pixel Height": 64.0,
+      "Idle Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_1920x1080.dds",
+      "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_1920x1080_HOVER.dds",
+      "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_1920x1080.dds",
+      "Messages": [ 26 ],
+      "Sub Canvas Toggle Index": 4
+    }
   ]
 }

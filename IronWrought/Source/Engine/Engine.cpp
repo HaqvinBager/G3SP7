@@ -210,7 +210,11 @@ void CEngine::Update()
 {
 	if (mySceneMap.find(myActiveState) != mySceneMap.end())
 	{
-		myPhysxWrapper->Simulate();
+		if (CTimer::FixedTimeStep() == true)
+		{
+			myPhysxWrapper->Simulate(); //<-- Anropas i samma intervall som Fixed "är"
+			mySceneMap[myActiveState]->FixedUpdate();
+		}
 		mySceneMap[myActiveState]->Update();
 	}
 
