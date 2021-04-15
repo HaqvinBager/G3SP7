@@ -45,7 +45,7 @@ PxFilterFlags contactReportFilterShader(PxFilterObjectAttributes attributes0, Px
 		return PxFilterFlag::eDEFAULT;
 	}
 	// generate contacts for all that were not filtered above
-	pairFlags = PxPairFlag::eCONTACT_DEFAULT | PxPairFlag::eNOTIFY_TOUCH_FOUND
+	pairFlags = PxPairFlag::eCONTACT_DEFAULT
 		| PxPairFlag::eNOTIFY_TOUCH_PERSISTS
 		| PxPairFlag::eNOTIFY_CONTACT_POINTS
 		| PxPairFlag::eSOLVE_CONTACT
@@ -54,8 +54,16 @@ PxFilterFlags contactReportFilterShader(PxFilterObjectAttributes attributes0, Px
 
 	// trigger the contact callback for pairs (A,B) where
 	// the filtermask of A contains the ID of B and vice versa.
-	if ((filterData0.word0 & filterData1.word1) && (filterData1.word0 & filterData0.word1))
+	//if ((filterData0.word0 & filterData1.word1) && (filterData1.word0 & filterData0.word1))
+	//	pairFlags |= PxPairFlag::eNOTIFY_TOUCH_FOUND;
+
+	PxU32 keep = (filterData0.word0 & filterData1.word0)
+		| (filterData0.word1 & filterData1.word1)
+		| (filterData0.word2 & filterData1.word2)
+		| (filterData0.word3 & filterData1.word3);
+	if (keep) {
 		pairFlags |= PxPairFlag::eNOTIFY_TOUCH_FOUND;
+	}
 
 	return PxFilterFlag::eDEFAULT;
 }
@@ -208,8 +216,10 @@ PxRaycastBuffer CPhysXWrapper::Raycast(Vector3 aOrigin, Vector3 aDirection, floa
 
 	PxReal maxDistance = aDistance;
 	PxRaycastBuffer hit;
-
-	/*bool status = */scene->raycast(origin, unitDir, maxDistance, hit);
+	PxQueryFilterData filterData = PxQueryFilterData();
+	filterData.data.word0 = GROUP1;
+	//PxQueryFilterData filterData(PxQueryFlag::eNO_BLOCK);
+	/*bool status = */scene->raycast(origin, unitDir, maxDistance, hit, PxHitFlag::eDEFAULT, filterData);
 	/*if (status) {
 		return hit;
 	}*/
