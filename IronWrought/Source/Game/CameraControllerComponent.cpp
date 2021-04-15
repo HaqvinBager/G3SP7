@@ -136,7 +136,13 @@ void CCameraControllerComponent::RotateTransformWithYawAndPitch(const Vector2& s
 	float sensitivity = 0.25f; //TestVärde, Kändes  okej på min Dator! Bra å testa på andras datorer! /Axel Savage 2021-04-09 14:00
 	myYaw = WrapAngle(myYaw + (someInput.x * sensitivity));
 	myPitch = std::clamp(myPitch + (someInput.y * sensitivity), ToDegrees(-PI / 2.0f), ToDegrees(PI / 2.0f));
-	GameObject().myTransform->Rotation({ myPitch, myYaw, 0 });
+	if (GameObject().myTransform->GetParent()) {
+		GameObject().myTransform->Rotation({ myPitch, 0, 0 });
+		GameObject().myTransform->GetParent()->Rotation({ 0, myYaw, 0 });
+	}
+	else {
+		GameObject().myTransform->Rotation({ myPitch, myYaw, 0 });
+	}
 }
 void CCameraControllerComponent::SetCameraMoveSpeed(float aCameraMoveSpeed) {
 	myCameraMoveSpeed = aCameraMoveSpeed;

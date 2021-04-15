@@ -21,6 +21,11 @@ public:
 
 	};//regular enum was easier to use.
 
+	enum class EAxis {
+		Horizontal = 0,
+		Vertical = 1
+	};
+
 	Input();
 
 	bool UpdateEvents(UINT message, WPARAM wParam, LPARAM lParam);
@@ -34,6 +39,8 @@ public:
 
 	DirectX::SimpleMath::Vector2 GetAxisRaw();
 
+
+	float GetAxis(const EAxis& aAxis);
 	bool IsKeyDown(WPARAM wParam);
 	bool IsKeyPressed(WPARAM wParam);
 	bool IsKeyReleased(WPARAM wParam);
@@ -71,4 +78,9 @@ private:
 	int myMouseRawXLast;
 	int myMouseRawYLast;
 	int myMouseWheel;//positive = away from user, negative = towards user
+
+	bool myHorizontalPressed;
+	bool myVerticalPressed;
+	float myHorizontal;
+	float myVertical;
 };

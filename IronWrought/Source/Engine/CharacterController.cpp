@@ -36,6 +36,13 @@ void CCharacterController::SetPosition(const Vector3& aPosition)
     myController->setPosition({ aPosition.x, aPosition.y, aPosition.z });
 }
 
+//void CCharacterController::SetRotation(const Quaternion& aRotation)
+//{
+//    PxQuat newQuat = {aRotation.x, aRotation.y, aRotation.z, aRotation.w};
+//    PxVec3 newPos = {myController->getPosition().x, myController->getPosition().y, myController->getPosition().z};
+//    myController->getActor()->setGlobalPose({ newPos, newQuat });
+//}
+
 UINT8 CCharacterController::Move(const Vector3& aDir, float aSpeed)
 {
     return myController->move({ aDir.x * aSpeed, aDir.y * aSpeed, aDir.z * aSpeed }, 0, CTimer::Dt(), 0);
