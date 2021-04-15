@@ -34,6 +34,7 @@ void CMainMenuState::Start()
 {
 	CEngine::GetInstance()->SetActiveScene(myState);
 	IRONWROUGHT->ShowCursor(false);
+	IRONWROUGHT->GetActiveScene().CanvasToggle(true, true);
 	IRONWROUGHT->GetActiveScene().DisableWidgetsOnCanvas();
 	CMainSingleton::PostMaster().Subscribe(EMessageType::StartGame, this);
 	CMainSingleton::PostMaster().Subscribe(EMessageType::Quit, this);
