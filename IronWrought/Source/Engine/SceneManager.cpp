@@ -349,7 +349,7 @@ void CSceneManager::AddPlayer(CScene& aScene, RapidObject someData)
 	camera->AddComponent<CGravityGloveComponent>(*camera, gravityGloveSlot->myTransform);
 	player->AddComponent<CPlayerComponent>(*player);
 
-	player->AddComponent<CPlayerControllerComponent>(*player, 0.03f, 0.03f, CEngine::GetInstance()->GetPhysx().GetPlayerReportBack());// CPlayerControllerComponent constructor sets position of camera child object.
+	player->AddComponent<CPlayerControllerComponent>(*player, 0.15f, 0.075f, CEngine::GetInstance()->GetPhysx().GetPlayerReportBack());// CPlayerControllerComponent constructor sets position of camera child object.
 
 	camera->AddComponent<CVFXSystemComponent>(*camera, ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystem_Player.json"));
 
