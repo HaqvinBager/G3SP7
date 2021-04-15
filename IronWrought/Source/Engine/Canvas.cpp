@@ -323,8 +323,8 @@ void CCanvas::Init(const std::string& aFilePath, CScene& aScene, bool addToScene
 	// To start Idle Crosshair Animation
 	if (mySprites.empty())
 		return;
-
-	mySprites[0]->PlayAnimationUsingInternalData(1);
+	if(mySprites[0]->HasAnimations())
+		mySprites[0]->PlayAnimationUsingInternalData(1);
 }
 
 void CCanvas::Update()
@@ -363,6 +363,17 @@ void CCanvas::Update()
 						myLevelToLoad = "Level_2-2";
 				break;
 
+				case 6:
+				{
+					if (!myWidgets[i]->GetEnabled())
+						continue;
+
+					for (auto& button : myButtons)
+					{
+						button->Enabled(false);
+					}
+				}	
+				break;
 				default:
 				break;
 						
@@ -435,18 +446,14 @@ void CCanvas::Receive(const SMessage& aMessage)
 				if (myWidgets.empty())
 					return;
 
-				DisableWidgets();
-
 				int index = *static_cast<int*>(aMessage.data);
 				if (index > -1 && index < myWidgets.size())
 				{
-					if (myCurrentWidgetIndex != -1)
-					{
-						myWidgets[myCurrentWidgetIndex]->SetEnabled(false);
-					}
+					DisableWidgets(index == myCurrentWidgetIndex ? index : 999);
 
 					myCurrentWidgetIndex = index;
-					myWidgets[myCurrentWidgetIndex]->SetEnabled(true);
+					CCanvas& widget = *myWidgets[myCurrentWidgetIndex];
+					widget.SetEnabled(!widget.GetEnabled());
 				}
 			}break;
 
@@ -520,12 +527,39 @@ void CCanvas::SetEnabled(bool isEnabled)
 	}
 }
 
-void CCanvas::DisableWidgets()
+void CCanvas::ForceEnabled(const bool& anIsEnabled)
 {
-	for (auto& widget : myWidgets)
+	myIsEnabled = anIsEnabled;
+
+	for (auto& button : myButtons)
+		button->Enabled(myIsEnabled);
+
+	for (auto& text : myButtonTexts)
+		text->SetShouldRender(myIsEnabled);
+
+	for (auto& sprite : mySprites)
+		sprite->SetShouldRender(myIsEnabled);
+
+	for (auto& text : myTexts)
+		text->SetShouldRender(myIsEnabled);
+
+	for (auto& animUI : myAnimatedUIs)
+		animUI->SetShouldRender(myIsEnabled);
+
+	if(myBackground)
+		myBackground->SetShouldRender(myIsEnabled);
+}
+
+void CCanvas::DisableWidgets(const int& anExceptionIndex)
+{
+	for (int i = 0; i < myWidgets.size(); ++i)
 	{
-		widget->SetEnabled(false);
-		widget->DisableWidgets();
+		if (i == anExceptionIndex)
+			continue;
+
+		auto& widget = *myWidgets[i];
+		widget.SetEnabled(false);
+		widget.DisableWidgets();
 	}
 }
 

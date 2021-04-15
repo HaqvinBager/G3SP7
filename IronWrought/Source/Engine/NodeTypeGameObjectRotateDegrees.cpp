@@ -19,7 +19,7 @@ CNodeTypeGameObjectRotateDegrees::CNodeTypeGameObjectRotateDegrees()
 
 int CNodeTypeGameObjectRotateDegrees::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 {
-	CGameObject* gameObject = IRONWROUGHT_ACTIVE_SCENE.FindObjectWithID(aTriggeringNodeInstance->GraphManager()->GetCurrentBlueprintInstanceID());
+	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject();
 
 	const auto searchResult = myRotations.find(gameObject->InstanceID());
 

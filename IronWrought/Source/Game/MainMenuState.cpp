@@ -34,27 +34,26 @@ void CMainMenuState::Start()
 {
 	CEngine::GetInstance()->SetActiveScene(myState);
 	IRONWROUGHT->ShowCursor(false);
+	IRONWROUGHT->GetActiveScene().CanvasToggle(true, true);
 	IRONWROUGHT->GetActiveScene().DisableWidgetsOnCanvas();
 	CMainSingleton::PostMaster().Subscribe(EMessageType::StartGame, this);
 	CMainSingleton::PostMaster().Subscribe(EMessageType::Quit, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::SetResolution1280x720, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::SetResolution1600x900, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::SetResolution1920x1080, this);
 }
 
 void CMainMenuState::Stop()
 {
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::StartGame, this);
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::Quit, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::SetResolution1280x720, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::SetResolution1600x900, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::SetResolution1920x1080, this);
 }
 
 void CMainMenuState::Update()
 {
-	//IRONWROUGHT->UpdateScene(myState);// This is only for menu states.
-	//for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
-	//{
-	//	gameObject->Update();
-	//}
-
-	//IRONWROUGHT->GetActiveScene().UpdateCanvas();
-
 #ifndef NDEBUG
 	if (INPUT->IsKeyPressed('R'))
 	{
@@ -88,6 +87,25 @@ void CMainMenuState::Receive(const SMessage& aMessage)
 		{
 			myTimeToQuit = true;
 		}break;
+
+		case EMessageType::SetResolution1280x720:
+		{
+			CEngine::GetInstance()->SetResolution({ 1280.0f, 720.0f });
+			IRONWROUGHT->GetActiveScene().ReInitCanvas(ASSETPATH("Assets/Graphics/UI/JSON/UI_MainMenu.json"));
+			myStateStack.PopTopAndPush(CStateStack::EState::MainMenu);
+		} break;
+		case EMessageType::SetResolution1600x900:
+		{
+			CEngine::GetInstance()->SetResolution({ 1600.0f, 900.0f });
+			IRONWROUGHT->GetActiveScene().ReInitCanvas(ASSETPATH("Assets/Graphics/UI/JSON/UI_MainMenu.json"));
+			myStateStack.PopTopAndPush(CStateStack::EState::MainMenu);
+		} break;
+		case EMessageType::SetResolution1920x1080:
+		{
+			CEngine::GetInstance()->SetResolution({ 1920.0f, 1080.0f });
+			IRONWROUGHT->GetActiveScene().ReInitCanvas(ASSETPATH("Assets/Graphics/UI/JSON/UI_MainMenu.json"));
+			myStateStack.PopTopAndPush(CStateStack::EState::MainMenu);
+		} break;
 
 		default: break;
 	}

@@ -121,13 +121,13 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!134 &771727410
+--- !u!134 &117319792
 PhysicMaterial:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: ' (Instance) (Instance) (Instance)'
+  m_Name: ' (Instance) (Instance) (Instance) (Instance)'
   dynamicFriction: 0.6
   staticFriction: 0.6
   bounciness: 0
@@ -169,7 +169,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Material
       value: 
-      objectReference: {fileID: 771727410}
+      objectReference: {fileID: 117319792}
     - target: {fileID: 8419189240601916174, guid: 60f656cf274b6584983149d2c29c6854,
         type: 3}
       propertyPath: m_RootOrder
@@ -183,7 +183,7 @@ PrefabInstance:
     - target: {fileID: 8419189240601916174, guid: 60f656cf274b6584983149d2c29c6854,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2
+      value: -5
       objectReference: {fileID: 0}
     - target: {fileID: 8419189240601916174, guid: 60f656cf274b6584983149d2c29c6854,
         type: 3}

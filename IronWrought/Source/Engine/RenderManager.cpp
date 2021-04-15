@@ -179,6 +179,7 @@ void CRenderManager::Render(CScene& aScene)
 	// Shadows
 	myEnvironmentShadowDepth.SetAsDepthTarget();
 	myShadowRenderer.Render(environmentlight, gameObjects, instancedGameObjects);
+	myShadowRenderer.Render(environmentlight, gameObjectsWithAlpha, instancedGameObjectsWithAlpha);
 	//myBoxLightShadowDepth.SetAsDepthTarget();
 	//myShadowRenderer.Render(boxLight, gameObjects, instancedGameObjects);
 

@@ -2,9 +2,6 @@
 #include "NodeTypeVariableGetVector3.h"
 #include "NodeInstance.h"
 #include "NodeDataManager.h"
-#include "Scene.h"
-#include "Engine.h"
-#include "GraphManager.h"
 
 CNodeTypeVariableGetVector3::CNodeTypeVariableGetVector3()
 {
@@ -14,7 +11,7 @@ CNodeTypeVariableGetVector3::CNodeTypeVariableGetVector3()
 
 int CNodeTypeVariableGetVector3::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 {
-	CGameObject* gameObject = IRONWROUGHT_ACTIVE_SCENE.FindObjectWithID(aTriggeringNodeInstance->GraphManager()->GetCurrentBlueprintInstanceID());
+	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject();
 
 	SPin::EPinType outType;
 	NodeDataPtr someData = nullptr;

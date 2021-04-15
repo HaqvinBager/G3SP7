@@ -161,7 +161,7 @@ void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
 	if (myCamera->IsFreeCamMode() || myCamera->IsCursorUnlocked())
 	{
 		if (aEvent == EInputEvent::SetResetPointEntities)
-			myRespawnPosition = myCamera->GameObject().myTransform->Position();
+			myRespawnPosition = myCamera->GameObject().myTransform->WorldPosition();
 
 		return;
 	}
