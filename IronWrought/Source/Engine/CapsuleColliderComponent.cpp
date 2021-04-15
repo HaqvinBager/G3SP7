@@ -33,6 +33,9 @@ void CCapsuleColliderComponent::Start()
 	PxVec3 offset = { myPositionOffset.x, myPositionOffset.y, myPositionOffset.z };
 	PxTransform relativePose(offset, PxQuat(PxHalfPi, physx::PxVec3(0, 0, 1)));
 	myShape->setLocalPose(relativePose);
+	PxFilterData filterData;
+	filterData.word0 = CPhysXWrapper::ELayerMask::GROUP1;
+	myShape->setQueryFilterData(filterData);
 
 	CRigidBodyComponent* rigidBody = nullptr;
 	if (GameObject().TryGetComponent(&rigidBody))

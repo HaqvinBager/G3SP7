@@ -42,7 +42,7 @@ void CBoxColliderComponent::CreateBoxCollider()
 	myShape = CEngine::GetInstance()->GetPhysx().GetPhysics()->createShape(physx::PxBoxGeometry(myBoxSize.x / 2.f, myBoxSize.y / 2.f, myBoxSize.z / 2.f), *myMaterial, true);
 	myShape->setLocalPose({ myPositionOffset.x, myPositionOffset.y, myPositionOffset.z });
 	PxFilterData filterData;
-	filterData.word0 =	CPhysXWrapper::ActiveGroup::GROUP1;
+	filterData.word0 =	CPhysXWrapper::ELayerMask::GROUP1;
 	myShape->setQueryFilterData(filterData);
 	//myShape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, true);
 
