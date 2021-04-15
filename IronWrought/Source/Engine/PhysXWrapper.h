@@ -27,13 +27,12 @@ public:
 	};
 
 
-	enum ActiveGroup
+	enum ELayerMask
 	{
 		GROUP1 = (1 << 0),
 		GROUP2 = (1 << 1),
 		GROUP3 = (1 << 2),
 		GROUP4 = (1 << 3)
-
 	};
 
 public:

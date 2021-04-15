@@ -217,7 +217,7 @@ PxRaycastBuffer CPhysXWrapper::Raycast(Vector3 aOrigin, Vector3 aDirection, floa
 	PxReal maxDistance = aDistance;
 	PxRaycastBuffer hit;
 	PxQueryFilterData filterData = PxQueryFilterData();
-	filterData.data.word0 = GROUP1;
+	filterData.data.word0 = ELayerMask::GROUP1;
 	//PxQueryFilterData filterData(PxQueryFlag::eNO_BLOCK);
 	/*bool status = */scene->raycast(origin, unitDir, maxDistance, hit, PxHitFlag::eDEFAULT, filterData);
 	/*if (status) {
@@ -379,6 +379,10 @@ void CPhysXWrapper::Cooking(const std::vector<CGameObject*>& gameObjectsToCook, 
 
 				PxRigidStatic* actor = myPhysics->createRigidStatic({ 0.f, 0.f, 0.f });
 				PxShape* instancedShape = myPhysics->createShape(pMeshGeometry, *CreateMaterial(CPhysXWrapper::materialfriction::basic), true);
+
+				PxFilterData filterData;
+				filterData.word0 = CPhysXWrapper::ELayerMask::GROUP1;
+				instancedShape->setQueryFilterData(filterData);
 				actor->attachShape(*instancedShape);
 				aScene->PXScene()->addActor(*actor);
 

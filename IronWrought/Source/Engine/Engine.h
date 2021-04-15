@@ -89,6 +89,8 @@ public:
 
 private:
 	void AllScenesToInactive();
+
+	// More or less a temp fix for SP7. Aki 2021 04 15
 	void CheckIfMenuState(const CStateStack::EState& aState);
 
 private:
