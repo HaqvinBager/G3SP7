@@ -25,7 +25,6 @@ public class InstanceModelCollection
     public List<InstancedModel> instancedModels;
 }
 
-
 public class ExportInstancedModel
 {
     public static InstanceModelCollection Export(string aSceneName)

@@ -20,6 +20,7 @@ public:
 
     Vector3 GetPosition() const;
     void SetPosition(const Vector3& aPosition);
+   // void SetRotation(const Quaternion& aRotation);
     UINT8 Move(const Vector3& aDir, float aSpeed);
     const Vector3 GetHitNormal() const;
 

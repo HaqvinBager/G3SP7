@@ -227,6 +227,18 @@ void CScene::Update()
 
 	if (myCanvas)
 		myCanvas->Update();
+
+	if (myPlayer && myEnvironmentLight)
+	{
+		myEnvironmentLight->SetPosition({ myPlayer->myTransform->WorldPosition().x, myEnvironmentLight->GetShadowPosition().y, myPlayer->myTransform->WorldPosition().z });
+	}
+
+}
+
+void CScene::FixedUpdate()
+{
+	for (auto& gameObject : myGameObjects)
+		gameObject->FixedUpdate();
 }
 
 void CScene::InitAnyNewComponents()
