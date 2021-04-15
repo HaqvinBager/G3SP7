@@ -93,7 +93,7 @@ bool CWindowHandler::Init(CWindowHandler::SWindowData someWindowData)
 
     HCURSOR customCursor = NULL;
     if (document.HasMember("Cursor Path")) 
-        customCursor = LoadCursorFromFileA(document["Cursor Path"].GetString());
+        customCursor = LoadCursorFromFileA(ASSETPATH(document["Cursor Path"].GetString()).c_str());
 
     if (customCursor == NULL) 
         customCursor = LoadCursor(nullptr, IDC_ARROW);
