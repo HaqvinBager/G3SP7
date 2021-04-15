@@ -49,6 +49,7 @@ public:
 	void CanvasIsHUD();
 	/*void UpdateCanvas()*/;
 	void DisableWidgetsOnCanvas();
+	void CanvasToggle(const bool& anIsEnabled, const bool& anIsForceEnable = false);
 
 //SETUP END
 
