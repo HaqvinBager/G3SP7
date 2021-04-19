@@ -49,6 +49,7 @@ public:
 	void CanvasIsHUD();
 	/*void UpdateCanvas()*/;
 	void DisableWidgetsOnCanvas();
+	void CanvasToggle(const bool& anIsEnabled, const bool& anIsForceEnable = false);
 
 //SETUP END
 
@@ -57,6 +58,7 @@ public:
 	void Awake();
 	void Start();
 	void Update();
+	void FixedUpdate();
 	void Receive(const SMessage& aMessage) override;
 
 private:

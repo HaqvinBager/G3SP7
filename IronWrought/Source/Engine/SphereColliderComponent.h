@@ -10,7 +10,7 @@ namespace physx
 class CSphereColliderComponent : public CBehaviour
 {
 public:
-	CSphereColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const float& aRadius, bool aIsStatic = false, physx::PxMaterial* aMaterial = nullptr);
+	CSphereColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const float& aRadius, physx::PxMaterial* aMaterial = nullptr);
 	~CSphereColliderComponent() override;
 
 	void Awake() override;

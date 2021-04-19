@@ -34,6 +34,8 @@ void CRigidBodyComponent::Awake()
 	myDynamicRigidBody->GetBody().setCMassLocalPose({myLocalCenterMass.x, myLocalCenterMass.y, myLocalCenterMass.z});
 	myDynamicRigidBody->GetBody().userData = (void*)GameObject().myTransform;
 	myDynamicRigidBody->GetBody().setRigidBodyFlag(physx::PxRigidBodyFlag::Enum::eKINEMATIC, myIsKinematic);
+	myDynamicRigidBody->GetBody().putToSleep();
+	myDynamicRigidBody->GetBody().setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
 }
 
 void CRigidBodyComponent::Start()

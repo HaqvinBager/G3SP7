@@ -2,10 +2,6 @@
 #include "NodeTypeVariableSetFloat.h"
 #include "NodeInstance.h"
 #include "NodeDataManager.h"
-#include "Timer.h"
-#include "Scene.h"
-#include "Engine.h"
-#include "GraphManager.h"
 
 CNodeTypeVariableSetFloat::CNodeTypeVariableSetFloat()
 {
@@ -18,7 +14,7 @@ CNodeTypeVariableSetFloat::CNodeTypeVariableSetFloat()
 
 int CNodeTypeVariableSetFloat::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 {
-	CGameObject* gameObject = IRONWROUGHT_ACTIVE_SCENE.FindObjectWithID(aTriggeringNodeInstance->GraphManager()->GetCurrentBlueprintInstanceID());
+	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject();
 
 	SPin::EPinType outType;
 	NodeDataPtr someData = nullptr;
@@ -33,7 +29,7 @@ int CNodeTypeVariableSetFloat::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 	if (!local)
 		CNodeDataManager::Get()->SetData(myNodeDataKey, CNodeDataManager::EDataType::EFloat, input);
 	else
-		CNodeDataManager::Get()->SetData(std::to_string(gameObject->InstanceID()), CNodeDataManager::EDataType::EFloat, input, false);
+		CNodeDataManager::Get()->SetData(myNodeDataKey + std::to_string(gameObject->InstanceID()), CNodeDataManager::EDataType::EFloat, input, false);
 
 	std::vector<SPin>& pins = aTriggeringNodeInstance->GetPins();
 	DeclareDataOnPinIfNecessary<float>(pins[3]);

@@ -121,11 +121,12 @@ void CButton::Enabled(const bool& anIsEnabled)
 	if (myEnabled != anIsEnabled)
 	{
 		myEnabled = anIsEnabled;
-		//for (auto& sprite : mySprites)
-		//{
-			//sprite->SetShouldRender(myEnabled);
-		//}
-		mySprites.at(static_cast<size_t>(EButtonState::Idle))->SetShouldRender(myEnabled);
+		for (int i = 0; i < mySprites.size(); ++i)
+		{
+			if (anIsEnabled == true && static_cast<EButtonState>(i) != myState)
+				continue;
+			mySprites[i]->SetShouldRender(myEnabled);
+		}
 	}
 }
 

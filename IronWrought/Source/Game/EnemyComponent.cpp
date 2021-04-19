@@ -10,14 +10,15 @@
 
 //EnemyComp
 
-CEnemyComponent::CEnemyComponent(CGameObject& aParent, const SEnemySetting& someSettings)
+CEnemyComponent::CEnemyComponent(CGameObject& aParent, const SEnemySetting& someSettings, physx::PxUserControllerHitReport* aHitReport)
 	: CComponent(aParent)
 	, myController(nullptr)
 	, myPlayer(nullptr)
+	, myEnemy(nullptr)
 	, myCurrentState(EBehaviour::Patrol)
 {
 	mySettings = someSettings;
-	myController = CEngine::GetInstance()->GetPhysx().CreateCharacterController(GameObject().myTransform->Position(), 0.6f * 0.5f, 1.8f * 0.5f);
+	myController = CEngine::GetInstance()->GetPhysx().CreateCharacterController(GameObject().myTransform->Position(), 0.6f * 0.5f, 1.8f * 0.5f, GameObject().myTransform, aHitReport);
 	myPitch = 0.0f;
 	myYaw = 0.0f;
 }
@@ -55,7 +56,7 @@ void CEnemyComponent::Start()
 	this->GameObject().GetComponent<CVFXSystemComponent>()->EnableEffect(0);
 }
 
-void CEnemyComponent::Update()//får bestämma vilket behaviour vi vill köra i denna Update()!!!
+void CEnemyComponent::Update()//fï¿½r bestï¿½mma vilket behaviour vi vill kï¿½ra i denna Update()!!!
 {
 	float distanceToPlayer = Vector3::DistanceSquared(myPlayer->myTransform->Position(), GameObject().myTransform->Position());
 
@@ -70,7 +71,7 @@ void CEnemyComponent::Update()//får bestämma vilket behaviour vi vill köra i den
 	}
 
 	Vector3 newDirection = myBehaviours[static_cast<int>(myCurrentState)]->Update(GameObject().myTransform->Position()); // current direction
-	
+
 	myYaw = WrapAngle(myYaw + newDirection.x);
 	myController->Move(newDirection, mySettings.mySpeed);
 	GameObject().myTransform->Rotation({ 0.0f,myYaw,0.0f });

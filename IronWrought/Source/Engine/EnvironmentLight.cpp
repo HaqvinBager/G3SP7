@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "EnvironmentLight.h"
+#include "Engine.h"
 
 
 CEnvironmentLight::CEnvironmentLight()
@@ -31,7 +32,7 @@ bool CEnvironmentLight::Init(CDirectXFramework* aFramework, std::string aFilePat
 	myDirection = { 0.0f, 1.0f, 0.0f, 0.0f };
 	myShadowmapViewMatrix = DirectX::XMMatrixLookAtLH(myPosition, myPosition - myDirection, Vector3::Up);
 
-	myShadowcastSize = /*{ 32.0f, 32.0f }*/{ 64.0f, 64.0f };
+	myShadowcastSize = /*{ 32.0f, 32.0f }*/{ 128.0f, 128.0f };
 	myShadowTextureSize = { 2048.0f/* * 4.0f*/, 2048.0f/* * 4.0f*/ };
 
 	myShadowmapProjectionMatrix = DirectX::XMMatrixOrthographicLH(myShadowcastSize.x, myShadowcastSize.y, -40.0f, 40.0f);
@@ -80,7 +81,24 @@ void CEnvironmentLight::SetIntensity(float anIntensity)
 
 void CEnvironmentLight::SetPosition(DirectX::SimpleMath::Vector3 aPosition)
 {
-	myPosition = DirectX::SimpleMath::Vector4(aPosition.x, aPosition.y, aPosition.z, 1.0f);
+	myPosition = Vector4(aPosition.x, aPosition.y, aPosition.z, 1.0f);
+
+	// Round to pixel positions
+	Vector3 position = DirectX::SimpleMath::Vector3(myPosition);
+	Vector2 unitsPerPixel = myShadowcastSize / myShadowTextureSize;
+	Matrix shadowTransform = GetShadowTransform();
+
+	float rightStep = position.Dot(shadowTransform.Right());
+	position -= rightStep * shadowTransform.Right();
+	rightStep = floor(rightStep / unitsPerPixel.x) * unitsPerPixel.x;
+	position += rightStep * shadowTransform.Right();
+
+	float upStep = position.Dot(shadowTransform.Up());
+	position -= upStep * shadowTransform.Up();
+	upStep = floor(upStep / unitsPerPixel.y) * unitsPerPixel.y;
+	position += upStep * shadowTransform.Up();
+
+	myPosition = Vector4(position.x, position.y, position.z, 1.0f);
 
 	myShadowmapViewMatrix = DirectX::XMMatrixLookAtLH(myPosition, myPosition - myDirection, Vector3::Up);
 }
@@ -99,6 +117,7 @@ DirectX::SimpleMath::Matrix CEnvironmentLight::GetShadowProjection() const
 
 DirectX::SimpleMath::Vector4 CEnvironmentLight::GetShadowPosition() const
 {
+	return myPosition;/*
 	DirectX::SimpleMath::Vector3 position = DirectX::SimpleMath::Vector3(myPosition);
 	DirectX::SimpleMath::Vector2 unitsPerPixel = myShadowcastSize / myShadowTextureSize;
 	DirectX::SimpleMath::Matrix shadowTransform = GetShadowTransform();
@@ -113,5 +132,5 @@ DirectX::SimpleMath::Vector4 CEnvironmentLight::GetShadowPosition() const
 	upStep = floor(upStep / unitsPerPixel.y) * unitsPerPixel.y;
 	position += upStep * shadowTransform.Up();
 
-	return DirectX::SimpleMath::Vector4(position.x, position.y, position.z, 1.0f);
+	return DirectX::SimpleMath::Vector4(position.x, position.y, position.z, 1.0f);*/
 }

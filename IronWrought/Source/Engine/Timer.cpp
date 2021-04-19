@@ -7,6 +7,9 @@ CTimer::CTimer()
 	ourInstance = this;
 	myLast = std::chrono::steady_clock::now();
 	myFirst = myLast;
+
+	myFixedTimer = 0.0f;
+	myFixedTimeInterval = 1.0f / 60.0f;
 }
 CTimer::~CTimer()
 {
@@ -25,9 +28,19 @@ float CTimer::Dt()
 	return ourInstance->myDeltaTime;
 }
 
+float CTimer::FixedDt()
+{
+	return ourInstance->myFixedTimeInterval;
+}
+
 float CTimer::Mark()
 {
 	return ourInstance->NewFrame();
+}
+
+bool CTimer::FixedTimeStep()
+{
+	return ourInstance->myFixedTimer >= ourInstance->myFixedTimeInterval;
 }
 
 float CTimer::NewFrame()
@@ -36,6 +49,14 @@ float CTimer::NewFrame()
 	myLast = std::chrono::steady_clock::now();
 	const std::chrono::duration<float> dt = myLast - old;
 	myDeltaTime = dt.count();
+
+	if (myFixedTimer > myFixedTimeInterval)
+	{
+		myFixedTimer -= myFixedTimeInterval;
+	}
+	
+	myFixedTimer += myDeltaTime;
+
 	return myDeltaTime;
 }
 

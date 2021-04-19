@@ -19,79 +19,63 @@ CNodeTypeGameObjectRotateDegrees::CNodeTypeGameObjectRotateDegrees()
 
 int CNodeTypeGameObjectRotateDegrees::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 {
-	CGameObject* gameObject = IRONWROUGHT_ACTIVE_SCENE.FindObjectWithID(aTriggeringNodeInstance->GraphManager()->GetCurrentBlueprintInstanceID());
-	int currentID = gameObject->InstanceID();
+	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject();
+
 	const auto searchResult = myRotations.find(gameObject->InstanceID());
 
 	if (myRotations.end() == searchResult)
 	{
-		myRotations[currentID] = gameObject->myTransform->Rotation();
+		myRotations[gameObject->InstanceID()] = gameObject->myTransform->Rotation();
 	}
 
 	SPin::EPinType outType;
 	NodeDataPtr someData = nullptr;
 	size_t outSize = 0;
 
-	std::vector<SPin>& pins = aTriggeringNodeInstance->GetPins();
-
 	GetDataOnPin(aTriggeringNodeInstance, 4, outType, someData, outSize);
 	float t = NodeData::Get<float>(someData) * CTimer::Dt() * (3.14159265f / 180.0f);
 	GetDataOnPin(aTriggeringNodeInstance, 2, outType, someData, outSize);
 	Vector3 input = NodeData::Get<Vector3>(someData) * (3.14159265f / 180.0f);
 
-	if (static_cast<int>(myInput.x) != static_cast<int>(input.x))
+	Quaternion a = gameObject->myTransform->Rotation();
+	Quaternion b = Quaternion::CreateFromYawPitchRoll(input.y, input.x, input.z) * myRotations[gameObject->InstanceID()];
+	Quaternion r;
+	Quaternion::Lerp(a, b, t, r);
+
+	bool stopMovingX = false;
+	bool stopMovingY = false;
+	bool stopMovingZ = false;
+	bool stopMovingW = false;
+	bool stopMoving = false;
+
+	if (((b.x - r.x) < 0.01f && (b.x - r.x) > -0.01f))
 	{
-		myInput.x = input.x;
-		myIsFinished[currentID] = false;
+		stopMovingX = true;
 	}
-	if (static_cast<int>(myInput.y) != static_cast<int>(input.y))
+	if (((b.y - r.y) < 0.01f && (b.y - r.y) > -0.01f))
 	{
-		myInput.y = input.y;
-		myIsFinished[currentID] = false;
+		stopMovingY = true;
 	}
-	if (static_cast<int>(myInput.z) != static_cast<int>(input.z))
+	if (((b.z - r.z) < 0.01f && (b.z - r.z) > -0.01f))
 	{
-		myInput.z = input.z;
-		myIsFinished[currentID] = false;
+		stopMovingZ = true;
+	}
+	if (((b.w - r.w) < 0.01f && (b.w - r.w) > -0.01f))
+	{
+		stopMovingW = true;
 	}
 
-
-	if (!myIsFinished[currentID])
+	if (stopMovingX && stopMovingY && stopMovingZ && stopMovingW)
 	{
-		Quaternion a = gameObject->myTransform->Rotation();
-		Quaternion b = Quaternion::CreateFromYawPitchRoll(input.y, input.x, input.z) * myRotations[currentID];
-		if (((b.x - a.x) < 0.01f && (b.x - a.x) > -0.01f) || ((b.x + a.x) < 0.01f && (b.x + a.x) > -0.01f))
-		{
-			if (((b.y - a.y) < 0.01f && (b.y - a.y) > -0.01f) || ((b.y + a.y) < 0.01f && (b.y + a.y) > -0.01f))
-			{
-				if (((b.z - a.z) < 0.01f && (b.z - a.z) > -0.01f) || ((b.z + a.z) < 0.01f && (b.z + a.z) > -0.01f))
-				{
-					if (((b.w - a.w) < 0.01f && (b.w - a.w) > -0.01f) || ((b.w + a.w) < 0.01f && (b.w + a.w) > -0.01f))
-					{
-						myIsFinished[currentID] = true;
-						DeclareDataOnPinIfNecessary<bool>(pins[3]);
-						memcpy(pins[3].myData, &myIsFinished[currentID], sizeof(bool));
+		stopMoving = true;
+	}
 
-						return 1;
-					}
-				}
-			}
-		}
-
-		Quaternion r;
-		Quaternion::Lerp(a, b, t, r);
+	if (!stopMoving)
 		gameObject->myTransform->Rotation(r);
 
-		DeclareDataOnPinIfNecessary<bool>(pins[3]);
-		memcpy(pins[3].myData, &myIsFinished[currentID], sizeof(bool));
+	std::vector<SPin>& pins = aTriggeringNodeInstance->GetPins();
+	DeclareDataOnPinIfNecessary<bool>(pins[3]);
+	memcpy(pins[3].myData, &stopMoving, sizeof(bool));
 
-		return 1;
-	}
-	else
-	{
-		DeclareDataOnPinIfNecessary<bool>(pins[3]);
-		memcpy(pins[3].myData, &myIsFinished[currentID], sizeof(bool));
-
-		return 1;
-	}
+	return 1;
 }

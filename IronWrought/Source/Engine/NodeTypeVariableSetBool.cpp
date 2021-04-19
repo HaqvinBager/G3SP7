@@ -2,9 +2,6 @@
 #include "NodeTypeVariableSetBool.h"
 #include "NodeInstance.h"
 #include "NodeDataManager.h"
-#include "Scene.h"
-#include "Engine.h"
-#include "GraphManager.h"
 
 CNodeTypeVariableSetBool::CNodeTypeVariableSetBool()
 {
@@ -17,7 +14,7 @@ CNodeTypeVariableSetBool::CNodeTypeVariableSetBool()
 
 int CNodeTypeVariableSetBool::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 {
-	CGameObject* gameObject = IRONWROUGHT_ACTIVE_SCENE.FindObjectWithID(aTriggeringNodeInstance->GraphManager()->GetCurrentBlueprintInstanceID());
+	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject();
 
 	SPin::EPinType outType;
 	NodeDataPtr someData = nullptr;
@@ -32,7 +29,7 @@ int CNodeTypeVariableSetBool::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 	if (!local)
 		CNodeDataManager::Get()->SetData(myNodeDataKey, CNodeDataManager::EDataType::EBool, input);
 	else
-		CNodeDataManager::Get()->SetData(std::to_string(gameObject->InstanceID()), CNodeDataManager::EDataType::EBool, input, false);
+		CNodeDataManager::Get()->SetData(myNodeDataKey + std::to_string(gameObject->InstanceID()), CNodeDataManager::EDataType::EBool, input, false);
 
 	std::vector<SPin>& pins = aTriggeringNodeInstance->GetPins();
 	DeclareDataOnPinIfNecessary<bool>(pins[3]);

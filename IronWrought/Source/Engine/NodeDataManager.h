@@ -43,6 +43,10 @@ public:
 			{
 				return *(reinterpret_cast<T*>(data.myData));
 			}
+			else
+			{
+				hash;
+			}
 		}
 		return NULL;
 	}

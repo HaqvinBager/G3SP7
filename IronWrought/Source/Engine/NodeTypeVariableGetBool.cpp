@@ -2,10 +2,6 @@
 #include "NodeTypeVariableGetBool.h"
 #include "NodeInstance.h"
 #include "NodeDataManager.h"
-#include "Timer.h"
-#include "Scene.h"
-#include "Engine.h"
-#include "GraphManager.h"
 
 CNodeTypeVariableGetBool::CNodeTypeVariableGetBool()
 {
@@ -15,7 +11,7 @@ CNodeTypeVariableGetBool::CNodeTypeVariableGetBool()
 
 int CNodeTypeVariableGetBool::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 {
-	CGameObject* gameObject = IRONWROUGHT_ACTIVE_SCENE.FindObjectWithID(aTriggeringNodeInstance->GraphManager()->GetCurrentBlueprintInstanceID());
+	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject();
 
 	SPin::EPinType outType;
 	NodeDataPtr someData = nullptr;
@@ -29,7 +25,7 @@ int CNodeTypeVariableGetBool::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 	if(!input)
 		output = CNodeDataManager::Get()->GetData<bool>(myNodeDataKey);
 	else
-		output = CNodeDataManager::Get()->GetData<bool>(std::to_string(gameObject->InstanceID()));
+		output = CNodeDataManager::Get()->GetData<bool>(myNodeDataKey + std::to_string(gameObject->InstanceID()));
 
 	std::vector<SPin>& pins = aTriggeringNodeInstance->GetPins();
 	DeclareDataOnPinIfNecessary<bool>(pins[0]);

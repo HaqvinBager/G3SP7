@@ -4,6 +4,8 @@
 #include <PlayerControllerComponent.h>
 #include "RigidBodyComponent.h"
 #include "RigidDynamicBody.h"
+#include "BoxColliderComponent.h"
+//#include "GameObject.h"
 
 void CContactReportCallback::onWake(physx::PxActor** actors, physx::PxU32 count)
 {
@@ -23,10 +25,47 @@ void CContactReportCallback::onSleep(physx::PxActor** actors, physx::PxU32 count
 	}
 }
 
+void CContactReportCallback::onTriggerEnter(physx::PxActor* trigger, physx::PxActor* other)
+{
+	(trigger);
+	(other);
+	CBoxColliderComponent* triggerVolume = (CBoxColliderComponent*)trigger->userData;
+	if (triggerVolume != nullptr)
+	{
+		triggerVolume->OnTriggerEnter();
+	}
+}
+
 void CContactReportCallback::onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 count)
 {
 	(pairs);
 	(count);
+	for (physx::PxU32 i = 0; i < count; i++)
+	{
+		if (pairs[i].status == physx::PxPairFlag::eNOTIFY_TOUCH_FOUND) {
+			onTriggerEnter(pairs[i].triggerActor, pairs[i].otherActor);
+		}
+		else if (pairs[i].status == physx::PxPairFlag::eNOTIFY_TOUCH_LOST) {
+			onTriggerExit(pairs[i].triggerActor, pairs[i].otherActor);
+		}
+
+		std::cout << "trigger collided with trigger?" << std::endl;
+		// ignore pairs when shapes have been deleted
+		if (pairs[i].flags & (physx::PxTriggerPairFlag::eREMOVED_SHAPE_TRIGGER |
+			physx::PxTriggerPairFlag::eREMOVED_SHAPE_OTHER))
+			continue;
+	}
+}
+
+void CContactReportCallback::onTriggerExit(physx::PxActor* trigger, physx::PxActor* other)
+{
+	(trigger);
+	(other);
+	CBoxColliderComponent* triggerVolume = (CBoxColliderComponent*)trigger->userData;
+	if (triggerVolume != nullptr)
+	{
+		triggerVolume->OnTriggerExit();
+	}
 }
 
 void CContactReportCallback::onAdvance(const physx::PxRigidBody* const* bodyBuffer, const physx::PxTransform* poseBuffer, const physx::PxU32 count)
@@ -50,7 +89,7 @@ void CContactReportCallback::onContact(const physx::PxContactPairHeader& /*pairH
 		// Implement what is to happen when two objects collide
 		//const std::string* firstRodent = static_cast<std::string*>(pairHeader.actors[0]->userData);
 		//const std::string* secondRodent = static_cast<std::string*>(pairHeader.actors[1]->userData);
-		
+
 		/*CTransformComponent* firstTransform = (CTransformComponent*)pairHeader.actors[0]->userData;
 		CTransformComponent* secondTransform = (CTransformComponent*)pairHeader.actors[1]->userData;
 		CPlayerControllerComponent* player = nullptr;

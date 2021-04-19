@@ -26,6 +26,15 @@ public:
 
 	};
 
+
+	enum ELayerMask
+	{
+		GROUP1 = (1 << 0),
+		GROUP2 = (1 << 1),
+		GROUP3 = (1 << 2),
+		GROUP4 = (1 << 3)
+	};
+
 public:
 
 	CPhysXWrapper();
@@ -47,11 +56,12 @@ public:
 	CRigidDynamicBody* CreateDynamicRigidbody(const CTransformComponent& aTransform);
 	CRigidDynamicBody* CreateDynamicRigidbody(const PxTransform& aTransform);
 
-	CCharacterController* CreateCharacterController(const Vector3& aPos, const float& aRadius, const float& aHeight, CTransformComponent* aUserData = nullptr);
+	CCharacterController* CreateCharacterController(const Vector3& aPos, const float& aRadius, const float& aHeight, CTransformComponent* aUserData = nullptr, physx::PxUserControllerHitReport* aHitReport = nullptr);
 
 	PxControllerManager* GetControllerManager();
 
-	physx::PxUserControllerHitReport* GetCharacterReportBack() { return myCharacterReportCallback; }
+	physx::PxUserControllerHitReport* GetPlayerReportBack() { return myPlayerReportCallback; }
+	physx::PxUserControllerHitReport* GetEnemyReportBack() { return myEnemyReportCallback; }
 
 
   //merge conflict 8/3/2021
@@ -73,6 +83,7 @@ private:
 	PxControllerManager* myControllerManager;
 	//std::unordered_map<PxScene*, PxControllerManager*> myControllerManagers;// Should not be necessary
 	std::unordered_map<CScene*, PxScene*> myPXScenes;
-	physx::PxUserControllerHitReport* myCharacterReportCallback;
+	physx::PxUserControllerHitReport* myPlayerReportCallback;
+	physx::PxUserControllerHitReport* myEnemyReportCallback;
 	//std::queue<CRigidDynamicBody*> myAddBodyQueue;
 };

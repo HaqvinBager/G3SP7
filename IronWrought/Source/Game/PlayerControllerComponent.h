@@ -1,23 +1,31 @@
 #pragma once
 #include "Component.h"
 #include "InputObserver.h"
-
+class CRigidBodyComponent;
 class CCharacterController;
 class CGameObject;
 class CCameraControllerComponent;
 class CPlayerAnimationController;
 class CPlayerComponent;
+
+namespace physx {
+	class PxUserControllerHitReport;
+}
+
 class CPlayerControllerComponent : public CComponent, public IInputObserver
 {
 public:
-	CPlayerControllerComponent(CGameObject& gameObject, const float aWalkSpeed = 0.1f, const float aCrouchSpeed = 0.05f);
+	CPlayerControllerComponent(CGameObject& gameObject, const float aWalkSpeed = 0.314f, const float aCrouchSpeed = 0.13f, physx::PxUserControllerHitReport* aHitReport = nullptr);
 	~CPlayerControllerComponent() override;
 
 	void Awake() override;
 	void Start() override;
 	void Update() override;
+	void FixedUpdate() override;
 
 	void ReceiveEvent(const EInputEvent aEvent) override;
+
+	void ControllerUpdate();
 
 	void Move(Vector3 aDir);
 
@@ -41,6 +49,7 @@ public:
 	void FallSpeed(const float aSpeed) { myFallSpeed = aSpeed; }
 
 	void LadderEnter();
+	void LadderExit();
 private:
 	void LadderUpdate();
 
@@ -55,10 +64,10 @@ private:
 	Vector3 myMovement;
 	float mySpeed;
 
-	bool myCanJump;
+	bool myIsGrounded;
 	bool myIsJumping;
 	bool myHasJumped;
-	bool myIsOnLadder;
+	bool myLadderHasTriggered;
 
 	bool myIsCrouching;
 	float myWalkSpeed;
@@ -66,7 +75,7 @@ private:
 	float myJumpHeight;
 	float myFallSpeed;
 
-	
+	//CRigidBodyComponent* myLadder;
 
 	// 0.6f is player width from GDD
 	const float myColliderRadius = 0.6f * 0.5f;
@@ -84,4 +93,3 @@ private:
 			Camera position = 0.85f;
 	*/
 };
-

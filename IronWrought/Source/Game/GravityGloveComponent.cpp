@@ -115,7 +115,6 @@ void CGravityGloveComponent::Pull()
 			}
 		}
 	}*/
-
 	if (hit.getNbAnyHits() > 0)
 	{
 		CTransformComponent* transform = (CTransformComponent*)hit.getAnyHit(0).actor->userData;
@@ -176,7 +175,7 @@ void CGravityGloveComponent::Push()
 				return;
 
 			CRigidBodyComponent* target = transform->GetComponent<CRigidBodyComponent>();
-			if (target != nullptr) 
+			if (target != nullptr)
 			{
 				if (!target->IsKinematic())
 				{

@@ -5,22 +5,28 @@
 namespace physx
 {
     class PxController;
-
+    class PxUserControllerHitReport;
 }
+
+class CPlayerReportCallback;
 
 class CTransformComponent;
 
 class CCharacterController
 {
 public:
-    CCharacterController(const Vector3 aPosition, const float aRadius = 0.6f, const float aHeight = 1.8f, CTransformComponent* userData = nullptr);
+    CCharacterController(const Vector3 aPosition, const float aRadius = 0.6f, const float aHeight = 1.8f, CTransformComponent* userData = nullptr, physx::PxUserControllerHitReport* aHitReport = nullptr);
     physx::PxController& GetController();
 
     Vector3 GetPosition() const;
     void SetPosition(const Vector3& aPosition);
+   // void SetRotation(const Quaternion& aRotation);
     UINT8 Move(const Vector3& aDir, float aSpeed);
+    const Vector3 GetHitNormal() const;
+
 private:
     physx::PxController* myController = nullptr;
+    CPlayerReportCallback* myPlayerReport;
 };
 
 //#pragma once

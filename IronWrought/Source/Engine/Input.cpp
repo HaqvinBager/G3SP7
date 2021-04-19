@@ -19,6 +19,10 @@ Input::Input() {
 	myMouseWheel = 0;
 	myMouseScreenX = 0;
 	myMouseScreenY = 0;
+	myHorizontal = 0;
+	myVertical = 0;
+	myHorizontalPressed = false;
+	myVerticalPressed = false;
 
 	RAWINPUTDEVICE rid;
 	rid.usUsagePage = 0x01; // For mouse
@@ -137,6 +141,28 @@ void Input::Update() {
 		myMouseScreenX = point.x;
 		myMouseScreenY = point.y;
 	}
+
+	if (myHorizontalPressed == false) {
+		if (myHorizontal >= (0.f + CTimer::FixedDt())) {
+			myHorizontal -= CTimer::FixedDt();
+		}else if (myHorizontal <= (0.f - CTimer::FixedDt())) {
+			myHorizontal += CTimer::FixedDt();
+		}
+		else {
+			myHorizontal = 0.f;
+		}
+	}
+	if (myVerticalPressed == false) {
+		if (myVertical >= (0.f + CTimer::FixedDt())) {
+			myVertical -= CTimer::FixedDt();
+		}
+		else if (myVertical <= (0.f - CTimer::FixedDt())) {
+			myVertical += CTimer::FixedDt();
+		}
+		else {
+			myVertical = 0.f;
+		}
+	}
 }
 
 bool Input::MoveLeft() {
@@ -155,6 +181,47 @@ bool Input::MoveDown() {
 	return IsKeyPressed('S') == true || IsKeyPressed(VK_DOWN) == true;
 }
 //const auto& ImguiInput = ImGui::GetIO();
+
+float Input::GetAxis(const EAxis& aAxis)
+{
+	if (aAxis == EAxis::Horizontal) {
+		myHorizontalPressed = false;
+		if (IsKeyDown('A')) {
+			myHorizontalPressed = true;
+			myHorizontal += CTimer::FixedDt();
+			if (myHorizontal >= 1.f) {
+				myHorizontal = 1.f;
+			}
+		}
+		if (IsKeyDown('D')) {
+			myHorizontalPressed = true;
+			myHorizontal -= CTimer::FixedDt();
+			if (myHorizontal <= -1.f) {
+				myHorizontal = -1.f;
+			}
+		}
+		return myHorizontal;
+	} 
+	if (aAxis == EAxis::Vertical) {
+		myVerticalPressed = false;
+		if (IsKeyDown('W')) {
+			myVerticalPressed = true;
+			myVertical += CTimer::FixedDt();
+			if (myVertical >= 1.f) {
+				myVertical = 1.f;
+			}
+		}
+		if (IsKeyDown('S')) {
+			myVerticalPressed = true;
+			myVertical -= CTimer::FixedDt();
+			if (myVertical <= -1.f) {
+				myVertical = -1.f;
+			}
+		}
+		return myVertical;
+	}
+	return 0;
+}
 
 bool Input::IsKeyDown(WPARAM wParam) {
 	

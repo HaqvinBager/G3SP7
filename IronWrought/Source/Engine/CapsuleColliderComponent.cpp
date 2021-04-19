@@ -5,7 +5,7 @@
 #include "RigidBodyComponent.h"
 #include "RigidDynamicBody.h"
 
-CCapsuleColliderComponent::CCapsuleColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const float& aRadius, const float& aHeight, bool aIsStatic, PxMaterial* aMaterial)
+CCapsuleColliderComponent::CCapsuleColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const float& aRadius, const float& aHeight, PxMaterial* aMaterial)
 	: CBehaviour(aParent)
 	, myPositionOffset(aPositionOffset)
 	, myRadius(aRadius)
@@ -13,7 +13,6 @@ CCapsuleColliderComponent::CCapsuleColliderComponent(CGameObject& aParent, const
 	, myMaterial(aMaterial)
 	, myShape(nullptr)
 {
-	aIsStatic;
 	if (myMaterial == nullptr) {
 		myMaterial = CEngine::GetInstance()->GetPhysx().CreateMaterial(CPhysXWrapper::materialfriction::basic);
 	}
@@ -34,6 +33,9 @@ void CCapsuleColliderComponent::Start()
 	PxVec3 offset = { myPositionOffset.x, myPositionOffset.y, myPositionOffset.z };
 	PxTransform relativePose(offset, PxQuat(PxHalfPi, physx::PxVec3(0, 0, 1)));
 	myShape->setLocalPose(relativePose);
+	PxFilterData filterData;
+	filterData.word0 = CPhysXWrapper::ELayerMask::GROUP1;
+	myShape->setQueryFilterData(filterData);
 
 	CRigidBodyComponent* rigidBody = nullptr;
 	if (GameObject().TryGetComponent(&rigidBody))

@@ -1,0 +1,61 @@
+{
+  "Pivot X": 0.0,
+  "Pivot Y": 0.0,
+  "Postion X": 0.0,
+  "Position Y": 0.14,
+
+  "Buttons": [
+    {
+      "Text": "",
+      "FontAndFontSize": "Assets/Fonts/MorrisRoman42",
+      "Text Position X": 0.0,
+      "Text Position Y": -0.15,
+      "Text Pivot X": 0.0,
+      "Text Pivot Y": 0.0,
+      "Text Color R": 1.5,
+      "Text Color G": 0.7,
+      "Text Color B": 0.0,
+      "Pixel Width": 512.0,
+      "Pixel Height": 64.0,
+      "Idle Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_WANTTOQUIT.dds",
+      "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_WANTTOQUIT.dds",
+      "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_WANTTOQUIT.dds"
+    },
+    {
+      "Text": "",
+      "FontAndFontSize": "Assets/Fonts/MorrisRoman42",
+      "Text Position X": -0.22,
+      "Text Position Y": 0.0,
+      "Text Pivot X": 0.0,
+      "Text Pivot Y": 0.0,
+      "Text Color R": 1.5,
+      "Text Color G": 0.7,
+      "Text Color B": 0.0,
+      "Pixel Width": 128.0,
+      "Pixel Height": 64.0,
+      "Idle Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_YES.dds",
+      "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_YES_HOVER.dds",
+      "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_YES_HOVER.dds",
+      "Messages": [ 8 ]
+    }
+    ,
+    {
+      "Text": "",
+      "FontAndFontSize": "Assets/Fonts/MorrisRoman42",
+      "Text Position X": 0.23,
+      "Text Position Y": 0.0,
+      "Text Pivot X": 0.0,
+      "Text Pivot Y": 0.0,
+      "Text Color R": 1.5,
+      "Text Color G": 0.7,
+      "Text Color B": 0.0,
+      "Pixel Width": 128.0,
+      "Pixel Height": 64.0,
+      "Idle Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_NO.dds",
+      "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_NO_HOVER.dds",
+      "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_NO_HOVER.dds",
+      "Messages": [ ],
+      "Sub Canvas Toggle Index": 6
+    }
+  ]
+}

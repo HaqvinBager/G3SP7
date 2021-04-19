@@ -12,7 +12,7 @@ class CScene;
 class CBoxColliderComponent : public CBehaviour
 {
 public:
-	CBoxColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const Vector3& aBoxSize, bool aIsStatic = false, physx::PxMaterial* aMaterial = nullptr);
+	CBoxColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const Vector3& aBoxSize, const bool aIsTrigger, physx::PxMaterial* aMaterial = nullptr);
 	~CBoxColliderComponent() override;
 
 	void Awake() override;
@@ -21,8 +21,10 @@ public:
 
 	void CreateBoxCollider();
 
-	void RegisterEventTriggerMessage(const SMessage& aMessage) { myTriggerMessages.push_back(aMessage); }
-	const std::vector<SMessage>& EventTriggerMessage() { return myTriggerMessages; }
+	void OnTriggerEnter();
+	void OnTriggerExit();
+	void RegisterEventTriggerMessage(const std::string& aMessage) { myEventMessage = aMessage; }
+	//const SStringMessage& EventTriggerMessage() { return myTriggerMessage; }
 
 	void OnEnable() override;
 	void OnDisable() override;
@@ -31,7 +33,7 @@ private:
 	physx::PxMaterial* myMaterial;
 	Vector3 myPositionOffset;
 	Vector3 myBoxSize;
+	bool myIsTrigger;
 
-	std::vector<SMessage> myTriggerMessages;
+	std::string myEventMessage;
 };
-

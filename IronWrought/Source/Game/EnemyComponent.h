@@ -5,6 +5,10 @@ class CAIController;
 class CCharacterController;
 class CGameObject;
 
+namespace physx {
+	class PxUserControllerHitReport;
+}
+
 struct SEnemySetting {
 	float mySpeed;	//= 0.1f;
 	float myRadius;	//= 10.0f;
@@ -25,7 +29,7 @@ public:
 	};
 
 public:
-	CEnemyComponent(CGameObject& aParent, const SEnemySetting& someSettings);
+	CEnemyComponent(CGameObject& aParent, const SEnemySetting& someSettings, physx::PxUserControllerHitReport* aHitReport);
 	~CEnemyComponent() override;
 
 	void Awake() override;

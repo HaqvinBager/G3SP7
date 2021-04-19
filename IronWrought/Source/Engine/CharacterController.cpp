@@ -3,10 +3,11 @@
 #include "PhysXWrapper.h"
 #include "Engine.h"
 #include "TransformComponent.h"
+#include "PlayerReportCallback.h"
 
 using namespace physx;
 
-CCharacterController::CCharacterController(const Vector3 aPosition, const float aRadius, const float aHeight, CTransformComponent* aUserData)
+CCharacterController::CCharacterController(const Vector3 aPosition, const float aRadius, const float aHeight, CTransformComponent* aUserData, PxUserControllerHitReport* aHitReport)
 {
     PxCapsuleControllerDesc desc;
     desc.position = {aPosition.x, aPosition.y, aPosition.z};
@@ -14,8 +15,9 @@ CCharacterController::CCharacterController(const Vector3 aPosition, const float 
     desc.radius = aRadius;
     desc.material = CEngine::GetInstance()->GetPhysx().CreateMaterial(CPhysXWrapper::materialfriction::basic);
     desc.stepOffset = 0.05f;
-    desc.reportCallback = CEngine::GetInstance()->GetPhysx().GetCharacterReportBack();
+    desc.reportCallback = aHitReport;
     desc.userData = aUserData;
+    myPlayerReport = static_cast<CPlayerReportCallback*>(CEngine::GetInstance()->GetPhysx().GetPlayerReportBack());
     myController = CEngine::GetInstance()->GetPhysx().GetControllerManager()->createController(desc);
 }
 
@@ -34,9 +36,21 @@ void CCharacterController::SetPosition(const Vector3& aPosition)
     myController->setPosition({ aPosition.x, aPosition.y, aPosition.z });
 }
 
+//void CCharacterController::SetRotation(const Quaternion& aRotation)
+//{
+//    PxQuat newQuat = {aRotation.x, aRotation.y, aRotation.z, aRotation.w};
+//    PxVec3 newPos = {myController->getPosition().x, myController->getPosition().y, myController->getPosition().z};
+//    myController->getActor()->setGlobalPose({ newPos, newQuat });
+//}
+
 UINT8 CCharacterController::Move(const Vector3& aDir, float aSpeed)
 {
     return myController->move({ aDir.x * aSpeed, aDir.y * aSpeed, aDir.z * aSpeed }, 0, CTimer::Dt(), 0);
+}
+
+const Vector3 CCharacterController::GetHitNormal() const
+{
+    return myPlayerReport->GetNormal();
 }
 
 //CCharacterController::CCharacterController(PxControllerShapeType::Enum aType, const Vector3& aPos, const float& aRadius, const float& aHeight)
