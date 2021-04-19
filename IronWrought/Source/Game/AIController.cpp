@@ -53,9 +53,6 @@ void CSeek::SetTarget(CTransformComponent* aTarget) {
 CAttack::CAttack() : myDamage(1.0f) {
 }
 
-CAttack::~CAttack(){
-}
-
 Vector3 CAttack::Update(Vector3 aPosition)
 {
 	Vector3 direction = myTarget->Position() - aPosition;
