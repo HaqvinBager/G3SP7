@@ -37,10 +37,11 @@ class CAttack : public CAIController
 {
 public:
 	CAttack();
-	~CAttack() override;
+	~CAttack() override { myTarget = nullptr; }
 	Vector3 Update(Vector3 aPosition) override;
-	void DoAttack();
+
 private:
 	float myDamage;
+	CTransformComponent* myTarget;
 };
 
