@@ -189,7 +189,7 @@ float4 GBuffer_Normal(float2 uv)
     float3 normal = normalTextureGBuffer.Sample(defaultSampler, uv).rgb;
 
 // Recreate z
-    // Fråga björn 18/2 :)
+    // Frï¿½ga bjï¿½rn 18/2 :)
     //float3 normal;
     //normal.xy = normalTextureGBuffer.Sample(defaultSampler, input.myUV.xy).wy;
     //normal.z = 0.0f;
@@ -274,10 +274,8 @@ float SampleShadowPos(float3 projectionPos)
 
 float3 ShadowFactor(float3 worldPosition, float3 lightPosition, float4x4 lightViewMatrix, float4x4 lightProjectionMatrix)
 {
-    worldPosition -= /*directionalLightPosition*/lightPosition.xyz;
-    //float4 viewPos = mul(worldPosition, toDirectionalLightTransform);
+    worldPosition -= lightPosition.xyz;
     float4 viewPos = mul(lightViewMatrix, worldPosition);
-    //float4 projectionPos = mul(viewPos, toDirectionalLightView);
     float4 projectionPos = mul(lightProjectionMatrix, viewPos);
     float3 viewCoords = projectionPos.xyz;
 

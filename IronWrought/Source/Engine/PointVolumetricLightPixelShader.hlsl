@@ -1,19 +1,20 @@
 #include "PointLightShaderStructs.hlsli"
+#include "VolumetricLightShaderStructs.hlsli"
 #include "MathHelpers.hlsli"
 
-#define NUM_SAMPLES 128
-#define NUM_SAMPLES_RCP 0.0078125
+//#define NUM_SAMPLES 128
+//#define NUM_SAMPLES_RCP 0.0078125
 
-// RAYMARCHING
-#define TAU 0.0001
-#define PHI 1000000.0
+//// RAYMARCHING
+//#define TAU 0.0001
+//#define PHI 1000000.0
 
-#define PI_RCP 0.31830988618379067153776752674503
+//#define PI_RCP 0.31830988618379067153776752674503
 
 sampler defaultSampler : register(s0);
-sampler shadowSampler : register(s1);
+//sampler shadowSampler : register(s1);
 Texture2D normalTextureGBuffer : register(t2);
-Texture2D depthTexture : register(t21);
+//Texture2D depthTexture : register(t21);
 //Texture2D shadowDepthTexture : register(t22);
 
 float4 PixelShader_WorldPosition(float2 uv)
@@ -89,7 +90,7 @@ void ExecuteRaymarching(inout float3 rayPositionLightVS, float3 invViewDirLightV
     float dRcp = rcp(d); // reciprocal
     
     // Calculate the final light contribution for the sample on the ray...
-    float3 intens = TAU * (shadowTerm * (PHI * 0.25 * PI_RCP) * dRcp * dRcp) * exp(-d * TAU) * exp(-l * TAU) * stepSize;
+    float3 intens = scatteringProbability * (shadowTerm * (lightPower * 0.25 * PI_RCP) * dRcp * dRcp) * exp(-d * scatteringProbability) * exp(-l * scatteringProbability) * stepSize;
     
     // World space attenuation
     float3 toLight = pointLightPositionAndRange.xyz - rayPositionWorld.xyz;
@@ -138,8 +139,19 @@ PointLightPixelOutput main(PointLightVertexToPixel input)
     float raymarchDistance = clamp(length(cameraPositionLightVS.xyz - positionLightVS.xyz), 0.0f, raymarchDistanceLimit);
     
     // Calculate the size of each step
-    float stepSize = raymarchDistance * NUM_SAMPLES_RCP;
-    float3 rayPositionLightVS = positionLightVS.xyz;
+    float stepSize = raymarchDistance * numberOfSamplesReciprocal;
+    
+    // Calculate the offsets on the ray according to the interleaved sampling pattern
+    float2 interleavedPos = fmod(input.myPosition.xy - 0.5f, INTERLEAVED_GRID_SIZE);
+#if defined(USE_RANDOM_RAY_SAMPLES)
+    float index = (floor(interleavedPos.y) * INTERLEAVED_GRID_SIZE + floor(interleavedPos.x));
+    // lightVolumetricRandomRaySamples contains the values 0..63 in a randomized order
+    float rayStartOffset = lightVolumetricRandomRaySamples[index] * (stepSize * INTERLEAVED_GRID_SIZE_SQR_RCP);
+#else
+    float rayStartOffset = (interleavedPos.y * INTERLEAVED_GRID_SIZE + interleavedPos.x) * (stepSize * INTERLEAVED_GRID_SIZE_SQR_RCP);
+#endif // USE_RANDOM_RAY_SAMPLES
+ 
+    float3 rayPositionLightVS = rayStartOffset * invViewDirLightVS.xyz + positionLightVS.xyz;
     
     // The total light contribution accumulated along the ray
     float3 VLI = 0.0f;

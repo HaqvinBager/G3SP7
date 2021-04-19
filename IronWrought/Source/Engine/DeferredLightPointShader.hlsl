@@ -10,11 +10,11 @@ PixelOutput main(/*PointLightGeometryToPixel*/PointLightVertexToPixel input)
     float2 screenUV = (input.myUV.xy / input.myUV.z) * 0.5f + 0.5f;
     //float2 screenUV = input.myUV;
     
-    //float depth = PixelShader_Exists(screenUV).r;
-    //if (depth == 1)
-    //{
-    //    discard;
-    //}
+    float depth = PixelShader_Exists(screenUV).r;
+    if (depth == 1)
+    {
+       discard;
+    }
     
     float3 worldPosition = PixelShader_WorldPosition(screenUV).rgb;
     float3 toEye = normalize(cameraPosition.xyz - worldPosition.xyz);

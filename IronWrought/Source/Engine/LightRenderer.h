@@ -97,6 +97,14 @@ private:
 		Vector2 myPadding;
 	} myBoxLightBufferData;
 
+	struct SVolumetricLightBufferData
+	{
+		float myNumberOfSamplesReciprocal;
+		float myLightPower;
+		float myScatteringProbability;
+		float myHenyeyGreensteinGValue;
+	} myVolumetricLightBufferData;
+
 private:
 	ID3D11DeviceContext* myContext;
 
@@ -105,6 +113,7 @@ private:
 	ID3D11Buffer* myPointLightBuffer;
 	ID3D11Buffer* mySpotLightBuffer;
 	ID3D11Buffer* myBoxLightBuffer;
+	ID3D11Buffer* myVolumetricLightBuffer;
 
 	ID3D11Buffer* myPointLightVertexBuffer;
 	ID3D11Buffer* myPointLightIndexBuffer;
