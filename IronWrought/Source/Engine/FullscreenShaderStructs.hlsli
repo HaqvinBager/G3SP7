@@ -34,3 +34,15 @@ SamplerState defaultSampler : register(s0);
 static const float2 resolution = float2(1600.0f, 900.0f) / 8.0f;
 static const float2 brokenScreenData = float2(-0.82f, -0.29f);
 static const float gaussianKernel5[5] = { 0.06136f, 0.24477f, 0.38774f, 0.24477f, 0.06136f };
+
+#define BSIGMA 0.1
+
+float normpdf(in float x, in float sigma)
+{
+    return 0.39894 * exp(-0.5 * x * x / (sigma * sigma)) / sigma;
+}
+
+float normpdf3(in float3 v, in float sigma)
+{
+    return 0.39894 * exp(-0.5 * dot(v, v) / (sigma * sigma)) / sigma;
+}

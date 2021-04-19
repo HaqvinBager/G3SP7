@@ -106,6 +106,12 @@ void CMainMenuState::Receive(const SMessage& aMessage)
 			IRONWROUGHT->GetActiveScene().ReInitCanvas(ASSETPATH("Assets/Graphics/UI/JSON/UI_MainMenu.json"));
 			myStateStack.PopTopAndPush(CStateStack::EState::MainMenu);
 		} break;
+		case EMessageType::SetResolution2560x1440:
+		{
+			CEngine::GetInstance()->SetResolution({ 2560.0f, 1440.0f });
+			IRONWROUGHT->GetActiveScene().ReInitCanvas(ASSETPATH("Assets/Graphics/UI/JSON/UI_MainMenu.json"));
+			myStateStack.PopTopAndPush(CStateStack::EState::MainMenu);
+		} break;
 
 		default: break;
 	}

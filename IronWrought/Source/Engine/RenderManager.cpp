@@ -217,7 +217,7 @@ void CRenderManager::Render(CScene& aScene)
 	myLightRenderer.Render(maincamera, onlySpotLights);
 	myLightRenderer.Render(maincamera, onlyBoxLights);
 
-	// Volumetric Lighting
+	//// Volumetric Lighting
 	//myVolumetricAccumulationBuffer.SetAsActiveTarget();
 
 	//myLightRenderer.RenderVolumetric(maincamera, onlyPointLights);
@@ -228,13 +228,13 @@ void CRenderManager::Render(CScene& aScene)
 	//myEnvironmentShadowDepth.SetAsResourceOnSlot(22);
 	//myLightRenderer.RenderVolumetric(maincamera, environmentlight);
 
-	// Downsampling and Blur
+	//// Downsampling and Blur
 	//myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_DISABLE);
 	//myDownsampledDepth.SetAsActiveTarget();
 	//myIntermediateDepth.SetAsResourceOnSlot(0);
 	//myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_DOWNSAMPLE_DEPTH);
 
-	//// Blur
+	// Blur
 	//myVolumetricBlurTexture.SetAsActiveTarget();
 	//myVolumetricAccumulationBuffer.SetAsResourceOnSlot(0);
 	//myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_GAUSSIANHORIZONTAL);
@@ -267,7 +267,7 @@ void CRenderManager::Render(CScene& aScene)
 	//myVolumetricBlurTexture.SetAsResourceOnSlot(0);
 	//myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_GAUSSIANVERTICAL);
 
-	// Upsampling
+	//// Upsampling
 	//myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_ADDITIVEBLEND);
 	//myDeferredLightingTexture.SetAsActiveTarget();
 	//myVolumetricAccumulationBuffer.SetAsResourceOnSlot(0);
