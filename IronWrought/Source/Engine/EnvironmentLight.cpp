@@ -37,6 +37,13 @@ bool CEnvironmentLight::Init(CDirectXFramework* aFramework, std::string aFilePat
 
 	myShadowmapProjectionMatrix = DirectX::XMMatrixOrthographicLH(myShadowcastSize.x, myShadowcastSize.y, -40.0f, 40.0f);
 
+	myNumberOfSamples = 16.0f;
+	myLightPower = 500000.0f;
+	myScatteringProbability = 0.0001f;
+	myHenyeyGreensteinGValue = 0.0f;
+
+	myIsVolumetric = false;
+
 	return true;
 }
 
@@ -103,6 +110,31 @@ void CEnvironmentLight::SetPosition(DirectX::SimpleMath::Vector3 aPosition)
 	myShadowmapViewMatrix = DirectX::XMMatrixLookAtLH(myPosition, myPosition - myDirection, Vector3::Up);
 }
 
+void CEnvironmentLight::SetNumberOfSamples(float aNumberOfSamples)
+{
+	myNumberOfSamples = aNumberOfSamples;
+}
+
+void CEnvironmentLight::SetLightPower(float aPower)
+{
+	myLightPower = aPower;
+}
+
+void CEnvironmentLight::SetScatteringProbability(float aScatteringProbability)
+{
+	myScatteringProbability = aScatteringProbability;
+}
+
+void CEnvironmentLight::SetHenyeyGreensteinGValue(float aGValue)
+{
+	myHenyeyGreensteinGValue = aGValue;
+}
+
+void CEnvironmentLight::SetIsVolumetric(bool aShouldBeVolumetric)
+{
+	myIsVolumetric = aShouldBeVolumetric;
+}
+
 DirectX::SimpleMath::Matrix CEnvironmentLight::GetShadowView() const
 {
 	return myShadowmapViewMatrix;
@@ -133,4 +165,29 @@ DirectX::SimpleMath::Vector4 CEnvironmentLight::GetShadowPosition() const
 	position += upStep * shadowTransform.Up();
 
 	return DirectX::SimpleMath::Vector4(position.x, position.y, position.z, 1.0f);*/
+}
+
+const float& CEnvironmentLight::GetNumberOfSamples() const
+{
+	return myNumberOfSamples;
+}
+
+const float& CEnvironmentLight::GetLightPower() const
+{
+	return myLightPower;
+}
+
+const float& CEnvironmentLight::GetScatteringProbability() const
+{
+	return myScatteringProbability;
+}
+
+const float& CEnvironmentLight::GetHenyeyGreensteinGValue() const
+{
+	return myHenyeyGreensteinGValue;
+}
+
+const bool& CEnvironmentLight::GetIsVolumetric() const
+{
+	return myIsVolumetric;
 }

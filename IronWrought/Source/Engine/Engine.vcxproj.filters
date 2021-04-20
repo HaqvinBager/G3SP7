@@ -880,7 +880,10 @@
     <ClCompile Include="NodeTypeGameObjectRotateDegrees.cpp">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClCompile>
-      <ClCompile Include="EnemyReportCallback.cpp" />
+    <ClCompile Include="EnemyReportCallback.cpp" />
+    <ClCompile Include="EnvironmentLightWindow.cpp">
+      <Filter>Imgui\Windows</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1616,6 +1619,9 @@
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClInclude>
     <ClInclude Include="EnemyReportCallback.h" />
+    <ClInclude Include="EnvironmentLightWindow.h">
+      <Filter>Imgui\Windows</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">

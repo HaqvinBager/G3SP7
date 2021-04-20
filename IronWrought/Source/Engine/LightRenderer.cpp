@@ -481,6 +481,9 @@ void CLightRenderer::Render(CCameraComponent* aCamera, std::vector<CBoxLight*>& 
 
 void CLightRenderer::RenderVolumetric(CCameraComponent* aCamera, CEnvironmentLight* anEnvironmentLight)
 {
+	if (!anEnvironmentLight->GetIsVolumetric())
+		return;
+
 	SM::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
 	myFrameBufferData.myCameraPosition = SM::Vector4{ cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f };
 	myFrameBufferData.myToCameraSpace = cameraMatrix.Invert();
@@ -500,10 +503,10 @@ void CLightRenderer::RenderVolumetric(CCameraComponent* aCamera, CEnvironmentLig
 	BindBuffer(myLightBuffer, myDirectionalLightBufferData, "Light Buffer");
 	myContext->PSSetConstantBuffers(1, 1, &myLightBuffer);
 
-	myVolumetricLightBufferData.myNumberOfSamplesReciprocal = (1.0f / 128.0f);
-	myVolumetricLightBufferData.myLightPower = 5000000.0f;
-	myVolumetricLightBufferData.myScatteringProbability = 0.0001f;
-	myVolumetricLightBufferData.myHenyeyGreensteinGValue = 0.0f;
+	myVolumetricLightBufferData.myNumberOfSamplesReciprocal = (1.0f / anEnvironmentLight->GetNumberOfSamples());
+	myVolumetricLightBufferData.myLightPower = anEnvironmentLight->GetLightPower();
+	myVolumetricLightBufferData.myScatteringProbability = anEnvironmentLight->GetScatteringProbability();
+	myVolumetricLightBufferData.myHenyeyGreensteinGValue = anEnvironmentLight->GetHenyeyGreensteinGValue();
 
 	BindBuffer(myVolumetricLightBuffer, myVolumetricLightBufferData, "Volumetric Light Buffer");
 	myContext->PSSetConstantBuffers(4, 1, &myVolumetricLightBuffer);

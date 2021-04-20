@@ -5,3 +5,4 @@
 #include "VFXEditorWindow.h"
 #include "PlayerControlWindow.h"
 #include "GravityGloveEditor.h"
+#include "EnvironmentLightWindow.h"
