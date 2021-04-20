@@ -6,7 +6,10 @@ Texture2D materialTexture : register(t2); //Linear: R = Metalness, G = Roughness
 Texture2D normalTexture : register(t3); //Linear: R = null, G = Normal.y, B = AmbientOcclusion, A = Normal.x
 Texture2D detailNormals[4] : register(t4);
 
+Texture2D shadowDepthTexture : register(t22);
+
 SamplerState defaultSampler : register(s0);
+sampler shadowSampler : register(s1);
 
 cbuffer FrameBuffer : register(b0)
 {
@@ -15,6 +18,10 @@ cbuffer FrameBuffer : register(b0)
     float4 cameraPosition; //16
     float4 toDirectionalLight; //16
     float4 directionalLightColor; //16
+    
+    float4x4 toDirectionalLightView;
+    float4x4 toDirectionalLightProjection;
+    float4 directionalLightPosition;
 };
 
 cbuffer ObjectBuffer : register(b1)

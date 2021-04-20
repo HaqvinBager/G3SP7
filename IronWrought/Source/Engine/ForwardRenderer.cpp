@@ -126,6 +126,10 @@ void CForwardRenderer::Render(CEnvironmentLight* anEnvironmentLight, std::vector
 	myFrameBufferData.myDirectionalLightDirection = anEnvironmentLight->GetDirection();
 	myFrameBufferData.myDirectionalLightColor = anEnvironmentLight->GetColor();
 
+	myFrameBufferData.myDirectionalLightView = anEnvironmentLight->GetShadowView();
+	myFrameBufferData.myDirectionalLightProjection = anEnvironmentLight->GetShadowProjection();
+	myFrameBufferData.myDirectionalLightPosition = anEnvironmentLight->GetShadowPosition();
+
 	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
 
 	myContext->VSSetConstantBuffers(0, 1, &myFrameBuffer);
@@ -228,6 +232,10 @@ void CForwardRenderer::InstancedRender(CEnvironmentLight* anEnvironmentLight, st
 	myFrameBufferData.myCameraPosition = DirectX::SimpleMath::Vector4{cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f};
 	myFrameBufferData.myDirectionalLightDirection = anEnvironmentLight->GetDirection();
 	myFrameBufferData.myDirectionalLightColor = anEnvironmentLight->GetColor();
+
+	myFrameBufferData.myDirectionalLightView = anEnvironmentLight->GetShadowView();
+	myFrameBufferData.myDirectionalLightProjection = anEnvironmentLight->GetShadowProjection();
+	myFrameBufferData.myDirectionalLightPosition = anEnvironmentLight->GetShadowPosition();
 
 	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
 

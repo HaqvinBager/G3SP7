@@ -235,6 +235,9 @@
     <FxCompile Include="FullscreenPixelShader_BrokenScreenEffect.hlsl">
       <Filter>Shaders\Fullscreen</Filter>
     </FxCompile>
+    <FxCompile Include="ShadowAlphaPixelShader.hlsl">
+      <Filter>Shaders\Shadows</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimationComponent.cpp">
@@ -1935,6 +1938,9 @@
     </Filter>
     <Filter Include="Shaders\SpotLight">
       <UniqueIdentifier>{7cce27cf-d4c3-4bcb-9250-79de89449fb5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Shadows">
+      <UniqueIdentifier>{aba6652c-120c-4f66-9a31-b77b5a5a3a84}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

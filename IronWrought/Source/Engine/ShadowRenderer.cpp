@@ -17,6 +17,11 @@ CShadowRenderer::CShadowRenderer()
 	, myShadowSampler(nullptr)
 	, myFrameBuffer(nullptr)
 	, myObjectBuffer(nullptr)
+	, myBoneBuffer(nullptr)
+	, myAnimationVertexShader(nullptr)
+	, myModelVertexShader(nullptr)
+	, myInstancedModelVertexShader(nullptr)
+	, myAlphaObjectPixelShader(nullptr)
 {
 }
 
@@ -50,6 +55,8 @@ bool CShadowRenderer::Init(CDirectXFramework* aFramework)
 	Graphics::CreateVertexShader("Shaders/DeferredModelVertexShader.cso", aFramework, &myModelVertexShader, vsData);
 	Graphics::CreateVertexShader("Shaders/DeferredAnimationVertexShader.cso", aFramework, &myAnimationVertexShader, vsData);
 	Graphics::CreateVertexShader("Shaders/DeferredInstancedModelVertexShader.cso", aFramework, &myInstancedModelVertexShader, vsData);
+
+	Graphics::CreatePixelShader("Shaders/ShadowAlphaPixelShader.cso", aFramework, &myAlphaObjectPixelShader);
 
 	return true;
 }
@@ -93,11 +100,19 @@ void CShadowRenderer::Render(CEnvironmentLight* anEnvironmentLight, std::vector<
 		myContext->IASetPrimitiveTopology(modelData.myPrimitiveTopology);
 		myContext->IASetInputLayout(modelData.myInputLayout);
 		myContext->VSSetConstantBuffers(1, 1, &myObjectBuffer);
-		myContext->PSSetShader(nullptr, nullptr, 0);
+
+		if (modelComponent->RenderWithAlpha())
+			myContext->PSSetShader(myAlphaObjectPixelShader, nullptr, 0);
+		else
+			myContext->PSSetShader(nullptr, nullptr, 0);
 
 		// Render all meshes
 		for (unsigned int i = 0; i < modelData.myMeshes.size(); ++i)
 		{
+			if (modelComponent->RenderWithAlpha())
+			{
+				myContext->PSSetShaderResources(1, 1, &modelData.myMaterials[modelData.myMeshes[i].myMaterialIndex][0]);
+			}
 			myContext->IASetVertexBuffers(0, 1, &modelData.myMeshes[i].myVertexBuffer, &modelData.myMeshes[i].myStride, &modelData.myMeshes[i].myOffset);
 			myContext->IASetIndexBuffer(modelData.myMeshes[i].myIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 			myContext->DrawIndexed(modelData.myMeshes[i].myNumberOfIndices, 0, 0);
@@ -128,11 +143,19 @@ void CShadowRenderer::Render(CEnvironmentLight* anEnvironmentLight, std::vector<
 		myContext->IASetInputLayout(modelData.myInputLayout);
 		myContext->VSSetConstantBuffers(1, 1, &myObjectBuffer);
 		myContext->VSSetShader(myInstancedModelVertexShader, nullptr, 0);
-		myContext->PSSetShader(nullptr, nullptr, 0);
+		
+		if (instanceComponent->RenderWithAlpha())
+			myContext->PSSetShader(myAlphaObjectPixelShader, nullptr, 0);
+		else
+			myContext->PSSetShader(nullptr, nullptr, 0);
 
 		// Render all meshes
 		for (unsigned int i = 0; i < modelData.myMeshes.size(); ++i)
 		{
+			if (instanceComponent->RenderWithAlpha())
+			{
+				myContext->PSSetShaderResources(1, 1, &modelData.myMaterials[modelData.myMeshes[i].myMaterialIndex][0]);
+			}
 			ID3D11Buffer* bufferPointers[2] = { modelData.myMeshes[i].myVertexBuffer, modelData.myInstanceBuffer };
 			myContext->IASetVertexBuffers(0, 2, bufferPointers, modelData.myMeshes[i].myStride, modelData.myMeshes[i].myOffset);
 			myContext->IASetIndexBuffer(modelData.myMeshes[i].myIndexBuffer, DXGI_FORMAT_R32_UINT, 0);

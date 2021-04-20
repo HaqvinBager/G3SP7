@@ -80,7 +80,7 @@ void CRenderManager::InitRenderTextures(CWindowHandler* aWindowHandler)
 	myDepthCopy = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R32_FLOAT);
 	myDownsampledDepth = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution() / 2.0f, DXGI_FORMAT_R32_FLOAT);
 
-	myIntermediateTexture = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R8G8B8A8_UNORM);
+	myIntermediateTexture = myFullscreenTextureFactory.CreateTexture({ 2048.0f/* * 4.0f*/, 2048.0f/* * 4.0f*/ }, DXGI_FORMAT_R8G8B8A8_UNORM);
 	myLuminanceTexture = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R16G16B16A16_FLOAT);
 	myHalfSizeTexture = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution() / 2.0f, DXGI_FORMAT_R16G16B16A16_FLOAT);
 	myQuarterSizeTexture = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution() / 4.0f, DXGI_FORMAT_R16G16B16A16_FLOAT);
@@ -177,7 +177,7 @@ void CRenderManager::Render(CScene& aScene)
 	myDeferredRenderer.GenerateGBuffer(maincamera, gameObjects, instancedGameObjects);
 	
 	// Shadows
-	myEnvironmentShadowDepth.SetAsDepthTarget();
+	myEnvironmentShadowDepth.SetAsDepthTarget(&myIntermediateTexture);
 	myShadowRenderer.Render(environmentlight, gameObjects, instancedGameObjects);
 	myShadowRenderer.Render(environmentlight, gameObjectsWithAlpha, instancedGameObjectsWithAlpha);
 	//myBoxLightShadowDepth.SetAsDepthTarget();
@@ -309,6 +309,7 @@ void CRenderManager::Render(CScene& aScene)
 		pointlights.emplace_back(aScene.CullLights(gameObjectsWithAlpha[i]));
 	}
 
+	myEnvironmentShadowDepth.SetAsResourceOnSlot(22);
 	myForwardRenderer.InstancedRender(environmentlight, pointLightsInstanced, maincamera, instancedGameObjectsWithAlpha);
 	myForwardRenderer.Render(environmentlight, pointlights, maincamera, gameObjectsWithAlpha);
 
