@@ -1122,6 +1122,7 @@
     <None Include="SpriteShaderStructs.hlsli" />
     <None Include="SpriteVFXShaderStructs.hlsli" />
     <None Include="VFXShaderStructs.hlsli" />
+    <None Include="VolumetricLightShaderStructs.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="..\Includes\ImGui\NodeEditor\imgui_node_editor.natvis" />

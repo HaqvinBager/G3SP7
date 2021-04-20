@@ -2,13 +2,6 @@
 #include "VolumetricLightShaderStructs.hlsli"
 #include "MathHelpers.hlsli"
 
-//#define NUM_SAMPLES 64
-//#define NUM_SAMPLES_RCP 0.0625
-
-//// RAYMARCHING
-//#define TAU 0.0001
-//#define PHI /*10000000.0*/5000000.0
-
 cbuffer LightBuffer : register(b1)
 {
     float4x4 toDirectionalLightView;
@@ -39,6 +32,9 @@ float3 SampleShadowPos(float3 projectionPos)
     uvCoords *= float2(0.5f, -0.5f);
     uvCoords += float2(0.5f, 0.5f);
 
+    if (abs(uvCoords.x) > 1.0f || abs(uvCoords.y) > 1.0f)
+        return 0.0f;
+    
     float nonLinearDepth = shadowDepthTexture.Sample(shadowSampler, uvCoords).r;
     float oob = 1.0f;
     if (projectionPos.x > 1.0f || projectionPos.x < -1.0f || projectionPos.y > 1.0f || projectionPos.y < -1.0f)
@@ -81,7 +77,10 @@ void ExecuteRaymarching(inout float3 rayPositionLightVS, float3 invViewDirLightV
     float dRcp = rcp(d); // reciprocal
     
     // Calculate the final light contribution for the sample on the ray...
-    float3 intens = scatteringProbability * (shadowTerm * (lightPower * 0.25 * PI_RCP) * dRcp * dRcp) * exp(-d * scatteringProbability) * exp(-l * scatteringProbability) * stepSize;
+    float phase = 0.25f * PI_RCP;
+    float projection = dot(invViewDirLightVS, -toDirectionalLight.xyz);
+    phase = PhaseFunctionHenyeyGreenstein(projection, henyeyGreensteinGValue);
+    float3 intens = scatteringProbability * (shadowTerm * (lightPower * phase) * dRcp * dRcp) * exp(-d * scatteringProbability) * exp(-l * scatteringProbability) * stepSize;
     
     // ... and add it to the total contribution of the ray
     VLI += intens;

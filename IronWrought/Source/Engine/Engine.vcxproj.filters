@@ -1694,6 +1694,9 @@
     <None Include="SpotLightShaderStructs.hlsli">
       <Filter>Shaders\SpotLight</Filter>
     </None>
+    <None Include="VolumetricLightShaderStructs.hlsli">
+      <Filter>Shaders\Volumetric Light</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">
