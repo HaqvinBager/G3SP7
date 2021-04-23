@@ -3,6 +3,7 @@
 #include "NodeInstance.h"
 #include "GameObject.h"
 #include "TransformComponent.h"
+#include "RigidBodyComponent.h"
 #include "Engine.h"
 #include "Scene.h"
 #include "GraphManager.h"
@@ -36,6 +37,10 @@ int CNodeTypeGameObjectSetRotation::OnEnter(CNodeInstance* aTriggeringNodeInstan
 
 	//Vector3 newRotation = { x, y, z };
 	gameObject->myTransform->Rotation(newRotation);
+
+	CRigidBodyComponent* rigidBody = gameObject->GetComponent<CRigidBodyComponent>();
+	if(rigidBody)
+		rigidBody->SetRotation(gameObject->myTransform->Rotation());
 
 	return 1;
 }

@@ -3,6 +3,7 @@
 #include "NodeInstance.h"
 #include "GameObject.h"
 #include "TransformComponent.h"
+#include "RigidBodyComponent.h"
 #include "GraphManager.h"
 #include "Timer.h"
 #include "Scene.h"
@@ -68,6 +69,10 @@ int CNodeTypeGameObjectMoveToPosition::OnEnter(CNodeInstance* aTriggeringNodeIns
 		gameObject->myTransform->Move({ direction.x,  direction.y, direction.z });
 	}
 
+
+	CRigidBodyComponent* rigidBody = gameObject->GetComponent<CRigidBodyComponent>();
+	if(rigidBody)
+		rigidBody->SetPosition(gameObject->myTransform->Position());
 
 	std::vector<SPin>& pins = aTriggeringNodeInstance->GetPins();
 	DeclareDataOnPinIfNecessary<bool>(pins[3]);

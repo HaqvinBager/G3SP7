@@ -3,6 +3,7 @@
 #include "NodeInstance.h"
 #include "GameObject.h"
 #include "TransformComponent.h"
+#include "RigidBodyComponent.h"
 #include "Timer.h"
 #include "Scene.h"
 #include "Engine.h"
@@ -72,6 +73,10 @@ int CNodeTypeGameObjectRotateDegrees::OnEnter(CNodeInstance* aTriggeringNodeInst
 
 	if (!stopMoving)
 		gameObject->myTransform->Rotation(r);
+
+	CRigidBodyComponent* rigidBody = gameObject->GetComponent<CRigidBodyComponent>();
+	if(rigidBody)
+		rigidBody->SetRotation(gameObject->myTransform->Rotation());
 
 	std::vector<SPin>& pins = aTriggeringNodeInstance->GetPins();
 	DeclareDataOnPinIfNecessary<bool>(pins[3]);
