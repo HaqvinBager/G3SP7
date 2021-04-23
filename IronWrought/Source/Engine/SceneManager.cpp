@@ -28,6 +28,7 @@
 #include "animationLoader.h"
 #include "AnimationComponent.h"
 
+#include <BinReader.h>
 
 #include <ppl.h>
 #include <concurrent_unordered_map.h>
@@ -493,6 +494,7 @@ void CSceneManager::AddTriggerEvents(CScene& aScene, RapidArray someData)
 CSceneFactory* CSceneFactory::ourInstance = nullptr;
 CSceneFactory::CSceneFactory()
 {
+	myBinReader = new CBinReader();
 	ourInstance = this;
 }
 
@@ -523,6 +525,23 @@ void CSceneFactory::LoadSceneAsync(const std::string& aSceneName, const CStateSt
 	myLastSceneName = aSceneName;
 	myLastLoadedState = aState;
 	myFuture = std::async(std::launch::async, &CSceneManager::CreateScene, aSceneName);
+}
+
+void CSceneFactory::LoadSceneBin(const std::string& aSceneName, const CStateStack::EState aState, std::function<void(std::string)> onComplete)
+{
+	aState;
+	aSceneName;
+	onComplete;
+	myBinReader->Load(aSceneName);
+	std::cout << aSceneName.c_str() << " - Load Scene using Binary Data" << std::endl;
+}
+
+void CSceneFactory::LoadSceneAsyncBin(const std::string& aSceneName, const CStateStack::EState aState, std::function<void(std::string)> onComplete)
+{
+	aSceneName;
+	aState;
+	onComplete;
+
 }
 
 void CSceneFactory::Update()

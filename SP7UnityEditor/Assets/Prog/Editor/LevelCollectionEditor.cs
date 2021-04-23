@@ -81,7 +81,7 @@ public class LevelCollectionEditor : Editor
         if (GUILayout.Button("Export"))
         {
             OpenScenes();
-            Exporter.Export();
+            ExporterJson.ExportJson();
         }
     }
 

@@ -18,7 +18,7 @@ public struct Player
     public PlayerID player;
 }
 
-public class Exporter
+public class ExporterJson
 {
     [MenuItem("GameObject/BluePrint/Add Patrol Point", validate = true)]
     static bool ValidateTest()
@@ -40,9 +40,23 @@ public class Exporter
         //obj.transform.parent = parent.transform;
     }
 
-    [MenuItem("Export/Export Scene")]
-    public static void Export()
-    {
+    //[MenuItem("Export/Export Bin")]
+    //public static void Testererer()
+    //{
+    //    if(Selection.activeObject.GetType() == typeof(LevelCollection))
+    //    {
+    //        Object selectedObject = Selection.objects[0];
+    //        LevelCollection collection = selectedObject as LevelCollection;
+    //        ExportBin bin = new ExportBin("test", "tester");
+    //        bin.DoExport(collection);
+    //    }
+    //}
+
+
+
+    [MenuItem("Export/Export Json")]
+    public static void ExportJson()
+    {  
         if(GameObject.FindObjectOfType<PlayerSpawnPosition>() == null)
         {
             Debug.LogError("Export Cancelled. Please place a PlayerSpawnPosition Prefab in your Layout Scene");
@@ -83,7 +97,8 @@ public class Exporter
             }
         }
 
-        ExportAScene(SceneManager.GetSceneAt(aSceneIndex).name);
+
+        ExportASceneJson(SceneManager.GetSceneAt(aSceneIndex).name);
 
         foreach (var gameobject in activeobjects)
         {
@@ -93,7 +108,7 @@ public class Exporter
         AssetDatabase.Refresh();
     }
 
-    private static void ExportAScene(string aSceneName)
+    private static void ExportASceneJson(string aSceneName)
     {
         //Next Step is to make sure that we only write the correct data to the correct Scene_Json.json!
         //Or maybe just leave it be tbh! This might just be a good enough of a solution!
@@ -102,20 +117,20 @@ public class Exporter
         Json.AddToExport(instanceIDs);
         Json.AddToExport(ExportTransform.Export(aSceneName, instanceIDs.Ids));
         Json.AddToExport(ExportVertexPaint.Export(aSceneName, instanceIDs.Ids));
-        Json.AddToExport(ExportModel.Export(aSceneName, instanceIDs.Ids));
-        Json.AddToExport(ExportDirectionalLight.Export(aSceneName));
-        Json.AddToExport(ExportPointlights.ExportPointlight(aSceneName));
-        Json.AddToExport(ExportDecals.Export(aSceneName));
-        Json.AddToExport(ExportPlayer(aSceneName));
-        Json.AddToExport(ExportBluePrint.Export(aSceneName));
-        Json.AddToExport(ExportCollider.Export(aSceneName, instanceIDs.Ids));
-        Json.AddToExport(EnemyExporter.Export(aSceneName));
-        Json.AddToExport(ExportParents.Export(aSceneName));
-        Json.AddToExport(ExportEventTrigger.Export(aSceneName));
-        Json.AddToExport(ExportInstancedModel.Export(aSceneName), true);
+        Json.AddToExport(       ExportModel.Export(aSceneName, instanceIDs.Ids)     );
+        Json.AddToExport(       ExportDirectionalLight.Export(aSceneName)           );
+        Json.AddToExport(       ExportPointlights.ExportPointlight(aSceneName)      );
+        Json.AddToExport(       ExportDecals.Export(aSceneName)                     );
+        Json.AddToExport(       ExportPlayer(aSceneName)                            );
+        Json.AddToExport(       ExportBluePrint.Export(aSceneName)                  );
+        Json.AddToExport(       ExportCollider.Export(aSceneName, instanceIDs.Ids)  );
+        Json.AddToExport(       EnemyExporter.Export(aSceneName)                    );
+        Json.AddToExport(       ExportParents.Export(aSceneName)                    );
+        Json.AddToExport(       ExportEventTrigger.Export(aSceneName)               );
+        Json.AddToExport(       ExportInstancedModel.Export(aSceneName) , true);
     }
 
-    private static Player ExportPlayer(string aSceneName)
+    public static Player ExportPlayer(string aSceneName)
     {
         Player data = new Player();
         PlayerSpawnPosition player = GameObject.FindObjectOfType<PlayerSpawnPosition>();

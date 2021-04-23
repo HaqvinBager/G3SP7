@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "Game.h"
 #include "InGameState.h"
+//#include "BinReader.h"
+#include <EngineDefines.h>
+#include <SceneManager.h>
 
 //#include "MainSingleton.h"
 //#include "PostMaster.h"
@@ -23,6 +26,9 @@ CGame::~CGame()
 
 void CGame::Init()
 {
+	CSceneFactory::Get()->LoadSceneBin(ASSETPATH("Assets/Generated/PhysXTest_Bin/PhysXTest.bin"), CStateStack::EState::InGame);
+	//CBinReader::Test(ASSETPATH("Assets/Generated/TestBinary.bin"));
+
 #ifdef NDEBUG
 	InitRealGame();
 #else
