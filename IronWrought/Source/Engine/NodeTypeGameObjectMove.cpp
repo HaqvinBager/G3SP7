@@ -3,6 +3,7 @@
 #include "NodeInstance.h"
 #include "GameObject.h"
 #include "TransformComponent.h"
+#include "RigidBodyComponent.h"
 #include "Timer.h"
 #include "GraphManager.h"
 #include "Scene.h"
@@ -35,6 +36,10 @@ int CNodeTypeGameObjectMove::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 	//float z = NodeData::Get<float>(someData) * CTimer::Dt();
 
 	gameObject->myTransform->MoveLocal(newPosition);
+
+	CRigidBodyComponent* rigidBody = gameObject->GetComponent<CRigidBodyComponent>();
+	if(rigidBody)
+		rigidBody->SetPosition(gameObject->myTransform->Position());
 
 	return 1;
 }

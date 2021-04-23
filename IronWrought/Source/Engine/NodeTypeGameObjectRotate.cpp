@@ -3,6 +3,7 @@
 #include "NodeInstance.h"
 #include "GameObject.h"
 #include "TransformComponent.h"
+#include "RigidBodyComponent.h"
 #include "Timer.h"
 #include "Scene.h"
 #include "Engine.h"
@@ -38,6 +39,10 @@ int CNodeTypeGameObjectRotate::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 	DirectX::SimpleMath::Quaternion rotation = DirectX::SimpleMath::Quaternion::CreateFromYawPitchRoll(newRotation.y, newRotation.x, newRotation.z);
 	rotation *= currentRotation;
 	gameObject->myTransform->Rotation(rotation);
+
+	CRigidBodyComponent* rigidBody = gameObject->GetComponent<CRigidBodyComponent>();
+	if(rigidBody)
+		rigidBody->SetRotation(gameObject->myTransform->Rotation());
 
 	return 1;
 }

@@ -3,6 +3,7 @@
 #include "NodeInstance.h"
 #include "GameObject.h"
 #include "TransformComponent.h"
+#include "RigidBodyComponent.h"
 #include "GraphManager.h"
 #include "Scene.h"
 #include "Engine.h"
@@ -20,6 +21,8 @@ int CNodeTypeGameObjectSetPosition::OnEnter(CNodeInstance* aTriggeringNodeInstan
 {
 	CGameObject* gameObject = aTriggeringNodeInstance->GetCurrentGameObject();
 
+
+
 	SPin::EPinType outType;
 	NodeDataPtr someData = nullptr;
 	size_t outSize = 0;
@@ -35,6 +38,11 @@ int CNodeTypeGameObjectSetPosition::OnEnter(CNodeInstance* aTriggeringNodeInstan
 
 	//Vector3 newPosition = { x, y, z };
 	gameObject->myTransform->Position(newPosition);
+
+	// Tror det här är det som behövs för att objekt som flyttas i script ska uppdatera sin collider.
+	CRigidBodyComponent* rigidBody = gameObject->GetComponent<CRigidBodyComponent>();
+	if(rigidBody)
+		rigidBody->SetPosition(gameObject->myTransform->Position());
 
 	return 1;
 }
