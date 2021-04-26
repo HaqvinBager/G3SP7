@@ -33,7 +33,7 @@ void CMainMenuState::Awake()
 void CMainMenuState::Start()
 {
 	CEngine::GetInstance()->SetActiveScene(myState);
-	IRONWROUGHT->ShowCursor(false);
+	//IRONWROUGHT->ShowCursor(false);
 	IRONWROUGHT->GetActiveScene().CanvasToggle(true, true);
 	IRONWROUGHT->GetActiveScene().DisableWidgetsOnCanvas();
 	CMainSingleton::PostMaster().Subscribe(EMessageType::StartGame, this);
@@ -45,6 +45,8 @@ void CMainMenuState::Start()
 
 void CMainMenuState::Stop()
 {
+	IRONWROUGHT->GetActiveScene().CanvasToggle(false, false);
+	IRONWROUGHT->GetActiveScene().DisableWidgetsOnCanvas();
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::StartGame, this);
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::Quit, this);
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::SetResolution1280x720, this);
