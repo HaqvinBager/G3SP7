@@ -13,6 +13,9 @@ public:
 	void SetRange(float aRange);
 	void SetIntensity(float aIntensity);
 
+	void SetIsVolumetric(bool aShouldBeVolumetric);
+	const bool& GetIsVolumetric() const;
+
 	const Matrix& GetWorldMatrix() const;
 	const SM::Vector3& GetPosition() const;
 	const SM::Vector3& GetColor() const;
@@ -25,5 +28,6 @@ private:
 	SM::Vector3 myColor;
 	float myIntensity;
 	float myRange;
+	bool myIsVolumetric;
 };
 

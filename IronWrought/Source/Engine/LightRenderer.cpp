@@ -552,7 +552,11 @@ void CLightRenderer::RenderVolumetric(CCameraComponent* aCamera, std::vector<CPo
 	myContext->IASetVertexBuffers(0, 1, &myPointLightVertexBuffer, &myPointLightStride, &myPointLightOffset);
 	myContext->IASetIndexBuffer(myPointLightIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
-	for (CPointLight* currentInstance : aPointLightList) {
+	for (CPointLight* currentInstance : aPointLightList) 
+	{
+		if (!currentInstance->GetIsVolumetric())
+			continue;
+
 		const SM::Vector3& position = currentInstance->GetPosition();
 		const SM::Vector3& color = currentInstance->GetColor();
 		myPointLightBufferData.myToWorldSpace = currentInstance->GetWorldMatrix();
