@@ -129,6 +129,7 @@ void CForwardRenderer::Render(CEnvironmentLight* anEnvironmentLight, std::vector
 	myFrameBufferData.myDirectionalLightView = anEnvironmentLight->GetShadowView();
 	myFrameBufferData.myDirectionalLightProjection = anEnvironmentLight->GetShadowProjection();
 	myFrameBufferData.myDirectionalLightPosition = anEnvironmentLight->GetShadowPosition();
+	myFrameBufferData.myDirectionalLightShadowMapResolution = anEnvironmentLight->GetShadowmapResolution();
 
 	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
 
@@ -236,6 +237,7 @@ void CForwardRenderer::InstancedRender(CEnvironmentLight* anEnvironmentLight, st
 	myFrameBufferData.myDirectionalLightView = anEnvironmentLight->GetShadowView();
 	myFrameBufferData.myDirectionalLightProjection = anEnvironmentLight->GetShadowProjection();
 	myFrameBufferData.myDirectionalLightPosition = anEnvironmentLight->GetShadowPosition();
+	myFrameBufferData.myDirectionalLightShadowMapResolution = anEnvironmentLight->GetShadowmapResolution();
 
 	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
 

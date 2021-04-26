@@ -75,12 +75,12 @@ bool CRenderManager::ReInit(CDirectXFramework* aFramework, CWindowHandler* aWind
 void CRenderManager::InitRenderTextures(CWindowHandler* aWindowHandler)
 {
 	myIntermediateDepth = myFullscreenTextureFactory.CreateDepth(aWindowHandler->GetResolution(), DXGI_FORMAT_R24G8_TYPELESS);
-	myEnvironmentShadowDepth = myFullscreenTextureFactory.CreateDepth({ 2048.0f/* * 4.0f*/, 2048.0f/* * 4.0f*/ }, DXGI_FORMAT_R32_TYPELESS);
+	myEnvironmentShadowDepth = myFullscreenTextureFactory.CreateDepth({ 2048.0f * 1.0f, 2048.0f * 1.0f }, DXGI_FORMAT_R32_TYPELESS);
 	myBoxLightShadowDepth = myFullscreenTextureFactory.CreateDepth(aWindowHandler->GetResolution(), DXGI_FORMAT_R32_TYPELESS);
 	myDepthCopy = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R32_FLOAT);
 	myDownsampledDepth = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution() / 2.0f, DXGI_FORMAT_R32_FLOAT);
 
-	myIntermediateTexture = myFullscreenTextureFactory.CreateTexture({ 2048.0f/* * 4.0f*/, 2048.0f/* * 4.0f*/ }, DXGI_FORMAT_R8G8B8A8_UNORM);
+	myIntermediateTexture = myFullscreenTextureFactory.CreateTexture({ 2048.0f * 1.0f, 2048.0f * 1.0f }, DXGI_FORMAT_R8G8B8A8_UNORM);
 	myLuminanceTexture = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R16G16B16A16_FLOAT);
 	myHalfSizeTexture = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution() / 2.0f, DXGI_FORMAT_R16G16B16A16_FLOAT);
 	myQuarterSizeTexture = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution() / 4.0f, DXGI_FORMAT_R16G16B16A16_FLOAT);
@@ -217,8 +217,55 @@ void CRenderManager::Render(CScene& aScene)
 	myLightRenderer.Render(maincamera, onlySpotLights);
 	myLightRenderer.Render(maincamera, onlyBoxLights);
 
+	// Skybox
+	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_DISABLE);
+	myDeferredLightingTexture.SetAsActiveTarget(&myIntermediateDepth);
+
+	myRenderStateManager.SetDepthStencilState(CRenderStateManager::DepthStencilStates::DEPTHSTENCILSTATE_DEPTHFIRST);
+	myRenderStateManager.SetRasterizerState(CRenderStateManager::RasterizerStates::RASTERIZERSTATE_FRONTFACECULLING);
+	myDeferredRenderer.RenderSkybox(maincamera, environmentlight);
+	myRenderStateManager.SetDepthStencilState(CRenderStateManager::DepthStencilStates::DEPTHSTENCILSTATE_DEFAULT);
+	myRenderStateManager.SetRasterizerState(CRenderStateManager::RasterizerStates::RASTERIZERSTATE_DEFAULT);
+
+	// Render Lines
+	const std::vector<CLineInstance*>& lineInstances = aScene.CullLineInstances();
+	const std::vector<SLineTime>& lines = aScene.CullLines();
+	myForwardRenderer.RenderLines(maincamera, lines);
+	myForwardRenderer.RenderLineInstances(maincamera, lineInstances);
+
+	// Alpha stage for objects in World 3D space
+	//myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_ALPHABLEND);
+	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_DISABLE);
+	myRenderStateManager.SetDepthStencilState(CRenderStateManager::DepthStencilStates::DEPTHSTENCILSTATE_DEFAULT);
+	//myRenderStateManager.SetDepthStencilState(CRenderStateManager::DepthStencilStates::DEPTHSTENCILSTATE_ONLYREAD);
+
+	std::vector<LightPair> pointlights;
+	std::vector<LightPair> pointLightsInstanced;
+
+	for (unsigned int i = 0; i < instancedGameObjectsWithAlpha.size(); ++i)
+	{
+		pointLightsInstanced.emplace_back(aScene.CullLightInstanced(instancedGameObjectsWithAlpha[i]->GetComponent<CInstancedModelComponent>()));
+	}
+	for (unsigned int i = 0; i < gameObjectsWithAlpha.size(); ++i)
+	{
+		pointlights.emplace_back(aScene.CullLights(gameObjectsWithAlpha[i]));
+	}
+
+	myEnvironmentShadowDepth.SetAsResourceOnSlot(22);
+	myForwardRenderer.InstancedRender(environmentlight, pointLightsInstanced, maincamera, instancedGameObjectsWithAlpha);
+	myForwardRenderer.Render(environmentlight, pointlights, maincamera, gameObjectsWithAlpha);
+
+#pragma region Volumetric Lighting
+	// Depth Copy
+	myDepthCopy.SetAsActiveTarget();
+	myIntermediateDepth.SetAsResourceOnSlot(0);
+	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_COPYDEPTH);
+
 	// Volumetric Lighting
 	myVolumetricAccumulationBuffer.SetAsActiveTarget();
+	myDepthCopy.SetAsResourceOnSlot(21);
+	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_ADDITIVEBLEND);
+	myRenderStateManager.SetRasterizerState(CRenderStateManager::RasterizerStates::RASTERIZERSTATE_NOFACECULLING);
 
 	myLightRenderer.RenderVolumetric(maincamera, onlyPointLights);
 	myLightRenderer.RenderVolumetric(maincamera, onlySpotLights);
@@ -274,44 +321,7 @@ void CRenderManager::Render(CScene& aScene)
 	myDownsampledDepth.SetAsResourceOnSlot(1);
 	myIntermediateDepth.SetAsResourceOnSlot(2);
 	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FULLSCREENSHADER_DEPTH_AWARE_UPSAMPLING);
-
-	// Skybox
-	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_DISABLE);
-	myDeferredLightingTexture.SetAsActiveTarget(&myIntermediateDepth);
-
-	myRenderStateManager.SetDepthStencilState(CRenderStateManager::DepthStencilStates::DEPTHSTENCILSTATE_DEPTHFIRST);
-	myRenderStateManager.SetRasterizerState(CRenderStateManager::RasterizerStates::RASTERIZERSTATE_FRONTFACECULLING);
-	myDeferredRenderer.RenderSkybox(maincamera, environmentlight);
-	myRenderStateManager.SetDepthStencilState(CRenderStateManager::DepthStencilStates::DEPTHSTENCILSTATE_DEFAULT);
-	myRenderStateManager.SetRasterizerState(CRenderStateManager::RasterizerStates::RASTERIZERSTATE_DEFAULT);
-
-	// Render Lines
-	const std::vector<CLineInstance*>& lineInstances = aScene.CullLineInstances();
-	const std::vector<SLineTime>& lines = aScene.CullLines();
-	myForwardRenderer.RenderLines(maincamera, lines);
-	myForwardRenderer.RenderLineInstances(maincamera, lineInstances);
-
-	// Alpha stage for objects in World 3D space
-	//myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_ALPHABLEND);
-	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_DISABLE);
-	myRenderStateManager.SetDepthStencilState(CRenderStateManager::DepthStencilStates::DEPTHSTENCILSTATE_DEFAULT);
-	//myRenderStateManager.SetDepthStencilState(CRenderStateManager::DepthStencilStates::DEPTHSTENCILSTATE_ONLYREAD);
-
-	std::vector<LightPair> pointlights;
-	std::vector<LightPair> pointLightsInstanced;
-
-	for (unsigned int i = 0; i < instancedGameObjectsWithAlpha.size(); ++i)
-	{
-		pointLightsInstanced.emplace_back(aScene.CullLightInstanced(instancedGameObjectsWithAlpha[i]->GetComponent<CInstancedModelComponent>()));
-	}
-	for (unsigned int i = 0; i < gameObjectsWithAlpha.size(); ++i)
-	{
-		pointlights.emplace_back(aScene.CullLights(gameObjectsWithAlpha[i]));
-	}
-
-	myEnvironmentShadowDepth.SetAsResourceOnSlot(22);
-	myForwardRenderer.InstancedRender(environmentlight, pointLightsInstanced, maincamera, instancedGameObjectsWithAlpha);
-	myForwardRenderer.Render(environmentlight, pointlights, maincamera, gameObjectsWithAlpha);
+#pragma endregion
 
 	//VFX
 	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_ALPHABLEND);

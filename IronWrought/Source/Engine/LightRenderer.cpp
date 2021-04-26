@@ -313,6 +313,7 @@ void CLightRenderer::Render(CCameraComponent* aCamera, CEnvironmentLight* anEnvi
 	myDirectionalLightBufferData.myDirectionalLightPosition = anEnvironmentLight->GetShadowPosition();
 	myDirectionalLightBufferData.myToDirectionalLightView = anEnvironmentLight->GetShadowView();
 	myDirectionalLightBufferData.myToDirectionalLightProjection = anEnvironmentLight->GetShadowProjection();
+	myDirectionalLightBufferData.myDirectionalLightShadowMapResolution = { 2048.0f * 4.0f, 2048.0f * 4.0f };
 	BindBuffer(myLightBuffer, myDirectionalLightBufferData, "Light Buffer");
 	myContext->PSSetConstantBuffers(2, 1, &myLightBuffer);
 
@@ -500,6 +501,7 @@ void CLightRenderer::RenderVolumetric(CCameraComponent* aCamera, CEnvironmentLig
 	myDirectionalLightBufferData.myDirectionalLightPosition = anEnvironmentLight->GetShadowPosition();
 	myDirectionalLightBufferData.myToDirectionalLightView = anEnvironmentLight->GetShadowView();
 	myDirectionalLightBufferData.myToDirectionalLightProjection = anEnvironmentLight->GetShadowProjection(); // Actual projection
+	myDirectionalLightBufferData.myDirectionalLightShadowMapResolution = anEnvironmentLight->GetShadowmapResolution();
 	BindBuffer(myLightBuffer, myDirectionalLightBufferData, "Light Buffer");
 	myContext->PSSetConstantBuffers(1, 1, &myLightBuffer);
 
