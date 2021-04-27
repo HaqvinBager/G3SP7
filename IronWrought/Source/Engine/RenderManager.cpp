@@ -324,7 +324,8 @@ void CRenderManager::Render(CScene& aScene)
 #pragma endregion
 
 	//VFX
-	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_ALPHABLEND);
+	myDeferredLightingTexture.SetAsActiveTarget(&myIntermediateDepth);
+	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_ADDITIVEBLEND);
 	myRenderStateManager.SetDepthStencilState(CRenderStateManager::DepthStencilStates::DEPTHSTENCILSTATE_ONLYREAD);
 	myRenderStateManager.SetRasterizerState(CRenderStateManager::RasterizerStates::RASTERIZERSTATE_NOFACECULLING);
 	myVFXRenderer.Render(maincamera, gameObjects);

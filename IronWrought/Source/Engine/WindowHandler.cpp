@@ -138,7 +138,7 @@ bool CWindowHandler::Init(CWindowHandler::SWindowData someWindowData)
 
     if (borderless)
     {
-        // Start in fullscreen
+        // Start in borderless
         myWindowHandle = CreateWindowA("3DEngine", gameName.c_str(), 
             WS_POPUP | WS_VISIBLE,
             0, 0, /*GetSystemMetrics(SM_CXSCREEN)*/myWindowData.myWidth, /*GetSystemMetrics(SM_CYSCREEN)*/myWindowData.myHeight,
@@ -159,7 +159,7 @@ bool CWindowHandler::Init(CWindowHandler::SWindowData someWindowData)
     ImGui_ImplWin32_Init(myWindowHandle);
 #endif // _DEBUG
 
-    //LockCursor(true);
+    LockCursor(true);
 
     myResolution = new Vector2();
     return true;
