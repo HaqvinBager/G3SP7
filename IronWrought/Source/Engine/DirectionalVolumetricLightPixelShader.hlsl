@@ -78,8 +78,8 @@ void ExecuteRaymarching(inout float3 rayPositionLightVS, float3 invViewDirLightV
     
     // Calculate the final light contribution for the sample on the ray...
     float phase = 0.25f * PI_RCP;
-    float projection = dot(invViewDirLightVS, -toDirectionalLight.xyz);
-    phase = PhaseFunctionHenyeyGreenstein(projection, henyeyGreensteinGValue);
+    //float projection = dot(invViewDirLightVS, -toDirectionalLight.xyz);
+    //phase = PhaseFunctionHenyeyGreenstein(projection, henyeyGreensteinGValue);
     float3 intens = scatteringProbability * (shadowTerm * (lightPower * phase) * dRcp * dRcp) * exp(-d * scatteringProbability) * exp(-l * scatteringProbability) * stepSize;
     
     // ... and add it to the total contribution of the ray
@@ -94,11 +94,11 @@ PixelOutput main(VertexToPixel input)
     
     float raymarchDistanceLimit = 99999.0f;
     
-    //float z = depthTexture.Sample(defaultSampler, input.myUV).r;
-    //if (z > 0.9999f)
-    //{
-    //    discard;
-    //}
+    float z = depthTexture.Sample(defaultSampler, input.myUV).r;
+    if (z > 0.9999f)
+    {
+        discard;
+    }
     
     // ...
     float3 worldPosition = PixelShader_WorldPosition(input.myUV).rgb;

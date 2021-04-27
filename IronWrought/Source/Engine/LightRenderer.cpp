@@ -313,6 +313,7 @@ void CLightRenderer::Render(CCameraComponent* aCamera, CEnvironmentLight* anEnvi
 	myDirectionalLightBufferData.myDirectionalLightPosition = anEnvironmentLight->GetShadowPosition();
 	myDirectionalLightBufferData.myToDirectionalLightView = anEnvironmentLight->GetShadowView();
 	myDirectionalLightBufferData.myToDirectionalLightProjection = anEnvironmentLight->GetShadowProjection();
+	myDirectionalLightBufferData.myDirectionalLightShadowMapResolution = { 2048.0f * 4.0f, 2048.0f * 4.0f };
 	BindBuffer(myLightBuffer, myDirectionalLightBufferData, "Light Buffer");
 	myContext->PSSetConstantBuffers(2, 1, &myLightBuffer);
 
@@ -500,6 +501,7 @@ void CLightRenderer::RenderVolumetric(CCameraComponent* aCamera, CEnvironmentLig
 	myDirectionalLightBufferData.myDirectionalLightPosition = anEnvironmentLight->GetShadowPosition();
 	myDirectionalLightBufferData.myToDirectionalLightView = anEnvironmentLight->GetShadowView();
 	myDirectionalLightBufferData.myToDirectionalLightProjection = anEnvironmentLight->GetShadowProjection(); // Actual projection
+	myDirectionalLightBufferData.myDirectionalLightShadowMapResolution = anEnvironmentLight->GetShadowmapResolution();
 	BindBuffer(myLightBuffer, myDirectionalLightBufferData, "Light Buffer");
 	myContext->PSSetConstantBuffers(1, 1, &myLightBuffer);
 
@@ -550,7 +552,11 @@ void CLightRenderer::RenderVolumetric(CCameraComponent* aCamera, std::vector<CPo
 	myContext->IASetVertexBuffers(0, 1, &myPointLightVertexBuffer, &myPointLightStride, &myPointLightOffset);
 	myContext->IASetIndexBuffer(myPointLightIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
-	for (CPointLight* currentInstance : aPointLightList) {
+	for (CPointLight* currentInstance : aPointLightList) 
+	{
+		if (!currentInstance->GetIsVolumetric())
+			continue;
+
 		const SM::Vector3& position = currentInstance->GetPosition();
 		const SM::Vector3& color = currentInstance->GetColor();
 		myPointLightBufferData.myToWorldSpace = currentInstance->GetWorldMatrix();

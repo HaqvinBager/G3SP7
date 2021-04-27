@@ -52,7 +52,7 @@ PixelOutput main(BoxLightVertexToPixel input)
     float lightDistance = length(toLight);
     toLight = normalize(toLight);
     float3 directionalLight = EvaluateBoxLight(diffuseColor, specularColor, normal, perceptualRoughness, boxLightColorAndIntensity.rgb * boxLightColorAndIntensity.w, boxLightPositionAndRange.w, toLight, lightDistance, toEye, boxLightDirection.xyz);
-    float3 radiance = directionalLight * (1.0f - ShadowFactor(worldPosition, boxLightPositionAndRange.xyz, toBoxLightView, toBoxLightProjection));
+    float3 radiance = directionalLight * (1.0f - ShadowFactor(worldPosition, boxLightPositionAndRange.xyz, toBoxLightView, toBoxLightProjection, shadowDepthTexture, shadowSampler, boxLightShadowmapResolution));
 
     output.myColor.rgb = radiance;
     output.myColor.a = 1.0f;

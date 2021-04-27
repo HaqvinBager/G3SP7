@@ -26,7 +26,7 @@ CGame::~CGame()
 
 void CGame::Init()
 {
-	CSceneFactory::Get()->LoadSceneBin(ASSETPATH("Assets/Generated/PhysXTest_Bin/PhysXTest.bin"), CStateStack::EState::InGame);
+	//CSceneFactory::Get()->LoadSceneBin(ASSETPATH("Assets/Generated/PhysXTest_Bin/PhysXTest.bin"), CStateStack::EState::InGame);
 	//CBinReader::Test(ASSETPATH("Assets/Generated/TestBinary.bin"));
 
 #ifdef NDEBUG

@@ -58,6 +58,8 @@ private:
 		DirectX::SimpleMath::Matrix myDirectionalLightView;
 		DirectX::SimpleMath::Matrix myDirectionalLightProjection;
 		DirectX::SimpleMath::Vector4 myDirectionalLightPosition;
+		Vector2 myDirectionalLightShadowMapResolution;
+		Vector2 myPadding;
 	} myFrameBufferData;
 
 	static_assert((sizeof(SFrameBufferData) % 16) == 0, "CB size not padded correctly");
