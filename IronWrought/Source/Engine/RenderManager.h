@@ -30,6 +30,7 @@ public:
 
 public:
 	void SetBrokenScreen(bool aShouldSetBrokenScreen);
+	void EnableVignette(bool aShouldEnableVignette);
 
 public:
 	static unsigned int myNumberOfDrawCallsThisFrame;
@@ -41,6 +42,7 @@ private:
 private:
 	void RenderBloom();
 	void RenderWithoutBloom();
+	void ToggleRenderPass();
 
 private:
 	CRenderStateManager myRenderStateManager;
@@ -79,9 +81,9 @@ private:
 
 	DirectX::SimpleMath::Vector4 myClearColor;
 
+	int myRenderPassIndex;
 	// Effectively used to toggle renderpasses and bloom. True == enable bloom, full render. False == disable bloom, isolated render pass
 	bool myDoFullRender;
 	bool myUseAntiAliasing;
 	bool myUseBrokenScreenPass;
-	//int myFrameCounter;// Used for a hack solution, can probably be removed
 };

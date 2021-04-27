@@ -114,6 +114,14 @@ bool CForwardRenderer::Init(CDirectXFramework* aFramework) {
 	myRenderPassPixelShaders.emplace_back();
 	ENGINE_HR_MESSAGE(device->CreatePixelShader(psData.data(), psData.size(), nullptr, &myRenderPassPixelShaders[4]), "Ambient Occlusion Pixel Shader could not be created.");
 
+	// ===============
+	psFile.open("Shaders/RenderPassEmissivePixelShader.cso", std::ios::binary);
+	psData = { std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>() };
+	psFile.close();
+
+	myRenderPassPixelShaders.emplace_back();
+	ENGINE_HR_MESSAGE(device->CreatePixelShader(psData.data(), psData.size(), nullptr, &myRenderPassPixelShaders[5]), "Ambient Occlusion Pixel Shader could not be created.");
+
 	return true;
 }
 
