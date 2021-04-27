@@ -5,11 +5,11 @@
       "VFXMeshes": [
         {
           "Path": "Assets/Graphics/VFX/JSON/Data/VFXMeshData_Helix.json",
-          "Offset X": 0.20000000298023225,
-          "Offset Y": -0.800000011920929,
-          "Offset Z": 0.0,
+          "Offset X": 0.0,
+          "Offset Y": 0.0,
+          "Offset Z": 4.5,
           "Rotation X": 0.0,
-          "Rotation Y": -10.0,
+          "Rotation Y": 0.0,
           "Rotation Z": 0.0,
           "Scale X": 3.0,
           "Scale Y": 3.0,
@@ -19,7 +19,7 @@
           "Rotate Z per second": 0.0,
           "Orbit": false,
           "Delay": 0.0,
-          "Duration": 0.5
+          "Duration": 0.3
         }
       ],
       "ParticleSystems": [
@@ -60,7 +60,7 @@
           "Rotate Z per second": 0.0,
           "Orbit": false,
           "Delay": 0.0,
-          "Duration": 0.30000001192092898
+          "Duration": 0.3
         }
       ],
       "ParticleSystems": [
