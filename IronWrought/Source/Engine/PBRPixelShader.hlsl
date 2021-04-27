@@ -117,7 +117,7 @@ PixelOutPut main(VertexToPixel input)
     }
     
     float3 emissive = albedo * emissivedata; // Maybe add cool multiplier?? // Aki 2021
-    float3 radiance = ambience + directionallight * (1.0f - ShadowFactor(input.myWorldPosition.xyz, directionalLightPosition.xyz, toDirectionalLightView, toDirectionalLightProjection)) + pointLights + emissive;
+    float3 radiance = ambience + directionallight * (1.0f - ShadowFactor(input.myWorldPosition.xyz, directionalLightPosition.xyz, toDirectionalLightView, toDirectionalLightProjection, shadowDepthTexture, shadowSampler, directionalLightShadowMapResolution)) + pointLights + emissive;
    
     output.myColor.rgb = /*LinearToGamma(*/radiance/*)*/;
     output.myColor.a = albedo.w;

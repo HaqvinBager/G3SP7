@@ -14,6 +14,19 @@ IronWroughtImGui::CEnvironmentLightWindow::CEnvironmentLightWindow(const char* a
 	, myScatteringProbability(0.001f)
 	, myHenyeyGreensteinGValue(0.0f)
 {
+	if (&CEngine::GetInstance()->GetActiveScene())
+	{
+		CEnvironmentLight* light = CEngine::GetInstance()->GetActiveScene().EnvironmentLight();
+		if (light)
+		{
+			myIsVolumetric = light->GetIsVolumetric();
+			myNumberOfSamples = light->GetNumberOfSamples();
+			myLightPower = light->GetLightPower();
+			myScatteringProbability = light->GetScatteringProbability();
+			myHenyeyGreensteinGValue = light->GetHenyeyGreensteinGValue();
+		}
+	}
+
 }
 
 IronWroughtImGui::CEnvironmentLightWindow::~CEnvironmentLightWindow()

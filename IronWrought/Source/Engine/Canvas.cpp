@@ -329,6 +329,9 @@ void CCanvas::Init(const std::string& aFilePath, CScene& aScene, bool addToScene
 
 void CCanvas::Update()
 {
+	if (!myIsEnabled)
+		return;
+
 	for (unsigned int i = 0; i < mySprites.size(); ++i)
 	{
 		mySprites[i]->Update();
@@ -344,7 +347,6 @@ void CCanvas::Update()
 			switch (i)
 			{
 				case 0:
-					
 						myLevelToLoad = "Level_1-1";
 				break;
 
@@ -500,31 +502,25 @@ bool CCanvas::GetEnabled()
 
 void CCanvas::SetEnabled(bool isEnabled)
 {
-	if (myIsEnabled != isEnabled)
-	{
-		myIsEnabled = isEnabled;
+	myIsEnabled = isEnabled;
 
-		for (auto& button : myButtons)
-			button->Enabled(myIsEnabled);
+	for (auto& button : myButtons)
+		button->Enabled(myIsEnabled);
 
-		for (auto& text : myButtonTexts)
-			text->SetShouldRender(myIsEnabled);
+	for (auto& text : myButtonTexts)
+		text->SetShouldRender(myIsEnabled);
 
-		for (auto& sprite : mySprites)
-			sprite->SetShouldRender(myIsEnabled);
+	for (auto& sprite : mySprites)
+		sprite->SetShouldRender(myIsEnabled);
 
-		for (auto& text : myTexts)
-			text->SetShouldRender(myIsEnabled);
+	for (auto& text : myTexts)
+		text->SetShouldRender(myIsEnabled);
 
-		for (auto& animUI : myAnimatedUIs)
-			animUI->SetShouldRender(myIsEnabled);
+	for (auto& animUI : myAnimatedUIs)
+		animUI->SetShouldRender(myIsEnabled);
 
-		if(myBackground)
-			myBackground->SetShouldRender(myIsEnabled);
-
-		//for (auto& widget : myWidgets)
-		//	widget->SetEnabled(myIsEnabled);
-	}
+	if(myBackground)
+		myBackground->SetShouldRender(myIsEnabled);
 }
 
 void CCanvas::ForceEnabled(const bool& anIsEnabled)

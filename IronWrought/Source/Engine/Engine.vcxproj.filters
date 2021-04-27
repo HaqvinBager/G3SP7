@@ -1700,6 +1700,9 @@
     <None Include="VolumetricLightShaderStructs.hlsli">
       <Filter>Shaders\Volumetric Light</Filter>
     </None>
+    <None Include="ShadowSampling.hlsli">
+      <Filter>Shaders\Shadows</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">

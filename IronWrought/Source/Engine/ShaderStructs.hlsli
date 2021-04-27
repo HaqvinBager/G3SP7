@@ -22,6 +22,8 @@ cbuffer FrameBuffer : register(b0)
     float4x4 toDirectionalLightView;
     float4x4 toDirectionalLightProjection;
     float4 directionalLightPosition;
+    float2 directionalLightShadowMapResolution;
+    float2 myDirectionalLightPadding;
 };
 
 cbuffer ObjectBuffer : register(b1)
