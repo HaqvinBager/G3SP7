@@ -74,7 +74,7 @@ void CEnemyComponent::Update()//får bestämma vilket behaviour vi vill köra i 
 	myController->Move(targetDirection, mySettings.mySpeed);
 	GameObject().myTransform->Position(myController->GetPosition());
 	float targetOrientation = atan2f(myCurrentDirection.x, myCurrentDirection.z);
-	myCurrentOrientation = WrapAngle(targetOrientation);
+	//myCurrentOrientation = 
 	myCurrentDirection = Vector3::Lerp(myCurrentDirection, targetDirection, CTimer::Dt());
 	GameObject().myTransform->Rotation({ 0, DirectX::XMConvertToDegrees(atan2f(myCurrentDirection.x, myCurrentDirection.z)) + 180.f, 0 });
 }
