@@ -17,9 +17,8 @@ struct SNodeInstanceLink
 {
 	SNodeInstanceLink(class CNodeInstance* aLink, unsigned int aFromPinID, unsigned int aToPinID, unsigned int aLinkID)
 		:myLink(aLink), myFromPinID(aFromPinID), myToPinID(aToPinID), myLinkID(aLinkID)
-	{
-
-	}
+	{}
+	
 	class CNodeInstance* myLink = nullptr;
 	unsigned int myFromPinID = UNDEFINED_PIN_ID;
 	unsigned int myToPinID = UNDEFINED_PIN_ID;
@@ -46,8 +45,8 @@ public:
 	bool AddLinkToVia(CNodeInstance* aLink, unsigned int aPinIdFromMe, unsigned int aPinIdToMe, unsigned int aLinkID);
 	void RemoveLinkToVia(CNodeInstance* aLink, unsigned int aPinThatIOwn);
 
-	bool IsPinConnected(SPin& aPin);
-	std::string GetNodeName();
+	bool IsPinConnected(SPin& aPin) { return GetLinkFromPin(aPin.myUID.AsInt()).size() > 0; }
+	std::string GetNodeName() {	return myNodeType->NodeName(); }
 
 	std::vector<SPin>& GetPins() { return myPins; }
 	void ChangePinTypes(SPin::EPinType aType);
@@ -60,27 +59,37 @@ public:
 
 	inline std::string WriteVariableType(const SPin& aPin) const
 	{
-		if (aPin.myVariableType == SPin::EPinType::EBool)
+		switch (aPin.myVariableType)
+		{
+		case SPin::EPinType::EBool:
 		{
 			return "BOOL";
 		}
-		else if (aPin.myVariableType == SPin::EPinType::EInt)
+			break;
+		case SPin::EPinType::EInt:
 		{
 			return "INT";
 		}
-		else if (aPin.myVariableType == SPin::EPinType::EFloat)
+			break;
+		case SPin::EPinType::EFloat:
 		{
 			return "FLOAT";
 		}
-		else if (aPin.myVariableType == SPin::EPinType::EString)
+			break;
+		case SPin::EPinType::EString:
 		{
 			return "STRING";
 		}
-		else if (aPin.myVariableType == SPin::EPinType::EVector3)
+			break;
+		case SPin::EPinType::EVector3:
 		{
 			return "VECTOR3";
 		}
-		return "";
+			break;
+		default:
+			return "";
+			break;
+		}
 	}
 
 
@@ -98,35 +107,44 @@ public:
 			{
 				aWriter.String("");
 			}
-			else if (aPin.myVariableType == SPin::EPinType::EBool)
-			{
-				aWriter.Bool(NodeData::Get<bool>(aPin.myData));
-			}
-			else if (aPin.myVariableType == SPin::EPinType::EInt)
-			{
-				aWriter.Int(NodeData::Get<int>(aPin.myData));
-			}
-			else if (aPin.myVariableType == SPin::EPinType::EFloat)
-			{
-				aWriter.Double((double)NodeData::Get<float>(aPin.myData));
-
-			}
-			else if (aPin.myVariableType == SPin::EPinType::EString)
-			{
-				aWriter.String((char*)aPin.myData);
-			}
-			else if (aPin.myVariableType == SPin::EPinType::EVector3)
-			{
-				Vector3 data = NodeData::Get<Vector3>(aPin.myData);
-				aWriter.StartArray();
-				aWriter.Double(static_cast<double>(data.x));
-				aWriter.Double(static_cast<double>(data.y));
-				aWriter.Double(static_cast<double>(data.z));
-				aWriter.EndArray();
-			}
 			else
 			{
-				aWriter.String("");
+				switch (aPin.myVariableType)
+				{
+				case SPin::EPinType::EBool:
+				{
+					aWriter.Bool(NodeData::Get<bool>(aPin.myData));
+				}
+				break;
+				case SPin::EPinType::EInt:
+				{
+					aWriter.Int(NodeData::Get<int>(aPin.myData));
+				}
+				break;
+				case SPin::EPinType::EFloat:
+				{
+					aWriter.Double((double)NodeData::Get<float>(aPin.myData));
+				}
+				break;
+				case SPin::EPinType::EString:
+				{
+					aWriter.String((char*)aPin.myData);
+				}
+				break;
+				case SPin::EPinType::EVector3:
+				{
+					Vector3 data = NodeData::Get<Vector3>(aPin.myData);
+					aWriter.StartArray();
+					aWriter.Double(static_cast<double>(data.x));
+					aWriter.Double(static_cast<double>(data.y));
+					aWriter.Double(static_cast<double>(data.z));
+					aWriter.EndArray();
+				}
+				break;
+				default:
+					aWriter.String("");
+					break;
+				}
 			}
 		}
 	}

@@ -887,6 +887,12 @@
     <ClCompile Include="EnvironmentLightWindow.cpp">
       <Filter>Imgui\Windows</Filter>
     </ClCompile>
+    <ClCompile Include="DrawGraphManager.cpp">
+      <Filter>Imgui\Node Editor\Node Editor Managers\GraphManager Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="SaveLoadGraphManager.cpp">
+      <Filter>Imgui\Node Editor\Node Editor Managers\GraphManager Helpers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1625,6 +1631,12 @@
     <ClInclude Include="EnvironmentLightWindow.h">
       <Filter>Imgui\Windows</Filter>
     </ClInclude>
+    <ClInclude Include="DrawGraphManager.h">
+      <Filter>Imgui\Node Editor\Node Editor Managers\GraphManager Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="SaveLoadGraphManager.h">
+      <Filter>Imgui\Node Editor\Node Editor Managers\GraphManager Helpers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">
@@ -1941,6 +1953,9 @@
     </Filter>
     <Filter Include="Shaders\Shadows">
       <UniqueIdentifier>{aba6652c-120c-4f66-9a31-b77b5a5a3a84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\Node Editor\Node Editor Managers\GraphManager Helpers">
+      <UniqueIdentifier>{0ee4aec4-8e83-4a9c-84da-38d17fe64fec}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
