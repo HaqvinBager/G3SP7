@@ -80,6 +80,8 @@ cbuffer LightBuffer : register(b2)
     float4 directionalLightPosition; // For shadow calculations
     float4 toDirectionalLight;
     float4 directionalLightColor;
+    float2 directionalLightShadowMapResolution;
+    float2 directionalLightPadding;
 }
 
 cbuffer PointLightBuffer : register(b3)

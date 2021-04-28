@@ -145,7 +145,7 @@ public class ExportVertexPaint : Editor
             string meshName = meshFilter.sharedMesh.name;
             if (!meshName.Contains(polybrushMesh))
             {
-                Debug.LogError("This Object has not yet been Painted on. Skipping it!", polyBrushObject.gameObject);
+                //Debug.LogError("This Object has not yet been Painted on. Skipping it!", polyBrushObject.gameObject);
                 //continue;
             }
 

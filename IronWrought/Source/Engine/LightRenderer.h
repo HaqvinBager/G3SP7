@@ -57,6 +57,8 @@ private:
 		Vector4 myDirectionalLightPosition;
 		Vector4 myDirectionalLightDirection;
 		Vector4 myDirectionalLightColor;
+		Vector2 myDirectionalLightShadowMapResolution;
+		Vector2 myPadding;
 	} myDirectionalLightBufferData;
 
 	struct SPointLightBufferData
@@ -94,7 +96,7 @@ private:
 		Vector4 myDirectionNormal1;
 		Vector4 myDirectionNormal2;
 		Vector2 myWidthAndHeight;
-		Vector2 myPadding;
+		Vector2 myShadowMapResolution;
 	} myBoxLightBufferData;
 
 	struct SVolumetricLightBufferData

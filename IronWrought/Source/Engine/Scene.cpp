@@ -230,7 +230,7 @@ void CScene::Update()
 
 	if (myPlayer && myEnvironmentLight)
 	{
-		myEnvironmentLight->SetPosition({ myPlayer->myTransform->WorldPosition().x, 0.0f, myPlayer->myTransform->WorldPosition().z });
+		myEnvironmentLight->SetPosition({ myPlayer->myTransform->WorldPosition().x, 20.0f, myPlayer->myTransform->WorldPosition().z });
 	}
 
 }

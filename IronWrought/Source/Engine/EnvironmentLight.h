@@ -20,6 +20,8 @@ public:
 	DirectX::SimpleMath::Vector4 GetColor() { return myColor; }
 	DirectX::SimpleMath::Vector4 GetShadowPosition() const;
 
+	const Vector2& GetShadowmapResolution() const;
+
 	const float& GetNumberOfSamples() const;
 	const float& GetLightPower() const;
 	const float& GetScatteringProbability() const;
@@ -46,7 +48,7 @@ private:
 	Matrix myShadowmapViewMatrix;
 	Matrix myShadowmapProjectionMatrix;
 	DirectX::SimpleMath::Vector2 myShadowcastSize;
-	DirectX::SimpleMath::Vector2 myShadowTextureSize;
+	DirectX::SimpleMath::Vector2 myShadowmapResolution;
 
 	ID3D11ShaderResourceView* myCubeShaderResourceView = nullptr;
 	DirectX::SimpleMath::Vector4 myPosition;

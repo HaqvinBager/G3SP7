@@ -48,26 +48,32 @@ bool CFullscreenRenderer::Init(CDirectXFramework* aFramework) {
 	vsFile.close();
 	myVertexShader = vertexShader;
 
-	std::array<std::string, static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_COUNT)> filepaths;
-	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_COPY)] = "Shaders/FullscreenPixelShader_Copy.cso";
-	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_COPYDEPTH)] = "Shaders/FullscreenPixelShader_CopyDepth.cso";
-	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_COPYGBUFFER)] = "Shaders/FullscreenPixelShader_CopyGBuffer.cso";
-	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_LUMINANCE)] = "Shaders/FullscreenPixelShader_Luminance.cso";
-	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_GAUSSIANHORIZONTAL)] = "Shaders/FullscreenPixelShader_GaussianBlurHorizontal.cso";
-	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_GAUSSIANVERTICAL)] = "Shaders/FullscreenPixelShader_GaussianBlurVertical.cso";
-	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_BILATERALHORIZONTAL)] = "Shaders/FullscreenPixelShader_BilateralBlurHorizontal.cso";
-	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_BILATERALVERTICAL)] = "Shaders/FullscreenPixelShader_BilateralBlurVertical.cso";
-	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_BLOOM)] = "Shaders/FullscreenPixelShader_Bloom.cso";
-	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_VIGNETTE)] = "Shaders/FullscreenPixelShader_Vignette.cso";
-	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_TONEMAP)] = "Shaders/FullscreenPixelShader_Tonemap.cso";
-	filepaths[static_cast<size_t>(FullscreenShader::FULLSCRENSHADER_GAMMACORRECTION)] = "Shaders/FullscreenPixelShader_GammaCorrection.cso";
-	filepaths[static_cast<size_t>(FullscreenShader::FULLSCRENSHADER_GAMMACORRECTION_RENDERPASS)] = "Shaders/DeferredRenderPassFullscreenPixelShader_GammaCorrection.cso";
-	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_FXAA)] = "Shaders/FullscreenPixelShader_FXAA.cso";
-	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_BROKEN_SCREEN_EFFECT)] = "Shaders/FullscreenPixelShader_BrokenScreenEffect.cso";
-	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_DOWNSAMPLE_DEPTH)] = "Shaders/FullscreenPixelShader_DepthDownSample.cso";
-	filepaths[static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_DEPTH_AWARE_UPSAMPLING)] = "Shaders/FullscreenPixelShader_DepthAwareUpsample.cso";
+	std::array<std::string, static_cast<size_t>(FullscreenShader::Count)> filepaths;
+	filepaths[static_cast<size_t>(FullscreenShader::Copy)] = "Shaders/FullscreenPixelShader_Copy.cso";
+	filepaths[static_cast<size_t>(FullscreenShader::CopyDepth)] = "Shaders/FullscreenPixelShader_CopyDepth.cso";
+	filepaths[static_cast<size_t>(FullscreenShader::CopyGBuffer)] = "Shaders/FullscreenPixelShader_CopyGBuffer.cso";
+	filepaths[static_cast<size_t>(FullscreenShader::Luminance)] = "Shaders/FullscreenPixelShader_Luminance.cso";
+	filepaths[static_cast<size_t>(FullscreenShader::GaussianHorizontal)] = "Shaders/FullscreenPixelShader_GaussianBlurHorizontal.cso";
+	filepaths[static_cast<size_t>(FullscreenShader::GaussianVertical)] = "Shaders/FullscreenPixelShader_GaussianBlurVertical.cso";
+	filepaths[static_cast<size_t>(FullscreenShader::BilateralHorizontal)] = "Shaders/FullscreenPixelShader_BilateralBlurHorizontal.cso";
+	filepaths[static_cast<size_t>(FullscreenShader::BilateralVertical)] = "Shaders/FullscreenPixelShader_BilateralBlurVertical.cso";
+	filepaths[static_cast<size_t>(FullscreenShader::Bloom)] = "Shaders/FullscreenPixelShader_Bloom.cso";
+	filepaths[static_cast<size_t>(FullscreenShader::Vignette)] = "Shaders/FullscreenPixelShader_Vignette.cso";
+	filepaths[static_cast<size_t>(FullscreenShader::Tonemap)] = "Shaders/FullscreenPixelShader_Tonemap.cso";
+	filepaths[static_cast<size_t>(FullscreenShader::GammaCorrection)] = "Shaders/FullscreenPixelShader_GammaCorrection.cso";
+	filepaths[static_cast<size_t>(FullscreenShader::GammaCorrectionRenderPass)] = "Shaders/DeferredRenderPassFullscreenPixelShader_GammaCorrection.cso";
+	filepaths[static_cast<size_t>(FullscreenShader::FXAA)] = "Shaders/FullscreenPixelShader_FXAA.cso";
+	filepaths[static_cast<size_t>(FullscreenShader::BrokenScreenEffect)] = "Shaders/FullscreenPixelShader_BrokenScreenEffect.cso";
+	filepaths[static_cast<size_t>(FullscreenShader::DownsampleDepth)] = "Shaders/FullscreenPixelShader_DepthDownSample.cso";
+	filepaths[static_cast<size_t>(FullscreenShader::DepthAwareUpsampling)] = "Shaders/FullscreenPixelShader_DepthAwareUpsample.cso";
+	filepaths[static_cast<size_t>(FullscreenShader::DeferredAlbedo)] = "Shaders/DeferredRenderPassShader_Albedo.cso";
+	filepaths[static_cast<size_t>(FullscreenShader::DeferredNormals)] = "Shaders/DeferredRenderPassShader_Normal.cso";
+	filepaths[static_cast<size_t>(FullscreenShader::DeferredRoughness)] = "Shaders/DeferredRenderPassShader_Roughness.cso";
+	filepaths[static_cast<size_t>(FullscreenShader::DeferredMetalness)] = "Shaders/DeferredRenderPassShader_Metalness.cso";
+	filepaths[static_cast<size_t>(FullscreenShader::DeferredAmbientOcclusion)] = "Shaders/DeferredRenderPassShader_AO.cso";
+	filepaths[static_cast<size_t>(FullscreenShader::DeferredEmissive)] = "Shaders/DeferredRenderPassShader_Emissive.cso";
 
-	for (UINT i = 0; i < static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_COUNT); i++) {
+	for (UINT i = 0; i < static_cast<size_t>(FullscreenShader::Count); i++) {
 		std::ifstream psFile;
 		psFile.open(filepaths[i], std::ios::binary);
 		std::string psData = { std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>() };

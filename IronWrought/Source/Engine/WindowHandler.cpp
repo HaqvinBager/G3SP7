@@ -99,8 +99,8 @@ bool CWindowHandler::Init(CWindowHandler::SWindowData someWindowData)
         myWindowData.myY = document["Window Starting Pos Y"].GetInt();
 
     HCURSOR customCursor = NULL;
-    if (document.HasMember("Cursor Path")) 
-        customCursor = LoadCursorFromFileA(ASSETPATH(document["Cursor Path"].GetString()).c_str());
+    if (document.HasMember("Cursor Path"))
+        customCursor = LoadCursorFromFileA(document["Cursor Path"].GetString());
 
     if (customCursor == NULL) 
         customCursor = LoadCursor(nullptr, IDC_ARROW);
@@ -130,17 +130,30 @@ bool CWindowHandler::Init(CWindowHandler::SWindowData someWindowData)
         gameName = document["Game Name"].GetString();
     }
 
-    // Start in bordered window
-    myWindowHandle = CreateWindowA("3DEngine", gameName.c_str(),
-        WS_OVERLAPPEDWINDOW | WS_POPUP | WS_VISIBLE,
-        myWindowData.myX, myWindowData.myY, myWindowData.myWidth, myWindowData.myHeight,
-        nullptr, nullptr, nullptr, this);
+    bool borderless = false;
+    if (document.HasMember("Borderless Window"))
+    {
+        borderless = document["Borderless Window"].GetBool();
+    }
 
-    // Start in fullscreen
-    //myWindowHandle = CreateWindowA("3DEngine", gameName.c_str(), 
-    //    WS_POPUP | WS_VISIBLE,
-    //    0, 0, /*GetSystemMetrics(SM_CXSCREEN)*/1920, /*GetSystemMetrics(SM_CYSCREEN)*/1080,
-    //    NULL, NULL, GetModuleHandle(nullptr), this);
+    if (borderless)
+    {
+        // Start in borderless
+        myWindowHandle = CreateWindowA("3DEngine", gameName.c_str(), 
+            WS_POPUP | WS_VISIBLE,
+            0, 0, /*GetSystemMetrics(SM_CXSCREEN)*/myWindowData.myWidth, /*GetSystemMetrics(SM_CYSCREEN)*/myWindowData.myHeight,
+            NULL, NULL, GetModuleHandle(nullptr), this);
+    }
+    else 
+    {
+        // Start in bordered window
+        myWindowHandle = CreateWindowA("3DEngine", gameName.c_str(),
+            WS_OVERLAPPEDWINDOW | WS_POPUP | WS_VISIBLE,
+            myWindowData.myX, myWindowData.myY, myWindowData.myWidth, myWindowData.myHeight,
+            nullptr, nullptr, nullptr, this);
+    }
+
+    ::SetCursor(customCursor);
 
 #ifdef _DEBUG
     ImGui_ImplWin32_Init(myWindowHandle);

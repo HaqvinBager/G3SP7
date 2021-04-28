@@ -8,6 +8,7 @@
 #include <concurrent_vector.h>
 
 struct SVertexPaintCollection;
+class CBinReader;
 
 enum class ColliderType {
 	none = 0,
@@ -53,11 +54,17 @@ private:
 
 #include <future>
 class CSceneFactory {
+	
 	friend class CEngine;
 public:
 	static CSceneFactory* Get();
 	void LoadScene(const std::string& aSceneName, const CStateStack::EState aState, std::function<void(std::string)> onComplete = nullptr);
 	void LoadSceneAsync(const std::string& aSceneName, const CStateStack::EState aState, std::function<void(std::string)> onComplete);
+
+	void LoadSceneBin(const std::string& aSceneName, const CStateStack::EState aState, std::function<void(std::string)> onComplete = nullptr);
+	void LoadSceneAsyncBin(const std::string& aSceneName, const CStateStack::EState aState, std::function<void(std::string)> onComplete);
+
+
 	void Update();
 
 private:
@@ -70,4 +77,5 @@ private:
 	std::function<void(std::string)> myOnComplete;
 	std::string myLastSceneName;
 	CStateStack::EState myLastLoadedState;
+	CBinReader* myBinReader;
 };

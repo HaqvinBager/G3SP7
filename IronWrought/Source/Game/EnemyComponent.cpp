@@ -56,7 +56,7 @@ void CEnemyComponent::Start()
 	this->GameObject().GetComponent<CVFXSystemComponent>()->EnableEffect(0);
 }
 
-void CEnemyComponent::Update()//f�r best�mma vilket behaviour vi vill k�ra i denna Update()!!!
+void CEnemyComponent::Update()//får bestämma vilket behaviour vi vill köra i denna Update()!!!
 {
 	float distanceToPlayer = Vector3::DistanceSquared(myPlayer->myTransform->Position(), GameObject().myTransform->Position());
 

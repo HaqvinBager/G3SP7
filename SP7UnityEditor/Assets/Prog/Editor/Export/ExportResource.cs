@@ -33,7 +33,7 @@ public class ExportResource
     }
 
 
-    private static void ExportModelAssets(string aSceneName)
+    public static Assets ExportModelAssets(string aSceneName)
     {
         string[] allAssetPaths = AssetDatabase.GetAllAssetPaths();
         Assets assets = new Assets();
@@ -76,6 +76,7 @@ public class ExportResource
             }
         }
         Json.ExportToJson(assets, "Resource");
+        return assets;
     }
 
     //public static void ExportBluePrintPrefabs(Scene aScene)
