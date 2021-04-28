@@ -70,12 +70,13 @@ void CEnemyComponent::Update()//får bestämma vilket behaviour vi vill köra i 
 		SetState(EBehaviour::Patrol);
 	}
 
-	Vector3 newDirection = myBehaviours[static_cast<int>(myCurrentState)]->Update(GameObject().myTransform->Position()); // current direction
-	myController->Move(newDirection, mySettings.mySpeed);
+	Vector3 targetDirection = myBehaviours[static_cast<int>(myCurrentState)]->Update(GameObject().myTransform->Position()); 
+	myController->Move(targetDirection, mySettings.mySpeed);
 	GameObject().myTransform->Position(myController->GetPosition());
-	//Matrix lookMatrix = DirectX::XMMatrixLookAtLH(GameObject().myTransform->Position(), newDirection, Vector3::Up);
-	//Quaternion rotation = Quaternion::CreateFromRotationMatrix(lookMatrix);
-	GameObject().myTransform->Rotation({ 0, DirectX::XMConvertToDegrees(atan2f(newDirection.x, newDirection.z)) + 180.f, 0 });
+	float targetOrientation = atan2f(myCurrentDirection.x, myCurrentDirection.z);
+	myCurrentOrientation = WrapAngle(targetOrientation);
+	myCurrentDirection = Vector3::Lerp(myCurrentDirection, targetDirection, CTimer::Dt());
+	GameObject().myTransform->Rotation({ 0, DirectX::XMConvertToDegrees(atan2f(myCurrentDirection.x, myCurrentDirection.z)) + 180.f, 0 });
 }
 
 void CEnemyComponent::TakeDamage()
