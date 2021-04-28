@@ -7,10 +7,10 @@ class CJsonReader;
 class CSaveLoadGraphManager
 {
 public:
-	CSaveLoadGraphManager() : myGraphManager(nullptr){}
+	CSaveLoadGraphManager(CGraphManager* aGraphManager);
 	~CSaveLoadGraphManager() { myGraphManager = nullptr; }
-	void GraphManager(CGraphManager& aGraphManager) { myGraphManager = &aGraphManager; }
-	void LoadScripts(const std::string& aSceneName, std::string& aSceneFolder);
+	void GraphManager(CGraphManager* aGraphManager) { myGraphManager = aGraphManager; }
+	void LoadScripts(CGraphManager& aGraphManager, const std::string& aSceneName, std::string& aSceneFolder);
 	void LoadTreeFromFile();
 	void SaveTreeToFile();
 

@@ -89,6 +89,7 @@ private:
 public:
 	std::vector<SGraph> Graphs() const { return myGraphs; }
 	void CurrentGraph(SGraph& aGraph) { myCurrentGraph = &aGraph; }
+	void Graph(SGraph aGraph) { myGraphs.push_back(aGraph); }
 	SGraph CurrentGraph() const { return *myCurrentGraph; }
 
 private:

@@ -61,8 +61,8 @@ void CGraphManager::Load(const std::string& aSceneName)
 #else
 	myRunScripts = true;
 #endif
-	mySaveLoadGraphManager = new CSaveLoadGraphManager();
-	mySaveLoadGraphManager->GraphManager(*this);
+	mySaveLoadGraphManager = new CSaveLoadGraphManager(this);
+	//mySaveLoadGraphManager->GraphManager(this);
 	myDrawGraphManager = new CDrawGraphManager();
 	myDrawGraphManager->GraphManager(*this);
 
@@ -77,7 +77,7 @@ void CGraphManager::Load(const std::string& aSceneName)
 	}
 
 	CGraphNodeTimerManager::Create();
-	mySaveLoadGraphManager->LoadScripts(aSceneName, mySceneFolder);
+	mySaveLoadGraphManager->LoadScripts(*this, aSceneName, mySceneFolder);
 	CNodeDataManager::Get()->SetFolderPath(mySceneFolder);
 
 	if (myGraphs.size() > 0)

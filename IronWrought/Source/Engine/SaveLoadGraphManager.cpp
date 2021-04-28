@@ -62,7 +62,9 @@ SPin::EPinType LoadPinData(NodeDataPtr& someDataToCopy, rapidjson::Value& someDa
 	return SPin::EPinType::EUnknown;
 }
 
-void CSaveLoadGraphManager::LoadScripts(const std::string& aSceneName, std::string& aSceneFolder)
+CSaveLoadGraphManager::CSaveLoadGraphManager(CGraphManager* aGraphManager) : myGraphManager(aGraphManager) {}
+
+void CSaveLoadGraphManager::LoadScripts(CGraphManager& aGraphManager, const std::string& aSceneName, std::string& aSceneFolder)
 {
 	const std::string sceneJson = ASSETPATH("Assets/Generated/" + aSceneName + "/" + aSceneName + ".json");
 	const auto doc = CJsonReader::Get()->LoadDocument(sceneJson);
@@ -95,7 +97,6 @@ void CSaveLoadGraphManager::LoadScripts(const std::string& aSceneName, std::stri
 
 				std::string key = bluePrint["type"].GetString();
 				CGraphManager::SGraph graph;
-				myGraphManager->Graphs().push_back(graph);
 
 				for (const auto& jsonGameObjectID : bluePrint["instances"].GetArray())
 				{
@@ -114,14 +115,14 @@ void CSaveLoadGraphManager::LoadScripts(const std::string& aSceneName, std::stri
 							firstLoop = false;
 							continue;
 						}
-						myGraphManager->Graphs().back().myChildrenKey = key;
+						graph.myChildrenKey = key;
 						CNodeTypeCollector::RegisterChildNodeTypes(key, counter++, childID.GetInt());
 					}
-					myGraphManager->Graphs().back().myBluePrintInstances.emplace_back(bpInstance);
+					graph.myBluePrintInstances.emplace_back(bpInstance);
 				}
 
 				std::string scriptFolder = aSceneFolder + key + "/";
-				myGraphManager->Graphs().back().myFolderPath = scriptFolder;
+				graph.myFolderPath = scriptFolder;
 				if (std::filesystem::exists(scriptFolder))
 					continue;
 
@@ -132,11 +133,12 @@ void CSaveLoadGraphManager::LoadScripts(const std::string& aSceneName, std::stri
 				}
 				else
 				{
-					myGraphManager->CurrentGraph(myGraphManager->Graphs().back());
+					aGraphManager.CurrentGraph(graph);
 #ifdef _DEBUG
 					SaveTreeToFile();
 #endif // _DEBUG
 				}
+				aGraphManager.Graph(graph);
 			}
 		}
 	}
