@@ -38,9 +38,5 @@ int CNodeTypeGameObjectSetRotation::OnEnter(CNodeInstance* aTriggeringNodeInstan
 	//Vector3 newRotation = { x, y, z };
 	gameObject->myTransform->Rotation(newRotation);
 
-	CRigidBodyComponent* rigidBody = gameObject->GetComponent<CRigidBodyComponent>();
-	if(rigidBody)
-		rigidBody->SetRotation(gameObject->myTransform->Rotation());
-
 	return 1;
 }

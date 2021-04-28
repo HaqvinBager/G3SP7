@@ -39,6 +39,7 @@ public:
 	CAttack();
 	~CAttack() override { myTarget = nullptr; }
 	Vector3 Update(Vector3 aPosition) override;
+	void SetTarget(CTransformComponent* aTarget);
 
 private:
 	float myDamage;

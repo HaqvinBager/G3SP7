@@ -42,16 +42,16 @@ void CEnemyComponent::Start()
 	myBehaviours.push_back(new CPatrol(myPatrolPositions));
 
 	CSeek* seekBehaviour = new CSeek();
-
-	seekBehaviour->SetTarget(myPlayer->myTransform);
 	myBehaviours.push_back(seekBehaviour);
-	myBehaviours.push_back(new CAttack());
-
 	if (myPlayer != nullptr)
+	{
 		seekBehaviour->SetTarget(myPlayer->myTransform);
-	//myBehaviours.push_back(seekBehaviour);
+	}
 
-	myBehaviours.push_back(new CAttack());
+	CAttack* attack = new CAttack();
+	if(myPlayer != nullptr)
+		attack->SetTarget(myPlayer->myTransform);
+	myBehaviours.push_back(attack);
 
 	this->GameObject().GetComponent<CVFXSystemComponent>()->EnableEffect(0);
 }

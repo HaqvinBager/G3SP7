@@ -26,6 +26,7 @@ CRigidBodyComponent::~CRigidBodyComponent()
 	myDynamicRigidBody = nullptr;
 }
 
+static int kinematicCount = 0;
 void CRigidBodyComponent::Awake()
 {
 	myDynamicRigidBody = CEngine::GetInstance()->GetPhysx().CreateDynamicRigidbody(*GameObject().myTransform);
@@ -33,9 +34,16 @@ void CRigidBodyComponent::Awake()
 	myDynamicRigidBody->GetBody().setMassSpaceInertiaTensor({ myInertiaTensor.x, myInertiaTensor.y, myInertiaTensor.z });
 	myDynamicRigidBody->GetBody().setCMassLocalPose({myLocalCenterMass.x, myLocalCenterMass.y, myLocalCenterMass.z});
 	myDynamicRigidBody->GetBody().userData = (void*)GameObject().myTransform;
+
+	kinematicCount += static_cast<int>(myIsKinematic);
+	std::cout << __FUNCTION__ << " b" << myIsKinematic << " " << kinematicCount << std::endl;
+
 	myDynamicRigidBody->GetBody().setRigidBodyFlag(physx::PxRigidBodyFlag::Enum::eKINEMATIC, myIsKinematic);
-	myDynamicRigidBody->GetBody().putToSleep();
-	myDynamicRigidBody->GetBody().setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
+	if (!myIsKinematic)
+	{
+		myDynamicRigidBody->GetBody().setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
+		myDynamicRigidBody->GetBody().putToSleep();
+	}
 }
 
 void CRigidBodyComponent::Start()
@@ -46,9 +54,17 @@ void CRigidBodyComponent::Start()
 void CRigidBodyComponent::Update()
 {
 	if (myDynamicRigidBody != nullptr) {
-		GameObject().myTransform->Rotation(myDynamicRigidBody->GetRotation());
-		GameObject().myTransform->Position(myDynamicRigidBody->GetPosition());
+		if(myIsKinematic) {
+			SetGlobalPose(GameObject().myTransform->Position(), GameObject().myTransform->Rotation());
+		}
+		else
+		{
+			GameObject().myTransform->Rotation(myDynamicRigidBody->GetRotation());
+			GameObject().myTransform->Position(myDynamicRigidBody->GetPosition());
+		}
 	}
+
+
 }
 
 void CRigidBodyComponent::AddForce(const Vector3& aDirection, const EForceMode aForceMode)
