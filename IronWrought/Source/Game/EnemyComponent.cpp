@@ -71,12 +71,11 @@ void CEnemyComponent::Update()//får bestämma vilket behaviour vi vill köra i 
 	}
 
 	Vector3 newDirection = myBehaviours[static_cast<int>(myCurrentState)]->Update(GameObject().myTransform->Position()); // current direction
-
-	myYaw = WrapAngle(myYaw + newDirection.x);
 	myController->Move(newDirection, mySettings.mySpeed);
-	GameObject().myTransform->Rotation({ 0.0f,myYaw,0.0f });
 	GameObject().myTransform->Position(myController->GetPosition());
-	//GameObject().myTransform->MoveLocal(-newDirection * mySettings.mySpeed * CTimer::Dt());
+	//Matrix lookMatrix = DirectX::XMMatrixLookAtLH(GameObject().myTransform->Position(), newDirection, Vector3::Up);
+	//Quaternion rotation = Quaternion::CreateFromRotationMatrix(lookMatrix);
+	GameObject().myTransform->Rotation({ 0, DirectX::XMConvertToDegrees(atan2f(newDirection.x, newDirection.z)) + 180.f, 0 });
 }
 
 void CEnemyComponent::TakeDamage()
