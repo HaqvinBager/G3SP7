@@ -388,6 +388,16 @@ void CGraphManager::Graph(SGraph aGraph)
 	myGraphs.push_back(aGraph);
 }
 
+CGraphManager::SGraph CGraphManager::Graph(unsigned int anIndex)
+{
+	return myGraphs[anIndex];
+}
+
+void CGraphManager::Graph(SGraph aGraph, unsigned int anIndex)
+{
+	myGraphs[anIndex] = aGraph;
+}
+
 #ifdef _DEBUG
 CGraphManager::EditorCommand CGraphManager::CreateInverseEditorCommand(CGraphManager::EditorCommand &anEditorCommand)
 {

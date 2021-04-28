@@ -146,8 +146,9 @@ void CSaveLoadGraphManager::LoadTreeFromFile(CGraphManager& aGraphManager)
 {
 	CUID::myAllUIDs.clear();
 	CUID::myGlobalUID = 0;
-	for (auto& graph : aGraphManager.Graphs())
+	for (unsigned int i = 0; i < aGraphManager.Graphs().size(); ++i)
 	{
+		CGraphManager::SGraph graph = aGraphManager.Graph(i);
 		aGraphManager.CurrentGraph(&graph);
 		Document document;
 		{
@@ -163,9 +164,9 @@ void CSaveLoadGraphManager::LoadTreeFromFile(CGraphManager& aGraphManager)
 			{
 				auto nodeInstances = document["NodeInstances"].GetArray();
 
-				for (unsigned int i = 0; i < nodeInstances.Size(); ++i)
+				for (unsigned int j = 0; j < nodeInstances.Size(); ++j)
 				{
-					auto nodeInstance = nodeInstances[i].GetObjectW();
+					auto nodeInstance = nodeInstances[j].GetObjectW();
 					CNodeInstance* object = new CNodeInstance(&aGraphManager, false);
 					int nodeTypeID = nodeInstance["NodeType ID"].GetInt();
 					int UID = nodeInstance["UID"].GetInt();
@@ -180,11 +181,11 @@ void CSaveLoadGraphManager::LoadTreeFromFile(CGraphManager& aGraphManager)
 
 					object->ConstructUniquePins();
 
-					for (unsigned int j = 0; j < nodeInstance["Pins"].Size(); j++)
+					for (unsigned int k = 0; k < nodeInstance["Pins"].Size(); k++)
 					{
-						int index = nodeInstance["Pins"][j]["Index"].GetInt();
-						object->myPins[index].myUID.SetUID(nodeInstance["Pins"][j]["UID"].GetInt());
-						SPin::EPinType newType = LoadPinData(object->myPins[index].myData, nodeInstance["Pins"][j]["DATA"]);
+						int index = nodeInstance["Pins"][k]["Index"].GetInt();
+						object->myPins[index].myUID.SetUID(nodeInstance["Pins"][k]["UID"].GetInt());
+						SPin::EPinType newType = LoadPinData(object->myPins[index].myData, nodeInstance["Pins"][k]["DATA"]);
 						if (object->myPins[index].myVariableType == SPin::EPinType::EUnknown)
 							object->ChangePinTypes(newType);
 					}
@@ -198,11 +199,11 @@ void CSaveLoadGraphManager::LoadTreeFromFile(CGraphManager& aGraphManager)
 			{
 				auto links = document["Links"].GetArray();
 				graph.myNextLinkIdCounter = 0;
-				for (unsigned int i = 0; i < links.Size(); i++)
+				for (unsigned int j = 0; j < links.Size(); j++)
 				{
-					unsigned int id = document["Links"][i]["ID"].GetInt();
-					int inputID = document["Links"][i]["Input"].GetInt();
-					int Output = document["Links"][i]["Output"].GetInt();
+					unsigned int id = document["Links"][j]["ID"].GetInt();
+					int inputID = document["Links"][j]["Input"].GetInt();
+					int Output = document["Links"][j]["Output"].GetInt();
 
 					CNodeInstance* firstNode = aGraphManager.GetNodeFromPinID(inputID);
 					if (!firstNode)
@@ -222,6 +223,7 @@ void CSaveLoadGraphManager::LoadTreeFromFile(CGraphManager& aGraphManager)
 				}
 			}
 		}
+		aGraphManager.Graph(graph, i);
 	}
 
 

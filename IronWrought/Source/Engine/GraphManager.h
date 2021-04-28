@@ -73,6 +73,7 @@ private:
 		std::vector<int> childrenIDs;
 	};
 
+public:
 	struct SGraph
 	{
 		std::vector<CNodeInstance*> myNodeInstances;
@@ -90,6 +91,8 @@ public:
 	std::vector<SGraph> Graphs() const { return myGraphs; }
 	void CurrentGraph(SGraph* aGraph);
 	void Graph(SGraph aGraph);
+	SGraph Graph(unsigned int anIndex);
+	void Graph(SGraph aGraph, unsigned int anIndex);
 	SGraph CurrentGraph() const { return *myCurrentGraph; }
 
 private:
