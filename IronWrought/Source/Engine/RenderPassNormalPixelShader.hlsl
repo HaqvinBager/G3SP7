@@ -11,7 +11,7 @@ PixelOutPut main(VertexToPixel input)
     normal.rgb = mul(normal.xyz, tangentSpaceMatrix);
     normal.rgb = normalize(normal);
     
-    output.myColor = normal;
+    output.myColor = abs(normal);
     
     return output;
 }
