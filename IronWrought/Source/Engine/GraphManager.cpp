@@ -61,7 +61,6 @@ void CGraphManager::Load(const std::string& aSceneName)
 #else
 	myRunScripts = true;
 #endif
-	mySaveLoadGraphManager = new CSaveLoadGraphManager(this);
 	//mySaveLoadGraphManager->GraphManager(this);
 	myDrawGraphManager = new CDrawGraphManager();
 	myDrawGraphManager->GraphManager(*this);
@@ -95,7 +94,10 @@ void CGraphManager::Load(const std::string& aSceneName)
 	LoadDataNodesFromFile();
 	myMenuSearchField = new char[127];
 	memset(&myMenuSearchField[0], 0, sizeof(myMenuSearchField));
-	mySaveLoadGraphManager->LoadTreeFromFile();
+	mySaveLoadGraphManager->LoadTreeFromFile(*this);
+
+	if (myGraphs.size() > 0)
+		myCurrentGraph = &myGraphs[0];
 }
 
 void CGraphManager::Clear()
@@ -104,7 +106,7 @@ void CGraphManager::Clear()
 		return;
 
 #ifdef _DEBUG
-	mySaveLoadGraphManager->SaveTreeToFile();
+	mySaveLoadGraphManager->SaveTreeToFile(*this);
 #endif // _DEBUG
 
 	CUID::ClearUIDS();
@@ -341,8 +343,6 @@ void CGraphManager::LoadDataNodesFromFile()
 	}
 }
 
-#ifdef _DEBUG
-
 void CGraphManager::RegisterNewDataNode(std::string aName)
 {
 	if (myNewVariableType == "Float")
@@ -378,6 +378,17 @@ void CGraphManager::RegisterNewDataNode(std::string aName)
 	myCustomDataNodes.push_back(aName);
 }
 
+void CGraphManager::CurrentGraph(CGraphManager::SGraph* aGraph)
+{
+	myCurrentGraph = aGraph;
+}
+
+void CGraphManager::Graph(SGraph aGraph)
+{
+	myGraphs.push_back(aGraph);
+}
+
+#ifdef _DEBUG
 CGraphManager::EditorCommand CGraphManager::CreateInverseEditorCommand(CGraphManager::EditorCommand &anEditorCommand)
 {
 	EditorCommand inverseCommand = anEditorCommand;
@@ -934,10 +945,10 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 		if (ed::BeginShortcut())
 		{
 			if (ed::AcceptCopy())
-				mySaveLoadGraphManager->SaveNodesToClipboard();
+				mySaveLoadGraphManager->SaveNodesToClipboard(*this);
 
 			if (ed::AcceptPaste())
-				mySaveLoadGraphManager->LoadNodesFromClipboard();
+				mySaveLoadGraphManager->LoadNodesFromClipboard(*this);
 
 			if (ed::AcceptUndo())
 			{
@@ -973,7 +984,7 @@ void CGraphManager::PostFrame()
 	if (mySave)
 	{
 		mySave = false;
-		mySaveLoadGraphManager->SaveTreeToFile();
+		mySaveLoadGraphManager->SaveTreeToFile(*this);
 	}
 
 	if (myShowFlow)

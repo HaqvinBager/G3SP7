@@ -19,10 +19,10 @@ class CGraphManager
 {
 	friend class CSaveLoadGraphManager;
 public:
+	bool RunScripts() { return myRunScripts; }
 #ifdef _DEBUG
 	~CGraphManager();
 	void ShowFlow(int aLinkID) { if (aLinkID == 0) return; myFlowsToBeShown.push_back(aLinkID); }
-	bool RunScripts() { return myRunScripts; }
 	void ToggleShouldRenderGraph() { myRenderGraph = !myRenderGraph; }
 	bool ToggleShouldRunScripts() { myRunScripts = !myRunScripts; return myRunScripts; }
 	bool ShouldRenderGraph() { return myRenderGraph; }
@@ -88,8 +88,8 @@ private:
 	};
 public:
 	std::vector<SGraph> Graphs() const { return myGraphs; }
-	void CurrentGraph(SGraph& aGraph) { myCurrentGraph = &aGraph; }
-	void Graph(SGraph aGraph) { myGraphs.push_back(aGraph); }
+	void CurrentGraph(SGraph* aGraph);
+	void Graph(SGraph aGraph);
 	SGraph CurrentGraph() const { return *myCurrentGraph; }
 
 private:

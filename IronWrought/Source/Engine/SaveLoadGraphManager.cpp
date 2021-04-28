@@ -62,8 +62,6 @@ SPin::EPinType LoadPinData(NodeDataPtr& someDataToCopy, rapidjson::Value& someDa
 	return SPin::EPinType::EUnknown;
 }
 
-CSaveLoadGraphManager::CSaveLoadGraphManager(CGraphManager* aGraphManager) : myGraphManager(aGraphManager) {}
-
 void CSaveLoadGraphManager::LoadScripts(CGraphManager& aGraphManager, const std::string& aSceneName, std::string& aSceneFolder)
 {
 	const std::string sceneJson = ASSETPATH("Assets/Generated/" + aSceneName + "/" + aSceneName + ".json");
@@ -123,6 +121,7 @@ void CSaveLoadGraphManager::LoadScripts(CGraphManager& aGraphManager, const std:
 
 				std::string scriptFolder = aSceneFolder + key + "/";
 				graph.myFolderPath = scriptFolder;
+				aGraphManager.Graph(graph);
 				if (std::filesystem::exists(scriptFolder))
 					continue;
 
@@ -133,24 +132,23 @@ void CSaveLoadGraphManager::LoadScripts(CGraphManager& aGraphManager, const std:
 				}
 				else
 				{
-					aGraphManager.CurrentGraph(graph);
+					aGraphManager.CurrentGraph(&graph);
 #ifdef _DEBUG
-					SaveTreeToFile();
+					SaveTreeToFile(aGraphManager);
 #endif // _DEBUG
 				}
-				aGraphManager.Graph(graph);
 			}
 		}
 	}
 }
 
-void CSaveLoadGraphManager::LoadTreeFromFile()
+void CSaveLoadGraphManager::LoadTreeFromFile(CGraphManager& aGraphManager)
 {
 	CUID::myAllUIDs.clear();
 	CUID::myGlobalUID = 0;
-	for (auto& graph : myGraphManager->Graphs())
+	for (auto& graph : aGraphManager.Graphs())
 	{
-		myGraphManager->CurrentGraph(graph);
+		aGraphManager.CurrentGraph(&graph);
 		Document document;
 		{
 			std::string path = graph.myFolderPath + "nodeinstances.json";
@@ -168,7 +166,7 @@ void CSaveLoadGraphManager::LoadTreeFromFile()
 				for (unsigned int i = 0; i < nodeInstances.Size(); ++i)
 				{
 					auto nodeInstance = nodeInstances[i].GetObjectW();
-					CNodeInstance* object = new CNodeInstance(myGraphManager, false);
+					CNodeInstance* object = new CNodeInstance(&aGraphManager, false);
 					int nodeTypeID = nodeInstance["NodeType ID"].GetInt();
 					int UID = nodeInstance["UID"].GetInt();
 					object->myUID.SetUID(UID);
@@ -206,11 +204,11 @@ void CSaveLoadGraphManager::LoadTreeFromFile()
 					int inputID = document["Links"][i]["Input"].GetInt();
 					int Output = document["Links"][i]["Output"].GetInt();
 
-					CNodeInstance* firstNode = myGraphManager->GetNodeFromPinID(inputID);
+					CNodeInstance* firstNode = aGraphManager.GetNodeFromPinID(inputID);
 					if (!firstNode)
 						continue;
 
-					CNodeInstance* secondNode = myGraphManager->GetNodeFromPinID(Output);
+					CNodeInstance* secondNode = aGraphManager.GetNodeFromPinID(Output);
 					if (!secondNode)
 						continue;
 
@@ -226,13 +224,15 @@ void CSaveLoadGraphManager::LoadTreeFromFile()
 		}
 	}
 
-	if (myGraphManager->Graphs().size() > 0)
-		myGraphManager->CurrentGraph(myGraphManager->Graphs()[0]);
+
 }
 
-void CSaveLoadGraphManager::SaveTreeToFile()
+#ifdef _DEBUG
+
+
+void CSaveLoadGraphManager::SaveTreeToFile(CGraphManager& aGraphManager)
 {
-	for (const auto& graph : myGraphManager->Graphs())
+	for (const auto& graph : aGraphManager.Graphs())
 	{
 		{
 			rapidjson::StringBuffer s;
@@ -284,14 +284,14 @@ void CSaveLoadGraphManager::SaveTreeToFile()
 	}
 }
 
-void CSaveLoadGraphManager::SaveNodesToClipboard()
+void CSaveLoadGraphManager::SaveNodesToClipboard(CGraphManager& aGraphManager)
 {
 	int selectedObjectCount = ed::GetSelectedObjectCount();
 	ed::NodeId* selectedNodeIDs = new ed::NodeId[selectedObjectCount];
 	ed::GetSelectedNodes(selectedNodeIDs, selectedObjectCount);
 	std::vector<CNodeInstance*> nodeInstances;
 	for (int i = 0; i < selectedObjectCount; ++i)
-		nodeInstances.push_back(myGraphManager->GetNodeFromNodeID(static_cast<unsigned int>(selectedNodeIDs[i].Get())));
+		nodeInstances.push_back(aGraphManager.GetNodeFromNodeID(static_cast<unsigned int>(selectedNodeIDs[i].Get())));
 
 	rapidjson::StringBuffer s;
 	rapidjson::PrettyWriter<rapidjson::StringBuffer> writer1(s);
@@ -316,7 +316,7 @@ void CSaveLoadGraphManager::SaveNodesToClipboard()
 	of << s.GetString();
 }
 
-void CSaveLoadGraphManager::LoadNodesFromClipboard()
+void CSaveLoadGraphManager::LoadNodesFromClipboard(CGraphManager& aGraphManager)
 {
 	std::ifstream inputFile("Imgui/NodeScripts/clipboard.json");
 	std::stringstream jsonDocumentBuffer;
@@ -340,7 +340,7 @@ void CSaveLoadGraphManager::LoadNodesFromClipboard()
 	{
 		rapidjson::Value& nodeInstance = results[i];
 
-		CNodeInstance* object = new CNodeInstance(myGraphManager, true);
+		CNodeInstance* object = new CNodeInstance(&aGraphManager, true);
 		int nodeTypeID = nodeInstance["NodeType ID"].GetInt();
 		object->myNodeType = CNodeTypeCollector::GetNodeTypeFromID(nodeTypeID, static_cast<CNodeType::ENodeType>(nodeInstance["NodeType"].GetInt()));
 
@@ -371,6 +371,7 @@ void CSaveLoadGraphManager::LoadNodesFromClipboard()
 		ed::SetNodePosition(object->myUID.AsInt(), position);
 		object->myHasSetEditorPosition = true;
 
-		myGraphManager->CurrentGraph().myNodeInstances.push_back(object);
+		aGraphManager.CurrentGraph().myNodeInstances.push_back(object);
 	}
 }
+#endif // _DEBUG

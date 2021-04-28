@@ -7,17 +7,15 @@ class CJsonReader;
 class CSaveLoadGraphManager
 {
 public:
-	CSaveLoadGraphManager(CGraphManager* aGraphManager);
-	~CSaveLoadGraphManager() { myGraphManager = nullptr; }
-	void GraphManager(CGraphManager* aGraphManager) { myGraphManager = aGraphManager; }
 	void LoadScripts(CGraphManager& aGraphManager, const std::string& aSceneName, std::string& aSceneFolder);
-	void LoadTreeFromFile();
-	void SaveTreeToFile();
+	void LoadTreeFromFile(CGraphManager& aGraphManager);
+#ifdef _DEBUG
+	void SaveTreeToFile(CGraphManager& aGraphManager);
 
-	void SaveNodesToClipboard();
-	void LoadNodesFromClipboard();
+	void SaveNodesToClipboard(CGraphManager& aGraphManager);
+	void LoadNodesFromClipboard(CGraphManager& aGraphManager);
+#endif // _DEBUG
 
 private:
-	CGraphManager* myGraphManager;
 };
 
