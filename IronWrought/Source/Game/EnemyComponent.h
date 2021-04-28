@@ -61,6 +61,9 @@ private:
 	SEnemySetting mySettings;
 	std::vector<Vector3> myPatrolPositions;
 	Quaternion myPatrolRotation;
+	Vector3 myCurrentDirection;
+	float myCurrentOrientation;
+
 	float myYaw;
 	float myPitch;
 	
