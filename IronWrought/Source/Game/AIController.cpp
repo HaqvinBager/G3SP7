@@ -8,7 +8,7 @@ CPatrol::CPatrol(const std::vector<Vector3>& somePositions)
 	myTarget = 0;
 }
 
-Vector3 CPatrol::Update(Vector3 aPosition)
+Vector3 CPatrol::Update(const Vector3& aPosition)
 {
 	if (myPositions.empty())
 		return Vector3::Zero;
@@ -27,7 +27,7 @@ Vector3 CPatrol::Update(Vector3 aPosition)
 	return direction;
 }
 
-bool CPatrol::CheckIfOverlap(Vector3 aFirstPosition, Vector3 aSecondPosition)
+bool CPatrol::CheckIfOverlap(const Vector3& aFirstPosition, const Vector3& aSecondPosition)
 {
 	float xDifference = fabs(aFirstPosition.x - aSecondPosition.x);
 	float zDifference = fabs(aFirstPosition.z - aSecondPosition.z);
@@ -43,7 +43,7 @@ CSeek::CSeek() :myTarget(nullptr)
 	
 }
 
-Vector3 CSeek::Update(Vector3 aPosition)//aPostion == EnemyRobot Position
+Vector3 CSeek::Update(const Vector3& aPosition)//aPostion == EnemyRobot Position
 {
 	Vector3 direction = myTarget->Position() - aPosition;
 	return direction;
@@ -56,14 +56,13 @@ void CSeek::SetTarget(CTransformComponent* aTarget) {
 CAttack::CAttack() : myDamage(1.0f), myTarget(nullptr) {
 }
 
-Vector3 CAttack::Update(Vector3 /*aPosition*/)
+Vector3 CAttack::Update(const Vector3& aPosition)
 {
 	// Plz no crash / Nico 27/4
 	if (!myTarget)
 		return Vector3();
 
 	Vector3 direction = myTarget->Position() - aPosition;
-	Vector3 direction = Vector3::Zero;
 	
 	return direction;
 }
