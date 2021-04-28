@@ -10,24 +10,30 @@ class CRenderManager;
 class CFullscreenRenderer {
 public:
 	enum class FullscreenShader {
-		FULLSCREENSHADER_COPY,
-		FULLSCREENSHADER_COPYDEPTH,
-		FULLSCREENSHADER_COPYGBUFFER,
-		FULLSCREENSHADER_LUMINANCE,
-		FULLSCREENSHADER_GAUSSIANHORIZONTAL,
-		FULLSCREENSHADER_GAUSSIANVERTICAL,
-		FULLSCREENSHADER_BILATERALHORIZONTAL,
-		FULLSCREENSHADER_BILATERALVERTICAL,
-		FULLSCREENSHADER_BLOOM,
-		FULLSCREENSHADER_VIGNETTE,
-		FULLSCREENSHADER_TONEMAP,
-		FULLSCRENSHADER_GAMMACORRECTION,
-		FULLSCRENSHADER_GAMMACORRECTION_RENDERPASS,
-		FULLSCREENSHADER_FXAA,
-		FULLSCREENSHADER_BROKEN_SCREEN_EFFECT,
-		FULLSCREENSHADER_DOWNSAMPLE_DEPTH,
-		FULLSCREENSHADER_DEPTH_AWARE_UPSAMPLING,
-		FULLSCREENSHADER_COUNT
+		Copy,
+		CopyDepth,
+		CopyGBuffer,
+		Luminance,
+		GaussianHorizontal,
+		GaussianVertical,
+		BilateralHorizontal,
+		BilateralVertical,
+		Bloom,
+		Vignette,
+		Tonemap,
+		GammaCorrection,
+		GammaCorrectionRenderPass,
+		FXAA,
+		BrokenScreenEffect,
+		DownsampleDepth,
+		DepthAwareUpsampling,
+		DeferredAlbedo,
+		DeferredNormals,
+		DeferredRoughness,
+		DeferredMetalness,
+		DeferredAmbientOcclusion,
+		DeferredEmissive,
+		Count
 	};
 
 	friend CRenderManager;
@@ -60,5 +66,5 @@ private:
 	ID3D11Buffer* myFullscreenDataBuffer;
 	ID3D11VertexShader* myVertexShader;
 	ID3D11SamplerState* mySampler;
-	std::array<ID3D11PixelShader*, static_cast<size_t>(FullscreenShader::FULLSCREENSHADER_COUNT)> myPixelShaders;
+	std::array<ID3D11PixelShader*, static_cast<size_t>(FullscreenShader::Count)> myPixelShaders;
 };

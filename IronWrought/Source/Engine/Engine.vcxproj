@@ -997,6 +997,11 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
     </FxCompile>
+    <FxCompile Include="RenderPassEmissivePixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
+    </FxCompile>
     <FxCompile Include="RenderPassMetalnessPixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
@@ -1127,6 +1132,7 @@
     <None Include="PointLightShaderStructs.hlsli" />
     <None Include="SamplingFunctions.hlsli" />
     <None Include="ShaderStructs.hlsli" />
+    <None Include="ShadowSampling.hlsli" />
     <None Include="SpotLightShaderStructs.hlsli" />
     <None Include="SpriteShaderStructs.hlsli" />
     <None Include="SpriteVFXShaderStructs.hlsli" />

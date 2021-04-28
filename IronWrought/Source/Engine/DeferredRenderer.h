@@ -21,8 +21,6 @@ public:
 	bool Init(CDirectXFramework* aFramework);
 
 	void GenerateGBuffer(CCameraComponent* aCamera, std::vector<CGameObject*>& aGameObjectList, std::vector<CGameObject*>& aInstancedGameObjectList);
-	void Render(CCameraComponent* aCamera, CEnvironmentLight* anEnvironmentLight);
-	void Render(CCameraComponent* aCamera, std::vector<CPointLight*>& aPointLightList);
 	void RenderSkybox(CCameraComponent* aCamera, CEnvironmentLight* anEnvironmentLight);
 
 	bool ToggleRenderPass();
@@ -84,7 +82,7 @@ private:
 	static_assert((sizeof(SBoneBufferData) % 16) == 0, "SBoneBufferData size not padded correctly");
 
 private:
-	bool LoadRenderPassPixelShaders(ID3D11Device* aDevice);
+	bool LoadRenderPassPixelShaders(CDirectXFramework* aFramework);
 
 	ID3D11DeviceContext* myContext;
 // Buffers;

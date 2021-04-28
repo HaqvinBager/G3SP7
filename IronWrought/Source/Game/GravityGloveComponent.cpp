@@ -46,10 +46,12 @@ void CGravityGloveComponent::Update()
 		data.myShouldBeReversed = true;
 		CMainSingleton::PostMaster().Send({ EMessageType::UpdateCrosshair, &data });
 
+		GameObject().GetComponent<CVFXSystemComponent>()->EnableEffect(1);
 		Push();
 	}
 	if (Input::GetInstance()->IsMousePressed(Input::EMouseButton::Right))
 	{
+		GameObject().GetComponent<CVFXSystemComponent>()->EnableEffect(0);
 		Pull();
 	}
 
@@ -135,7 +137,7 @@ void CGravityGloveComponent::Pull()
 				PostMaster::SCrossHairData data; // Wind Up
 				data.myIndex = 0;
 				CMainSingleton::PostMaster().Send({ EMessageType::UpdateCrosshair, &data });
-				GameObject().GetComponent<CVFXSystemComponent>()->EnableEffect(0);
+				//GameObject().GetComponent<CVFXSystemComponent>()->EnableEffect(0);
 			}
 		}
 
@@ -163,7 +165,7 @@ void CGravityGloveComponent::Push()
 		myCurrentTarget->GetDynamicRigidBody()->GetBody().setMaxLinearVelocity(100.f);
 		myCurrentTarget->AddForce(-GameObject().myTransform->GetWorldMatrix().Forward(), mySettings.myPushForce * myCurrentTarget->GetMass(), EForceMode::EImpulse);
 		myCurrentTarget = nullptr;
-		GameObject().GetComponent<CVFXSystemComponent>()->EnableEffect(1);
+		//GameObject().GetComponent<CVFXSystemComponent>()->EnableEffect(1);
 	} else {
 		Vector3 start = GameObject().myTransform->GetWorldMatrix().Translation();
 		Vector3 dir = -GameObject().myTransform->GetWorldMatrix().Forward();
@@ -180,7 +182,7 @@ void CGravityGloveComponent::Push()
 				if (!target->IsKinematic())
 				{
 					target->AddForce(-GameObject().myTransform->GetWorldMatrix().Forward(), mySettings.myPushForce * target->GetMass(), EForceMode::EImpulse);
-					GameObject().GetComponent<CVFXSystemComponent>()->EnableEffect(1);
+					//GameObject().GetComponent<CVFXSystemComponent>()->EnableEffect(1);
 				}
 			}
 		}

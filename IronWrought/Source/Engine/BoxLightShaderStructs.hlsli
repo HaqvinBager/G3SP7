@@ -37,5 +37,5 @@ cbuffer BoxLightObjectBuffer : register(b3)
     float4 boxLightDirectionNormal1;
     float4 boxLightDirectionNormal2;
     float2 boxLightWidthAndHeight;
-    float2 boxLightPadding;
+    float2 boxLightShadowmapResolution;
 }

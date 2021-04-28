@@ -40,9 +40,5 @@ int CNodeTypeGameObjectRotate::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 	rotation *= currentRotation;
 	gameObject->myTransform->Rotation(rotation);
 
-	CRigidBodyComponent* rigidBody = gameObject->GetComponent<CRigidBodyComponent>();
-	if(rigidBody)
-		rigidBody->SetRotation(gameObject->myTransform->Rotation());
-
 	return 1;
 }

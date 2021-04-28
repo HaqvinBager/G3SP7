@@ -375,8 +375,11 @@ void CSceneManager::AddEnemyComponents(CScene& aScene, RapidArray someData)
 		settings.mySpeed= m["speed"].GetFloat();
 		settings.myHealth = m["health"].GetFloat();
 		settings.myAttackDistance = m["attackDistance"].GetFloat();
-		for (const auto& point : m["points"].GetArray()) {
-			settings.myPatrolGameObjectIds.push_back(point["instanceID"].GetInt());
+		if (m.HasMember("points"))
+		{
+			for (const auto& point : m["points"].GetArray()) {
+				settings.myPatrolGameObjectIds.push_back(point["instanceID"].GetInt());
+			}
 		}
 		gameObject->AddComponent<CEnemyComponent>(*gameObject, settings, CEngine::GetInstance()->GetPhysx().GetEnemyReportBack());
 

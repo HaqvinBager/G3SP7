@@ -39,10 +39,6 @@ int CNodeTypeGameObjectSetPosition::OnEnter(CNodeInstance* aTriggeringNodeInstan
 	//Vector3 newPosition = { x, y, z };
 	gameObject->myTransform->Position(newPosition);
 
-	// Tror det här är det som behövs för att objekt som flyttas i script ska uppdatera sin collider.
-	CRigidBodyComponent* rigidBody = gameObject->GetComponent<CRigidBodyComponent>();
-	if(rigidBody)
-		rigidBody->SetPosition(gameObject->myTransform->Position());
 
 	return 1;
 }

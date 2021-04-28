@@ -37,9 +37,5 @@ int CNodeTypeGameObjectMove::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 
 	gameObject->myTransform->MoveLocal(newPosition);
 
-	CRigidBodyComponent* rigidBody = gameObject->GetComponent<CRigidBodyComponent>();
-	if(rigidBody)
-		rigidBody->SetPosition(gameObject->myTransform->Position());
-
 	return 1;
 }

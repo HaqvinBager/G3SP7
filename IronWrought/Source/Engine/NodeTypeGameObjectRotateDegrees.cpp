@@ -74,10 +74,6 @@ int CNodeTypeGameObjectRotateDegrees::OnEnter(CNodeInstance* aTriggeringNodeInst
 	if (!stopMoving)
 		gameObject->myTransform->Rotation(r);
 
-	CRigidBodyComponent* rigidBody = gameObject->GetComponent<CRigidBodyComponent>();
-	if(rigidBody)
-		rigidBody->SetRotation(gameObject->myTransform->Rotation());
-
 	std::vector<SPin>& pins = aTriggeringNodeInstance->GetPins();
 	DeclareDataOnPinIfNecessary<bool>(pins[3]);
 	memcpy(pins[3].myData, &stopMoving, sizeof(bool));

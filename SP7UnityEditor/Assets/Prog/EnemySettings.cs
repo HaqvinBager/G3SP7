@@ -12,7 +12,7 @@ public struct Enemy
     public float radius;
     public float health;
     public float attackDistance;
-    //public List<Transform> points;
+    public List<Transform> points;
 }
 
 public struct EnemyPatrolPoints
