@@ -1,46 +1,65 @@
 #pragma once
 
-#include <stack>
-#include <unordered_map>
-
-class CNodeInstance;
-class CNodeType;
-class CGameObject;
-class CSaveLoadGraphManager;
-class CDrawGraphManager;
-struct SPin;
-
 #ifdef _DEBUG
 #include <imgui_node_editor.h>
+#endif // DEBUG
+#include <stack>
+#include <unordered_map>
+//#include "NodeData.h"
+
+class CNodeInstance;
+class CGameObject;
+
+struct BluePrintInstance {
+	int rootID;
+	std::vector<int> childrenIDs;
+};
+
+#ifdef _DEBUG
 namespace ed = ax::NodeEditor;
 #endif // DEBUG
 
 class CGraphManager
 {
-	friend class CSaveLoadGraphManager;
 public:
-	bool RunScripts() { return myRunScripts; }
-#ifdef _DEBUG
 	~CGraphManager();
-	void ShowFlow(int aLinkID) { if (aLinkID == 0) return; myFlowsToBeShown.push_back(aLinkID); }
-	void ToggleShouldRenderGraph() { myRenderGraph = !myRenderGraph; }
-	bool ToggleShouldRunScripts() { myRunScripts = !myRunScripts; return myRunScripts; }
-	bool ShouldRenderGraph() { return myRenderGraph; }
-	
-	void PostFrame();
-	void ConstructEditorTreeAndConnectLinks();
-#endif // DEBUG
-	
 	void Load(const std::string& aSceneName);
 	void Clear();
 	void ReTriggerUpdatingTrees();
+
 	void PreFrame();
+	void ConstructEditorTreeAndConnectLinks();
+	void PostFrame();
+
+	//void ReTriggerTree();
+	void SaveTreeToFile();
+	void LoadTreeFromFile();
+	void SaveNodesToClipboard();
+	void LoadNodesFromClipboard();
+
+	void ShowFlow(int aLinkID);
+
+
 	void Update();
+
+	void ToggleShouldRenderGraph();
+	bool ToggleShouldRunScripts();
+	bool ShouldRenderGraph() { return myRenderGraph; }
+
 	CGameObject* GetCurrentGameObject();
 	std::vector<CGameObject*> GetCurrentGameObjectChildren();
-	const int GetCurrentBlueprintInstanceID() const { return myCurrentBluePrintInstance.childrenIDs[0]; }
+	const int GetCurrentBlueprintInstanceID() const;
 
 private:
+	struct SEditorLinkInfo
+	{
+#ifdef _DEBUG
+		ed::LinkId myID;
+		ed::PinId  myInputID;
+		ed::PinId  myOutputID;
+#endif
+	};
+
 	enum class ECommandAction {
 		ECreate,
 		EDelete,
@@ -50,14 +69,6 @@ private:
 		ECount
 	};
 
-#ifdef _DEBUG
-	struct SEditorLinkInfo
-	{
-		ed::LinkId myID;
-		ed::PinId  myInputID;
-		ed::PinId  myOutputID;
-	};
-
 	struct EditorCommand
 	{
 		ECommandAction myAction;
@@ -65,15 +76,13 @@ private:
 		CNodeInstance* mySecondNodeInstance;
 		SEditorLinkInfo myEditorLinkInfo;
 		unsigned int myResourceUID;
-	};
-#endif	
+		//unsigned int myInputPinID;
+		//unsigned int myOutputPinID;
 
-	struct BluePrintInstance {
-		int rootID;
-		std::vector<int> childrenIDs;
+		//void Do();
+		//void Undo();
 	};
 
-public:
 	struct SGraph
 	{
 		std::vector<CNodeInstance*> myNodeInstances;
@@ -87,38 +96,48 @@ public:
 
 		void Clear();
 	};
-public:
-	std::vector<SGraph> Graphs() const { return myGraphs; }
-	void CurrentGraph(SGraph* aGraph);
-	void Graph(SGraph aGraph);
-	SGraph Graph(unsigned int anIndex);
-	void Graph(SGraph aGraph, unsigned int anIndex);
-	SGraph CurrentGraph() const { return *myCurrentGraph; }
-
 private:
-	void RegisterNewDataNode(std::string aName);
 #ifdef _DEBUG
-	EditorCommand CreateInverseEditorCommand(EditorCommand &anEditorCommand);
-	void DeleteNodeType(CNodeInstance& aNodeInstance);
-	void CreateNewDataNode();
-	void PopulateNodeList(std::vector<CNodeType*>& aNodeListToFill, CNodeType**& aNodeTypeList, const unsigned int& aNumberOfNodes);
+
 
 	ImTextureID HeaderTextureID();
 #endif // _DEBUG
-	void WillBeCyclic(CNodeInstance* aFirst, bool& aIsCyclic, CNodeInstance* aBase);
-	void LoadDataNodesFromFile();
+	void WillBeCyclic(CNodeInstance* aFirst, CNodeInstance* aSecond, bool& aIsCyclic, CNodeInstance* aBase);
 
-public:
 	CNodeInstance* GetNodeFromPinID(unsigned int anID);
 	CNodeInstance* GetNodeFromNodeID(unsigned int anID);
+	void DrawTypeSpecificPin(struct SPin& aPin, CNodeInstance* aNodeInstance);
+
+	void CreateNewDataNode();
+	void LoadDataNodesFromFile();
+
+
 
 private:
+
+
+	std::vector<SGraph> myGraphs;
 	SGraph* myCurrentGraph;
 	BluePrintInstance myCurrentBluePrintInstance;
-	CSaveLoadGraphManager* mySaveLoadGraphManager;
-	CDrawGraphManager* myDrawGraphManager;
+
+	//std::unordered_map<std::string, std::vector<CNodeInstance*>> myGraphs;
+	//std::unordered_map<std::string, std::vector<BluePrintInstance>> myGameObjectIDsMap;
+	//std::vector<std::string> myKeys;
+	//std::string myCurrentPath;
+	//std::string myCurrentKey;
+
+	std::vector<int> myFlowsToBeShown;
+	std::vector<std::string> myInstantiableVariables;
+
+	std::stack<EditorCommand> myUndoCommands;
+	std::stack<EditorCommand> myRedoCommands;
+
+
+	//std::unordered_map<std::string, CNodeData*> myVariableNodeDataMap;
+	std::string myNewVariableType;
 
 	char* myMenuSearchField = nullptr;
+
 	bool myEnteringNodeName = false;
 	bool mySetPosition = false;
 	bool mySave = false;
@@ -127,18 +146,11 @@ private:
 	bool myPushCommand = true;
 	bool myRenderGraph;
 	bool myRunScripts;
-	
 	std::string mySceneFolder;
-	std::string myNewVariableType;
-	
-	std::vector<std::string> myInstantiableVariables;
-	std::vector<std::string> myCustomDataNodes;
-	std::vector<SGraph> myGraphs;
 
 #ifdef _DEBUG
-	std::vector<int> myFlowsToBeShown;
-	std::stack<EditorCommand> myUndoCommands;
-	std::stack<EditorCommand> myRedoCommands;
 	ImTextureID myHeaderTextureID;
-#endif
+#endif // _DEBUG
+
+	std::vector<std::string> myCustomDataNodes;
 };

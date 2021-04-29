@@ -23,6 +23,7 @@ public:
 	void Render(CCameraComponent* aCamera, std::vector<CBoxLight*>& aBoxLightList);
 
 	void RenderVolumetric(CCameraComponent* aCamera, CEnvironmentLight* anEnvironmentLight);
+	void RenderVolumetric(CCameraComponent* aCamera, std::vector<CEnvironmentLight*> anEnvironmentLightList);
 	void RenderVolumetric(CCameraComponent* aCamera, std::vector<CPointLight*>& aPointLightList);
 	void RenderVolumetric(CCameraComponent* aCamera, std::vector<CSpotLight*>& aSpotLightList);
 	void RenderVolumetric(CCameraComponent* aCamera, std::vector<CBoxLight*>& aBoxLightList);

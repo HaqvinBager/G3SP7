@@ -43,6 +43,7 @@ bool CEnvironmentLight::Init(CDirectXFramework* aFramework, std::string aFilePat
 	myHenyeyGreensteinGValue = 0.0f;
 
 	myIsVolumetric = false;
+	myIsFog = false;
 
 	return true;
 }
@@ -135,11 +136,20 @@ void CEnvironmentLight::SetIsVolumetric(bool aShouldBeVolumetric)
 	myIsVolumetric = aShouldBeVolumetric;
 }
 
+void CEnvironmentLight::SetIsFog(bool aShouldBeFog)
+{
+	if (aShouldBeFog)
+		myIsVolumetric = true;
+
+	myIsFog = aShouldBeFog;
+}
+
 DirectX::SimpleMath::Matrix CEnvironmentLight::GetShadowView() const
 {
+	if (myIsFog)
+		return DirectX::XMMatrixLookAtLH(GetShadowPosition(), myDirection, Vector3::Up);
+	
 	return myShadowmapViewMatrix;
-	// For fog
-	//return DirectX::XMMatrixLookAtLH(GetShadowPosition(), myDirection, Vector3::Up);
 }
 
 DirectX::SimpleMath::Matrix CEnvironmentLight::GetShadowProjection() const
@@ -195,4 +205,9 @@ const float& CEnvironmentLight::GetHenyeyGreensteinGValue() const
 const bool& CEnvironmentLight::GetIsVolumetric() const
 {
 	return myIsVolumetric;
+}
+
+const bool& CEnvironmentLight::GetIsFog() const
+{
+	return myIsFog;
 }

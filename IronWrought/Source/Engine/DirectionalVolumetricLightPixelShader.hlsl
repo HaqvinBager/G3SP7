@@ -94,11 +94,11 @@ PixelOutput main(VertexToPixel input)
     
     float raymarchDistanceLimit = 99999.0f;
     
-    float z = depthTexture.Sample(defaultSampler, input.myUV).r;
-    if (z > 0.9999f)
-    {
-        discard;
-    }
+    //float z = depthTexture.Sample(defaultSampler, input.myUV).r;
+    //if (z > 0.9999f)
+    //{
+    //    discard;
+    //}
     
     // ...
     float3 worldPosition = PixelShader_WorldPosition(input.myUV).rgb;
@@ -113,7 +113,7 @@ PixelOutput main(VertexToPixel input)
     // Reduce noisyness by truncating the starting position
     //float raymarchDistance = trunc(clamp(length(cameraPositionLightVS.xyz - positionLightVS.xyz), 0.0f, raymarchDistanceLimit));
     float4 invViewDirLightVS = float4(normalize(cameraPositionLightVS.xyz - positionLightVS.xyz), 0.0f);
-    float raymarchDistance = clamp(length(cameraPositionLightVS.xyz - positionLightVS.xyz), 0.0f, raymarchDistanceLimit);
+    float raymarchDistance = /*trunc(*/clamp(length(cameraPositionLightVS.xyz - positionLightVS.xyz), 0.0f, raymarchDistanceLimit)/*)*/;
     
     // Calculate the size of each step
     float stepSize = raymarchDistance * numberOfSamplesReciprocal;

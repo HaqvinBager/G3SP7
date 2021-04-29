@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#include "SaveLoadGraphManager.h"
 #include "JsonReader.h"
 #include "rapidjson/document.h"
 #include "rapidjson/prettywriter.h"

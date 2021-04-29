@@ -106,6 +106,7 @@ public:
 	void Ready(bool aReady) { myIsReadyToRender = aReady; }
 public:
 //CULLING START
+	std::vector<CEnvironmentLight*> CullSecondaryEnvironmentLights(CGameObject* aGameObject);
 	std::vector<CPointLight*> CullPointLights(CGameObject* aGameObject);
 	std::vector<CSpotLight*> CullSpotLights(CGameObject* aGameObject);
 	std::vector<CBoxLight*> CullBoxLights(CGameObject* aGameObject);
@@ -122,6 +123,9 @@ public:
 //CULLING END
 public:
 	//POPULATE SCENE START
+
+	// Note that this is used for environmentlights OTHER than the main one
+	bool AddInstance(CEnvironmentLight* aSecondaryDirectionalLight);
 	bool AddInstance(CPointLight* aPointLight);
 	bool AddInstance(CSpotLight* aSpotLight);
 	bool AddInstance(CBoxLight* aBoxLight);
@@ -136,6 +140,7 @@ public:
 	//POPULATE SCENE END
 public:
 //REMOVE SPECIFIC INSTANCE START
+	bool RemoveInstance(CEnvironmentLight* aSecondaryEnvironmentLight);
 	bool RemoveInstance(CPointLight* aPointLight);
 	bool RemoveInstance(CSpotLight* aSpotLight);
 	bool RemoveInstance(CBoxLight* aBoxLight);
@@ -145,6 +150,7 @@ public:
 	bool RemoveInstance(CTextInstance* aTextInstance);
 //REMOVE SPECIFIC INSTANCE END
 //CLEAR SCENE OF INSTANCES START
+	bool ClearSecondaryEnvironmentLights();
 	bool ClearPointLights();
 	bool ClearSpotLights();
 	bool ClearBoxLights();
@@ -164,6 +170,7 @@ private:
 	} ourNearestPlayerComparer;
 private:
 //CONTAINERS START
+	std::vector<CEnvironmentLight*> mySecondaryEnvironmentLights;
 	std::vector<CPointLight*> myPointLights;
 	std::vector<CSpotLight*> mySpotLights;
 	std::vector<CBoxLight*> myBoxLights;

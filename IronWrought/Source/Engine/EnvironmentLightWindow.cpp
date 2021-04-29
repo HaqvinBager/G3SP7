@@ -20,6 +20,7 @@ IronWroughtImGui::CEnvironmentLightWindow::CEnvironmentLightWindow(const char* a
 		if (light)
 		{
 			myIsVolumetric = light->GetIsVolumetric();
+			myIsFog = light->GetIsFog();
 			myNumberOfSamples = light->GetNumberOfSamples();
 			myLightPower = light->GetLightPower();
 			myScatteringProbability = light->GetScatteringProbability();
@@ -54,6 +55,11 @@ void IronWroughtImGui::CEnvironmentLightWindow::OnInspectorGUI()
 	if (ImGui::Checkbox("Is Volumetric", &myIsVolumetric))
 	{
 		light->SetIsVolumetric(myIsVolumetric);
+	}
+
+	if (ImGui::Checkbox("Is Fog", &myIsFog))
+	{
+		light->SetIsFog(myIsFog);
 	}
 
 	if (ImGui::SliderFloat("Number of Samples", &myNumberOfSamples, 8.0f, 128.0f, "%.0f")) 

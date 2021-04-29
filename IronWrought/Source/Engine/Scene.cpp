@@ -72,6 +72,7 @@ CScene::CScene(const unsigned int aGameObjectCount)
 CScene::~CScene()
 {
 	this->ClearGameObjects();
+	this->ClearSecondaryEnvironmentLights();
 	this->ClearPointLights();
 	this->ClearSpotLights();
 	this->ClearBoxLights();
@@ -370,6 +371,10 @@ const std::vector<CGameObject*>& CScene::ActiveGameObjects() const
 {
 	return myGameObjects;
 }
+std::vector<CEnvironmentLight*> CScene::CullSecondaryEnvironmentLights(CGameObject* /*aGameObject*/)
+{
+	return mySecondaryEnvironmentLights;
+}
 //GETTERS END
 //CULLING START
 std::vector<CPointLight*> CScene::CullPointLights(CGameObject* /*aGameObject*/)
@@ -525,6 +530,11 @@ CGameObject* CScene::FindObjectWithID(const int aGameObjectInstanceID)
 
 	return myIDGameObjectMap[aGameObjectInstanceID];
 }
+bool CScene::AddInstance(CEnvironmentLight* aSecondaryDirectionalLight)
+{
+	mySecondaryEnvironmentLights.emplace_back(aSecondaryDirectionalLight);
+	return true;
+}
 //CULLING END
 //POPULATE SCENE START
 bool CScene::AddInstance(CPointLight* aPointLight)
@@ -626,6 +636,18 @@ bool CScene::AddPXScene(PxScene* aPXScene)
 //POPULATE SCENE END
 // 
 //REMOVE SPECIFIC INSTANCE START
+bool CScene::RemoveInstance(CEnvironmentLight* aSecondaryEnvironmentLight)
+{
+	for (int i = 0; i < mySecondaryEnvironmentLights.size(); ++i)
+	{
+		if (aSecondaryEnvironmentLight == mySecondaryEnvironmentLights[i])
+		{
+			mySecondaryEnvironmentLights.erase(mySecondaryEnvironmentLights.begin() + i);
+			return true;
+		}
+	}
+	return false;
+}
 bool CScene::RemoveInstance(CPointLight* aPointLight)
 {
 	for (int i = 0; i < myPointLights.size(); ++i)
@@ -718,6 +740,16 @@ bool CScene::RemoveInstance(CTextInstance* aTextInstance)
 		}
 	}
 	return false;
+}
+bool CScene::ClearSecondaryEnvironmentLights()
+{
+	for (auto& p : mySecondaryEnvironmentLights)
+	{
+		delete p;
+		p = nullptr;
+	}
+	mySecondaryEnvironmentLights.clear();
+	return true;
 }
 //REMOVE SPECIFIC INSTANCE END
 // 

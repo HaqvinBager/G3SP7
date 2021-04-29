@@ -50,7 +50,10 @@ public:
 	{
 		return anAngleInRadians * (180.0f / PI);
 	}
-
+	float Lerp(float a, float b, float t) const
+	{
+		return (1.0f - t) * a + b * t;
+	}
 
 private:
 	CCharacterController* myController;
@@ -61,6 +64,9 @@ private:
 	SEnemySetting mySettings;
 	std::vector<Vector3> myPatrolPositions;
 	Quaternion myPatrolRotation;
+	Vector3 myCurrentDirection;
+	float myCurrentOrientation;
+
 	float myYaw;
 	float myPitch;
 	
