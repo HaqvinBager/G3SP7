@@ -409,7 +409,7 @@ void CAnimationController::UpdateAnimationTimeConstant(const float aStep)
 		if (myPlayTime <= 0.f)
 		{
 			myTemporary = false;
-			BlendToAnimation(myAnim1Index);
+			BlendToAnimation(myAnim1Index, true, 0.75f);
 		}
 	}
 }

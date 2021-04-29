@@ -119,6 +119,11 @@ bool CAnimationComponent::AllowAnimationRender()
 	return SafeModeCheck();
 }
 
+const bool CAnimationComponent::PlayingTemporaryAnimation()
+{
+	return myController->TemporaryAnimationPlaying();
+}
+
 void CAnimationComponent::SetBonesToIdentity()
 {
 	for (int i = 0; i < 64; i++)

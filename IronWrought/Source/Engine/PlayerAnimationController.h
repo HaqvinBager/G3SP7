@@ -1,8 +1,9 @@
 #pragma once
 #include "AnimationComponent.h"
+#include "Observer.h"
 
 class CAnimationComponent;
-class CPlayerAnimationController
+class CPlayerAnimationController : public IObserver
 {
 public:
 	/*
@@ -10,11 +11,12 @@ public:
 	* Should always start on 1.
 	*
 	* Todo:
-	*	Make it just read the files in the folder and create the necessary indexes. Would be cool atleast.
+	*	Make it just read the files in the folder and create the necessary indices. Would be cool atleast.
 	* 
 	*/
 	enum class EPlayerAnimations
 	{
+		None = 0,
 		Idle = 1,
 		Pull,
 		PullHover,
@@ -22,8 +24,24 @@ public:
 		TakingDamage,
 		TPose,
 		Walk,
+
 		Count
 	};
+
+	enum class EState
+	{
+		Idle,
+		Moving,
+		Action,
+		Transition,
+
+		None,
+		Count
+	};
+
+public:
+	void Receive(const SMessage& aMessage) override;
+
 public:
 	// This is freaking disaster
 
@@ -32,22 +50,15 @@ public:
 	
 	void Init(CAnimationComponent* anAnimationComponent);
 
-	void Update();
-	void UpdateBlendValue(const float aBlendValue);
-	void SwitchBlendTarget(const EPlayerAnimations anAnimationToBlendTo, const EPlayerAnimations anAnimationToBlendFrom = EPlayerAnimations::Idle);
+	void Update(const Vector3& aMovement);
 
-	void Idle();
-	void Walk();
-	void Pull(const float anObjectDistanceToPlayer, const float anInitialDistance);
-	void PullHoldingObject();
+	void Walk(const Vector3& aMovement);
+	void Pull();
 	void Push();
 	void TakeDamage();
 
 private:
 	CAnimationComponent* myPlayerAnimation;
-	//Temp
-	//using 2.0f as max
-	float myReturnToIdle = 0.0f;
-	// ! Temp
+	EState myState;
 };
 

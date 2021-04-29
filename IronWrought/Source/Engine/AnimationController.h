@@ -126,6 +126,8 @@ public:
 
 	void ResetAnimationTimeCurrent() { myAnimationTime1 = 0.0f; }
 
+	const bool TemporaryAnimationPlaying() { return myTemporary; }
+
 private:
 	bool AnimationIndexWithinRange(uint anIndex);
 

@@ -8,4 +8,10 @@ namespace PostMaster
 		bool myShouldLoop		= false; 
 		bool myShouldBeReversed = false;
 	};
+
+	struct SGravityGloveTargetData
+	{
+		float myInitialDistanceSquared = 0.0f;
+		float myCurrentDistanceSquared = 0.0f;
+	};
 }

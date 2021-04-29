@@ -23,6 +23,20 @@ struct SGravityGloveSettings {
 	float myCurrentDistanceInverseLerp;
 };
 
+struct SRigidBodyTarget
+{
+	CRigidBodyComponent* myRigidBodyPtr = nullptr;
+	float initialDistanceSquared = 0.0f;
+	float currentDistanceSquared = 0.0f;
+
+	void Clear()
+	{
+		myRigidBodyPtr = nullptr;
+		initialDistanceSquared = 0.0f;
+		currentDistanceSquared = 0.0f;
+	}
+};
+
 class CGravityGloveComponent : public CBehaviour
 {
 	friend class IronWroughtImGui::CGravityGloveEditor;
@@ -95,7 +109,7 @@ private:
 	}
 
 	CTransformComponent* myGravitySlot;
-	CRigidBodyComponent* myCurrentTarget;
+	SRigidBodyTarget myCurrentTarget;
 
 };
 

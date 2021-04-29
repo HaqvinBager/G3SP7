@@ -60,6 +60,9 @@ enum class EMessageType
 
 	LockPlayer,
 
+	GravityGloveTargetDistance,// Specific, solves single problem. Remove later / Aki 2021 04 29
+	GravityGlovePull,
+	GravityGlovePush,
 
 	Count
 };

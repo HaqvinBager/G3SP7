@@ -334,13 +334,9 @@ void CSceneManager::AddPlayer(CScene& aScene, RapidObject someData)
 
 	CGameObject* camera = CCameraControllerComponent::CreatePlayerFirstPersonCamera(player);//new CGameObject(1000);
 	camera->myTransform->Rotation(playerRot);
-	CGameObject* model = new CGameObject(PLAYER_MODEL_ID);
 	std::string modelPath = ASSETPATH("Assets/Graphics/Character/Main_Character/CH_PL_SK.fbx");
-	model->AddComponent<CModelComponent>(*model, modelPath);
-	model->myTransform->SetParent(camera->myTransform);
-	model->myTransform->Rotation(playerRot);
-	CAnimationComponent* animComp = AnimationLoader::AddAnimationsToGameObject(model, modelPath);
-	animComp->BlendToAnimation(1);
+	camera->AddComponent<CModelComponent>(*camera, modelPath);
+	AnimationLoader::AddAnimationsToGameObject(camera, modelPath);
 	CGameObject* gravityGloveSlot = new CGameObject(PLAYER_GLOVE_ID);
 	gravityGloveSlot->myTransform->Scale(0.1f);
 	gravityGloveSlot->myTransform->SetParent(camera->myTransform);
@@ -350,11 +346,11 @@ void CSceneManager::AddPlayer(CScene& aScene, RapidObject someData)
 	camera->AddComponent<CGravityGloveComponent>(*camera, gravityGloveSlot->myTransform);
 	player->AddComponent<CPlayerComponent>(*player);
 
-	player->AddComponent<CPlayerControllerComponent>(*player, 0.314f, 0.13f, CEngine::GetInstance()->GetPhysx().GetPlayerReportBack());// CPlayerControllerComponent constructor sets position of camera child object.
+	player->AddComponent<CPlayerControllerComponent>(*player, 0.1f, 0.065f, CEngine::GetInstance()->GetPhysx().GetPlayerReportBack());// CPlayerControllerComponent constructor sets position of camera child object.
 
 	camera->AddComponent<CVFXSystemComponent>(*camera, ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystem_Player.json"));
 
-	aScene.AddInstance(model);
+	//aScene.AddInstance(model);
 	aScene.AddInstance(camera);
 	aScene.AddInstance(gravityGloveSlot);
 	aScene.MainCamera(camera->GetComponent<CCameraComponent>());
