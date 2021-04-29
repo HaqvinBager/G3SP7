@@ -248,15 +248,17 @@ public static class BinaryWriterExtensions
         aBinWriter.Write(data.models);
     }
 
-    public static void Write(this BinaryWriter aBinWriter, DirectionalLight data)
+    public static void Write(this BinaryWriter aBinWriter, DirectionalLightCollection data)
     {
-        aBinWriter.Write(data.directionalLight.instanceID);
-        aBinWriter.Write(data.directionalLight.direction);
-        Vector3 rgb = new Vector3(data.directionalLight.r, data.directionalLight.g, data.directionalLight.b);
-        aBinWriter.Write(rgb);
-        aBinWriter.Write(data.directionalLight.intensity);
-        aBinWriter.Write(0); //TODO Change to AssetID for Textures
-        //Write(aBinWriter, data.directionalLight.cubemapName);
+        // Plz fix /Nico 28/4
+
+        //aBinWriter.Write(data.directionalLight.instanceID);
+        //aBinWriter.Write(data.directionalLight.direction);
+        //Vector3 rgb = new Vector3(data.directionalLight.r, data.directionalLight.g, data.directionalLight.b);
+        //aBinWriter.Write(rgb);
+        //aBinWriter.Write(data.directionalLight.intensity);
+        //aBinWriter.Write(0); //TODO Change to AssetID for Textures
+        ////Write(aBinWriter, data.directionalLight.cubemapName);
     }
 
     public static void Write(this BinaryWriter aBinWriter, PointLightCollection data)

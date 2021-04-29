@@ -92,7 +92,7 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneJson)
 			if (sceneData.HasMember("parents"))
 				SetParents(*scene, sceneData["parents"].GetArray());
 
-			AddDirectionalLight(*scene, sceneData["directionalLight"].GetObjectW());
+			AddDirectionalLights(*scene, sceneData["directionalLights"].GetArray());
 			AddPointLights(*scene, sceneData["lights"].GetArray());
 			AddModelComponents(*scene, sceneData["models"].GetArray());
 			SetVertexPaintedColors(*scene, sceneData["vertexColors"].GetArray(), vertexPaintData);
@@ -292,7 +292,50 @@ void CSceneManager::AddDirectionalLight(CScene& aScene, RapidObject someData)
 		someData["direction"]["y"].GetFloat(),
 		someData["direction"]["z"].GetFloat())
 		);
-	aScene.EnvironmentLight(gameObject->GetComponent<CEnvironmentLightComponent>()->GetEnvironmentLight());
+
+	if (someData["isMainDirectionalLight"].GetBool())
+		aScene.EnvironmentLight(gameObject->GetComponent<CEnvironmentLightComponent>()->GetEnvironmentLight());
+}
+
+void CSceneManager::AddDirectionalLights(CScene& aScene, RapidArray someData)
+{
+	for (const auto& directionalLight : someData)
+	{
+		const auto& id = directionalLight["instanceID"].GetInt();
+
+		if (id == 0)
+			continue;
+
+		CGameObject* gameObject = aScene.FindObjectWithID(id);
+		if (gameObject == nullptr)
+			continue;
+
+		gameObject->AddComponent<CEnvironmentLightComponent>(
+			*gameObject,
+			directionalLight["cubemapName"].GetString(),
+			Vector3(directionalLight["r"].GetFloat(),
+				directionalLight["g"].GetFloat(),
+				directionalLight["b"].GetFloat()),
+			directionalLight["intensity"].GetFloat(),
+			Vector3(directionalLight["direction"]["x"].GetFloat(),
+				directionalLight["direction"]["y"].GetFloat(),
+				directionalLight["direction"]["z"].GetFloat())
+			);
+
+		auto light = gameObject->GetComponent<CEnvironmentLightComponent>()->GetEnvironmentLight();
+		light->SetIsVolumetric(directionalLight["isVolumetric"].GetBool());
+		light->SetIsFog(directionalLight["isFog"].GetBool());
+		light->SetNumberOfSamples(directionalLight["numberOfSamples"].GetFloat());
+		light->SetLightPower(directionalLight["lightPower"].GetFloat());
+		light->SetScatteringProbability(directionalLight["scatteringProbability"].GetFloat());
+		light->SetHenyeyGreensteinGValue(directionalLight["henyeyGreensteinGValue"].GetFloat());
+		light->SetPosition(gameObject->myTransform->Position());
+
+		if (directionalLight["isMainDirectionalLight"].GetBool())
+			aScene.EnvironmentLight(gameObject->GetComponent<CEnvironmentLightComponent>()->GetEnvironmentLight());
+		else
+			aScene.AddInstance(gameObject->GetComponent<CEnvironmentLightComponent>()->GetEnvironmentLight());
+	}
 }
 
 void CSceneManager::AddPointLights(CScene& aScene, RapidArray someData)

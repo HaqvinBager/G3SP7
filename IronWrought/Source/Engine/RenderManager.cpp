@@ -105,7 +105,8 @@ void CRenderManager::Render(CScene& aScene)
 	{
 		/*myDoFullRender = myDeferredRenderer.ToggleRenderPass();*/
 		ToggleRenderPass();
-		myDoFullRender = myForwardRenderer.ToggleRenderPass();
+		if (myRenderPassIndex < 7)
+			myDoFullRender = myForwardRenderer.ToggleRenderPass();
 	}
 
 	myRenderStateManager.SetAllDefault();
@@ -204,6 +205,8 @@ void CRenderManager::Render(CScene& aScene)
 	onlySpotLights = aScene.CullSpotLights(&maincamera->GameObject());
 	std::vector<CBoxLight*> onlyBoxLights;
 	onlyBoxLights = aScene.CullBoxLights(&maincamera->GameObject());
+	std::vector<CEnvironmentLight*> onlySecondaryEnvironmentLights;
+	onlySecondaryEnvironmentLights = aScene.CullSecondaryEnvironmentLights(&maincamera->GameObject());
 
 	if (myRenderPassIndex == 0)
 	{
@@ -281,71 +284,75 @@ void CRenderManager::Render(CScene& aScene)
 	myForwardRenderer.Render(environmentlight, pointlights, maincamera, gameObjectsWithAlpha);
 
 #pragma region Volumetric Lighting
-	// Depth Copy
-	myDepthCopy.SetAsActiveTarget();
-	myIntermediateDepth.SetAsResourceOnSlot(0);
-	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::CopyDepth);
+	if (myRenderPassIndex == 0 || myRenderPassIndex == 7)
+	{
+		// Depth Copy
+		myDepthCopy.SetAsActiveTarget();
+		myIntermediateDepth.SetAsResourceOnSlot(0);
+		myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::CopyDepth);
 
-	// Volumetric Lighting
-	myVolumetricAccumulationBuffer.SetAsActiveTarget();
-	myDepthCopy.SetAsResourceOnSlot(21);
-	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_ADDITIVEBLEND);
-	myRenderStateManager.SetRasterizerState(CRenderStateManager::RasterizerStates::RASTERIZERSTATE_NOFACECULLING);
+		// Volumetric Lighting
+		myVolumetricAccumulationBuffer.SetAsActiveTarget();
+		myDepthCopy.SetAsResourceOnSlot(21);
+		myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_ADDITIVEBLEND);
+		myRenderStateManager.SetRasterizerState(CRenderStateManager::RasterizerStates::RASTERIZERSTATE_NOFACECULLING);
 
-	myLightRenderer.RenderVolumetric(maincamera, onlyPointLights);
-	myLightRenderer.RenderVolumetric(maincamera, onlySpotLights);
-	myBoxLightShadowDepth.SetAsResourceOnSlot(22);
-	myLightRenderer.RenderVolumetric(maincamera, onlyBoxLights);
-	myRenderStateManager.SetRasterizerState(CRenderStateManager::RasterizerStates::RASTERIZERSTATE_DEFAULT);
-	myEnvironmentShadowDepth.SetAsResourceOnSlot(22);
-	myLightRenderer.RenderVolumetric(maincamera, environmentlight);
+		myLightRenderer.RenderVolumetric(maincamera, onlyPointLights);
+		myLightRenderer.RenderVolumetric(maincamera, onlySpotLights);
+		myBoxLightShadowDepth.SetAsResourceOnSlot(22);
+		myLightRenderer.RenderVolumetric(maincamera, onlyBoxLights);
+		myRenderStateManager.SetRasterizerState(CRenderStateManager::RasterizerStates::RASTERIZERSTATE_DEFAULT);
+		myEnvironmentShadowDepth.SetAsResourceOnSlot(22);
+		myLightRenderer.RenderVolumetric(maincamera, environmentlight);
+		myLightRenderer.RenderVolumetric(maincamera, onlySecondaryEnvironmentLights);
 
-	// Downsampling and Blur
-	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_DISABLE);
-	myDownsampledDepth.SetAsActiveTarget();
-	myIntermediateDepth.SetAsResourceOnSlot(0);
-	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::DownsampleDepth);
+		// Downsampling and Blur
+		myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_DISABLE);
+		myDownsampledDepth.SetAsActiveTarget();
+		myIntermediateDepth.SetAsResourceOnSlot(0);
+		myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::DownsampleDepth);
 
-	// Blur
-	myVolumetricBlurTexture.SetAsActiveTarget();
-	myVolumetricAccumulationBuffer.SetAsResourceOnSlot(0);
-	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::BilateralHorizontal);
+		// Blur
+		myVolumetricBlurTexture.SetAsActiveTarget();
+		myVolumetricAccumulationBuffer.SetAsResourceOnSlot(0);
+		myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::BilateralHorizontal);
 
-	myVolumetricAccumulationBuffer.SetAsActiveTarget();
-	myVolumetricBlurTexture.SetAsResourceOnSlot(0);
-	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::BilateralVertical);
+		myVolumetricAccumulationBuffer.SetAsActiveTarget();
+		myVolumetricBlurTexture.SetAsResourceOnSlot(0);
+		myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::BilateralVertical);
 
-	myVolumetricBlurTexture.SetAsActiveTarget();
-	myVolumetricAccumulationBuffer.SetAsResourceOnSlot(0);
-	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::BilateralHorizontal);
+		myVolumetricBlurTexture.SetAsActiveTarget();
+		myVolumetricAccumulationBuffer.SetAsResourceOnSlot(0);
+		myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::BilateralHorizontal);
 
-	myVolumetricAccumulationBuffer.SetAsActiveTarget();
-	myVolumetricBlurTexture.SetAsResourceOnSlot(0);
-	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::BilateralVertical);
+		myVolumetricAccumulationBuffer.SetAsActiveTarget();
+		myVolumetricBlurTexture.SetAsResourceOnSlot(0);
+		myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::BilateralVertical);
 
-	myVolumetricBlurTexture.SetAsActiveTarget();
-	myVolumetricAccumulationBuffer.SetAsResourceOnSlot(0);
-	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::BilateralHorizontal);
+		myVolumetricBlurTexture.SetAsActiveTarget();
+		myVolumetricAccumulationBuffer.SetAsResourceOnSlot(0);
+		myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::BilateralHorizontal);
 
-	myVolumetricAccumulationBuffer.SetAsActiveTarget();
-	myVolumetricBlurTexture.SetAsResourceOnSlot(0);
-	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::BilateralVertical);
+		myVolumetricAccumulationBuffer.SetAsActiveTarget();
+		myVolumetricBlurTexture.SetAsResourceOnSlot(0);
+		myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::BilateralVertical);
 
-	myVolumetricBlurTexture.SetAsActiveTarget();
-	myVolumetricAccumulationBuffer.SetAsResourceOnSlot(0);
-	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::BilateralHorizontal);
+		myVolumetricBlurTexture.SetAsActiveTarget();
+		myVolumetricAccumulationBuffer.SetAsResourceOnSlot(0);
+		myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::BilateralHorizontal);
 
-	myVolumetricAccumulationBuffer.SetAsActiveTarget();
-	myVolumetricBlurTexture.SetAsResourceOnSlot(0);
-	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::BilateralVertical);
+		myVolumetricAccumulationBuffer.SetAsActiveTarget();
+		myVolumetricBlurTexture.SetAsResourceOnSlot(0);
+		myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::BilateralVertical);
 
-	// Upsampling
-	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_ADDITIVEBLEND);
-	myDeferredLightingTexture.SetAsActiveTarget();
-	myVolumetricAccumulationBuffer.SetAsResourceOnSlot(0);
-	myDownsampledDepth.SetAsResourceOnSlot(1);
-	myIntermediateDepth.SetAsResourceOnSlot(2);
-	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::DepthAwareUpsampling);
+		// Upsampling
+		myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_ADDITIVEBLEND);
+		myDeferredLightingTexture.SetAsActiveTarget();
+		myVolumetricAccumulationBuffer.SetAsResourceOnSlot(0);
+		myDownsampledDepth.SetAsResourceOnSlot(1);
+		myIntermediateDepth.SetAsResourceOnSlot(2);
+		myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::DepthAwareUpsampling);
+	}
 #pragma endregion
 
 	//VFX
@@ -399,6 +406,11 @@ void CRenderManager::Render(CScene& aScene)
 		myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::BrokenScreenEffect);
 		myBackbuffer.SetAsActiveTarget();
 		myAntiAliasedTexture.SetAsResourceOnSlot(0);
+	}
+
+	if (myRenderPassIndex == 7)
+	{
+		myVolumetricAccumulationBuffer.SetAsResourceOnSlot(0);
 	}
 
 	// Gamma correction
@@ -544,7 +556,7 @@ void CRenderManager::RenderWithoutBloom()
 void CRenderManager::ToggleRenderPass()
 {
 	++myRenderPassIndex;
-	if (myRenderPassIndex > 6)
+	if (myRenderPassIndex > 7)
 	{
 		myRenderPassIndex = 0;
 	}

@@ -28,6 +28,7 @@ public:
 	const float& GetHenyeyGreensteinGValue() const;
 
 	const bool& GetIsVolumetric() const;
+	const bool& GetIsFog() const;
 
 	void SetDirection(DirectX::SimpleMath::Vector3 aDirection);
 	void SetColor(DirectX::SimpleMath::Vector3 aColor);
@@ -40,6 +41,7 @@ public:
 	void SetHenyeyGreensteinGValue(float aGValue);
 
 	void SetIsVolumetric(bool aShouldBeVolumetric);
+	void SetIsFog(bool aShouldBeFog);
 
 private:
 	DirectX::SimpleMath::Matrix GetShadowTransform() const; // Used for shadow position calculation
@@ -61,4 +63,5 @@ private:
 	float myHenyeyGreensteinGValue;
 
 	bool myIsVolumetric;
+	bool myIsFog;
 };

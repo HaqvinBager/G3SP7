@@ -21,5 +21,6 @@ namespace IronWroughtImGui {
 		float myScatteringProbability;
 		float myHenyeyGreensteinGValue;
 		bool myIsVolumetric;
+		bool myIsFog;
 	};
 }

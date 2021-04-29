@@ -42,6 +42,7 @@ private:
 
 	static void AddInstancedModelComponents(CScene& aScene, RapidArray someData);
 	static void AddDirectionalLight(CScene& aScene, RapidObject someData);
+	static void AddDirectionalLights(CScene& aScene, RapidArray someData);
 	static void AddPointLights(CScene& aScene, RapidArray someData);
 	static void AddDecalComponents(CScene& aScene, RapidArray someData);
 	static void AddCollider(CScene& aScene, RapidArray someData);
