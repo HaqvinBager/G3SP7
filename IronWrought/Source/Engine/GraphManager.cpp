@@ -373,6 +373,11 @@ void CGraphManager::LoadTreeFromFile()
 					object->myEditorPosition[0] = static_cast<float>(nodeInstance["Position"]["X"].GetInt());
 					object->myEditorPosition[1] = static_cast<float>(nodeInstance["Position"]["Y"].GetInt());
 
+					if (object->myEditorPosition[0] <= -100000 || object->myEditorPosition[0] >= 100000)
+						object->myEditorPosition[0] = 0;
+					if (object->myEditorPosition[1] <= -100000 || object->myEditorPosition[1] >= 100000)
+						object->myEditorPosition[1] = 0;
+
 					object->ConstructUniquePins();
 
 					for (unsigned int j = 0; j < nodeInstance["Pins"].Size(); j++)
