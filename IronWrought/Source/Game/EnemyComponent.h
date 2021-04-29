@@ -50,7 +50,10 @@ public:
 	{
 		return anAngleInRadians * (180.0f / PI);
 	}
-
+	float Lerp(float a, float b, float t) const
+	{
+		return (1.0f - t) * a + b * t;
+	}
 
 private:
 	CCharacterController* myController;
