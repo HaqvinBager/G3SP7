@@ -18,12 +18,16 @@ CPlayerComponent::CPlayerComponent(CGameObject& gameObject, const float& aMaxHea
 	, myHealthHasDecreasedTimer(PLAYER_HEALTH_REGEN_TIMER)
 {
 	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayerHealthPickup, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayerSetRespawnPoint, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayerRespawn, this);
 	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayerTakeDamage, this);
 }
 
 CPlayerComponent::~CPlayerComponent()
 {
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayerHealthPickup, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayerSetRespawnPoint, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayerRespawn, this);
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayerTakeDamage, this);
 }
 
@@ -42,10 +46,28 @@ void CPlayerComponent::Start()
 void CPlayerComponent::Update()
 {
 #ifdef _DEBUG
-	if (Input::GetInstance()->IsKeyPressed('K'))
-	{
-		DecreaseHealth();
-	}
+	//if (Input::GetInstance()->IsKeyPressed('K'))
+	//{
+	//	DecreaseHealth();
+	//}
+	//if (Input::GetInstance()->IsKeyPressed('L'))
+	//{
+	//	float damage = 50.0f;
+	//	CMainSingleton::PostMaster().Send({ EMessageType::PlayerTakeDamage, &damage });
+	//}
+	//if (Input::GetInstance()->IsKeyPressed('M'))
+	//{
+	//	float health = 10.0f;
+	//	CMainSingleton::PostMaster().Send({ EMessageType::PlayerHealthPickup, &health });
+	//}
+	//if (Input::GetInstance()->IsKeyPressed('N'))
+	//{
+	//	CMainSingleton::PostMaster().SendLate({ EMessageType::PlayerRespawn, nullptr });
+	//}
+	//if (Input::GetInstance()->IsKeyPressed('B'))
+	//{
+	//	CMainSingleton::PostMaster().SendLate({ EMessageType::PlayerSetRespawnPoint, nullptr });
+	//}
 #endif // DEBUG
 
 	RegenerateHealth();
@@ -180,6 +202,19 @@ void CPlayerComponent::Receive(const SMessage& aMessage)
 				DecreaseHealth(*reinterpret_cast<float*>(aMessage.data));
 			else
 				DecreaseHealth();
+		}
+		break;
+
+		case EMessageType::PlayerSetRespawnPoint:
+		{
+			myPlayerController->SetRespawnPosition();
+		}
+		break;
+
+		case EMessageType::PlayerRespawn:
+		{
+			myPlayerController->ResetPlayerPosition();
+			ResetHealth();
 		}
 		break;
 

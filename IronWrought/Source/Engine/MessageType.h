@@ -65,6 +65,8 @@ enum class EMessageType
 	GravityGlovePush,
 
 	PlayerHealthPickup,
+	PlayerSetRespawnPoint,
+	PlayerRespawn,
 
 	Count
 };

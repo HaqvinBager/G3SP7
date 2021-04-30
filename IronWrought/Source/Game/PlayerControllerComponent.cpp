@@ -18,6 +18,9 @@
 #include "RigidBodyComponent.h"
 #include "RigidDynamicBody.h"
 
+#define PLAYER_MAX_POSITION 1000.0f
+#define PLAYER_MIN_POSITION -1000.0f
+
 CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, const float aWalkSpeed, const float aCrouchSpeed, physx::PxUserControllerHitReport* aHitReport)
 	: CComponent(gameObject)
 	, mySpeed(aWalkSpeed)
@@ -75,8 +78,7 @@ void CPlayerControllerComponent::Awake()
 
 void CPlayerControllerComponent::Start()
 {
-	myRespawnPosition = myController->GetPosition();
-
+	SetRespawnPosition();
 }
 
 void CPlayerControllerComponent::Update()
@@ -100,11 +102,13 @@ void CPlayerControllerComponent::Update()
 
 	ControllerUpdate();
 
+	BoundsCheck();
+
 
 #ifdef _DEBUG
 	if (Input::GetInstance()->IsKeyPressed('R'))
 	{
-		myController->SetPosition(myRespawnPosition);
+		ResetPlayerPosition();
 	}
 #endif // _DEBUG
 }
@@ -251,6 +255,18 @@ void CPlayerControllerComponent::LadderEnter()
 void CPlayerControllerComponent::LadderExit()
 {
 	myLadderHasTriggered = false;
+}
+
+void CPlayerControllerComponent::SetRespawnPosition()
+{
+	myRespawnPosition = myController->GetPosition();
+}
+
+void CPlayerControllerComponent::BoundsCheck()
+{
+	const Vector3 playerPos = GameObject().myTransform->Position();
+	if ((playerPos.y < PLAYER_MAX_POSITION && playerPos.y > PLAYER_MIN_POSITION) == false)
+		ResetPlayerPosition();
 }
 
 void CPlayerControllerComponent::LadderUpdate()

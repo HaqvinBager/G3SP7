@@ -50,7 +50,11 @@ public:
 
 	void LadderEnter();
 	void LadderExit();
+
+	void SetRespawnPosition();
+
 private:
+	void BoundsCheck();
 	void LadderUpdate();
 
 
