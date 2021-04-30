@@ -95,15 +95,6 @@ void CPlayerControllerComponent::Update()
 		//Move({0.0f, myMovement.y, 0.0f});
 	}
 
-	/*if (myPlayerComponent->getIsAlive() == false)
-	{
-		myController->SetPosition(myRespawnPosition);
-		GameObject().myTransform->Position(myController->GetPosition());
-
-		myPlayerComponent->setIsAlive(true);
-		myPlayerComponent->resetHealth();
-	}*/
-
 	GameObject().myTransform->Position(myController->GetPosition());
 	myAnimationComponentController->Update(myMovement);
 
