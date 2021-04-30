@@ -142,27 +142,12 @@ void Input::Update() {
 		myMouseScreenY = point.y;
 	}
 
-	if (myHorizontalPressed == false) {
-		if (myHorizontal >= (0.f + CTimer::FixedDt())) {
-			myHorizontal -= CTimer::FixedDt();
-		}else if (myHorizontal <= (0.f - CTimer::FixedDt())) {
-			myHorizontal += CTimer::FixedDt();
-		}
-		else {
-			myHorizontal = 0.f;
-		}
-	}
-	if (myVerticalPressed == false) {
-		if (myVertical >= (0.f + CTimer::FixedDt())) {
-			myVertical -= CTimer::FixedDt();
-		}
-		else if (myVertical <= (0.f - CTimer::FixedDt())) {
-			myVertical += CTimer::FixedDt();
-		}
-		else {
-			myVertical = 0.f;
-		}
-	}
+#ifdef INPUT_AXIS_USES_FALLOFF
+	UpdateAxisUsingFallOff();
+#else
+	UpdateAxisUsingNoFallOff();
+#endif
+	
 }
 
 bool Input::MoveLeft() {
@@ -184,43 +169,11 @@ bool Input::MoveDown() {
 
 float Input::GetAxis(const EAxis& aAxis)
 {
-	if (aAxis == EAxis::Horizontal) {
-		myHorizontalPressed = false;
-		if (IsKeyDown('A')) {
-			myHorizontalPressed = true;
-			myHorizontal += CTimer::FixedDt();
-			if (myHorizontal >= 1.f) {
-				myHorizontal = 1.f;
-			}
-		}
-		if (IsKeyDown('D')) {
-			myHorizontalPressed = true;
-			myHorizontal -= CTimer::FixedDt();
-			if (myHorizontal <= -1.f) {
-				myHorizontal = -1.f;
-			}
-		}
-		return myHorizontal;
-	} 
-	if (aAxis == EAxis::Vertical) {
-		myVerticalPressed = false;
-		if (IsKeyDown('W')) {
-			myVerticalPressed = true;
-			myVertical += CTimer::FixedDt();
-			if (myVertical >= 1.f) {
-				myVertical = 1.f;
-			}
-		}
-		if (IsKeyDown('S')) {
-			myVerticalPressed = true;
-			myVertical -= CTimer::FixedDt();
-			if (myVertical <= -1.f) {
-				myVertical = -1.f;
-			}
-		}
-		return myVertical;
-	}
-	return 0;
+#ifdef INPUT_AXIS_USES_FALLOFF
+	return GetAxisUsingFallOff(aAxis);
+#else
+	return GetAxisUsingNoFallOff(aAxis);
+#endif
 }
 
 bool Input::IsKeyDown(WPARAM wParam) {
@@ -308,4 +261,140 @@ bool Input::IsMousePressed(EMouseButton aMouseButton) {
 
 bool Input::IsMouseReleased(EMouseButton aMouseButton) {
 	return (!myMouseButton[(int)aMouseButton]) && myMouseButtonLast[(int)aMouseButton];
+}
+
+void Input::UpdateAxisUsingFallOff()
+{
+	if (myHorizontalPressed == false) {
+		if (myHorizontal >= (0.f + CTimer::FixedDt())) {
+			myHorizontal -= CTimer::FixedDt();
+		}else if (myHorizontal <= (0.f - CTimer::FixedDt())) {
+			myHorizontal += CTimer::FixedDt();
+		}
+		else {
+			myHorizontal = 0.f;
+		}
+	}
+	if (myVerticalPressed == false) {
+		if (myVertical >= (0.f + CTimer::FixedDt())) {
+			myVertical -= CTimer::FixedDt();
+		}
+		else if (myVertical <= (0.f - CTimer::FixedDt())) {
+			myVertical += CTimer::FixedDt();
+		}
+		else {
+			myVertical = 0.f;
+		}
+	}
+}
+
+void Input::UpdateAxisUsingNoFallOff()
+{
+	if (myHorizontalPressed == false) {
+		if (myHorizontal >= (0.f + CTimer::FixedDt())) {
+			myHorizontal = 0.f;
+		}else if (myHorizontal <= (0.f - CTimer::FixedDt())) {
+			myHorizontal = 0.f;
+		}
+		else {
+			myHorizontal = 0.f;
+		}
+	}
+	if (myVerticalPressed == false) {
+		if (myVertical >= (0.f + CTimer::FixedDt())) {
+			myVertical = 0.0f;
+		}
+		else if (myVertical <= (0.f - CTimer::FixedDt())) {
+			myVertical = 0.0f;
+		}
+		else {
+			myVertical = 0.f;
+		}
+	}
+}
+
+const float Input::GetAxisUsingFallOff(const EAxis& anAxis)
+{
+	if (anAxis == EAxis::Horizontal) {
+		myHorizontalPressed = false;
+		if (IsKeyDown('A')) {
+			myHorizontalPressed = true;
+			myHorizontal += CTimer::FixedDt();
+			if (myHorizontal >= 1.f) {
+				myHorizontal = 1.f;
+			}
+		}
+		if (IsKeyDown('D')) {
+			myHorizontalPressed = true;
+			myHorizontal -= CTimer::FixedDt();
+			if (myHorizontal <= -1.f) {
+				myHorizontal = -1.f;
+			}
+		}
+		return myHorizontal;
+	} 
+	if (anAxis == EAxis::Vertical) {
+		myVerticalPressed = false;
+		if (IsKeyDown('W')) {
+			myVerticalPressed = true;
+			myVertical += CTimer::FixedDt();
+			if (myVertical >= 1.f) {
+				myVertical = 1.f;
+			}
+		}
+		if (IsKeyDown('S')) {
+			myVerticalPressed = true;
+			myVertical -= CTimer::FixedDt();
+			if (myVertical <= -1.f) {
+				myVertical = -1.f;
+			}
+		}
+		return myVertical;
+	}
+	return 0.f;
+}
+
+const float Input::GetAxisUsingNoFallOff(const EAxis& anAxis)
+{
+	if (anAxis == EAxis::Horizontal) {
+		myHorizontalPressed = false;
+		if (IsKeyDown('A')) {
+			myHorizontalPressed = true;
+			//myHorizontal += CTimer::FixedDt();// For falloff/ deceleration
+			myHorizontal += 1.f;
+			if (myHorizontal >= 1.f) {
+				myHorizontal = 1.f;
+			}
+		}
+		if (IsKeyDown('D')) {
+			myHorizontalPressed = true;
+			//myHorizontal -= CTimer::FixedDt();// For falloff/ deceleration
+			myHorizontal -= 1.f;
+			if (myHorizontal <= -1.f) {
+				myHorizontal = -1.f;
+			}
+		}
+		return myHorizontal;
+	} 
+	if (anAxis == EAxis::Vertical) {
+		myVerticalPressed = false;
+		if (IsKeyDown('W')) {
+			myVerticalPressed = true;
+			//myVertical += CTimer::FixedDt();// For falloff/ deceleration
+			myVertical += 1.f;
+			if (myVertical >= 1.f) {
+				myVertical = 1.f;
+			}
+		}
+		if (IsKeyDown('S')) {
+			myVerticalPressed = true;
+			//myVertical -= CTimer::FixedDt();// For falloff/ deceleration
+			myVertical -= 1.f;
+			if (myVertical <= -1.f) {
+				myVertical = -1.f;
+			}
+		}
+		return myVertical;
+	}
+	return 0.f;
 }

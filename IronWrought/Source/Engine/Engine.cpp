@@ -287,6 +287,8 @@ void CEngine::SetResolution(DirectX::SimpleMath::Vector2 aResolution)
 	myWindowHandler->SetResolution(aResolution);
 	myRenderManager->Release();
 	myRenderManager->ReInit(myFramework, myWindowHandler);
+	mySceneMap[CStateStack::EState::MainMenu]->ReInitCanvas(ASSETPATH("Assets/Graphics/UI/JSON/UI_MainMenu.json"));
+	mySceneMap[CStateStack::EState::PauseMenu]->ReInitCanvas(ASSETPATH("Assets/Graphics/UI/JSON/UI_PauseMenu.json"));
 }
 
 CEngine* CEngine::GetInstance()

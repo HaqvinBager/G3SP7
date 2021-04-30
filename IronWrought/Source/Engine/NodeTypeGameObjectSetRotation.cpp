@@ -3,6 +3,7 @@
 #include "NodeInstance.h"
 #include "GameObject.h"
 #include "TransformComponent.h"
+#include "RigidBodyComponent.h"
 #include "Engine.h"
 #include "Scene.h"
 #include "GraphManager.h"

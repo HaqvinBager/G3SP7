@@ -22,7 +22,6 @@ public struct ColliderLink
     public float dynamicFriction;
     public float staticFriction;
     public float bounciness;
-
 }
 // 1 - BoxCollider
 // 2 - SphereCollider

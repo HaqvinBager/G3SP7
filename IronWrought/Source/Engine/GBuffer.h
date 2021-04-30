@@ -25,6 +25,8 @@ public:
 	void SetAsResourceOnSlot(EGBufferTextures aResource, UINT aSlot);
 	void SetAllAsResources();
 
+	void ReleaseResources();
+
 private:
 	ID3D11DeviceContext* myContext;
 	std::array<ID3D11Texture2D*, static_cast<size_t>(EGBufferTextures::COUNT)> myTextures;

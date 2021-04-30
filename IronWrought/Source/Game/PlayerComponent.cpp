@@ -7,20 +7,28 @@
 #include "Canvas.h"
 #include "PlayerControllerComponent.h"
 
-CPlayerComponent::CPlayerComponent(CGameObject& gameObject) 
+#define PLAYER_HEALTH_REGEN_TIMER	5.0f
 
+CPlayerComponent::CPlayerComponent(CGameObject& gameObject, const float& aMaxHealth) 
 	: CComponent(gameObject),
-	myHealth(100.0f), 
-	myMaxHealth(100.0f),
-	isAlive(true)
+	myHealth(aMaxHealth),
+	myMaxHealth(aMaxHealth),
+	myIsAlive(true)
+	, myPlayerController(nullptr)
+	, myHealthHasDecreasedTimer(PLAYER_HEALTH_REGEN_TIMER)
 {
-	//CMainSingleton::PostMaster().Subscribe(EMessageType::PlayerHealthChanged, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayerHealthPickup, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayerSetRespawnPoint, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayerRespawn, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayerTakeDamage, this);
 }
 
 CPlayerComponent::~CPlayerComponent()
 {
-	//CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayerHealthChanged, this);
-
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayerHealthPickup, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayerSetRespawnPoint, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayerRespawn, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayerTakeDamage, this);
 }
 
 
@@ -32,7 +40,7 @@ void CPlayerComponent::Awake()
 void CPlayerComponent::Start()
 {
 	myPlayerController = GameObject().GetComponent<CPlayerControllerComponent>();
-	
+	assert(myPlayerController != nullptr && "Couldn't find a CPlayerControllerComponent.");
 }
 
 void CPlayerComponent::Update()
@@ -40,42 +48,100 @@ void CPlayerComponent::Update()
 #ifdef _DEBUG
 	//if (Input::GetInstance()->IsKeyPressed('K'))
 	//{
-	//	myHealth -= 20;
-	//	//std::cout << myHealth << std::endl;
-	//	myHealthPercentage = (myHealth / myMaxHealth);
-	//	CMainSingleton::PostMaster().Send({ EMessageType::PlayerHealthChanged, &myHealthPercentage });
+	//	DecreaseHealth();
+	//}
+	//if (Input::GetInstance()->IsKeyPressed('L'))
+	//{
+	//	float damage = 50.0f;
+	//	CMainSingleton::PostMaster().Send({ EMessageType::PlayerTakeDamage, &damage });
+	//}
+	//if (Input::GetInstance()->IsKeyPressed('M'))
+	//{
+	//	float health = 10.0f;
+	//	CMainSingleton::PostMaster().Send({ EMessageType::PlayerHealthPickup, &health });
+	//}
+	//if (Input::GetInstance()->IsKeyPressed('N'))
+	//{
+	//	CMainSingleton::PostMaster().SendLate({ EMessageType::PlayerRespawn, nullptr });
+	//}
+	//if (Input::GetInstance()->IsKeyPressed('B'))
+	//{
+	//	CMainSingleton::PostMaster().SendLate({ EMessageType::PlayerSetRespawnPoint, nullptr });
 	//}
 #endif // DEBUG
 
-	if (myHealth <= 0)
+	RegenerateHealth();
+
+	if (!myIsAlive)
 	{
-		setIsAlive(false);
-
-		CMainSingleton::PostMaster().Send({ EMessageType::PlayerDied, nullptr });
-
-		myPlayerController->ResetPlayerPosition();
-
-		resetHealth();
-		setIsAlive(true);
-
+		OnNotAlive();
 	}
 }
 
-
-
-bool CPlayerComponent::getIsAlive()
+void CPlayerComponent::OnNotAlive()
 {
-	return isAlive;
+	CMainSingleton::PostMaster().Send({ EMessageType::PlayerDied, nullptr });
+
+	myPlayerController->ResetPlayerPosition();
+
+	ResetHealth();
 }
 
-void CPlayerComponent::setIsAlive(bool setAlive)
+void CPlayerComponent::RegenerateHealth(const float& somePercent)
 {
-	isAlive = setAlive;
+	if (myHealth >= myMaxHealth)
+		return;
+
+	myHealthHasDecreasedTimer -= CTimer::Dt();
+	if (myHealthHasDecreasedTimer > 0.0f)
+		return;
+
+	IncreaseHealth(myMaxHealth * (somePercent / 100.0f) * CTimer::Dt());
 }
 
-void CPlayerComponent::resetHealth()
+bool CPlayerComponent::GetIsAlive()
 {
-	myHealth = 100.0f;
+	return myIsAlive;
+}
+
+void CPlayerComponent::SetIsAlive(bool setAlive)
+{
+	myIsAlive = setAlive;
+}
+
+void CPlayerComponent::IncreaseHealth(const float& anIncreaseBy)
+{
+	if (anIncreaseBy < 0.0f)
+		myHealthHasDecreasedTimer = PLAYER_HEALTH_REGEN_TIMER;
+
+	myHealth += anIncreaseBy;
+	if (myHealth > myMaxHealth)
+		myHealth = myMaxHealth;
+
+	SendHealthChangedMessage();
+
+	CheckIfAlive();
+}
+
+void CPlayerComponent::DecreaseHealth(const float& aDecreaseBy)
+{
+	if (aDecreaseBy > 0.0f)
+		myHealthHasDecreasedTimer = PLAYER_HEALTH_REGEN_TIMER;
+
+	myHealth -= aDecreaseBy;
+	if (myHealth > myMaxHealth)
+		myHealth = myMaxHealth;
+
+	SendHealthChangedMessage();
+
+	CheckIfAlive();
+}
+
+void CPlayerComponent::ResetHealth()
+{
+	myHealth = myMaxHealth;
+	myIsAlive = true;
+	SendHealthChangedMessage();
 }
 
 
@@ -87,6 +153,17 @@ void CPlayerComponent::OnEnable()
 void CPlayerComponent::OnDisable()
 {
 	CMainSingleton::PostMaster().Unsubscribe("Ladder", this);
+}
+
+void CPlayerComponent::CheckIfAlive()
+{
+	myIsAlive = (myHealth > 0.0f);
+}
+
+inline void CPlayerComponent::SendHealthChangedMessage()
+{
+	float healthPercentage = CurrentHealthPercent();
+	CMainSingleton::PostMaster().Send({ EMessageType::PlayerHealthChanged, &healthPercentage });
 }
 
 void CPlayerComponent::Receive(const SStringMessage& aMessage)
@@ -103,5 +180,45 @@ void CPlayerComponent::Receive(const SStringMessage& aMessage)
 		{
 			myPlayerController->LadderExit();
 		}
+	}
+}
+
+void CPlayerComponent::Receive(const SMessage& aMessage)
+{
+	switch (aMessage.myMessageType)
+	{
+		case EMessageType::PlayerHealthPickup:
+		{
+			if (aMessage.data)
+				IncreaseHealth(*reinterpret_cast<float*>(aMessage.data));
+			else
+				IncreaseHealth();
+		}
+		break;
+
+		case EMessageType::PlayerTakeDamage:
+		{
+			if (aMessage.data)
+				DecreaseHealth(*reinterpret_cast<float*>(aMessage.data));
+			else
+				DecreaseHealth();
+		}
+		break;
+
+		case EMessageType::PlayerSetRespawnPoint:
+		{
+			myPlayerController->SetRespawnPosition();
+		}
+		break;
+
+		case EMessageType::PlayerRespawn:
+		{
+			myPlayerController->ResetPlayerPosition();
+			ResetHealth();
+		}
+		break;
+
+		default:
+		break;
 	}
 }

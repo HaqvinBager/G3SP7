@@ -5,7 +5,7 @@ class CAIController
 {
 public:
 	virtual ~CAIController() { }
-	virtual Vector3 Update(Vector3 aPosition) = 0;
+	virtual Vector3 Update(const Vector3& aPosition) = 0; // Aki 28/4 använd gärna const & på vector3 så att man inte kopierar 3 floats i varje update :)
 	
 };
 
@@ -15,8 +15,8 @@ public:
 	
 	CPatrol(const std::vector<Vector3>& somePositions);
 	~CPatrol()override {}
-	Vector3 Update(Vector3 aPosition) override;
-	bool CheckIfOverlap(Vector3 aFirstPosition, Vector3 aSecondPosition);
+	Vector3 Update(const Vector3& aPosition) override;
+	bool CheckIfOverlap(const Vector3& aFirstPosition, const Vector3& aSecondPosition);
 private:
 	std::vector<Vector3> myPositions;
 	int myTarget;
@@ -27,7 +27,7 @@ class CSeek: public CAIController
 public:
 	CSeek();
 	~CSeek()override { myTarget = nullptr; }
-	Vector3 Update(Vector3 aPosition) override;
+	Vector3 Update(const Vector3& aPosition) override;
 	void SetTarget(CTransformComponent* aTarget);
 private:
 	CTransformComponent* myTarget;
@@ -37,10 +37,12 @@ class CAttack : public CAIController
 {
 public:
 	CAttack();
-	~CAttack() override;
-	Vector3 Update(Vector3 aPosition) override;
-	void DoAttack();
+	~CAttack() override { myTarget = nullptr; }
+	Vector3 Update(const Vector3& aPosition) override;
+	void SetTarget(CTransformComponent* aTarget);
+
 private:
 	float myDamage;
+	CTransformComponent* myTarget;
 };
 

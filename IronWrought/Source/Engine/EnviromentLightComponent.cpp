@@ -16,6 +16,11 @@ CEnvironmentLightComponent::CEnvironmentLightComponent(CGameObject& aParent, std
 	myEnvironmentLight->SetDirection(aParent.myTransform->Transform().Forward());
 	//myEnvironmentLight->SetDirection(aDirection);
 	myEnvironmentLight->SetPosition({ /*20.0f*/0.0f, 20.0f, 0.0f });
+
+	myEnvironmentLight->SetNumberOfSamples(16.0f);
+	myEnvironmentLight->SetLightPower(100000.0f);
+	myEnvironmentLight->SetScatteringProbability(0.001f);
+	myEnvironmentLight->SetHenyeyGreensteinGValue(0.0f);
 }
 
 CEnvironmentLightComponent::~CEnvironmentLightComponent()

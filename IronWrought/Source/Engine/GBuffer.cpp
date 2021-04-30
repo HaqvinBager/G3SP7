@@ -45,3 +45,21 @@ void CGBuffer::SetAllAsResources()
 {
 	myContext->PSSetShaderResources(1, static_cast<size_t>(EGBufferTextures::COUNT), &myShaderResources[0]);
 }
+
+void CGBuffer::ReleaseResources()
+{
+	myContext = nullptr;
+
+	for (UINT i = 0; i < static_cast<size_t>(EGBufferTextures::COUNT); ++i) 
+	{
+		myTextures[i]->Release();
+		myTextures[i] = nullptr;
+		myRenderTargets[i]->Release();
+		myRenderTargets[i] = nullptr;	
+		myShaderResources[i]->Release();
+		myShaderResources[i] = nullptr;
+	}
+
+	delete myViewport;
+	myViewport = nullptr;
+}

@@ -58,17 +58,18 @@ void CGravityGloveComponent::Update()
 		Pull();
 	}
 
-	if (myCurrentTarget != nullptr)
+	if (myCurrentTarget.myRigidBodyPtr != nullptr)
 	{
-		Vector3 direction = -(myCurrentTarget->GameObject().myTransform->WorldPosition() - myGravitySlot->WorldPosition());
+		Vector3 direction = -(myCurrentTarget.myRigidBodyPtr->GameObject().myTransform->WorldPosition() - myGravitySlot->WorldPosition());
 		float distance = direction.Length();
 		float maxDistance = mySettings.myMaxDistance;
 
 		mySettings.myCurrentDistanceInverseLerp = min(1.0f, InverseLerp(0.0f, maxDistance, distance));
 
+
 		if (mySettings.myCurrentDistanceInverseLerp < 0.1f)
 		{
-			//dont remove pls - Alexander Matthäi 2021-04-30
+			//dont remove pls - Alexander Matthï¿½i 2021-04-30
 			/*myJoint = PxD6JointCreate(*CEngine::GetInstance()->GetPhysx().GetPhysics(), myRigidStatic, myRigidStatic->getGlobalPose(), &myCurrentTarget->GetDynamicRigidBody()->GetBody(), myCurrentTarget->GetDynamicRigidBody()->GetBody().getGlobalPose());
 			myJoint->setMotion(PxD6Axis::eX, PxD6Motion::eFREE);
 			myJoint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eFREE);
@@ -88,35 +89,42 @@ void CGravityGloveComponent::Update()
 			myJoint->setMotion(PxD6Axis::eY, PxD6Motion::eLIMITED);
 			myJoint->setMotion(PxD6Axis::eZ, PxD6Motion::eLIMITED);*/
 
-			myCurrentTarget->SetPosition(myGravitySlot->WorldPosition());
-			myCurrentTarget->SetRotation(myCurrentTarget->GetComponent<CTransformComponent>()->Rotation());
-			myCurrentTarget->SetGlobalPose(myGravitySlot->WorldPosition(), myCurrentTarget->GetComponent<CTransformComponent>()->Rotation());
-			myCurrentTarget->SetLinearVelocity({ 0.f, 0.f, 0.f });
-			myCurrentTarget->SetAngularVelocity({ 0.f, 0.f, 0.f });
+			//myCurrentTarget->SetPosition(myGravitySlot->WorldPosition());
+			//myCurrentTarget->SetRotation(myCurrentTarget->GetComponent<CTransformComponent>()->Rotation());
+			myCurrentTarget.myRigidBodyPtr->SetGlobalPose(myGravitySlot->WorldPosition(), myCurrentTarget.myRigidBodyPtr->GetComponent<CTransformComponent>()->Rotation());
+			myCurrentTarget.myRigidBodyPtr->SetLinearVelocity({ 0.f, 0.f, 0.f });
+			myCurrentTarget.myRigidBodyPtr->SetAngularVelocity({ 0.f, 0.f, 0.f });
 		}
 		else
 		{
 			float force = Lerp(mySettings.myMaxPushForce, mySettings.myMinPullForce, mySettings.myCurrentDistanceInverseLerp);
-			
+
 			//myCurrentTarget->GetDynamicRigidBody()->GetBody().setMaxLinearVelocity(max(mySettings.myDistanceToMaxLinearVelocity, distance));
 			direction.Normalize();
-			myCurrentTarget->AddForce(direction, force, EForceMode::EForce);
+			myCurrentTarget.myRigidBodyPtr->AddForce(direction, force, EForceMode::EForce);
 		}
 		//Yaay Here things are happening omfg lets gouee! : D
+
+		myCurrentTarget.currentDistanceSquared = Vector3::DistanceSquared(myGravitySlot->WorldPosition(), myCurrentTarget.myRigidBodyPtr->GameObject().myTransform->WorldPosition());
+		PostMaster::SGravityGloveTargetData ggTargetData;
+		ggTargetData.myCurrentDistanceSquared = myCurrentTarget.currentDistanceSquared;
+		ggTargetData.myInitialDistanceSquared = myCurrentTarget.initialDistanceSquared;
+		CMainSingleton::PostMaster().Send({ EMessageType::GravityGloveTargetDistance, &ggTargetData });
 	}
 }
 
 void CGravityGloveComponent::Pull()
 {
-	if (myCurrentTarget != nullptr)
+	if (myCurrentTarget.myRigidBodyPtr != nullptr)
 	{
-		myCurrentTarget->GetDynamicRigidBody()->GetBody().setMaxLinearVelocity(100.f);
-		myCurrentTarget = nullptr;
+		myCurrentTarget.myRigidBodyPtr->GetDynamicRigidBody()->GetBody().setMaxLinearVelocity(100.f);
+		myCurrentTarget.myRigidBodyPtr = nullptr;
 
 		PostMaster::SCrossHairData data; // Wind down
 		data.myIndex = 0;
 		data.myShouldBeReversed = true;
 		CMainSingleton::PostMaster().Send({ EMessageType::UpdateCrosshair, &data });
+		CMainSingleton::PostMaster().Send({ EMessageType::GravityGlovePull, nullptr });
 
 		return;
 	}
@@ -157,10 +165,15 @@ void CGravityGloveComponent::Pull()
 		if (transform->GameObject().TryGetComponent<CRigidBodyComponent>(&rigidbody))
 		{
 			if (!rigidbody->IsKinematic()) {
-				myCurrentTarget = rigidbody;
+				myCurrentTarget.Clear();
+
+				myCurrentTarget.myRigidBodyPtr = rigidbody;
+				myCurrentTarget.initialDistanceSquared = Vector3::DistanceSquared(myGravitySlot->WorldPosition(), transform->WorldPosition());
+
 				PostMaster::SCrossHairData data; // Wind Up
 				data.myIndex = 0;
 				CMainSingleton::PostMaster().Send({ EMessageType::UpdateCrosshair, &data });
+				CMainSingleton::PostMaster().Send({ EMessageType::GravityGlovePull, nullptr });
 				GameObject().GetComponent<CVFXSystemComponent>()->EnableEffect(0);
 			}
 		}
@@ -183,13 +196,17 @@ void CGravityGloveComponent::Pull()
 #include "CameraComponent.h"
 void CGravityGloveComponent::Push()
 {
-	if (myCurrentTarget != nullptr) {
+	bool sendPushMessage = false;
+
+	if (myCurrentTarget.myRigidBodyPtr != nullptr) {
 		IRONWROUGHT->GetActiveScene().MainCamera()->SetTrauma(0.25f); // plz enable camera movement without moving player for shake??? ::)) Nico 2021-04-09
 
-		myCurrentTarget->GetDynamicRigidBody()->GetBody().setMaxLinearVelocity(100.f);
-		myCurrentTarget->AddForce(-GameObject().myTransform->GetWorldMatrix().Forward(), mySettings.myPushForce * myCurrentTarget->GetMass(), EForceMode::EImpulse);
-		myCurrentTarget = nullptr;
-		GameObject().GetComponent<CVFXSystemComponent>()->EnableEffect(1);
+		myCurrentTarget.myRigidBodyPtr->GetDynamicRigidBody()->GetBody().setMaxLinearVelocity(100.f);
+		myCurrentTarget.myRigidBodyPtr->AddForce(-GameObject().myTransform->GetWorldMatrix().Forward(), mySettings.myPushForce * myCurrentTarget.myRigidBodyPtr->GetMass(), EForceMode::EImpulse);
+		myCurrentTarget.myRigidBodyPtr = nullptr;
+		//GameObject().GetComponent<CVFXSystemComponent>()->EnableEffect(1);
+		sendPushMessage = true;
+
 	} else {
 		Vector3 start = GameObject().myTransform->GetWorldMatrix().Translation();
 		Vector3 dir = -GameObject().myTransform->GetWorldMatrix().Forward();
@@ -206,10 +223,18 @@ void CGravityGloveComponent::Push()
 				if (!target->IsKinematic())
 				{
 					target->AddForce(-GameObject().myTransform->GetWorldMatrix().Forward(), mySettings.myPushForce * target->GetMass(), EForceMode::EImpulse);
-					GameObject().GetComponent<CVFXSystemComponent>()->EnableEffect(1);
+					//GameObject().GetComponent<CVFXSystemComponent>()->EnableEffect(1);
+
+					sendPushMessage = true;
 				}
 			}
 		}
+	}
+
+	if (sendPushMessage)
+	{
+		CMainSingleton::PostMaster().SendLate({ EMessageType::GravityGlovePush, nullptr });
+		GameObject().GetComponent<CVFXSystemComponent>()->EnableEffect(1);
 	}
 }
 

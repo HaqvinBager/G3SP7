@@ -200,6 +200,7 @@
     <ClInclude Include="Behaviour.h" />
     <ClInclude Include="BoxColliderComponent.h" />
     <ClInclude Include="EnemyReportCallback.h" />
+    <ClInclude Include="EnvironmentLightWindow.h" />
     <ClInclude Include="NodeTypeUtilityInvertBool.h" />
     <ClInclude Include="PlayerReportCallback.h" />
     <ClInclude Include="ConvexMeshColliderComponent.h" />
@@ -441,6 +442,7 @@
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="BoxColliderComponent.cpp" />
     <ClCompile Include="EnemyReportCallback.cpp" />
+    <ClCompile Include="EnvironmentLightWindow.cpp" />
     <ClCompile Include="NodeTypeUtilityInvertBool.cpp" />
     <ClCompile Include="PlayerReportCallback.cpp" />
     <ClCompile Include="ConvexMeshColliderComponent.cpp" />
@@ -991,6 +993,11 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
     </FxCompile>
+    <FxCompile Include="RenderPassEmissivePixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
+    </FxCompile>
     <FxCompile Include="RenderPassMetalnessPixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
@@ -1005,6 +1012,11 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="ShadowAlphaPixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Excelsior|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="SkyboxPixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
@@ -1116,10 +1128,12 @@
     <None Include="PointLightShaderStructs.hlsli" />
     <None Include="SamplingFunctions.hlsli" />
     <None Include="ShaderStructs.hlsli" />
+    <None Include="ShadowSampling.hlsli" />
     <None Include="SpotLightShaderStructs.hlsli" />
     <None Include="SpriteShaderStructs.hlsli" />
     <None Include="SpriteVFXShaderStructs.hlsli" />
     <None Include="VFXShaderStructs.hlsli" />
+    <None Include="VolumetricLightShaderStructs.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="..\Includes\ImGui\NodeEditor\imgui_node_editor.natvis" />

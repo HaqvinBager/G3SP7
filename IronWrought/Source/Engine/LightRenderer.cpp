@@ -20,6 +20,7 @@ CLightRenderer::CLightRenderer()
 	, myPointLightBuffer(nullptr)
 	, mySpotLightBuffer(nullptr)
 	, myBoxLightBuffer(nullptr)
+	, myVolumetricLightBuffer(nullptr)
 	, myPointLightVertexBuffer(nullptr)
 	, myPointLightIndexBuffer(nullptr)
 	, mySpotLightVertexBuffer(nullptr)
@@ -79,6 +80,9 @@ bool CLightRenderer::Init(CDirectXFramework* aFramework)
 
 	bufferDescription.ByteWidth = sizeof(SBoxLightBufferData);
 	ENGINE_HR_MESSAGE(device->CreateBuffer(&bufferDescription, nullptr, &myBoxLightBuffer), "Box Light Buffer could not be created.");
+
+	bufferDescription.ByteWidth = sizeof(SVolumetricLightBufferData);
+	ENGINE_HR_MESSAGE(device->CreateBuffer(&bufferDescription, nullptr, &myVolumetricLightBuffer), "Volumetric Light Buffer could not be created.");
 
 	//Vertex Setup
 	struct Vertex
@@ -281,6 +285,8 @@ bool CLightRenderer::Init(CDirectXFramework* aFramework)
 	samplerDesc.BorderColor[0] = 1.0f;
 	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
 	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+	samplerDesc.MinLOD = 0;
+	samplerDesc.MaxLOD = 10;
 
 	ENGINE_HR_BOOL_MESSAGE(device->CreateSamplerState(&samplerDesc, &myShadowSampler), "Shadow Sampler could not be created.");
 
@@ -307,6 +313,7 @@ void CLightRenderer::Render(CCameraComponent* aCamera, CEnvironmentLight* anEnvi
 	myDirectionalLightBufferData.myDirectionalLightPosition = anEnvironmentLight->GetShadowPosition();
 	myDirectionalLightBufferData.myToDirectionalLightView = anEnvironmentLight->GetShadowView();
 	myDirectionalLightBufferData.myToDirectionalLightProjection = anEnvironmentLight->GetShadowProjection();
+	myDirectionalLightBufferData.myDirectionalLightShadowMapResolution = { 2048.0f * 4.0f, 2048.0f * 4.0f };
 	BindBuffer(myLightBuffer, myDirectionalLightBufferData, "Light Buffer");
 	myContext->PSSetConstantBuffers(2, 1, &myLightBuffer);
 
@@ -475,6 +482,9 @@ void CLightRenderer::Render(CCameraComponent* aCamera, std::vector<CBoxLight*>& 
 
 void CLightRenderer::RenderVolumetric(CCameraComponent* aCamera, CEnvironmentLight* anEnvironmentLight)
 {
+	if (!anEnvironmentLight->GetIsVolumetric())
+		return;
+
 	SM::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
 	myFrameBufferData.myCameraPosition = SM::Vector4{ cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f };
 	myFrameBufferData.myToCameraSpace = cameraMatrix.Invert();
@@ -491,8 +501,17 @@ void CLightRenderer::RenderVolumetric(CCameraComponent* aCamera, CEnvironmentLig
 	myDirectionalLightBufferData.myDirectionalLightPosition = anEnvironmentLight->GetShadowPosition();
 	myDirectionalLightBufferData.myToDirectionalLightView = anEnvironmentLight->GetShadowView();
 	myDirectionalLightBufferData.myToDirectionalLightProjection = anEnvironmentLight->GetShadowProjection(); // Actual projection
+	myDirectionalLightBufferData.myDirectionalLightShadowMapResolution = anEnvironmentLight->GetShadowmapResolution();
 	BindBuffer(myLightBuffer, myDirectionalLightBufferData, "Light Buffer");
 	myContext->PSSetConstantBuffers(1, 1, &myLightBuffer);
+
+	myVolumetricLightBufferData.myNumberOfSamplesReciprocal = (1.0f / anEnvironmentLight->GetNumberOfSamples());
+	myVolumetricLightBufferData.myLightPower = anEnvironmentLight->GetLightPower();
+	myVolumetricLightBufferData.myScatteringProbability = anEnvironmentLight->GetScatteringProbability();
+	myVolumetricLightBufferData.myHenyeyGreensteinGValue = anEnvironmentLight->GetHenyeyGreensteinGValue();
+
+	BindBuffer(myVolumetricLightBuffer, myVolumetricLightBufferData, "Volumetric Light Buffer");
+	myContext->PSSetConstantBuffers(4, 1, &myVolumetricLightBuffer);
 
 	myContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	myContext->IASetInputLayout(nullptr);
@@ -510,6 +529,60 @@ void CLightRenderer::RenderVolumetric(CCameraComponent* aCamera, CEnvironmentLig
 
 	myContext->Draw(3, 0);
 	CRenderManager::myNumberOfDrawCallsThisFrame++;
+}
+
+void CLightRenderer::RenderVolumetric(CCameraComponent* aCamera, std::vector<CEnvironmentLight*> anEnvironmentLightList)
+{
+	for (CEnvironmentLight* currentInstance : anEnvironmentLightList)
+	{
+		if (!currentInstance->GetIsVolumetric())
+			return;
+
+		SM::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
+		myFrameBufferData.myCameraPosition = SM::Vector4{ cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f };
+		myFrameBufferData.myToCameraSpace = cameraMatrix.Invert();
+		myFrameBufferData.myToWorldFromCamera = cameraMatrix;
+		myFrameBufferData.myToProjectionSpace = aCamera->GetProjection();
+		myFrameBufferData.myToCameraFromProjection = aCamera->GetProjection().Invert();
+		BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
+
+		myContext->PSSetConstantBuffers(0, 1, &myFrameBuffer);
+
+		// Update lightbufferdata and fill lightbuffer
+		myDirectionalLightBufferData.myDirectionalLightDirection = currentInstance->GetDirection();
+		myDirectionalLightBufferData.myDirectionalLightColor = currentInstance->GetColor();
+		myDirectionalLightBufferData.myDirectionalLightPosition = currentInstance->GetShadowPosition();
+		myDirectionalLightBufferData.myToDirectionalLightView = currentInstance->GetShadowView();
+		myDirectionalLightBufferData.myToDirectionalLightProjection = currentInstance->GetShadowProjection(); // Actual projection
+		myDirectionalLightBufferData.myDirectionalLightShadowMapResolution = currentInstance->GetShadowmapResolution();
+		BindBuffer(myLightBuffer, myDirectionalLightBufferData, "Light Buffer");
+		myContext->PSSetConstantBuffers(1, 1, &myLightBuffer);
+
+		myVolumetricLightBufferData.myNumberOfSamplesReciprocal = (1.0f / currentInstance->GetNumberOfSamples());
+		myVolumetricLightBufferData.myLightPower = currentInstance->GetLightPower();
+		myVolumetricLightBufferData.myScatteringProbability = currentInstance->GetScatteringProbability();
+		myVolumetricLightBufferData.myHenyeyGreensteinGValue = currentInstance->GetHenyeyGreensteinGValue();
+
+		BindBuffer(myVolumetricLightBuffer, myVolumetricLightBufferData, "Volumetric Light Buffer");
+		myContext->PSSetConstantBuffers(4, 1, &myVolumetricLightBuffer);
+
+		myContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		myContext->IASetInputLayout(nullptr);
+		myContext->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
+		myContext->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0);
+
+		myContext->GSSetShader(nullptr, nullptr, 0);
+
+		myContext->VSSetShader(myFullscreenShader, nullptr, 0);
+
+		myContext->PSSetShader(myDirectionalVolumetricLightShader, nullptr, 0);
+
+		myContext->PSSetSamplers(0, 1, &mySamplerState);
+		myContext->PSSetSamplers(1, 1, &myShadowSampler);
+
+		myContext->Draw(3, 0);
+		CRenderManager::myNumberOfDrawCallsThisFrame++;
+	}
 }
 
 void CLightRenderer::RenderVolumetric(CCameraComponent* aCamera, std::vector<CPointLight*>& aPointLightList)
@@ -533,7 +606,11 @@ void CLightRenderer::RenderVolumetric(CCameraComponent* aCamera, std::vector<CPo
 	myContext->IASetVertexBuffers(0, 1, &myPointLightVertexBuffer, &myPointLightStride, &myPointLightOffset);
 	myContext->IASetIndexBuffer(myPointLightIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
-	for (CPointLight* currentInstance : aPointLightList) {
+	for (CPointLight* currentInstance : aPointLightList) 
+	{
+		if (!currentInstance->GetIsVolumetric())
+			continue;
+
 		const SM::Vector3& position = currentInstance->GetPosition();
 		const SM::Vector3& color = currentInstance->GetColor();
 		myPointLightBufferData.myToWorldSpace = currentInstance->GetWorldMatrix();
@@ -543,6 +620,14 @@ void CLightRenderer::RenderVolumetric(CCameraComponent* aCamera, std::vector<CPo
 		BindBuffer(myPointLightBuffer, myPointLightBufferData, "Point Light Buffer");
 		myContext->VSSetConstantBuffers(3, 1, &myPointLightBuffer);
 		myContext->PSSetConstantBuffers(3, 1, &myPointLightBuffer);
+
+		myVolumetricLightBufferData.myNumberOfSamplesReciprocal = (1.0f / 16.0f);
+		myVolumetricLightBufferData.myLightPower = 1000000.0f;
+		myVolumetricLightBufferData.myScatteringProbability = 0.0001f;
+		myVolumetricLightBufferData.myHenyeyGreensteinGValue = 0.0f;
+
+		BindBuffer(myVolumetricLightBuffer, myVolumetricLightBufferData, "Volumetric Light Buffer");
+		myContext->PSSetConstantBuffers(4, 1, &myVolumetricLightBuffer);
 
 		myContext->VSSetShader(myPointLightVertexShader, nullptr, 0);
 
@@ -653,6 +738,15 @@ void CLightRenderer::RenderVolumetric(CCameraComponent* aCamera, std::vector<CBo
 		myContext->VSSetConstantBuffers(3, 1, &myBoxLightBuffer);
 		myContext->PSSetConstantBuffers(3, 1, &myBoxLightBuffer);
 
+		myVolumetricLightBufferData.myNumberOfSamplesReciprocal = (1.0f / 16.0f);
+		myVolumetricLightBufferData.myLightPower = 100000.0f;
+		myVolumetricLightBufferData.myScatteringProbability = 0.0001f;
+		myVolumetricLightBufferData.myHenyeyGreensteinGValue = 0.0f;
+
+		BindBuffer(myVolumetricLightBuffer, myVolumetricLightBufferData, "Volumetric Light Buffer");
+		myContext->PSSetConstantBuffers(4, 1, &myVolumetricLightBuffer);
+
+		//myContext->VSSetShader(myFullscreenShader, nullptr, 0);
 		myContext->VSSetShader(myBoxLightVertexShader, nullptr, 0);
 
 		myContext->PSSetShader(myBoxLightVolumetricLightShader, nullptr, 0);

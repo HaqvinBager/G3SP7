@@ -51,6 +51,8 @@ public:
 
 	bool AllowAnimationRender();
 
+	const bool PlayingTemporaryAnimation();
+
 public:
 	const float GetBlendLerp() const { return myAnimationBlend.myBlendLerp; }
 
@@ -63,90 +65,9 @@ private:
 	bool myShouldUseLerp;
 	CAnimationController* myController;
 	SAnimationBlend myAnimationBlend;
-	std::array<SlimMatrix44, 64> myBones { };
+	std::array<SlimMatrix44, 64> myBones{ };
 
 	bool myUseSafeMode;
-//#ifdef ANIMATION_SAFE_MODE // Didnt work for some reason?
+	//#ifdef ANIMATION_SAFE_MODE // Didnt work for some reason?
 	std::vector<bool> myIsSafeToPlay;
-
-
-// Used in SP6, optional to keep. Saves Id in vector using CStringID (int + _Debug::string).
-	//std::vector<CStringID> myAnimationIds;
-
-//////////////////////////////////////////
-// Helper functions for myAnimationIds //
-////////////////////////////////////////
-/*
-private:
-	// This works if the ids are in a sorted list. But if the animations are added at random to the project the ids aren't sorted, making this function unsafe.
-	//bool WithinIDRange(const int anID)
-	//{
-	//	return (anID <= myAnimationIds.back().ID() && anID >= myAnimationIds.front().ID()); 
-	//}
-
-	// Goes through std::vector myAnimationID: returns true if it finds the id within the list.
-	//bool HasID(const int anID)
-	//{
-	//	for (auto& id : myAnimationIds)
-	//	{
-	//		if (id.ID() == anID)
-	//		{
-	//			return true;
-	//		}
-	//	}
-	//	return false;
-	//}
-
-	// This works if the ids are in a sorted list. Uses first abs(id - anID) +1. Unsafe.
-	//const int GetIndexFromID(const int anID)
-	//{
-	//	int index = abs(myAnimationIds[0].ID() - anID ) + 1;
-	//	return index;
-	//}
-
-	// Checks for ID withing std::vector myAnimationIds and returns index of ID
-	//const int GetIndexFromList(const int anID)
-	//{
-	//	for (int i = 0; i < myAnimationIds.size(); ++i)
-	//	{
-	//		if (myAnimationIds[i].ID() == anID)
-	//		{
-	//			return i + 1; // Animations inside CAnimation start at 1, 0 is a static civillian/ tpose.
-	//		}
-	//	}
-	//	return 0;
-	//}
-////////////////////////////////////////////
-// ! Helper functions for myAnimationIds //
-//////////////////////////////////////////
-*/
 };
-
-#pragma region COMMENTED 2020_11_11 UNUSED, No defintions existed (From TGA Animation project?)
-//class SceneAnimator;
-//public :
-	//void BoneTransform(SlimMatrix44* Transforms); 
-	//void SetAnimator(SceneAnimator* anAnimator) { myAnimator = anAnimator; }	
-	//void SetBindPose(SceneAnimator* aBindPose) { myBindPose = aBindPose; }	
-	//void SetActiveAnimations(std::vector<int>& someActiveAnimations) { myActiveAnimations = someActiveAnimations; }	
-	//void SetTotalAnimationTime(float aTotalAnimationTime) { myTotalAnimationTime = aTotalAnimationTime; }		
-	//void SetAnimationTime(float anAnimationTime) { myAnimTime = anAnimationTime; }		
-	//void SetAnimationSpeed(int anAnimationSpeed) { myAnimSpeed = anAnimationSpeed; }		
-
-	//SceneAnimator* GetAnimator() const { return myAnimator; }		
-	//SceneAnimator* GetBindPose() const { return myBindPose; }		
-	//const std::vector<int>& GetActiveAnimations() const { return myActiveAnimations; }
-	//const float GetTotalAnimationTime() const { return myTotalAnimationTime; }		
-	//const float GetAnimationTime() const { return myAnimTime; }		
-	//const int GetAnimationSpeed() const { return myAnimSpeed; }		
-
-
-//private:
-	//SceneAnimator* myAnimator; 
-	//SceneAnimator* myBindPose = nullptr;
-	//std::vector<int> myActiveAnimations;
-
-	//int myAnimSpeed = 60;
-	//float myAnimTime = 0;
-
-#pragma endregion ! 2020_11_11 UNUSED

@@ -168,6 +168,8 @@ void CBoxLight::SetRotation(Vector3 aRotation)
     myDirection.Normalize();
     myDirectionNormal1.Normalize();
     myDirectionNormal2.Normalize();
+
+    UpdateView();
 }
 
 void CBoxLight::Rotate(Vector3 aRotation)
@@ -202,6 +204,8 @@ void CBoxLight::Rotate(Vector3 aRotation)
     myDirection.Normalize();
     myDirectionNormal1.Normalize();
     myDirectionNormal2.Normalize();
+
+    UpdateView();
 }
 
 void CBoxLight::UpdateWorld()
@@ -253,11 +257,10 @@ void CBoxLight::UpdateWorld()
 
 void CBoxLight::UpdateView()
 {
-    myToViewMatrix = DirectX::XMMatrixLookAtLH(myPosition, myPosition - myDirection, Vector3::Up);
+    myToViewMatrix = DirectX::XMMatrixLookAtLH(myPosition, myPosition + myDirection, Vector3::Up);
 }
 
 void CBoxLight::UpdateProjection()
 {
-    myToProjectionMatrix = DirectX::XMMatrixOrthographicLH(myWidth, myHeight, 0.01f, myRange);
-    //myToProjectionMatrix = DirectX::XMMatrixOrthographicLH(myHeight, myWidth, -40.0f, 40.0f);
+    myToProjectionMatrix = DirectX::XMMatrixOrthographicLH(myWidth, myHeight, 0.0f, myRange);
 }

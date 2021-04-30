@@ -38,6 +38,7 @@ public:
 	void HideAndLockCursor(const bool& anIsInEditorMode = false);
 	void ShowAndUnlockCursor(const bool& anIsInEditorMode = true);
 
+	// More or less a temp fix for SP7. Aki 2021 04 15
 	void GameIsInMenu(const bool& aIsInMenu);
 
 private:
@@ -52,6 +53,8 @@ private:
 	float myResolutionScale;
 	bool myCursorIsLocked;
 	bool myWindowIsInEditingMode;
+
+	// More or less a temp fix for SP7. Aki 2021 04 15
 	bool myGameIsInMenu;
 };
 

@@ -76,17 +76,12 @@
 #include "Engine.h"
 #include "NodeDataManager.h"
 
-
 CNodeType* CNodeTypeCollector::myDefaultTypes[128];
 CNodeType* CNodeTypeCollector::myCustomTypes[128];
 CNodeType* CNodeTypeCollector::myChildTypes[128];
 unsigned short CNodeTypeCollector::myDefaultTypeCounter = 0;
 unsigned short CNodeTypeCollector::myCustomTypeCounter = 0;
 unsigned short CNodeTypeCollector::myChildTypeCounter = 0;
-//CNodeType* CNodeTypeCollector::myTypes[128];
-//unsigned short CNodeTypeCollector::myTypeCounter = 0;
-//std::unordered_map<std::string, SNodeTypeData> CNodeTypeCollector::myChildNodeTypesMap;
-
 std::vector<unsigned int> CUID::myAllUIDs;
 unsigned int CUID::myGlobalUID = 0;
 
@@ -208,14 +203,9 @@ void CNodeTypeCollector::DegisterCustomDataType(const std::string& aNodeName)
 
 void CNodeTypeCollector::RegisterChildNodeTypes(std::string aKey, const unsigned int anIndex, int aGOID)
 {
-	//int poop = aGOID;
 	std::string name = "Get " + aKey + " Child " + std::to_string(anIndex) + " Position";
 	RegisterType<CNodeTypeGameObjectGetChildPosition>(name, CNodeType::ENodeType::EChild);
-	CNodeDataManager::Get()->SetData(name, CNodeDataManager::EDataType::EChildNodeData, aGOID);
-}
-
-void CNodeType::ClearNodeInstanceFromMap(CNodeInstance* /*aTriggeringNodeInstance*/)
-{
+	CNodeDataManager::Get()->SetData(name, CNodeDataManager::EDataType::EChildNodeData, aGOID, false);
 }
 
 int CNodeType::DoEnter(CNodeInstance* aTriggeringNodeInstance)
@@ -223,11 +213,6 @@ int CNodeType::DoEnter(CNodeInstance* aTriggeringNodeInstance)
 	int index = OnEnter(aTriggeringNodeInstance);
 	aTriggeringNodeInstance->myEnteredTimer = 3.0f;
 	return index;
-}
-
-std::vector<SPin> CNodeType::GetPins()
-{
-	return myPins;
 }
 
 void CNodeType::GetDataOnPin(CNodeInstance* aTriggeringNodeInstance, unsigned int aPinIndex, SPin::EPinType& anOutType, void*& someData, size_t& anOutSize)

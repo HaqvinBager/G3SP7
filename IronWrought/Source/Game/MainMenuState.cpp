@@ -33,7 +33,7 @@ void CMainMenuState::Awake()
 void CMainMenuState::Start()
 {
 	CEngine::GetInstance()->SetActiveScene(myState);
-	IRONWROUGHT->ShowCursor(false);
+	IRONWROUGHT->ShowCursor(true);
 	IRONWROUGHT->GetActiveScene().CanvasToggle(true, true);
 	IRONWROUGHT->GetActiveScene().DisableWidgetsOnCanvas();
 	CMainSingleton::PostMaster().Subscribe(EMessageType::StartGame, this);
@@ -45,6 +45,8 @@ void CMainMenuState::Start()
 
 void CMainMenuState::Stop()
 {
+	IRONWROUGHT->GetActiveScene().CanvasToggle(false, false);
+	IRONWROUGHT->GetActiveScene().DisableWidgetsOnCanvas();
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::StartGame, this);
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::Quit, this);
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::SetResolution1280x720, this);
@@ -90,20 +92,22 @@ void CMainMenuState::Receive(const SMessage& aMessage)
 
 		case EMessageType::SetResolution1280x720:
 		{
-			CEngine::GetInstance()->SetResolution({ 1280.0f, 720.0f });
-			IRONWROUGHT->GetActiveScene().ReInitCanvas(ASSETPATH("Assets/Graphics/UI/JSON/UI_MainMenu.json"));
+			CEngine::GetInstance()->SetResolution({ 1280.0f, 720.0f });  // Canvas reinited in here
 			myStateStack.PopTopAndPush(CStateStack::EState::MainMenu);
 		} break;
 		case EMessageType::SetResolution1600x900:
 		{
 			CEngine::GetInstance()->SetResolution({ 1600.0f, 900.0f });
-			IRONWROUGHT->GetActiveScene().ReInitCanvas(ASSETPATH("Assets/Graphics/UI/JSON/UI_MainMenu.json"));
 			myStateStack.PopTopAndPush(CStateStack::EState::MainMenu);
 		} break;
 		case EMessageType::SetResolution1920x1080:
 		{
 			CEngine::GetInstance()->SetResolution({ 1920.0f, 1080.0f });
-			IRONWROUGHT->GetActiveScene().ReInitCanvas(ASSETPATH("Assets/Graphics/UI/JSON/UI_MainMenu.json"));
+			myStateStack.PopTopAndPush(CStateStack::EState::MainMenu);
+		} break;
+		case EMessageType::SetResolution2560x1440:
+		{
+			CEngine::GetInstance()->SetResolution({ 2560.0f, 1440.0f });
 			myStateStack.PopTopAndPush(CStateStack::EState::MainMenu);
 		} break;
 

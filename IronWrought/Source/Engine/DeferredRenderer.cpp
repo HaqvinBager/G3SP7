@@ -119,7 +119,7 @@ bool CDeferredRenderer::Init(CDirectXFramework* aFramework)
 	Graphics::CreatePixelShader("Shaders/DeferredLightEnvironmentShader.cso", aFramework, &myEnvironmentLightShader);
 	Graphics::CreatePixelShader("Shaders/DeferredLightPointShader.cso", aFramework, &myPointLightShader);
 
-	LoadRenderPassPixelShaders(aFramework->GetDevice());
+	LoadRenderPassPixelShaders(aFramework/*->GetDevice()*/);
 
 	// Vertex Paint 
 	Graphics::CreatePixelShader("Shaders/DeferredVertexPaintPixelShader.cso", aFramework, &myVertexPaintPixelShader);
@@ -268,7 +268,7 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 	if (myCurrentRenderPassShader == nullptr)
 		myCurrentGBufferPixelShader = myGBufferPixelShader;
 	else
-		myCurrentGBufferPixelShader = myRenderPassGBuffer;
+		myCurrentGBufferPixelShader = /*myRenderPassGBuffer*/myCurrentRenderPassShader;
 
 	for (auto& gameObject : aGameObjectList)
 	{
@@ -433,105 +433,6 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 	myObjectBufferData.myNumberOfDetailNormals = 0;// Making sure to reset it!
 }
 
-//void CDeferredRenderer::Render(CCameraComponent* aCamera, CEnvironmentLight* anEnvironmentLight)
-//{
-//	SM::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
-//	myFrameBufferData.myCameraPosition = SM::Vector4{ cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f };
-//	myFrameBufferData.myToCameraSpace = cameraMatrix.Invert();
-//	myFrameBufferData.myToWorldFromCamera = cameraMatrix;
-//	myFrameBufferData.myToProjectionSpace = aCamera->GetProjection();
-//	myFrameBufferData.myToCameraFromProjection = aCamera->GetProjection().Invert();
-//	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
-//
-//	myContext->PSSetConstantBuffers(0, 1, &myFrameBuffer);
-//	ID3D11ShaderResourceView* environmentLightShaderResource = *anEnvironmentLight->GetCubeMap();
-//	myContext->PSSetShaderResources(0, 1, &environmentLightShaderResource);
-//
-//	// Update lightbufferdata and fill lightbuffer
-//	myLightBufferData.myDirectionalLightDirection = anEnvironmentLight->GetDirection();
-//	myLightBufferData.myDirectionalLightColor = anEnvironmentLight->GetColor();
-//	myLightBufferData.myDirectionalLightPosition = anEnvironmentLight->GetShadowPosition();
-//	myLightBufferData.myDirectionalLightTransform = anEnvironmentLight->GetShadowTransform();
-//	myLightBufferData.myDirectionalLightView = anEnvironmentLight->GetShadowView();
-//	BindBuffer(myLightBuffer, myLightBufferData, "Light Buffer");
-//	myContext->PSSetConstantBuffers(2, 1, &myLightBuffer);
-//
-//	myContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-//	myContext->IASetInputLayout(nullptr);
-//	myContext->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
-//	myContext->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0);
-//
-//	myContext->GSSetShader(nullptr, nullptr, 0);
-//
-//	myContext->VSSetShader(myFullscreenShader, nullptr, 0);
-//
-//	if(myCurrentRenderPassShader)
-//		myContext->PSSetShader(myRenderPassShaders[myRenderPassIndex], nullptr, 0);
-//	else
-//		myContext->PSSetShader(myEnvironmentLightShader, nullptr, 0);
-//
-//	myContext->PSSetSamplers(0, 1, &mySamplerState);
-//	myContext->PSSetSamplers(1, 1, &myShadowSampler);
-//
-//	myContext->Draw(3, 0);
-//	CRenderManager::myNumberOfDrawCallsThisFrame++;
-//}
-//
-//void CDeferredRenderer::Render(CCameraComponent* aCamera, std::vector<CPointLight*>& aPointLightList)
-//{
-//	if (myCurrentRenderPassShader)
-//		return;
-//
-//	SM::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
-//	myFrameBufferData.myCameraPosition = SM::Vector4{ cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f };
-//	myFrameBufferData.myToCameraSpace = cameraMatrix.Invert();
-//	myFrameBufferData.myToWorldFromCamera = cameraMatrix;
-//	myFrameBufferData.myToProjectionSpace = aCamera->GetProjection();
-//	myFrameBufferData.myToCameraFromProjection = aCamera->GetProjection().Invert();
-//	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
-//	myContext->VSSetConstantBuffers(0, 1, &myFrameBuffer);
-//	myContext->GSSetConstantBuffers(0, 1, &myFrameBuffer);
-//	myContext->PSSetConstantBuffers(0, 1, &myFrameBuffer);
-//
-//	Matrix transform = {};
-//	UINT stride = sizeof(Vector4);
-//	UINT offset = 0;
-//
-//	for (CPointLight* currentInstance : aPointLightList) {
-//		transform.Translation(currentInstance->GetPosition());
-//		myObjectBufferData.myToWorld = transform;
-//
-//		BindBuffer(myObjectBuffer, myObjectBufferData, "Point Light Object Buffer");
-//		myContext->VSSetConstantBuffers(1, 1, &myObjectBuffer);
-//		
-//		//Update pointlightbufferdata and fill pointlightbuffer
-//		const SM::Vector3& position = currentInstance->GetPosition();
-//		const SM::Vector3& color = currentInstance->GetColor();
-//		myPointLightBufferData.myPositionAndRange = { position.x, position.y, position.z, currentInstance->GetRange() };
-//		myPointLightBufferData.myColorAndIntensity = { color.x, color.y, color.z, currentInstance->GetIntensity() };
-//
-//		BindBuffer(myPointLightBuffer, myPointLightBufferData, "Point Light Buffer");
-//		myContext->PSSetConstantBuffers(3, 1, &myPointLightBuffer);
-//		myContext->GSSetConstantBuffers(3, 1, &myPointLightBuffer);
-//
-//		myContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
-//		myContext->IASetInputLayout(myPointLightInputLayout);
-//		myContext->IASetVertexBuffers(0, 1, &myPointLightVertexBuffer, &stride, &offset);
-//		myContext->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0);
-//
-//		myContext->VSSetShader(myPointLightVertexShader, nullptr, 0);
-//		myContext->GSSetShader(myPointLightGeometryShader, nullptr, 0);
-//
-//		myContext->PSSetShader(myPointLightShader, nullptr, 0);
-//		myContext->PSSetSamplers(0, 1, &mySamplerState);
-//
-//		myContext->Draw(1, 0);
-//		CRenderManager::myNumberOfDrawCallsThisFrame++;
-//	}
-//
-//	myContext->GSSetShader(nullptr, nullptr, 0);
-//}
-
 void CDeferredRenderer::RenderSkybox(CCameraComponent* aCamera, CEnvironmentLight* anEnvironmentLight)
 {
 	//SM::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
@@ -577,56 +478,62 @@ void CDeferredRenderer::RenderSkybox(CCameraComponent* aCamera, CEnvironmentLigh
 	CRenderManager::myNumberOfDrawCallsThisFrame++;
 }
 
-bool CDeferredRenderer::LoadRenderPassPixelShaders(ID3D11Device* aDevice)
+bool CDeferredRenderer::LoadRenderPassPixelShaders(CDirectXFramework* aFramework)
 {
 	// Render pass shaders
-	std::ifstream psFile;
-	psFile.open("Shaders/DeferredRenderPassShader_Albedo.cso", std::ios::binary);
-	std::string psData = {std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>()};
-	psFile.close();
+	//std::ifstream psFile;
+	//psFile.open("Shaders/DeferredRenderPassShader_Albedo.cso", std::ios::binary);
+	//std::string psData = {std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>()};
+	//psFile.close();
 	myRenderPassShaders.emplace_back();
-	ENGINE_HR_MESSAGE(aDevice->CreatePixelShader(psData.data(), psData.size(), nullptr, &myRenderPassShaders[0]), "Color Pixel Shader could not be created.");
+	Graphics::CreatePixelShader("Shaders/DeferredRenderPassShader_Albedo.cso", aFramework, &myRenderPassShaders[0]);
+	//ENGINE_HR_MESSAGE(aDevice->CreatePixelShader(psData.data(), psData.size(), nullptr, &myRenderPassShaders[0]), "Color Pixel Shader could not be created.");
 
-	// ===============
-	psFile.open("Shaders/DeferredRenderPassShader_Normal.cso", std::ios::binary);
-	psData = {std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>()};
-	psFile.close();
+	//// ===============
+	//psFile.open("Shaders/DeferredRenderPassShader_Normal.cso", std::ios::binary);
+	//psData = {std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>()};
+	//psFile.close();
 	myRenderPassShaders.emplace_back();
-	ENGINE_HR_MESSAGE(aDevice->CreatePixelShader(psData.data(), psData.size(), nullptr, &myRenderPassShaders[1]), "Normal Pixel Shader could not be created.");
+	Graphics::CreatePixelShader("Shaders/DeferredRenderPassShader_Normal.cso", aFramework, &myRenderPassShaders[1]);
+	//ENGINE_HR_MESSAGE(aDevice->CreatePixelShader(psData.data(), psData.size(), nullptr, &myRenderPassShaders[1]), "Normal Pixel Shader could not be created.");
 
-	// ===============
-	psFile.open("Shaders/DeferredRenderPassShader_Roughness.cso", std::ios::binary);
-	psData = {std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>()};
-	psFile.close();
+	//// ===============
+	//psFile.open("Shaders/DeferredRenderPassShader_Roughness.cso", std::ios::binary);
+	//psData = {std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>()};
+	//psFile.close();
 	myRenderPassShaders.emplace_back();
-	ENGINE_HR_MESSAGE(aDevice->CreatePixelShader(psData.data(), psData.size(), nullptr, &myRenderPassShaders[2]), "Roughness Pixel Shader could not be created.");
+	Graphics::CreatePixelShader("Shaders/DeferredRenderPassShader_Roughness.cso", aFramework, &myRenderPassShaders[2]);
+	//ENGINE_HR_MESSAGE(aDevice->CreatePixelShader(psData.data(), psData.size(), nullptr, &myRenderPassShaders[2]), "Roughness Pixel Shader could not be created.");
 
-	// ===============
-	psFile.open("Shaders/DeferredRenderPassShader_Metalness.cso", std::ios::binary);
-	psData = {std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>()};
-	psFile.close();
+	//// ===============
+	//psFile.open("Shaders/DeferredRenderPassShader_Metalness.cso", std::ios::binary);
+	//psData = {std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>()};
+	//psFile.close();
 	myRenderPassShaders.emplace_back();
-	ENGINE_HR_MESSAGE(aDevice->CreatePixelShader(psData.data(), psData.size(), nullptr, &myRenderPassShaders[3]), "Metalness Pixel Shader could not be created.");
+	Graphics::CreatePixelShader("Shaders/DeferredRenderPassShader_Metalness.cso", aFramework, &myRenderPassShaders[3]);
+	//ENGINE_HR_MESSAGE(aDevice->CreatePixelShader(psData.data(), psData.size(), nullptr, &myRenderPassShaders[3]), "Metalness Pixel Shader could not be created.");
 
-	// ===============
-	psFile.open("Shaders/DeferredRenderPassShader_AO.cso", std::ios::binary);
-	psData = {std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>()};
-	psFile.close();
+	//// ===============
+	//psFile.open("Shaders/DeferredRenderPassShader_AO.cso", std::ios::binary);
+	//psData = {std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>()};
+	//psFile.close();
 	myRenderPassShaders.emplace_back();
-	ENGINE_HR_MESSAGE(aDevice->CreatePixelShader(psData.data(), psData.size(), nullptr, &myRenderPassShaders[4]), "Ambient Occlusion Pixel Shader could not be created.");
+	Graphics::CreatePixelShader("Shaders/DeferredRenderPassShader_AO.cso", aFramework, &myRenderPassShaders[4]);
+	//ENGINE_HR_MESSAGE(aDevice->CreatePixelShader(psData.data(), psData.size(), nullptr, &myRenderPassShaders[4]), "Ambient Occlusion Pixel Shader could not be created.");
 
-	// ===============
-	psFile.open("Shaders/DeferredRenderPassShader_Emissive.cso", std::ios::binary);
-	psData = {std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>()};
-	psFile.close();
+	//// ===============
+	//psFile.open("Shaders/DeferredRenderPassShader_Emissive.cso", std::ios::binary);
+	//psData = {std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>()};
+	//psFile.close();
 	myRenderPassShaders.emplace_back();
-	ENGINE_HR_MESSAGE(aDevice->CreatePixelShader(psData.data(), psData.size(), nullptr, &myRenderPassShaders[5]), "Emissive Pixel Shader could not be created.");
+	Graphics::CreatePixelShader("Shaders/DeferredRenderPassShader_Emissive.cso", aFramework, &myRenderPassShaders[5]);
+	//ENGINE_HR_MESSAGE(aDevice->CreatePixelShader(psData.data(), psData.size(), nullptr, &myRenderPassShaders[5]), "Emissive Pixel Shader could not be created.");
 
-	// ===============
-	psFile.open("Shaders/DeferredRenderPassGBufferPixelShader.cso", std::ios::binary);
-	psData = {std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>()};
-	psFile.close();
-	ENGINE_HR_MESSAGE(aDevice->CreatePixelShader(psData.data(), psData.size(), nullptr, &myRenderPassGBuffer), "Renderpass GBuffer could not be created.");
+	//// ===============
+	//psFile.open("Shaders/DeferredRenderPassGBufferPixelShader.cso", std::ios::binary);
+	//psData = {std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>()};
+	//psFile.close();
+	//ENGINE_HR_MESSAGE(aDevice->CreatePixelShader(psData.data(), psData.size(), nullptr, &myRenderPassGBuffer), "Renderpass GBuffer could not be created.");
 
 	return true;
 }

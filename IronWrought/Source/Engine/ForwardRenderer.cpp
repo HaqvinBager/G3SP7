@@ -114,6 +114,14 @@ bool CForwardRenderer::Init(CDirectXFramework* aFramework) {
 	myRenderPassPixelShaders.emplace_back();
 	ENGINE_HR_MESSAGE(device->CreatePixelShader(psData.data(), psData.size(), nullptr, &myRenderPassPixelShaders[4]), "Ambient Occlusion Pixel Shader could not be created.");
 
+	// ===============
+	psFile.open("Shaders/RenderPassEmissivePixelShader.cso", std::ios::binary);
+	psData = { std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>() };
+	psFile.close();
+
+	myRenderPassPixelShaders.emplace_back();
+	ENGINE_HR_MESSAGE(device->CreatePixelShader(psData.data(), psData.size(), nullptr, &myRenderPassPixelShaders[5]), "Ambient Occlusion Pixel Shader could not be created.");
+
 	return true;
 }
 
@@ -125,6 +133,11 @@ void CForwardRenderer::Render(CEnvironmentLight* anEnvironmentLight, std::vector
 	myFrameBufferData.myCameraPosition = DirectX::SimpleMath::Vector4{cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f};
 	myFrameBufferData.myDirectionalLightDirection = anEnvironmentLight->GetDirection();
 	myFrameBufferData.myDirectionalLightColor = anEnvironmentLight->GetColor();
+
+	myFrameBufferData.myDirectionalLightView = anEnvironmentLight->GetShadowView();
+	myFrameBufferData.myDirectionalLightProjection = anEnvironmentLight->GetShadowProjection();
+	myFrameBufferData.myDirectionalLightPosition = anEnvironmentLight->GetShadowPosition();
+	myFrameBufferData.myDirectionalLightShadowMapResolution = anEnvironmentLight->GetShadowmapResolution();
 
 	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
 
@@ -228,6 +241,11 @@ void CForwardRenderer::InstancedRender(CEnvironmentLight* anEnvironmentLight, st
 	myFrameBufferData.myCameraPosition = DirectX::SimpleMath::Vector4{cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f};
 	myFrameBufferData.myDirectionalLightDirection = anEnvironmentLight->GetDirection();
 	myFrameBufferData.myDirectionalLightColor = anEnvironmentLight->GetColor();
+
+	myFrameBufferData.myDirectionalLightView = anEnvironmentLight->GetShadowView();
+	myFrameBufferData.myDirectionalLightProjection = anEnvironmentLight->GetShadowProjection();
+	myFrameBufferData.myDirectionalLightPosition = anEnvironmentLight->GetShadowPosition();
+	myFrameBufferData.myDirectionalLightShadowMapResolution = anEnvironmentLight->GetShadowmapResolution();
 
 	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
 

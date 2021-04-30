@@ -23,6 +23,7 @@ public:
 	void Render(CCameraComponent* aCamera, std::vector<CBoxLight*>& aBoxLightList);
 
 	void RenderVolumetric(CCameraComponent* aCamera, CEnvironmentLight* anEnvironmentLight);
+	void RenderVolumetric(CCameraComponent* aCamera, std::vector<CEnvironmentLight*> anEnvironmentLightList);
 	void RenderVolumetric(CCameraComponent* aCamera, std::vector<CPointLight*>& aPointLightList);
 	void RenderVolumetric(CCameraComponent* aCamera, std::vector<CSpotLight*>& aSpotLightList);
 	void RenderVolumetric(CCameraComponent* aCamera, std::vector<CBoxLight*>& aBoxLightList);
@@ -57,6 +58,8 @@ private:
 		Vector4 myDirectionalLightPosition;
 		Vector4 myDirectionalLightDirection;
 		Vector4 myDirectionalLightColor;
+		Vector2 myDirectionalLightShadowMapResolution;
+		Vector2 myPadding;
 	} myDirectionalLightBufferData;
 
 	struct SPointLightBufferData
@@ -94,8 +97,16 @@ private:
 		Vector4 myDirectionNormal1;
 		Vector4 myDirectionNormal2;
 		Vector2 myWidthAndHeight;
-		Vector2 myPadding;
+		Vector2 myShadowMapResolution;
 	} myBoxLightBufferData;
+
+	struct SVolumetricLightBufferData
+	{
+		float myNumberOfSamplesReciprocal;
+		float myLightPower;
+		float myScatteringProbability;
+		float myHenyeyGreensteinGValue;
+	} myVolumetricLightBufferData;
 
 private:
 	ID3D11DeviceContext* myContext;
@@ -105,6 +116,7 @@ private:
 	ID3D11Buffer* myPointLightBuffer;
 	ID3D11Buffer* mySpotLightBuffer;
 	ID3D11Buffer* myBoxLightBuffer;
+	ID3D11Buffer* myVolumetricLightBuffer;
 
 	ID3D11Buffer* myPointLightVertexBuffer;
 	ID3D11Buffer* myPointLightIndexBuffer;

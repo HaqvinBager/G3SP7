@@ -1,23 +1,6 @@
 #include "FullscreenShaderStructs.hlsli"
+#include "VolumetricLightShaderStructs.hlsli"
 #include "MathHelpers.hlsli"
-
-#define NUM_SAMPLES 128
-#define NUM_SAMPLES_RCP 0.0078125
-
-// RAYMARCHING
-#define TAU 0.0001
-#define PHI /*10000000.0*/5000000.0
-
-#define PI_RCP 0.31830988618379067153776752674503
-
-cbuffer FrameBuffer : register(b0)
-{
-    float4x4 toCameraSpace;
-    float4x4 toWorldFromCamera;
-    float4x4 toProjectionSpace;
-    float4x4 toCameraFromProjection;
-    float4 cameraPosition;
-}
 
 cbuffer LightBuffer : register(b1)
 {
@@ -27,10 +10,6 @@ cbuffer LightBuffer : register(b1)
     float4 toDirectionalLight;
     float4 directionalLightColor;
 }
-
-sampler shadowSampler : register(s1);
-Texture2D depthTexture : register(t21);
-Texture2D shadowDepthTexture : register(t22);
 
 float4 PixelShader_WorldPosition(float2 uv)
 {
@@ -53,6 +32,9 @@ float3 SampleShadowPos(float3 projectionPos)
     uvCoords *= float2(0.5f, -0.5f);
     uvCoords += float2(0.5f, 0.5f);
 
+    if (abs(uvCoords.x) > 1.0f || abs(uvCoords.y) > 1.0f)
+        return 0.0f;
+    
     float nonLinearDepth = shadowDepthTexture.Sample(shadowSampler, uvCoords).r;
     float oob = 1.0f;
     if (projectionPos.x > 1.0f || projectionPos.x < -1.0f || projectionPos.y > 1.0f || projectionPos.y < -1.0f)
@@ -95,7 +77,10 @@ void ExecuteRaymarching(inout float3 rayPositionLightVS, float3 invViewDirLightV
     float dRcp = rcp(d); // reciprocal
     
     // Calculate the final light contribution for the sample on the ray...
-    float3 intens = TAU * (shadowTerm * (PHI * 0.25 * PI_RCP) * dRcp * dRcp) * exp(-d * TAU) * exp(-l * TAU) * stepSize;
+    float phase = 0.25f * PI_RCP;
+    //float projection = dot(invViewDirLightVS, -toDirectionalLight.xyz);
+    //phase = PhaseFunctionHenyeyGreenstein(projection, henyeyGreensteinGValue);
+    float3 intens = scatteringProbability * (shadowTerm * (lightPower * phase) * dRcp * dRcp) * exp(-d * scatteringProbability) * exp(-l * scatteringProbability) * stepSize;
     
     // ... and add it to the total contribution of the ray
     VLI += intens;
@@ -108,6 +93,12 @@ PixelOutput main(VertexToPixel input)
     PixelOutput output;
     
     float raymarchDistanceLimit = 99999.0f;
+    
+    //float z = depthTexture.Sample(defaultSampler, input.myUV).r;
+    //if (z > 0.9999f)
+    //{
+    //    discard;
+    //}
     
     // ...
     float3 worldPosition = PixelShader_WorldPosition(input.myUV).rgb;
@@ -122,17 +113,29 @@ PixelOutput main(VertexToPixel input)
     // Reduce noisyness by truncating the starting position
     //float raymarchDistance = trunc(clamp(length(cameraPositionLightVS.xyz - positionLightVS.xyz), 0.0f, raymarchDistanceLimit));
     float4 invViewDirLightVS = float4(normalize(cameraPositionLightVS.xyz - positionLightVS.xyz), 0.0f);
-    float raymarchDistance = clamp(length(cameraPositionLightVS.xyz - positionLightVS.xyz), 0.0f, raymarchDistanceLimit);
+    float raymarchDistance = /*trunc(*/clamp(length(cameraPositionLightVS.xyz - positionLightVS.xyz), 0.0f, raymarchDistanceLimit)/*)*/;
     
     // Calculate the size of each step
-    float stepSize = raymarchDistance * NUM_SAMPLES_RCP;
-    float3 rayPositionLightVS = positionLightVS.xyz;
+    float stepSize = raymarchDistance * numberOfSamplesReciprocal;
+    
+    // Calculate the offsets on the ray according to the interleaved sampling pattern
+    float2 interleavedPos = fmod(input.myPosition.xy - 0.5f, INTERLEAVED_GRID_SIZE);
+#if defined(USE_RANDOM_RAY_SAMPLES)
+    float index = (floor(interleavedPos.y) * INTERLEAVED_GRID_SIZE + floor(interleavedPos.x));
+    // lightVolumetricRandomRaySamples contains the values 0..63 in a randomized order
+    float rayStartOffset = lightVolumetricRandomRaySamples[index] * (stepSize * INTERLEAVED_GRID_SIZE_SQR_RCP);
+#else
+    float rayStartOffset = (interleavedPos.y * INTERLEAVED_GRID_SIZE + interleavedPos.x) * (stepSize * INTERLEAVED_GRID_SIZE_SQR_RCP);
+#endif // USE_RANDOM_RAY_SAMPLES
+    
+    float3 rayPositionLightVS = rayStartOffset * invViewDirLightVS.xyz + positionLightVS.xyz;
     
     // The total light contribution accumulated along the ray
     float3 VLI = 0.0f;
     
     // Start ray marching
-    [loop] for (float l = raymarchDistance; l > stepSize; l -= stepSize)
+    [loop]
+    for (float l = raymarchDistance; l > 2.0f * stepSize; l -= stepSize)
     {
         ExecuteRaymarching(rayPositionLightVS, invViewDirLightVS.xyz, stepSize, l, VLI);
     }

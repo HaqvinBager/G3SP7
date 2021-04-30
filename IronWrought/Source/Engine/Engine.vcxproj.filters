@@ -235,6 +235,12 @@
     <FxCompile Include="FullscreenPixelShader_BrokenScreenEffect.hlsl">
       <Filter>Shaders\Fullscreen</Filter>
     </FxCompile>
+    <FxCompile Include="ShadowAlphaPixelShader.hlsl">
+      <Filter>Shaders\Shadows</Filter>
+    </FxCompile>
+    <FxCompile Include="RenderPassEmissivePixelShader.hlsl">
+      <Filter>Shaders\Render Passes</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimationComponent.cpp">
@@ -880,7 +886,10 @@
     <ClCompile Include="NodeTypeGameObjectRotateDegrees.cpp">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClCompile>
-      <ClCompile Include="EnemyReportCallback.cpp" />
+    <ClCompile Include="EnemyReportCallback.cpp" />
+    <ClCompile Include="EnvironmentLightWindow.cpp">
+      <Filter>Imgui\Windows</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1616,6 +1625,9 @@
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClInclude>
     <ClInclude Include="EnemyReportCallback.h" />
+    <ClInclude Include="EnvironmentLightWindow.h">
+      <Filter>Imgui\Windows</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="FullscreenShaderStructs.hlsli">
@@ -1687,6 +1699,12 @@
     </None>
     <None Include="SpotLightShaderStructs.hlsli">
       <Filter>Shaders\SpotLight</Filter>
+    </None>
+    <None Include="VolumetricLightShaderStructs.hlsli">
+      <Filter>Shaders\Volumetric Light</Filter>
+    </None>
+    <None Include="ShadowSampling.hlsli">
+      <Filter>Shaders\Shadows</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -1926,6 +1944,9 @@
     </Filter>
     <Filter Include="Shaders\SpotLight">
       <UniqueIdentifier>{7cce27cf-d4c3-4bcb-9250-79de89449fb5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Shadows">
+      <UniqueIdentifier>{aba6652c-120c-4f66-9a31-b77b5a5a3a84}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -7,6 +7,8 @@
 
 #define INPUT Input::GetInstance()
 
+//#define INPUT_AXIS_USES_FALLOFF
+
 class Input {
 public:
 
@@ -60,7 +62,10 @@ public:
 	bool IsMouseReleased(EMouseButton aMouseButton);
 
 private:
-
+	void UpdateAxisUsingFallOff();
+	void UpdateAxisUsingNoFallOff();
+	const float GetAxisUsingFallOff(const EAxis& anAxis);
+	const float GetAxisUsingNoFallOff(const EAxis& anAxis);
 
 private:
 	std::bitset<5> myMouseButtonLast;

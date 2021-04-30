@@ -28,6 +28,7 @@
 #include "animationLoader.h"
 #include "AnimationComponent.h"
 
+#include <BinReader.h>
 
 #include <ppl.h>
 #include <concurrent_unordered_map.h>
@@ -91,7 +92,7 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneJson)
 			if (sceneData.HasMember("parents"))
 				SetParents(*scene, sceneData["parents"].GetArray());
 
-			AddDirectionalLight(*scene, sceneData["directionalLight"].GetObjectW());
+			AddDirectionalLights(*scene, sceneData["directionalLights"].GetArray());
 			AddPointLights(*scene, sceneData["lights"].GetArray());
 			AddModelComponents(*scene, sceneData["models"].GetArray());
 			SetVertexPaintedColors(*scene, sceneData["vertexColors"].GetArray(), vertexPaintData);
@@ -291,7 +292,50 @@ void CSceneManager::AddDirectionalLight(CScene& aScene, RapidObject someData)
 		someData["direction"]["y"].GetFloat(),
 		someData["direction"]["z"].GetFloat())
 		);
-	aScene.EnvironmentLight(gameObject->GetComponent<CEnvironmentLightComponent>()->GetEnvironmentLight());
+
+	if (someData["isMainDirectionalLight"].GetBool())
+		aScene.EnvironmentLight(gameObject->GetComponent<CEnvironmentLightComponent>()->GetEnvironmentLight());
+}
+
+void CSceneManager::AddDirectionalLights(CScene& aScene, RapidArray someData)
+{
+	for (const auto& directionalLight : someData)
+	{
+		const auto& id = directionalLight["instanceID"].GetInt();
+
+		if (id == 0)
+			continue;
+
+		CGameObject* gameObject = aScene.FindObjectWithID(id);
+		if (gameObject == nullptr)
+			continue;
+
+		gameObject->AddComponent<CEnvironmentLightComponent>(
+			*gameObject,
+			directionalLight["cubemapName"].GetString(),
+			Vector3(directionalLight["r"].GetFloat(),
+				directionalLight["g"].GetFloat(),
+				directionalLight["b"].GetFloat()),
+			directionalLight["intensity"].GetFloat(),
+			Vector3(directionalLight["direction"]["x"].GetFloat(),
+				directionalLight["direction"]["y"].GetFloat(),
+				directionalLight["direction"]["z"].GetFloat())
+			);
+
+		auto light = gameObject->GetComponent<CEnvironmentLightComponent>()->GetEnvironmentLight();
+		light->SetIsVolumetric(directionalLight["isVolumetric"].GetBool());
+		light->SetIsFog(directionalLight["isFog"].GetBool());
+		light->SetNumberOfSamples(directionalLight["numberOfSamples"].GetFloat());
+		light->SetLightPower(directionalLight["lightPower"].GetFloat());
+		light->SetScatteringProbability(directionalLight["scatteringProbability"].GetFloat());
+		light->SetHenyeyGreensteinGValue(directionalLight["henyeyGreensteinGValue"].GetFloat());
+		light->SetPosition(gameObject->myTransform->Position());
+
+		if (directionalLight["isMainDirectionalLight"].GetBool())
+			aScene.EnvironmentLight(gameObject->GetComponent<CEnvironmentLightComponent>()->GetEnvironmentLight());
+		else
+			aScene.AddInstance(gameObject->GetComponent<CEnvironmentLightComponent>()->GetEnvironmentLight());
+	}
 }
 
 void CSceneManager::AddPointLights(CScene& aScene, RapidArray someData)
@@ -333,13 +377,9 @@ void CSceneManager::AddPlayer(CScene& aScene, RapidObject someData)
 
 	CGameObject* camera = CCameraControllerComponent::CreatePlayerFirstPersonCamera(player);//new CGameObject(1000);
 	camera->myTransform->Rotation(playerRot);
-	CGameObject* model = new CGameObject(PLAYER_MODEL_ID);
 	std::string modelPath = ASSETPATH("Assets/Graphics/Character/Main_Character/CH_PL_SK.fbx");
-	model->AddComponent<CModelComponent>(*model, modelPath);
-	model->myTransform->SetParent(camera->myTransform);
-	model->myTransform->Rotation(playerRot);
-	CAnimationComponent* animComp = AnimationLoader::AddAnimationsToGameObject(model, modelPath);
-	animComp->BlendToAnimation(1);
+	camera->AddComponent<CModelComponent>(*camera, modelPath);
+	AnimationLoader::AddAnimationsToGameObject(camera, modelPath);
 	CGameObject* gravityGloveSlot = new CGameObject(PLAYER_GLOVE_ID);
 	gravityGloveSlot->myTransform->Scale(0.1f);
 	gravityGloveSlot->myTransform->SetParent(camera->myTransform);
@@ -349,11 +389,11 @@ void CSceneManager::AddPlayer(CScene& aScene, RapidObject someData)
 	camera->AddComponent<CGravityGloveComponent>(*camera, gravityGloveSlot->myTransform);
 	player->AddComponent<CPlayerComponent>(*player);
 
-	player->AddComponent<CPlayerControllerComponent>(*player, 0.314f, 0.13f, CEngine::GetInstance()->GetPhysx().GetPlayerReportBack());// CPlayerControllerComponent constructor sets position of camera child object.
+	player->AddComponent<CPlayerControllerComponent>(*player, 0.09f, 0.035f, CEngine::GetInstance()->GetPhysx().GetPlayerReportBack());// CPlayerControllerComponent constructor sets position of camera child object.
 
 	camera->AddComponent<CVFXSystemComponent>(*camera, ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystem_Player.json"));
 
-	aScene.AddInstance(model);
+	//aScene.AddInstance(model);
 	aScene.AddInstance(camera);
 	aScene.AddInstance(gravityGloveSlot);
 	aScene.MainCamera(camera->GetComponent<CCameraComponent>());
@@ -370,10 +410,16 @@ void CSceneManager::AddEnemyComponents(CScene& aScene, RapidArray someData)
 			continue;
 
 		SEnemySetting settings;
-		settings.myDistance = m["distance"].GetFloat();
-		settings.myRadius = m["radius"].GetFloat();
-		settings.mySpeed = m["speed"].GetFloat();
+		settings.myRadius= m["radius"].GetFloat();
+		settings.mySpeed= m["speed"].GetFloat();
 		settings.myHealth = m["health"].GetFloat();
+		settings.myAttackDistance = m["attackDistance"].GetFloat();
+		if (m.HasMember("points"))
+		{
+			for (const auto& point : m["points"].GetArray()) {
+				settings.myPatrolGameObjectIds.push_back(point["instanceID"].GetInt());
+			}
+		}
 		gameObject->AddComponent<CEnemyComponent>(*gameObject, settings, CEngine::GetInstance()->GetPhysx().GetEnemyReportBack());
 
 		gameObject->AddComponent<CVFXSystemComponent>(*gameObject, ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystem_Enemy.json"));
@@ -490,6 +536,7 @@ void CSceneManager::AddTriggerEvents(CScene& aScene, RapidArray someData)
 CSceneFactory* CSceneFactory::ourInstance = nullptr;
 CSceneFactory::CSceneFactory()
 {
+	myBinReader = new CBinReader();
 	ourInstance = this;
 }
 
@@ -520,6 +567,23 @@ void CSceneFactory::LoadSceneAsync(const std::string& aSceneName, const CStateSt
 	myLastSceneName = aSceneName;
 	myLastLoadedState = aState;
 	myFuture = std::async(std::launch::async, &CSceneManager::CreateScene, aSceneName);
+}
+
+void CSceneFactory::LoadSceneBin(const std::string& aSceneName, const CStateStack::EState aState, std::function<void(std::string)> onComplete)
+{
+	aState;
+	aSceneName;
+	onComplete;
+	myBinReader->Load(aSceneName);
+	std::cout << aSceneName.c_str() << " - Load Scene using Binary Data" << std::endl;
+}
+
+void CSceneFactory::LoadSceneAsyncBin(const std::string& aSceneName, const CStateStack::EState aState, std::function<void(std::string)> onComplete)
+{
+	aSceneName;
+	aState;
+	onComplete;
+
 }
 
 void CSceneFactory::Update()

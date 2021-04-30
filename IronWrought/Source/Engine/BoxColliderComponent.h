@@ -9,6 +9,12 @@ namespace physx
 
 class CScene;
 
+class CLineInstance;
+
+#ifdef _DEBUG
+//#define DEBUG_COLLIDER_BOX // DOES NOT WORK PROPERLY, UPDATE TRANSFORM 
+#endif
+
 class CBoxColliderComponent : public CBehaviour
 {
 public:
@@ -28,6 +34,10 @@ public:
 
 	void OnEnable() override;
 	void OnDisable() override;
+
+private:
+	void CreateColliderDraw(const float& aHalfSizeX, const float& aHalfSizeY, const float& aHalfSizeZ, const Vector3& aPosOffset);
+
 private:
 	physx::PxShape* myShape;
 	physx::PxMaterial* myMaterial;
@@ -36,4 +46,8 @@ private:
 	bool myIsTrigger;
 
 	std::string myEventMessage;
+
+#ifdef DEBUG_COLLIDER_BOX
+	CLineInstance* myColliderDraw;
+#endif
 };

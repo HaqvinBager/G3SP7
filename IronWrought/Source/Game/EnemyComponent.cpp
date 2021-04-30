@@ -24,6 +24,9 @@ CEnemyComponent::CEnemyComponent(CGameObject& aParent, const SEnemySetting& some
 	//myController = CEngine::GetInstance()->GetPhysx().CreateCharacterController(GameObject().myTransform->Position(), 0.6f * 0.5f, 1.8f * 0.5f, GameObject().myTransform, aHitReport);
 	//myController->GetController().getActor()->setRigidBodyFlag(PxRigidBodyFlag::eUSE_KINEMATIC_TARGET_FOR_SCENE_QUERIES, true);
 	mySettings = someSettings;
+	myController = CEngine::GetInstance()->GetPhysx().CreateCharacterController(GameObject().myTransform->Position(), 0.6f * 0.5f, 1.8f * 0.5f, GameObject().myTransform, aHitReport);
+	myPitch = 0.0f;
+	myYaw = 0.0f;
 }
 
 CEnemyComponent::~CEnemyComponent()
@@ -36,21 +39,25 @@ void CEnemyComponent::Awake()
 
 void CEnemyComponent::Start()
 {
-
 	myPlayer = CEngine::GetInstance()->GetActiveScene().Player();
-	/*myBehaviours.push_back(new CPatrol(
-		{
-			{ 20.0f,0.0f, 0.0f },
-			{ 20.0f,0.0f, 10.0f },
-			{ 0.0f,0.0f, 0.0f }
-		}));*/
+
+	for (const auto id : mySettings.myPatrolGameObjectIds) {
+		CTransformComponent* patrolTransform = CEngine::GetInstance()->GetActiveScene().FindObjectWithID(id)->myTransform;
+		myPatrolPositions.push_back(patrolTransform->Position());
+	}
+	myBehaviours.push_back(new CPatrol(myPatrolPositions));
 
 	CSeek* seekBehaviour = new CSeek();
-	if(myPlayer != nullptr)
+	myBehaviours.push_back(seekBehaviour);
+	if (myPlayer != nullptr)
+	{
 		seekBehaviour->SetTarget(myPlayer->myTransform);
-	//myBehaviours.push_back(seekBehaviour);
+	}
 
-	//myBehaviours.push_back(new CAttack());
+	CAttack* attack = new CAttack();
+	if(myPlayer != nullptr)
+		attack->SetTarget(myPlayer->myTransform);
+	myBehaviours.push_back(attack);
 
 	this->GameObject().GetComponent<CVFXSystemComponent>()->EnableEffect(0);
 
@@ -62,42 +69,36 @@ void CEnemyComponent::Start()
 	myCurrentHealth = mySettings.myHealth;
 }
 
-void CEnemyComponent::Update()//f�r best�mma vilket behaviour vi vill k�ra i denna Update()!!!
+void CEnemyComponent::Update()//får bestämma vilket behaviour vi vill köra i denna Update()!!!
 {
-	/*myDistance = sqrt(
-		(myPlayer->myTransform->Position().x - GameObject().myTransform->Position().x) * ((myPlayer->myTransform->Position().x - GameObject().myTransform->Position().x)) +
-		((myPlayer->myTransform->Position().y - GameObject().myTransform->Position().y) * ((myPlayer->myTransform->Position().y - GameObject().myTransform->Position().y))) +
-		((myPlayer->myTransform->Position().z - GameObject().myTransform->Position().z) * ((myPlayer->myTransform->Position().z - GameObject().myTransform->Position().z))));*/
-	if(myPlayer)
-		mySettings.myDistance = Vector3::DistanceSquared(myPlayer->myTransform->Position(), GameObject().myTransform->Position());
+	float distanceToPlayer = Vector3::DistanceSquared(myPlayer->myTransform->Position(), GameObject().myTransform->Position());
 
-	/*Vector3 newPos;
-	newPos.x = (float)myController->GetController().getFootPosition().x;
-	newPos.y = (float)myController->GetController().getFootPosition().y;
-	newPos.z = (float)myController->GetController().getFootPosition().z;*/
-	//GameObject().myTransform->Position(GameObject().GetComponent<CRigidBodyComponent>()->GetDynamicRigidBody()->GetPosition());
-
-	if (mySettings.myRadius * mySettings.myRadius >= mySettings.myDistance) {//seek
-		//SetState(EBehaviour::Seek);
-	float attackDistance = 2.0f; //example will probably be more complicated in the future;
-		if (mySettings.myDistance <= attackDistance) {
-		 //	SetState(EBehaviour::Attack);
-			/*TakeDamage();*/
+	if (mySettings.myRadius * mySettings.myRadius >= distanceToPlayer) {
+		SetState(EBehaviour::Seek);
+		if (distanceToPlayer <= mySettings.myAttackDistance * mySettings.myAttackDistance) {
+			SetState(EBehaviour::Attack);
 		}
 	}
-	else {//patrol
+	else {
 		SetState(EBehaviour::Patrol);
 	}
-	if (GameObject().GetComponent<CRigidBodyComponent>()) {
-		GameObject().GetComponent<CRigidBodyComponent>()->AddForce({ 1.f, 0.f, 0.f });
-	}
+
+	Vector3 targetDirection = myBehaviours[static_cast<int>(myCurrentState)]->Update(GameObject().myTransform->Position());
+	myController->Move(targetDirection, mySettings.mySpeed);
+	GameObject().myTransform->Position(myController->GetPosition());
+	float targetOrientation = WrapAngle(atan2f(targetDirection.x, targetDirection.z));
+	myCurrentOrientation = Lerp(myCurrentOrientation, targetOrientation, 2.0f * CTimer::Dt());
+	//myCurrentDirection = Vector3::Lerp(myCurrentDirection, targetDirection, CTimer::Dt());
+	GameObject().myTransform->Rotation({ 0, DirectX::XMConvertToDegrees(myCurrentOrientation) + 180.f, 0 });
+
+//new movement
+	//if (GameObject().GetComponent<CRigidBodyComponent>()) {
+//		GameObject().GetComponent<CRigidBodyComponent>()->AddForce({ 1.f, 0.f, 0.f });
+	//}
 	if (myCurrentHealth <= 0.f) {
 		Dead();
 		//std::cout << "DEAD" << std::endl;
 	}
-	//Vector3 newDirection = myBehaviours[static_cast<int>(myCurrentState)]->Update(GameObject().myTransform->Position());
-	//myController->Move(newDirection, mySettings.mySpeed);
-	//GameObject().myTransform->Position(myController->GetPosition());
 }
 
 void CEnemyComponent::FixedUpdate()

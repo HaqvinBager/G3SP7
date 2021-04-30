@@ -18,6 +18,7 @@ public:
 	void ClearDepth(float aClearDepth = 1.0f, unsigned int aClearStencil = 0);
 	void SetAsActiveTarget(CFullscreenTexture* aDepth = nullptr);
 	void SetAsDepthTarget();
+	void SetAsDepthTarget(CFullscreenTexture* anIntermediateRenderTarget);
 	void SetAsResourceOnSlot(unsigned int aSlot);
 	void ReleaseTexture();
 	void ReleaseDepth();

@@ -33,9 +33,17 @@ bool CEnvironmentLight::Init(CDirectXFramework* aFramework, std::string aFilePat
 	myShadowmapViewMatrix = DirectX::XMMatrixLookAtLH(myPosition, myPosition - myDirection, Vector3::Up);
 
 	myShadowcastSize = /*{ 32.0f, 32.0f }*/{ 128.0f, 128.0f };
-	myShadowTextureSize = { 2048.0f/* * 4.0f*/, 2048.0f/* * 4.0f*/ };
+	myShadowmapResolution = { 2048.0f * 1.0f, 2048.0f * 1.0f };
 
 	myShadowmapProjectionMatrix = DirectX::XMMatrixOrthographicLH(myShadowcastSize.x, myShadowcastSize.y, -40.0f, 40.0f);
+
+	myNumberOfSamples = 16.0f;
+	myLightPower = 500000.0f;
+	myScatteringProbability = 0.0001f;
+	myHenyeyGreensteinGValue = 0.0f;
+
+	myIsVolumetric = false;
+	myIsFog = false;
 
 	return true;
 }
@@ -64,7 +72,7 @@ void CEnvironmentLight::SetDirection(DirectX::SimpleMath::Vector3 aDirection)
 	myDirection.y = aDirection.y;
 	myDirection.z = aDirection.z;
 
-	myShadowmapViewMatrix = DirectX::XMMatrixLookAtLH(GetShadowPosition(), GetShadowPosition() - myDirection, Vector3::Up);
+	myShadowmapViewMatrix = DirectX::XMMatrixLookAtLH(myPosition, myPosition - myDirection, Vector3::Up);
 }
 
 void CEnvironmentLight::SetColor(DirectX::SimpleMath::Vector3 aColor)
@@ -81,15 +89,67 @@ void CEnvironmentLight::SetIntensity(float anIntensity)
 
 void CEnvironmentLight::SetPosition(DirectX::SimpleMath::Vector3 aPosition)
 {
-	myPosition = DirectX::SimpleMath::Vector4(aPosition.x, aPosition.y, aPosition.z, 1.0f);
-	myShadowmapViewMatrix = DirectX::XMMatrixLookAtLH(GetShadowPosition(), GetShadowPosition() - myDirection, Vector3::Up);
+	myPosition = Vector4(aPosition.x, aPosition.y, aPosition.z, 1.0f);
+
+	// Round to pixel positions
+	Vector3 position = DirectX::SimpleMath::Vector3(myPosition);
+	Vector2 unitsPerPixel = myShadowcastSize / myShadowmapResolution;
+	Matrix shadowTransform = GetShadowTransform();
+
+	float rightStep = position.Dot(shadowTransform.Right());
+	position -= rightStep * shadowTransform.Right();
+	rightStep = floor(rightStep / unitsPerPixel.x) * unitsPerPixel.x;
+	position += rightStep * shadowTransform.Right();
+
+	float upStep = position.Dot(shadowTransform.Up());
+	position -= upStep * shadowTransform.Up();
+	upStep = floor(upStep / unitsPerPixel.y) * unitsPerPixel.y;
+	position += upStep * shadowTransform.Up();
+
+	myPosition = Vector4(position.x, position.y, position.z, 1.0f);
+
+	myShadowmapViewMatrix = DirectX::XMMatrixLookAtLH(myPosition, myPosition - myDirection, Vector3::Up);
+}
+
+void CEnvironmentLight::SetNumberOfSamples(float aNumberOfSamples)
+{
+	myNumberOfSamples = aNumberOfSamples;
+}
+
+void CEnvironmentLight::SetLightPower(float aPower)
+{
+	myLightPower = aPower;
+}
+
+void CEnvironmentLight::SetScatteringProbability(float aScatteringProbability)
+{
+	myScatteringProbability = aScatteringProbability;
+}
+
+void CEnvironmentLight::SetHenyeyGreensteinGValue(float aGValue)
+{
+	myHenyeyGreensteinGValue = aGValue;
+}
+
+void CEnvironmentLight::SetIsVolumetric(bool aShouldBeVolumetric)
+{
+	myIsVolumetric = aShouldBeVolumetric;
+}
+
+void CEnvironmentLight::SetIsFog(bool aShouldBeFog)
+{
+	if (aShouldBeFog)
+		myIsVolumetric = true;
+
+	myIsFog = aShouldBeFog;
 }
 
 DirectX::SimpleMath::Matrix CEnvironmentLight::GetShadowView() const
 {
+	if (myIsFog)
+		return DirectX::XMMatrixLookAtLH(GetShadowPosition(), myDirection, Vector3::Up);
+	
 	return myShadowmapViewMatrix;
-	// For fog
-	//return DirectX::XMMatrixLookAtLH(GetShadowPosition(), myDirection, Vector3::Up);
 }
 
 DirectX::SimpleMath::Matrix CEnvironmentLight::GetShadowProjection() const
@@ -99,9 +159,9 @@ DirectX::SimpleMath::Matrix CEnvironmentLight::GetShadowProjection() const
 
 DirectX::SimpleMath::Vector4 CEnvironmentLight::GetShadowPosition() const
 {
-	//return myPosition;
+	return myPosition;/*
 	DirectX::SimpleMath::Vector3 position = DirectX::SimpleMath::Vector3(myPosition);
-	DirectX::SimpleMath::Vector2 unitsPerPixel = myShadowcastSize / myShadowTextureSize;
+	DirectX::SimpleMath::Vector2 unitsPerPixel = myShadowcastSize / myShadowmapResolution;
 	DirectX::SimpleMath::Matrix shadowTransform = GetShadowTransform();
 
 	float rightStep = position.Dot(shadowTransform.Right());
@@ -114,5 +174,40 @@ DirectX::SimpleMath::Vector4 CEnvironmentLight::GetShadowPosition() const
 	upStep = floor(upStep / unitsPerPixel.y) * unitsPerPixel.y;
 	position += upStep * shadowTransform.Up();
 
-	return DirectX::SimpleMath::Vector4(position.x, position.y, position.z, 1.0f);
+	return DirectX::SimpleMath::Vector4(position.x, position.y, position.z, 1.0f);*/
+}
+
+const Vector2& CEnvironmentLight::GetShadowmapResolution() const
+{
+	return myShadowmapResolution;
+}
+
+const float& CEnvironmentLight::GetNumberOfSamples() const
+{
+	return myNumberOfSamples;
+}
+
+const float& CEnvironmentLight::GetLightPower() const
+{
+	return myLightPower;
+}
+
+const float& CEnvironmentLight::GetScatteringProbability() const
+{
+	return myScatteringProbability;
+}
+
+const float& CEnvironmentLight::GetHenyeyGreensteinGValue() const
+{
+	return myHenyeyGreensteinGValue;
+}
+
+const bool& CEnvironmentLight::GetIsVolumetric() const
+{
+	return myIsVolumetric;
+}
+
+const bool& CEnvironmentLight::GetIsFog() const
+{
+	return myIsFog;
 }

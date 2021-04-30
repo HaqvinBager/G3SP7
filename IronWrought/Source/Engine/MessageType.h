@@ -35,6 +35,7 @@ enum class EMessageType
 	SetResolution1280x720,
 	SetResolution1600x900,
 	SetResolution1920x1080,
+	SetResolution2560x1440,
 
 	PlayStepSound,
 	PlayResearcherReactionExplosives,
@@ -59,6 +60,13 @@ enum class EMessageType
 
 	LockPlayer,
 
+	GravityGloveTargetDistance,// Specific, solves single problem. Remove later / Aki 2021 04 29
+	GravityGlovePull,
+	GravityGlovePush,
+
+	PlayerHealthPickup,
+	PlayerSetRespawnPoint,
+	PlayerRespawn,
 
 	Count
 };

@@ -102,6 +102,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3824655842746701969}
   - component: {fileID: 1305753391376355880}
+  - component: {fileID: 8940042554043142032}
   - component: {fileID: 3462445091702138742}
   m_Layer: 0
   m_Name: Directional_Light
@@ -137,7 +138,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63c2f44afeaa8bb41ba58020f965dd76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cubeMap: {fileID: 8900000, guid: a0f2138eae6c7224ca7c6f7886531f90, type: 3}
+  cubeMap: {fileID: 8900000, guid: 873247aa0f0669744a951ac9136f6c8b, type: 3}
+--- !u!114 &8940042554043142032
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6693035354360656924}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f1ccaf3bd1e9dc498dcaeec6b838f4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isMainDirectionalLight: 1
+  isVolumetric: 0
+  isFog: 0
+  numberOfSamples: 16
+  lightPower: 500000
+  scatteringProbability: 0.0001
+  henyeyGreensteinGValue: 0
 --- !u!114 &3462445091702138742
 MonoBehaviour:
   m_ObjectHideFlags: 0

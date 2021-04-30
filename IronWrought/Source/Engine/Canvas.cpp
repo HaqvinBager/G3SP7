@@ -329,6 +329,9 @@ void CCanvas::Init(const std::string& aFilePath, CScene& aScene, bool addToScene
 
 void CCanvas::Update()
 {
+	if (!myIsEnabled)
+		return;
+
 	for (unsigned int i = 0; i < mySprites.size(); ++i)
 	{
 		mySprites[i]->Update();
@@ -344,7 +347,6 @@ void CCanvas::Update()
 			switch (i)
 			{
 				case 0:
-					if(myWidgets[i]->GetEnabled())
 						myLevelToLoad = "Level_1-1";
 				break;
 
@@ -363,7 +365,7 @@ void CCanvas::Update()
 						myLevelToLoad = "Level_2-2";
 				break;
 
-				case 6:
+				case 7:
 				{
 					if (!myWidgets[i]->GetEnabled())
 						continue;
@@ -500,31 +502,25 @@ bool CCanvas::GetEnabled()
 
 void CCanvas::SetEnabled(bool isEnabled)
 {
-	if (myIsEnabled != isEnabled)
-	{
-		myIsEnabled = isEnabled;
+	myIsEnabled = isEnabled;
 
-		for (auto& button : myButtons)
-			button->Enabled(myIsEnabled);
+	for (auto& button : myButtons)
+		button->Enabled(myIsEnabled);
 
-		for (auto& text : myButtonTexts)
-			text->SetShouldRender(myIsEnabled);
+	for (auto& text : myButtonTexts)
+		text->SetShouldRender(myIsEnabled);
 
-		for (auto& sprite : mySprites)
-			sprite->SetShouldRender(myIsEnabled);
+	for (auto& sprite : mySprites)
+		sprite->SetShouldRender(myIsEnabled);
 
-		for (auto& text : myTexts)
-			text->SetShouldRender(myIsEnabled);
+	for (auto& text : myTexts)
+		text->SetShouldRender(myIsEnabled);
 
-		for (auto& animUI : myAnimatedUIs)
-			animUI->SetShouldRender(myIsEnabled);
+	for (auto& animUI : myAnimatedUIs)
+		animUI->SetShouldRender(myIsEnabled);
 
-		if(myBackground)
-			myBackground->SetShouldRender(myIsEnabled);
-
-		//for (auto& widget : myWidgets)
-		//	widget->SetEnabled(myIsEnabled);
-	}
+	if(myBackground)
+		myBackground->SetShouldRender(myIsEnabled);
 }
 
 void CCanvas::ForceEnabled(const bool& anIsEnabled)
@@ -602,13 +598,16 @@ bool CCanvas::InitButton(const rapidjson::GenericObject<false, rapidjson::Value>
 	data.mySpritePaths.at(0) = ASSETPATH(aRapidObject["Idle Sprite Path"].GetString());
 	data.mySpritePaths.at(1) = ASSETPATH(aRapidObject["Hover Sprite Path"].GetString());
 	data.mySpritePaths.at(2) = ASSETPATH(aRapidObject["Click Sprite Path"].GetString());
-
-	auto messagesArray = aRapidObject["Messages"].GetArray();
-	data.myMessagesToSend.resize(messagesArray.Size());
-
-	for (unsigned int j = 0; j < messagesArray.Size(); ++j)
+	
+	if (aRapidObject.HasMember("Messages"))
 	{
-		data.myMessagesToSend[j] = static_cast<EMessageType>(messagesArray[j].GetInt());
+		auto messagesArray = aRapidObject["Messages"].GetArray();
+		data.myMessagesToSend.resize(messagesArray.Size());
+
+		for (unsigned int j = 0; j < messagesArray.Size(); ++j)
+		{
+			data.myMessagesToSend[j] = static_cast<EMessageType>(messagesArray[j].GetInt());
+		}
 	}
 
 	data.myWidgetToToggleIndex = -1;

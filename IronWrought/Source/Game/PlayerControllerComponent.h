@@ -50,7 +50,11 @@ public:
 
 	void LadderEnter();
 	void LadderExit();
+
+	void SetRespawnPosition();
+
 private:
+	void BoundsCheck();
 	void LadderUpdate();
 
 
@@ -74,6 +78,7 @@ private:
 	float myCrouchSpeed;
 	float myJumpHeight;
 	float myFallSpeed;
+	float myAirborneTimer;
 
 	//CRigidBodyComponent* myLadder;
 
@@ -85,6 +90,7 @@ private:
 	const float myCameraPosYStanding = 1.6f * 0.5f;
 	const float myCameraPosYCrouching = 0.95f * 0.5f;
 	const float myCameraPosZ = -0.22f;
+	const float myMaxFallSpeed = -0.3f;
 
 	/*
 		Standing:

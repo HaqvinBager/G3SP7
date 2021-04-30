@@ -57,5 +57,6 @@ private:
 	ID3D11VertexShader* myModelVertexShader;
 	ID3D11VertexShader* myAnimationVertexShader;
 	ID3D11VertexShader* myInstancedModelVertexShader;
+	ID3D11PixelShader* myAlphaObjectPixelShader;
 };
 

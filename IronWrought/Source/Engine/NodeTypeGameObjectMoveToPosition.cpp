@@ -3,6 +3,10 @@
 #include "NodeInstance.h"
 #include "GameObject.h"
 #include "TransformComponent.h"
+#include "RigidBodyComponent.h"
+#include "BoxColliderComponent.h"
+#include "SphereColliderComponent.h"
+#include "CapsuleColliderComponent.h"
 #include "GraphManager.h"
 #include "Timer.h"
 #include "Scene.h"
@@ -67,7 +71,6 @@ int CNodeTypeGameObjectMoveToPosition::OnEnter(CNodeInstance* aTriggeringNodeIns
 
 		gameObject->myTransform->Move({ direction.x,  direction.y, direction.z });
 	}
-
 
 	std::vector<SPin>& pins = aTriggeringNodeInstance->GetPins();
 	DeclareDataOnPinIfNecessary<bool>(pins[3]);

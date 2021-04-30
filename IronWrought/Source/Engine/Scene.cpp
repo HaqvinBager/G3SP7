@@ -72,6 +72,7 @@ CScene::CScene(const unsigned int aGameObjectCount)
 CScene::~CScene()
 {
 	this->ClearGameObjects();
+	this->ClearSecondaryEnvironmentLights();
 	this->ClearPointLights();
 	this->ClearSpotLights();
 	this->ClearBoxLights();
@@ -230,7 +231,7 @@ void CScene::Update()
 
 	if (myPlayer && myEnvironmentLight)
 	{
-		myEnvironmentLight->SetPosition({ myPlayer->myTransform->WorldPosition().x, myEnvironmentLight->GetShadowPosition().y, myPlayer->myTransform->WorldPosition().z });
+		myEnvironmentLight->SetPosition({ myPlayer->myTransform->WorldPosition().x, 20.0f, myPlayer->myTransform->WorldPosition().z });
 	}
 
 }
@@ -370,6 +371,10 @@ const std::vector<CGameObject*>& CScene::ActiveGameObjects() const
 {
 	return myGameObjects;
 }
+std::vector<CEnvironmentLight*> CScene::CullSecondaryEnvironmentLights(CGameObject* /*aGameObject*/)
+{
+	return mySecondaryEnvironmentLights;
+}
 //GETTERS END
 //CULLING START
 std::vector<CPointLight*> CScene::CullPointLights(CGameObject* /*aGameObject*/)
@@ -478,7 +483,7 @@ std::vector<CGameObject*> CScene::CullGameObjects(CCameraComponent* aMainCamera)
 	std::vector<CGameObject*> culledGameObjects;
 	for (auto& gameObject : myGameObjects)
 	{
-		if (gameObject->InstanceID() == PLAYER_CAMERA_ID || gameObject->InstanceID() == PLAYER_MODEL_ID)
+		if (gameObject->InstanceID() == PLAYER_CAMERA_ID)
 		{
 			culledGameObjects.push_back(gameObject);
 			continue;
@@ -524,6 +529,11 @@ CGameObject* CScene::FindObjectWithID(const int aGameObjectInstanceID)
 		return nullptr;
 
 	return myIDGameObjectMap[aGameObjectInstanceID];
+}
+bool CScene::AddInstance(CEnvironmentLight* aSecondaryDirectionalLight)
+{
+	mySecondaryEnvironmentLights.emplace_back(aSecondaryDirectionalLight);
+	return true;
 }
 //CULLING END
 //POPULATE SCENE START
@@ -626,6 +636,18 @@ bool CScene::AddPXScene(PxScene* aPXScene)
 //POPULATE SCENE END
 // 
 //REMOVE SPECIFIC INSTANCE START
+bool CScene::RemoveInstance(CEnvironmentLight* aSecondaryEnvironmentLight)
+{
+	for (int i = 0; i < mySecondaryEnvironmentLights.size(); ++i)
+	{
+		if (aSecondaryEnvironmentLight == mySecondaryEnvironmentLights[i])
+		{
+			mySecondaryEnvironmentLights.erase(mySecondaryEnvironmentLights.begin() + i);
+			return true;
+		}
+	}
+	return false;
+}
 bool CScene::RemoveInstance(CPointLight* aPointLight)
 {
 	for (int i = 0; i < myPointLights.size(); ++i)
@@ -718,6 +740,16 @@ bool CScene::RemoveInstance(CTextInstance* aTextInstance)
 		}
 	}
 	return false;
+}
+bool CScene::ClearSecondaryEnvironmentLights()
+{
+	for (auto& p : mySecondaryEnvironmentLights)
+	{
+		delete p;
+		p = nullptr;
+	}
+	mySecondaryEnvironmentLights.clear();
+	return true;
 }
 //REMOVE SPECIFIC INSTANCE END
 // 
