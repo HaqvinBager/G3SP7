@@ -93,8 +93,10 @@ void CBoxColliderComponent::OnTriggerExit()
 
 void CBoxColliderComponent::OnEnable()
 {
+	Enabled(true);
 }
 
 void CBoxColliderComponent::OnDisable()
 {
+	Enabled(false);
 }

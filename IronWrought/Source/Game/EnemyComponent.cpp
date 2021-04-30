@@ -6,19 +6,24 @@
 #include "VFXSystemComponent.h"
 #include <Scene.h>
 #include "Engine.h"
+#include "RigidBodyComponent.h"
+#include "RigidDynamicBody.h"
+#include "CapsuleColliderComponent.h"
+#include "ModelComponent.h"
 #include "PhysXWrapper.h"
 
 //EnemyComp
 
-CEnemyComponent::CEnemyComponent(CGameObject& aParent, const SEnemySetting& someSettings, physx::PxUserControllerHitReport* aHitReport)
+CEnemyComponent::CEnemyComponent(CGameObject& aParent, const SEnemySetting& someSettings, physx::PxUserControllerHitReport* /*aHitReport*/)
 	: CComponent(aParent)
 	, myController(nullptr)
 	, myPlayer(nullptr)
 	, myEnemy(nullptr)
 	, myCurrentState(EBehaviour::Patrol)
 {
+	//myController = CEngine::GetInstance()->GetPhysx().CreateCharacterController(GameObject().myTransform->Position(), 0.6f * 0.5f, 1.8f * 0.5f, GameObject().myTransform, aHitReport);
+	//myController->GetController().getActor()->setRigidBodyFlag(PxRigidBodyFlag::eUSE_KINEMATIC_TARGET_FOR_SCENE_QUERIES, true);
 	mySettings = someSettings;
-	myController = CEngine::GetInstance()->GetPhysx().CreateCharacterController(GameObject().myTransform->Position(), 0.6f * 0.5f, 1.8f * 0.5f, GameObject().myTransform, aHitReport);
 }
 
 CEnemyComponent::~CEnemyComponent()
@@ -48,6 +53,13 @@ void CEnemyComponent::Start()
 	//myBehaviours.push_back(new CAttack());
 
 	this->GameObject().GetComponent<CVFXSystemComponent>()->EnableEffect(0);
+
+	if (GameObject().GetComponent<CRigidBodyComponent>()) {
+		GameObject().GetComponent<CRigidBodyComponent>()->GetDynamicRigidBody()->GetBody().setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
+		GameObject().GetComponent<CRigidBodyComponent>()->GetDynamicRigidBody()->GetBody().setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, true);
+		GameObject().GetComponent<CRigidBodyComponent>()->GetDynamicRigidBody()->GetBody().setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
+	}
+	myCurrentHealth = mySettings.myHealth;
 }
 
 void CEnemyComponent::Update()//f�r best�mma vilket behaviour vi vill k�ra i denna Update()!!!
@@ -59,7 +71,11 @@ void CEnemyComponent::Update()//f�r best�mma vilket behaviour vi vill k�ra
 	if(myPlayer)
 		mySettings.myDistance = Vector3::DistanceSquared(myPlayer->myTransform->Position(), GameObject().myTransform->Position());
 
-	//myController->Move({ 0.0f, -0.098f, 0.0f }, 1.f);
+	/*Vector3 newPos;
+	newPos.x = (float)myController->GetController().getFootPosition().x;
+	newPos.y = (float)myController->GetController().getFootPosition().y;
+	newPos.z = (float)myController->GetController().getFootPosition().z;*/
+	//GameObject().myTransform->Position(GameObject().GetComponent<CRigidBodyComponent>()->GetDynamicRigidBody()->GetPosition());
 
 	if (mySettings.myRadius * mySettings.myRadius >= mySettings.myDistance) {//seek
 		//SetState(EBehaviour::Seek);
@@ -72,16 +88,26 @@ void CEnemyComponent::Update()//f�r best�mma vilket behaviour vi vill k�ra
 	else {//patrol
 		SetState(EBehaviour::Patrol);
 	}
+	if (GameObject().GetComponent<CRigidBodyComponent>()) {
+		GameObject().GetComponent<CRigidBodyComponent>()->AddForce({ 1.f, 0.f, 0.f });
+	}
+	if (myCurrentHealth <= 0.f) {
+		Dead();
+		//std::cout << "DEAD" << std::endl;
+	}
 	//Vector3 newDirection = myBehaviours[static_cast<int>(myCurrentState)]->Update(GameObject().myTransform->Position());
 	//myController->Move(newDirection, mySettings.mySpeed);
 	//GameObject().myTransform->Position(myController->GetPosition());
 }
 
-void CEnemyComponent::TakeDamage()
+void CEnemyComponent::FixedUpdate()
 {
-	mySettings.myHealth -= 5.0f;
+	//myController->Move({ 0.0f, -0.098f, 0.0f }, 1.f);
+}
 
-	std::cout << mySettings.myHealth << std::endl;
+void CEnemyComponent::TakeDamage(float aDamage)
+{
+	myCurrentHealth -= aDamage;
 }
 
 void CEnemyComponent::SetState(EBehaviour aState)
@@ -92,4 +118,9 @@ void CEnemyComponent::SetState(EBehaviour aState)
 const CEnemyComponent::EBehaviour CEnemyComponent::GetState() const
 {
 	return myCurrentState;
+}
+
+void CEnemyComponent::Dead()
+{
+	GameObject().Active(false);
 }

@@ -9,6 +9,11 @@ namespace IronWroughtImGui {
 	class CGravityGloveEditor;
 }
 
+namespace physx {
+	class PxRigidStatic;
+	class PxD6Joint;
+}
+
 struct SGravityGloveSettings {
 	float myPushForce; //Current Default Value: 27
 	float myDistanceToMaxLinearVelocity;
@@ -96,7 +101,8 @@ private:
 
 	CTransformComponent* myGravitySlot;
 	CRigidBodyComponent* myCurrentTarget;
-
+	physx::PxRigidStatic* myRigidStatic;
+	physx::PxD6Joint* myJoint;
 };
 
 

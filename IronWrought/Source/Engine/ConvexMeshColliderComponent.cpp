@@ -46,10 +46,12 @@ void CConvexMeshColliderComponent::Update()
 
 void CConvexMeshColliderComponent::OnEnable()
 {
+	Enabled(true);
 }
 
 void CConvexMeshColliderComponent::OnDisable()
 {
+	Enabled(false);
 }
 
 void CConvexMeshColliderComponent::SetShape(physx::PxShape* aShape)

@@ -9,6 +9,8 @@
 #include "Engine.h"
 #include "Scene.h"
 #include "RigidDynamicBody.h"
+#include "PlayerControllerComponent.h"
+#include "CharacterController.h"
 
 CGravityGloveComponent::CGravityGloveComponent(CGameObject& aParent, CTransformComponent* aGravitySlot)
 	: CBehaviour(aParent)
@@ -22,6 +24,7 @@ CGravityGloveComponent::CGravityGloveComponent(CGameObject& aParent, CTransformC
 
 	mySettings.myMaxDistance = 50.0f;
 	mySettings.myCurrentDistanceInverseLerp = 0.0f;
+	myJoint = nullptr;
 }
 
 CGravityGloveComponent::~CGravityGloveComponent()
@@ -31,6 +34,8 @@ CGravityGloveComponent::~CGravityGloveComponent()
 
 void CGravityGloveComponent::Awake()
 {
+	myRigidStatic = CEngine::GetInstance()->GetPhysx().GetPhysics()->createRigidStatic({ myGravitySlot->GetWorldMatrix().Translation().x,myGravitySlot->GetWorldMatrix().Translation().y, myGravitySlot->GetWorldMatrix().Translation().z });
+	CEngine::GetInstance()->GetPhysx().GetPXScene()->addActor(*myRigidStatic);
 }
 
 void CGravityGloveComponent::Start()
@@ -63,8 +68,28 @@ void CGravityGloveComponent::Update()
 
 		if (mySettings.myCurrentDistanceInverseLerp < 0.1f)
 		{
-			//myCurrentTarget->SetPosition(myGravitySlot->WorldPosition());
-			//myCurrentTarget->SetRotation(myCurrentTarget->GetComponent<CTransformComponent>()->Rotation());
+			//dont remove pls - Alexander Matthäi 2021-04-30
+			/*myJoint = PxD6JointCreate(*CEngine::GetInstance()->GetPhysx().GetPhysics(), myRigidStatic, myRigidStatic->getGlobalPose(), &myCurrentTarget->GetDynamicRigidBody()->GetBody(), myCurrentTarget->GetDynamicRigidBody()->GetBody().getGlobalPose());
+			myJoint->setMotion(PxD6Axis::eX, PxD6Motion::eFREE);
+			myJoint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eFREE);
+
+			myJoint->setMotion(PxD6Axis::eY, PxD6Motion::eFREE);
+			myJoint->setMotion(PxD6Axis::eZ, PxD6Motion::eFREE);
+			myJoint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eFREE);
+			myJoint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eFREE);
+			myJoint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eFREE);
+
+			myJoint->setMotion(PxD6Axis::eX, PxD6Motion::eFREE);
+			myJoint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eFREE);
+			myJoint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eFREE);
+			myJoint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eFREE);
+
+			myJoint->setMotion(PxD6Axis::eX, PxD6Motion::eFREE);
+			myJoint->setMotion(PxD6Axis::eY, PxD6Motion::eLIMITED);
+			myJoint->setMotion(PxD6Axis::eZ, PxD6Motion::eLIMITED);*/
+
+			myCurrentTarget->SetPosition(myGravitySlot->WorldPosition());
+			myCurrentTarget->SetRotation(myCurrentTarget->GetComponent<CTransformComponent>()->Rotation());
 			myCurrentTarget->SetGlobalPose(myGravitySlot->WorldPosition(), myCurrentTarget->GetComponent<CTransformComponent>()->Rotation());
 			myCurrentTarget->SetLinearVelocity({ 0.f, 0.f, 0.f });
 			myCurrentTarget->SetAngularVelocity({ 0.f, 0.f, 0.f });
@@ -72,7 +97,7 @@ void CGravityGloveComponent::Update()
 		else
 		{
 			float force = Lerp(mySettings.myMaxPushForce, mySettings.myMinPullForce, mySettings.myCurrentDistanceInverseLerp);
-
+			
 			//myCurrentTarget->GetDynamicRigidBody()->GetBody().setMaxLinearVelocity(max(mySettings.myDistanceToMaxLinearVelocity, distance));
 			direction.Normalize();
 			myCurrentTarget->AddForce(direction, force, EForceMode::EForce);
@@ -100,6 +125,7 @@ void CGravityGloveComponent::Pull()
 	Vector3 dir = -GameObject().myTransform->GetWorldMatrix().Forward();
 
 	PxRaycastBuffer hit = CEngine::GetInstance()->GetPhysx().Raycast(start, dir, mySettings.myMaxDistance);
+
 //	std::vector<CGameObject*> gameobjects = CEngine::GetInstance()->GetActiveScene().ActiveGameObjects();
 
 	/*for (int i = 0; i < gameobjects.size(); ++i) {
@@ -115,8 +141,6 @@ void CGravityGloveComponent::Pull()
 			}
 		}
 	}*/
-	int anyhits = hit.getNbAnyHits();
-	std::cout << anyhits << std::endl;
 	if (hit.getNbAnyHits() > 0)
 	{
 		CTransformComponent* transform = (CTransformComponent*)hit.getAnyHit(0).actor->userData;

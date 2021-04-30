@@ -4,6 +4,7 @@
 #include "RigidBodyComponent.h"
 #include <PlayerControllerComponent.h>
 #include "RigidDynamicBody.h"
+#include <EnemyComponent.h>
 
 void CPlayerReportCallback::onShapeHit(const physx::PxControllerShapeHit& hit)
 {
@@ -17,7 +18,6 @@ void CPlayerReportCallback::onShapeHit(const physx::PxControllerShapeHit& hit)
 	if (hit.shape->getGeometryType() == physx::PxGeometryType::eTRIANGLEMESH) {
 		myHitNormal = hit.worldNormal;
 	}
-	
 	if (playerTransform) {
 		if (playerTransform->GameObject().GetComponent<CPlayerControllerComponent>()) {
 			if (hit.actor->userData != nullptr)
@@ -37,7 +37,7 @@ void CPlayerReportCallback::onShapeHit(const physx::PxControllerShapeHit& hit)
 							{
 								float m = other->GetMass();
 								Vector3 f = { (m * ((v - n)  / CTimer::Dt())) };
-								other->AddForce(f / 2.f);
+								other->AddForce(f / 50.f);
 								//other->GetDynamicRigidBody()->GetBody().setMaxLinearVelocity(10.f);
 								//F = m * (v - v0/t - t0) or F = m * (v/t) because v0 and t0 is almost always 0 in this case
 								//m = mass

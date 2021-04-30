@@ -7,6 +7,7 @@ class CGameObject;
 
 namespace physx {
 	class PxUserControllerHitReport;
+	class PxShape;
 }
 
 struct SEnemySetting {
@@ -32,10 +33,12 @@ public:
 
 	void Awake() override;
 	void Start() override;
-	void Update()override;
-	void TakeDamage();
+	void Update() override;
+	void FixedUpdate() override;
+	void TakeDamage(float aDamage);
 	void SetState(EBehaviour aState);
 	const EBehaviour GetState()const;
+	void Dead();
 private:
 	CCharacterController* myController;
 	std::vector<CAIController*> myBehaviours;
@@ -43,6 +46,7 @@ private:
 	CGameObject* myEnemy;
 	CGameObject* myPlayer;
 	SEnemySetting mySettings;
+	float myCurrentHealth;
 	
 };
 

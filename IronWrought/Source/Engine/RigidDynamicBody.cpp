@@ -52,6 +52,12 @@ CRigidDynamicBody::CRigidDynamicBody(physx::PxPhysics& aPhysX, const physx::PxTr
 	//myBody->attachShape(*shape);
 }
 
+Vector3 CRigidDynamicBody::GetLinearVelocity() const
+{
+	const physx::PxVec3 transform = myBody->getLinearVelocity();
+	return { transform.x, transform.y , transform.z };
+}
+
 Vector3 CRigidDynamicBody::GetPosition() const
 {
 	const physx::PxTransform transform = myBody->getGlobalPose();
