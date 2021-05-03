@@ -215,6 +215,7 @@ PxRaycastBuffer CPhysXWrapper::Raycast(Vector3 aOrigin, Vector3 aDirection, floa
 	PxRaycastBuffer hit;
 	PxQueryFilterData filterData = PxQueryFilterData();
 	filterData.data.word0 = ELayerMask::GROUP1;
+	//filterData.flags.set(PxQueryFlag::eANY_HIT);
 	//PxQueryFilterData filterData(PxQueryFlag::eNO_BLOCK);
 	/*bool status = */scene->raycast(origin, unitDir, maxDistance, hit, PxHitFlag::eDEFAULT, filterData);
 	/*if (status) {
