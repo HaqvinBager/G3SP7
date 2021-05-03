@@ -127,7 +127,8 @@ public class ExporterJson
         Json.AddToExport(       EnemyExporter.Export(aSceneName)                    );
         Json.AddToExport(       ExportParents.Export(aSceneName)                    );
         Json.AddToExport(       ExportEventTrigger.Export(aSceneName)               );
-        Json.AddToExport(       ExportInstancedModel.Export(aSceneName) , true);
+        Json.AddToExport(       HealthPickupExporter.Export(aSceneName)             );
+        Json.AddToExport(       ExportInstancedModel.Export(aSceneName) , true      );
     }
 
     public static Player ExportPlayer(string aSceneName)

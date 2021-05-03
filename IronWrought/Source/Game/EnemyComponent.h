@@ -3,10 +3,11 @@
 #define PI 3.14159265f
 class CAIController;
 class CCharacterController;
+class CRigidBodyComponent;
 class CGameObject;
 
 namespace physx {
-	class PxUserControllerHitReport;
+	class PxShape;
 }
 
 struct SEnemySetting {
@@ -29,16 +30,18 @@ public:
 	};
 
 public:
-	CEnemyComponent(CGameObject& aParent, const SEnemySetting& someSettings, physx::PxUserControllerHitReport* aHitReport);
+	CEnemyComponent(CGameObject& aParent, const SEnemySetting& someSettings);
 	~CEnemyComponent() override;
 
 	void Awake() override;
 	void Start() override;
-	void Update()override;
-	void TakeDamage();
+	void Update() override;
+	void FixedUpdate() override;
+	void TakeDamage(float aDamage);
 	void SetState(EBehaviour aState);
 	const EBehaviour GetState()const;
 
+	void Dead();
 
 public:
 	float WrapAngle(float anAngle)
@@ -56,19 +59,19 @@ public:
 	}
 
 private:
-	CCharacterController* myController;
 	std::vector<CAIController*> myBehaviours;
 	EBehaviour myCurrentState;
 	CGameObject* myEnemy;
 	CGameObject* myPlayer;
 	SEnemySetting mySettings;
+	float myCurrentHealth;
 	std::vector<Vector3> myPatrolPositions;
 	Quaternion myPatrolRotation;
 	Vector3 myCurrentDirection;
-	float myCurrentOrientation;
+	float myCurrentOrientation; 
+	CRigidBodyComponent* myRigidBodyComponent;
 
 	float myYaw;
 	float myPitch;
-	
-};
 
+};

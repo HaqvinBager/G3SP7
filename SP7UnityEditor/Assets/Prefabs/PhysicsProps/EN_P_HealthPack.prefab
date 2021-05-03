@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: -2701946978418678120}
   - component: {fileID: 7623177273899947262}
   - component: {fileID: 6047225610158040372}
+  - component: {fileID: 7127260016007785556}
   m_Layer: 0
   m_Name: EN_P_HealthPack
   m_TagString: Untagged
@@ -76,6 +77,19 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -1427934330341393655, guid: 07a56d8e69e2dc143bd2d64efdd706ad, type: 3}
+--- !u!114 &7127260016007785556
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4566036859748520178}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df5cf69ca1c45074dbc9f89c24f09f09, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  healthPickupAmount: 5
 --- !u!1001 &4989065474281456195
 PrefabInstance:
   m_ObjectHideFlags: 0

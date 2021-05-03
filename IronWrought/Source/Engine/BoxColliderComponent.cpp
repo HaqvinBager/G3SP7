@@ -121,10 +121,12 @@ void CBoxColliderComponent::OnTriggerExit()
 
 void CBoxColliderComponent::OnEnable()
 {
+	Enabled(true);
 }
 
 void CBoxColliderComponent::OnDisable()
 {
+	Enabled(false);
 }
 
 void CBoxColliderComponent::CreateColliderDraw(const float& aHalfSizeX, const float& aHalfSizeY, const float& aHalfSizeZ, const Vector3& aPosOffset)

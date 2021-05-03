@@ -2,24 +2,22 @@
 #include "EnemyReportCallback.h"
 #include "TransformComponent.h"
 #include "RigidBodyComponent.h"
-#include <PlayerControllerComponent.h>
 #include "RigidDynamicBody.h"
 #include <EnemyComponent.h>
 
 void CEnemyReportCallback::onShapeHit(const physx::PxControllerShapeHit& hit)
 {
-	if (hit.actor->userData!= nullptr) {
-		CTransformComponent* enemy = (CTransformComponent*)hit.controller->getUserData();
-		if (enemy) {
-			if (enemy->GetComponent<CEnemyComponent>()) {
-				CTransformComponent* objectTransform = (CTransformComponent*)hit.actor->userData;
-				if (objectTransform) {
-					CRigidBodyComponent* other = objectTransform->GetComponent<CRigidBodyComponent>();
-					if (other) {
-						enemy->GetComponent<CEnemyComponent>()->TakeDamage();
-					}
-				}
-			}
+	CTransformComponent* enemy = (CTransformComponent*)hit.controller->getUserData();
+	if (enemy) {
+		if (enemy->GetComponent<CEnemyComponent>()) {
+				//CTransformComponent* objectTransform = (CTransformComponent*)hit.actor->userData;
+				//if (objectTransform) {
+				//	CRigidBodyComponent* other = objectTransform->GetComponent<CRigidBodyComponent>();
+				//	if (other) {
+						//enemy->GetComponent<CEnemyComponent>()->TakeDamage();
+				//	}
+				//}
+		
 		}
 	}
 }

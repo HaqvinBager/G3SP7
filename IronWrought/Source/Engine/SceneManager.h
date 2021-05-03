@@ -49,6 +49,7 @@ private:
 	static void AddTriggerEvents(CScene& aScene, RapidArray someData);
 	static void AddPlayer(CScene& aScene, RapidObject someData);
 	static void AddEnemyComponents(CScene& aScene, RapidArray someData);
+	static void AddPickups(CScene& aScene, RapidArray someData);
 	static CScene* ourLastInstantiatedScene;
 };
 
