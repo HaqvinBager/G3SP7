@@ -3,6 +3,8 @@
 #include "TransformComponent.h"
 #include "RigidBodyComponent.h"
 #include <PlayerControllerComponent.h>
+#include <HealthPickupComponent.h>
+#include <PlayerComponent.h>
 #include "RigidDynamicBody.h"
 #include <EnemyComponent.h>
 
@@ -26,13 +28,21 @@ void CPlayerReportCallback::onShapeHit(const physx::PxControllerShapeHit& hit)
 				CPlayerControllerComponent* player = playerTransform->GameObject().GetComponent<CPlayerControllerComponent>();
 				if (player) {
 					if (objectTransform) {
+
+						if (objectTransform->GetComponent<CHealthPickupComponent>()) {
+							if (player->GetComponent<CPlayerComponent>()->CurrentHealth() < 100.f) {
+								player->GetComponent<CPlayerComponent>()->IncreaseHealth(objectTransform->GetComponent<CHealthPickupComponent>()->GetHealthPickupAmount());
+								objectTransform->GetComponent<CHealthPickupComponent>()->Destroy();
+							}
+						}
+
 						Vector3 v = player->GetLinearVelocity();
 						Vector3 n = { hit.worldNormal.x, hit.worldNormal.y, hit.worldNormal.z };
 						float dot = n.Dot({0,1,0});
 						float angle = std::acos(dot) * (180.f/3.14f);
 						CRigidBodyComponent* other = objectTransform->GetComponent<CRigidBodyComponent>();
 								//std::cout << angle << std::endl;
-						if (other != nullptr && angle > 50.f) {
+						if (other != nullptr && angle > 50.f && other->GetDynamicRigidBody() != nullptr) {
 							if (!other->IsKinematic())
 							{
 								float m = other->GetMass();

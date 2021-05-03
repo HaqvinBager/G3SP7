@@ -9,28 +9,29 @@
 #include "RigidBodyComponent.h"
 #include "RigidDynamicBody.h"
 #include "CapsuleColliderComponent.h"
+#include "RigidBodyComponent.h"
 #include "ModelComponent.h"
 #include "PhysXWrapper.h"
 
 //EnemyComp
 
-CEnemyComponent::CEnemyComponent(CGameObject& aParent, const SEnemySetting& someSettings, physx::PxUserControllerHitReport* /*aHitReport*/)
+CEnemyComponent::CEnemyComponent(CGameObject& aParent, const SEnemySetting& someSettings)
 	: CComponent(aParent)
-	, myController(nullptr)
 	, myPlayer(nullptr)
 	, myEnemy(nullptr)
 	, myCurrentState(EBehaviour::Patrol)
+	, myRigidBodyComponent(nullptr)
 {
 	//myController = CEngine::GetInstance()->GetPhysx().CreateCharacterController(GameObject().myTransform->Position(), 0.6f * 0.5f, 1.8f * 0.5f, GameObject().myTransform, aHitReport);
 	//myController->GetController().getActor()->setRigidBodyFlag(PxRigidBodyFlag::eUSE_KINEMATIC_TARGET_FOR_SCENE_QUERIES, true);
 	mySettings = someSettings;
-	myController = CEngine::GetInstance()->GetPhysx().CreateCharacterController(GameObject().myTransform->Position(), 0.6f * 0.5f, 1.8f * 0.5f, GameObject().myTransform, aHitReport);
 	myPitch = 0.0f;
 	myYaw = 0.0f;
 }
 
 CEnemyComponent::~CEnemyComponent()
 {
+	myRigidBodyComponent = nullptr;
 }
 
 void CEnemyComponent::Awake()
@@ -62,9 +63,11 @@ void CEnemyComponent::Start()
 	this->GameObject().GetComponent<CVFXSystemComponent>()->EnableEffect(0);
 
 	if (GameObject().GetComponent<CRigidBodyComponent>()) {
-		GameObject().GetComponent<CRigidBodyComponent>()->GetDynamicRigidBody()->GetBody().setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
-		GameObject().GetComponent<CRigidBodyComponent>()->GetDynamicRigidBody()->GetBody().setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, true);
-		GameObject().GetComponent<CRigidBodyComponent>()->GetDynamicRigidBody()->GetBody().setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
+		myRigidBodyComponent = GameObject().GetComponent<CRigidBodyComponent>();
+		myRigidBodyComponent->GetDynamicRigidBody()->GetBody().setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
+		myRigidBodyComponent->GetDynamicRigidBody()->GetBody().setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, true);
+		myRigidBodyComponent->GetDynamicRigidBody()->GetBody().setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true); 
+		myRigidBodyComponent->GetDynamicRigidBody()->GetBody().setMaxLinearVelocity(mySettings.mySpeed);
 	}
 	myCurrentHealth = mySettings.myHealth;
 }
@@ -83,13 +86,13 @@ void CEnemyComponent::Update()//får bestämma vilket behaviour vi vill köra i 
 		SetState(EBehaviour::Patrol);
 	}
 
-	Vector3 targetDirection = myBehaviours[static_cast<int>(myCurrentState)]->Update(GameObject().myTransform->Position());
-	myController->Move(targetDirection, mySettings.mySpeed);
-	GameObject().myTransform->Position(myController->GetPosition());
-	float targetOrientation = WrapAngle(atan2f(targetDirection.x, targetDirection.z));
-	myCurrentOrientation = Lerp(myCurrentOrientation, targetOrientation, 2.0f * CTimer::Dt());
-	//myCurrentDirection = Vector3::Lerp(myCurrentDirection, targetDirection, CTimer::Dt());
-	GameObject().myTransform->Rotation({ 0, DirectX::XMConvertToDegrees(myCurrentOrientation) + 180.f, 0 });
+	if (myRigidBodyComponent) {
+		Vector3 targetDirection = myBehaviours[static_cast<int>(myCurrentState)]->Update(GameObject().myTransform->Position());
+		myRigidBodyComponent->AddForce(targetDirection);
+		float targetOrientation = WrapAngle(atan2f(targetDirection.x, targetDirection.z));
+		myCurrentOrientation = Lerp(myCurrentOrientation, targetOrientation, 2.0f * CTimer::Dt());
+		GameObject().myTransform->Rotation({ 0, DirectX::XMConvertToDegrees(myCurrentOrientation) + 180.f, 0 });
+	}
 
 //new movement
 	//if (GameObject().GetComponent<CRigidBodyComponent>()) {
@@ -97,7 +100,6 @@ void CEnemyComponent::Update()//får bestämma vilket behaviour vi vill köra i 
 	//}
 	if (myCurrentHealth <= 0.f) {
 		Dead();
-		//std::cout << "DEAD" << std::endl;
 	}
 }
 

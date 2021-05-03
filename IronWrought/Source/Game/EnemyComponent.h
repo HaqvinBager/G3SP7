@@ -3,10 +3,10 @@
 #define PI 3.14159265f
 class CAIController;
 class CCharacterController;
+class CRigidBodyComponent;
 class CGameObject;
 
 namespace physx {
-	class PxUserControllerHitReport;
 	class PxShape;
 }
 
@@ -30,7 +30,7 @@ public:
 	};
 
 public:
-	CEnemyComponent(CGameObject& aParent, const SEnemySetting& someSettings, physx::PxUserControllerHitReport* aHitReport);
+	CEnemyComponent(CGameObject& aParent, const SEnemySetting& someSettings);
 	~CEnemyComponent() override;
 
 	void Awake() override;
@@ -59,7 +59,6 @@ public:
 	}
 
 private:
-	CCharacterController* myController;
 	std::vector<CAIController*> myBehaviours;
 	EBehaviour myCurrentState;
 	CGameObject* myEnemy;
@@ -69,7 +68,8 @@ private:
 	std::vector<Vector3> myPatrolPositions;
 	Quaternion myPatrolRotation;
 	Vector3 myCurrentDirection;
-	float myCurrentOrientation;
+	float myCurrentOrientation; 
+	CRigidBodyComponent* myRigidBodyComponent;
 
 	float myYaw;
 	float myPitch;

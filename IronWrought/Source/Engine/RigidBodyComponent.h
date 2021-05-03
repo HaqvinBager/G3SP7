@@ -47,6 +47,8 @@ public:
 	const bool IsKinematic() const { return myIsKinematic; }
 
 	const float GetMass();
+
+	void Destroy();
 	
 	CRigidDynamicBody* GetDynamicRigidBody() { return myDynamicRigidBody; }
 private:

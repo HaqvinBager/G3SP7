@@ -19,6 +19,7 @@
 #include "VFXSystemComponent.h"
 #include <GravityGloveComponent.h>
 #include <EnemyComponent.h>
+#include <HealthPickupComponent.h>
 //#include <iostream>
 
 #include <BinReader.h>
@@ -106,6 +107,7 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneJson)
 				AddPlayer(*scene, sceneData["player"].GetObjectW());
 			}
 			AddEnemyComponents(*scene, sceneData["enemies"].GetArray());
+			AddPickups(*scene, sceneData["healthPickups"].GetArray());
 		}
 		AddInstancedModelComponents(*scene, sceneData["instancedModels"].GetArray());
 	}
@@ -420,9 +422,23 @@ void CSceneManager::AddEnemyComponents(CScene& aScene, RapidArray someData)
 				settings.myPatrolGameObjectIds.push_back(point["instanceID"].GetInt());
 			}
 		}
-		gameObject->AddComponent<CEnemyComponent>(*gameObject, settings, CEngine::GetInstance()->GetPhysx().GetEnemyReportBack());
+		gameObject->AddComponent<CEnemyComponent>(*gameObject, settings);
 
 		gameObject->AddComponent<CVFXSystemComponent>(*gameObject, ASSETPATH("Assets/Graphics/VFX/JSON/VFXSystem_Enemy.json"));
+	}
+}
+
+void CSceneManager::AddPickups(CScene& aScene, RapidArray someData)
+{
+	for (const auto& m : someData)
+	{
+		const int instanceId = m["instanceID"].GetInt();
+		CGameObject* gameObject = aScene.FindObjectWithID(instanceId);
+		if (!gameObject)
+			continue;
+
+		float healthPickupAmount = m["healthPickupAmount"].GetFloat();
+		gameObject->AddComponent<CHealthPickupComponent>(*gameObject, healthPickupAmount);
 	}
 }
 

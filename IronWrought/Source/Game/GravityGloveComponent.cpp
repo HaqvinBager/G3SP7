@@ -10,6 +10,9 @@
 #include "Scene.h"
 #include "RigidDynamicBody.h"
 #include "PlayerControllerComponent.h"
+#include "EnemyComponent.h"
+#include "PlayerComponent.h"
+#include "HealthPickupComponent.h"
 #include "CharacterController.h"
 
 CGravityGloveComponent::CGravityGloveComponent(CGameObject& aParent, CTransformComponent* aGravitySlot)
@@ -94,6 +97,20 @@ void CGravityGloveComponent::Update()
 			myCurrentTarget.myRigidBodyPtr->SetGlobalPose(myGravitySlot->WorldPosition(), myCurrentTarget.myRigidBodyPtr->GetComponent<CTransformComponent>()->Rotation());
 			myCurrentTarget.myRigidBodyPtr->SetLinearVelocity({ 0.f, 0.f, 0.f });
 			myCurrentTarget.myRigidBodyPtr->SetAngularVelocity({ 0.f, 0.f, 0.f });
+
+			if (myCurrentTarget.myRigidBodyPtr->GetComponent<CHealthPickupComponent>()) {
+				if (GameObject().myTransform->GetParent()->GetComponent<CPlayerComponent>()->CurrentHealth() < 100.f) {
+					GameObject().myTransform->GetParent()->GetComponent<CPlayerComponent>()->IncreaseHealth(myCurrentTarget.myRigidBodyPtr->GetComponent<CHealthPickupComponent>()->GetHealthPickupAmount());
+					myCurrentTarget.myRigidBodyPtr->GetComponent<CHealthPickupComponent>()->Destroy();
+					myCurrentTarget.myRigidBodyPtr = nullptr;
+
+					PostMaster::SCrossHairData data; // Wind down
+					data.myIndex = 0;
+					data.myShouldBeReversed = true;
+					CMainSingleton::PostMaster().Send({ EMessageType::UpdateCrosshair, &data });
+					CMainSingleton::PostMaster().Send({ EMessageType::GravityGlovePull, nullptr });
+				}
+			}
 		}
 		else
 		{
@@ -105,11 +122,13 @@ void CGravityGloveComponent::Update()
 		}
 		//Yaay Here things are happening omfg lets gouee! : D
 
-		myCurrentTarget.currentDistanceSquared = Vector3::DistanceSquared(myGravitySlot->WorldPosition(), myCurrentTarget.myRigidBodyPtr->GameObject().myTransform->WorldPosition());
-		PostMaster::SGravityGloveTargetData ggTargetData;
-		ggTargetData.myCurrentDistanceSquared = myCurrentTarget.currentDistanceSquared;
-		ggTargetData.myInitialDistanceSquared = myCurrentTarget.initialDistanceSquared;
-		CMainSingleton::PostMaster().Send({ EMessageType::GravityGloveTargetDistance, &ggTargetData });
+		if (myCurrentTarget.myRigidBodyPtr != nullptr) {
+			myCurrentTarget.currentDistanceSquared = Vector3::DistanceSquared(myGravitySlot->WorldPosition(), myCurrentTarget.myRigidBodyPtr->GameObject().myTransform->WorldPosition());
+			PostMaster::SGravityGloveTargetData ggTargetData;
+			ggTargetData.myCurrentDistanceSquared = myCurrentTarget.currentDistanceSquared;
+			ggTargetData.myInitialDistanceSquared = myCurrentTarget.initialDistanceSquared;
+			CMainSingleton::PostMaster().Send({ EMessageType::GravityGloveTargetDistance, &ggTargetData });
+		}
 	}
 }
 
@@ -152,7 +171,7 @@ void CGravityGloveComponent::Pull()
 	if (hit.getNbAnyHits() > 0)
 	{
 		CTransformComponent* transform = (CTransformComponent*)hit.getAnyHit(0).actor->userData;
-		if (transform == nullptr)
+		if (transform == nullptr || transform->GetComponent<CEnemyComponent>())
 		{
 			PostMaster::SCrossHairData data; // Wind down
 			data.myIndex = 0;

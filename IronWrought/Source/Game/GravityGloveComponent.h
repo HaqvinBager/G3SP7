@@ -113,9 +113,9 @@ private:
 		return Lerp(oMin, oMax, t);
 	}
 
+	SRigidBodyTarget myCurrentTarget;
 	CTransformComponent* myGravitySlot;
-	CRigidBodyComponent* myCurrentTarget;
+	//CRigidBodyComponent* myCurrentTarget;
 	physx::PxRigidStatic* myRigidStatic;
 	physx::PxD6Joint* myJoint;
-	SRigidBodyTarget myCurrentTarget;
 };
