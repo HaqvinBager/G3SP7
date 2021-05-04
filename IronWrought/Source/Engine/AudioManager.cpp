@@ -10,6 +10,7 @@
 using namespace rapidjson;
 
 #define CAST(type) { static_cast<unsigned int>(type) }
+#define AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION 3
 
 CAudioManager::CAudioManager() 
 	: myWrapper() 
@@ -184,10 +185,10 @@ void CAudioManager::Receive(const SMessage& aMessage) {
 	// UI
 	case EMessageType::UIButtonPress:
 	{
-		//if (myUIAudio.size() >= static_cast<unsigned int>(EUI::ButtonClick))
-		//{
-		//	myWrapper.Play(myUIAudio[CAST(EUI::ButtonClick)], myChannels[CAST(EChannel::UI)]);
-		//}
+		if (myUIAudio.size() >= static_cast<unsigned int>(EUI::ButtonClick))
+		{
+			myWrapper.Play(myUIAudio[CAST(EUI::ButtonClick)], myChannels[CAST(EChannel::UI)]);
+		}
 	}break;
 
 
@@ -195,11 +196,11 @@ void CAudioManager::Receive(const SMessage& aMessage) {
 	{
 		if (myCurrentGroundType == EGroundType::Concrete)
 		{
-			PlayRandomSoundFromCollection(myConcreteStepSounds, EChannel::SFX);
+			PlayRandomSoundFromCollection(myConcreteStepSounds, EChannel::SFX, 1);
 		}
 		else if (myCurrentGroundType == EGroundType::AirVent)
 		{
-			PlayRandomSoundFromCollection(myAirVentStepSounds, EChannel::SFX);
+			PlayRandomSoundFromCollection(myAirVentStepSounds, EChannel::SFX, 1);
 		}
 	}
 	break;
@@ -212,31 +213,31 @@ void CAudioManager::Receive(const SMessage& aMessage) {
 
 	case EMessageType::PlayRobotAttackSound:
 	{
-		PlayRandomSoundFromCollection(myRobotAttackSounds, EChannel::RobotVOX);
+		PlayRandomSoundFromCollection(myRobotAttackSounds, EChannel::RobotVOX, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
 	}
 	break;
 
 	case EMessageType::PlayRobotDeathSound:
 	{
-		PlayRandomSoundFromCollection(myRobotDeathSounds, EChannel::RobotVOX);
+		PlayRandomSoundFromCollection(myRobotDeathSounds, EChannel::RobotVOX, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
 	}
 	break;
 
 	case EMessageType::PlayRobotIdleSound:
 	{
-		PlayRandomSoundFromCollection(myRobotIdleSounds, EChannel::RobotVOX);
+		PlayRandomSoundFromCollection(myRobotIdleSounds, EChannel::RobotVOX, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
 	}
 	break;
 
 	case EMessageType::PlayRobotPatrolling:
 	{
-		PlayRandomSoundFromCollection(myRobotPatrollingSounds, EChannel::RobotVOX);
+		PlayRandomSoundFromCollection(myRobotPatrollingSounds, EChannel::RobotVOX, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
 	}
 	break;
 
 	case EMessageType::PlayRobotSearching:
 	{
-		PlayRandomSoundFromCollection(myRobotSearchingSounds, EChannel::RobotVOX);
+		PlayRandomSoundFromCollection(myRobotSearchingSounds, EChannel::RobotVOX, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
 	}
 	break;
 	
@@ -269,6 +270,23 @@ void CAudioManager::Receive(const SMessage& aMessage) {
 	case EMessageType::GravityGlovePush:
 	{
 		myWrapper.Play(mySFXAudio[CAST(ESFX::GravityGlovePush)], myChannels[CAST(EChannel::SFX)]);
+	}break;
+
+	case EMessageType::EnemyAttackState:
+	{
+		// Todo add max 3 to be playable at the same time. Can be done inside PlayRandomSoundFromCollection
+		// 
+		PlayRandomSoundFromCollection(myRobotAttackSounds, EChannel::RobotVOX);
+	}break;
+
+	case EMessageType::EnemyPatrolState:
+	{
+		PlayRandomSoundFromCollection(myRobotPatrollingSounds, EChannel::RobotVOX);
+	}break;
+
+	case EMessageType::EnemySeekState:
+	{
+		PlayRandomSoundFromCollection(myRobotAttackSounds, EChannel::RobotVOX);
 	}break;
 
 	//// VOICELINES
@@ -334,6 +352,11 @@ void CAudioManager::SubscribeToMessages()
 	CMainSingleton::PostMaster().Subscribe(EMessageType::GravityGlovePull, this);
 	CMainSingleton::PostMaster().Subscribe(EMessageType::GravityGlovePush, this);
 
+	// Enemy
+	CMainSingleton::PostMaster().Subscribe(EMessageType::EnemyPatrolState, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::EnemySeekState, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::EnemyAttackState, this);
+
 	//CMainSingleton::PostMaster().Subscribe(EMessageType::PlayVoiceLine, this);
 	//CMainSingleton::PostMaster().Subscribe(EMessageType::StopDialogue, this);
 }
@@ -354,6 +377,11 @@ void CAudioManager::UnsubscribeToMessages()
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayStepSound, this);
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::GravityGlovePull, this);
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::GravityGlovePush, this);
+
+	// Enemy
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::EnemyPatrolState, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::EnemySeekState, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::EnemyAttackState, this);
 
 	//CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayVoiceLine, this);
 	//CMainSingleton::PostMaster().Unsubscribe(EMessageType::StopDialogue, this);
@@ -387,7 +415,7 @@ std::string CAudioManager::GetPath(EUI type) const
 {
 	std::string path = myUIPath;
 	path.append(TranslateEnum(type));
-	path.append(".mp3");
+	path.append(".wav");
 	return path;
 }
 
@@ -484,14 +512,14 @@ std::string CAudioManager::TranslateEnum(ESFXCollection enumerator) const
 		return "";
 	}
 }
-std::string CAudioManager::TranslateEnum(EUI /*enumerator*/) const {
-	//switch (enumerator) {
-	////case EUI::ButtonClick:
-	////	return "ButtonClick";
-	//default:
-	//	return "";
-	//}
-	return "";
+std::string CAudioManager::TranslateEnum(EUI enumerator) const {
+	switch (enumerator)
+	{
+	case EUI::ButtonClick:
+		return "buttonclick";
+	default:
+		return "";
+	}
 }
 std::string CAudioManager::TranslateEnum(EResearcherEventVoiceLine enumerator) const
 {
@@ -660,10 +688,14 @@ void CAudioManager::FillCollection(ERobotVoiceLine enumerator)
 	}
 }
 
-void CAudioManager::PlayRandomSoundFromCollection(const std::vector<CAudio*>& aCollection, const EChannel& aChannel)
+void CAudioManager::PlayRandomSoundFromCollection(const std::vector<CAudio*>& aCollection, const EChannel& aChannel, const int& aMaxNrOfChannelsActive)
 {
 	if (aCollection.empty())
 		return;
+
+	//std::cout << __FUNCTION__ << " " << myChannels[CAST(aChannel)]->PlayCount() << std::endl;
+	if(myChannels[CAST(aChannel)]->PlayCount() > aMaxNrOfChannelsActive)
+	   return;
 
 	unsigned int randomIndex = Random(0, static_cast<int>(aCollection.size()) - 1);
 	myWrapper.Play(aCollection[randomIndex], myChannels[CAST(aChannel)]);

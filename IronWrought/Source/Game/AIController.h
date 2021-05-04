@@ -45,4 +45,3 @@ private:
 	float myDamage;
 	CTransformComponent* myTarget;
 };
-

@@ -37,6 +37,7 @@ CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, 
 	, myLadderHasTriggered(false)
 	, myAnimationComponentController(nullptr)
 	, myPlayerComponent(nullptr)
+	, myStepTimer(0.0f)
 {
 	INPUT_MAPPER->AddObserver(EInputEvent::Jump, this);
 	INPUT_MAPPER->AddObserver(EInputEvent::Crouch, this);
@@ -190,8 +191,10 @@ void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
 
 void CPlayerControllerComponent::ControllerUpdate()
 {
-	Vector3 horizontal = -GameObject().myTransform->GetLocalMatrix().Right() * Input::GetInstance()->GetAxis(Input::EAxis::Horizontal);
-	Vector3 vertical =	-GameObject().myTransform->GetLocalMatrix().Forward() * Input::GetInstance()->GetAxis(Input::EAxis::Vertical);
+	const float horizontalInput = Input::GetInstance()->GetAxis(Input::EAxis::Horizontal);
+	const float verticalInput = Input::GetInstance()->GetAxis(Input::EAxis::Vertical);
+	Vector3 horizontal = -GameObject().myTransform->GetLocalMatrix().Right() * horizontalInput;
+	Vector3 vertical =	-GameObject().myTransform->GetLocalMatrix().Forward() * verticalInput;
 	float y = myMovement.y;
 	myMovement = (horizontal + vertical) * mySpeed;
 	myMovement.y = y;
@@ -200,9 +203,21 @@ void CPlayerControllerComponent::ControllerUpdate()
 void CPlayerControllerComponent::Move(Vector3 aDir)
 {
 	physx::PxControllerCollisionFlags collisionflag = myController->GetController().move({ aDir.x, aDir.y, aDir.z}, 0, CTimer::FixedDt(), 0);
-	myIsGrounded = collisionflag == physx::PxControllerCollisionFlag::eCOLLISION_DOWN;
+	myIsGrounded = (collisionflag == physx::PxControllerCollisionFlag::eCOLLISION_DOWN);
 	if (myIsGrounded)
+	{
 		myMovement.y = 0.0f;
+		Vector2 horizontalDir(aDir.x, aDir.z);
+		if (horizontalDir.LengthSquared() > 0.0f)
+		{
+			myStepTimer -= CTimer::FixedDt();
+			if (myStepTimer <= 0.0f) 
+			{
+				myStepTimer = mySpeed;
+				CMainSingleton::PostMaster().SendLate({ EMessageType::PlayStepSound, nullptr });
+			}
+		}
+	}
 }
 
 void CPlayerControllerComponent::SetControllerPosition(const Vector3& aPos)

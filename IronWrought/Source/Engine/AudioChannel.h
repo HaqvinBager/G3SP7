@@ -10,6 +10,8 @@ class CAudioChannel
 public:
 	const bool IsPlaying() const;
 
+	const int PlayCount() const;
+
 	void SetVolume(float aVolumeLevel);
 	void Stop();
 	void Mute(bool aDoMute);

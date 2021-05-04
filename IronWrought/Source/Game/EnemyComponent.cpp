@@ -32,6 +32,10 @@ CEnemyComponent::CEnemyComponent(CGameObject& aParent, const SEnemySetting& some
 CEnemyComponent::~CEnemyComponent()
 {
 	myRigidBodyComponent = nullptr;
+	for (size_t i = 0; i < myBehaviours.size(); ++i)
+	{
+		delete myBehaviours[i];
+	}
 }
 
 void CEnemyComponent::Awake()
@@ -77,9 +81,13 @@ void CEnemyComponent::Update()//får bestämma vilket behaviour vi vill köra i 
 	float distanceToPlayer = Vector3::DistanceSquared(myPlayer->myTransform->Position(), GameObject().myTransform->Position());
 
 	if (mySettings.myRadius * mySettings.myRadius >= distanceToPlayer) {
-		SetState(EBehaviour::Seek);
-		if (distanceToPlayer <= mySettings.myAttackDistance * mySettings.myAttackDistance) {
+		if (distanceToPlayer <= mySettings.myAttackDistance * mySettings.myAttackDistance) 
+		{
 			SetState(EBehaviour::Attack);
+		}
+		else
+		{
+			SetState(EBehaviour::Seek);
 		}
 	}
 	else {
@@ -127,16 +135,19 @@ void CEnemyComponent::SetState(EBehaviour aState)
 	{
 		case EBehaviour::Patrol:
 		{
+			//std::cout << __FUNCTION__ << " " << "PATROL" << std::endl;
 			msgType = EMessageType::EnemyPatrolState;
 		}break;
 
 		case EBehaviour::Seek:
 		{
+			//std::cout << __FUNCTION__ << " " << "SEEK" << std::endl;
 			msgType = EMessageType::EnemySeekState;
 		}break;
 
 		case EBehaviour::Attack:
 		{
+			//std::cout << __FUNCTION__ << " " << "ATTACK" << std::endl;
 			msgType = EMessageType::EnemyAttackState;
 		}break;
 

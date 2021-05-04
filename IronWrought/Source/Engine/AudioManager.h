@@ -11,7 +11,7 @@ enum class EMusic { Count };
 enum class EAmbience { AirVent, Factory, Count };
 enum class ESFX { GravityGlovePullBuildup, GravityGlovePullHit, GravityGlovePush, GravityGlovePullRelease, Count };
 enum class ESFXCollection { StepAirVent, StepConcrete, Count };
-enum class EUI { Count };
+enum class EUI { ButtonClick, Count };
 enum class EResearcherEventVoiceLine { ResearcherDoorEventVerticalSlice, ResearcherIntroVerticalSlice, Count };
 enum class EResearcherReactionVoiceLine { ResearcherReactionExplosives, Count };
 enum class ERobotVoiceLine { RobotAttack, RobotDeath, RobotIdle, RobotPatrolling, RobotSearching, Count };
@@ -68,7 +68,7 @@ private:
 	void FillCollection(ERobotVoiceLine enumerator);
 
 private:
-	void PlayRandomSoundFromCollection(const std::vector<CAudio*>& aCollection, const EChannel& aChannel);
+	void PlayRandomSoundFromCollection(const std::vector<CAudio*>& aCollection, const EChannel& aChannel, const int& aMaxNrOfChannelsActive = 5);
 
 private:
 	const std::string& myAmbiencePath = "Audio/Ambience/";
