@@ -69,7 +69,6 @@ void CGravityGloveComponent::Update()
 
 		mySettings.myCurrentDistanceInverseLerp = min(1.0f, InverseLerp(0.0f, maxDistance, distance));
 
-
 		if (mySettings.myCurrentDistanceInverseLerp < 0.1f)
 		{
 			//dont remove pls - Alexander Matth�i 2021-04-30
@@ -108,7 +107,8 @@ void CGravityGloveComponent::Update()
 					data.myIndex = 0;
 					data.myShouldBeReversed = true;
 					CMainSingleton::PostMaster().Send({ EMessageType::UpdateCrosshair, &data });
-					CMainSingleton::PostMaster().Send({ EMessageType::GravityGlovePull, nullptr });
+					bool released = true;
+					CMainSingleton::PostMaster().Send({ EMessageType::GravityGlovePull, &released });
 				}
 			}
 		}
@@ -143,7 +143,8 @@ void CGravityGloveComponent::Pull()
 		data.myIndex = 0;
 		data.myShouldBeReversed = true;
 		CMainSingleton::PostMaster().Send({ EMessageType::UpdateCrosshair, &data });
-		CMainSingleton::PostMaster().Send({ EMessageType::GravityGlovePull, nullptr });
+		bool released = true;
+		CMainSingleton::PostMaster().Send({ EMessageType::GravityGlovePull, &released });
 
 		return;
 	}
