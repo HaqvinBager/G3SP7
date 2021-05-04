@@ -24,7 +24,7 @@ Vector3 CPatrol::Update(const Vector3& aPosition)
 	Vector3 direction = myPositions[myTarget] - aPosition;
 
 	direction.Normalize();
-	return direction;
+	return std::move(direction);
 }
 
 bool CPatrol::CheckIfOverlap(const Vector3& aFirstPosition, const Vector3& aSecondPosition)
@@ -45,8 +45,13 @@ CSeek::CSeek() :myTarget(nullptr)
 
 Vector3 CSeek::Update(const Vector3& aPosition)//aPostion == EnemyRobot Position
 {
+	if (!myTarget)
+		return Vector3();
+
 	Vector3 direction = myTarget->Position() - aPosition;
-	return direction;
+	direction.Normalize();
+
+	return std::move(direction);
 }
 
 void CSeek::SetTarget(CTransformComponent* aTarget) {
@@ -63,8 +68,8 @@ Vector3 CAttack::Update(const Vector3& aPosition)
 		return Vector3();
 
 	Vector3 direction = myTarget->Position() - aPosition;
-	
-	return direction;
+	direction.Normalize();
+	return std::move(direction);
 }
 
 void CAttack::SetTarget(CTransformComponent* aTarget)

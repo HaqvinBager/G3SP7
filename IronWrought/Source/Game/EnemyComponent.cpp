@@ -15,9 +15,10 @@ CEnemyComponent::CEnemyComponent(CGameObject& aParent, const SEnemySetting& some
 	, myController(nullptr)
 	, myPlayer(nullptr)
 	, myEnemy(nullptr)
-	, myCurrentState(EBehaviour::Patrol)
+	, myCurrentState(EBehaviour::Count)
 {
 	mySettings = someSettings;
+	std::cout << __FUNCTION__ << " " << mySettings.mySpeed << std::endl;
 	myController = CEngine::GetInstance()->GetPhysx().CreateCharacterController(GameObject().myTransform->Position(), 0.6f * 0.5f, 1.8f * 0.5f, GameObject().myTransform, aHitReport);
 	myPitch = 0.0f;
 	myYaw = 0.0f;
@@ -73,6 +74,7 @@ void CEnemyComponent::Update()//får bestämma vilket behaviour vi vill köra i 
 	Vector3 targetDirection = myBehaviours[static_cast<int>(myCurrentState)]->Update(GameObject().myTransform->Position()); 
 	myController->Move(targetDirection, mySettings.mySpeed);
 	GameObject().myTransform->Position(myController->GetPosition());
+	
 	float targetOrientation = WrapAngle(atan2f(targetDirection.x, targetDirection.z));
 	myCurrentOrientation = Lerp(myCurrentOrientation, targetOrientation, 2.0f * CTimer::Dt());
 	//myCurrentDirection = Vector3::Lerp(myCurrentDirection, targetDirection, CTimer::Dt());
@@ -88,7 +90,36 @@ void CEnemyComponent::TakeDamage()
 
 void CEnemyComponent::SetState(EBehaviour aState)
 {
+	if (myCurrentState == aState)
+		return;
+
 	myCurrentState = aState;
+
+	EMessageType msgType = EMessageType::Count;
+	switch (myCurrentState)
+	{
+		case EBehaviour::Patrol:
+		{
+			msgType = EMessageType::EnemyPatrolState;
+		}break;
+
+		case EBehaviour::Seek:
+		{
+			msgType = EMessageType::EnemySeekState;
+		}break;
+
+		case EBehaviour::Attack:
+		{
+			msgType = EMessageType::EnemyAttackState;
+		}break;
+
+
+		default:
+		break;
+	}
+	if (msgType == EMessageType::Count)
+		return;
+	CMainSingleton::PostMaster().SendLate({ msgType, this });
 }
 
 const CEnemyComponent::EBehaviour CEnemyComponent::GetState() const

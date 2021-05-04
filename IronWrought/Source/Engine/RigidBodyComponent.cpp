@@ -26,7 +26,7 @@ CRigidBodyComponent::~CRigidBodyComponent()
 	myDynamicRigidBody = nullptr;
 }
 
-static int kinematicCount = 0;
+//static int kinematicCount = 0;
 void CRigidBodyComponent::Awake()
 {
 	myDynamicRigidBody = CEngine::GetInstance()->GetPhysx().CreateDynamicRigidbody(*GameObject().myTransform);
@@ -35,8 +35,9 @@ void CRigidBodyComponent::Awake()
 	myDynamicRigidBody->GetBody().setCMassLocalPose({myLocalCenterMass.x, myLocalCenterMass.y, myLocalCenterMass.z});
 	myDynamicRigidBody->GetBody().userData = (void*)GameObject().myTransform;
 
-	kinematicCount += static_cast<int>(myIsKinematic);
-	std::cout << __FUNCTION__ << " b" << myIsKinematic << " " << kinematicCount << std::endl;
+	// Debug test
+	/*kinematicCount += static_cast<int>(myIsKinematic);
+	std::cout << __FUNCTION__ << " b" << myIsKinematic << " " << kinematicCount << std::endl;*/
 
 	myDynamicRigidBody->GetBody().setRigidBodyFlag(physx::PxRigidBodyFlag::Enum::eKINEMATIC, myIsKinematic);
 	if (!myIsKinematic)

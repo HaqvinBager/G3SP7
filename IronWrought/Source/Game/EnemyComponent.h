@@ -25,7 +25,9 @@ public:
 		Patrol,
 		Seek,
 		Attack,
-		TakeDamage
+		TakeDamage,
+
+		Count
 	};
 
 public:
@@ -56,6 +58,8 @@ public:
 	}
 
 private:
+	friend class CEnemyAnimationController;
+
 	CCharacterController* myController;
 	std::vector<CAIController*> myBehaviours;
 	EBehaviour myCurrentState;
