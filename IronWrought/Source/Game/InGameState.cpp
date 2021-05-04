@@ -17,6 +17,8 @@
 #include <JsonReader.h>
 #include <SceneManager.h>
 
+#include "EnemyAnimationController.h"
+
 #ifndef NDEBUG
 	#include <VFXSystemComponent.h>
 	#include <VFXMeshFactory.h>
@@ -35,23 +37,29 @@ CInGameState::CInGameState(CStateStack& aStateStack, const CStateStack::EState a
 {
 }
 
-CInGameState::~CInGameState() {}
+CInGameState::~CInGameState() 
+{
+	delete myEnemyAnimationController;
+}
 
 
 void CInGameState::Awake()
 {
 	CJsonReader::Get()->InitFromGenerated();
+	myEnemyAnimationController = new CEnemyAnimationController();
 	CScene* scene = CSceneManager::CreateEmpty();
 #ifndef NDEBUG
 	TEMP_VFX(scene);
 #endif
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CMainSingleton::PostMaster().Subscribe("LoadScene", this);
+
 }
 
 
 void CInGameState::Start()
 {
+	myEnemyAnimationController->Activate();
 	CEngine::GetInstance()->SetActiveScene(myState);
 	IRONWROUGHT->GetActiveScene().CanvasIsHUD();
 	IRONWROUGHT->HideCursor();
@@ -62,6 +70,7 @@ void CInGameState::Stop()
 {
 	IRONWROUGHT->RemoveScene(myState);
 	CMainSingleton::CollisionManager().ClearColliders();
+	myEnemyAnimationController->Deactivate();
 }
 
 void CInGameState::Update()

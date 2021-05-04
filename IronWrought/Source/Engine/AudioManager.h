@@ -9,7 +9,7 @@ class CAudioChannel;
 
 enum class EMusic { Count };
 enum class EAmbience { AirVent, Factory, Count };
-enum class ESFX { GravityGlovePullBuildup, GravityGlovePullHit, GravityGlovePush, Count };
+enum class ESFX { GravityGlovePullBuildup, GravityGlovePullHit, GravityGlovePush, GravityGlovePullRelease, Count };
 enum class ESFXCollection { StepAirVent, StepConcrete, Count };
 enum class EUI { Count };
 enum class EResearcherEventVoiceLine { ResearcherDoorEventVerticalSlice, ResearcherIntroVerticalSlice, Count };

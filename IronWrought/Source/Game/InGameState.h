@@ -28,5 +28,6 @@ public:
 private:
 	bool myExitLevel;
 
+	class CEnemyAnimationController* myEnemyAnimationController;
 	CGameObject* myDecal;
 };

@@ -7,19 +7,6 @@
 #include "JsonReader.h"
 #include "RandomNumberGenerator.h"
 
-/*////////////////////////////////////
-* Suggestion
-*	Create separate postmaster for sounds (AudioPostMaster)
-*   Create separate enum list for messages:
-*		EMusic
-*		ESFX
-*		EVox
-*		...
-* 
-*	For a less bloated Receive() and also to reduce clutter in main PostMaster
-* 
-*////////////////////////////////////
-
 using namespace rapidjson;
 
 #define CAST(type) { static_cast<unsigned int>(type) }
@@ -267,6 +254,23 @@ void CAudioManager::Receive(const SMessage& aMessage) {
 		myWrapper.Play(mySFXAudio[index], myChannels[CAST(EChannel::SFX)]);
 	}
 	break;
+
+	case EMessageType::GravityGlovePull:
+	{
+		bool release = false;
+		if (aMessage.data)
+			release = *static_cast<bool*>(aMessage.data);
+		if (release)
+			myWrapper.Play(mySFXAudio[CAST(ESFX::GravityGlovePullRelease)], myChannels[CAST(EChannel::SFX)]);
+		else
+			myWrapper.Play(mySFXAudio[CAST(ESFX::GravityGlovePullHit)], myChannels[CAST(EChannel::SFX)]);
+	}break;
+
+	case EMessageType::GravityGlovePush:
+	{
+		myWrapper.Play(mySFXAudio[CAST(ESFX::GravityGlovePush)], myChannels[CAST(EChannel::SFX)]);
+	}break;
+
 	//// VOICELINES
 	//case EMessageType::PlayVoiceLine:
 	//{
@@ -316,7 +320,6 @@ void CAudioManager::Update()
 void CAudioManager::SubscribeToMessages()
 {
 	CMainSingleton::PostMaster().Subscribe(EMessageType::UIButtonPress, this);
-	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayStepSound, this);
 	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayResearcherReactionExplosives, this);
 	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayRobotAttackSound, this);
 	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayRobotDeathSound, this);
@@ -326,6 +329,11 @@ void CAudioManager::SubscribeToMessages()
 	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayResearcherEvent, this);
 	CMainSingleton::PostMaster().Subscribe(EMessageType::PlaySFX, this);
 
+	// Player & Gravity Glove 
+	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayStepSound, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::GravityGlovePull, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::GravityGlovePush, this);
+
 	//CMainSingleton::PostMaster().Subscribe(EMessageType::PlayVoiceLine, this);
 	//CMainSingleton::PostMaster().Subscribe(EMessageType::StopDialogue, this);
 }
@@ -333,7 +341,6 @@ void CAudioManager::SubscribeToMessages()
 void CAudioManager::UnsubscribeToMessages()
 {
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::UIButtonPress, this);
-	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayStepSound, this);
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayResearcherReactionExplosives, this);
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayRobotAttackSound, this);
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayRobotDeathSound, this);
@@ -342,6 +349,11 @@ void CAudioManager::UnsubscribeToMessages()
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayRobotSearching, this);
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayResearcherEvent, this);
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlaySFX, this);
+
+	// Player & Gravity Glove 
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayStepSound, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::GravityGlovePull, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::GravityGlovePush, this);
 
 	//CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayVoiceLine, this);
 	//CMainSingleton::PostMaster().Unsubscribe(EMessageType::StopDialogue, this);
@@ -454,6 +466,8 @@ std::string CAudioManager::TranslateEnum(ESFX enumerator) const {
 		return "GravityGlovePullHit";
 	case ESFX::GravityGlovePush:
 		return "GravityGlovePush";
+	case ESFX::GravityGlovePullRelease:
+		return "GravityGlovePullRelease";
 	default:
 		return "";
 	}

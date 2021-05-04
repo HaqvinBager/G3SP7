@@ -68,5 +68,12 @@ enum class EMessageType
 	PlayerSetRespawnPoint,
 	PlayerRespawn,
 
+	EnemyPatrolState,
+	EnemySeekState,
+	EnemyAttackState,
+	EnemyAttack,
+	EnemyTargetLost,
+	EnemyTakeDamage,
+
 	Count
 };

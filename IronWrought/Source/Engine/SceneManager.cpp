@@ -107,7 +107,9 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneJson)
 				AddPlayer(*scene, sceneData["player"].GetObjectW());
 			}
 			AddEnemyComponents(*scene, sceneData["enemies"].GetArray());
-			AddPickups(*scene, sceneData["healthPickups"].GetArray());
+
+			if(sceneData.HasMember("healthPickups"))
+				AddPickups(*scene, sceneData["healthPickups"].GetArray());
 		}
 		AddInstancedModelComponents(*scene, sceneData["instancedModels"].GetArray());
 	}
@@ -203,7 +205,9 @@ void CSceneManager::AddModelComponents(CScene& aScene, RapidArray someData)
 		const int assetId = m["assetID"].GetInt();
 		if (CJsonReader::Get()->HasAssetPath(assetId))
 		{
-			gameObject->AddComponent<CModelComponent>(*gameObject, ASSETPATH(CJsonReader::Get()->GetAssetPath(assetId)));
+			std::string assetPath = ASSETPATH(CJsonReader::Get()->GetAssetPath(assetId));
+			gameObject->AddComponent<CModelComponent>(*gameObject, assetPath);
+			AnimationLoader::AddAnimationsToGameObject(gameObject, assetPath);// Does nothing if the Model has no animations.
 		}
 	}
 }
@@ -410,7 +414,7 @@ void CSceneManager::AddEnemyComponents(CScene& aScene, RapidArray someData)
 		CGameObject* gameObject = aScene.FindObjectWithID(instanceId);
 		if (!gameObject)
 			continue;
-
+		
 		SEnemySetting settings;
 		settings.myRadius= m["radius"].GetFloat();
 		settings.mySpeed= m["speed"].GetFloat();
