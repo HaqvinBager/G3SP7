@@ -89,14 +89,14 @@ void CPlayerControllerComponent::Update()
 		return;
 #endif
 
-	if (myLadderHasTriggered)
-	{
-		LadderUpdate();
-	}
-	else
-	{
-		//Move({0.0f, myMovement.y, 0.0f});
-	}
+	//if (myLadderHasTriggered)
+	//{
+	//	LadderUpdate();
+	//}
+	//else
+	//{
+	//	//Move({0.0f, myMovement.y, 0.0f});
+	//}
 
 	GameObject().myTransform->Position(myController->GetPosition());
 	myAnimationComponentController->Update(myMovement);
@@ -116,20 +116,30 @@ void CPlayerControllerComponent::Update()
 
 void CPlayerControllerComponent::FixedUpdate()
 {
-	if (myHasJumped == true)
+	if (myLadderHasTriggered)
 	{
-		myMovement.y = myJumpHeight;
-		myAirborneTimer = 0.0f;
-		myHasJumped = false;
+		LadderUpdate();
 	}
+	else
+	{
+		if (myHasJumped == true)
+		{
+			myMovement.y = myJumpHeight;
+			myAirborneTimer = 0.0f;
+			myHasJumped = false;
+		}
 
-	myMovement.y -= myFallSpeed * myFallSpeed * CTimer::FixedDt() * myAirborneTimer * static_cast<float>(!myIsGrounded);// false == 0, true == 1 => !true == 0 and !false == 1.
-	myAirborneTimer += CTimer::FixedDt();
+		myMovement.y -= myFallSpeed * myFallSpeed * CTimer::FixedDt() * myAirborneTimer * static_cast<float>(!myIsGrounded);// false == 0, true == 1 => !true == 0 and !false == 1.
+		myAirborneTimer += CTimer::FixedDt();
 
-	if (myMovement.y < myMaxFallSpeed)
-		myMovement.y = myMaxFallSpeed;
+		if (myMovement.y < myMaxFallSpeed)
+			myMovement.y = myMaxFallSpeed;
 
-	Move({ myMovement.x, myMovement.y, myMovement.z });
+		Move({ myMovement.x, myMovement.y, myMovement.z });
+		
+		if (myIsGrounded)
+			myMovement.y = 0.0f;
+	}
 }
 
 void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
@@ -174,19 +184,6 @@ void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
 	}
 
 	myMovement.y = y;
-
-	if (myLadderHasTriggered)
-	{
-		myMovement.y = myMovement.z;
-		std::cout << myMovement.z << std::endl;
-		myMovement.z = 0.0f;
-		//myMovement = { 0.f, myMovement.y,0.f };
-		//Move(myMovement * mySpeed);
-	}
-	else
-	{
-		//Move(myMovement * mySpeed);
-	}
 }
 
 void CPlayerControllerComponent::ControllerUpdate()
@@ -286,12 +283,48 @@ void CPlayerControllerComponent::BoundsCheck()
 
 void CPlayerControllerComponent::LadderUpdate()
 {
-	if (myLadderHasTriggered)
+	if (Input::GetInstance()->IsKeyDown('W'))
 	{
+		Move({ 0.0f, 0.075f, 0.0f });
+	}
+	else if (Input::GetInstance()->IsKeyDown('S'))
+	{
+		Move({ 0.0f, -0.075f, 0.0f });
+	}
+
+	if (myIsGrounded)
+	{
+		if (Input::GetInstance()->IsKeyDown('S'))
+		{
+			LadderExit();
+		}
+	}
+
+	//if (myHasJumped)
+	//{
+	//	LadderExit();
+	//}
+
+	//	std::cout << myMovement.z << std::endl;
+	//	if (myMovement.z < 0.0f)
+	//	{
+	//		LadderExit();
+	//	}
+	//	//std::cout << "Touched Ground" << std::endl;
+	//}
+	//else
+	//{
+	//	Move({ 0.0f, myMovement.z, 0.0f });
+	//}
+
+
+
+	//if (myLadderHasTriggered)
+	//{
 		//Nuddar vi Marken?
 
 		//Försöker vi gå neråt?
-	}
+	//}
 
 	//Best�mmer n�r myIsOnladder s�tts till false
 
