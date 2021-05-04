@@ -18,6 +18,7 @@ CConvexMeshColliderComponent::CConvexMeshColliderComponent(CGameObject& aParent,
 
 CConvexMeshColliderComponent::~CConvexMeshColliderComponent()
 {
+	myShape = nullptr;
 }
 
 void CConvexMeshColliderComponent::Awake()
@@ -46,10 +47,12 @@ void CConvexMeshColliderComponent::Update()
 
 void CConvexMeshColliderComponent::OnEnable()
 {
+	Enabled(true);
 }
 
 void CConvexMeshColliderComponent::OnDisable()
 {
+	Enabled(false);
 }
 
 void CConvexMeshColliderComponent::SetShape(physx::PxShape* aShape)

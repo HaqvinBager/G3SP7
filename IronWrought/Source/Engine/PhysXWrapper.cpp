@@ -79,21 +79,19 @@ CPhysXWrapper::CPhysXWrapper()
 	myContactReportCallback = nullptr;
 	myControllerManager = nullptr;
 	myPlayerReportCallback = nullptr;
-	myEnemyReportCallback = nullptr;
 }
 
 CPhysXWrapper::~CPhysXWrapper()
 {
 	//I will fix later -- crashes because cant release nullptr //Alexander Matth�i 15/1 - 2021
 
-	//myPXMaterial->release();
-	//myDispatcher->release();
-	//myPhysics->release();
-	//myPhysicsVisualDebugger->release();
-	//myFoundation->release();
 	//delete myAllocator;
 	//myAllocator = nullptr;
-	myPhysicsVisualDebugger->disconnect();
+	//myFoundation->release();
+	/*myCooking->release();
+	myPhysics->release();
+	myDispatcher->release();
+	myPXMaterial->release();*/
 }
 
 bool CPhysXWrapper::Init()
@@ -126,7 +124,6 @@ bool CPhysXWrapper::Init()
 	// All collisions gets pushed to this class
 	myContactReportCallback = new CContactReportCallback();
 	myPlayerReportCallback = new CPlayerReportCallback();
-	myEnemyReportCallback = new CEnemyReportCallback();
     return true;
 }
 
@@ -218,6 +215,7 @@ PxRaycastBuffer CPhysXWrapper::Raycast(Vector3 aOrigin, Vector3 aDirection, floa
 	PxRaycastBuffer hit;
 	PxQueryFilterData filterData = PxQueryFilterData();
 	filterData.data.word0 = ELayerMask::GROUP1;
+	//filterData.flags.set(PxQueryFlag::eANY_HIT);
 	//PxQueryFilterData filterData(PxQueryFlag::eNO_BLOCK);
 	/*bool status = */scene->raycast(origin, unitDir, maxDistance, hit, PxHitFlag::eDEFAULT, filterData);
 	/*if (status) {

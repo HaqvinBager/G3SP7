@@ -61,7 +61,6 @@ public:
 	PxControllerManager* GetControllerManager();
 
 	physx::PxUserControllerHitReport* GetPlayerReportBack() { return myPlayerReportCallback; }
-	physx::PxUserControllerHitReport* GetEnemyReportBack() { return myEnemyReportCallback; }
 
 
   //merge conflict 8/3/2021
@@ -84,6 +83,5 @@ private:
 	//std::unordered_map<PxScene*, PxControllerManager*> myControllerManagers;// Should not be necessary
 	std::unordered_map<CScene*, PxScene*> myPXScenes;
 	physx::PxUserControllerHitReport* myPlayerReportCallback;
-	physx::PxUserControllerHitReport* myEnemyReportCallback;
 	//std::queue<CRigidDynamicBody*> myAddBodyQueue;
 };

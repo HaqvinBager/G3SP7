@@ -69,7 +69,10 @@ void CPlayerComponent::Update()
 	//	CMainSingleton::PostMaster().SendLate({ EMessageType::PlayerSetRespawnPoint, nullptr });
 	//}
 #endif // DEBUG
-
+	
+	if (Input::GetInstance()->IsKeyPressed('O')) {
+		DecreaseHealth(10);
+	}
 	RegenerateHealth();
 
 	if (!myIsAlive)

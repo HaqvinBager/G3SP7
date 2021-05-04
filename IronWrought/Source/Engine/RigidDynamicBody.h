@@ -14,6 +14,7 @@ class CRigidDynamicBody
 public:
 	CRigidDynamicBody(physx::PxPhysics& aPhysX, const physx::PxTransform& aTransform);
 	physx::PxRigidDynamic& GetBody() { return *myBody; }
+	Vector3 GetLinearVelocity() const;
 	Vector3	GetPosition() const;
 	Quaternion GetRotation() const;
 

@@ -9,6 +9,11 @@
 #include "Engine.h"
 #include "Scene.h"
 #include "RigidDynamicBody.h"
+#include "PlayerControllerComponent.h"
+#include "EnemyComponent.h"
+#include "PlayerComponent.h"
+#include "HealthPickupComponent.h"
+#include "CharacterController.h"
 
 CGravityGloveComponent::CGravityGloveComponent(CGameObject& aParent, CTransformComponent* aGravitySlot)
 	: CBehaviour(aParent)
@@ -22,6 +27,7 @@ CGravityGloveComponent::CGravityGloveComponent(CGameObject& aParent, CTransformC
 
 	mySettings.myMaxDistance = 50.0f;
 	mySettings.myCurrentDistanceInverseLerp = 0.0f;
+	myJoint = nullptr;
 }
 
 CGravityGloveComponent::~CGravityGloveComponent()
@@ -31,6 +37,8 @@ CGravityGloveComponent::~CGravityGloveComponent()
 
 void CGravityGloveComponent::Awake()
 {
+	myRigidStatic = CEngine::GetInstance()->GetPhysx().GetPhysics()->createRigidStatic({ myGravitySlot->GetWorldMatrix().Translation().x,myGravitySlot->GetWorldMatrix().Translation().y, myGravitySlot->GetWorldMatrix().Translation().z });
+	CEngine::GetInstance()->GetPhysx().GetPXScene()->addActor(*myRigidStatic);
 }
 
 void CGravityGloveComponent::Start()
@@ -64,11 +72,45 @@ void CGravityGloveComponent::Update()
 
 		if (mySettings.myCurrentDistanceInverseLerp < 0.1f)
 		{
+			//dont remove pls - Alexander Matth�i 2021-04-30
+			/*myJoint = PxD6JointCreate(*CEngine::GetInstance()->GetPhysx().GetPhysics(), myRigidStatic, myRigidStatic->getGlobalPose(), &myCurrentTarget->GetDynamicRigidBody()->GetBody(), myCurrentTarget->GetDynamicRigidBody()->GetBody().getGlobalPose());
+			myJoint->setMotion(PxD6Axis::eX, PxD6Motion::eFREE);
+			myJoint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eFREE);
+
+			myJoint->setMotion(PxD6Axis::eY, PxD6Motion::eFREE);
+			myJoint->setMotion(PxD6Axis::eZ, PxD6Motion::eFREE);
+			myJoint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eFREE);
+			myJoint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eFREE);
+			myJoint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eFREE);
+
+			myJoint->setMotion(PxD6Axis::eX, PxD6Motion::eFREE);
+			myJoint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eFREE);
+			myJoint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eFREE);
+			myJoint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eFREE);
+
+			myJoint->setMotion(PxD6Axis::eX, PxD6Motion::eFREE);
+			myJoint->setMotion(PxD6Axis::eY, PxD6Motion::eLIMITED);
+			myJoint->setMotion(PxD6Axis::eZ, PxD6Motion::eLIMITED);*/
+
 			//myCurrentTarget->SetPosition(myGravitySlot->WorldPosition());
 			//myCurrentTarget->SetRotation(myCurrentTarget->GetComponent<CTransformComponent>()->Rotation());
 			myCurrentTarget.myRigidBodyPtr->SetGlobalPose(myGravitySlot->WorldPosition(), myCurrentTarget.myRigidBodyPtr->GetComponent<CTransformComponent>()->Rotation());
 			myCurrentTarget.myRigidBodyPtr->SetLinearVelocity({ 0.f, 0.f, 0.f });
 			myCurrentTarget.myRigidBodyPtr->SetAngularVelocity({ 0.f, 0.f, 0.f });
+
+			if (myCurrentTarget.myRigidBodyPtr->GetComponent<CHealthPickupComponent>()) {
+				if (GameObject().myTransform->GetParent()->GetComponent<CPlayerComponent>()->CurrentHealth() < 100.f) {
+					GameObject().myTransform->GetParent()->GetComponent<CPlayerComponent>()->IncreaseHealth(myCurrentTarget.myRigidBodyPtr->GetComponent<CHealthPickupComponent>()->GetHealthPickupAmount());
+					myCurrentTarget.myRigidBodyPtr->GetComponent<CHealthPickupComponent>()->Destroy();
+					myCurrentTarget.myRigidBodyPtr = nullptr;
+
+					PostMaster::SCrossHairData data; // Wind down
+					data.myIndex = 0;
+					data.myShouldBeReversed = true;
+					CMainSingleton::PostMaster().Send({ EMessageType::UpdateCrosshair, &data });
+					CMainSingleton::PostMaster().Send({ EMessageType::GravityGlovePull, nullptr });
+				}
+			}
 		}
 		else
 		{
@@ -80,11 +122,13 @@ void CGravityGloveComponent::Update()
 		}
 		//Yaay Here things are happening omfg lets gouee! : D
 
-		myCurrentTarget.currentDistanceSquared = Vector3::DistanceSquared(myGravitySlot->WorldPosition(), myCurrentTarget.myRigidBodyPtr->GameObject().myTransform->WorldPosition());
-		PostMaster::SGravityGloveTargetData ggTargetData;
-		ggTargetData.myCurrentDistanceSquared = myCurrentTarget.currentDistanceSquared;
-		ggTargetData.myInitialDistanceSquared = myCurrentTarget.initialDistanceSquared;
-		CMainSingleton::PostMaster().Send({ EMessageType::GravityGloveTargetDistance, &ggTargetData });
+		if (myCurrentTarget.myRigidBodyPtr != nullptr) {
+			myCurrentTarget.currentDistanceSquared = Vector3::DistanceSquared(myGravitySlot->WorldPosition(), myCurrentTarget.myRigidBodyPtr->GameObject().myTransform->WorldPosition());
+			PostMaster::SGravityGloveTargetData ggTargetData;
+			ggTargetData.myCurrentDistanceSquared = myCurrentTarget.currentDistanceSquared;
+			ggTargetData.myInitialDistanceSquared = myCurrentTarget.initialDistanceSquared;
+			CMainSingleton::PostMaster().Send({ EMessageType::GravityGloveTargetDistance, &ggTargetData });
+		}
 	}
 }
 
@@ -108,6 +152,7 @@ void CGravityGloveComponent::Pull()
 	Vector3 dir = -GameObject().myTransform->GetWorldMatrix().Forward();
 
 	PxRaycastBuffer hit = CEngine::GetInstance()->GetPhysx().Raycast(start, dir, mySettings.myMaxDistance);
+
 //	std::vector<CGameObject*> gameobjects = CEngine::GetInstance()->GetActiveScene().ActiveGameObjects();
 
 	/*for (int i = 0; i < gameobjects.size(); ++i) {
@@ -126,7 +171,7 @@ void CGravityGloveComponent::Pull()
 	if (hit.getNbAnyHits() > 0)
 	{
 		CTransformComponent* transform = (CTransformComponent*)hit.getAnyHit(0).actor->userData;
-		if (transform == nullptr)
+		if (transform == nullptr || transform->GetComponent<CEnemyComponent>())
 		{
 			PostMaster::SCrossHairData data; // Wind down
 			data.myIndex = 0;

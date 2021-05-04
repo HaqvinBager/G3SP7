@@ -23,7 +23,9 @@ CRigidBodyComponent::CRigidBodyComponent(CGameObject& aParent, const float& aMas
 
 CRigidBodyComponent::~CRigidBodyComponent()
 {
-	myDynamicRigidBody = nullptr;
+	if (!myDynamicRigidBody) {
+		myDynamicRigidBody = nullptr;
+	}
 }
 
 //static int kinematicCount = 0;
@@ -113,6 +115,12 @@ const float CRigidBodyComponent::GetMass()
 {
 	PxReal mass = myDynamicRigidBody->GetBody().getMass();
 	return {mass};
+}
+
+void CRigidBodyComponent::Destroy()
+{
+	CEngine::GetInstance()->GetPhysx().GetPXScene()->removeActor(myDynamicRigidBody->GetBody());
+	myDynamicRigidBody = nullptr;
 }
 
 void CRigidBodyComponent::SetPosition(const Vector3& aPos) {

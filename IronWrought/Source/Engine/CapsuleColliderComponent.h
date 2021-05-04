@@ -13,6 +13,7 @@ public:
 	CCapsuleColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const float& aRadius, const float& aHeight, physx::PxMaterial* aMaterial = nullptr);
 	~CCapsuleColliderComponent() override;
 
+	physx::PxShape* GetShape() { return myShape; }
 public:
 	void Awake() override;
 	void Start() override;
