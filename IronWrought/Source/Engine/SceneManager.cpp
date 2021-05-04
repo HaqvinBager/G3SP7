@@ -107,7 +107,9 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneJson)
 				AddPlayer(*scene, sceneData["player"].GetObjectW());
 			}
 			AddEnemyComponents(*scene, sceneData["enemies"].GetArray());
-			AddPickups(*scene, sceneData["healthPickups"].GetArray());
+
+			if(sceneData.HasMember("healthPickups"))
+				AddPickups(*scene, sceneData["healthPickups"].GetArray());
 		}
 		AddInstancedModelComponents(*scene, sceneData["instancedModels"].GetArray());
 	}
