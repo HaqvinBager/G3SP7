@@ -19,17 +19,6 @@ public:
 		Count
 	};
 
-	enum class EState
-	{
-		Idle,
-		Moving,
-		Action,
-		Transition,
-
-		None,
-		Count
-	};
-
 public:
 	CEnemyAnimationController();
 	~CEnemyAnimationController();
@@ -44,24 +33,7 @@ private:
 	void OnAttack(CEnemyComponent* anEnemy);
 	void OnTakeDamage(CEnemyComponent* anEnemy);
 
-	/*void Init(CAnimationComponent* anAnimationComponent);
-
-	void Update();
-	void UpdateBlendValue(const float aBlendValue);
-	void SwitchBlendTarget(const EEnemyAnimations anAnimationToBlendTo, const EEnemyAnimations anAnimationToBlendFrom = EEnemyAnimations::Idle);
-
-	void Idle();
-	void Move(const float& aSpeed = 0.5f, const float& aMaxSpeed = 1.0f);
-	void Attack(const bool& aTemporary = true);
-	void OnDeath();
-	void Search(const bool& aTemporary = true);*/
-
 private:
 	CAnimationComponent* myAnimationComponent;
-	//bool myIsActive;
-	////Temp
-	////using 2.0f as max
-	//float myReturnToIdle = 0.0f;
-	//// ! Temp
 };
 
