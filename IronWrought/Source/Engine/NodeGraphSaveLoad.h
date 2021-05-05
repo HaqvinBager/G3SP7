@@ -4,7 +4,7 @@ class CGraphManager;
 struct SPin;
 class CJsonReader;
 
-class CSaveLoadGraphManager
+class CNodeGraphSaveLoad
 {
 public:
 	void LoadScripts(CGraphManager& aGraphManager, const std::string& aSceneName, std::string& aSceneFolder);
@@ -14,6 +14,7 @@ public:
 
 	void SaveNodesToClipboard(CGraphManager& aGraphManager);
 	void LoadNodesFromClipboard(CGraphManager& aGraphManager);
+	void LoadDataNodesFromFile(const std::string& aSceneFolder, std::string& aNewVariableType);
 #endif // _DEBUG
 
 private:

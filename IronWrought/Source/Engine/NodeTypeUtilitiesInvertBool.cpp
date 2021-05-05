@@ -1,8 +1,8 @@
 #include "stdafx.h"
-#include "NodeTypeUtilityInvertBool.h"
+#include "NodeTypeUtilitiesInvertBool.h"
 #include "NodeInstance.h"
 
-CNodeTypeUtilityInvertBool::CNodeTypeUtilityInvertBool()
+CNodeTypeUtilitiesInvertBool::CNodeTypeUtilitiesInvertBool()
 {
     myPins.push_back(SPin("", SPin::EPinTypeInOut::EPinTypeInOut_IN));								//0
     myPins.push_back(SPin("", SPin::EPinTypeInOut::EPinTypeInOut_OUT));								//1
@@ -10,7 +10,7 @@ CNodeTypeUtilityInvertBool::CNodeTypeUtilityInvertBool()
     myPins.push_back(SPin("", SPin::EPinTypeInOut::EPinTypeInOut_OUT, SPin::EPinType::EBool));		//3
 }
 
-int CNodeTypeUtilityInvertBool::OnEnter(CNodeInstance* aTriggeringNodeInstance)
+int CNodeTypeUtilitiesInvertBool::OnEnter(CNodeInstance* aTriggeringNodeInstance)
 {
 	SPin::EPinType outType;
 	NodeDataPtr someData = nullptr;

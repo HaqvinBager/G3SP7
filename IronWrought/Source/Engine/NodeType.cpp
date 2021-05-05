@@ -70,7 +70,7 @@
 #include "NodeTypeStartSphereOnTriggerExit.h"
 #include "NodeTypePlayerGetPosition.h"
 #include "NodeTypeGameObjectRotateDegrees.h"
-#include "NodeTypeUtilityInvertBool.h"
+#include "NodeTypeUtilitiesInvertBool.h"
 #include "NodeTypeEnemySpawn.h"
 #include "Scene.h"
 #include "Engine.h"
@@ -152,7 +152,7 @@ void CNodeTypeCollector::PopulateTypes()
 	RegisterType<CNodeTypeStartSphereOnTriggerExit>("Sphere On Trigger Exit");
 	RegisterType<CNodeTypePlayerGetPosition>("Player Get Position");
 	RegisterType<CNodeTypeGameObjectRotateDegrees>("Rotate Object To Face");
-	RegisterType<CNodeTypeUtilityInvertBool>("Invert Bool");
+	RegisterType<CNodeTypeUtilitiesInvertBool>("Invert Bool");
 	//RegisterType<CNodeTypeEnemySpawn>("Spawn Enemies"); // Enabled only when testing, not ready for use yet. 23/3 Aki
 }
 

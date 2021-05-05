@@ -882,7 +882,6 @@
     <ClCompile Include="PlayerReportCallback.cpp">
       <Filter>PhysX</Filter>
     </ClCompile>
-    <ClCompile Include="NodeTypeUtilityInvertBool.cpp" />
     <ClCompile Include="NodeTypeGameObjectRotateDegrees.cpp">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClCompile>
@@ -890,11 +889,14 @@
     <ClCompile Include="EnvironmentLightWindow.cpp">
       <Filter>Imgui\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="DrawGraphManager.cpp">
+    <ClCompile Include="DrawNodePins.cpp">
       <Filter>Imgui\Node Editor\Node Editor Managers\GraphManager Helpers</Filter>
     </ClCompile>
-    <ClCompile Include="SaveLoadGraphManager.cpp">
+    <ClCompile Include="NodeGraphSaveLoad.cpp">
       <Filter>Imgui\Node Editor\Node Editor Managers\GraphManager Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTypeUtilitiesInvertBool.cpp">
+      <Filter>Imgui\Node Editor\Nodes\Utilities</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1626,7 +1628,6 @@
     <ClInclude Include="PlayerReportCallback.h">
       <Filter>PhysX</Filter>
     </ClInclude>
-    <ClInclude Include="NodeTypeUtilityInvertBool.h" />
     <ClInclude Include="NodeTypeGameObjectRotateDegrees.h">
       <Filter>Imgui\Node Editor\Nodes\Game Object</Filter>
     </ClInclude>
@@ -1634,11 +1635,14 @@
     <ClInclude Include="EnvironmentLightWindow.h">
       <Filter>Imgui\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="DrawGraphManager.h">
+    <ClInclude Include="DrawNodePins.h">
       <Filter>Imgui\Node Editor\Node Editor Managers\GraphManager Helpers</Filter>
     </ClInclude>
-    <ClInclude Include="SaveLoadGraphManager.h">
+    <ClInclude Include="NodeGraphSaveLoad.h">
       <Filter>Imgui\Node Editor\Node Editor Managers\GraphManager Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeTypeUtilitiesInvertBool.h">
+      <Filter>Imgui\Node Editor\Nodes\Utilities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

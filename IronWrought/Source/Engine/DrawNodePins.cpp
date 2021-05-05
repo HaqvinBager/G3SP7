@@ -1,16 +1,127 @@
 #include "stdafx.h"
-#include "DrawGraphManager.h"
+#include "DrawNodePins.h"
 #include "NodeInstance.h"
 #include <imgui_node_editor.h>
 #include "Drawing.h"
 #include "Widgets.h"
 #include "NodeType.h"
 #include "GraphManager.h"
+#include "Interop.h"
+#include <imgui_impl_dx11.h>
 
 namespace ed = ax::NodeEditor;
 using namespace ax::Drawing;
 
-ImColor CDrawGraphManager::GetIconColor(unsigned int aType)
+void CDrawNodePins::DrawNodes()
+{
+	for (auto& nodeInstance : myGraphManager->CurrentGraph().myNodeInstances)
+	{
+		if (!nodeInstance->myHasSetEditorPosition)
+		{
+			ed::SetNodePosition(nodeInstance->myUID.AsInt(), ImVec2(nodeInstance->myEditorPosition[0], nodeInstance->myEditorPosition[1]));
+			nodeInstance->myHasSetEditorPosition = true;
+		}
+
+		ed::PushStyleVar(ed::StyleVar_NodePadding, ImVec4(8, 4, 8, 8));
+		ed::BeginNode(nodeInstance->myUID.AsInt());
+		ImGui::PushID(nodeInstance->myUID.AsInt());
+		ImGui::BeginVertical("node");
+
+		ImGui::BeginHorizontal("header");
+		ImGui::Spring(0);
+		ImGui::TextUnformatted(nodeInstance->GetNodeName().c_str());
+		ImGui::Spring(1);
+		ImGui::Dummy(ImVec2(0, 28));
+		ImGui::Spring(0);
+
+		ImGui::EndHorizontal();
+		ax::rect HeaderRect = ImGui_GetItemRect();
+		ImGui::Spring(0, ImGui::GetStyle().ItemSpacing.y * 2.0f);
+
+		bool previusWasOut = false;
+		bool isFirstInput = true;
+		bool isFirstIteration = true;
+		for (auto& pin : nodeInstance->GetPins())
+		{
+			if (isFirstIteration)
+			{
+				if (pin.myPinType == SPin::EPinTypeInOut::EPinTypeInOut_OUT)
+					isFirstInput = false;
+				isFirstIteration = false;
+			}
+
+			if (pin.myPinType == SPin::EPinTypeInOut::EPinTypeInOut_IN)
+			{
+				ed::BeginPin(pin.myUID.AsInt(), ed::PinKind::Input);
+
+				ImGui::Text(pin.myText.c_str());
+				ImGui::SameLine(0, 0);
+				if (pin.myVariableType == SPin::EPinType::EFlow)
+					DrawPinIcon(pin, nodeInstance->IsPinConnected(pin), 255);
+				else
+					DrawTypeSpecificPin(pin, nodeInstance);
+
+				ed::EndPin();
+				previusWasOut = false;
+
+			}
+			else
+			{
+				if (isFirstInput)
+					ImGui::SameLine(100, 0);
+
+				ImGui::Indent(150.0f);
+
+
+				ed::BeginPin(pin.myUID.AsInt(), ed::PinKind::Output);
+
+				ImGui::Text(pin.myText.c_str());
+				ImGui::SameLine(0, 0);
+
+				DrawPinIcon(pin, nodeInstance->IsPinConnected(pin), 255);
+				ed::EndPin();
+				previusWasOut = true;
+				ImGui::Unindent(150.0f);
+				isFirstInput = false;
+			}
+		}
+
+		ImGui::EndVertical();
+		auto ContentRect = ImGui_GetItemRect();
+		ed::EndNode();
+
+		if (ImGui::IsItemVisible())
+		{
+			auto drawList = ed::GetNodeBackgroundDrawList(nodeInstance->myUID.AsInt());
+
+			const auto halfBorderWidth = ed::GetStyle().NodeBorderWidth * 0.5f;
+			auto headerColor = nodeInstance->GetColor();
+			const auto uv = ImVec2(
+				HeaderRect.w / (float)(4.0f * ImGui_GetTextureWidth(HeaderTextureID())),
+				HeaderRect.h / (float)(4.0f * ImGui_GetTextureHeight(HeaderTextureID())));
+
+			drawList->AddImageRounded(HeaderTextureID(),
+				to_imvec(HeaderRect.top_left()) - ImVec2(8 - halfBorderWidth, 4 - halfBorderWidth),
+				to_imvec(HeaderRect.bottom_right()) + ImVec2(8 - halfBorderWidth, 0),
+				ImVec2(0.0f, 0.0f), uv,
+				headerColor, ed::GetStyle().NodeRounding, 1 | 2);
+
+
+			auto headerSeparatorRect = ax::rect(HeaderRect.bottom_left(), ContentRect.top_right());
+			drawList->AddLine(
+				to_imvec(headerSeparatorRect.top_left()) + ImVec2(-(8 - halfBorderWidth), -0.5f),
+				to_imvec(headerSeparatorRect.top_right()) + ImVec2((8 - halfBorderWidth), -0.5f),
+				ImColor(255, 255, 255, 255), 1.0f);
+		}
+		ImGui::PopID();
+		ed::PopStyleVar();
+	}
+
+	for (auto& linkInfo : myGraphManager->CurrentGraph().myLinks)
+		ed::Link(linkInfo.myID, linkInfo.myInputID, linkInfo.myOutputID);
+}
+
+ImColor CDrawNodePins::GetIconColor(unsigned int aType)
 {
 	SPin::EPinType type = static_cast<SPin::EPinType>(aType);
 	switch (type)
@@ -35,11 +146,12 @@ ImColor CDrawGraphManager::GetIconColor(unsigned int aType)
 	}
 };
 
-void CDrawGraphManager::DrawPinIcon(const SPin& pin, bool connected, int alpha)
+void CDrawNodePins::DrawPinIcon(const SPin& pin, bool connected, int alpha)
 {
 	IconType iconType;
 	ImColor  color = GetIconColor(static_cast<unsigned int>(pin.myVariableType));
 	color.Value.w = alpha / 255.0f;
+
 	switch (pin.myVariableType)
 	{
 	case SPin::EPinType::EFlow:
@@ -85,11 +197,12 @@ void CDrawGraphManager::DrawPinIcon(const SPin& pin, bool connected, int alpha)
 	default:
 		return;
 	}
+
 	const int s_PinIconSize = 24;
 	ax::Widgets::Icon(ImVec2(s_PinIconSize, s_PinIconSize), iconType, connected, color, ImColor(32, 32, 32, alpha));
 };
 
-void CDrawGraphManager::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInstance)
+void CDrawNodePins::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInstance)
 {
 	switch (aPin.myVariableType)
 	{
@@ -176,7 +289,6 @@ void CDrawGraphManager::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInst
 				ImGui::InputFloat("##edit", c);
 
 		ImGui::PopItemWidth();
-
 		ImGui::PopID();
 	}
 	break;
@@ -203,8 +315,8 @@ void CDrawGraphManager::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInst
 				ImGui::InputFloat("##edit2", &c->z);
 			}
 		}
-		ImGui::PopItemWidth();
 
+		ImGui::PopItemWidth();
 		ImGui::PopID();
 	}
 	break;
@@ -241,4 +353,12 @@ void CDrawGraphManager::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInst
 	default:
 		assert(0);
 	}
+}
+
+ImTextureID CDrawNodePins::HeaderTextureID()
+{
+	if (!myHeaderTextureID)
+		myHeaderTextureID = ImGui_LoadTexture("Imgui/Sprites/BlueprintBackground.png");
+
+	return myHeaderTextureID;
 }

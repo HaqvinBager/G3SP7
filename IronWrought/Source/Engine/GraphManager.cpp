@@ -21,8 +21,8 @@
 #include "GraphNodeTimerManager.h"
 #include "FolderUtility.h"
 #include "NodeDataManager.h"
-#include "SaveLoadGraphManager.h"
-#include "DrawGraphManager.h"
+#include "NodeGraphSaveLoad.h"
+#include "DrawNodePins.h"
 #ifdef _DEBUG
 #include <imgui_node_editor.h>
 #include "Drawing.h"
@@ -34,10 +34,29 @@ namespace ed = ax::NodeEditor;
 using namespace ax::Drawing;
 static ed::EditorContext* g_Context = nullptr;
 
+std::string InstatiableVariable(unsigned int aType)
+{
+	CNodeDataManager::EInstatiableVariables instatiableVariable = static_cast<CNodeDataManager::EInstatiableVariables>(aType);
+
+	switch (instatiableVariable)
+	{
+	case CNodeDataManager::EInstatiableVariables::EFloat:
+		return "Float";
+	case CNodeDataManager::EInstatiableVariables::EInt:
+		return "Int";
+	case CNodeDataManager::EInstatiableVariables::EBool:
+		return "Bool";
+	case CNodeDataManager::EInstatiableVariables::EStart:
+		return "Start";
+	case CNodeDataManager::EInstatiableVariables::EVector3:
+		return "Vector 3";
+	default:
+		break;
+	}
+}
+
 CGraphManager::~CGraphManager()
 {
-	delete myHeaderTextureID;
-	myHeaderTextureID = nullptr;
 	ed::DestroyEditor(g_Context);
 }
 #endif
@@ -61,9 +80,8 @@ void CGraphManager::Load(const std::string& aSceneName)
 #else
 	myRunScripts = true;
 #endif
-	//mySaveLoadGraphManager->GraphManager(this);
-	myDrawGraphManager = new CDrawGraphManager();
-	myDrawGraphManager->GraphManager(*this);
+	myPinDrawer = new CDrawNodePins();
+	myPinDrawer->GraphManager(*this);
 
 	if (!CNodeDataManager::Get())
 	{
@@ -83,7 +101,6 @@ void CGraphManager::Load(const std::string& aSceneName)
 		myCurrentGraph = &myGraphs[0];
 	CNodeTypeCollector::PopulateTypes();
 #ifdef _DEBUG
-	myHeaderTextureID = nullptr;
 	ed::Config config;
 	std::string simple = "Imgui/NodeScripts/Simple.json";
 	config.SettingsFile = simple.c_str();
@@ -517,477 +534,369 @@ void CGraphManager::PopulateNodeList(std::vector<CNodeType*>& aNodeListToFill, C
 	}
 }
 
-ImTextureID CGraphManager::HeaderTextureID()
+void CGraphManager::Construct()
 {
-	if (!myHeaderTextureID)
-		myHeaderTextureID = ImGui_LoadTexture("Imgui/Sprites/BlueprintBackground.png");
+	if (ed::BeginCreate())
+	{
+		ed::PinId inputPinId, outputPinId;
+		if (ed::QueryNewLink(&inputPinId, &outputPinId))
+		{
+			if (inputPinId && outputPinId)
+			{
+				if (ed::AcceptNewItem())
+				{
+					unsigned int inputPinID = static_cast<unsigned int>(inputPinId.Get());
+					unsigned int outputPinID = static_cast<unsigned int>(outputPinId.Get());
+					CNodeInstance* firstNode = GetNodeFromPinID(inputPinID);
+					CNodeInstance* secondNode = GetNodeFromPinID(outputPinID);
+					assert(firstNode);
+					assert(secondNode);
 
-	return myHeaderTextureID;
+					if (firstNode != secondNode)
+					{
+						SPin* firstPin = firstNode->GetPinFromID(inputPinID);
+						SPin* secondPin = secondNode->GetPinFromID(outputPinID);
+
+						bool canAddlink = true;
+						if (firstPin && secondPin)
+							if (firstPin->myPinType == SPin::EPinTypeInOut::EPinTypeInOut_IN && secondPin->myPinType == SPin::EPinTypeInOut::EPinTypeInOut_IN)
+								canAddlink = false;
+
+						if (!ArePinTypesCompatible(*firstPin, *secondPin))
+							canAddlink = false;
+
+						if (!firstNode->CanAddLink(inputPinID))
+							canAddlink = false;
+
+						if (!secondNode->CanAddLink(outputPinID))
+							canAddlink = false;
+
+						if (firstNode->HasLinkBetween(inputPinID, outputPinID))
+							canAddlink = false;
+
+
+						if (canAddlink)
+						{
+							if (secondPin->myVariableType == SPin::EPinType::EUnknown)
+								secondNode->ChangePinTypes(firstPin->myVariableType);
+
+							unsigned int linkId = ++myCurrentGraph->myNextLinkIdCounter;
+							firstNode->AddLinkToVia(secondNode, inputPinID, outputPinID, linkId);
+							secondNode->AddLinkToVia(firstNode, outputPinID, inputPinID, linkId);
+
+							bool aIsCyclic = false;
+							WillBeCyclic(firstNode, aIsCyclic, firstNode);
+							if (aIsCyclic || !canAddlink)
+							{
+								firstNode->RemoveLinkToVia(secondNode, inputPinID);
+								secondNode->RemoveLinkToVia(firstNode, outputPinID);
+							}
+							else
+							{
+								if (firstPin->myPinType == SPin::EPinTypeInOut::EPinTypeInOut_IN)
+									myCurrentGraph->myLinks.push_back({ ed::LinkId(linkId), outputPinId, inputPinId });
+								else
+									myCurrentGraph->myLinks.push_back({ ed::LinkId(linkId), inputPinId, outputPinId });
+
+								myUndoCommands.push({ ECommandAction::EAddLink, firstNode, secondNode, myCurrentGraph->myLinks.back(), 0 });
+
+								mySave = true;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	ed::EndCreate();
 }
 
-void CGraphManager::ConstructEditorTreeAndConnectLinks()
+void CGraphManager::Delete()
 {
-	for (auto& nodeInstance : myCurrentGraph->myNodeInstances)
+	if (ed::BeginDelete())
 	{
-		if (!nodeInstance->myHasSetEditorPosition)
+		ed::LinkId deletedLinkId;
+		while (ed::QueryDeletedLink(&deletedLinkId))
 		{
-			ed::SetNodePosition(nodeInstance->myUID.AsInt(), ImVec2(nodeInstance->myEditorPosition[0], nodeInstance->myEditorPosition[1]));
-			nodeInstance->myHasSetEditorPosition = true;
-		}
-
-		ed::PushStyleVar(ed::StyleVar_NodePadding, ImVec4(8, 4, 8, 8));
-		ed::BeginNode(nodeInstance->myUID.AsInt());
-		ImGui::PushID(nodeInstance->myUID.AsInt());
-		ImGui::BeginVertical("node");
-
-		ImGui::BeginHorizontal("header");
-		ImGui::Spring(0);
-		ImGui::TextUnformatted(nodeInstance->GetNodeName().c_str());
-		ImGui::Spring(1);
-		ImGui::Dummy(ImVec2(0, 28));
-		ImGui::Spring(0);
-
-		ImGui::EndHorizontal();
-		ax::rect HeaderRect = ImGui_GetItemRect();
-		ImGui::Spring(0, ImGui::GetStyle().ItemSpacing.y * 2.0f);
-
-		bool previusWasOut = false;
-		bool isFirstInput = true;
-		bool isFirstIteration = true;
-		for (auto& pin : nodeInstance->GetPins())
-		{
-			if (isFirstIteration)
+			if (ed::AcceptDeletedItem())
 			{
-				if (pin.myPinType == SPin::EPinTypeInOut::EPinTypeInOut_OUT)
-					isFirstInput = false;
-				isFirstIteration = false;
-			}
-
-			if (pin.myPinType == SPin::EPinTypeInOut::EPinTypeInOut_IN)
-			{
-				ed::BeginPin(pin.myUID.AsInt(), ed::PinKind::Input);
-
-				ImGui::Text(pin.myText.c_str());
-				ImGui::SameLine(0, 0);
-				if (pin.myVariableType == SPin::EPinType::EFlow)
-					myDrawGraphManager->DrawPinIcon(pin, nodeInstance->IsPinConnected(pin), 255);
-				else
-					myDrawGraphManager->DrawTypeSpecificPin(pin, nodeInstance);
-
-				ed::EndPin();
-				previusWasOut = false;
-
-			}
-			else
-			{
-				if (isFirstInput)
-					ImGui::SameLine(100, 0);
-
-				ImGui::Indent(150.0f);
-
-
-				ed::BeginPin(pin.myUID.AsInt(), ed::PinKind::Output);
-
-				ImGui::Text(pin.myText.c_str());
-				ImGui::SameLine(0, 0);
-
-				myDrawGraphManager->DrawPinIcon(pin, nodeInstance->IsPinConnected(pin), 255);
-				ed::EndPin();
-				previusWasOut = true;
-				ImGui::Unindent(150.0f);
-				isFirstInput = false;
-			}
-		}
-
-		ImGui::EndVertical();
-		auto ContentRect = ImGui_GetItemRect();
-		ed::EndNode();
-
-		if (ImGui::IsItemVisible())
-		{
-			auto drawList = ed::GetNodeBackgroundDrawList(nodeInstance->myUID.AsInt());
-
-			const auto halfBorderWidth = ed::GetStyle().NodeBorderWidth * 0.5f;
-			auto headerColor = nodeInstance->GetColor();
-			const auto uv = ImVec2(
-				HeaderRect.w / (float)(4.0f * ImGui_GetTextureWidth(HeaderTextureID())),
-				HeaderRect.h / (float)(4.0f * ImGui_GetTextureHeight(HeaderTextureID())));
-
-			drawList->AddImageRounded(HeaderTextureID(),
-				to_imvec(HeaderRect.top_left()) - ImVec2(8 - halfBorderWidth, 4 - halfBorderWidth),
-				to_imvec(HeaderRect.bottom_right()) + ImVec2(8 - halfBorderWidth, 0),
-				ImVec2(0.0f, 0.0f), uv,
-				headerColor, ed::GetStyle().NodeRounding, 1 | 2);
-
-
-			auto headerSeparatorRect = ax::rect(HeaderRect.bottom_left(), ContentRect.top_right());
-			drawList->AddLine(
-				to_imvec(headerSeparatorRect.top_left()) + ImVec2(-(8 - halfBorderWidth), -0.5f),
-				to_imvec(headerSeparatorRect.top_right()) + ImVec2((8 - halfBorderWidth), -0.5f),
-				ImColor(255, 255, 255, 255), 1.0f);
-		}
-		ImGui::PopID();
-		ed::PopStyleVar();
-	}
-
-	for (auto& linkInfo : myCurrentGraph->myLinks)
-		ed::Link(linkInfo.myID, linkInfo.myInputID, linkInfo.myOutputID);
-
-	if (!myRunScripts)
-	{
-		if (ed::BeginCreate())
-		{
-			ed::PinId inputPinId, outputPinId;
-			if (ed::QueryNewLink(&inputPinId, &outputPinId))
-			{
-				if (inputPinId && outputPinId)
+				for (auto& link : myCurrentGraph->myLinks)
 				{
-					if (ed::AcceptNewItem())
+					if (link.myID == deletedLinkId)
 					{
-						unsigned int inputPinID = static_cast<unsigned int>(inputPinId.Get());
-						unsigned int outputPinID = static_cast<unsigned int>(outputPinId.Get());
-						CNodeInstance* firstNode = GetNodeFromPinID(inputPinID);
-						CNodeInstance* secondNode = GetNodeFromPinID(outputPinID);
+						CNodeInstance* firstNode = GetNodeFromPinID(static_cast<unsigned int>(link.myInputID.Get()));
+						CNodeInstance* secondNode = GetNodeFromPinID(static_cast<unsigned int>(link.myOutputID.Get()));
 						assert(firstNode);
 						assert(secondNode);
 
-						if (firstNode != secondNode)
-						{
-							SPin* firstPin = firstNode->GetPinFromID(inputPinID);
-							SPin* secondPin = secondNode->GetPinFromID(outputPinID);
+						firstNode->RemoveLinkToVia(secondNode, static_cast<unsigned int>(link.myInputID.Get()));
+						secondNode->RemoveLinkToVia(firstNode, static_cast<unsigned int>(link.myOutputID.Get()));
 
-							bool canAddlink = true;
-							if (firstPin && secondPin)
-								if (firstPin->myPinType == SPin::EPinTypeInOut::EPinTypeInOut_IN && secondPin->myPinType == SPin::EPinTypeInOut::EPinTypeInOut_IN)
-									canAddlink = false;
+						if (myPushCommand)
+							myUndoCommands.push({ ECommandAction::ERemoveLink, firstNode, secondNode, link, 0 });
 
-							if (!ArePinTypesCompatible(*firstPin, *secondPin))
-								canAddlink = false;
+						myCurrentGraph->myLinks.erase(&link);
+						mySave = true;
 
-							if (!firstNode->CanAddLink(inputPinID))
-								canAddlink = false;
-
-							if (!secondNode->CanAddLink(outputPinID))
-								canAddlink = false;
-
-							if (firstNode->HasLinkBetween(inputPinID, outputPinID))
-								canAddlink = false;
-
-
-							if (canAddlink)
-							{
-								if (secondPin->myVariableType == SPin::EPinType::EUnknown)
-									secondNode->ChangePinTypes(firstPin->myVariableType);
-
-								unsigned int linkId = ++myCurrentGraph->myNextLinkIdCounter;
-								firstNode->AddLinkToVia(secondNode, inputPinID, outputPinID, linkId);
-								secondNode->AddLinkToVia(firstNode, outputPinID, inputPinID, linkId);
-
-								bool aIsCyclic = false;
-								WillBeCyclic(firstNode, aIsCyclic, firstNode);
-								if (aIsCyclic || !canAddlink)
-								{
-									firstNode->RemoveLinkToVia(secondNode, inputPinID);
-									secondNode->RemoveLinkToVia(firstNode, outputPinID);
-								}
-								else
-								{
-									if (firstPin->myPinType == SPin::EPinTypeInOut::EPinTypeInOut_IN)
-										myCurrentGraph->myLinks.push_back({ ed::LinkId(linkId), outputPinId, inputPinId });
-									else
-										myCurrentGraph->myLinks.push_back({ ed::LinkId(linkId), inputPinId, outputPinId });
-
-									myUndoCommands.push({ ECommandAction::EAddLink, firstNode, secondNode, myCurrentGraph->myLinks.back(), 0 });
-
-									mySave = true;
-								}
-							}
-						}
+						break;
 					}
 				}
 			}
 		}
-		ed::EndCreate();
-
-		if (ed::BeginDelete())
+		ed::NodeId nodeId = 0;
+		while (ed::QueryDeletedNode(&nodeId))
 		{
-			ed::LinkId deletedLinkId;
-			while (ed::QueryDeletedLink(&deletedLinkId))
+			if (ed::AcceptDeletedItem())
 			{
-				if (ed::AcceptDeletedItem())
+				auto it = myCurrentGraph->myNodeInstances.begin();
+				while (it != myCurrentGraph->myNodeInstances.end())
 				{
-					for (auto& link : myCurrentGraph->myLinks)
+					if ((*it)->myUID.AsInt() == nodeId.Get())
 					{
-						if (link.myID == deletedLinkId)
-						{
-							CNodeInstance* firstNode = GetNodeFromPinID(static_cast<unsigned int>(link.myInputID.Get()));
-							CNodeInstance* secondNode = GetNodeFromPinID(static_cast<unsigned int>(link.myOutputID.Get()));
-							assert(firstNode);
-							assert(secondNode);
 
-							firstNode->RemoveLinkToVia(secondNode, static_cast<unsigned int>(link.myInputID.Get()));
-							secondNode->RemoveLinkToVia(firstNode, static_cast<unsigned int>(link.myOutputID.Get()));
-
-							if (myPushCommand)
-								myUndoCommands.push({ ECommandAction::ERemoveLink, firstNode, secondNode, link, 0 });
-
-							myCurrentGraph->myLinks.erase(&link);
-							mySave = true;
-
-							break;
-						}
-					}
-				}
-			}
-
-			ed::NodeId nodeId = 0;
-			while (ed::QueryDeletedNode(&nodeId))
-			{
-				if (ed::AcceptDeletedItem())
-				{
-					auto it = myCurrentGraph->myNodeInstances.begin();
-					while (it != myCurrentGraph->myNodeInstances.end())
-					{
-						if ((*it)->myUID.AsInt() == nodeId.Get())
-						{
-
-							(*it)->myNodeType->ClearNodeInstanceFromMap((*it));
-							if (myPushCommand)
-							{
-								mySave = true;
-								myUndoCommands.push({ ECommandAction::EDelete, (*it), nullptr,  {0,0,0}, (*it)->myUID.AsInt() });
-							}
-
-							it = myCurrentGraph->myNodeInstances.erase(it);
-						}
-						else
-							++it;
-					}
-				}
-			}
-		}
-		ed::EndDelete();
-
-		auto openPopupPosition = ImGui::GetMousePos();
-		ed::Suspend();
-
-		if (ed::ShowBackgroundContextMenu())
-			ImGui::OpenPopup("Create New Node");
-
-		ed::Resume();
-
-		ed::Suspend();
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8, 8));
-
-		if (ImGui::BeginPopup("Create New Node"))
-		{
-			auto newNodePostion = openPopupPosition;
-			CNodeType** defaultTypes = CNodeTypeCollector::GetAllNodeTypes(CNodeType::ENodeType::EDefault);
-			CNodeType** customTypes = CNodeTypeCollector::GetAllNodeTypes(CNodeType::ENodeType::ECustom);
-			CNodeType** childTypes = CNodeTypeCollector::GetAllNodeTypes(CNodeType::ENodeType::EChild);
-			unsigned short noOfDefaultTypes = CNodeTypeCollector::GetNodeTypeCount(CNodeType::ENodeType::EDefault);
-			unsigned short noOfCustomTypes = CNodeTypeCollector::GetNodeTypeCount(CNodeType::ENodeType::ECustom);
-			unsigned short noOfChildTypes = CNodeTypeCollector::GetNodeTypeCount(CNodeType::ENodeType::EChild);
-
-			std::map< std::string, std::vector<CNodeType*>> cats;
-			for (int i = 0; i < noOfDefaultTypes; i++)
-				cats[defaultTypes[i]->GetNodeTypeCategory()].push_back(defaultTypes[i]);
-
-			static bool noVariablesCreated = true;
-			for (int i = 0; i < noOfCustomTypes; i++)
-			{
-				cats[customTypes[i]->GetNodeTypeCategory()].push_back(customTypes[i]);
-				if (customTypes[i]->GetNodeTypeCategory() == "New Node Type")
-					noVariablesCreated = false;
-			}
-
-			for (int i = 0; i < noOfChildTypes; i++)
-				cats[childTypes[i]->GetNodeTypeCategory()].push_back(childTypes[i]);
-
-			if (noVariablesCreated)
-			{
-				cats["New Node Type"].push_back(nullptr);
-				cats["Delete Node Type"].push_back(nullptr);
-			}
-
-			ImGui::PushItemWidth(100.0f);
-			ImGui::InputText("##edit", (char*)myMenuSearchField, 127);
-
-			if (mySearchFokus)
-				ImGui::SetKeyboardFocusHere(0);
-
-			mySearchFokus = false;
-			ImGui::PopItemWidth();
-
-			if (myMenuSearchField[0] != '\0')
-			{
-				std::vector<CNodeType*> found;
-
-				PopulateNodeList(found, defaultTypes, noOfDefaultTypes);
-				PopulateNodeList(found, customTypes, noOfCustomTypes);
-				PopulateNodeList(found, childTypes, noOfChildTypes);
-
-				for (int i = 0; i < found.size(); i++)
-				{
-					CNodeInstance* node = nullptr;
-					if (ImGui::MenuItem(found[i]->NodeName().c_str()))
-					{
-						node = new CNodeInstance(this);
-
-						node->myNodeType = found[i];
-						node->CheckIfInputNode();
-						node->ConstructUniquePins();
-						ed::SetNodePosition(node->myUID.AsInt(), newNodePostion);
-						node->myHasSetEditorPosition = true;
-
-						myCurrentGraph->myNodeInstances.push_back(node);
-
+						(*it)->myNodeType->ClearNodeInstanceFromMap((*it));
 						if (myPushCommand)
 						{
 							mySave = true;
-							myUndoCommands.push({ ECommandAction::ECreate, node, nullptr, {0,0,0}, node->myUID.AsInt() });
+							myUndoCommands.push({ ECommandAction::EDelete, (*it), nullptr,  {0,0,0}, (*it)->myUID.AsInt() });
 						}
+
+						it = myCurrentGraph->myNodeInstances.erase(it);
 					}
-				}
-			}
-			else
-			{
-				for (auto& category : cats)
-				{
-					std::string theCatName = category.first;
-					if (theCatName.empty())
-						theCatName = "General";
-
-					if (ImGui::BeginMenu(theCatName.c_str()))
-					{
-						CNodeInstance* node = nullptr;
-
-						if (theCatName == "New Node Type")
-						{
-							for (const auto& instantiableVariable : myInstantiableVariables)
-							{
-								if (ImGui::MenuItem(instantiableVariable.c_str()))
-								{
-									myNewVariableType = instantiableVariable;
-									myEnteringNodeName = true;
-								}
-							}
-						}
-						else if (theCatName == "Delete Node Type")
-						{
-							for (int i = 0; i < myCustomDataNodes.size(); ++i)
-							{
-								if (ImGui::MenuItem(myCustomDataNodes[i].c_str()))
-								{
-									for (auto& graph : myGraphs)
-									{
-										auto it = graph.myNodeInstances.begin();
-										while (it != graph.myNodeInstances.end())
-										{
-											if ((*it)->myNodeType->NodeName() == "Get: " + myCustomDataNodes[i])
-											{
-												DeleteNodeType(*(*it));
-												it = graph.myNodeInstances.erase(it);
-											}
-											else if ((*it)->myNodeType->NodeName() == "Set: " + myCustomDataNodes[i])
-											{
-												DeleteNodeType(*(*it));
-												it = graph.myNodeInstances.erase(it);
-											}
-											else
-												++it;
-										}
-									}
-									CNodeTypeCollector::DegisterCustomDataType(myCustomDataNodes[i]);
-									std::swap(myCustomDataNodes[i], myCustomDataNodes.back());
-									myCustomDataNodes.pop_back();
-									CNodeDataManager::Get()->SaveDataTypesToJson();
-								}
-							}
-						}
-						else
-						{
-
-							for (int i = 0; i < category.second.size(); i++)
-							{
-								if (category.second[i] == nullptr)
-									break;
-
-								CNodeType* type = category.second[i];
-								if (ImGui::MenuItem(type->NodeName().c_str()))
-								{
-									node = new CNodeInstance(this, true);
-
-									//int nodeType = i;
-									node->myNodeType = type;
-									node->CheckIfInputNode();
-									node->ConstructUniquePins();
-									ed::SetNodePosition(node->myUID.AsInt(), newNodePostion);
-									node->myHasSetEditorPosition = true;
-
-									myCurrentGraph->myNodeInstances.push_back(node);
-
-									if (myPushCommand)
-									{
-										mySave = true;
-										myUndoCommands.push({ ECommandAction::ECreate, node, nullptr, {0,0,0}, node->myUID.AsInt() });
-									}
-								}
-							}
-						}
-						ImGui::EndMenu();
-					}
-				}
-			}
-			ImGui::EndPopup();
-		}
-		else
-		{
-			mySearchFokus = true;
-			memset(&myMenuSearchField[0], 0, sizeof(myMenuSearchField));
-		}
-
-		ImGui::PopStyleVar();
-		ed::Resume();
-
-		myPushCommand = true;
-
-		if (ed::BeginShortcut())
-		{
-			if (ed::AcceptCopy())
-				mySaveLoadGraphManager->SaveNodesToClipboard(*this);
-
-			if (ed::AcceptPaste())
-				mySaveLoadGraphManager->LoadNodesFromClipboard(*this);
-
-			if (ed::AcceptUndo())
-			{
-				if (!myUndoCommands.empty())
-				{
-					myPushCommand = false;
-					ed::ResetShortCutAction();
-					auto& command = myUndoCommands.top();
-					myUndoCommands.pop();
-					mySave = true;
-					myRedoCommands.push(CreateInverseEditorCommand(command));
-				}
-			}
-
-			if (ed::AcceptRedo())
-			{
-				if (!myRedoCommands.empty())
-				{
-					myPushCommand = false;
-					ed::ResetShortCutAction();
-					auto& command = myRedoCommands.top();
-					myRedoCommands.pop();
-					mySave = true;
-					myUndoCommands.push(CreateInverseEditorCommand(command));
+					else
+						++it;
 				}
 			}
 		}
 	}
+	ed::EndDelete();
 }
+
+void CGraphManager::UndoRedo()
+{
+	if (ed::BeginShortcut())
+	{
+		if (ed::AcceptCopy())
+			mySaveLoadGraphManager->SaveNodesToClipboard(*this);
+
+		if (ed::AcceptPaste())
+			mySaveLoadGraphManager->LoadNodesFromClipboard(*this);
+
+		if (ed::AcceptUndo())
+		{
+			if (!myUndoCommands.empty())
+			{
+				myPushCommand = false;
+				ed::ResetShortCutAction();
+				auto& command = myUndoCommands.top();
+				myUndoCommands.pop();
+				mySave = true;
+				mySaveLoadGraphManager->LoadNodesFromClipboard(*this);
+				myRedoCommands.push(CreateInverseEditorCommand(command));
+			}
+		}
+
+		if (ed::AcceptRedo())
+		{
+			if (!myRedoCommands.empty())
+			{
+				myPushCommand = false;
+				ed::ResetShortCutAction();
+				auto& command = myRedoCommands.top();
+				myRedoCommands.pop();
+				mySave = true;
+				myUndoCommands.push(CreateInverseEditorCommand(command));
+			}
+		}
+	}
+}
+
+void CGraphManager::CreateNewNode()
+{
+	auto openPopupPosition = ImGui::GetMousePos();
+	ed::Suspend();
+
+	if (ed::ShowBackgroundContextMenu())
+		ImGui::OpenPopup("Create New Node");
+
+	ed::Resume();
+
+	ed::Suspend();
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8, 8));
+
+	if (ImGui::BeginPopup("Create New Node"))
+	{
+		auto newNodePostion = openPopupPosition;
+		CNodeType** defaultTypes = CNodeTypeCollector::GetAllNodeTypes(CNodeType::ENodeType::EDefault);
+		CNodeType** customTypes = CNodeTypeCollector::GetAllNodeTypes(CNodeType::ENodeType::ECustom);
+		CNodeType** childTypes = CNodeTypeCollector::GetAllNodeTypes(CNodeType::ENodeType::EChild);
+		unsigned short noOfDefaultTypes = CNodeTypeCollector::GetNodeTypeCount(CNodeType::ENodeType::EDefault);
+		unsigned short noOfCustomTypes = CNodeTypeCollector::GetNodeTypeCount(CNodeType::ENodeType::ECustom);
+		unsigned short noOfChildTypes = CNodeTypeCollector::GetNodeTypeCount(CNodeType::ENodeType::EChild);
+
+		std::map< std::string, std::vector<CNodeType*>> cats;
+		for (int i = 0; i < noOfDefaultTypes; i++)
+			cats[defaultTypes[i]->GetNodeTypeCategory()].push_back(defaultTypes[i]);
+
+		static bool noVariablesCreated = true;
+		for (int i = 0; i < noOfCustomTypes; i++)
+		{
+			cats[customTypes[i]->GetNodeTypeCategory()].push_back(customTypes[i]);
+			if (customTypes[i]->GetNodeTypeCategory() == "New Node Type")
+				noVariablesCreated = false;
+		}
+
+		for (int i = 0; i < noOfChildTypes; i++)
+			cats[childTypes[i]->GetNodeTypeCategory()].push_back(childTypes[i]);
+
+		if (noVariablesCreated)
+		{
+			cats["New Node Type"].push_back(nullptr);
+			cats["Delete Node Type"].push_back(nullptr);
+		}
+
+		ImGui::PushItemWidth(100.0f);
+		ImGui::InputText("##edit", (char*)myMenuSearchField, 127);
+
+		if (mySearchFokus)
+			ImGui::SetKeyboardFocusHere(0);
+
+		mySearchFokus = false;
+		ImGui::PopItemWidth();
+
+		if (myMenuSearchField[0] != '\0')
+		{
+			std::vector<CNodeType*> found;
+
+			PopulateNodeList(found, defaultTypes, noOfDefaultTypes);
+			PopulateNodeList(found, customTypes, noOfCustomTypes);
+			PopulateNodeList(found, childTypes, noOfChildTypes);
+
+			for (int i = 0; i < found.size(); i++)
+			{
+				CNodeInstance* node = nullptr;
+				if (ImGui::MenuItem(found[i]->NodeName().c_str()))
+				{
+					node = new CNodeInstance(this);
+
+					node->myNodeType = found[i];
+					node->CheckIfInputNode();
+					node->ConstructUniquePins();
+					ed::SetNodePosition(node->myUID.AsInt(), newNodePostion);
+					node->myHasSetEditorPosition = true;
+
+					myCurrentGraph->myNodeInstances.push_back(node);
+
+					if (myPushCommand)
+					{
+						mySave = true;
+						myUndoCommands.push({ ECommandAction::ECreate, node, nullptr, {0,0,0}, node->myUID.AsInt() });
+					}
+				}
+			}
+		}
+		else
+		{
+			for (auto& category : cats)
+			{
+				std::string theCatName = category.first;
+				if (theCatName.empty())
+					theCatName = "General";
+
+				if (ImGui::BeginMenu(theCatName.c_str()))
+				{
+					CNodeInstance* node = nullptr;
+
+					if (theCatName == "New Node Type")
+					{
+						for (const auto& instantiableVariable : myInstantiableVariables)
+						{
+							if (ImGui::MenuItem(instantiableVariable.c_str()))
+							{
+								myNewVariableType = instantiableVariable;
+								myEnteringNodeName = true;
+							}
+						}
+					}
+					else if (theCatName == "Delete Node Type")
+					{
+						for (int i = 0; i < myCustomDataNodes.size(); ++i)
+						{
+							if (ImGui::MenuItem(myCustomDataNodes[i].c_str()))
+							{
+								for (auto& graph : myGraphs)
+								{
+									auto it = graph.myNodeInstances.begin();
+									while (it != graph.myNodeInstances.end())
+									{
+										if ((*it)->myNodeType->NodeName() == "Get: " + myCustomDataNodes[i])
+										{
+											DeleteNodeType(*(*it));
+											it = graph.myNodeInstances.erase(it);
+										}
+										else if ((*it)->myNodeType->NodeName() == "Set: " + myCustomDataNodes[i])
+										{
+											DeleteNodeType(*(*it));
+											it = graph.myNodeInstances.erase(it);
+										}
+										else
+											++it;
+									}
+								}
+								CNodeTypeCollector::DegisterCustomDataType(myCustomDataNodes[i]);
+								std::swap(myCustomDataNodes[i], myCustomDataNodes.back());
+								myCustomDataNodes.pop_back();
+								CNodeDataManager::Get()->SaveDataTypesToJson();
+							}
+						}
+					}
+					else
+					{
+
+						for (int i = 0; i < category.second.size(); i++)
+						{
+							if (category.second[i] == nullptr)
+								break;
+
+							CNodeType* type = category.second[i];
+							if (ImGui::MenuItem(type->NodeName().c_str()))
+							{
+								node = new CNodeInstance(this, true);
+
+								//int nodeType = i;
+								node->myNodeType = type;
+								node->CheckIfInputNode();
+								node->ConstructUniquePins();
+								ed::SetNodePosition(node->myUID.AsInt(), newNodePostion);
+								node->myHasSetEditorPosition = true;
+
+								myCurrentGraph->myNodeInstances.push_back(node);
+
+								if (myPushCommand)
+								{
+									mySave = true;
+									myUndoCommands.push({ ECommandAction::ECreate, node, nullptr, {0,0,0}, node->myUID.AsInt() });
+								}
+							}
+						}
+					}
+					ImGui::EndMenu();
+				}
+			}
+		}
+		ImGui::EndPopup();
+	}
+	else
+	{
+		mySearchFokus = true;
+		memset(&myMenuSearchField[0], 0, sizeof(myMenuSearchField));
+	}
+
+	ImGui::PopStyleVar();
+	ed::Resume();
+}
+
+
 
 void CGraphManager::PostFrame()
 {
@@ -1007,5 +916,22 @@ void CGraphManager::PostFrame()
 	myFlowsToBeShown.clear();
 	ed::End();
 	ed::SetCurrentEditor(nullptr);
+}
+
+void CGraphManager::ConstructEditorTreeAndConnectLinks()
+{
+	myPinDrawer->DrawNodes();
+
+	if (!myRunScripts)
+	{
+		Construct();
+		Delete();
+
+		CreateNewNode();
+
+		myPushCommand = true;
+
+		UndoRedo();
+	}
 }
 #endif

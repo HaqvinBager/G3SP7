@@ -6,8 +6,8 @@
 class CNodeInstance;
 class CNodeType;
 class CGameObject;
-class CSaveLoadGraphManager;
-class CDrawGraphManager;
+class CNodeGraphSaveLoad;
+class CDrawNodePins;
 struct SPin;
 
 #ifdef _DEBUG
@@ -17,7 +17,7 @@ namespace ed = ax::NodeEditor;
 
 class CGraphManager
 {
-	friend class CSaveLoadGraphManager;
+	friend class CNodeGraphSaveLoad;
 public:
 	bool RunScripts() { return myRunScripts; }
 #ifdef _DEBUG
@@ -102,11 +102,14 @@ private:
 	void DeleteNodeType(CNodeInstance& aNodeInstance);
 	void CreateNewDataNode();
 	void PopulateNodeList(std::vector<CNodeType*>& aNodeListToFill, CNodeType**& aNodeTypeList, const unsigned int& aNumberOfNodes);
+	void Construct();
+	void Delete();
+	void UndoRedo();
+	void CreateNewNode();
 
-	ImTextureID HeaderTextureID();
 #endif // _DEBUG
 	void WillBeCyclic(CNodeInstance* aFirst, bool& aIsCyclic, CNodeInstance* aBase);
-	void LoadDataNodesFromFile();
+	void LoadDataNodesFromFile(const std::string& aSceneFolder, std::string& aNewVariableType);
 
 public:
 	CNodeInstance* GetNodeFromPinID(unsigned int anID);
@@ -115,8 +118,8 @@ public:
 private:
 	SGraph* myCurrentGraph;
 	BluePrintInstance myCurrentBluePrintInstance;
-	CSaveLoadGraphManager* mySaveLoadGraphManager;
-	CDrawGraphManager* myDrawGraphManager;
+	CNodeGraphSaveLoad* mySaveLoadGraphManager;
+	CDrawNodePins* myPinDrawer;
 
 	char* myMenuSearchField = nullptr;
 	bool myEnteringNodeName = false;
@@ -139,6 +142,5 @@ private:
 	std::vector<int> myFlowsToBeShown;
 	std::stack<EditorCommand> myUndoCommands;
 	std::stack<EditorCommand> myRedoCommands;
-	ImTextureID myHeaderTextureID;
 #endif
 };

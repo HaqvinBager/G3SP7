@@ -1,9 +1,35 @@
 #pragma once
 //#include <map>
 #include "hasher.h"
+
+
+//EInstatiableVariables& operator++(EInstatiableVariables& x) {
+//	using IntType = typename std::underlying_type<EInstatiableVariables>::type;
+//		x = static_cast<EInstatiableVariables>(static_cast<IntType>(x) + 1);
+//	if (x == EInstatiableVariables::ECount)
+//		x = static_cast<EInstatiableVariables>(0);
+//	return x;
+//}
+//
+//EInstatiableVariables operator++(EInstatiableVariables& x, int) {
+//	EInstatiableVariables result = x;
+//	++x;
+//	return result;
+//}
+
 class CNodeDataManager
 {
 public:
+	enum class EInstatiableVariables
+	{
+		EFloat,
+		EInt,
+		EBool,
+		EStart,
+		EVector3,
+		ECount
+	};
+
 	enum class EDataType
 	{
 		EFloat,

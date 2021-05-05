@@ -2,10 +2,10 @@
 #include "NodeType.h"
 #include "NodeTypes.h"
 
-class CNodeTypeUtilityInvertBool : public CNodeType
+class CNodeTypeUtilitiesInvertBool : public CNodeType
 {
 public:
-	CNodeTypeUtilityInvertBool();
+	CNodeTypeUtilitiesInvertBool();
 	int OnEnter(class CNodeInstance* aTriggeringNodeInstance) override;
 	std::string GetNodeTypeCategory() override { return "Utility"; }
 };

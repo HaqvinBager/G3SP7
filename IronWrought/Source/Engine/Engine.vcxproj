@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
@@ -199,17 +199,17 @@
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Behaviour.h" />
     <ClInclude Include="BoxColliderComponent.h" />
-    <ClInclude Include="DrawGraphManager.h" />
+    <ClInclude Include="DrawNodePins.h" />
     <ClInclude Include="EnemyReportCallback.h" />
     <ClInclude Include="EnvironmentLightWindow.h" />
-    <ClInclude Include="NodeTypeUtilityInvertBool.h" />
+    <ClInclude Include="NodeTypeUtilitiesInvertBool.h" />
     <ClInclude Include="PlayerReportCallback.h" />
     <ClInclude Include="ConvexMeshColliderComponent.h" />
     <ClInclude Include="GravityGloveEditor.h" />
     <ClInclude Include="NodeTypeAddForce.h" />
     <ClInclude Include="NodeTypeGameObjectRotateDegrees.h" />
     <ClInclude Include="PostMasterStructs.h" />
-    <ClInclude Include="SaveLoadGraphManager.h" />
+    <ClInclude Include="NodeGraphSaveLoad.h" />
     <ClInclude Include="SphereColliderComponent.h" />
     <ClInclude Include="BoxLight.h" />
     <ClInclude Include="BoxLightComponent.h" />
@@ -443,16 +443,16 @@
     <ClCompile Include="AudioChannel.cpp" />
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="BoxColliderComponent.cpp" />
-    <ClCompile Include="DrawGraphManager.cpp" />
+    <ClCompile Include="DrawNodePins.cpp" />
     <ClCompile Include="EnemyReportCallback.cpp" />
     <ClCompile Include="EnvironmentLightWindow.cpp" />
-    <ClCompile Include="NodeTypeUtilityInvertBool.cpp" />
+    <ClCompile Include="NodeTypeUtilitiesInvertBool.cpp" />
     <ClCompile Include="PlayerReportCallback.cpp" />
     <ClCompile Include="ConvexMeshColliderComponent.cpp" />
     <ClCompile Include="GravityGloveEditor.cpp" />
     <ClCompile Include="NodeTypeAddForce.cpp" />
     <ClCompile Include="NodeTypeGameObjectRotateDegrees.cpp" />
-    <ClCompile Include="SaveLoadGraphManager.cpp" />
+    <ClCompile Include="NodeGraphSaveLoad.cpp" />
     <ClCompile Include="SphereColliderComponent.cpp" />
     <ClCompile Include="BoxLight.cpp" />
     <ClCompile Include="BoxLightComponent.cpp" />
