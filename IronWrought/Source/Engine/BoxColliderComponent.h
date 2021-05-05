@@ -28,7 +28,7 @@ public:
 	};
 
 public:
-	CBoxColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const Vector3& aBoxSize, const bool aIsTrigger, physx::PxMaterial* aMaterial = nullptr);
+	CBoxColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const Vector3& aBoxSize, const bool aIsTrigger, const unsigned int aLayerValue, physx::PxMaterial* aMaterial = nullptr);
 	~CBoxColliderComponent() override;
 
 	void Awake() override;
@@ -37,8 +37,8 @@ public:
 
 	void CreateBoxCollider();
 
-	void OnTriggerEnter();
-	void OnTriggerExit();
+	void OnTriggerEnter(CTransformComponent* aOther);
+	void OnTriggerExit(CTransformComponent* aOther);
 	void RegisterEventTriggerMessage(const std::string& aMessage) { myEventMessage = aMessage; }
 	void RegisterEventTriggerFilter(const int& anEventFilter);
 	//const SStringMessage& EventTriggerMessage() { return myTriggerMessage; }
@@ -55,6 +55,7 @@ private:
 	Vector3 myPositionOffset;
 	Vector3 myBoxSize;
 	bool myIsTrigger;
+	unsigned int myLayerValue;
 
 	std::string myEventMessage;
 	EEventFilter myEventFilter;

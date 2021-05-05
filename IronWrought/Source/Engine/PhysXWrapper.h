@@ -32,7 +32,8 @@ public:
 		GROUP1 = (1 << 0),
 		GROUP2 = (1 << 1),
 		GROUP3 = (1 << 2),
-		GROUP4 = (1 << 3)
+		GROUP4 = (1 << 3),
+		PLAYER = (1 << 8)
 	};
 
 public:

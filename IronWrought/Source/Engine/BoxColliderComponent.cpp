@@ -6,17 +6,20 @@
 #include "Scene.h"
 #include "RigidDynamicBody.h"
 #include "TransformComponent.h"
+#include "PlayerControllerComponent.h"
 
 #include "LineFactory.h"
 #include "LineInstance.h"
 
-CBoxColliderComponent::CBoxColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const Vector3& aBoxSize, const bool aIsTrigger, PxMaterial* aMaterial)
+CBoxColliderComponent::CBoxColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const Vector3& aBoxSize, const bool aIsTrigger, const unsigned int aLayerValue, PxMaterial* aMaterial)
 	: CBehaviour(aParent)
 	, myShape(nullptr)
 	, myPositionOffset(aPositionOffset)
 	, myBoxSize(aBoxSize)
 	, myMaterial(aMaterial)
 	, myIsTrigger(aIsTrigger)
+	, myLayerValue(aLayerValue)
+	//, myEventFilter(static_cast<EEventFilter>(aLayerValue))
 #ifdef DEBUG_COLLIDER_BOX
 	, myColliderDraw(nullptr)
 #endif
@@ -70,7 +73,7 @@ void CBoxColliderComponent::CreateBoxCollider()
 
 	myShape->setLocalPose({ -colliderPos.x, colliderPos.y, -colliderPos.z });
 	PxFilterData filterData;
-	filterData.word0 =	CPhysXWrapper::ELayerMask::GROUP1;
+	filterData.word0 = static_cast<CPhysXWrapper::ELayerMask>(myLayerValue);// ::GROUP1;
 	myShape->setQueryFilterData(filterData);
 	//myShape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, true);
 
@@ -110,18 +113,44 @@ void CBoxColliderComponent::CreateBoxCollider()
 	}
 }
 
-void CBoxColliderComponent::OnTriggerEnter()
+void CBoxColliderComponent::OnTriggerEnter(CTransformComponent* aOther)
 {
-	bool state = true;
-	SStringMessage message = { myEventMessage.c_str(), &state };
-	CMainSingleton::PostMaster().Send(message);
+	if (myEventFilter == EEventFilter::PlayerOnly)
+	{
+		if (aOther->GetComponent<CPlayerControllerComponent>() != nullptr)
+		{
+			//Send Player Has entered Collision Message here
+			bool state = true;
+			SStringMessage message = { myEventMessage.c_str(), &state };
+			CMainSingleton::PostMaster().Send(message);
+		}
+	}
+	else
+	{
+		bool state = true;
+		SStringMessage message = { myEventMessage.c_str(), &state };
+		CMainSingleton::PostMaster().Send(message);
+	}
 }
 
-void CBoxColliderComponent::OnTriggerExit()
+void CBoxColliderComponent::OnTriggerExit(CTransformComponent* aOther)
 {
-	bool state = false;
-	SStringMessage message = { myEventMessage.c_str(), &state };
-	CMainSingleton::PostMaster().Send(message);
+	if (myEventFilter == EEventFilter::PlayerOnly)
+	{
+		if (aOther->GetComponent<CPlayerControllerComponent>() != nullptr)
+		{
+			//Send Player Has entered Collision Message here
+			bool state = true;
+			SStringMessage message = { myEventMessage.c_str(), &state };
+			CMainSingleton::PostMaster().Send(message);
+		}
+	}
+	else
+	{
+		bool state = true;
+		SStringMessage message = { myEventMessage.c_str(), &state };
+		CMainSingleton::PostMaster().Send(message);
+	}
 }
 
 void CBoxColliderComponent::RegisterEventTriggerFilter(const int& anEventFilter)

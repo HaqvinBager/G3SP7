@@ -6,6 +6,8 @@
 #include "RigidDynamicBody.h"
 #include "BoxColliderComponent.h"
 #include <EnemyComponent.h>
+#include "Engine.h"
+#include "Scene.h"
 //#include "GameObject.h"
 
 void CContactReportCallback::onWake(physx::PxActor** actors, physx::PxU32 count)
@@ -28,19 +30,24 @@ void CContactReportCallback::onSleep(physx::PxActor** actors, physx::PxU32 count
 
 void CContactReportCallback::onTriggerEnter(physx::PxActor* trigger, physx::PxActor* other)
 {
-	(trigger);
-	(other);
 	CBoxColliderComponent* triggerVolume = (CBoxColliderComponent*)trigger->userData;
 	if (triggerVolume != nullptr)
 	{
-		triggerVolume->OnTriggerEnter();
+		CTransformComponent* transform = static_cast<CTransformComponent*>(other->userData);
+		if (transform != nullptr)
+		{
+			triggerVolume->OnTriggerEnter(transform);
+		}
+		else
+		{
+			transform = CEngine::GetInstance()->GetActiveScene().PlayerController()->GameObject().myTransform;
+			triggerVolume->OnTriggerEnter(transform);
+		}
 	}
 }
 
 void CContactReportCallback::onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 count)
 {
-	(pairs);
-	(count);
 	for (physx::PxU32 i = 0; i < count; i++)
 	{
 		if (pairs[i].status == physx::PxPairFlag::eNOTIFY_TOUCH_FOUND) {
@@ -49,8 +56,7 @@ void CContactReportCallback::onTrigger(physx::PxTriggerPair* pairs, physx::PxU32
 		else if (pairs[i].status == physx::PxPairFlag::eNOTIFY_TOUCH_LOST) {
 			onTriggerExit(pairs[i].triggerActor, pairs[i].otherActor);
 		}
-
-		std::cout << "trigger collided with trigger?" << std::endl;
+		
 		// ignore pairs when shapes have been deleted
 		if (pairs[i].flags & (physx::PxTriggerPairFlag::eREMOVED_SHAPE_TRIGGER |
 			physx::PxTriggerPairFlag::eREMOVED_SHAPE_OTHER))
@@ -65,7 +71,16 @@ void CContactReportCallback::onTriggerExit(physx::PxActor* trigger, physx::PxAct
 	CBoxColliderComponent* triggerVolume = (CBoxColliderComponent*)trigger->userData;
 	if (triggerVolume != nullptr)
 	{
-		triggerVolume->OnTriggerExit();
+		CTransformComponent* transform = static_cast<CTransformComponent*>(other->userData);
+		if (transform != nullptr)
+		{
+			triggerVolume->OnTriggerExit(transform);
+		}
+		else
+		{
+			transform = CEngine::GetInstance()->GetActiveScene().PlayerController()->GameObject().myTransform;
+			triggerVolume->OnTriggerEnter(transform);
+		}
 	}
 }
 

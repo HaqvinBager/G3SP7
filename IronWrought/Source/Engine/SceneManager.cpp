@@ -462,6 +462,7 @@ void CSceneManager::AddCollider(CScene& aScene, RapidArray someData)
 		bool isStatic = c.HasMember("isStatic") ? c["isStatic"].GetBool() : false;
 		bool isKinematic = c.HasMember("isKinematic") ? c["isKinematic"].GetBool() : false;
 		bool isTrigger = c.HasMember("isTrigger") ? c["isTrigger"].GetBool() : false;
+		unsigned int layer = c.HasMember("layer") ? c["layer"].GetInt() : 1;
 
 
 		CRigidBodyComponent* rigidBody = gameObject->GetComponent<CRigidBodyComponent>();
@@ -496,7 +497,7 @@ void CSceneManager::AddCollider(CScene& aScene, RapidArray someData)
 				boxSize.x = c["boxSize"]["x"].GetFloat();
 				boxSize.y = c["boxSize"]["y"].GetFloat();
 				boxSize.z = c["boxSize"]["z"].GetFloat();
-				gameObject->AddComponent<CBoxColliderComponent>(*gameObject, posOffset, boxSize, isTrigger, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(dynamicFriction, staticFriction, bounciness));
+				gameObject->AddComponent<CBoxColliderComponent>(*gameObject, posOffset, boxSize, isTrigger, layer, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(dynamicFriction, staticFriction, bounciness));
 			}
 			break;
 		case ColliderType::SphereCollider:
@@ -544,7 +545,7 @@ void CSceneManager::AddTriggerEvents(CScene& aScene, RapidArray someData)
 		if (gameObject->TryGetComponent<CBoxColliderComponent>(&triggerVolume))
 		{
 			std::string eventData = triggerEvent["gameEvent"].GetString();
-			int eventFilter = triggerEvent["eventFilter"].GetInt();
+			int eventFilter = triggerEvent.HasMember("eventFilter") ? triggerEvent["eventFilter"].GetInt() : static_cast<int>(CBoxColliderComponent::EEventFilter::Any);
 			triggerVolume->RegisterEventTriggerMessage(eventData);
 			triggerVolume->RegisterEventTriggerFilter(eventFilter);
 			//SStringMessage triggerMessage = {};
