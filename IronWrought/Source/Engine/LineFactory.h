@@ -2,7 +2,7 @@
 
 #include "SimpleMath.h"
 
-#define CLINE_DEFAULT_COLOR {0.65f, 1.0f, 0.75f, 1.0f}
+#define CLINE_DEFAULT_COLOR {0.85f, 0.85f, 0.85f, 1.0f}
 #define CLINE_DEFAULT_COLOR_BOX {2.f, 0.75f, 0.75f, 1.0f}
 
 struct ID3D11Device;
@@ -23,7 +23,7 @@ public:
 	CLine* CreateSquareXZ(const float aWidth, const DirectX::SimpleMath::Vector4& aColor = CLINE_DEFAULT_COLOR);
 	CLine* CreateCircleXZ(const float aRadius, const short aResolution = 16,const DirectX::SimpleMath::Vector4& aColor = CLINE_DEFAULT_COLOR);
 	CLine* CreateTriangleXZ(const float aLength, const float aWidth, const DirectX::SimpleMath::Vector4& aColor = CLINE_DEFAULT_COLOR);
-	CLine* CreatePolygon(std::vector<DirectX::SimpleMath::Vector3> somePositions);
+	CLine* CreatePolygon(const std::vector<DirectX::SimpleMath::Vector3>& somePositions, const DirectX::SimpleMath::Vector4& aColor = CLINE_DEFAULT_COLOR);
 	CLine* CreateBox(const float& aHalfSizeX, const float& aHalfSizeY, const float& aHalfSizeZ, const Vector4& aColor = CLINE_DEFAULT_COLOR_BOX);
 
 private:

@@ -12,11 +12,21 @@ class CScene;
 class CLineInstance;
 
 #ifdef _DEBUG
-//#define DEBUG_COLLIDER_BOX // DOES NOT WORK PROPERLY, UPDATE TRANSFORM 
+#define DEBUG_COLLIDER_BOX // DOES NOT WORK PROPERLY, UPDATE TRANSFORM 
 #endif
 
 class CBoxColliderComponent : public CBehaviour
 {
+public:
+	enum class EEventFilter
+	{
+		PlayerOnly,
+		EnemyOnly,
+		ObjectOnly,
+		Any,
+		None
+	};
+
 public:
 	CBoxColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const Vector3& aBoxSize, const bool aIsTrigger, physx::PxMaterial* aMaterial = nullptr);
 	~CBoxColliderComponent() override;
@@ -30,6 +40,7 @@ public:
 	void OnTriggerEnter();
 	void OnTriggerExit();
 	void RegisterEventTriggerMessage(const std::string& aMessage) { myEventMessage = aMessage; }
+	void RegisterEventTriggerFilter(const int& anEventFilter);
 	//const SStringMessage& EventTriggerMessage() { return myTriggerMessage; }
 
 	void OnEnable() override;
@@ -46,6 +57,7 @@ private:
 	bool myIsTrigger;
 
 	std::string myEventMessage;
+	EEventFilter myEventFilter;
 
 #ifdef DEBUG_COLLIDER_BOX
 	CLineInstance* myColliderDraw;

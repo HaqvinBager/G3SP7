@@ -16,6 +16,7 @@ public class IronEventEditor : Editor
     SerializedProperty eventType = null;
     SerializedProperty eventProperty = null;
     string eventName = string.Empty;
+    SerializedProperty eventFilter = null;
 
     private void OnEnable()
     {
@@ -25,6 +26,11 @@ public class IronEventEditor : Editor
     public override void OnInspectorGUI()
     {
         serializedObject.Update();
+        //EditorGUILayout.PropertyField(eventFilter);
+        ////EEventFilter activeFilter = (EEventFilter)eventFilter.enumValueIndex;
+        eventFilter = serializedObject.FindProperty("eventFilter");
+        EditorGUILayout.PropertyField(eventFilter);
+
         EditorGUILayout.PropertyField(eventType);
 
         IronEventType activeEvent = (IronEventType) eventType.enumValueIndex;
@@ -41,6 +47,7 @@ public class IronEventEditor : Editor
             //    OnInspectorGUIVFXEvents();
             //    break;
         }
+
         serializedObject.ApplyModifiedProperties();
     }
 

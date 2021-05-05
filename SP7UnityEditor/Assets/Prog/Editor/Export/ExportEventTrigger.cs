@@ -7,6 +7,7 @@ public struct EventData
 {
     public Transform instanceID;
     public string gameEvent;
+    public EEventFilter eventFilter;
 }
 
 [System.Serializable]
@@ -28,7 +29,8 @@ public class ExportEventTrigger
         {
             collection.triggerEvents.Add(new EventData { 
                 instanceID = ironEvent.transform, 
-                gameEvent = ironEvent.eventObject.name 
+                gameEvent = ironEvent.eventObject.name,
+                eventFilter = ironEvent.eventFilter
             });
         }
 

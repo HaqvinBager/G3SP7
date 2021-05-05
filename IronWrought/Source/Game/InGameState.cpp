@@ -34,6 +34,7 @@
 CInGameState::CInGameState(CStateStack& aStateStack, const CStateStack::EState aState)
 	: CState(aStateStack, aState),
 	myExitLevel(false)
+	, myEnemyAnimationController(nullptr)
 {
 }
 
@@ -52,7 +53,10 @@ void CInGameState::Awake()
 	TEMP_VFX(scene);
 #endif
 	CEngine::GetInstance()->AddScene(myState, scene);
-	CMainSingleton::PostMaster().Subscribe("LoadScene", this);
+	CMainSingleton::PostMaster().Subscribe("Level_1-1", this);
+	CMainSingleton::PostMaster().Subscribe("Level_1-2", this);
+	CMainSingleton::PostMaster().Subscribe("Level_2-1", this);
+	CMainSingleton::PostMaster().Subscribe("Level_2-2", this);
 
 }
 
@@ -75,11 +79,16 @@ void CInGameState::Stop()
 
 void CInGameState::Update()
 {
-	/*IRONWROUGHT->GetActiveScene().UpdateCanvas();*/
 
 	if (Input::GetInstance()->IsKeyPressed(VK_ESCAPE))
 	{
 		myStateStack.PushState(CStateStack::EState::PauseMenu);
+	}
+
+	if (myExitLevel)
+	{
+		myExitLevel = false;
+		myStateStack.PopTopAndPush(CStateStack::EState::LoadLevel);
 	}
 
 }
@@ -101,12 +110,12 @@ void CInGameState::ReceiveEvent(const EInputEvent aEvent)
 
 void CInGameState::Receive(const SStringMessage& aMessage)
 {
-	const char* test = "LoadScene";
-	if (aMessage.myMessageType == test)
+	const char* test = "Level_1-1";
+	if (strcmp(aMessage.myMessageType, test) == 0)
 	{
-		Start();
+		/*Start();*/
+		myExitLevel = true;
 	}
-	myExitLevel = true;
 }
 
 void CInGameState::Receive(const SMessage& /*aMessage*/)

@@ -544,7 +544,9 @@ void CSceneManager::AddTriggerEvents(CScene& aScene, RapidArray someData)
 		if (gameObject->TryGetComponent<CBoxColliderComponent>(&triggerVolume))
 		{
 			std::string eventData = triggerEvent["gameEvent"].GetString();
+			int eventFilter = triggerEvent["eventFilter"].GetInt();
 			triggerVolume->RegisterEventTriggerMessage(eventData);
+			triggerVolume->RegisterEventTriggerFilter(eventFilter);
 			//SStringMessage triggerMessage = {};
 			//memcpy(&triggerMessage.myMessageType, &eventData[0], sizeof(char) * eventData.size());
 			//triggerMessage.myMessageType = eventData.c_str();

@@ -7,6 +7,7 @@
 #include <MainMenuState.h>
 #include <InGameState.h>
 #include <PauseMenuState.h>
+#include <LoadLevelState.h>
 
 CStateStack::~CStateStack()
 {
@@ -42,8 +43,12 @@ bool CStateStack::Awake(std::initializer_list<CStateStack::EState> someStates, c
 			myStateMap[state] = new CPauseMenuState(*this);
 			myStateMap[state]->Awake();
 			break;
+		case CStateStack::EState::LoadLevel:
+			myStateMap[state] = new CLoadLevelState(*this);
+			myStateMap[state]->Awake();
+			break;
 		default:
-			assert(0 && "State Is not Implemented yet.");
+			assert(0 && "State is not implemented yet.");
 			break;
 		}
 	}

@@ -10,6 +10,7 @@ public:
 		MainMenu,
 		InGame,
 		PauseMenu,
+		LoadLevel,
 		NoState
 	};
 

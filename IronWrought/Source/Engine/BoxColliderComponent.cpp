@@ -29,8 +29,8 @@ CBoxColliderComponent::CBoxColliderComponent(CGameObject& aParent, const Vector3
 CBoxColliderComponent::~CBoxColliderComponent()
 {
 #ifdef DEBUG_COLLIDER_BOX
-	//if (myColliderDraw)
-	//	delete myColliderDraw;
+	if (myColliderDraw)
+		delete myColliderDraw;
 #endif 
 }
 
@@ -122,6 +122,18 @@ void CBoxColliderComponent::OnTriggerExit()
 	bool state = false;
 	SStringMessage message = { myEventMessage.c_str(), &state };
 	CMainSingleton::PostMaster().Send(message);
+}
+
+void CBoxColliderComponent::RegisterEventTriggerFilter(const int& anEventFilter)
+{
+	if (anEventFilter > static_cast<int>(EEventFilter::Any) && anEventFilter < static_cast<int>(EEventFilter::PlayerOnly))
+	{
+		assert(false && "EventFilter is not within enum range!");
+		myEventFilter = EEventFilter::None;
+		return;
+	}
+
+	myEventFilter = static_cast<EEventFilter>(anEventFilter);
 }
 
 void CBoxColliderComponent::OnEnable()
