@@ -454,17 +454,41 @@ void CForwardRenderer::RenderLineInstances(CCameraComponent* aCamera, const std:
 	}
 }
 
-bool CForwardRenderer::ToggleRenderPass()
+bool CForwardRenderer::ToggleRenderPass(bool aShouldToggleForwards)
 {
-	++myRenderPassIndex;
+	if (!aShouldToggleForwards)
+		--myRenderPassIndex; 
+	else 
+		++myRenderPassIndex;
+
+
+	if (myRenderPassIndex < 0)
+	{
+		myRenderPassIndex = static_cast<int>(myRenderPassPixelShaders.size());
+	}
 	if (myRenderPassIndex == myRenderPassPixelShaders.size())
 	{
 		myCurrentPixelShader = nullptr;
 		return true;
-	} else if (myRenderPassIndex > myRenderPassPixelShaders.size())
+	}
+	else if (myRenderPassIndex > myRenderPassPixelShaders.size())
 	{
 		myRenderPassIndex = 0;
 	}
+	myCurrentPixelShader = myRenderPassPixelShaders[myRenderPassIndex];
+	return false;
+}
+
+bool CForwardRenderer::ToggleRenderPass(int anIndex)
+{
+	myRenderPassIndex = anIndex - 1;
+
+	if (myRenderPassIndex >= myRenderPassPixelShaders.size() || myRenderPassIndex < 0)
+	{
+		myCurrentPixelShader = nullptr;
+		return true;
+	}
+
 	myCurrentPixelShader = myRenderPassPixelShaders[myRenderPassIndex];
 	return false;
 }

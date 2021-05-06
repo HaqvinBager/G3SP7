@@ -10,6 +10,7 @@ class CRenderManager;
 class CFullscreenRenderer {
 public:
 	enum class FullscreenShader {
+		Multiply,
 		Copy,
 		CopyDepth,
 		CopyGBuffer,
@@ -24,6 +25,8 @@ public:
 		GammaCorrection,
 		GammaCorrectionRenderPass,
 		FXAA,
+		SSAO,
+		SSAOBlur,
 		BrokenScreenEffect,
 		DownsampleDepth,
 		DepthAwareUpsampling,
@@ -39,6 +42,9 @@ public:
 	friend CRenderManager;
 	
 private:
+	static const unsigned int myKernelSize = 16;
+
+private:
 	template<class T>
 	void BindBuffer(ID3D11Buffer* aBuffer, T& someBufferData, std::string aBufferType)
 	{
@@ -53,8 +59,22 @@ private:
 
 	struct SFullscreenData {
 		Vector2 myResolution;
-		Vector2 myPadding;
+		Vector2 myNoiseScale;
+		Vector3 mySampleKernel[myKernelSize];
 	} myFullscreenData;
+
+	static_assert((sizeof(SFullscreenData) % 16) == 0, "CB size not padded correctly");
+
+	struct SFrameBufferData
+	{
+		DirectX::SimpleMath::Matrix myToCameraSpace;
+		DirectX::SimpleMath::Matrix myToWorldFromCamera;
+		DirectX::SimpleMath::Matrix myToProjectionSpace;
+		DirectX::SimpleMath::Matrix myToCameraFromProjection;
+		DirectX::SimpleMath::Vector4 myCameraPosition;
+	} myFrameBufferData;
+
+	static_assert((sizeof(SFrameBufferData) % 16) == 0, "CB size not padded correctly");
 
 private:
 	CFullscreenRenderer();
@@ -64,7 +84,15 @@ private:
 
 	ID3D11DeviceContext* myContext;
 	ID3D11Buffer* myFullscreenDataBuffer;
+	ID3D11Buffer* myFrameBuffer;
 	ID3D11VertexShader* myVertexShader;
-	ID3D11SamplerState* mySampler;
+	ID3D11SamplerState* myClampSampler;
+	ID3D11SamplerState* myWrapSampler;
+
 	std::array<ID3D11PixelShader*, static_cast<size_t>(FullscreenShader::Count)> myPixelShaders;
+
+	ID3D11ShaderResourceView* myNoiseTexture;
+	Vector3 myKernel[myKernelSize];
+
+
 };

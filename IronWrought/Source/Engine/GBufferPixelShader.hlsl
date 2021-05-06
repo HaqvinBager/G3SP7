@@ -14,6 +14,8 @@ GBufferOutput main(VertexModelToPixel input)
     vertToPixel.myPosition  = input.myPosition;
     vertToPixel.myUV        = input.myUV;
     
+    clip(PixelShader_Albedo(vertToPixel.myUV).a - 0.5f); // Alpha clip for foliage
+    
     float3 albedo = PixelShader_Albedo(vertToPixel.myUV).rgb;
     float3 normal = PixelShader_Normal(vertToPixel.myUV).xyz;
     

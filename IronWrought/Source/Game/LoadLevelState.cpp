@@ -38,10 +38,9 @@ void CLoadLevelState::Update()
 
 void CLoadLevelState::Receive(const SStringMessage& aMessage)
 {
-	const char* test = "Level_1-1";
-	if (strcmp(aMessage.myMessageType, test) == 0)
+	if (PostMaster::LevelCheck(aMessage.myMessageType))
 	{
-		myLevelToLoad = test;
+		myLevelToLoad = aMessage.myMessageType;
 	}
 }
 

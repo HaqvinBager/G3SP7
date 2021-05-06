@@ -57,7 +57,6 @@ void CInGameState::Awake()
 	CMainSingleton::PostMaster().Subscribe("Level_1-2", this);
 	CMainSingleton::PostMaster().Subscribe("Level_2-1", this);
 	CMainSingleton::PostMaster().Subscribe("Level_2-2", this);
-
 }
 
 
@@ -110,12 +109,16 @@ void CInGameState::ReceiveEvent(const EInputEvent aEvent)
 
 void CInGameState::Receive(const SStringMessage& aMessage)
 {
-	const char* test = "Level_1-1";
-	if (strcmp(aMessage.myMessageType, test) == 0)
+	if (PostMaster::LevelCheck(aMessage.myMessageType))
 	{
-		/*Start();*/
 		myExitLevel = true;
 	}
+	//const char* test = "Level_1-1";
+	//if (strcmp(aMessage.myMessageType, test) == 0)
+	//{
+	//	/*Start();*/
+	//	myExitLevel = true;
+	//}
 }
 
 void CInGameState::Receive(const SMessage& /*aMessage*/)

@@ -115,6 +115,7 @@ Texture2D vertexPaintTextures[9] : register(t12);
 
 Texture2D depthTexture          : register(t21);
 Texture2D shadowDepthTexture    : register(t22);
+Texture2D SSAOTexture           : register(t23);
 
 sampler defaultSampler : register(s0);
 sampler shadowSampler  : register(s1);
