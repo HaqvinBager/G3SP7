@@ -29,8 +29,6 @@
 #include "animationLoader.h"
 #include "AnimationComponent.h"
 
-#include <BinReader.h>
-
 #include <ppl.h>
 #include <concurrent_unordered_map.h>
 #include <concurrent_vector.h>
@@ -74,6 +72,8 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneJson)
 {
 	CScene* scene = Instantiate();
 
+	Binary::SLevelData binLevelData = CBinReader::Load(ASSETPATH("Assets/Generated/" + aSceneJson + "/" + aSceneJson + ".bin"));
+
 	const auto doc = CJsonReader::Get()->LoadDocument(ASSETPATH("Assets/Generated/" + aSceneJson + "/" + aSceneJson + ".json"));
 	if (doc.HasParseError())
 		return nullptr;
@@ -83,40 +83,64 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneJson)
 
 	SVertexPaintCollection vertexPaintData = CBinReader::LoadVertexPaintCollection(doc["Root"].GetString());
 	const auto& scenes = doc.GetObjectW()["Scenes"].GetArray();
-	for (const auto& sceneData : scenes)
-	{
-		std::string sceneName = sceneData["sceneName"].GetString();
 
-		if (AddGameObjects(*scene, sceneData["Ids"].GetArray()))
+	if (AddGameObjects(*scene, binLevelData.myInstanceIDs))
+	{
+		SetTransforms(*scene, binLevelData.myTransforms);
+		AddInstancedModelComponents(*scene, binLevelData.myInstancedModels);
+		AddPointLights(*scene, binLevelData.myPointLights);
+		AddModelComponents(*scene, binLevelData.myModels);
+		AddCollider(*scene, binLevelData.myColliders);
+
+		for (const auto& sceneData : scenes)
 		{
-			SetTransforms(*scene, sceneData["transforms"].GetArray());
+			std::string sceneName = sceneData["sceneName"].GetString();
 			if (sceneData.HasMember("parents"))
 				SetParents(*scene, sceneData["parents"].GetArray());
 
 			AddDirectionalLights(*scene, sceneData["directionalLights"].GetArray());
-			AddPointLights(*scene, sceneData["lights"].GetArray());
-			AddModelComponents(*scene, sceneData["models"].GetArray());
 			SetVertexPaintedColors(*scene, sceneData["vertexColors"].GetArray(), vertexPaintData);
 			AddDecalComponents(*scene, sceneData["decals"].GetArray());
-			AddCollider(*scene, sceneData["colliders"].GetArray());
 			if (sceneData.HasMember("triggerEvents"))
 				AddTriggerEvents(*scene, sceneData["triggerEvents"].GetArray());
-
 			if (sceneName.find("Layout") != std::string::npos)//Om Unity Scene Namnet inneh�ller nyckelordet "Layout"
 			{
 				AddPlayer(*scene, sceneData["player"].GetObjectW());
 			}
 			AddEnemyComponents(*scene, sceneData["enemies"].GetArray());
-
-			if(sceneData.HasMember("healthPickups"))
-				AddPickups(*scene, sceneData["healthPickups"].GetArray());
 		}
-		AddInstancedModelComponents(*scene, sceneData["instancedModels"].GetArray());
 	}
 
 
 
-	//AddPlayer(*scene); //This add player does not read data from unity. (Yet..!) /Axel 2021-03-24
+	//if (AddGameObjects(*scene, sceneData["Ids"].GetArray()))
+	//{
+	//	SetTransforms(*scene, sceneData["transforms"].GetArray());
+
+	//	AddDirectionalLights(*scene, sceneData["directionalLights"].GetArray());
+	//	AddPointLights(*scene, sceneData["lights"].GetArray());
+	//	AddModelComponents(*scene, sceneData["models"].GetArray());
+	//	SetVertexPaintedColors(*scene, sceneData["vertexColors"].GetArray(), vertexPaintData);
+	//	AddDecalComponents(*scene, sceneData["decals"].GetArray());
+	//	AddCollider(*scene, sceneData["colliders"].GetArray());
+	//	if (sceneData.HasMember("triggerEvents"))
+	//		AddTriggerEvents(*scene, sceneData["triggerEvents"].GetArray());
+
+	//	if (sceneName.find("Layout") != std::string::npos)//Om Unity Scene Namnet inneh�ller nyckelordet "Layout"
+	//	{
+	//		AddPlayer(*scene, sceneData["player"].GetObjectW());
+	//	}
+	//	AddEnemyComponents(*scene, sceneData["enemies"].GetArray());
+
+	//	if(sceneData.HasMember("healthPickups"))
+	//		AddPickups(*scene, sceneData["healthPickups"].GetArray());
+	//}
+	//AddInstancedModelComponents(*scene, sceneData["instancedModels"].GetArray());
+//}
+
+
+
+//AddPlayer(*scene); //This add player does not read data from unity. (Yet..!) /Axel 2021-03-24
 
 	CEngine::GetInstance()->GetPhysx().Cooking(scene->ActiveGameObjects(), scene);
 
@@ -159,6 +183,19 @@ bool CSceneManager::AddGameObjects(CScene& aScene, RapidArray someData)
 	return true;
 }
 
+bool CSceneManager::AddGameObjects(CScene& aScene, const std::vector<Binary::SInstanceID>& someData)
+{
+	if (someData.size() == 0)
+		return false;
+
+	for (const auto& data : someData)
+	{
+		int instanceID = data.instanceID;
+		aScene.AddInstance(new CGameObject(instanceID));
+	}
+	return true;
+}
+
 void CSceneManager::SetTransforms(CScene& aScene, RapidArray someData)
 {
 	for (const auto& t : someData)
@@ -174,6 +211,17 @@ void CSceneManager::SetTransforms(CScene& aScene, RapidArray someData)
 		transform->Rotation({ t["rotation"]["x"].GetFloat(),
 							  t["rotation"]["y"].GetFloat(),
 							  t["rotation"]["z"].GetFloat() });
+	}
+}
+
+void CSceneManager::SetTransforms(CScene& aScene, const std::vector<Binary::STransform>& someData)
+{
+	for (const auto& t : someData)
+	{
+		CTransformComponent* transform = aScene.FindObjectWithID(t.instanceID)->myTransform;
+		transform->Scale(t.scale);
+		transform->Position(t.pos);
+		transform->Rotation(t.rot);
 	}
 }
 
@@ -208,6 +256,24 @@ void CSceneManager::AddModelComponents(CScene& aScene, RapidArray someData)
 			std::string assetPath = ASSETPATH(CJsonReader::Get()->GetAssetPath(assetId));
 			gameObject->AddComponent<CModelComponent>(*gameObject, assetPath);
 			AnimationLoader::AddAnimationsToGameObject(gameObject, assetPath);// Does nothing if the Model has no animations.
+		}
+	}
+}
+
+void CSceneManager::AddModelComponents(CScene& aScene, const std::vector<Binary::SModel>& someData)
+{
+	for (const auto& m : someData)
+	{
+		CGameObject* gameObject = aScene.FindObjectWithID(m.instanceID);
+		if (gameObject == nullptr)
+			continue;
+
+		std::string assetPath = {};
+		if (CJsonReader::Get()->TryGetAssetPath(m.assetID, assetPath))
+		{
+			assetPath = ASSETPATH(assetPath);
+			gameObject->AddComponent<CModelComponent>(*gameObject, assetPath);
+			AnimationLoader::AddAnimationsToGameObject(gameObject, assetPath);
 		}
 	}
 }
@@ -276,6 +342,33 @@ void CSceneManager::AddInstancedModelComponents(CScene& aScene, RapidArray someD
 	}
 }
 
+void CSceneManager::AddInstancedModelComponents(CScene& aScene, const std::vector<Binary::SInstancedModel>& someData)
+{
+	for (const auto& i : someData)
+	{
+		CGameObject* gameObject = new CGameObject(i.assetID);
+
+		std::vector<Matrix> transforms = {};
+		transforms.reserve(i.transforms.size());
+		for (const auto& t : i.transforms)
+		{
+			CGameObject temp(0);
+			CTransformComponent transform(temp);
+			transform.Scale(t.scale);
+			transform.Position(t.pos);
+			transform.Rotation(t.rot);
+			transforms.push_back(transform.GetLocalMatrix());
+		}
+		std::string assetPath = {};
+		if (CJsonReader::Get()->TryGetAssetPath(i.assetID, assetPath))
+		{
+			gameObject->AddComponent<CInstancedModelComponent>(*gameObject, ASSETPATH(assetPath), transforms);
+			aScene.AddInstance(gameObject);
+		}
+
+	}
+}
+
 void CSceneManager::AddDirectionalLight(CScene& aScene, RapidObject someData)
 {
 	const auto& id = someData["instanceID"].GetInt();
@@ -320,12 +413,12 @@ void CSceneManager::AddDirectionalLights(CScene& aScene, RapidArray someData)
 			*gameObject,
 			directionalLight["cubemapName"].GetString(),
 			Vector3(directionalLight["r"].GetFloat(),
-				directionalLight["g"].GetFloat(),
-				directionalLight["b"].GetFloat()),
+			directionalLight["g"].GetFloat(),
+			directionalLight["b"].GetFloat()),
 			directionalLight["intensity"].GetFloat(),
 			Vector3(directionalLight["direction"]["x"].GetFloat(),
-				directionalLight["direction"]["y"].GetFloat(),
-				directionalLight["direction"]["z"].GetFloat())
+			directionalLight["direction"]["y"].GetFloat(),
+			directionalLight["direction"]["z"].GetFloat())
 			);
 
 		auto light = gameObject->GetComponent<CEnvironmentLightComponent>()->GetEnvironmentLight();
@@ -361,6 +454,25 @@ void CSceneManager::AddPointLights(CScene& aScene, RapidArray someData)
 			pointLight["g"].GetFloat(),
 			pointLight["b"].GetFloat()),
 			pointLight["intensity"].GetFloat());
+		aScene.AddInstance(pointLightComponent->GetPointLight());
+	}
+}
+
+void CSceneManager::AddPointLights(CScene& aScene, const std::vector<Binary::SPointLight>& someData)
+{
+	for (const auto& pointLight : someData)
+	{
+		const auto& id = pointLight.instanceID;
+
+		CGameObject* gameObject = aScene.FindObjectWithID(id);
+		if (gameObject == nullptr)
+			continue;
+
+		CPointLightComponent* pointLightComponent = gameObject->AddComponent<CPointLightComponent>(
+			*gameObject,
+			pointLight.range,
+			pointLight.color,
+			pointLight.intensity);
 		aScene.AddInstance(pointLightComponent->GetPointLight());
 	}
 }
@@ -414,15 +526,16 @@ void CSceneManager::AddEnemyComponents(CScene& aScene, RapidArray someData)
 		CGameObject* gameObject = aScene.FindObjectWithID(instanceId);
 		if (!gameObject)
 			continue;
-		
+
 		SEnemySetting settings;
-		settings.myRadius= m["radius"].GetFloat();
-		settings.mySpeed= m["speed"].GetFloat();
+		settings.myRadius = m["radius"].GetFloat();
+		settings.mySpeed = m["speed"].GetFloat();
 		settings.myHealth = m["health"].GetFloat();
 		settings.myAttackDistance = m["attackDistance"].GetFloat();
 		if (m.HasMember("points"))
 		{
-			for (const auto& point : m["points"].GetArray()) {
+			for (const auto& point : m["points"].GetArray())
+			{
 				settings.myPatrolGameObjectIds.push_back(point["instanceID"].GetInt());
 			}
 		}
@@ -522,17 +635,43 @@ void CSceneManager::AddCollider(CScene& aScene, RapidArray someData)
 	}
 }
 
-/*
-triggerEvents :  [
+void CSceneManager::AddCollider(CScene& aScene, const std::vector<Binary::SCollider>& someData)
+{
+	for (const auto& c : someData)
 	{
-		"instanceID" : 1234,
-		"events" : [
-			"eventType" : 42
-		]
-		//evt l�gga till collisionfilter : 5125
+		CGameObject* gameObject = aScene.FindObjectWithID(c.instanceID);
+		ColliderType colliderType = static_cast<ColliderType>(c.colliderType);
+		CRigidBodyComponent* rigidBody = gameObject->GetComponent<CRigidBodyComponent>();
+		if (rigidBody == nullptr && c.isStatic == false)
+		{
+			gameObject->AddComponent<CRigidBodyComponent>(*gameObject, c.mass, c.localMassPosition, c.inertiaTensor, c.isKinematic);
+		}
+
+		switch (colliderType)
+		{
+		case ColliderType::BoxCollider:
+			{
+				gameObject->AddComponent<CBoxColliderComponent>(*gameObject, c.positionOffest, c.boxSize, c.isTrigger, c.layer, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(c.dynamicFriction, c.staticFriction, c.bounciness));
+			}
+			break;
+		case ColliderType::SphereCollider:
+			{
+				gameObject->AddComponent<CSphereColliderComponent>(*gameObject, c.positionOffest, c.sphereRadius, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(c.dynamicFriction, c.staticFriction, c.bounciness));
+			}
+			break;
+		case ColliderType::CapsuleCollider:
+			{
+				gameObject->AddComponent<CCapsuleColliderComponent>(*gameObject, c.positionOffest, c.capsuleRadius, c.capsuleHeight, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(c.dynamicFriction, c.staticFriction, c.bounciness));
+			}
+			break;
+		case ColliderType::MeshCollider:
+			{
+				gameObject->AddComponent<CConvexMeshColliderComponent>(*gameObject, CEngine::GetInstance()->GetPhysx().CreateCustomMaterial(c.dynamicFriction, c.staticFriction, c.bounciness));
+			}
+			break;
+		}
 	}
-]
-*/
+}
 
 void CSceneManager::AddTriggerEvents(CScene& aScene, RapidArray someData)
 {
@@ -555,6 +694,22 @@ void CSceneManager::AddTriggerEvents(CScene& aScene, RapidArray someData)
 		}
 	}
 }
+
+//void CSceneManager::AddTriggerEvents(CScene& aScene, const std::vector<Binary::SEventData>& someData)
+//{
+//	for (const auto& triggerEvent : someData)
+//	{
+//		CGameObject* gameObject = aScene.FindObjectWithID(triggerEvent.instanceID);
+//		CBoxColliderComponent* triggerVolume = nullptr;
+//		if (gameObject->TryGetComponent<CBoxColliderComponent>(&triggerVolume))
+//		{
+//			std::string eventData = triggerEvent.gameEvent;
+//			int eventFilter = triggerEvent.eventFilter;
+//			triggerVolume->RegisterEventTriggerMessage(eventData);
+//			triggerVolume->RegisterEventTriggerFilter(eventFilter);
+//		}
+//	}
+//}
 
 CSceneFactory* CSceneFactory::ourInstance = nullptr;
 CSceneFactory::CSceneFactory()

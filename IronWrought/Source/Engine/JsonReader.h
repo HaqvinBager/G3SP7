@@ -30,6 +30,7 @@ public:
 public:
 	void InitFromGenerated();
 	const bool HasAssetPath(const int anAssetID) const;
+	const bool TryGetAssetPath(const int anAssetID, std::string& outPath) const;
 	const std::string& GetAssetPath(const int anAssetID) const;
 
 private:

@@ -181,6 +181,7 @@ public static class BinaryWriterExtensions
             aBinWriter.Write(data.dynamicFriction);
             aBinWriter.Write(data.staticFriction);
             aBinWriter.Write(data.bounciness);
+            aBinWriter.Write(data.layer);
         }
     }
 

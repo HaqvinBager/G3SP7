@@ -1,11 +1,14 @@
 #pragma once
 #include "Scene.h"
+#include "BinReader.h"
 #include "JsonReader.h"
 #include "StateStack.h"
+
 
 #include <ppl.h>
 #include <concurrent_unordered_map.h>
 #include <concurrent_vector.h>
+
 
 struct SVertexPaintCollection;
 class CBinReader;
@@ -35,18 +38,38 @@ private:
 	static CScene* Instantiate();
 
 	static bool AddGameObjects(CScene& aScene, RapidArray someData);
+	static bool AddGameObjects(CScene& aScene, const std::vector<Binary::SInstanceID>& someData);
+
 	static void SetTransforms(CScene& aScene, RapidArray someData);
-	static void SetParents(CScene& aScene, RapidArray someData);
+	static void SetTransforms(CScene& aScene, const std::vector<Binary::STransform>& someData);
+
 	static void AddModelComponents(CScene& aScene, RapidArray someData);
-	static void SetVertexPaintedColors(CScene& aScene, RapidArray someData, const SVertexPaintCollection& vertexColorData);
+	static void AddModelComponents(CScene& aScene, const std::vector<Binary::SModel>& someData);
+
+	static void AddPointLights(CScene& aScene, RapidArray someData);
+	static void AddPointLights(CScene& aScene, const std::vector<Binary::SPointLight>& someData);
+
+	static void AddCollider(CScene& aScene, RapidArray someData);
+	static void AddCollider(CScene& aScene, const std::vector<Binary::SCollider>& someData);
 
 	static void AddInstancedModelComponents(CScene& aScene, RapidArray someData);
+	static void AddInstancedModelComponents(CScene& aScene, const std::vector<Binary::SInstancedModel>& someData);
+	
+	static void AddTriggerEvents(CScene& aScene, RapidArray someData);
+	//static void AddTriggerEvents(CScene& aScene, const std::vector<Binary::SEventData>& someData);
+
+
+	static void SetParents(CScene& aScene, RapidArray someData);
+	
+
+
+	static void SetVertexPaintedColors(CScene& aScene, RapidArray someData, const SVertexPaintCollection& vertexColorData);
+
+
+
 	static void AddDirectionalLight(CScene& aScene, RapidObject someData);
 	static void AddDirectionalLights(CScene& aScene, RapidArray someData);
-	static void AddPointLights(CScene& aScene, RapidArray someData);
 	static void AddDecalComponents(CScene& aScene, RapidArray someData);
-	static void AddCollider(CScene& aScene, RapidArray someData);
-	static void AddTriggerEvents(CScene& aScene, RapidArray someData);
 	static void AddPlayer(CScene& aScene, RapidObject someData);
 	static void AddEnemyComponents(CScene& aScene, RapidArray someData);
 	static void AddPickups(CScene& aScene, RapidArray someData);

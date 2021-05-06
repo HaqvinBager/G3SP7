@@ -1,9 +1,13 @@
 #include "stdafx.h"
+
 #include "BinReader.h"
+#include <fstream>
+
 #include "EngineDefines.h"
 #include <EngineException.h>
 #include "FolderUtility.h"
 
+using namespace Binary;
 CBinReader::CBinReader()
 {
 }
@@ -157,92 +161,100 @@ Binary::SLevelData CBinReader::Load(const std::string& aPath)
 	char* ptr = &binaryData[0];
 
 	Binary::SLevelData data = {};
-	int count = 0;
-
-	ptr += Read(count, ptr);						//Read Instance IDs
-	data.myInstanceIDs.resize(count);
-	ptr += Read(data.myInstanceIDs.data()[0], ptr, count);
-
-	ptr += Read(count, ptr);						//Read Transforms
-	data.myTransforms.resize(count);
-	ptr += Read(data.myTransforms.data()[0], ptr, count);
-
-	ptr += Read(count, ptr);						//Read Model Links
-	data.myModels.resize(count);
-	ptr += Read(data.myModels.data()[0], ptr, count); 
-
-	ptr += Read(data.myDirectionalLight, ptr);		//Read Directional Light
-
-	ptr += Read(count, ptr);
-	data.myPointLights.resize(count);
-	ptr += Read(data.myPointLights.data()[0], ptr, count);
-
-	ptr += Read(data.myPlayer.instanceID, ptr);		//Read Player Instance ID
-	ptr += Read(count, ptr);						//Read Player Children IDs
-	data.myPlayer.childrenIDs.resize(count);
-	ptr += Read(data.myPlayer.childrenIDs.data()[0], ptr, count);
-
-	ptr += Read(count, ptr);						//Read Colliders
-	data.myColliders.resize(count);
-	ptr += Read(data.myColliders.data()[0], ptr, count);
-	
-	//TODO Unity Export temporarily removed for Enemies until the export is Binary Friendly <3 /Axel Savage 2021-04-23
-	/*ptr += Read(count, ptr);
-	data.myEnemies.resize(count);
-	ptr += Read(data.myEnemies.data()[0], ptr, count);*/
-
-	ptr += Read(count, ptr);						//Read Parents
-	data.myParents.resize(count);
-	for (int i = 0; i < count; ++i)
-	{
-		ptr += Read(data.myParents[i].parent, ptr);	
-		int childCount = 0;
-		ptr += Read(childCount, ptr);
-		data.myParents[i].children.resize(childCount);
-		ptr += Read(data.myParents[i].children.data()[0], ptr, childCount);
-	}
-
-	ptr += Read(count, ptr);						//Read Events
-	data.myEvents.resize(count);
-	for (int i = 0; i < count; ++i)
-	{
-		ptr += Read(data.myEvents[i].instanceID, ptr);
-		ptr += ReadCharBuffer(ptr, data.myEvents[i].gameEvent);
-	}
-
-	ptr += Read(count, ptr);						//Read Instanced Models
-	data.myInstancedModels.resize(count);
-	for (int i = 0; i < count; ++i)
-	{
-		ptr += Read(data.myInstancedModels[i].assetID, ptr);
-		int instanceCount = 0;
-		ptr += Read(instanceCount, ptr);
-		data.myInstancedModels[i].transforms.resize(instanceCount);
-		ptr += Read(data.myInstancedModels[i].transforms.data()[0], ptr, instanceCount);
-	}
-
-	stream.close();
-	ptr = nullptr;
-	binaryData.clear();
-	
-	stream.open(ASSETPATH("Assets/Generated/Resources_Bin/Resources.bin"), std::ios::binary);
-	if (!stream.is_open())
-		ENGINE_BOOL_POPUP(stream.is_open(), "Failed to open Binary File");
-
-	std::string binaryDataTest((std::istreambuf_iterator<char>(stream)), std::istreambuf_iterator<char>());
-	ptr = &binaryDataTest[0];
-
-	int resourceCount = 0;
-	ptr += Read(resourceCount, ptr);
-
-	Binary::SResources resources = {};
-	resources.myPaths.reserve(resourceCount);
-	for (int i = 0; i < resourceCount; ++i)
-	{
-		std::string resourceString = {};
-		ptr += ReadCharBuffer(ptr, resourceString);
-		resources.myPaths.push_back(resourceString);
-	}
-
+	ptr += CopyBin<SInstanceID>()(data.myInstanceIDs, ptr);
+	ptr += CopyBin<STransform>()(data.myTransforms, ptr);
+	ptr += CopyBin<SModel>()(data.myModels, ptr);
+	ptr += CopyBin<SPointLight>()(data.myPointLights, ptr);
+	ptr += CopyBin<SCollider>()(data.myColliders, ptr);
+	ptr += CopyBin<SInstancedModel>()(data.myInstancedModels, ptr);
 	return std::move(data);
 }
+
+	//int count = 0;
+
+	//ptr += Read(count, ptr);						//Read Instance IDs
+	//data.myInstanceIDs.resize(count);
+	//ptr += Read(data.myInstanceIDs.data()[0], ptr, count);
+
+	//ptr += Read(count, ptr);						//Read Transforms
+	//data.myTransforms.resize(count);
+	//ptr += Read(data.myTransforms.data()[0], ptr, count);
+
+	//ptr += Read(count, ptr);						//Read Model Links
+	//data.myModels.resize(count);
+	//ptr += Read(data.myModels.data()[0], ptr, count); 
+
+	//ptr += Read(data.myDirectionalLight, ptr);		//Read Directional Light
+
+	//ptr += Read(count, ptr);
+	//data.myPointLights.resize(count);
+	//ptr += Read(data.myPointLights.data()[0], ptr, count);
+
+	//ptr += Read(data.myPlayer.instanceID, ptr);		//Read Player Instance ID
+	//ptr += Read(count, ptr);						//Read Player Children IDs
+	//data.myPlayer.childrenIDs.resize(count);
+	//ptr += Read(data.myPlayer.childrenIDs.data()[0], ptr, count);
+
+	//ptr += Read(count, ptr);						//Read Colliders
+	//data.myColliders.resize(count);
+	//ptr += Read(data.myColliders.data()[0], ptr, count);
+	//
+	////TODO Unity Export temporarily removed for Enemies until the export is Binary Friendly <3 /Axel Savage 2021-04-23
+	///*ptr += Read(count, ptr);
+	//data.myEnemies.resize(count);
+	//ptr += Read(data.myEnemies.data()[0], ptr, count);*/
+
+	//ptr += Read(count, ptr);						//Read Parents
+	//data.myParents.resize(count);
+	//for (int i = 0; i < count; ++i)
+	//{
+	//	ptr += Read(data.myParents[i].parent, ptr);	
+	//	int childCount = 0;
+	//	ptr += Read(childCount, ptr);
+	//	data.myParents[i].children.resize(childCount);
+	//	ptr += Read(data.myParents[i].children.data()[0], ptr, childCount);
+	//}
+
+	//ptr += Read(count, ptr);						//Read Events
+	//data.myEvents.resize(count);
+	//for (int i = 0; i < count; ++i)
+	//{
+	//	ptr += Read(data.myEvents[i].instanceID, ptr);
+	//	ptr += ReadCharBuffer(ptr, data.myEvents[i].gameEvent);
+	//}
+
+	//ptr += Read(count, ptr);						//Read Instanced Models
+	//data.myInstancedModels.resize(count);
+	//for (int i = 0; i < count; ++i)
+	//{
+	//	ptr += Read(data.myInstancedModels[i].assetID, ptr);
+	//	int instanceCount = 0;
+	//	ptr += Read(instanceCount, ptr);
+	//	data.myInstancedModels[i].transforms.resize(instanceCount);
+	//	ptr += Read(data.myInstancedModels[i].transforms.data()[0], ptr, instanceCount);
+	//}
+
+	//stream.close();
+	//ptr = nullptr;
+	//binaryData.clear();
+	//
+	//stream.open(ASSETPATH("Assets/Generated/Resources_Bin/Resources.bin"), std::ios::binary);
+	//if (!stream.is_open())
+	//	ENGINE_BOOL_POPUP(stream.is_open(), "Failed to open Binary File");
+
+	//std::string binaryDataTest((std::istreambuf_iterator<char>(stream)), std::istreambuf_iterator<char>());
+	//ptr = &binaryDataTest[0];
+
+	//int resourceCount = 0;
+	//ptr += Read(resourceCount, ptr);
+
+	//Binary::SResources resources = {};
+	//resources.myPaths.reserve(resourceCount);
+	//for (int i = 0; i < resourceCount; ++i)
+	//{
+	//	std::string resourceString = {};
+	//	ptr += ReadCharBuffer(ptr, resourceString);
+	//	resources.myPaths.push_back(resourceString);
+	//}
+
+
