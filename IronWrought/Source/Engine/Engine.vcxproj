@@ -207,6 +207,7 @@
     <ClInclude Include="GravityGloveEditor.h" />
     <ClInclude Include="NodeTypeAddForce.h" />
     <ClInclude Include="NodeTypeGameObjectRotateDegrees.h" />
+    <ClInclude Include="PostMasterHelpers.h" />
     <ClInclude Include="PostMasterStructs.h" />
     <ClInclude Include="SphereColliderComponent.h" />
     <ClInclude Include="BoxLight.h" />
@@ -449,6 +450,7 @@
     <ClCompile Include="GravityGloveEditor.cpp" />
     <ClCompile Include="NodeTypeAddForce.cpp" />
     <ClCompile Include="NodeTypeGameObjectRotateDegrees.cpp" />
+    <ClCompile Include="PostMasterHelpers.cpp" />
     <ClCompile Include="SphereColliderComponent.cpp" />
     <ClCompile Include="BoxLight.cpp" />
     <ClCompile Include="BoxLightComponent.cpp" />

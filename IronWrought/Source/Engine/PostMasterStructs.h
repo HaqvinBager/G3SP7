@@ -14,4 +14,7 @@ namespace PostMaster
 		float myInitialDistanceSquared = 0.0f;
 		float myCurrentDistanceSquared = 0.0f;
 	};
+
+	// SP7: Checks if the string is equivalent to any of our levels
+	const bool LevelCheck(const char* aMessageToCompare);
 }

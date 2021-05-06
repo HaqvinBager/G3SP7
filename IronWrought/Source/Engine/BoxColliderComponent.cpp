@@ -140,14 +140,14 @@ void CBoxColliderComponent::OnTriggerExit(CTransformComponent* aOther)
 		if (aOther->GetComponent<CPlayerControllerComponent>() != nullptr)
 		{
 			//Send Player Has entered Collision Message here
-			bool state = true;
+			bool state = false;
 			SStringMessage message = { myEventMessage.c_str(), &state };
 			CMainSingleton::PostMaster().Send(message);
 		}
 	}
 	else
 	{
-		bool state = true;
+		bool state = false;
 		SStringMessage message = { myEventMessage.c_str(), &state };
 		CMainSingleton::PostMaster().Send(message);
 	}

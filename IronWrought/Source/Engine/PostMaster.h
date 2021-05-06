@@ -6,6 +6,7 @@
 #include <string>
 #include <queue>
 #include "PostMasterStructs.h"
+#include "PostMasterHelpers.h"
 
 
 class CPostMaster
