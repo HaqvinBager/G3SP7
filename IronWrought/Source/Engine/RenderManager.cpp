@@ -426,6 +426,7 @@ void CRenderManager::Render(CScene& aScene)
 	if (myRenderPassIndex == 8)
 	{
 		mySSAOBlurTexture.SetAsResourceOnSlot(0);
+		//mySSAOBuffer.SetAsResourceOnSlot(0);
 	}
 
 	if (myRenderPassIndex < 2)
@@ -502,8 +503,14 @@ void CRenderManager::SetBrokenScreen(bool aShouldSetBrokenScreen)
 	myUseBrokenScreenPass = aShouldSetBrokenScreen;
 }
 
-void CRenderManager::EnableVignette(bool /*aShouldEnableVignette*/)
+const CFullscreenRenderer::SPostProcessingBufferData& CRenderManager::GetPostProcessingBufferData() const
 {
+	return myFullscreenRenderer.myPostProcessingBufferData;
+}
+
+void CRenderManager::SetPostProcessingBufferData(const CFullscreenRenderer::SPostProcessingBufferData& someBufferData)
+{
+	myFullscreenRenderer.myPostProcessingBufferData = someBufferData;
 }
 
 void CRenderManager::Clear(DirectX::SimpleMath::Vector4 aClearColor)

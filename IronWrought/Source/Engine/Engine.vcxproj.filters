@@ -900,6 +900,9 @@
       <Filter>Imgui\Windows</Filter>
     </ClCompile>
     <ClCompile Include="PostMasterHelpers.cpp" />
+    <ClCompile Include="PostProcessingWindow.cpp">
+      <Filter>Imgui\Windows</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h">
@@ -1640,6 +1643,9 @@
     </ClInclude>
     <ClInclude Include="PostMasterHelpers.h">
       <Filter>Post Master</Filter>
+    </ClInclude>
+    <ClInclude Include="PostProcessingWindow.h">
+      <Filter>Imgui\Windows</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

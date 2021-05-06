@@ -22,7 +22,15 @@ cbuffer FullscreenBuffer : register(b0)
 {
     float2 myResolution;
     float2 myNoiseScale;
-    float3 mySampleKernel[16];
+    float4 mySampleKernel[16];
+}
+
+cbuffer PostProcessingBuffer : register(b2)
+{
+    float mySSAORadius;
+    float mySSAOSampleBias;
+    float mySSAOMagnitude;
+    float mySSAOContrast;
 }
 
 Texture2D fullscreenTexture1 : register(t0);

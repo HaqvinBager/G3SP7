@@ -12,10 +12,12 @@ CFullscreenRenderer::CFullscreenRenderer()
 	: myContext(nullptr)
 	, myVertexShader(nullptr)
 	, myPixelShaders()
+	, myPostProcessingBufferData()
 	, myClampSampler(nullptr)
 	, myWrapSampler(nullptr)
 	, myFullscreenDataBuffer(nullptr)
 	, myFrameBuffer(nullptr)
+	, myPostProcessingBuffer(nullptr)
 	, myNoiseTexture(nullptr)
 {
 }
@@ -51,6 +53,9 @@ bool CFullscreenRenderer::Init(CDirectXFramework* aFramework) {
 
 	bufferDescription.ByteWidth = sizeof(SFrameBufferData);
 	ENGINE_HR_BOOL_MESSAGE(device->CreateBuffer(&bufferDescription, nullptr, &myFrameBuffer), "Frame Buffer could not be created.");
+
+	bufferDescription.ByteWidth = sizeof(SPostProcessingBufferData);
+	ENGINE_HR_BOOL_MESSAGE(device->CreateBuffer(&bufferDescription, nullptr, &myPostProcessingBuffer), "Post Processing Buffer could not be created.");
 
 	std::ifstream vsFile;
 	vsFile.open("Shaders/FullscreenVertexShader.cso", std::ios::binary);
@@ -118,28 +123,33 @@ bool CFullscreenRenderer::Init(CDirectXFramework* aFramework) {
 	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 	ENGINE_HR_MESSAGE(device->CreateSamplerState(&samplerDesc, &myWrapSampler), "Sampler could not be created.");
-
 	//End Samplers
 
 #pragma region SSAO Setup
 	for (unsigned int i = 0; i < myKernelSize; ++i) {
-		myKernel[i] = Vector3(
-			/*RandomGaussian(0.0f, 1.0f)*/Random(-1.0f, 1.0f)/*0.0f*/,
-			/*RandomGaussian(0.0f, 1.0f)*/Random(-1.0f, 1.0f)/*0.0f*/,
-			/*RandomGaussian(0.5f, 0.5f)*/Random(0.2f, 1.0f)/*1.0f*/);
-			myKernel[i].Normalize();
+		float r = 1.0f * sqrt(Random(0.0f, 1.0f));
+		float theta = Random(float(i) / float(myKernelSize), float(i+1) / float(myKernelSize)) * 2.0f * 3.14159265f;
+		float x = r * cosf(theta);
+		float y = r * sinf(theta);
+		float z = sqrt(1 - x * x - y * y);
+		myKernel[i] = Vector4(
+			x,
+			y,
+			z,
+			1.0f);
+			//myKernel[i].Normalize();
 			myKernel[i] *= Random(0.0f, 1.0f);
-			float scale = float(i) / float(myKernelSize);
-			scale = KernelLerp(0.1f, 1.0f, scale * scale);
-			myKernel[i] *= scale;
+			//float scale = float(i) / float(myKernelSize);
+			//scale = KernelLerp(0.1f, 1.0f, scale * scale);
+			//myKernel[i] *= scale;
 	}
 
 	Vector4 noise[myKernelSize];
 	for (unsigned int i = 0; i < myKernelSize; ++i)
 	{
 		noise[i] = Vector4(
-			/*Random(-1.0f, 1.0f)*/0.7075f,
-			/*Random(-1.0f, 1.0f)*/0.7075f,
+			Random(-1.0f, 1.0f),
+			Random(-1.0f, 1.0f),
 			0.0f,
 			0.0f
 		);
@@ -175,6 +185,11 @@ bool CFullscreenRenderer::Init(CDirectXFramework* aFramework) {
 	ID3D11Texture2D* noiseTextureBuffer;
 	ENGINE_HR_MESSAGE(device->CreateTexture2D(&noiseTextureDesc, &noiseTextureData, &noiseTextureBuffer), "Noise Texture could not be created.");
 	ENGINE_HR_MESSAGE(device->CreateShaderResourceView(noiseTextureBuffer, &noiseSRVDesc, &myNoiseTexture), "Noise Shader Resource View could not be created.");
+
+	myPostProcessingBufferData.mySSAORadius = 0.6f;
+	myPostProcessingBufferData.mySSAOSampleBias = 0.005f;
+	myPostProcessingBufferData.mySSAOMagnitude = 1.1f;
+	myPostProcessingBufferData.mySSAOContrast = 1.5f;
 #pragma endregion
 	return true;
 }
@@ -195,6 +210,8 @@ void CFullscreenRenderer::Render(FullscreenShader anEffect)
 	myFrameBufferData.myToCameraFromProjection = camera->GetProjection().Invert();
 	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
 
+	BindBuffer(myPostProcessingBuffer, myPostProcessingBufferData, "Post Processing Buffer");
+
 	myContext->VSSetConstantBuffers(0, 1, &myFrameBuffer);
 
 	myContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -208,6 +225,7 @@ void CFullscreenRenderer::Render(FullscreenShader anEffect)
 	myContext->PSSetSamplers(1, 1, &myWrapSampler);
 	myContext->PSSetConstantBuffers(0, 1, &myFullscreenDataBuffer);
 	myContext->PSSetConstantBuffers(1, 1, &myFrameBuffer);
+	myContext->PSSetConstantBuffers(2, 1, &myPostProcessingBuffer);
 	myContext->PSSetShaderResources(23, 1, &myNoiseTexture);
 
 	myContext->Draw(3, 0);

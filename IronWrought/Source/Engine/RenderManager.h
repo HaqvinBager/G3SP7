@@ -30,7 +30,9 @@ public:
 
 public:
 	void SetBrokenScreen(bool aShouldSetBrokenScreen);
-	void EnableVignette(bool aShouldEnableVignette);
+	
+	const CFullscreenRenderer::SPostProcessingBufferData& GetPostProcessingBufferData() const;
+	void SetPostProcessingBufferData(const CFullscreenRenderer::SPostProcessingBufferData& someBufferData);
 
 public:
 	static unsigned int myNumberOfDrawCallsThisFrame;

@@ -69,6 +69,7 @@ CImguiManager::CImguiManager() : myGraphManagerIsFullscreen(false), myIsEnabled(
 	myWindows.emplace_back(std::make_unique <IronWroughtImGui::CPlayerControlWindow>("Player"));
 	myWindows.emplace_back(std::make_unique <IronWroughtImGui::CGravityGloveEditor>("GravityGlove"));
 	myWindows.emplace_back(std::make_unique <IronWroughtImGui::CEnvironmentLightWindow>("Environment Light"));
+	myWindows.emplace_back(std::make_unique <IronWroughtImGui::CPostProcessingWindow>("Post Processing"));
 
 	CMainSingleton::PostMaster().Subscribe(EMessageType::CursorHideAndLock, this);
 	CMainSingleton::PostMaster().Subscribe(EMessageType::CursorShowAndUnlock, this);
