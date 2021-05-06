@@ -65,6 +65,11 @@ const bool CJsonReader::HasAssetPath(const int anAssetID) const
 }
 const bool CJsonReader::TryGetAssetPath(const int anAssetID, std::string& outPath) const
 {
+	if (myPathsMap.find(anAssetID) == myPathsMap.end())
+	{
+		outPath = "";
+		return false;
+	}
 	assert(myPathsMap.find(anAssetID) != myPathsMap.end() && "Could not find AssetPath");
 	outPath = myPathsMap.at(anAssetID);
 	return outPath.size() > 0;
