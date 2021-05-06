@@ -88,9 +88,15 @@ void CRenderManager::InitRenderTextures(CWindowHandler* aWindowHandler)
 	myBlurTexture1 = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R16G16B16A16_FLOAT);
 	myBlurTexture2 = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R16G16B16A16_FLOAT);
 	myVignetteTexture = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R16G16B16A16_FLOAT);
+	
 	myDeferredLightingTexture = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R16G16B16A16_FLOAT);
+	
 	myVolumetricAccumulationBuffer = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution() / 2.0f, DXGI_FORMAT_R16G16B16A16_FLOAT);
 	myVolumetricBlurTexture = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution() / 2.0f, DXGI_FORMAT_R16G16B16A16_FLOAT);
+	
+	mySSAOBuffer = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution() / 2.0f, DXGI_FORMAT_R16G16B16A16_FLOAT);
+	mySSAOBlurTexture = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution() / 2.0f, DXGI_FORMAT_R16G16B16A16_FLOAT);
+
 	myTonemappedTexture = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R16G16B16A16_FLOAT);
 	myAntiAliasedTexture = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R16G16B16A16_FLOAT);
 	myGBuffer = myFullscreenTextureFactory.CreateGBuffer(aWindowHandler->GetResolution());
@@ -103,10 +109,13 @@ void CRenderManager::Render(CScene& aScene)
 
 	if (Input::GetInstance()->IsKeyPressed(VK_F6))	
 	{
-		/*myDoFullRender = myDeferredRenderer.ToggleRenderPass();*/
 		ToggleRenderPass();
-		if (myRenderPassIndex < 7)
-			myDoFullRender = myForwardRenderer.ToggleRenderPass();
+		myForwardRenderer.ToggleRenderPass(myRenderPassIndex);
+	}
+	if (Input::GetInstance()->IsKeyPressed(VK_F7))
+	{
+		ToggleRenderPass(false);
+		myForwardRenderer.ToggleRenderPass(myRenderPassIndex);
 	}
 
 	myRenderStateManager.SetAllDefault();
@@ -117,6 +126,7 @@ void CRenderManager::Render(CScene& aScene)
 	myGBuffer.ClearTextures(myClearColor);
 	myDeferredLightingTexture.ClearTexture();
 	myVolumetricAccumulationBuffer.ClearTexture();
+	mySSAOBuffer.ClearTexture();
 
 	CEnvironmentLight* environmentlight = aScene.EnvironmentLight();
 	CCameraComponent* maincamera = aScene.MainCamera();
@@ -140,22 +150,22 @@ void CRenderManager::Render(CScene& aScene)
 
 		if (instance->GetComponent<CInstancedModelComponent>()) 
 		{
-			if (instance->GetComponent<CInstancedModelComponent>()->RenderWithAlpha())
-			{
-				instancedGameObjectsWithAlpha.emplace_back(instance);
-				indicesOfAlphaGameObjects.emplace_back(i);
-				continue;
-			}
+			//if (instance->GetComponent<CInstancedModelComponent>()->RenderWithAlpha())
+			//{
+			//	instancedGameObjectsWithAlpha.emplace_back(instance);
+			//	indicesOfAlphaGameObjects.emplace_back(i);
+			//	continue;
+			//}
 			instancedGameObjects.emplace_back(instance);
 		}
 		else if (instance->GetComponent<CModelComponent>()) 
 		{
-			if (instance->GetComponent<CModelComponent>()->RenderWithAlpha())
-			{
-				gameObjectsWithAlpha.emplace_back(instance);
-				indicesOfAlphaGameObjects.emplace_back(i);
-				continue;
-			}
+			//if (instance->GetComponent<CModelComponent>()->RenderWithAlpha())
+			//{
+			//	gameObjectsWithAlpha.emplace_back(instance);
+			//	indicesOfAlphaGameObjects.emplace_back(i);
+			//	continue;
+			//}
 		}
 	}
 
@@ -195,9 +205,21 @@ void CRenderManager::Render(CScene& aScene)
 	myDepthCopy.SetAsResourceOnSlot(21);
 	myDecalRenderer.Render(maincamera, gameObjects);
 
+	// SSAO
+	mySSAOBuffer.SetAsActiveTarget();
+	myGBuffer.SetAsResourceOnSlot(CGBuffer::EGBufferTextures::NORMAL, 2);
+	myIntermediateDepth.SetAsResourceOnSlot(21);
+	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::SSAO);
+	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_DISABLE);
+
+	mySSAOBlurTexture.SetAsActiveTarget();
+	mySSAOBuffer.SetAsResourceOnSlot(0);
+	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::SSAOBlur);
+
 	// Lighting
 	myDeferredLightingTexture.SetAsActiveTarget();
 	myGBuffer.SetAllAsResources();
+	myDepthCopy.SetAsResourceOnSlot(21);
 	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_ADDITIVEBLEND);
 	std::vector<CPointLight*> onlyPointLights;
 	onlyPointLights = aScene.CullPointLights(&maincamera->GameObject());
@@ -211,6 +233,7 @@ void CRenderManager::Render(CScene& aScene)
 	if (myRenderPassIndex == 0)
 	{
 		myEnvironmentShadowDepth.SetAsResourceOnSlot(22);
+		mySSAOBlurTexture.SetAsResourceOnSlot(23);
 		myLightRenderer.Render(maincamera, environmentlight);
 
 		myRenderStateManager.SetRasterizerState(CRenderStateManager::RasterizerStates::RASTERIZERSTATE_NOFACECULLING);
@@ -370,33 +393,16 @@ void CRenderManager::Render(CScene& aScene)
 
 	// Bloom
 	RenderBloom();
-	//myDoFullRender ? RenderBloom() : RenderWithoutBloom();
 
 	// Tonemapping
 	myTonemappedTexture.SetAsActiveTarget();
 	myDeferredLightingTexture.SetAsResourceOnSlot(0);
 	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::Tonemap);
 
-#ifdef _DEBUG
-	if (INPUT->IsKeyPressed(VK_F2))
-		myUseAntiAliasing = !myUseAntiAliasing;
-#endif // _DEBUG
-
 	// Anti-aliasing
-	if (myUseAntiAliasing)
-	{
-		myAntiAliasedTexture.SetAsActiveTarget();
-		myTonemappedTexture.SetAsResourceOnSlot(0);
-		myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FXAA);
-
-		myBackbuffer.SetAsActiveTarget();
-		myAntiAliasedTexture.SetAsResourceOnSlot(0);
-	}
-	else
-	{
-		myBackbuffer.SetAsActiveTarget();
-		myTonemappedTexture.SetAsResourceOnSlot(0);
-	}
+	myAntiAliasedTexture.SetAsActiveTarget();
+	myTonemappedTexture.SetAsResourceOnSlot(0);
+	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::FXAA);
 
 	// Broken Screen
 	if (myUseBrokenScreenPass)
@@ -408,12 +414,20 @@ void CRenderManager::Render(CScene& aScene)
 		myAntiAliasedTexture.SetAsResourceOnSlot(0);
 	}
 
+	// Gamma correction
+	myBackbuffer.SetAsActiveTarget();
+	myAntiAliasedTexture.SetAsResourceOnSlot(0);
+	
 	if (myRenderPassIndex == 7)
 	{
 		myVolumetricAccumulationBuffer.SetAsResourceOnSlot(0);
 	}
 
-	// Gamma correction
+	if (myRenderPassIndex == 8)
+	{
+		mySSAOBlurTexture.SetAsResourceOnSlot(0);
+	}
+
 	if (myRenderPassIndex < 2)
 	{
 		myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::GammaCorrection);
@@ -553,10 +567,19 @@ void CRenderManager::RenderWithoutBloom()
 	myFullscreenRenderer.Render(CFullscreenRenderer::FullscreenShader::Vignette);
 }
 
-void CRenderManager::ToggleRenderPass()
+void CRenderManager::ToggleRenderPass(bool aShouldToggleForwards)
 {
+	if (!aShouldToggleForwards)
+	{
+		--myRenderPassIndex;
+		if (myRenderPassIndex < 0) {
+			myRenderPassIndex = 8;
+		}
+		return;
+	}
+
 	++myRenderPassIndex;
-	if (myRenderPassIndex > 7)
+	if (myRenderPassIndex > 8)
 	{
 		myRenderPassIndex = 0;
 	}
