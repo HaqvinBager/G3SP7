@@ -31,7 +31,8 @@ public:
 	void RenderOutline(CCameraComponent* aCamera, CGameObject* aModelInstance, CModel* someOutlineModelData, DirectX::SimpleMath::Vector4 aColor);
 	void RenderLineInstances(CCameraComponent* aCamera, const std::vector<CLineInstance*>& aLineList);
 
-	bool ToggleRenderPass();
+	bool ToggleRenderPass(bool aShouldToggleForwards = true);
+	bool ToggleRenderPass(int anIndex);
 
 private:
 	template<class T>
@@ -105,7 +106,7 @@ private:
 
 	std::vector<ID3D11PixelShader*> myRenderPassPixelShaders;
 	ID3D11PixelShader* myCurrentPixelShader;
-	unsigned int myRenderPassIndex;
+	int myRenderPassIndex;
 };
 
 //struct SObjectLightBufferData

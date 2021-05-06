@@ -42,7 +42,7 @@ private:
 private:
 	void RenderBloom();
 	void RenderWithoutBloom();
-	void ToggleRenderPass();
+	void ToggleRenderPass(bool aShouldToggleForwards = true);
 
 private:
 	CRenderStateManager myRenderStateManager;
@@ -73,6 +73,8 @@ private:
 	CFullscreenTexture myDeferredLightingTexture;
 	CFullscreenTexture myVolumetricAccumulationBuffer;
 	CFullscreenTexture myVolumetricBlurTexture;
+	CFullscreenTexture mySSAOBuffer;
+	CFullscreenTexture mySSAOBlurTexture;
 	CFullscreenTexture myDownsampledDepth;
 	CFullscreenTexture myTonemappedTexture;
 	CFullscreenTexture myAntiAliasedTexture;

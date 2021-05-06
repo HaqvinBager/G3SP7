@@ -21,7 +21,8 @@ struct GBufferOutput {
 cbuffer FullscreenBuffer : register(b0)
 {
     float2 myResolution;
-    float2 myPadding;
+    float2 myNoiseScale;
+    float3 mySampleKernel[16];
 }
 
 Texture2D fullscreenTexture1 : register(t0);
@@ -29,7 +30,8 @@ Texture2D fullscreenTexture2 : register(t1);
 Texture2D fullscreenTexture3 : register(t2);
 Texture2D fullscreenTexture4 : register(t3);
 Texture2D fullscreenTexture5 : register(t4);
-SamplerState defaultSampler : register(s0);
+SamplerState defaultSampler : register(s0); // Clamp Sampler
+SamplerState wrapSampler : register(s1);
 
 static const float2 resolution = float2(1600.0f, 900.0f) / 8.0f;
 static const float2 brokenScreenData = float2(-0.82f, -0.29f);

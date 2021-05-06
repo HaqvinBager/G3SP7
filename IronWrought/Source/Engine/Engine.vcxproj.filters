@@ -241,6 +241,15 @@
     <FxCompile Include="RenderPassEmissivePixelShader.hlsl">
       <Filter>Shaders\Render Passes</Filter>
     </FxCompile>
+    <FxCompile Include="FullscreenPixelShader_SSAO.hlsl">
+      <Filter>Shaders\Fullscreen</Filter>
+    </FxCompile>
+    <FxCompile Include="FullscreenPixelShader_SSAOBlur.hlsl">
+      <Filter>Shaders\Fullscreen</Filter>
+    </FxCompile>
+    <FxCompile Include="FullscreenPixelShader_Multiply.hlsl">
+      <Filter>Shaders\Fullscreen</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimationComponent.cpp">

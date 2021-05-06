@@ -8,6 +8,11 @@ namespace
 	std::mt19937 myRandomEngine{ myRandomDevice() };
 }
 
+static float RandomGaussian(float aMean, float aStandardDeviation)
+{
+	return std::normal_distribution<float>{aMean, aStandardDeviation}(myRandomEngine);
+}
+
 static float Random(float aLowerBound, float anUpperBound)
 {
 	return std::uniform_real_distribution<float>{ aLowerBound, anUpperBound }(myRandomEngine);

@@ -22,6 +22,7 @@ PixelOutput main(VertexToPixel input)
     float metalness = GBuffer_Metalness(input.myUV);
     float perceptualRoughness = GBuffer_PerceptualRoughness(input.myUV);
     float emissiveData = GBuffer_Emissive(input.myUV);
+    float ssao = PixelShader_SSAO(input.myUV);
     
     float3 specularColor = lerp((float3) 0.04, albedo, metalness);
     float3 diffuseColor = lerp((float3) 0.00, albedo, 1 - metalness);
@@ -29,7 +30,7 @@ PixelOutput main(VertexToPixel input)
     float3 ambiance = EvaluateAmbiance(environmentTexture, normal, vertexNormal, toEye, perceptualRoughness, metalness, albedo, ambientOcclusion, diffuseColor, specularColor);
     float3 directionalLight = EvaluateDirectionalLight(diffuseColor, specularColor, normal, perceptualRoughness, directionalLightColor.rgb * directionalLightColor.a, toDirectionalLight.xyz, toEye.xyz);
     float3 emissive = albedo * emissiveData;
-    float3 radiance = ambiance + directionalLight * (1.0f - ShadowFactor(worldPosition, directionalLightPosition.xyz, toDirectionalLightView, toDirectionalLightProjection, shadowDepthTexture, shadowSampler, directionalLightShadowMapResolution)) + emissive;
+    float3 radiance = (ambiance * ssao) + directionalLight * (1.0f - ShadowFactor(worldPosition, directionalLightPosition.xyz, toDirectionalLightView, toDirectionalLightProjection, shadowDepthTexture, shadowSampler, directionalLightShadowMapResolution)) + emissive;
 
     output.myColor.rgb = radiance;
     output.myColor.a = 1.0f;

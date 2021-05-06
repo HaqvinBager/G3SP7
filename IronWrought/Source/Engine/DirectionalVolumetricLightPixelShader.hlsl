@@ -70,17 +70,19 @@ void ExecuteRaymarching(inout float3 rayPositionLightVS, float3 invViewDirLightV
 {
     rayPositionLightVS.xyz += stepSize * invViewDirLightVS.xyz;
 
-    float3 shadowTerm = ShadowFactor(rayPositionLightVS.xyz).xxx;
+    float3 visibilityTerm = ShadowFactor(rayPositionLightVS.xyz).xxx;
     
     // Distance to the current position on the ray in light view-space
-    float d = length(rayPositionLightVS.xyz);
+    float d = /*length(rayPositionLightVS.xyz)*/20.0f;
     float dRcp = rcp(d); // reciprocal
     
     // Calculate the final light contribution for the sample on the ray...
     float phase = 0.25f * PI_RCP;
     //float projection = dot(invViewDirLightVS, -toDirectionalLight.xyz);
     //phase = PhaseFunctionHenyeyGreenstein(projection, henyeyGreensteinGValue);
-    float3 intens = scatteringProbability * (shadowTerm * (lightPower * phase) * dRcp * dRcp) * exp(-d * scatteringProbability) * exp(-l * scatteringProbability) * stepSize;
+    float3 intens = scatteringProbability * (visibilityTerm * (lightPower * phase) * dRcp * dRcp) * exp(-d * scatteringProbability) * exp(-l * scatteringProbability) * stepSize;
+    
+    //float3 intens = ((lightPower * phase) * dRcp * dRcp) * exp(-d * scatteringProbability) * (exp(-furthestPoint * scatteringProbability) - exp(-endofshadowregion * scatteringProbability)));
     
     // ... and add it to the total contribution of the ray
     VLI += intens;
@@ -100,7 +102,8 @@ PixelOutput main(VertexToPixel input)
     //    discard;
     //}
     
-    // ...
+     //...
+    
     float3 worldPosition = PixelShader_WorldPosition(input.myUV).rgb;
     float3 camPos = cameraPosition.xyz;
     
@@ -113,7 +116,7 @@ PixelOutput main(VertexToPixel input)
     // Reduce noisyness by truncating the starting position
     //float raymarchDistance = trunc(clamp(length(cameraPositionLightVS.xyz - positionLightVS.xyz), 0.0f, raymarchDistanceLimit));
     float4 invViewDirLightVS = float4(normalize(cameraPositionLightVS.xyz - positionLightVS.xyz), 0.0f);
-    float raymarchDistance = /*trunc(*/clamp(length(cameraPositionLightVS.xyz - positionLightVS.xyz), 0.0f, raymarchDistanceLimit)/*)*/;
+    float raymarchDistance = /*trunc(*/clamp(length(cameraPositionLightVS.xyz - positionLightVS.xyz), 0.0f, raymarchDistanceLimit) /*)*/;
     
     // Calculate the size of each step
     float stepSize = raymarchDistance * numberOfSamplesReciprocal;
@@ -139,6 +142,12 @@ PixelOutput main(VertexToPixel input)
     {
         ExecuteRaymarching(rayPositionLightVS, invViewDirLightVS.xyz, stepSize, l, VLI);
     }
+    
+    //float fogDensity = scatteringProbability;
+    
+    //float depth = depthTexture.Sample(defaultSampler, input.myUV).r;
+    //depth = (depth - 0.95f) / 0.05f;
+    //float3 VLI = exp(depth/* * fogDensity*/);
     
     output.myColor.rgb = directionalLightColor.rgb * VLI;
     output.myColor.a = 1.0f;
