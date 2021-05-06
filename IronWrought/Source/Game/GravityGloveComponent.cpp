@@ -38,6 +38,7 @@ CGravityGloveComponent::~CGravityGloveComponent()
 void CGravityGloveComponent::Awake()
 {
 	myRigidStatic = CEngine::GetInstance()->GetPhysx().GetPhysics()->createRigidStatic({ myGravitySlot->GetWorldMatrix().Translation().x,myGravitySlot->GetWorldMatrix().Translation().y, myGravitySlot->GetWorldMatrix().Translation().z });
+	myRigidStatic->userData = (void*)GameObject().myTransform;
 	CEngine::GetInstance()->GetPhysx().GetPXScene()->addActor(*myRigidStatic);
 }
 
