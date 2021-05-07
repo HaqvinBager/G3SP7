@@ -275,6 +275,8 @@ void CDeferredRenderer::GenerateGBuffer(CCameraComponent* aCamera, std::vector<C
 		CModelComponent* modelComponent = gameObject->GetComponent<CModelComponent>();
 		if (modelComponent == nullptr)
 			continue;
+		if (!modelComponent->Enabled())
+			continue;
 
 		if (modelComponent->GetMyModel() == nullptr)
 			continue;
