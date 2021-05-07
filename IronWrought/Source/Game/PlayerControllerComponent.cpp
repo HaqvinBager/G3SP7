@@ -45,6 +45,10 @@ CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, 
 	INPUT_MAPPER->AddObserver(EInputEvent::SetResetPointEntities, this);
 
 	myController = CEngine::GetInstance()->GetPhysx().CreateCharacterController(gameObject.myTransform->Position(), myColliderRadius, myColliderHeightStanding, GameObject().myTransform, aHitReport);
+	physx::PxShape* shape = nullptr;
+	myController->GetController().getActor()->getShapes(&shape, 1);
+	shape->setFlag(PxShapeFlag::Enum::eSCENE_QUERY_SHAPE, true);
+
 	GameObject().myTransform->Position(myController->GetPosition());// This is a test / Aki 2021 03 12
 
 	GameObject().myTransform->FetchChildren()[0]->Position({ 0.0f, myCameraPosYStanding, myCameraPosZ });
