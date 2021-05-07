@@ -32,7 +32,10 @@ public class ExportParents
             data.children = new List<Transform>();
             data.parent = parent.transform;
             foreach (Transform child in parent.myChildren)
-                data.children.Add(child);
+            {
+                if(child != null)
+                    data.children.Add(child);
+            }
 
             collection.parents.Add(data);
         }
