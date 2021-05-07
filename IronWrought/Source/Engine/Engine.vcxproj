@@ -209,6 +209,7 @@
     <ClInclude Include="NodeTypeGameObjectRotateDegrees.h" />
     <ClInclude Include="PostMasterHelpers.h" />
     <ClInclude Include="PostMasterStructs.h" />
+    <ClInclude Include="PostProcessingWindow.h" />
     <ClInclude Include="SphereColliderComponent.h" />
     <ClInclude Include="BoxLight.h" />
     <ClInclude Include="BoxLightComponent.h" />
@@ -451,6 +452,7 @@
     <ClCompile Include="NodeTypeAddForce.cpp" />
     <ClCompile Include="NodeTypeGameObjectRotateDegrees.cpp" />
     <ClCompile Include="PostMasterHelpers.cpp" />
+    <ClCompile Include="PostProcessingWindow.cpp" />
     <ClCompile Include="SphereColliderComponent.cpp" />
     <ClCompile Include="BoxLight.cpp" />
     <ClCompile Include="BoxLightComponent.cpp" />

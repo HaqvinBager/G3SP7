@@ -98,7 +98,7 @@ void CEnemyComponent::Update()//får bestämma vilket behaviour vi vill köra i 
 		Vector3 targetDirection = myBehaviours[static_cast<int>(myCurrentState)]->Update(GameObject().myTransform->Position());
 		
 		targetDirection.y = 0;
-		myRigidBodyComponent->AddForce(targetDirection);
+		myRigidBodyComponent->AddForce(targetDirection,mySettings.mySpeed);
 		float targetOrientation = WrapAngle(atan2f(targetDirection.x, targetDirection.z));
 		myCurrentOrientation = Lerp(myCurrentOrientation, targetOrientation, 2.0f * CTimer::Dt());
 		GameObject().myTransform->Rotation({ 0, DirectX::XMConvertToDegrees(myCurrentOrientation) + 180.f, 0 });

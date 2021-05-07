@@ -424,3 +424,13 @@ void CEngine::SetBrokenScreen(bool aShouldSetBrokenScreen)
 {
 	myRenderManager->SetBrokenScreen(aShouldSetBrokenScreen);
 }
+
+const CFullscreenRenderer::SPostProcessingBufferData& CEngine::GetPostProcessingBufferData() const
+{
+	return myRenderManager->GetPostProcessingBufferData();
+}
+
+void CEngine::SetPostProcessingBufferData(const CFullscreenRenderer::SPostProcessingBufferData& someBufferData)
+{
+	myRenderManager->SetPostProcessingBufferData(someBufferData);
+}

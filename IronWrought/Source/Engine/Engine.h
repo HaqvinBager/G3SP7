@@ -3,6 +3,7 @@
 #include "DirectXFramework.h"
 
 #include "StateStack.h"
+#include "FullscreenRenderer.h"
 
 #include <string>
 #include <vector>
@@ -86,6 +87,8 @@ public:
 	void LoadGraph(const std::string& aSceneName);
 
 	void SetBrokenScreen(bool aShouldSetBrokenScreen);
+	const CFullscreenRenderer::SPostProcessingBufferData& GetPostProcessingBufferData() const;
+	void SetPostProcessingBufferData(const CFullscreenRenderer::SPostProcessingBufferData& someBufferData);
 
 private:
 	void AllScenesToInactive();

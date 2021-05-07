@@ -65,21 +65,21 @@ PixelOutput main(VertexToPixel input)
     float3 randomVector = noiseTexture.Sample(wrapSampler, uv * myNoiseScale).xyz * 2.0f - 1.0f;
     randomVector.z = 0.0f;
     randomVector = normalize(randomVector);
-    float3 tangent = normalize(randomVector - normal * dot(randomVector, normal));
+    float3 tangent = normalize(float3(1.0f, 0.0f, 0.0f) - normal * dot(float3(1.0f, 0.0f, 0.0f), normal));
     float3 bitangent = cross(normal, tangent);
-    float3x3 tbn = float3x3(tangent, bitangent, normal);
+    float3x3 tbn = float3x3(randomVector.x * tangent + randomVector.y * bitangent, randomVector.x * bitangent - randomVector.y * tangent, normal);
     
-    float aoRadius = 0.6f;
-    float bias = 0.005f;
-    float magnitude = 1.1;
-    float contrast = 1.5;
-    float brightning = 0.2f/*0.2f*/;
+    //float aoRadius = 0.6f;
+    //float bias = 0.005f;
+    //float magnitude = 1.1;
+    //float contrast = 1.5;
+    float constantBias = 0.0f;
     
     float occlusion = numberOfSamples;
     for (unsigned int i = 0; i < numberOfSamples; ++i)
     {
-        float3 samplePosition = mul(mySampleKernel[i], tbn);
-        samplePosition = origin + samplePosition * aoRadius;
+        float3 samplePosition = mul(mySampleKernel[i].xyz, tbn);
+        samplePosition = origin + samplePosition * mySSAORadius;
         
         float4 offsetUV = float4(samplePosition.xyz, 1.0);
         offsetUV = mul(toProjectionSpace, offsetUV);
@@ -99,7 +99,7 @@ PixelOutput main(VertexToPixel input)
         float4 offsetPosition = viewSpacePos;
         
         float occluded = 0.0f;
-        if (samplePosition.z + bias <= offsetPosition.z)
+        if (samplePosition.z + mySSAOSampleBias <= offsetPosition.z)
         {
             occluded = 0.0f;
         }
@@ -108,47 +108,17 @@ PixelOutput main(VertexToPixel input)
             occluded = 1.0f;
         }
         
-        float intensity = smoothstep(0.0f, 1.0f, aoRadius / abs(origin.z - offsetPosition.z));
+        float intensity = smoothstep(0.0f, 1.0f, mySSAORadius / abs(origin.z - offsetPosition.z));
         occluded *= intensity;
         
         occlusion -= occluded;
     }
     
     occlusion /= numberOfSamples;
-    occlusion = pow(occlusion, magnitude);
-    occlusion = contrast * (occlusion - 0.5f) + 0.5f;
+    occlusion = pow(occlusion, mySSAOMagnitude);
+    occlusion = mySSAOContrast * (occlusion - 0.5f) + 0.5f;
     
-    
-    //float occlusion = 0.0;
-    //for (unsigned int i = 0; i < numberOfSamples; ++i)
-    //{
-    //    // get sample position:
-    //    float3 samplePoint = mul(mySampleKernel[i], tbn);
-    //    //float3 samplePoint = dot(mySampleKernel[i], normal) * normal;
-    //    samplePoint = samplePoint * aoRadius + origin;
-  
-    //    // project sample position:
-    //    float4 offset = float4(samplePoint.xyz, 1.0);
-    //    offset = mul(toProjectionSpace, offset);
-    //    offset.xy /= offset.w;
-    //    offset.xy = offset.xy * 0.5 + 0.5;
-    //    offset.y = (1 - offset.y);
-  
-    //    // get sample depth:
-    //    float sampleDepth = LinearizeDepth(depthTexture.Sample(defaultSampler, offset.xy).r);
-        
-    //    // range check & accumulate:
-    //    float rangeCheck = abs(origin.z - sampleDepth) < aoRadius ? 1.0 : 0.0;
-        
-    //    if (sampleDepth <= samplePoint.z)
-    //    {
-    //        occlusion += 1.0f * rangeCheck;
-    //    }
-    //    //occlusion += ((sampleDepth + bias) <= samplePoint.z ? 1.0 : 0.0) * rangeCheck;
-    //}
-    //occlusion = 1.0f - (occlusion / numberOfSamples);
-    
-    output.myColor.rgb = saturate(occlusion + brightning);
+    output.myColor.rgb = saturate(occlusion + constantBias);
     output.myColor.a = 1.0f;
     return output;
 }
