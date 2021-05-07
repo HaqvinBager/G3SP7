@@ -43,5 +43,7 @@ public:
 
 private:
 	float myDamage;
+	float myAttackCooldown;
+	float myAttackTimer;
 	CTransformComponent* myTarget;
 };

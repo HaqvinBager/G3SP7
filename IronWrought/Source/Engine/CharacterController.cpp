@@ -16,7 +16,7 @@ CCharacterController::CCharacterController(const Vector3 aPosition, const float 
     desc.material = CEngine::GetInstance()->GetPhysx().CreateMaterial(CPhysXWrapper::materialfriction::basic);
     desc.stepOffset = 0.05f;
     desc.reportCallback = aHitReport;
-    desc.userData = aUserData;
+    desc.userData = (void*)aUserData;
     myPlayerReport = static_cast<CPlayerReportCallback*>(CEngine::GetInstance()->GetPhysx().GetPlayerReportBack());
     myController = CEngine::GetInstance()->GetPhysx().GetControllerManager()->createController(desc);
 }
