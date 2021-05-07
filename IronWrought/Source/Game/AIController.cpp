@@ -70,13 +70,12 @@ Vector3 CAttack::Update(const Vector3& aPosition)
 	}
 
 	Vector3 direction = myTarget->Position() - aPosition;
-	direction.Normalize();
-	PxRaycastBuffer hit = CEngine::GetInstance()->GetPhysx().Raycast(aPosition + Vector3{0.0f,0.0f,1.0f}, direction, 10.0f);
+	PxRaycastBuffer hit = CEngine::GetInstance()->GetPhysx().Raycast(aPosition + Vector3{0,0,1.f}, direction, 10.0f);
 	int hits = hit.getNbAnyHits();
 
-	//CLineInstance* myLine2 = new CLineInstance();
-	//myLine2->Init(CLineFactory::GetInstance()->CreateLine(aPosition + Vector3{ 0.0f,0.0f,1.0f }, aPosition + (direction * 5.f), { 255,0,0,255 }));
-	//CEngine::GetInstance()->GetActiveScene().AddInstance(myLine2);
+	CLineInstance* myLine2 = new CLineInstance();
+	myLine2->Init(CLineFactory::GetInstance()->CreateLine(aPosition + Vector3{ 0.0f,0.0f,1.0f }, aPosition + (direction * 5.f), { 255,0,0,255 }));
+	CEngine::GetInstance()->GetActiveScene().AddInstance(myLine2);
 	
 	if (hits > 0) {
 		CTransformComponent* transform = (CTransformComponent*)hit.getAnyHit(0).actor->userData;

@@ -60,4 +60,5 @@ private:
 	bool myIsKinematic;
 	Vector3 myLocalCenterMass;
 	Vector3 myInertiaTensor;
+	physx::PxShape* myShape;
 };

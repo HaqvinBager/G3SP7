@@ -131,7 +131,7 @@ void CGravityGloveComponent::Update()
 		}
 	}
 }
-
+#include "BoxColliderComponent.h"
 void CGravityGloveComponent::Pull()
 {
 	if (myCurrentTarget.myRigidBodyPtr != nullptr)
@@ -152,7 +152,6 @@ void CGravityGloveComponent::Pull()
 	Vector3 dir = -GameObject().myTransform->GetWorldMatrix().Forward();
 
 	PxRaycastBuffer hit = CEngine::GetInstance()->GetPhysx().Raycast(start, dir, mySettings.myMaxDistance);
-
 //	std::vector<CGameObject*> gameobjects = CEngine::GetInstance()->GetActiveScene().ActiveGameObjects();
 
 	/*for (int i = 0; i < gameobjects.size(); ++i) {

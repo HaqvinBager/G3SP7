@@ -9,6 +9,7 @@
 #include "RigidBodyComponent.h"
 #include "RigidDynamicBody.h"
 #include "CapsuleColliderComponent.h"
+#include "PlayerComponent.h"
 #include "RigidBodyComponent.h"
 #include "ModelComponent.h"
 #include "PhysXWrapper.h"

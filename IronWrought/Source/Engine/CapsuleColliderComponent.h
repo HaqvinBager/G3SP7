@@ -5,6 +5,7 @@ namespace physx
 {
 	class PxShape;
 	class PxMaterial;
+	class PxRigidStatic;
 }
 
 class CCapsuleColliderComponent : public CBehaviour
@@ -29,5 +30,6 @@ private:
 	Vector3 myPositionOffset;
 	physx::PxShape* myShape;
 	physx::PxMaterial* myMaterial;
+	physx::PxRigidStatic* myStaticActor;
 };
 

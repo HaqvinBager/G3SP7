@@ -12,6 +12,7 @@ CCapsuleColliderComponent::CCapsuleColliderComponent(CGameObject& aParent, const
 	, myHeight(aHeight)
 	, myMaterial(aMaterial)
 	, myShape(nullptr)
+	, myStaticActor(nullptr)
 {
 	if (myMaterial == nullptr) {
 		myMaterial = CEngine::GetInstance()->GetPhysx().CreateMaterial(CPhysXWrapper::materialfriction::basic);
@@ -20,7 +21,6 @@ CCapsuleColliderComponent::CCapsuleColliderComponent(CGameObject& aParent, const
 
 CCapsuleColliderComponent::~CCapsuleColliderComponent()
 {
-
 }
 
 void CCapsuleColliderComponent::Awake()
@@ -53,10 +53,11 @@ void CCapsuleColliderComponent::Start()
 
 		PxVec3 pos = { translation.x, translation.y, translation.z };
 		PxQuat pxQuat = { quat.x, quat.y, quat.z, quat.w };
-		CEngine::GetInstance()->GetPhysx().GetPhysics()->createRigidStatic({ pos, pxQuat });
+		myStaticActor = CEngine::GetInstance()->GetPhysx().GetPhysics()->createRigidStatic({ pos, pxQuat });
+		myStaticActor->attachShape(*myShape);
+		CEngine::GetInstance()->GetPhysx().GetPXScene()->addActor(*myStaticActor);
 	}
 }
-
 void CCapsuleColliderComponent::Update()
 {
 }
