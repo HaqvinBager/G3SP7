@@ -79,7 +79,7 @@ void CContactReportCallback::onTriggerExit(physx::PxActor* trigger, physx::PxAct
 		else
 		{
 			transform = CEngine::GetInstance()->GetActiveScene().PlayerController()->GameObject().myTransform;
-			triggerVolume->OnTriggerEnter(transform);
+			triggerVolume->OnTriggerExit(transform);
 		}
 	}
 }

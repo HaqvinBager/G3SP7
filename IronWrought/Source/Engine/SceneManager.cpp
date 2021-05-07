@@ -101,6 +101,7 @@ CScene* CSceneManager::CreateScene(const std::string& aSceneJson)
 			AddDirectionalLights(*scene, sceneData["directionalLights"].GetArray());
 			SetVertexPaintedColors(*scene, sceneData["vertexColors"].GetArray(), vertexPaintData);
 			AddDecalComponents(*scene, sceneData["decals"].GetArray());
+			AddPickups(*scene, sceneData["healthPickups"].GetArray());
 			if (sceneData.HasMember("triggerEvents"))
 				AddTriggerEvents(*scene, sceneData["triggerEvents"].GetArray());
 			if (sceneName.find("Layout") != std::string::npos)//Om Unity Scene Namnet inneh�ller nyckelordet "Layout"
