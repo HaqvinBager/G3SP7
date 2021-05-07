@@ -2810,12 +2810,12 @@ PrefabInstance:
     - target: {fileID: 4438433738663154468, guid: d867d100b52ef79418c85e1c50b3a99d,
         type: 3}
       propertyPath: m_Color.b
-      value: 0.7176471
+      value: 0.6862745
       objectReference: {fileID: 0}
     - target: {fileID: 4438433738663154468, guid: d867d100b52ef79418c85e1c50b3a99d,
         type: 3}
       propertyPath: m_Color.g
-      value: 0.8156863
+      value: 0.7607843
       objectReference: {fileID: 0}
     - target: {fileID: 4438433738663154468, guid: d867d100b52ef79418c85e1c50b3a99d,
         type: 3}
@@ -2825,7 +2825,7 @@ PrefabInstance:
     - target: {fileID: 4438433738663154468, guid: d867d100b52ef79418c85e1c50b3a99d,
         type: 3}
       propertyPath: m_Intensity
-      value: 2
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 6693035354360656924, guid: d867d100b52ef79418c85e1c50b3a99d,
         type: 3}
@@ -2840,7 +2840,7 @@ PrefabInstance:
     - target: {fileID: 8940042554043142032, guid: d867d100b52ef79418c85e1c50b3a99d,
         type: 3}
       propertyPath: lightPower
-      value: 37231
+      value: 7460
       objectReference: {fileID: 0}
     - target: {fileID: 8940042554043142032, guid: d867d100b52ef79418c85e1c50b3a99d,
         type: 3}
@@ -2855,7 +2855,7 @@ PrefabInstance:
     - target: {fileID: 8940042554043142032, guid: d867d100b52ef79418c85e1c50b3a99d,
         type: 3}
       propertyPath: scatteringProbability
-      value: 0.00047
+      value: 0.01025
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d867d100b52ef79418c85e1c50b3a99d, type: 3}
