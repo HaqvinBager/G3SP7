@@ -16,6 +16,7 @@ namespace IronWroughtImGui {
 
 	private:
 		Vector3 myColor;
+		float myIntensity;
 		float myNumberOfSamples;
 		float myLightPower;
 		float myScatteringProbability;
