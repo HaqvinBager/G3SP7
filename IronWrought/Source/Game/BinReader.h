@@ -220,6 +220,9 @@ public:
 	static Binary::SLevelData Load(const std::string& aPath);
 
 
+	static void Write(const std::string& aFileNameAndPath, const std::vector<Vector3>& someData);
+	static bool Read(const std::string& aFileNameAndPath, std::vector<Vector3>& outData);
+
 private:
 	
 

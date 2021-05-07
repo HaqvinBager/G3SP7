@@ -6,6 +6,7 @@
 #include "EngineDefines.h"
 #include <EngineException.h>
 #include "FolderUtility.h"
+#include <cstdio>
 
 using namespace Binary;
 CBinReader::CBinReader()
@@ -169,6 +170,42 @@ Binary::SLevelData CBinReader::Load(const std::string& aPath)
 	ptr += CopyBin<SInstancedModel>()(data.myInstancedModels, ptr);
 	return std::move(data);
 }
+
+
+void CBinReader::Write(const std::string& aFileNameAndPath, const std::vector<Vector3>& someData)
+{
+	std::ofstream writer(aFileNameAndPath.c_str(), std::ios_base::out | std::ios_base::binary);
+	if (!writer)
+	{
+		std::cout << "Failed to open a new Binary Writer at FilePath: " << aFileNameAndPath << std::endl;
+		return;
+	}
+	int size = static_cast<int>(someData.size());
+	writer.write((char*)&size, sizeof(int));
+	writer.write((char*)&someData.data()[0], sizeof(Vector3) * someData.size());
+	writer.close();
+}
+
+bool CBinReader::Read(const std::string& aFileNameAndPath, std::vector<Vector3>& outData)
+{
+	std::ifstream stream;
+	stream.open(aFileNameAndPath, std::ios::binary);
+	if (!stream.is_open())
+		return false;
+	
+	std::string binaryData((std::istreambuf_iterator<char>(stream)), std::istreambuf_iterator<char>());
+	char* ptr = &binaryData[0];
+	int count = 0;
+	ptr += Read(count, ptr);
+	outData.resize(count);
+	ptr += Read(outData.data()[0], ptr, count);
+	return true;
+}
+
+
+
+
+
 
 	//int count = 0;
 
