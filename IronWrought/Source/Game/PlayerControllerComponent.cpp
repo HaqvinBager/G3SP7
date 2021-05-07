@@ -100,15 +100,6 @@ void CPlayerControllerComponent::Update()
 		return;
 #endif
 
-	//if (myLadderHasTriggered)
-	//{
-	//	LadderUpdate();
-	//}
-	//else
-	//{
-	//	//Move({0.0f, myMovement.y, 0.0f});
-	//}
-
 	GameObject().myTransform->Position(myController->GetPosition());
 	myAnimationComponentController->Update(myMovement);
 
@@ -140,7 +131,7 @@ void CPlayerControllerComponent::FixedUpdate()
 			myHasJumped = false;
 		}
 
-		myMovement.y -= myFallSpeed * myFallSpeed * CTimer::FixedDt() * myAirborneTimer /* static_cast<float>(!myIsGrounded)*/;// false == 0, true == 1 => !true == 0 and !false == 1.
+		myMovement.y -= myFallSpeed * myFallSpeed * CTimer::FixedDt() * myAirborneTimer ;
 		if (!myIsGrounded) {
 			myAirborneTimer += CTimer::FixedDt();
 		}
@@ -155,7 +146,6 @@ void CPlayerControllerComponent::FixedUpdate()
 
 void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
 {
-	/*CCameraControllerComponent* cameraController = CEngine::GetInstance()->GetActiveScene().FindFirstObjectWithComponent<CCameraControllerComponent>();*/
 #ifdef _DEBUG
 	if (myCamera->IsFreeCamMode() || myCamera->IsCursorUnlocked())
 	{
@@ -282,7 +272,6 @@ CCharacterController* CPlayerControllerComponent::GetCharacterController()
 const Vector3 CPlayerControllerComponent::GetLinearVelocity()
 {
 	const PxVec3 pxVec3 = myController->GetController().getActor()->getLinearVelocity();
-	//const Vector3& vec3 = {pxVec3.x, pxVec3.y, pxVec3.z};
 	return {pxVec3.x, pxVec3.y, pxVec3.z};
 }
 
