@@ -70,12 +70,12 @@ void IronWroughtImGui::CPostProcessingWindow::OnInspectorGUI()
 
 	bufferData.myWhitePointColor = myWhitePointColor;
 
-	if (ImGui::SliderFloat("White Point Intensity", &myWhitePointIntensity, 0.0f, 100.0f, "%.1f"))
+	if (ImGui::SliderFloat("White Point Intensity", &myWhitePointIntensity, 0.0f, 20.0f, "%.1f"))
 	{
 		bufferData.myWhitePointIntensity = myWhitePointIntensity;
 	}
 
-	if (ImGui::SliderFloat("Exposure", &myExposure, -10.0f, 10.0f, "%.1f"))
+	if (ImGui::SliderFloat("Exposure", &myExposure, -5.0f, 10.0f, "%.1f"))
 	{
 		bufferData.myExposure = myExposure;
 	}

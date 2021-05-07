@@ -2810,22 +2810,22 @@ PrefabInstance:
     - target: {fileID: 4438433738663154468, guid: d867d100b52ef79418c85e1c50b3a99d,
         type: 3}
       propertyPath: m_Color.b
-      value: 1
+      value: 0.7176471
       objectReference: {fileID: 0}
     - target: {fileID: 4438433738663154468, guid: d867d100b52ef79418c85e1c50b3a99d,
         type: 3}
       propertyPath: m_Color.g
-      value: 0.86666673
+      value: 0.8156863
       objectReference: {fileID: 0}
     - target: {fileID: 4438433738663154468, guid: d867d100b52ef79418c85e1c50b3a99d,
         type: 3}
       propertyPath: m_Color.r
-      value: 0.8078432
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4438433738663154468, guid: d867d100b52ef79418c85e1c50b3a99d,
         type: 3}
       propertyPath: m_Intensity
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6693035354360656924, guid: d867d100b52ef79418c85e1c50b3a99d,
         type: 3}
@@ -2836,6 +2836,26 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8940042554043142032, guid: d867d100b52ef79418c85e1c50b3a99d,
+        type: 3}
+      propertyPath: lightPower
+      value: 37231
+      objectReference: {fileID: 0}
+    - target: {fileID: 8940042554043142032, guid: d867d100b52ef79418c85e1c50b3a99d,
+        type: 3}
+      propertyPath: isVolumetric
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8940042554043142032, guid: d867d100b52ef79418c85e1c50b3a99d,
+        type: 3}
+      propertyPath: numberOfSamples
+      value: 128
+      objectReference: {fileID: 0}
+    - target: {fileID: 8940042554043142032, guid: d867d100b52ef79418c85e1c50b3a99d,
+        type: 3}
+      propertyPath: scatteringProbability
+      value: 0.00047
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d867d100b52ef79418c85e1c50b3a99d, type: 3}
