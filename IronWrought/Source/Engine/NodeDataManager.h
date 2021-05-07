@@ -1,35 +1,11 @@
 #pragma once
-//#include <map>
 #include "hasher.h"
 
-
-//EInstatiableVariables& operator++(EInstatiableVariables& x) {
-//	using IntType = typename std::underlying_type<EInstatiableVariables>::type;
-//		x = static_cast<EInstatiableVariables>(static_cast<IntType>(x) + 1);
-//	if (x == EInstatiableVariables::ECount)
-//		x = static_cast<EInstatiableVariables>(0);
-//	return x;
-//}
-//
-//EInstatiableVariables operator++(EInstatiableVariables& x, int) {
-//	EInstatiableVariables result = x;
-//	++x;
-//	return result;
-//}
+class CGraphManager;
 
 class CNodeDataManager
 {
 public:
-	enum class EInstatiableVariables
-	{
-		EFloat,
-		EInt,
-		EBool,
-		EStart,
-		EVector3,
-		ECount
-	};
-
 	enum class EDataType
 	{
 		EFloat,
@@ -53,10 +29,11 @@ public:
 	static void Create() { ourInstance = new CNodeDataManager(); }
 	static CNodeDataManager* Get() { return ourInstance; }
 
+	void ClearStoredData();
 	static void SetFolderPath(const std::string& aFolderPath) { ourInstance->myCurrentFolderPath = aFolderPath; }
 	static std::string GetFolderPath() { return ourInstance->myCurrentFolderPath; }
-
-	void ClearStoredData();
+	void RegisterNewDataNode(std::string aName, CGraphManager& aGraphManager);
+	void SaveDataTypesToJson();
 
 	template <typename T>
 	T GetData(const std::string& aNodeTypeName)
@@ -122,10 +99,6 @@ public:
 			}
 		}
 	}
-
-	void SaveDataTypesToJson();
-
-
 
 private:
 	std::vector<SNodeData> myNodeData;

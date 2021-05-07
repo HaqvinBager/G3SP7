@@ -13,6 +13,9 @@
 
 namespace ed = ax::NodeEditor;
 
+class CGraphManager;
+class CGameObject;
+
 struct SNodeInstanceLink
 {
 	SNodeInstanceLink(class CNodeInstance* aLink, unsigned int aFromPinID, unsigned int aToPinID, unsigned int aLinkID)
@@ -24,9 +27,6 @@ struct SNodeInstanceLink
 	unsigned int myToPinID = UNDEFINED_PIN_ID;
 	unsigned int myLinkID = 0;
 };
-
-class CGraphManager;
-class CGameObject;
 
 class CNodeInstance
 {
@@ -92,7 +92,6 @@ public:
 		}
 	}
 
-
 	template <typename Writer>
 	inline void WritePinValue(Writer& aWriter, const SPin& aPin) const
 	{
@@ -153,6 +152,7 @@ public:
 	void Serialize(Writer& aWriter) const
 	{
 		aWriter.StartObject();
+		
 		aWriter.Key("NodeType ID");
 		aWriter.Int(myNodeType->myID);
 		
@@ -190,20 +190,22 @@ public:
 				aWriter.String(WriteVariableType(myPins[i]).c_str());
 			}
 			aWriter.EndObject();
-
 		}
 		aWriter.EndArray();
-
 
 		aWriter.EndObject();
 	}
 
 	void DebugUpdate();
 	void VisualUpdate(float aDeltaTime);
+
 	float myEditorPosition[2];
+
 	bool myHasSetEditorPosition = false;
 	bool myShouldTriggerAgain = true;
+
 	std::unordered_map<std::string, std::any> myMetaData;
+
 	std::vector<SNodeInstanceLink> myLinks;
 	std::vector<SPin> myPins;
 
@@ -223,6 +225,7 @@ public:
 		}
 		return COL32(75, 75, 75, 255);
 	}
+
 	float myEnteredTimer = 0.0f;
 
 	CGameObject* GetCurrentGameObject();

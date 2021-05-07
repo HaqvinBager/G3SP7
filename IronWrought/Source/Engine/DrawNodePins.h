@@ -1,13 +1,14 @@
 #pragma once
+#include <imgui_node_editor.h>
+
+class CNodeInstance;
+class CGraphManager;
 
 struct ImColor;
 struct SPin;
-class CNodeInstance;
-class CGraphManager;
-#ifdef _DEBUG
-#include <imgui_node_editor.h>
+
 namespace ed = ax::NodeEditor;
-#endif // DEBUG
+
 class CDrawNodePins
 {
 public:

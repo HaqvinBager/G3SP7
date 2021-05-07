@@ -33,10 +33,9 @@ void CNodeInstance::Enter()
 		{
 			if ((int)link.myFromPinID == outputIndex && IsOutput(myPins, link.myFromPinID))
 				link.myLink->Enter();
-#ifdef _DEBUG
+
 			else if (!IsOutput(myPins, link.myFromPinID))
 				myGraphManager->ShowFlow(link.myLinkID);
-#endif // _DEBUG
 		}
 	}
 }
@@ -202,9 +201,9 @@ void CNodeInstance::FetchData(SPin::EPinType& anOutType, NodeDataPtr& someData, 
 				int pinIndex = links[0]->myLink->GetPinIndexFromPinUID(links[0]->myToPinID);
 				if (pinIndex == -1)
 					assert(0);
-#ifdef _DEBUG
+			
 				myGraphManager->ShowFlow(links[0]->myLinkID);
-#endif // _DEBUG
+				
 				links[0]->myLink->FetchData(anOutType, someData, anOutSize, pinIndex);
 				return;
 			}

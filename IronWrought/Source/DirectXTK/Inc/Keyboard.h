@@ -70,7 +70,7 @@ namespace DirectX
             Execute             = 0x2b,
             PrintScreen         = 0x2c,
             Insert              = 0x2d,
-            Delete              = 0x2e,
+            DeleteLinksOrNodes              = 0x2e,
             Help                = 0x2f,
             D0                  = 0x30,
             D1                  = 0x31,
@@ -251,7 +251,7 @@ namespace DirectX
             bool Execute : 1;           // VK_EXECUTE, 0x2B
             bool PrintScreen : 1;       // VK_SNAPSHOT, 0x2C
             bool Insert : 1;            // VK_INSERT, 0x2D
-            bool Delete : 1;            // VK_DELETE, 0x2E
+            bool DeleteLinksOrNodes : 1;            // VK_DELETE, 0x2E
             bool Help : 1;              // VK_HELP, 0x2F
             bool D0 : 1;                // 0x30
             bool D1 : 1;                // 0x31

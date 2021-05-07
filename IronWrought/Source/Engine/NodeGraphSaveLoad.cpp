@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "SaveLoadGraphManager.h"
+#include "NodeGraphSaveLoad.h"
 #include "JsonReader.h"
 #include "rapidjson/document.h"
 #include "rapidjson/prettywriter.h"
@@ -8,6 +8,7 @@
 #include "NodeInstance.h"
 #include "NodeType.h"
 #include "NodeTypes.h"
+#include "NodeDataManager.h"
 
 using namespace rapidjson;
 
@@ -68,6 +69,7 @@ void CNodeGraphSaveLoad::LoadScripts(CGraphManager& aGraphManager, const std::st
 	const auto doc = CJsonReader::Get()->LoadDocument(sceneJson);
 	if (doc.HasParseError())
 		return;
+
 	aSceneFolder = "Imgui/NodeScripts/" + aSceneName + "/";
 
 	if (!std::filesystem::exists(aSceneFolder))
@@ -88,8 +90,10 @@ void CNodeGraphSaveLoad::LoadScripts(CGraphManager& aGraphManager, const std::st
 			{
 				if (!bluePrint.HasMember("type"))
 					continue;
+	
 				if (!bluePrint.HasMember("instances"))
 					continue;
+				
 				if (!(bluePrint["instances"].GetArray().Size() > 0))
 					continue;
 
@@ -121,7 +125,7 @@ void CNodeGraphSaveLoad::LoadScripts(CGraphManager& aGraphManager, const std::st
 
 				std::string scriptFolder = aSceneFolder + key + "/";
 				graph.myFolderPath = scriptFolder;
-				aGraphManager.Graph(graph);
+				aGraphManager.AddGraph(graph);
 				if (std::filesystem::exists(scriptFolder))
 					continue;
 
@@ -133,9 +137,7 @@ void CNodeGraphSaveLoad::LoadScripts(CGraphManager& aGraphManager, const std::st
 				else
 				{
 					aGraphManager.CurrentGraph(&graph);
-#ifdef _DEBUG
 					SaveTreeToFile(aGraphManager);
-#endif // _DEBUG
 				}
 			}
 		}
@@ -146,6 +148,7 @@ void CNodeGraphSaveLoad::LoadTreeFromFile(CGraphManager& aGraphManager)
 {
 	CUID::myAllUIDs.clear();
 	CUID::myGlobalUID = 0;
+	
 	for (unsigned int i = 0; i < aGraphManager.Graphs().size(); ++i)
 	{
 		CGraphManager::SGraph graph = aGraphManager.Graph(i);
@@ -220,11 +223,10 @@ void CNodeGraphSaveLoad::LoadTreeFromFile(CGraphManager& aGraphManager)
 
 					firstNode->AddLinkToVia(secondNode, inputID, Output, id);
 					secondNode->AddLinkToVia(firstNode, Output, inputID, id);
-#ifdef _DEBUG
+
 					graph.myLinks.push_back({ ed::LinkId(id), ed::PinId(inputID), ed::PinId(Output) });
 					if (graph.myNextLinkIdCounter < id + 1)
 						graph.myNextLinkIdCounter = id + 1;
-#endif
 				}
 			}
 		}
@@ -232,7 +234,29 @@ void CNodeGraphSaveLoad::LoadTreeFromFile(CGraphManager& aGraphManager)
 	}
 }
 
-#ifdef _DEBUG
+void CNodeGraphSaveLoad::LoadDataNodesFromFile(CGraphManager& aGraphManager)
+{
+	Document document;
+	{
+		std::string path = aGraphManager.SceneFolderPath() + "CustomDataNodes.json";
+		document = CJsonReader::Get()->LoadDocument(path);
+		if (CJsonReader::IsValid(document, { "Custom Data" }))
+		{
+			auto nodeInstances = document["Custom Data"].GetArray();
+
+			for (unsigned int i = 0; i < nodeInstances.Size(); ++i)
+			{
+				if (nodeInstances[i].HasMember("Type"))
+				{
+					aGraphManager.NewVariableType(nodeInstances[i]["Type"].GetString());
+
+					CNodeDataManager::Get()->RegisterNewDataNode(nodeInstances[i]["Data key"].GetString(), aGraphManager);
+				}
+			}
+		}
+	}
+}
+
 void CNodeGraphSaveLoad::SaveTreeToFile(CGraphManager& aGraphManager)
 {
 	for (const auto& graph : aGraphManager.Graphs())
@@ -377,4 +401,3 @@ void CNodeGraphSaveLoad::LoadNodesFromClipboard(CGraphManager& aGraphManager)
 		aGraphManager.CurrentGraph().myNodeInstances.push_back(object);
 	}
 }
-#endif // _DEBUG

@@ -23,44 +23,21 @@
 #include "NodeDataManager.h"
 #include "NodeGraphSaveLoad.h"
 #include "DrawNodePins.h"
-#ifdef _DEBUG
 #include <imgui_node_editor.h>
 #include "Drawing.h"
 #include "Widgets.h"
 #include "Interop.h"
 #include <imgui_impl_dx11.h>
 
-namespace ed = ax::NodeEditor;
 using namespace ax::Drawing;
+using namespace rapidjson;
 static ed::EditorContext* g_Context = nullptr;
-
-std::string InstatiableVariable(unsigned int aType)
-{
-	CNodeDataManager::EInstatiableVariables instatiableVariable = static_cast<CNodeDataManager::EInstatiableVariables>(aType);
-
-	switch (instatiableVariable)
-	{
-	case CNodeDataManager::EInstatiableVariables::EFloat:
-		return "Float";
-	case CNodeDataManager::EInstatiableVariables::EInt:
-		return "Int";
-	case CNodeDataManager::EInstatiableVariables::EBool:
-		return "Bool";
-	case CNodeDataManager::EInstatiableVariables::EStart:
-		return "Start";
-	case CNodeDataManager::EInstatiableVariables::EVector3:
-		return "Vector 3";
-	default:
-		break;
-	}
-}
 
 CGraphManager::~CGraphManager()
 {
+	Clear();
 	ed::DestroyEditor(g_Context);
 }
-#endif
-using namespace rapidjson;
 
 void CGraphManager::SGraph::Clear()
 {
@@ -75,13 +52,33 @@ void CGraphManager::SGraph::Clear()
 
 void CGraphManager::Load(const std::string& aSceneName)
 {
-#ifdef _DEBUG
-	myRunScripts = false;
-#else
-	myRunScripts = true;
-#endif
 	myPinDrawer = new CDrawNodePins();
 	myPinDrawer->GraphManager(*this);
+	mySaveLoadGraphManager = new CNodeGraphSaveLoad();
+
+	ed::Config config;
+	config.SettingsFile = "Imgui/NodeScripts/Simple.json";
+	g_Context = ed::CreateEditor(&config);
+
+	myRunScripts = false;
+	myRenderGraph = false;
+	myRunScripts = false;
+
+	myMenuSearchField = new char[127];
+	memset(&myMenuSearchField[0], 0, sizeof(myMenuSearchField));
+
+	if (myGraphs.size() > 0)
+		myCurrentGraph = &myGraphs[0];
+
+	CGraphNodeTimerManager::Create();
+	CNodeDataManager::Get()->SetFolderPath(mySceneFolder);
+	mySaveLoadGraphManager->LoadScripts(*this, aSceneName, mySceneFolder);
+	CNodeTypeCollector::PopulateTypes();
+	mySaveLoadGraphManager->LoadDataNodesFromFile(*this);
+	mySaveLoadGraphManager->LoadTreeFromFile(*this);
+
+	if (myGraphs.size() > 0)
+		myCurrentGraph = &myGraphs[0];
 
 	if (!CNodeDataManager::Get())
 	{
@@ -92,29 +89,6 @@ void CGraphManager::Load(const std::string& aSceneName)
 		myInstantiableVariables.push_back("Start");
 		myInstantiableVariables.push_back("Vector 3");
 	}
-
-	CGraphNodeTimerManager::Create();
-	mySaveLoadGraphManager->LoadScripts(*this, aSceneName, mySceneFolder);
-	CNodeDataManager::Get()->SetFolderPath(mySceneFolder);
-
-	if (myGraphs.size() > 0)
-		myCurrentGraph = &myGraphs[0];
-	CNodeTypeCollector::PopulateTypes();
-#ifdef _DEBUG
-	ed::Config config;
-	std::string simple = "Imgui/NodeScripts/Simple.json";
-	config.SettingsFile = simple.c_str();
-	g_Context = ed::CreateEditor(&config);
-	myRenderGraph = false;
-	myRunScripts = false;
-#endif
-	LoadDataNodesFromFile();
-	myMenuSearchField = new char[127];
-	memset(&myMenuSearchField[0], 0, sizeof(myMenuSearchField));
-	mySaveLoadGraphManager->LoadTreeFromFile(*this);
-
-	if (myGraphs.size() > 0)
-		myCurrentGraph = &myGraphs[0];
 }
 
 void CGraphManager::Clear()
@@ -122,9 +96,7 @@ void CGraphManager::Clear()
 	if (myGraphs.size() <= 0)
 		return;
 
-#ifdef _DEBUG
 	mySaveLoadGraphManager->SaveTreeToFile(*this);
-#endif // _DEBUG
 
 	CUID::ClearUIDS();
 
@@ -135,45 +107,6 @@ void CGraphManager::Clear()
 	myCurrentGraph = nullptr;
 
 	CNodeDataManager::Get()->ClearStoredData();
-}
-
-void CGraphManager::ReTriggerUpdatingTrees()
-{
-	if (myRunScripts)
-	{
-		for (const auto& graph : myGraphs)
-		{
-			const auto& bluePrintInstances = graph.myBluePrintInstances;
-
-			for (unsigned int i = 0; i < bluePrintInstances.size(); ++i)
-			{
-				myCurrentBluePrintInstance = bluePrintInstances[i];
-				for (auto& nodeInstance : graph.myNodeInstances)
-				{
-					if (nodeInstance->myNodeType->IsStartNode())
-						nodeInstance->Enter();
-				}
-			}
-		}
-	}
-}
-
-void CGraphManager::Update()
-{
-	if (myGraphs.size() > 0)
-	{
-		CGraphNodeTimerManager::Get()->Update();
-
-		PreFrame();
-#ifdef _DEBUG
-		if (myRenderGraph)
-		{
-			ConstructEditorTreeAndConnectLinks();
-			PostFrame();
-			ImGui::End();
-		}
-#endif
-	}
 }
 
 CGameObject* CGraphManager::GetCurrentGameObject()
@@ -229,50 +162,33 @@ CNodeInstance* CGraphManager::GetNodeFromPinID(unsigned int anID)
 		std::vector<SPin>& pins = nodeInstance->GetPins();
 
 		for (auto& pin : pins)
+		{
 			if (pin.myUID.AsInt() == anID)
 				return nodeInstance;
+		}
 	}
 	return nullptr;
 }
 
-void CGraphManager::WillBeCyclic(CNodeInstance* aFirst, bool& aIsCyclic, CNodeInstance* aBase)
+void CGraphManager::Update()
 {
-	if (aFirst == nullptr)
-		return;
-
-	if (aBase == nullptr)
-		return;
-
-	if (aIsCyclic)
-		return;
-
-	std::vector<SPin>& pins = aFirst->GetPins();
-	for (auto& pin : pins)
+	if (myGraphs.size() > 0)
 	{
-		if (pin.myPinType == SPin::EPinTypeInOut::EPinTypeInOut_OUT)
+		CGraphNodeTimerManager::Get()->Update();
+
+		PreFrame();
+
+		if (myRenderGraph)
 		{
-			std::vector< SNodeInstanceLink*> links = aFirst->GetLinkFromPin(pin.myUID.AsInt());
-			if (links.size() == 0)
-				return;
-
-			for (auto& link : links)
-			{
-				CNodeInstance* connectedNodeToOutPut = GetNodeFromPinID(link->myToPinID);
-
-				if (connectedNodeToOutPut == aBase)
-				{
-					aIsCyclic |= true;
-					return;
-				}
-				WillBeCyclic(connectedNodeToOutPut, aIsCyclic, aBase);
-			}
+			ConstructEditorTreeAndConnectLinks();
+			PostFrame();
+			ImGui::End();
 		}
 	}
 }
 
 void CGraphManager::PreFrame()
 {
-#ifdef _DEBUG
 	if (myRenderGraph)
 	{
 		auto& io = ImGui::GetIO();
@@ -314,166 +230,13 @@ void CGraphManager::PreFrame()
 		nodeInstance->DebugUpdate();
 		nodeInstance->VisualUpdate(CTimer::Dt());
 	}
-#endif
 
-	ReTriggerUpdatingTrees();
+	TriggerNodeGraphs();
 
-#ifdef _DEBUG
 	if (myRenderGraph)
 	{
 		ed::SetCurrentEditor(g_Context);
 		ed::Begin("My Editor", ImVec2(0.0, 0.0f));
-	}
-#endif
-}
-
-bool ArePinTypesCompatible(SPin& aFirst, SPin& aSecond)
-{
-	if ((aFirst.myVariableType == SPin::EPinType::EFlow && aSecond.myVariableType != SPin::EPinType::EFlow))
-		return false;
-	if ((aSecond.myVariableType == SPin::EPinType::EFlow && aFirst.myVariableType != SPin::EPinType::EFlow))
-		return false;
-
-	return true;
-}
-
-void CGraphManager::LoadDataNodesFromFile()
-{
-	Document document;
-	{
-		std::string path = mySceneFolder + "CustomDataNodes.json";
-		document = CJsonReader::Get()->LoadDocument(path);
-		if (CJsonReader::IsValid(document, { "Custom Data" }))
-		{
-			auto nodeInstances = document["Custom Data"].GetArray();
-
-			for (unsigned int i = 0; i < nodeInstances.Size(); ++i)
-			{
-				if (nodeInstances[i].HasMember("Type"))
-				{
-					myNewVariableType = nodeInstances[i]["Type"].GetString();
-
-					RegisterNewDataNode(nodeInstances[i]["Data key"].GetString());
-				}
-			}
-		}
-	}
-}
-
-void CGraphManager::RegisterNewDataNode(std::string aName)
-{
-	if (myNewVariableType == "Float")
-	{
-		float value = 0.0f;
-		CNodeTypeCollector::RegisterNewDataType(aName, static_cast<int>(CNodeDataManager::EDataType::EFloat));
-		CNodeDataManager::Get()->SetData(aName, CNodeDataManager::EDataType::EFloat, value);
-	}
-	else if (myNewVariableType == "Int")
-	{
-		int value = 0;
-		CNodeTypeCollector::RegisterNewDataType(aName, static_cast<int>(CNodeDataManager::EDataType::EInt));
-		CNodeDataManager::Get()->SetData(aName, CNodeDataManager::EDataType::EInt, value);
-	}
-	else if (myNewVariableType == "Bool")
-	{
-		bool value = false;
-		CNodeTypeCollector::RegisterNewDataType(aName, static_cast<int>(CNodeDataManager::EDataType::EBool));
-		CNodeDataManager::Get()->SetData(aName, CNodeDataManager::EDataType::EBool, value);
-	}
-	else if (myNewVariableType == "Start")
-	{
-		bool value = false;
-		CNodeTypeCollector::RegisterNewDataType(aName, static_cast<int>(CNodeDataManager::EDataType::EStart));
-		CNodeDataManager::Get()->SetData(aName, CNodeDataManager::EDataType::EStart, value);
-	}
-	else if (myNewVariableType == "Vector 3")
-	{
-		Vector3 value = { 0.0f,0.0f,0.0f };
-		CNodeTypeCollector::RegisterNewDataType(aName, static_cast<int>(CNodeDataManager::EDataType::EVector3));
-		CNodeDataManager::Get()->SetData(aName, CNodeDataManager::EDataType::EVector3, value);
-	}
-	myCustomDataNodes.push_back(aName);
-}
-
-void CGraphManager::CurrentGraph(CGraphManager::SGraph* aGraph)
-{
-	myCurrentGraph = aGraph;
-}
-
-void CGraphManager::Graph(SGraph aGraph)
-{
-	myGraphs.push_back(aGraph);
-}
-
-CGraphManager::SGraph CGraphManager::Graph(unsigned int anIndex)
-{
-	return myGraphs[anIndex];
-}
-
-void CGraphManager::Graph(SGraph aGraph, unsigned int anIndex)
-{
-	myGraphs[anIndex] = aGraph;
-}
-
-#ifdef _DEBUG
-CGraphManager::EditorCommand CGraphManager::CreateInverseEditorCommand(CGraphManager::EditorCommand &anEditorCommand)
-{
-	EditorCommand inverseCommand = anEditorCommand;
-	SPin* firstPin;
-	SPin* secondPin;
-
-	switch (anEditorCommand.myAction)
-	{
-	case CGraphManager::ECommandAction::ECreate:
-	{
-		inverseCommand.myAction = ECommandAction::EDelete;
-		ed::DeleteNode(anEditorCommand.myResourceUID);
-	}
-	break;
-	case CGraphManager::ECommandAction::EDelete:
-	{
-		inverseCommand.myAction = ECommandAction::ECreate;
-		myCurrentGraph->myNodeInstances.push_back(anEditorCommand.myNodeInstance);
-	}
-	break;
-	case CGraphManager::ECommandAction::EAddLink:
-	{
-		inverseCommand.myAction = ECommandAction::ERemoveLink;
-		ed::DeleteLink(anEditorCommand.myEditorLinkInfo.myID);
-	}
-	break;
-	case CGraphManager::ECommandAction::ERemoveLink:
-	{
-		inverseCommand.myAction = ECommandAction::EAddLink;
-		anEditorCommand.myNodeInstance->AddLinkToVia(anEditorCommand.mySecondNodeInstance, static_cast<unsigned int>(anEditorCommand.myEditorLinkInfo.myInputID.Get()), static_cast<unsigned int>(anEditorCommand.myEditorLinkInfo.myOutputID.Get()), anEditorCommand.myResourceUID);
-		anEditorCommand.mySecondNodeInstance->AddLinkToVia(anEditorCommand.myNodeInstance, static_cast<unsigned int>(anEditorCommand.myEditorLinkInfo.myOutputID.Get()), static_cast<unsigned int>(anEditorCommand.myEditorLinkInfo.myInputID.Get()), anEditorCommand.myResourceUID);
-
-		firstPin = anEditorCommand.myNodeInstance->GetPinFromID(static_cast<unsigned int>(anEditorCommand.myEditorLinkInfo.myInputID.Get()));
-		secondPin = anEditorCommand.mySecondNodeInstance->GetPinFromID(static_cast<unsigned int>(anEditorCommand.myEditorLinkInfo.myOutputID.Get()));
-
-		if (firstPin->myPinType == SPin::EPinTypeInOut::EPinTypeInOut_IN)
-			myCurrentGraph->myLinks.push_back({ anEditorCommand.myEditorLinkInfo.myID, anEditorCommand.myEditorLinkInfo.myInputID, anEditorCommand.myEditorLinkInfo.myOutputID });
-		else
-			myCurrentGraph->myLinks.push_back({ anEditorCommand.myEditorLinkInfo.myID, anEditorCommand.myEditorLinkInfo.myOutputID, anEditorCommand.myEditorLinkInfo.myInputID });
-	}
-	break;
-	default:
-		break;
-	}
-	return inverseCommand;
-}
-
-void CGraphManager::DeleteNodeType(CNodeInstance& aNodeInstance)
-{
-	aNodeInstance.myNodeType->ClearNodeInstanceFromMap(&aNodeInstance);
-	std::vector<SNodeInstanceLink> links = (&aNodeInstance)->GetLinks();
-	for (auto& link : links)
-	{
-		CNodeInstance* firstNode = GetNodeFromPinID(static_cast<unsigned int>(link.myFromPinID));
-		CNodeInstance* secondNode = GetNodeFromPinID(static_cast<unsigned int>(link.myToPinID));
-
-		firstNode->RemoveLinkToVia(secondNode, static_cast<unsigned int>(link.myFromPinID));
-		secondNode->RemoveLinkToVia(firstNode, static_cast<unsigned int>(link.myToPinID));
 	}
 }
 
@@ -510,7 +273,7 @@ void CGraphManager::CreateNewDataNode()
 			}
 			if (!hasCreatedNewVariable)
 			{
-				RegisterNewDataNode(buffer);
+				CNodeDataManager::Get()->RegisterNewDataNode(buffer, *this);
 				CNodeDataManager::Get()->SaveDataTypesToJson();
 				ZeroMemory(buffer, 64);
 				hasCreatedNewVariable = false;
@@ -520,21 +283,118 @@ void CGraphManager::CreateNewDataNode()
 	}
 }
 
-void CGraphManager::PopulateNodeList(std::vector<CNodeType*>& aNodeListToFill, CNodeType**& aNodeTypeList, const unsigned int& aNumberOfNodes)
+void CGraphManager::TriggerNodeGraphs()
 {
-	for (unsigned int i = 0; i < aNumberOfNodes; i++)
+	if (myRunScripts)
 	{
-		std::string first = aNodeTypeList[i]->NodeName();
-		std::transform(first.begin(), first.end(), first.begin(), [](unsigned char c) { return static_cast<unsigned char>(std::tolower(c)); });
-		std::string second = myMenuSearchField;
-		std::transform(second.begin(), second.end(), second.begin(), [](unsigned char c) { return static_cast<unsigned char>(std::tolower(c)); });
+		for (const auto& graph : myGraphs)
+		{
+			const auto& bluePrintInstances = graph.myBluePrintInstances;
 
-		if (first.find(second) != std::string::npos)
-			aNodeListToFill.push_back(aNodeTypeList[i]);
+			for (unsigned int i = 0; i < bluePrintInstances.size(); ++i)
+			{
+				myCurrentBluePrintInstance = bluePrintInstances[i];
+				for (auto& nodeInstance : graph.myNodeInstances)
+				{
+					if (nodeInstance->myNodeType->IsStartNode())
+						nodeInstance->Enter();
+				}
+			}
+		}
 	}
 }
 
-void CGraphManager::Construct()
+CGraphManager::SEditorCommand CGraphManager::CreateInverseEditorCommand(SEditorCommand& anEditorCommand)
+{
+	SEditorCommand inverseCommand = anEditorCommand;
+	SPin* firstPin;
+	SPin* secondPin;
+
+	switch (anEditorCommand.myAction)
+	{
+	case CGraphManager::ECommandAction::ECreate:
+	{
+		inverseCommand.myAction = ECommandAction::EDelete;
+		ed::DeleteNode(anEditorCommand.myResourceUID);
+	}
+	break;
+	case CGraphManager::ECommandAction::EDelete:
+	{
+		inverseCommand.myAction = ECommandAction::ECreate;
+		myCurrentGraph->myNodeInstances.push_back(anEditorCommand.myFirstNodeInstance);
+	}
+	break;
+	case CGraphManager::ECommandAction::EAddLink:
+	{
+		inverseCommand.myAction = ECommandAction::ERemoveLink;
+		ed::DeleteLink(anEditorCommand.myEditorLinkInfo.myID);
+	}
+	break;
+	case CGraphManager::ECommandAction::ERemoveLink:
+	{
+		inverseCommand.myAction = ECommandAction::EAddLink;
+		anEditorCommand.myFirstNodeInstance->AddLinkToVia(anEditorCommand.mySecondNodeInstance, static_cast<unsigned int>(anEditorCommand.myEditorLinkInfo.myInputID.Get()), static_cast<unsigned int>(anEditorCommand.myEditorLinkInfo.myOutputID.Get()), anEditorCommand.myResourceUID);
+		anEditorCommand.mySecondNodeInstance->AddLinkToVia(anEditorCommand.myFirstNodeInstance, static_cast<unsigned int>(anEditorCommand.myEditorLinkInfo.myOutputID.Get()), static_cast<unsigned int>(anEditorCommand.myEditorLinkInfo.myInputID.Get()), anEditorCommand.myResourceUID);
+
+		firstPin = anEditorCommand.myFirstNodeInstance->GetPinFromID(static_cast<unsigned int>(anEditorCommand.myEditorLinkInfo.myInputID.Get()));
+		secondPin = anEditorCommand.mySecondNodeInstance->GetPinFromID(static_cast<unsigned int>(anEditorCommand.myEditorLinkInfo.myOutputID.Get()));
+
+		if (firstPin->myPinType == SPin::EPinTypeInOut::EPinTypeInOut_IN)
+			myCurrentGraph->myLinks.push_back({ anEditorCommand.myEditorLinkInfo.myID, anEditorCommand.myEditorLinkInfo.myInputID, anEditorCommand.myEditorLinkInfo.myOutputID });
+		else
+			myCurrentGraph->myLinks.push_back({ anEditorCommand.myEditorLinkInfo.myID, anEditorCommand.myEditorLinkInfo.myOutputID, anEditorCommand.myEditorLinkInfo.myInputID });
+	}
+	break;
+	default:
+		break;
+	}
+	return inverseCommand;
+}
+
+void CGraphManager::DeleteNodeType(CNodeInstance& aNodeInstance)
+{
+	aNodeInstance.myNodeType->ClearNodeInstanceFromMap(&aNodeInstance);
+	std::vector<SNodeInstanceLink> links = (&aNodeInstance)->GetLinks();
+
+	for (auto& link : links)
+	{
+		CNodeInstance* firstNode = GetNodeFromPinID(static_cast<unsigned int>(link.myFromPinID));
+		CNodeInstance* secondNode = GetNodeFromPinID(static_cast<unsigned int>(link.myToPinID));
+
+		firstNode->RemoveLinkToVia(secondNode, static_cast<unsigned int>(link.myFromPinID));
+		secondNode->RemoveLinkToVia(firstNode, static_cast<unsigned int>(link.myToPinID));
+	}
+}
+
+void CGraphManager::ConstructEditorTreeAndConnectLinks()
+{
+	myPinDrawer->DrawNodes();
+
+	if (!myRunScripts)
+	{
+		AddNodeLinks();
+		DeleteLinksOrNodes();
+
+		CreateNewNode();
+
+		myPushCommand = true;
+
+		UndoRedoActions();
+	}
+}
+
+bool ArePinTypesCompatible(SPin& aFirst, SPin& aSecond)
+{
+	if ((aFirst.myVariableType == SPin::EPinType::EFlow && aSecond.myVariableType != SPin::EPinType::EFlow))
+		return false;
+
+	if ((aSecond.myVariableType == SPin::EPinType::EFlow && aFirst.myVariableType != SPin::EPinType::EFlow))
+		return false;
+
+	return true;
+}
+
+void CGraphManager::AddNodeLinks()
 {
 	if (ed::BeginCreate())
 	{
@@ -559,48 +419,49 @@ void CGraphManager::Construct()
 
 						bool canAddlink = true;
 						if (firstPin && secondPin)
+						{
 							if (firstPin->myPinType == SPin::EPinTypeInOut::EPinTypeInOut_IN && secondPin->myPinType == SPin::EPinTypeInOut::EPinTypeInOut_IN)
 								canAddlink = false;
 
-						if (!ArePinTypesCompatible(*firstPin, *secondPin))
-							canAddlink = false;
+							if (!ArePinTypesCompatible(*firstPin, *secondPin))
+								canAddlink = false;
 
-						if (!firstNode->CanAddLink(inputPinID))
-							canAddlink = false;
+							if (!firstNode->CanAddLink(inputPinID))
+								canAddlink = false;
 
-						if (!secondNode->CanAddLink(outputPinID))
-							canAddlink = false;
+							if (!secondNode->CanAddLink(outputPinID))
+								canAddlink = false;
 
-						if (firstNode->HasLinkBetween(inputPinID, outputPinID))
-							canAddlink = false;
+							if (firstNode->HasLinkBetween(inputPinID, outputPinID))
+								canAddlink = false;
 
-
-						if (canAddlink)
-						{
-							if (secondPin->myVariableType == SPin::EPinType::EUnknown)
-								secondNode->ChangePinTypes(firstPin->myVariableType);
-
-							unsigned int linkId = ++myCurrentGraph->myNextLinkIdCounter;
-							firstNode->AddLinkToVia(secondNode, inputPinID, outputPinID, linkId);
-							secondNode->AddLinkToVia(firstNode, outputPinID, inputPinID, linkId);
-
-							bool aIsCyclic = false;
-							WillBeCyclic(firstNode, aIsCyclic, firstNode);
-							if (aIsCyclic || !canAddlink)
+							if (canAddlink)
 							{
-								firstNode->RemoveLinkToVia(secondNode, inputPinID);
-								secondNode->RemoveLinkToVia(firstNode, outputPinID);
-							}
-							else
-							{
-								if (firstPin->myPinType == SPin::EPinTypeInOut::EPinTypeInOut_IN)
-									myCurrentGraph->myLinks.push_back({ ed::LinkId(linkId), outputPinId, inputPinId });
+								if (secondPin->myVariableType == SPin::EPinType::EUnknown)
+									secondNode->ChangePinTypes(firstPin->myVariableType);
+
+								unsigned int linkId = ++myCurrentGraph->myNextLinkIdCounter;
+								firstNode->AddLinkToVia(secondNode, inputPinID, outputPinID, linkId);
+								secondNode->AddLinkToVia(firstNode, outputPinID, inputPinID, linkId);
+
+								bool aIsCyclic = false;
+								WillBeCyclic(firstNode, aIsCyclic, firstNode);
+								if (aIsCyclic || !canAddlink)
+								{
+									firstNode->RemoveLinkToVia(secondNode, inputPinID);
+									secondNode->RemoveLinkToVia(firstNode, outputPinID);
+								}
 								else
-									myCurrentGraph->myLinks.push_back({ ed::LinkId(linkId), inputPinId, outputPinId });
+								{
+									if (firstPin->myPinType == SPin::EPinTypeInOut::EPinTypeInOut_IN)
+										myCurrentGraph->myLinks.push_back({ ed::LinkId(linkId), outputPinId, inputPinId });
+									else
+										myCurrentGraph->myLinks.push_back({ ed::LinkId(linkId), inputPinId, outputPinId });
 
-								myUndoCommands.push({ ECommandAction::EAddLink, firstNode, secondNode, myCurrentGraph->myLinks.back(), 0 });
+									myUndoCommands.push({ ECommandAction::EAddLink, firstNode, secondNode, myCurrentGraph->myLinks.back(), 0 });
 
-								mySave = true;
+									mySave = true;
+								}
 							}
 						}
 					}
@@ -611,7 +472,41 @@ void CGraphManager::Construct()
 	ed::EndCreate();
 }
 
-void CGraphManager::Delete()
+void CGraphManager::WillBeCyclic(CNodeInstance* aFirst, bool& aIsCyclic, CNodeInstance* aBase)
+{
+	if (aFirst == nullptr)
+		return;
+
+	if (aBase == nullptr)
+		return;
+
+	if (aIsCyclic)
+		return;
+
+	std::vector<SPin>& pins = aFirst->GetPins();
+	for (auto& pin : pins)
+	{
+		if (pin.myPinType == SPin::EPinTypeInOut::EPinTypeInOut_OUT)
+		{
+			std::vector< SNodeInstanceLink*> links = aFirst->GetLinkFromPin(pin.myUID.AsInt());
+			if (links.size() == 0)
+				return;
+
+			for (auto& link : links)
+			{
+				CNodeInstance* connectedNodeToOutPut = GetNodeFromPinID(link->myToPinID);
+				if (connectedNodeToOutPut == aBase)
+				{
+					aIsCyclic |= true;
+					return;
+				}
+				WillBeCyclic(connectedNodeToOutPut, aIsCyclic, aBase);
+			}
+		}
+	}
+}
+
+void CGraphManager::DeleteLinksOrNodes()
 {
 	if (ed::BeginDelete())
 	{
@@ -653,14 +548,12 @@ void CGraphManager::Delete()
 				{
 					if ((*it)->myUID.AsInt() == nodeId.Get())
 					{
-
 						(*it)->myNodeType->ClearNodeInstanceFromMap((*it));
 						if (myPushCommand)
 						{
 							mySave = true;
 							myUndoCommands.push({ ECommandAction::EDelete, (*it), nullptr,  {0,0,0}, (*it)->myUID.AsInt() });
 						}
-
 						it = myCurrentGraph->myNodeInstances.erase(it);
 					}
 					else
@@ -670,45 +563,6 @@ void CGraphManager::Delete()
 		}
 	}
 	ed::EndDelete();
-}
-
-void CGraphManager::UndoRedo()
-{
-	if (ed::BeginShortcut())
-	{
-		if (ed::AcceptCopy())
-			mySaveLoadGraphManager->SaveNodesToClipboard(*this);
-
-		if (ed::AcceptPaste())
-			mySaveLoadGraphManager->LoadNodesFromClipboard(*this);
-
-		if (ed::AcceptUndo())
-		{
-			if (!myUndoCommands.empty())
-			{
-				myPushCommand = false;
-				ed::ResetShortCutAction();
-				auto& command = myUndoCommands.top();
-				myUndoCommands.pop();
-				mySave = true;
-				mySaveLoadGraphManager->LoadNodesFromClipboard(*this);
-				myRedoCommands.push(CreateInverseEditorCommand(command));
-			}
-		}
-
-		if (ed::AcceptRedo())
-		{
-			if (!myRedoCommands.empty())
-			{
-				myPushCommand = false;
-				ed::ResetShortCutAction();
-				auto& command = myRedoCommands.top();
-				myRedoCommands.pop();
-				mySave = true;
-				myUndoCommands.push(CreateInverseEditorCommand(command));
-			}
-		}
-	}
 }
 
 void CGraphManager::CreateNewNode()
@@ -778,7 +632,6 @@ void CGraphManager::CreateNewNode()
 				if (ImGui::MenuItem(found[i]->NodeName().c_str()))
 				{
 					node = new CNodeInstance(this);
-
 					node->myNodeType = found[i];
 					node->CheckIfInputNode();
 					node->ConstructUniquePins();
@@ -852,7 +705,6 @@ void CGraphManager::CreateNewNode()
 					}
 					else
 					{
-
 						for (int i = 0; i < category.second.size(); i++)
 						{
 							if (category.second[i] == nullptr)
@@ -896,7 +748,59 @@ void CGraphManager::CreateNewNode()
 	ed::Resume();
 }
 
+void CGraphManager::PopulateNodeList(std::vector<CNodeType*>& aNodeListToFill, CNodeType**& aNodeTypeList, const unsigned int& aNumberOfNodes)
+{
+	for (unsigned int i = 0; i < aNumberOfNodes; i++)
+	{
+		std::string first = aNodeTypeList[i]->NodeName();
+		std::transform(first.begin(), first.end(), first.begin(), [](unsigned char c) { return static_cast<unsigned char>(std::tolower(c)); });
 
+		std::string second = myMenuSearchField;
+		std::transform(second.begin(), second.end(), second.begin(), [](unsigned char c) { return static_cast<unsigned char>(std::tolower(c)); });
+
+		if (first.find(second) != std::string::npos)
+			aNodeListToFill.push_back(aNodeTypeList[i]);
+	}
+}
+
+void CGraphManager::UndoRedoActions()
+{
+	if (ed::BeginShortcut())
+	{
+		if (ed::AcceptCopy())
+			mySaveLoadGraphManager->SaveNodesToClipboard(*this);
+
+		if (ed::AcceptPaste())
+			mySaveLoadGraphManager->LoadNodesFromClipboard(*this);
+
+		if (ed::AcceptUndo())
+		{
+			if (!myUndoCommands.empty())
+			{
+				myPushCommand = false;
+				ed::ResetShortCutAction();
+				auto& command = myUndoCommands.top();
+				myUndoCommands.pop();
+				mySave = true;
+				mySaveLoadGraphManager->LoadNodesFromClipboard(*this);
+				myRedoCommands.push(CreateInverseEditorCommand(command));
+			}
+		}
+		
+		if (ed::AcceptRedo())
+		{
+			if (!myRedoCommands.empty())
+			{
+				myPushCommand = false;
+				ed::ResetShortCutAction();
+				auto& command = myRedoCommands.top();
+				myRedoCommands.pop();
+				mySave = true;
+				myUndoCommands.push(CreateInverseEditorCommand(command));
+			}
+		}
+	}
+}
 
 void CGraphManager::PostFrame()
 {
@@ -917,21 +821,3 @@ void CGraphManager::PostFrame()
 	ed::End();
 	ed::SetCurrentEditor(nullptr);
 }
-
-void CGraphManager::ConstructEditorTreeAndConnectLinks()
-{
-	myPinDrawer->DrawNodes();
-
-	if (!myRunScripts)
-	{
-		Construct();
-		Delete();
-
-		CreateNewNode();
-
-		myPushCommand = true;
-
-		UndoRedo();
-	}
-}
-#endif
