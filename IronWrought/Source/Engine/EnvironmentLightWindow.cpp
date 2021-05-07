@@ -9,6 +9,7 @@
 IronWroughtImGui::CEnvironmentLightWindow::CEnvironmentLightWindow(const char* aName)
 	: CWindow(aName)
 	, myColor(Vector3::One)
+	, myIntensity(1.0f)
 	, myNumberOfSamples(16.0f)
 	, myLightPower(100000.0f)
 	, myScatteringProbability(0.001f)
@@ -46,9 +47,14 @@ void IronWroughtImGui::CEnvironmentLightWindow::OnInspectorGUI()
 
 	float imguiVector3[3];
 	memcpy(&imguiVector3[0], &myColor, sizeof(Vector3));
-	ImGui::ColorEdit3("Start Color", &imguiVector3[0]);
+	ImGui::ColorEdit3("Light Color", &imguiVector3[0]);
 	memcpy(&myColor, &imguiVector3[0], sizeof(Vector3));
 	light->SetColor(myColor);
+
+	if (ImGui::SliderFloat("Light Intensity", &myIntensity, 0.0f, 20.0f, "%.1f"))
+	{
+		light->SetIntensity(myIntensity);
+	}
 
 	ImGui::Dummy({ 0.0f, 10.0f });
 

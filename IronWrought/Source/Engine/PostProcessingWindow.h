@@ -3,6 +3,13 @@
 
 namespace IronWroughtImGui {
 
+	enum class EToneMappingAlgorithm
+	{
+		Reinhard,
+		Uncharted,
+		ACES
+	};
+
 	class CPostProcessingWindow : public CWindow
 	{
 	public:
@@ -13,6 +20,13 @@ namespace IronWroughtImGui {
 		void OnDisable() override;
 
 	private:
+		Vector4 myWhitePointColor;
+		float myWhitePointIntensity;
+		float myExposure;
+		bool myIsReinhard;
+		bool myIsUncharted;
+		bool myIsACES;
+
 		float mySSAORadius;
 		float mySSAOSampleBias;
 		float mySSAOMagnitude;

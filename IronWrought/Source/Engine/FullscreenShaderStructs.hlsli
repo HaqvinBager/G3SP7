@@ -27,10 +27,19 @@ cbuffer FullscreenBuffer : register(b0)
 
 cbuffer PostProcessingBuffer : register(b2)
 {
+    float4 myWhitePointColor;
+    float myWhitePointIntensity;
+    float myExposure;
     float mySSAORadius;
     float mySSAOSampleBias;
     float mySSAOMagnitude;
     float mySSAOContrast;
+		
+    int myIsReinhard;
+    int myIsUncharted;
+    int myIsACES;
+
+    float myPadding[3];
 }
 
 Texture2D fullscreenTexture1 : register(t0);

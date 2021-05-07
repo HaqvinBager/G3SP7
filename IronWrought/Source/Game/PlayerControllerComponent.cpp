@@ -14,6 +14,7 @@
 
 #include "PlayerAnimationController.h"
 #include "PlayerComponent.h"
+#include "ModelComponent.h"
 
 #include "RigidBodyComponent.h"
 #include "RigidDynamicBody.h"
@@ -84,6 +85,8 @@ void CPlayerControllerComponent::Awake()
 void CPlayerControllerComponent::Start()
 {
 	SetRespawnPosition();
+	CMainSingleton::PostMaster().Subscribe(PostMaster::MSG_DISABLE_GLOVE, this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::MSG_ENABLE_GLOVE, this);
 }
 
 void CPlayerControllerComponent::Update()
@@ -188,6 +191,21 @@ void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
 	}
 
 	myMovement.y = y;
+}
+
+void CPlayerControllerComponent::Receive(const SStringMessage& aMsg)
+{
+	if (PostMaster::DisableGravityGlove(aMsg.myMessageType))
+	{
+		myCamera->GameObject().GetComponent<CModelComponent>()->Enabled(false);
+		myCamera->GameObject().GetComponent<CAnimationComponent>()->Enabled(false);
+	}
+
+	if (PostMaster::EnableGravityGlove(aMsg.myMessageType))
+	{
+		myCamera->GameObject().GetComponent<CModelComponent>()->Enabled(true);
+		myCamera->GameObject().GetComponent<CAnimationComponent>()->Enabled(true);
+	}
 }
 
 void CPlayerControllerComponent::ControllerUpdate()

@@ -15,3 +15,13 @@ const bool PostMaster::LevelCheck(const char* aStringMessageToCheck)
 		return false;
 	}
 }
+
+const bool PostMaster::DisableGravityGlove(const char* aStringMsg)
+{
+	return strcmp(aStringMsg, MSG_DISABLE_GLOVE) == 0;
+}
+
+const bool PostMaster::EnableGravityGlove(const char* aStringMsg)
+{
+	return strcmp(aStringMsg, MSG_ENABLE_GLOVE) == 0;
+}

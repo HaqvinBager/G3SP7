@@ -57,6 +57,7 @@ void CInGameState::Awake()
 	CMainSingleton::PostMaster().Subscribe("Level_1-2", this);
 	CMainSingleton::PostMaster().Subscribe("Level_2-1", this);
 	CMainSingleton::PostMaster().Subscribe("Level_2-2", this);
+
 }
 
 
@@ -67,6 +68,9 @@ void CInGameState::Start()
 	IRONWROUGHT->GetActiveScene().CanvasIsHUD();
 	IRONWROUGHT->HideCursor();
 	myExitLevel = false;
+
+	CMainSingleton::PostMaster().Subscribe(PostMaster::MSG_DISABLE_GLOVE, this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::MSG_ENABLE_GLOVE, this);
 }
 
 void CInGameState::Stop()
@@ -74,22 +78,25 @@ void CInGameState::Stop()
 	IRONWROUGHT->RemoveScene(myState);
 	CMainSingleton::CollisionManager().ClearColliders();
 	myEnemyAnimationController->Deactivate();
+
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::MSG_DISABLE_GLOVE, this);
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::MSG_ENABLE_GLOVE, this);
 }
 
 void CInGameState::Update()
 {
-
 	if (Input::GetInstance()->IsKeyPressed(VK_ESCAPE))
 	{
 		myStateStack.PushState(CStateStack::EState::PauseMenu);
 	}
+
+	DEBUGFunctionality();
 
 	if (myExitLevel)
 	{
 		myExitLevel = false;
 		myStateStack.PopTopAndPush(CStateStack::EState::LoadLevel);
 	}
-
 }
 
 void CInGameState::ReceiveEvent(const EInputEvent aEvent)
@@ -113,6 +120,15 @@ void CInGameState::Receive(const SStringMessage& aMessage)
 	{
 		myExitLevel = true;
 	}
+
+	if (PostMaster::DisableGravityGlove(aMessage.myMessageType))
+	{
+		IRONWROUGHT->GetActiveScene().CanvasToggle(false);
+	}
+	if (PostMaster::EnableGravityGlove(aMessage.myMessageType))
+	{
+		IRONWROUGHT->GetActiveScene().CanvasToggle(true);
+	}
 	//const char* test = "Level_1-1";
 	//if (strcmp(aMessage.myMessageType, test) == 0)
 	//{
@@ -127,6 +143,26 @@ void CInGameState::Receive(const SMessage& /*aMessage*/)
 	//{
 	//	default:break;
 	//}
+}
+
+void CInGameState::DEBUGFunctionality()
+{
+#ifdef _DEBUG
+	if (Input::GetInstance()->IsKeyPressed('X'))
+	{
+		SStringMessage msg = {};
+		msg.data = nullptr;
+		msg.myMessageType = PostMaster::MSG_DISABLE_GLOVE;
+		CMainSingleton::PostMaster().Send(msg);
+	}
+	if (Input::GetInstance()->IsKeyPressed('Z'))
+	{
+		SStringMessage msg = {};
+		msg.data = nullptr;
+		msg.myMessageType = PostMaster::MSG_ENABLE_GLOVE;
+		CMainSingleton::PostMaster().Send(msg);
+	}
+#endif
 }
 
 #ifndef NDEBUG

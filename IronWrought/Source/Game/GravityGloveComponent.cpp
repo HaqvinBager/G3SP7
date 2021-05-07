@@ -33,6 +33,8 @@ CGravityGloveComponent::CGravityGloveComponent(CGameObject& aParent, CTransformC
 CGravityGloveComponent::~CGravityGloveComponent()
 {
 	myGravitySlot = nullptr;
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::MSG_DISABLE_GLOVE, this);
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::MSG_ENABLE_GLOVE, this);
 }
 
 void CGravityGloveComponent::Awake()
@@ -40,6 +42,9 @@ void CGravityGloveComponent::Awake()
 	myRigidStatic = CEngine::GetInstance()->GetPhysx().GetPhysics()->createRigidStatic({ myGravitySlot->GetWorldMatrix().Translation().x,myGravitySlot->GetWorldMatrix().Translation().y, myGravitySlot->GetWorldMatrix().Translation().z });
 	myRigidStatic->userData = (void*)GameObject().myTransform;
 	CEngine::GetInstance()->GetPhysx().GetPXScene()->addActor(*myRigidStatic);
+
+	CMainSingleton::PostMaster().Subscribe(PostMaster::MSG_DISABLE_GLOVE, this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::MSG_ENABLE_GLOVE, this);
 }
 
 void CGravityGloveComponent::Start()
@@ -265,4 +270,16 @@ void CGravityGloveComponent::OnEnable()
 
 void CGravityGloveComponent::OnDisable()
 {
+}
+
+void CGravityGloveComponent::Receive(const SStringMessage& aMessage)
+{
+	if (PostMaster::DisableGravityGlove(aMessage.myMessageType))
+	{
+		this->Enabled(false);
+	}
+	if (PostMaster::EnableGravityGlove(aMessage.myMessageType))
+	{
+		this->Enabled(true);
+	}
 }

@@ -276,17 +276,17 @@ void CAudioManager::Receive(const SMessage& aMessage) {
 	{
 		// Todo add max 3 to be playable at the same time. Can be done inside PlayRandomSoundFromCollection
 		// 
-		PlayRandomSoundFromCollection(myRobotAttackSounds, EChannel::RobotVOX);
+		PlayRandomSoundFromCollection(myRobotAttackSounds, EChannel::RobotVOX, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
 	}break;
 
 	case EMessageType::EnemyPatrolState:
 	{
-		PlayRandomSoundFromCollection(myRobotPatrollingSounds, EChannel::RobotVOX);
+		PlayRandomSoundFromCollection(myRobotPatrollingSounds, EChannel::RobotVOX, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
 	}break;
 
 	case EMessageType::EnemySeekState:
 	{
-		PlayRandomSoundFromCollection(myRobotAttackSounds, EChannel::RobotVOX);
+		PlayRandomSoundFromCollection(myRobotAttackSounds, EChannel::RobotVOX, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
 	}break;
 
 	//// VOICELINES

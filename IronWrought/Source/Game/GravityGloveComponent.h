@@ -1,6 +1,7 @@
 #pragma once
 #include "Behaviour.h"
 //#include <GravityGloveEditor.h>
+#include "Observer.h"
 
 class CTransformComponent;
 class CRigidBodyComponent;
@@ -42,7 +43,7 @@ struct SRigidBodyTarget
 	}
 };
 
-class CGravityGloveComponent : public CBehaviour
+class CGravityGloveComponent : public CBehaviour, public IStringObserver
 {
 	friend class IronWroughtImGui::CGravityGloveEditor;
 public:
@@ -58,6 +59,8 @@ public:
 
 	void OnEnable() override;
 	void OnDisable() override;
+
+	void Receive(const SStringMessage& aMessage) override;
 
 private:
 	SGravityGloveSettings mySettings;
