@@ -30,7 +30,7 @@ void CConvexMeshColliderComponent::Awake()
 			//rigidBody->GetDynamicRigidBody()->GetBody().setRigidBodyFlag(PxRigidBodyFlag::eENABLE_SPECULATIVE_CCD, true);
 		if (myShape) {
 			PxFilterData filterData;
-			filterData.word0 = CPhysXWrapper::ELayerMask::GROUP1;
+			filterData.word0 = CPhysXWrapper::ELayerMask::DYNAMIC_OBJECTS;
 			myShape->setQueryFilterData(filterData);
 			rigidBody->AttachShape(myShape);
 		}

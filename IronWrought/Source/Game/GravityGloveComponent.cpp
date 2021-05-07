@@ -158,7 +158,9 @@ void CGravityGloveComponent::Pull()
 	Vector3 start = GameObject().myTransform->GetWorldMatrix().Translation();
 	Vector3 dir = -GameObject().myTransform->GetWorldMatrix().Forward();
 
-	PxRaycastBuffer hit = CEngine::GetInstance()->GetPhysx().Raycast(start, dir, mySettings.myMaxDistance);
+	//CPhysXWrapper::ELayerMask mask = ;
+	PxRaycastBuffer hit = CEngine::GetInstance()->GetPhysx().Raycast(start, dir, mySettings.myMaxDistance, CPhysXWrapper::ELayerMask::WORLD);
+
 
 //	std::vector<CGameObject*> gameobjects = CEngine::GetInstance()->GetActiveScene().ActiveGameObjects();
 
@@ -236,7 +238,7 @@ void CGravityGloveComponent::Push()
 	} else {
 		Vector3 start = GameObject().myTransform->GetWorldMatrix().Translation();
 		Vector3 dir = -GameObject().myTransform->GetWorldMatrix().Forward();
-		PxRaycastBuffer hit = CEngine::GetInstance()->GetPhysx().Raycast(start, dir, mySettings.myMaxDistance);
+		PxRaycastBuffer hit = CEngine::GetInstance()->GetPhysx().Raycast(start, dir, mySettings.myMaxDistance, CPhysXWrapper::ELayerMask::WORLD | CPhysXWrapper::ELayerMask::ENEMY);
 		if (hit.getNbAnyHits() > 0)
 		{
 			CTransformComponent* transform = (CTransformComponent*)hit.getAnyHit(0).actor->userData;

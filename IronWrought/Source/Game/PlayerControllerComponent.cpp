@@ -49,6 +49,10 @@ CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, 
 	physx::PxShape* shape = nullptr;
 	myController->GetController().getActor()->getShapes(&shape, 1);
 	shape->setFlag(PxShapeFlag::Enum::eSCENE_QUERY_SHAPE, true);
+	
+	PxFilterData filterData;
+	filterData.word0 = CPhysXWrapper::ELayerMask::PLAYER;
+	shape->setQueryFilterData(filterData);
 
 	GameObject().myTransform->Position(myController->GetPosition());// This is a test / Aki 2021 03 12
 

@@ -27,13 +27,17 @@ public:
 	};
 
 
-	enum ELayerMask
+	enum ELayerMask : physx::PxU32
 	{
-		GROUP1 = (1 << 0),
-		GROUP2 = (1 << 1),
-		GROUP3 = (1 << 2),
-		GROUP4 = (1 << 3),
-		PLAYER = (1 << 8)
+		STATIC_ENVIRONMENT = (1 << 0),
+		DYNAMIC_OBJECTS = (1 << 1),
+		WORLD = STATIC_ENVIRONMENT | DYNAMIC_OBJECTS,	
+
+		PLAYER = (1 << 8),
+		ENEMY = (1 << 9),
+
+		//Om man lägger tilll ELayerMask Layers vill man addera dom nedan så att "all" alltid representerar alla layers //Axel Savage 2021-05-07
+		ALL = STATIC_ENVIRONMENT | DYNAMIC_OBJECTS | PLAYER | ENEMY /* | NyttLayer  */ //Axel Savage 2021-05-07
 	};
 
 public:
@@ -51,7 +55,9 @@ public:
 
 	bool TryRayCast(const Vector3& aOrigin, Vector3& aDirection, const float aDistance, PxRaycastBuffer& outHit);
 
-	PxRaycastBuffer Raycast(Vector3 origin, Vector3 direction, float distance);
+	PxRaycastBuffer Raycast(Vector3 origin, Vector3 direction, float distance, ELayerMask aLayerMask = ELayerMask::ALL);
+	PxRaycastBuffer Raycast(Vector3 origin, Vector3 direction, float distance, physx::PxU32 aLayerMask);
+
 	PxMaterial* CreateMaterial(materialfriction amaterial);
 	PxMaterial* CreateCustomMaterial(const float& aDynamicFriction, const float& aStaticFriction, const float& aBounciness);
 	CRigidDynamicBody* CreateDynamicRigidbody(const CTransformComponent& aTransform);

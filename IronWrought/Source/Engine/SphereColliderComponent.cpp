@@ -31,7 +31,7 @@ void CSphereColliderComponent::Start()
 	myShape->setLocalPose({ myPositionOffset.x, myPositionOffset.y, myPositionOffset.z });
 	myShape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, true);
 	PxFilterData filterData;
-	filterData.word0 = CPhysXWrapper::ELayerMask::GROUP1;
+	filterData.word0 = CPhysXWrapper::ELayerMask::DYNAMIC_OBJECTS;
 	myShape->setQueryFilterData(filterData);
 	CRigidBodyComponent* rigidBody = nullptr;
 	if (GameObject().TryGetComponent(&rigidBody))
