@@ -54,7 +54,7 @@ public class ExporterJson
 
 
 
-    [MenuItem("Export/Export Json")]
+    [MenuItem("Export/Export")]
     public static void ExportJson()
     {  
         if(GameObject.FindObjectOfType<PlayerSpawnPosition>() == null)
@@ -66,6 +66,7 @@ public class ExporterJson
         //string sceneName = SceneManager.GetActiveScene().name;
        // string baseSceneName = sceneName.Substring(0, sceneName.LastIndexOf('_') + 2);
         DirectoryInfo parentDirectory = Directory.GetParent(SceneManager.GetActiveScene().path);
+        ExporterBin.Export();
         Json.BeginExport(parentDirectory.Name);
 
         List<GameObject> allScenesActiveObjects = GetAllOpenedSceneActiveObjects();
@@ -115,20 +116,20 @@ public class ExporterJson
         //Especially if we put these multiple .json files in a folder!
         InstanceIDCollection instanceIDs = ExportInstanceID.Export(aSceneName);
         Json.AddToExport(instanceIDs);
-        Json.AddToExport(ExportTransform.Export(aSceneName, instanceIDs.Ids));
+        //Json.AddToExport(ExportTransform.Export(aSceneName, instanceIDs.Ids));
         Json.AddToExport(ExportVertexPaint.Export(aSceneName, instanceIDs.Ids));
-        Json.AddToExport(       ExportModel.Export(aSceneName, instanceIDs.Ids)     );
+        //Json.AddToExport(       ExportModel.Export(aSceneName, instanceIDs.Ids)     );
         Json.AddToExport(       ExportDirectionalLight.Export(aSceneName)           );
-        Json.AddToExport(       ExportPointlights.ExportPointlight(aSceneName)      );
+        //Json.AddToExport(       ExportPointlights.ExportPointlight(aSceneName)      );
         Json.AddToExport(       ExportDecals.Export(aSceneName)                     );
         Json.AddToExport(       ExportPlayer(aSceneName)                            );
         Json.AddToExport(       ExportBluePrint.Export(aSceneName)                  );
-        Json.AddToExport(       ExportCollider.Export(aSceneName, instanceIDs.Ids)  );
+        //Json.AddToExport(       ExportCollider.Export(aSceneName, instanceIDs.Ids)  );
         Json.AddToExport(       EnemyExporter.Export(aSceneName)                    );
         Json.AddToExport(       ExportParents.Export(aSceneName)                    );
         Json.AddToExport(       ExportEventTrigger.Export(aSceneName)               );
-        Json.AddToExport(       HealthPickupExporter.Export(aSceneName)             );
-        Json.AddToExport(       ExportInstancedModel.Export(aSceneName) , true      );
+        Json.AddToExport(       HealthPickupExporter.Export(aSceneName), true       );
+        //Json.AddToExport(       ExportInstancedModel.Export(aSceneName) , true      );
     }
 
     public static Player ExportPlayer(string aSceneName)

@@ -6,17 +6,20 @@
 #include "Scene.h"
 #include "RigidDynamicBody.h"
 #include "TransformComponent.h"
+#include "PlayerControllerComponent.h"
 
 #include "LineFactory.h"
 #include "LineInstance.h"
 
-CBoxColliderComponent::CBoxColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const Vector3& aBoxSize, const bool aIsTrigger, PxMaterial* aMaterial)
+CBoxColliderComponent::CBoxColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const Vector3& aBoxSize, const bool aIsTrigger, const unsigned int aLayerValue, PxMaterial* aMaterial)
 	: CBehaviour(aParent)
 	, myShape(nullptr)
 	, myPositionOffset(aPositionOffset)
 	, myBoxSize(aBoxSize)
 	, myMaterial(aMaterial)
 	, myIsTrigger(aIsTrigger)
+	, myLayerValue(aLayerValue)
+	//, myEventFilter(static_cast<EEventFilter>(aLayerValue))
 #ifdef DEBUG_COLLIDER_BOX
 	, myColliderDraw(nullptr)
 #endif
@@ -29,8 +32,8 @@ CBoxColliderComponent::CBoxColliderComponent(CGameObject& aParent, const Vector3
 CBoxColliderComponent::~CBoxColliderComponent()
 {
 #ifdef DEBUG_COLLIDER_BOX
-	//if (myColliderDraw)
-	//	delete myColliderDraw;
+	if (myColliderDraw)
+		delete myColliderDraw;
 #endif 
 }
 
@@ -43,6 +46,7 @@ void CBoxColliderComponent::Start()
 {
 }
 
+//#define DEBUG_COLLIDER_BOX
 void CBoxColliderComponent::Update()
 {
 #ifdef DEBUG_COLLIDER_BOX
@@ -64,10 +68,12 @@ void CBoxColliderComponent::Update()
 void CBoxColliderComponent::CreateBoxCollider()
 {
 	myShape = CEngine::GetInstance()->GetPhysx().GetPhysics()->createShape(physx::PxBoxGeometry(myBoxSize.x / 2.f, myBoxSize.y / 2.f, myBoxSize.z / 2.f), *myMaterial, true);
-	Vector3 colliderPos = /*GameObject().myTransform->Position() - */myPositionOffset;
-	myShape->setLocalPose({ -colliderPos.x, colliderPos.y, colliderPos.z });
+	Vector3 colliderPos =/* GameObject().myTransform->Position() +*/ myPositionOffset;
+
+
+	myShape->setLocalPose({ -colliderPos.x, colliderPos.y, -colliderPos.z });
 	PxFilterData filterData;
-	filterData.word0 =	CPhysXWrapper::ELayerMask::GROUP1;
+	filterData.word0 = static_cast<CPhysXWrapper::ELayerMask>(myLayerValue);// ::GROUP1;
 	myShape->setQueryFilterData(filterData);
 	//myShape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, true);
 
@@ -76,10 +82,10 @@ void CBoxColliderComponent::CreateBoxCollider()
 	CRigidBodyComponent* rigidBody = nullptr;
 	if (GameObject().TryGetComponent(&rigidBody))
 	{
+		//rigidBody->SetPosition(GameObject().myTransform->Position());
 		rigidBody->AttachShape(myShape);
 		rigidBody->GetDynamicRigidBody()->GetBody();
-		
-
+	
 		//dynamic.setMaxLinearVelocity(10.f);
 	}
 	else
@@ -90,8 +96,10 @@ void CBoxColliderComponent::CreateBoxCollider()
 		DirectX::SimpleMath::Matrix transform = GameObject().GetComponent<CTransformComponent>()->GetLocalMatrix();
 		transform.Decompose(scale, quat, translation);
 
-		PxVec3 pos = { translation.x, translation.y, translation.z };
+		PxVec3 pos = { translation.x, translation.y , translation.z};
+
 		PxQuat pxQuat = { quat.x, quat.y, quat.z, quat.w };
+		
 		PxRigidStatic* actor = CEngine::GetInstance()->GetPhysx().GetPhysics()->createRigidStatic({ pos, pxQuat });
 		actor->attachShape(*myShape);
 		CEngine::GetInstance()->GetPhysx().GetPXScene()->addActor(*actor);
@@ -105,18 +113,56 @@ void CBoxColliderComponent::CreateBoxCollider()
 	}
 }
 
-void CBoxColliderComponent::OnTriggerEnter()
+void CBoxColliderComponent::OnTriggerEnter(CTransformComponent* aOther)
 {
-	bool state = true;
-	SStringMessage message = { myEventMessage.c_str(), &state };
-	CMainSingleton::PostMaster().Send(message);
+	if (myEventFilter == EEventFilter::PlayerOnly)
+	{
+		if (aOther->GetComponent<CPlayerControllerComponent>() != nullptr)
+		{
+			//Send Player Has entered Collision Message here
+			bool state = true;
+			SStringMessage message = { myEventMessage.c_str(), &state };
+			CMainSingleton::PostMaster().Send(message);
+		}
+	}
+	else
+	{
+		bool state = true;
+		SStringMessage message = { myEventMessage.c_str(), &state };
+		CMainSingleton::PostMaster().Send(message);
+	}
 }
 
-void CBoxColliderComponent::OnTriggerExit()
+void CBoxColliderComponent::OnTriggerExit(CTransformComponent* aOther)
 {
-	bool state = false;
-	SStringMessage message = { myEventMessage.c_str(), &state };
-	CMainSingleton::PostMaster().Send(message);
+	if (myEventFilter == EEventFilter::PlayerOnly)
+	{
+		if (aOther->GetComponent<CPlayerControllerComponent>() != nullptr)
+		{
+			//Send Player Has entered Collision Message here
+			bool state = false;
+			SStringMessage message = { myEventMessage.c_str(), &state };
+			CMainSingleton::PostMaster().Send(message);
+		}
+	}
+	else
+	{
+		bool state = false;
+		SStringMessage message = { myEventMessage.c_str(), &state };
+		CMainSingleton::PostMaster().Send(message);
+	}
+}
+
+void CBoxColliderComponent::RegisterEventTriggerFilter(const int& anEventFilter)
+{
+	if (anEventFilter > static_cast<int>(EEventFilter::Any) && anEventFilter < static_cast<int>(EEventFilter::PlayerOnly))
+	{
+		assert(false && "EventFilter is not within enum range!");
+		myEventFilter = EEventFilter::None;
+		return;
+	}
+
+	myEventFilter = static_cast<EEventFilter>(anEventFilter);
 }
 
 void CBoxColliderComponent::OnEnable()

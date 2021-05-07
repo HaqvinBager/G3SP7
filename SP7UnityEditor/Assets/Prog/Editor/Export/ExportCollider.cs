@@ -22,6 +22,7 @@ public struct ColliderLink
     public float dynamicFriction;
     public float staticFriction;
     public float bounciness;
+    public int layer;
 }
 // 1 - BoxCollider
 // 2 - SphereCollider
@@ -56,7 +57,8 @@ public class ExportCollider : MonoBehaviour
                 link.instanceID = collider.transform.GetInstanceID();
                 link.isStatic = collider.gameObject.isStatic;
                 link.isTrigger = collider.isTrigger;
-
+                link.layer = Mathf.Max(1, collider.gameObject.layer * 32);
+   
                 Rigidbody rigidbody = collider.GetComponent<Rigidbody>();
                 link.mass = rigidbody.mass;
                 link.localMassPosition = rigidbody.centerOfMass;
@@ -66,6 +68,7 @@ public class ExportCollider : MonoBehaviour
                 link.dynamicFriction = collider.material.dynamicFriction;
                 link.staticFriction = collider.material.staticFriction;
                 link.bounciness = collider.material.bounciness;
+                
 
                 if (collider.GetType() == typeof(BoxCollider))
                 {

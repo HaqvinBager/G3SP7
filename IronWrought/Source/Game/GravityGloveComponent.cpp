@@ -33,12 +33,18 @@ CGravityGloveComponent::CGravityGloveComponent(CGameObject& aParent, CTransformC
 CGravityGloveComponent::~CGravityGloveComponent()
 {
 	myGravitySlot = nullptr;
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_DISABLE_GLOVE, this);
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_ENABLE_GLOVE, this);
 }
 
 void CGravityGloveComponent::Awake()
 {
 	myRigidStatic = CEngine::GetInstance()->GetPhysx().GetPhysics()->createRigidStatic({ myGravitySlot->GetWorldMatrix().Translation().x,myGravitySlot->GetWorldMatrix().Translation().y, myGravitySlot->GetWorldMatrix().Translation().z });
+	myRigidStatic->userData = (void*)GameObject().myTransform;
 	CEngine::GetInstance()->GetPhysx().GetPXScene()->addActor(*myRigidStatic);
+
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_DISABLE_GLOVE, this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_ENABLE_GLOVE, this);
 }
 
 void CGravityGloveComponent::Start()
@@ -68,7 +74,6 @@ void CGravityGloveComponent::Update()
 		float maxDistance = mySettings.myMaxDistance;
 
 		mySettings.myCurrentDistanceInverseLerp = min(1.0f, InverseLerp(0.0f, maxDistance, distance));
-
 
 		if (mySettings.myCurrentDistanceInverseLerp < 0.1f)
 		{
@@ -108,7 +113,8 @@ void CGravityGloveComponent::Update()
 					data.myIndex = 0;
 					data.myShouldBeReversed = true;
 					CMainSingleton::PostMaster().Send({ EMessageType::UpdateCrosshair, &data });
-					CMainSingleton::PostMaster().Send({ EMessageType::GravityGlovePull, nullptr });
+					bool released = true;
+					CMainSingleton::PostMaster().Send({ EMessageType::GravityGlovePull, &released });
 				}
 			}
 		}
@@ -143,7 +149,8 @@ void CGravityGloveComponent::Pull()
 		data.myIndex = 0;
 		data.myShouldBeReversed = true;
 		CMainSingleton::PostMaster().Send({ EMessageType::UpdateCrosshair, &data });
-		CMainSingleton::PostMaster().Send({ EMessageType::GravityGlovePull, nullptr });
+		bool released = true;
+		CMainSingleton::PostMaster().Send({ EMessageType::GravityGlovePull, &released });
 
 		return;
 	}
@@ -151,7 +158,10 @@ void CGravityGloveComponent::Pull()
 	Vector3 start = GameObject().myTransform->GetWorldMatrix().Translation();
 	Vector3 dir = -GameObject().myTransform->GetWorldMatrix().Forward();
 
-	PxRaycastBuffer hit = CEngine::GetInstance()->GetPhysx().Raycast(start, dir, mySettings.myMaxDistance);
+	//CPhysXWrapper::ELayerMask mask = ;
+	PxRaycastBuffer hit = CEngine::GetInstance()->GetPhysx().Raycast(start, dir, mySettings.myMaxDistance, CPhysXWrapper::ELayerMask::WORLD);
+
+
 //	std::vector<CGameObject*> gameobjects = CEngine::GetInstance()->GetActiveScene().ActiveGameObjects();
 
 	/*for (int i = 0; i < gameobjects.size(); ++i) {
@@ -228,7 +238,7 @@ void CGravityGloveComponent::Push()
 	} else {
 		Vector3 start = GameObject().myTransform->GetWorldMatrix().Translation();
 		Vector3 dir = -GameObject().myTransform->GetWorldMatrix().Forward();
-		PxRaycastBuffer hit = CEngine::GetInstance()->GetPhysx().Raycast(start, dir, mySettings.myMaxDistance);
+		PxRaycastBuffer hit = CEngine::GetInstance()->GetPhysx().Raycast(start, dir, mySettings.myMaxDistance, CPhysXWrapper::ELayerMask::WORLD | CPhysXWrapper::ELayerMask::ENEMY);
 		if (hit.getNbAnyHits() > 0)
 		{
 			CTransformComponent* transform = (CTransformComponent*)hit.getAnyHit(0).actor->userData;
@@ -262,4 +272,16 @@ void CGravityGloveComponent::OnEnable()
 
 void CGravityGloveComponent::OnDisable()
 {
+}
+
+void CGravityGloveComponent::Receive(const SStringMessage& aMessage)
+{
+	if (PostMaster::DisableGravityGlove(aMessage.myMessageType))
+	{
+		this->Enabled(false);
+	}
+	if (PostMaster::EnableGravityGlove(aMessage.myMessageType))
+	{
+		this->Enabled(true);
+	}
 }

@@ -9,6 +9,13 @@ const bool CAudioChannel::IsPlaying() const
     return isPlaying;
 }
 
+const int CAudioChannel::PlayCount() const
+{
+    int count = 0;
+    myFModChannel->getNumChannels(&count);
+    return count;
+}
+
 void CAudioChannel::SetVolume(float aVolumeLevel)
 {
     myFModChannel->setVolume(aVolumeLevel);

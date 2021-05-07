@@ -6,3 +6,4 @@
 #include "PlayerControlWindow.h"
 #include "GravityGloveEditor.h"
 #include "EnvironmentLightWindow.h"
+#include "PostProcessingWindow.h"

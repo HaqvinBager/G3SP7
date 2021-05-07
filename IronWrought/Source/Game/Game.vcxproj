@@ -171,6 +171,7 @@
     <ClInclude Include="GravityGloveComponent.h" />
     <ClInclude Include="HealthPickupComponent.h" />
     <ClInclude Include="InGameState.h" />
+    <ClInclude Include="LoadLevelState.h" />
     <ClInclude Include="MainMenuState.h" />
     <ClInclude Include="NavMeshComponent.h" />
     <ClInclude Include="PauseMenuState.h" />
@@ -195,6 +196,7 @@
     <ClCompile Include="GravityGloveComponent.cpp" />
     <ClCompile Include="HealthPickupComponent.cpp" />
     <ClCompile Include="InGameState.cpp" />
+    <ClCompile Include="LoadLevelState.cpp" />
     <ClCompile Include="MainMenuState.cpp" />
     <ClCompile Include="NavMeshComponent.cpp" />
     <ClCompile Include="PauseMenuState.cpp" />

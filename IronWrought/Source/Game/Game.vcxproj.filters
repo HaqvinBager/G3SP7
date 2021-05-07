@@ -90,6 +90,9 @@
     <ClInclude Include="HealthPickupComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="LoadLevelState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp">
@@ -156,6 +159,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="HealthPickupComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadLevelState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -19,7 +19,7 @@ public:
 	bool CheckIfOverlap(const Vector3& aFirstPosition, const Vector3& aSecondPosition);
 private:
 	std::vector<Vector3> myPositions;
-	int myTarget;
+	int myTarget;// Suggestion: rename to myTargetIndex. Reasoning: myTarget suggests the Vec3 position. Adding Index clarifies that it is used to identify the target position. 
 };
 
 class CSeek: public CAIController 
@@ -45,4 +45,3 @@ private:
 	float myDamage;
 	CTransformComponent* myTarget;
 };
-

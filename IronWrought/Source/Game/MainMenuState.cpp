@@ -26,7 +26,6 @@ CMainMenuState::~CMainMenuState()
 void CMainMenuState::Awake()
 {
 	CScene* scene = CSceneManager::CreateMenuScene("MainMenu", ASSETPATH("Assets/Graphics/UI/JSON/UI_MainMenu.json"));
-
 	CEngine::GetInstance()->AddScene(myState, scene);
 }
 

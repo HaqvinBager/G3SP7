@@ -196,14 +196,13 @@ bool CPhysXWrapper::TryRayCast(const Vector3& aOrigin, Vector3& aDirection, cons
 	return hasHit;
 }
 
-PxRaycastBuffer CPhysXWrapper::Raycast(Vector3 aOrigin, Vector3 aDirection, float aDistance)
+PxRaycastBuffer CPhysXWrapper::Raycast(Vector3 aOrigin, Vector3 aDirection, float aDistance, ELayerMask aLayerMask)
 {
 	PxScene* scene = CEngine::GetInstance()->GetActiveScene().PXScene();
 	PxVec3 origin;
 	origin.x = aOrigin.x;
 	origin.y = aOrigin.y;
 	origin.z = aOrigin.z;
-
 
 	PxVec3 unitDir;
 	aDirection.Normalize();
@@ -214,13 +213,30 @@ PxRaycastBuffer CPhysXWrapper::Raycast(Vector3 aOrigin, Vector3 aDirection, floa
 	PxReal maxDistance = aDistance;
 	PxRaycastBuffer hit;
 	PxQueryFilterData filterData = PxQueryFilterData();
-	filterData.data.word0 = ELayerMask::GROUP1;
-	//filterData.flags.set(PxQueryFlag::eANY_HIT);
-	//PxQueryFilterData filterData(PxQueryFlag::eNO_BLOCK);
-	/*bool status = */scene->raycast(origin, unitDir, maxDistance, hit, PxHitFlag::eDEFAULT, filterData);
-	/*if (status) {
-		return hit;
-	}*/
+	filterData.data.word0 = aLayerMask;
+	scene->raycast(origin, unitDir, maxDistance, hit, PxHitFlag::eDEFAULT, filterData);
+	return hit;
+}
+
+PxRaycastBuffer CPhysXWrapper::Raycast(Vector3 aOrigin, Vector3 aDirection, float aDistance, physx::PxU32 aLayerMask)
+{
+	PxScene* scene = CEngine::GetInstance()->GetActiveScene().PXScene();
+	PxVec3 origin;
+	origin.x = aOrigin.x;
+	origin.y = aOrigin.y;
+	origin.z = aOrigin.z;
+
+	PxVec3 unitDir;
+	aDirection.Normalize();
+	unitDir.x = aDirection.x;
+	unitDir.y = aDirection.y;
+	unitDir.z = aDirection.z;
+
+	PxReal maxDistance = aDistance;
+	PxRaycastBuffer hit;
+	PxQueryFilterData filterData = PxQueryFilterData();
+	filterData.data.word0 = aLayerMask;
+	scene->raycast(origin, unitDir, maxDistance, hit, PxHitFlag::eDEFAULT, filterData);
 	return hit;
 }
 
@@ -379,7 +395,7 @@ void CPhysXWrapper::Cooking(const std::vector<CGameObject*>& gameObjectsToCook, 
 				PxShape* instancedShape = myPhysics->createShape(pMeshGeometry, *CreateMaterial(CPhysXWrapper::materialfriction::basic), true);
 
 				PxFilterData filterData;
-				filterData.word0 = CPhysXWrapper::ELayerMask::GROUP1;
+				filterData.word0 = CPhysXWrapper::ELayerMask::STATIC_ENVIRONMENT;
 				instancedShape->setQueryFilterData(filterData);
 				actor->attachShape(*instancedShape);
 				aScene->PXScene()->addActor(*actor);

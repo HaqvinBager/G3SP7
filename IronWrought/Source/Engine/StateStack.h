@@ -10,6 +10,7 @@ public:
 		MainMenu,
 		InGame,
 		PauseMenu,
+		LoadLevel,
 		NoState
 	};
 
@@ -33,5 +34,5 @@ private:
 	void Awake();//Remove,should only be called on PushState.
 
 	std::stack<CState*> myStateStack;
-	std::unordered_map<EState, CState*> myStateMap;
+	std::unordered_map<CStateStack::EState, CState*> myStateMap;
 };

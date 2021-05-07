@@ -1,5 +1,4 @@
 #pragma once
-#include <fstream>
 
 struct SVertexPaintColorData {
 	std::vector<Vector3> myColors;
@@ -21,6 +20,8 @@ struct STransformTest {
 };
 
 namespace Binary {
+
+
 	struct SInstanceID {
 		int instanceID;
 	};
@@ -82,6 +83,7 @@ namespace Binary {
 		float dynamicFriction;
 		float staticFriction;
 		float bounciness;
+		int layer;
 	};
 	struct SEnemy
 	{
@@ -99,6 +101,7 @@ namespace Binary {
 	struct SEventData
 	{
 		int instanceID;
+		int eventFilter;
 		std::string gameEvent;
 	};
 	struct SInstancedModel
@@ -111,19 +114,96 @@ namespace Binary {
 		std::vector<SInstanceID> myInstanceIDs;
 		std::vector<STransform> myTransforms;
 		std::vector<SModel> myModels;
-		SDirectionalLightData myDirectionalLight;
 		std::vector<SPointLight> myPointLights;
-		SPlayer myPlayer;
 		std::vector<SCollider> myColliders;
-		//std::vector<SEnemy> myEnemies;
-		std::vector<SParentData> myParents;
-		std::vector<SEventData> myEvents;
 		std::vector<SInstancedModel> myInstancedModels;
 	};
 
 	struct SResources {
 		std::vector<std::string> myPaths;
 	};
+
+	template<typename T>
+	struct CopyBin {
+
+		template<typename T>
+		size_t Copy(T& aData, char* aStreamPtr, const unsigned int aCount = 1)
+		{
+			memcpy(&aData, aStreamPtr, sizeof(T) * aCount);
+			return sizeof(T) * aCount;
+		}
+
+		//template<typename T>
+		size_t operator()(T& aData, char* aPtr, const unsigned int aCount = 1) noexcept
+		{
+			return Copy(aData, aPtr, aCount);
+		}
+
+		//template<typename T>
+		size_t operator()(std::vector<T>& someData, char* aPtr)
+		{
+			char* ptr = aPtr;
+			int count = 0;
+			ptr += Copy(count, ptr);
+			someData.resize(count);
+			ptr += Copy(someData.data()[0], ptr, count);
+			return ptr - aPtr;
+		}
+	};
+
+	template<>
+	struct CopyBin<SInstancedModel>{
+
+		template<typename SInstancedModel>
+		size_t Copy(SInstancedModel& aData, char* aStreamPtr, const unsigned int aCount = 1)
+		{
+			memcpy(&aData, aStreamPtr, sizeof(SInstancedModel) * aCount);
+			return sizeof(SInstancedModel) * aCount;
+		}
+
+		size_t operator()(std::vector<SInstancedModel>& someData, char* aPtr)
+		{
+			char* ptr = aPtr;
+			int count = 0;
+			ptr += Copy(count, ptr);
+			someData.resize(count);
+
+			for (int i = 0; i < count; ++i)
+			{
+				ptr += Copy(someData[i].assetID, ptr);
+
+				int transformCount = 0;
+				ptr += Copy(transformCount, ptr);
+
+				someData[i].transforms.resize(transformCount);
+				ptr += Copy(someData[i].transforms.data()[0], ptr, transformCount);
+			}
+			return ptr - aPtr;
+		}
+	};
+
+	//template<>
+	//struct CopyBin<SEventData> {
+
+	//	template<typename T>
+	//	size_t Copy(T& aData, char* aStreamPtr, const unsigned int aCount = 1)
+	//	{
+	//		memcpy(&aData, aStreamPtr, sizeof(T) * aCount);
+	//		return sizeof(T) * aCount;
+	//	}
+
+
+	//	size_t operator()(std::vector<SEventData>& someData, char* aPtr)
+	//	{
+	//		char* ptr = aPtr;
+	//		int count = 0;
+	//		ptr += Copy(count, ptr);
+	//		someData.reserve(count);
+
+	//		//Loop through events and save Data! This is because of the stringerino!
+
+	//	}
+	//};
 }
 
 class CBinReader
@@ -137,8 +217,11 @@ public:
 	static SVertexPaintColorData LoadVertexColorData(const std::string& aBinFilePath);
 	static void Test(const std::string& aBinFile);
 
-	Binary::SLevelData Load(const std::string& aPath);
+	static Binary::SLevelData Load(const std::string& aPath);
 
+
+	static void Write(const std::string& aFileNameAndPath, const std::vector<Vector3>& someData);
+	static bool Read(const std::string& aFileNameAndPath, std::vector<Vector3>& outData);
 
 private:
 	

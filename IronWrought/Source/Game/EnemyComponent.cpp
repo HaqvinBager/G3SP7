@@ -20,7 +20,7 @@ CEnemyComponent::CEnemyComponent(CGameObject& aParent, const SEnemySetting& some
 	: CComponent(aParent)
 	, myPlayer(nullptr)
 	, myEnemy(nullptr)
-	, myCurrentState(EBehaviour::Patrol)
+	, myCurrentState(EBehaviour::Count)
 	, myRigidBodyComponent(nullptr)
 {
 	//myController = CEngine::GetInstance()->GetPhysx().CreateCharacterController(GameObject().myTransform->Position(), 0.6f * 0.5f, 1.8f * 0.5f, GameObject().myTransform, aHitReport);
@@ -33,6 +33,10 @@ CEnemyComponent::CEnemyComponent(CGameObject& aParent, const SEnemySetting& some
 CEnemyComponent::~CEnemyComponent()
 {
 	myRigidBodyComponent = nullptr;
+	for (size_t i = 0; i < myBehaviours.size(); ++i)
+	{
+		delete myBehaviours[i];
+	}
 }
 
 void CEnemyComponent::Awake()
@@ -78,9 +82,13 @@ void CEnemyComponent::Update()//får bestämma vilket behaviour vi vill köra i 
 	float distanceToPlayer = Vector3::DistanceSquared(myPlayer->myTransform->Position(), GameObject().myTransform->Position());
 
 	if (mySettings.myRadius * mySettings.myRadius >= distanceToPlayer) {
-		SetState(EBehaviour::Seek);
-		if (distanceToPlayer <= mySettings.myAttackDistance * mySettings.myAttackDistance) {
+		if (distanceToPlayer <= mySettings.myAttackDistance * mySettings.myAttackDistance) 
+		{
 			SetState(EBehaviour::Attack);
+		}
+		else
+		{
+			SetState(EBehaviour::Seek);
 		}
 	}
 	else {
@@ -91,7 +99,7 @@ void CEnemyComponent::Update()//får bestämma vilket behaviour vi vill köra i 
 		Vector3 targetDirection = myBehaviours[static_cast<int>(myCurrentState)]->Update(GameObject().myTransform->Position());
 		
 		targetDirection.y = 0;
-		myRigidBodyComponent->AddForce(targetDirection);
+		myRigidBodyComponent->AddForce(targetDirection,mySettings.mySpeed);
 		float targetOrientation = WrapAngle(atan2f(targetDirection.x, targetDirection.z));
 		myCurrentOrientation = Lerp(myCurrentOrientation, targetOrientation, 2.0f * CTimer::Dt());
 		GameObject().myTransform->Rotation({ 0, DirectX::XMConvertToDegrees(myCurrentOrientation) + 180.f, 0 });
@@ -118,7 +126,39 @@ void CEnemyComponent::TakeDamage(float aDamage)
 
 void CEnemyComponent::SetState(EBehaviour aState)
 {
+	if (myCurrentState == aState)
+		return;
+
 	myCurrentState = aState;
+
+	EMessageType msgType = EMessageType::Count;
+	switch (myCurrentState)
+	{
+		case EBehaviour::Patrol:
+		{
+			//std::cout << __FUNCTION__ << " " << "PATROL" << std::endl;
+			msgType = EMessageType::EnemyPatrolState;
+		}break;
+
+		case EBehaviour::Seek:
+		{
+			//std::cout << __FUNCTION__ << " " << "SEEK" << std::endl;
+			msgType = EMessageType::EnemySeekState;
+		}break;
+
+		case EBehaviour::Attack:
+		{
+			//std::cout << __FUNCTION__ << " " << "ATTACK" << std::endl;
+			msgType = EMessageType::EnemyAttackState;
+		}break;
+
+
+		default:
+		break;
+	}
+	if (msgType == EMessageType::Count)
+		return;
+	CMainSingleton::PostMaster().SendLate({ msgType, this });
 }
 
 const CEnemyComponent::EBehaviour CEnemyComponent::GetState() const

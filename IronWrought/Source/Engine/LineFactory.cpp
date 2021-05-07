@@ -699,7 +699,7 @@ CLine* CLineFactory::CreateTriangleXZ(const float aLength, const float aWidth, c
 	return line;
 }
 
-CLine* CLineFactory::CreatePolygon(std::vector<DirectX::SimpleMath::Vector3> somePositions)
+CLine* CLineFactory::CreatePolygon(const std::vector<DirectX::SimpleMath::Vector3>& somePositions, const DirectX::SimpleMath::Vector4& aColor)
 {
 
 	HRESULT hResult;
@@ -713,16 +713,16 @@ CLine* CLineFactory::CreatePolygon(std::vector<DirectX::SimpleMath::Vector3> som
 	std::vector<SVertex> vertices;
 	vertices.resize(somePositions.size());
 	for (unsigned int i = 0; i < somePositions.size(); ++i) {
-		auto pos = somePositions[i];
+		auto& pos = somePositions[i];
 		vertices[i].myX = pos.x;
 		vertices[i].myY = pos.y;
 		vertices[i].myZ = pos.z;
 		vertices[i].myW = 1.0f;
 		
-		vertices[i].myR = 1.0f;
-		vertices[i].myG = 1.0f;
-		vertices[i].myB = 1.0f;
-		vertices[i].myA = 1.0f;
+		vertices[i].myR = aColor.x;
+		vertices[i].myG = aColor.y;
+		vertices[i].myB = aColor.z;
+		vertices[i].myA = aColor.w;
 	}
 
 	D3D11_BUFFER_DESC bufferDescription = { 0 };

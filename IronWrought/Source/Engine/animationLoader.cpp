@@ -23,6 +23,10 @@ namespace AnimationLoader
 		std::string animationPath = aModelPath.substr(0, aModelPath.length() - (aModelPath.length() - lastSlashIndex - 1));
 		animationPath.append("Animations/");
 
+		std::vector<std::string> animsInFolder;
+		if (!std::filesystem::exists(animationPath))
+			return std::move(animsInFolder);
+
 		std::filesystem::directory_iterator start(animationPath.c_str());
 		//try
 		//{
@@ -35,7 +39,6 @@ namespace AnimationLoader
 		//	return std::vector<std::string>();
 		//}
 
-		std::vector<std::string> animsInFolder;
 		animsInFolder.reserve(AnimationLoaderInternal::number_of_files_in_directory(start->path().parent_path()));
 		for (auto& file : start)
 		{
@@ -57,6 +60,8 @@ namespace AnimationLoader
 		}
 
 		std::vector<std::string> someAnimations = GetAnimationPaths(aModelPath);
+		if (someAnimations.empty())
+			return nullptr;
 		// No assert or return false here: Base model is Tpose and can still be used to render the model.
 
 		return aGameObject->AddComponent<CAnimationComponent>(*aGameObject, aModelPath, someAnimations);

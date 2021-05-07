@@ -1,6 +1,7 @@
 #pragma once
 #include "Component.h"
 #include "InputObserver.h"
+#include "Observer.h"
 class CRigidBodyComponent;
 class CCharacterController;
 class CGameObject;
@@ -12,7 +13,7 @@ namespace physx {
 	class PxUserControllerHitReport;
 }
 
-class CPlayerControllerComponent : public CComponent, public IInputObserver
+class CPlayerControllerComponent : public CComponent, public IInputObserver, public IStringObserver
 {
 public:
 	CPlayerControllerComponent(CGameObject& gameObject, const float aWalkSpeed = 0.314f, const float aCrouchSpeed = 0.13f, physx::PxUserControllerHitReport* aHitReport = nullptr);
@@ -24,6 +25,7 @@ public:
 	void FixedUpdate() override;
 
 	void ReceiveEvent(const EInputEvent aEvent) override;
+	void Receive(const SStringMessage& aMsg) override;
 
 	void ControllerUpdate();
 
@@ -79,6 +81,7 @@ private:
 	float myJumpHeight;
 	float myFallSpeed;
 	float myAirborneTimer;
+	float myStepTimer;
 
 	//CRigidBodyComponent* myLadder;
 
@@ -90,7 +93,7 @@ private:
 	const float myCameraPosYStanding = 1.6f * 0.5f;
 	const float myCameraPosYCrouching = 0.95f * 0.5f;
 	const float myCameraPosZ = -0.22f;
-	const float myMaxFallSpeed = -0.3f;
+	const float myMaxFallSpeed = -0.36f;
 
 	/*
 		Standing:

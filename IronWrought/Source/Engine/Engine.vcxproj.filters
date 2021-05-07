@@ -241,6 +241,15 @@
     <FxCompile Include="RenderPassEmissivePixelShader.hlsl">
       <Filter>Shaders\Render Passes</Filter>
     </FxCompile>
+    <FxCompile Include="FullscreenPixelShader_SSAO.hlsl">
+      <Filter>Shaders\Fullscreen</Filter>
+    </FxCompile>
+    <FxCompile Include="FullscreenPixelShader_SSAOBlur.hlsl">
+      <Filter>Shaders\Fullscreen</Filter>
+    </FxCompile>
+    <FxCompile Include="FullscreenPixelShader_Multiply.hlsl">
+      <Filter>Shaders\Fullscreen</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimationComponent.cpp">
@@ -888,6 +897,10 @@
     </ClCompile>
     <ClCompile Include="EnemyReportCallback.cpp" />
     <ClCompile Include="EnvironmentLightWindow.cpp">
+      <Filter>Imgui\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="PostMasterHelpers.cpp" />
+    <ClCompile Include="PostProcessingWindow.cpp">
       <Filter>Imgui\Windows</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1626,6 +1639,12 @@
     </ClInclude>
     <ClInclude Include="EnemyReportCallback.h" />
     <ClInclude Include="EnvironmentLightWindow.h">
+      <Filter>Imgui\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="PostMasterHelpers.h">
+      <Filter>Post Master</Filter>
+    </ClInclude>
+    <ClInclude Include="PostProcessingWindow.h">
       <Filter>Imgui\Windows</Filter>
     </ClInclude>
   </ItemGroup>

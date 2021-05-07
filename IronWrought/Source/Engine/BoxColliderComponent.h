@@ -12,13 +12,23 @@ class CScene;
 class CLineInstance;
 
 #ifdef _DEBUG
-//#define DEBUG_COLLIDER_BOX // DOES NOT WORK PROPERLY, UPDATE TRANSFORM 
+#define DEBUG_COLLIDER_BOX // DOES NOT WORK PROPERLY, UPDATE TRANSFORM 
 #endif
 
 class CBoxColliderComponent : public CBehaviour
 {
 public:
-	CBoxColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const Vector3& aBoxSize, const bool aIsTrigger, physx::PxMaterial* aMaterial = nullptr);
+	enum class EEventFilter
+	{
+		PlayerOnly,
+		EnemyOnly,
+		ObjectOnly,
+		Any,
+		None
+	};
+
+public:
+	CBoxColliderComponent(CGameObject& aParent, const Vector3& aPositionOffset, const Vector3& aBoxSize, const bool aIsTrigger, const unsigned int aLayerValue, physx::PxMaterial* aMaterial = nullptr);
 	~CBoxColliderComponent() override;
 
 	void Awake() override;
@@ -27,9 +37,10 @@ public:
 
 	void CreateBoxCollider();
 
-	void OnTriggerEnter();
-	void OnTriggerExit();
+	void OnTriggerEnter(CTransformComponent* aOther);
+	void OnTriggerExit(CTransformComponent* aOther);
 	void RegisterEventTriggerMessage(const std::string& aMessage) { myEventMessage = aMessage; }
+	void RegisterEventTriggerFilter(const int& anEventFilter);
 	//const SStringMessage& EventTriggerMessage() { return myTriggerMessage; }
 
 	void OnEnable() override;
@@ -44,8 +55,10 @@ private:
 	Vector3 myPositionOffset;
 	Vector3 myBoxSize;
 	bool myIsTrigger;
+	unsigned int myLayerValue;
 
 	std::string myEventMessage;
+	EEventFilter myEventFilter;
 
 #ifdef DEBUG_COLLIDER_BOX
 	CLineInstance* myColliderDraw;

@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEngine.SceneManagement;
 using UnityEditor.SceneManagement;
 
-public class ExporterBin 
+public class ExporterBin
 {
     private static string Base { get => "Assets/Generated/"; }
 
@@ -15,11 +15,11 @@ public class ExporterBin
     public ExporterBin(string aFileName)
     {
         string rootFolder = Base;
-        string folder = rootFolder + aFileName + "_Bin";
+        string folder = rootFolder + aFileName;
 
-        if(!Directory.Exists(Application.dataPath + folder))
+        if (!Directory.Exists(Application.dataPath + folder))
         {
-            Directory.CreateDirectory(rootFolder + aFileName + "_Bin");
+            Directory.CreateDirectory(rootFolder + aFileName);
         }
 
         AssetDatabase.Refresh();
@@ -28,7 +28,7 @@ public class ExporterBin
     }
 
 
-    [MenuItem("Export/Export Bin")]
+    //[MenuItem("Export/Export Bin")]
     public static void Export()
     {
         Scene activeScene = EditorSceneManager.GetActiveScene();
@@ -41,50 +41,29 @@ public class ExporterBin
 
         var ids = ExportInstanceID.Export(level.name);
         var transforms = ExportTransform.Export(level.name, ids.Ids);
-        //var vertexColors = ExportVertexPaint.Export(level.name, ids.Ids);
         var models = ExportModel.Export(level.name, ids.Ids);
-        var directionalLight = ExportDirectionalLight.Export(level.name);
-        var pointLights = ExportPointlights.ExportPointlight(level.name);
-        //var decals = ExportDecals.Export(level.name);
-        var player = ExporterJson.ExportPlayer(level.name);
-        //var bluePrints = ExportBluePrint.Export(level.name);
-        var colliders = ExportCollider.Export(level.name, ids.Ids);
-        var enemies = EnemyExporter.Export(level.name);
-        var parents = ExportParents.Export(level.name);
-        var eventTriggers = ExportEventTrigger.Export(level.name);
         var instancedModels = ExportInstancedModel.Export(level.name);
-
+        var pointLights = ExportPointlights.ExportPointlight(level.name);
+        var colliders = ExportCollider.Export(level.name, ids.Ids);
+        
         ExporterBin exporter = new ExporterBin(directoryInfo.Parent.Name);
-
         exporter.binWriter.Write(ids);
         exporter.binWriter.Write(transforms);
-        //exporter.binWriter.Write(vertexColors); //TODO
         exporter.binWriter.Write(models);
-        exporter.binWriter.Write(directionalLight);
         exporter.binWriter.Write(pointLights);
-        //exporter.binWriter.Write(decals); // TOOD
-        exporter.binWriter.Write(player);
-        //exporter.binWriter.Write(bluePrints); //Leave in JSON for now!
         exporter.binWriter.Write(colliders);
-        //exporter.binWriter.Write(enemies); // TODO Manage Children Instance IDs etc.
-        exporter.binWriter.Write(parents);
-        exporter.binWriter.Write(eventTriggers);
         exporter.binWriter.Write(instancedModels);
-
         exporter.binWriter.Close();
 
-
-        var resources = ExportResource.ExportModelAssets("Scene");
-        ExporterBin resourceBin = new ExporterBin("Resources");
-        resourceBin.binWriter.Write(resources.models.Count * 100);
-        for(int i = 0; i < 100; ++i)
-        {
-            foreach (var res in resources.models)
-            {
-                resourceBin.binWriter.Write(res.path);
-            }
-        }
-        resourceBin.binWriter.Close();
         Debug.Log(level.name + " Export Complete <3");
+        //var resources = ExportResource.ExportModelAssets("Scene");
+        //ExporterBin resourceBin = new ExporterBin("Resources");
+        //resourceBin.binWriter.Write(resources.models.Count * 100);
+
+        //foreach (var res in resources.models)
+        //{
+        //    resourceBin.binWriter.Write(res.path);     
+        //}
+        //resourceBin.binWriter.Close();
     }
 }

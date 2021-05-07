@@ -34,7 +34,7 @@ void CCapsuleColliderComponent::Start()
 	PxTransform relativePose(offset, PxQuat(PxHalfPi, physx::PxVec3(0, 0, 1)));
 	myShape->setLocalPose(relativePose);
 	PxFilterData filterData;
-	filterData.word0 = CPhysXWrapper::ELayerMask::GROUP1;
+	filterData.word0 = CPhysXWrapper::ELayerMask::DYNAMIC_OBJECTS;
 	myShape->setQueryFilterData(filterData);
 
 	CRigidBodyComponent* rigidBody = nullptr;

@@ -14,6 +14,7 @@
 
 #include "PlayerAnimationController.h"
 #include "PlayerComponent.h"
+#include "ModelComponent.h"
 
 #include "RigidBodyComponent.h"
 #include "RigidDynamicBody.h"
@@ -37,6 +38,7 @@ CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, 
 	, myLadderHasTriggered(false)
 	, myAnimationComponentController(nullptr)
 	, myPlayerComponent(nullptr)
+	, myStepTimer(0.0f)
 {
 	INPUT_MAPPER->AddObserver(EInputEvent::Jump, this);
 	INPUT_MAPPER->AddObserver(EInputEvent::Crouch, this);
@@ -44,6 +46,14 @@ CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, 
 	INPUT_MAPPER->AddObserver(EInputEvent::SetResetPointEntities, this);
 
 	myController = CEngine::GetInstance()->GetPhysx().CreateCharacterController(gameObject.myTransform->Position(), myColliderRadius, myColliderHeightStanding, GameObject().myTransform, aHitReport);
+	physx::PxShape* shape = nullptr;
+	myController->GetController().getActor()->getShapes(&shape, 1);
+	shape->setFlag(PxShapeFlag::Enum::eSCENE_QUERY_SHAPE, true);
+	
+	PxFilterData filterData;
+	filterData.word0 = CPhysXWrapper::ELayerMask::PLAYER;
+	shape->setQueryFilterData(filterData);
+
 	GameObject().myTransform->Position(myController->GetPosition());// This is a test / Aki 2021 03 12
 
 	GameObject().myTransform->FetchChildren()[0]->Position({ 0.0f, myCameraPosYStanding, myCameraPosZ });
@@ -79,6 +89,8 @@ void CPlayerControllerComponent::Awake()
 void CPlayerControllerComponent::Start()
 {
 	SetRespawnPosition();
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_DISABLE_GLOVE, this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_ENABLE_GLOVE, this);
 }
 
 void CPlayerControllerComponent::Update()
@@ -88,14 +100,14 @@ void CPlayerControllerComponent::Update()
 		return;
 #endif
 
-	if (myLadderHasTriggered)
-	{
-		LadderUpdate();
-	}
-	else
-	{
-		//Move({0.0f, myMovement.y, 0.0f});
-	}
+	//if (myLadderHasTriggered)
+	//{
+	//	LadderUpdate();
+	//}
+	//else
+	//{
+	//	//Move({0.0f, myMovement.y, 0.0f});
+	//}
 
 	GameObject().myTransform->Position(myController->GetPosition());
 	myAnimationComponentController->Update(myMovement);
@@ -115,20 +127,30 @@ void CPlayerControllerComponent::Update()
 
 void CPlayerControllerComponent::FixedUpdate()
 {
-	if (myHasJumped == true)
+	if (myLadderHasTriggered)
 	{
-		myMovement.y = myJumpHeight;
-		myAirborneTimer = 0.0f;
-		myHasJumped = false;
+		LadderUpdate();
 	}
+	else
+	{
+		if (myHasJumped == true)
+		{
+			myMovement.y = myJumpHeight;
+			myAirborneTimer = 0.0f;
+			myHasJumped = false;
+		}
 
-	myMovement.y -= myFallSpeed * myFallSpeed * CTimer::FixedDt() * myAirborneTimer * static_cast<float>(!myIsGrounded);// false == 0, true == 1 => !true == 0 and !false == 1.
-	myAirborneTimer += CTimer::FixedDt();
+		myMovement.y -= myFallSpeed * myFallSpeed * CTimer::FixedDt() * myAirborneTimer * static_cast<float>(!myIsGrounded);// false == 0, true == 1 => !true == 0 and !false == 1.
+		myAirborneTimer += CTimer::FixedDt();
 
-	if (myMovement.y < myMaxFallSpeed)
-		myMovement.y = myMaxFallSpeed;
+		if (myMovement.y < myMaxFallSpeed)
+			myMovement.y = myMaxFallSpeed;
 
-	Move({ myMovement.x, myMovement.y, myMovement.z });
+		Move({ myMovement.x, myMovement.y, myMovement.z });
+		
+		if (myIsGrounded)
+			myMovement.y = 0.0f;
+	}
 }
 
 void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
@@ -173,25 +195,29 @@ void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
 	}
 
 	myMovement.y = y;
+}
 
-	if (myLadderHasTriggered)
+void CPlayerControllerComponent::Receive(const SStringMessage& aMsg)
+{
+	if (PostMaster::DisableGravityGlove(aMsg.myMessageType))
 	{
-		myMovement.y = myMovement.z;
-		std::cout << myMovement.z << std::endl;
-		myMovement.z = 0.0f;
-		//myMovement = { 0.f, myMovement.y,0.f };
-		//Move(myMovement * mySpeed);
+		myCamera->GameObject().GetComponent<CModelComponent>()->Enabled(false);
+		myCamera->GameObject().GetComponent<CAnimationComponent>()->Enabled(false);
 	}
-	else
+
+	if (PostMaster::EnableGravityGlove(aMsg.myMessageType))
 	{
-		//Move(myMovement * mySpeed);
+		myCamera->GameObject().GetComponent<CModelComponent>()->Enabled(true);
+		myCamera->GameObject().GetComponent<CAnimationComponent>()->Enabled(true);
 	}
 }
 
 void CPlayerControllerComponent::ControllerUpdate()
 {
-	Vector3 horizontal = -GameObject().myTransform->GetLocalMatrix().Right() * Input::GetInstance()->GetAxis(Input::EAxis::Horizontal);
-	Vector3 vertical =	-GameObject().myTransform->GetLocalMatrix().Forward() * Input::GetInstance()->GetAxis(Input::EAxis::Vertical);
+	const float horizontalInput = Input::GetInstance()->GetAxis(Input::EAxis::Horizontal);
+	const float verticalInput = Input::GetInstance()->GetAxis(Input::EAxis::Vertical);
+	Vector3 horizontal = -GameObject().myTransform->GetLocalMatrix().Right() * horizontalInput;
+	Vector3 vertical =	-GameObject().myTransform->GetLocalMatrix().Forward() * verticalInput;
 	float y = myMovement.y;
 	myMovement = (horizontal + vertical) * mySpeed;
 	myMovement.y = y;
@@ -200,9 +226,21 @@ void CPlayerControllerComponent::ControllerUpdate()
 void CPlayerControllerComponent::Move(Vector3 aDir)
 {
 	physx::PxControllerCollisionFlags collisionflag = myController->GetController().move({ aDir.x, aDir.y, aDir.z}, 0, CTimer::FixedDt(), 0);
-	myIsGrounded = collisionflag == physx::PxControllerCollisionFlag::eCOLLISION_DOWN;
+	myIsGrounded = (collisionflag == physx::PxControllerCollisionFlag::eCOLLISION_DOWN);
 	if (myIsGrounded)
+	{
 		myMovement.y = 0.0f;
+		Vector2 horizontalDir(aDir.x, aDir.z);
+		if (horizontalDir.LengthSquared() > 0.0f)
+		{
+			myStepTimer -= CTimer::FixedDt();
+			if (myStepTimer <= 0.0f) 
+			{
+				myStepTimer = mySpeed;
+				CMainSingleton::PostMaster().SendLate({ EMessageType::PlayStepSound, nullptr });
+			}
+		}
+	}
 }
 
 void CPlayerControllerComponent::SetControllerPosition(const Vector3& aPos)
@@ -271,12 +309,48 @@ void CPlayerControllerComponent::BoundsCheck()
 
 void CPlayerControllerComponent::LadderUpdate()
 {
-	if (myLadderHasTriggered)
+	if (Input::GetInstance()->IsKeyDown('W'))
 	{
+		Move({ 0.0f, 0.075f, 0.0f });
+	}
+	else if (Input::GetInstance()->IsKeyDown('S'))
+	{
+		Move({ 0.0f, -0.075f, 0.0f });
+	}
+
+	if (myIsGrounded)
+	{
+		if (Input::GetInstance()->IsKeyDown('S'))
+		{
+			LadderExit();
+		}
+	}
+
+	//if (myHasJumped)
+	//{
+	//	LadderExit();
+	//}
+
+	//	std::cout << myMovement.z << std::endl;
+	//	if (myMovement.z < 0.0f)
+	//	{
+	//		LadderExit();
+	//	}
+	//	//std::cout << "Touched Ground" << std::endl;
+	//}
+	//else
+	//{
+	//	Move({ 0.0f, myMovement.z, 0.0f });
+	//}
+
+
+
+	//if (myLadderHasTriggered)
+	//{
 		//Nuddar vi Marken?
 
 		//Försöker vi gå neråt?
-	}
+	//}
 
 	//Best�mmer n�r myIsOnladder s�tts till false
 

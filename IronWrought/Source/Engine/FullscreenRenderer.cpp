@@ -3,17 +3,31 @@
 #include "DirectXFramework.h"
 #include "RenderManager.h"
 #include "Engine.h"
+#include "Scene.h"
+#include "RandomNumberGenerator.h"
+#include "CameraComponent.h"
 #include <fstream>
 
 CFullscreenRenderer::CFullscreenRenderer() 
 	: myContext(nullptr)
 	, myVertexShader(nullptr)
 	, myPixelShaders()
-	, mySampler(nullptr)
+	, myPostProcessingBufferData()
+	, myClampSampler(nullptr)
+	, myWrapSampler(nullptr)
+	, myFullscreenDataBuffer(nullptr)
+	, myFrameBuffer(nullptr)
+	, myPostProcessingBuffer(nullptr)
+	, myNoiseTexture(nullptr)
 {
 }
 
 CFullscreenRenderer::~CFullscreenRenderer() {
+}
+
+float KernelLerp(float a, float b, float t)
+{
+	return (a * (1.0f - t)) + (b * t);
 }
 
 bool CFullscreenRenderer::Init(CDirectXFramework* aFramework) {
@@ -37,6 +51,12 @@ bool CFullscreenRenderer::Init(CDirectXFramework* aFramework) {
 	bufferDescription.ByteWidth = sizeof(SFullscreenData);
 	ENGINE_HR_BOOL_MESSAGE(device->CreateBuffer(&bufferDescription, nullptr, &myFullscreenDataBuffer), "Fullscreen Data Buffer could not be created.");
 
+	bufferDescription.ByteWidth = sizeof(SFrameBufferData);
+	ENGINE_HR_BOOL_MESSAGE(device->CreateBuffer(&bufferDescription, nullptr, &myFrameBuffer), "Frame Buffer could not be created.");
+
+	bufferDescription.ByteWidth = sizeof(SPostProcessingBufferData);
+	ENGINE_HR_BOOL_MESSAGE(device->CreateBuffer(&bufferDescription, nullptr, &myPostProcessingBuffer), "Post Processing Buffer could not be created.");
+
 	std::ifstream vsFile;
 	vsFile.open("Shaders/FullscreenVertexShader.cso", std::ios::binary);
 	std::string vsData = { std::istreambuf_iterator<char>(vsFile), std::istreambuf_iterator<char>() };
@@ -49,6 +69,7 @@ bool CFullscreenRenderer::Init(CDirectXFramework* aFramework) {
 	myVertexShader = vertexShader;
 
 	std::array<std::string, static_cast<size_t>(FullscreenShader::Count)> filepaths;
+	filepaths[static_cast<size_t>(FullscreenShader::Multiply)] = "Shaders/FullscreenPixelShader_Multiply.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::Copy)] = "Shaders/FullscreenPixelShader_Copy.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::CopyDepth)] = "Shaders/FullscreenPixelShader_CopyDepth.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::CopyGBuffer)] = "Shaders/FullscreenPixelShader_CopyGBuffer.cso";
@@ -63,6 +84,8 @@ bool CFullscreenRenderer::Init(CDirectXFramework* aFramework) {
 	filepaths[static_cast<size_t>(FullscreenShader::GammaCorrection)] = "Shaders/FullscreenPixelShader_GammaCorrection.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::GammaCorrectionRenderPass)] = "Shaders/DeferredRenderPassFullscreenPixelShader_GammaCorrection.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::FXAA)] = "Shaders/FullscreenPixelShader_FXAA.cso";
+	filepaths[static_cast<size_t>(FullscreenShader::SSAO)] = "Shaders/FullscreenPixelShader_SSAO.cso";
+	filepaths[static_cast<size_t>(FullscreenShader::SSAOBlur)] = "Shaders/FullscreenPixelShader_SSAOBlur.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::BrokenScreenEffect)] = "Shaders/FullscreenPixelShader_BrokenScreenEffect.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::DownsampleDepth)] = "Shaders/FullscreenPixelShader_DepthDownSample.cso";
 	filepaths[static_cast<size_t>(FullscreenShader::DepthAwareUpsampling)] = "Shaders/FullscreenPixelShader_DepthAwareUpsample.cso";
@@ -86,8 +109,7 @@ bool CFullscreenRenderer::Init(CDirectXFramework* aFramework) {
 		myPixelShaders[i] = pixelShader;
 	}
 
-	//Start Sampler
-	ID3D11SamplerState* sampler;
+	//Start Samplers
 	D3D11_SAMPLER_DESC samplerDesc = {};
 	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
@@ -95,17 +117,111 @@ bool CFullscreenRenderer::Init(CDirectXFramework* aFramework) {
 	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
 	samplerDesc.MinLOD = 0;
 	samplerDesc.MaxLOD = 10;
-	ENGINE_HR_MESSAGE(device->CreateSamplerState(&samplerDesc, &sampler), "Sampler could not be created.");
-	mySampler = sampler;
-	//End Sampler
+	ENGINE_HR_MESSAGE(device->CreateSamplerState(&samplerDesc, &myClampSampler), "Sampler could not be created.");
 
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	ENGINE_HR_MESSAGE(device->CreateSamplerState(&samplerDesc, &myWrapSampler), "Sampler could not be created.");
+	//End Samplers
+
+#pragma region SSAO Setup
+	for (unsigned int i = 0; i < myKernelSize; ++i) {
+		float r = 1.0f * sqrt(Random(0.0f, 1.0f));
+		float theta = Random(float(i) / float(myKernelSize), float(i+1) / float(myKernelSize)) * 2.0f * 3.14159265f;
+		float x = r * cosf(theta);
+		float y = r * sinf(theta);
+		float z = sqrt(1 - x * x - y * y);
+		myKernel[i] = Vector4(
+			x,
+			y,
+			z,
+			1.0f);
+			//myKernel[i].Normalize();
+			myKernel[i] *= Random(0.0f, 1.0f);
+			//float scale = float(i) / float(myKernelSize);
+			//scale = KernelLerp(0.1f, 1.0f, scale * scale);
+			//myKernel[i] *= scale;
+	}
+
+	Vector4 noise[myKernelSize];
+	for (unsigned int i = 0; i < myKernelSize; ++i)
+	{
+		noise[i] = Vector4(
+			Random(-1.0f, 1.0f),
+			Random(-1.0f, 1.0f),
+			0.0f,
+			0.0f
+		);
+		noise[i].Normalize();
+	}
+
+	unsigned int width = static_cast<unsigned int>(sqrt(myKernelSize));
+
+	D3D11_TEXTURE2D_DESC noiseTextureDesc = { 0 };
+	noiseTextureDesc.Width = width;
+	noiseTextureDesc.Height = width;
+	noiseTextureDesc.MipLevels = 1;
+	noiseTextureDesc.ArraySize = 1;
+	noiseTextureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	noiseTextureDesc.SampleDesc.Count = 1;
+	noiseTextureDesc.SampleDesc.Quality = 0;
+	noiseTextureDesc.Usage = D3D11_USAGE_DEFAULT;
+	noiseTextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	noiseTextureDesc.CPUAccessFlags = 0;
+	noiseTextureDesc.MiscFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA noiseTextureData = { 0 };
+	noiseTextureData.pSysMem = &noise[0];
+	noiseTextureData.SysMemPitch = width * sizeof(Vector4);
+	noiseTextureData.SysMemSlicePitch = 0;
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC noiseSRVDesc;
+	noiseSRVDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	noiseSRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	noiseSRVDesc.Texture2D.MostDetailedMip = 0;
+	noiseSRVDesc.Texture2D.MipLevels = 1;
+
+	ID3D11Texture2D* noiseTextureBuffer;
+	ENGINE_HR_MESSAGE(device->CreateTexture2D(&noiseTextureDesc, &noiseTextureData, &noiseTextureBuffer), "Noise Texture could not be created.");
+	ENGINE_HR_MESSAGE(device->CreateShaderResourceView(noiseTextureBuffer, &noiseSRVDesc, &myNoiseTexture), "Noise Shader Resource View could not be created.");
+
+	myPostProcessingBufferData.myWhitePointColor = { 175.0f/255.0f, 182.0f/255.0f, 1.0f, 1.0f };
+	myPostProcessingBufferData.myWhitePointIntensity = 1.9f;
+	myPostProcessingBufferData.myExposure = 1.1f;
+	myPostProcessingBufferData.myIsReinhard = false;
+	myPostProcessingBufferData.myIsUncharted = true;
+	myPostProcessingBufferData.myIsACES = false;
+
+	myPostProcessingBufferData.mySSAORadius = 0.8f;
+	myPostProcessingBufferData.mySSAOSampleBias = 0.0624f;
+	myPostProcessingBufferData.mySSAOMagnitude = 1.0f;
+	myPostProcessingBufferData.mySSAOContrast = 1.7f;
+
+#pragma endregion
 	return true;
 }
 
-void CFullscreenRenderer::Render(FullscreenShader anEffect) {
+void CFullscreenRenderer::Render(FullscreenShader anEffect) 
+{
 	myFullscreenData.myResolution = IRONWROUGHT->GetWindowHandler()->GetResolution();
+	myFullscreenData.myNoiseScale = { myFullscreenData.myResolution.x / static_cast<float>(sqrt(myKernelSize)), myFullscreenData.myResolution.y / static_cast<float>(sqrt(myKernelSize)) };
+	memcpy(&myFullscreenData.mySampleKernel[0], &myKernel[0], sizeof(myKernel));
 	BindBuffer(myFullscreenDataBuffer, myFullscreenData, "Fullscreen Data Buffer");
 	
+	CCameraComponent* camera = IRONWROUGHT->GetActiveScene().MainCamera();
+	SM::Matrix& cameraMatrix = camera->GameObject().myTransform->Transform();
+	myFrameBufferData.myCameraPosition = SM::Vector4{ cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f };
+	myFrameBufferData.myToCameraSpace = cameraMatrix.Invert();
+	myFrameBufferData.myToWorldFromCamera = cameraMatrix;
+	myFrameBufferData.myToProjectionSpace = camera->GetProjection();
+	myFrameBufferData.myToCameraFromProjection = camera->GetProjection().Invert();
+	BindBuffer(myFrameBuffer, myFrameBufferData, "Frame Buffer");
+
+	BindBuffer(myPostProcessingBuffer, myPostProcessingBufferData, "Post Processing Buffer");
+
+	myContext->VSSetConstantBuffers(0, 1, &myFrameBuffer);
+
 	myContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	myContext->IASetInputLayout(nullptr);
 	myContext->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
@@ -113,8 +229,12 @@ void CFullscreenRenderer::Render(FullscreenShader anEffect) {
 
 	myContext->VSSetShader(myVertexShader, nullptr, 0);
 	myContext->PSSetShader(myPixelShaders[static_cast<size_t>(anEffect)], nullptr, 0);
-	myContext->PSSetSamplers(0, 1, &mySampler);
+	myContext->PSSetSamplers(0, 1, &myClampSampler);
+	myContext->PSSetSamplers(1, 1, &myWrapSampler);
 	myContext->PSSetConstantBuffers(0, 1, &myFullscreenDataBuffer);
+	myContext->PSSetConstantBuffers(1, 1, &myFrameBuffer);
+	myContext->PSSetConstantBuffers(2, 1, &myPostProcessingBuffer);
+	myContext->PSSetShaderResources(23, 1, &myNoiseTexture);
 
 	myContext->Draw(3, 0);
 	CRenderManager::myNumberOfDrawCallsThisFrame++;
