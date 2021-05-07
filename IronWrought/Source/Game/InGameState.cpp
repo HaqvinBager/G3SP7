@@ -85,33 +85,18 @@ void CInGameState::Stop()
 
 void CInGameState::Update()
 {
-
 	if (Input::GetInstance()->IsKeyPressed(VK_ESCAPE))
 	{
 		myStateStack.PushState(CStateStack::EState::PauseMenu);
 	}
 
-	if (Input::GetInstance()->IsKeyPressed('X'))
-	{
-		SStringMessage msg = {};
-		msg.data = nullptr;
-		msg.myMessageType = PostMaster::MSG_DISABLE_GLOVE;
-		CMainSingleton::PostMaster().Send(msg);
-	}
-	if (Input::GetInstance()->IsKeyPressed('Z'))
-	{
-		SStringMessage msg = {};
-		msg.data = nullptr;
-		msg.myMessageType = PostMaster::MSG_ENABLE_GLOVE;
-		CMainSingleton::PostMaster().Send(msg);
-	}
+	DEBUGFunctionality();
 
 	if (myExitLevel)
 	{
 		myExitLevel = false;
 		myStateStack.PopTopAndPush(CStateStack::EState::LoadLevel);
 	}
-
 }
 
 void CInGameState::ReceiveEvent(const EInputEvent aEvent)
@@ -158,6 +143,26 @@ void CInGameState::Receive(const SMessage& /*aMessage*/)
 	//{
 	//	default:break;
 	//}
+}
+
+void CInGameState::DEBUGFunctionality()
+{
+#ifdef _DEBUG
+	if (Input::GetInstance()->IsKeyPressed('X'))
+	{
+		SStringMessage msg = {};
+		msg.data = nullptr;
+		msg.myMessageType = PostMaster::MSG_DISABLE_GLOVE;
+		CMainSingleton::PostMaster().Send(msg);
+	}
+	if (Input::GetInstance()->IsKeyPressed('Z'))
+	{
+		SStringMessage msg = {};
+		msg.data = nullptr;
+		msg.myMessageType = PostMaster::MSG_ENABLE_GLOVE;
+		CMainSingleton::PostMaster().Send(msg);
+	}
+#endif
 }
 
 #ifndef NDEBUG

@@ -24,6 +24,8 @@ public:
 	void Receive(const SMessage& aMessage) override;
 
 	void TEMP_DecalTests(class CScene* aScene);
+private:
+	void DEBUGFunctionality();
 
 private:
 	bool myExitLevel;
