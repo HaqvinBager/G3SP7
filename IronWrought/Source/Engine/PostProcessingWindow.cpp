@@ -11,6 +11,12 @@ IronWroughtImGui::CPostProcessingWindow::CPostProcessingWindow(const char* aName
 	, mySSAOMagnitude(1.1f)
 	, mySSAOContrast(1.5f)
 	, mySSAOConstantBias(0.2f)
+	, myWhitePointColor(1.0f)
+	, myWhitePointIntensity(10.0f)
+	, myExposure(1.0f)
+	, myIsReinhard(false)
+	, myIsUncharted(true)
+	, myIsACES(false)
 {
 }
 
@@ -28,8 +34,56 @@ void IronWroughtImGui::CPostProcessingWindow::OnInspectorGUI()
 
 	ImGui::Begin(Name(), Open());
 
-	ImVec4 color = { 1.0f, 0.0f, 0.0f, 1.0f };
-	ImGui::TextColored(color, "SSAO");
+	ImVec4 tonemapColor = { 0.1f, 0.2f, 1.0f, 1.0f };
+	ImGui::TextColored(tonemapColor, "Tonemapping");
+
+	ImGui::Text("Algorithm: ");
+	ImGui::SameLine();
+	
+	if (ImGui::Checkbox("Reinhard", &myIsReinhard))
+	{
+		myIsUncharted = false;
+		myIsACES = false;
+	}
+	ImGui::SameLine();
+	if (ImGui::Checkbox("Uncharted", &myIsUncharted))
+	{
+		myIsReinhard = false;
+		myIsACES = false;
+
+	}
+	ImGui::SameLine();
+	if (ImGui::Checkbox("ACES", &myIsACES))
+	{
+		myIsReinhard = false;
+		myIsUncharted = false;
+	}
+
+	bufferData.myIsReinhard = myIsReinhard;
+	bufferData.myIsUncharted = myIsUncharted;
+	bufferData.myIsACES = myIsACES;
+
+	float imguiVector4[4];
+	memcpy(&imguiVector4[0], &myWhitePointColor, sizeof(Vector4));
+	ImGui::ColorEdit4("White Point Color", &imguiVector4[0]);
+	memcpy(&myWhitePointColor, &imguiVector4[0], sizeof(Vector4));
+
+	bufferData.myWhitePointColor = myWhitePointColor;
+
+	if (ImGui::SliderFloat("White Point Intensity", &myWhitePointIntensity, 0.0f, 100.0f, "%.1f"))
+	{
+		bufferData.myWhitePointIntensity = myWhitePointIntensity;
+	}
+
+	if (ImGui::SliderFloat("Exposure", &myExposure, -10.0f, 10.0f, "%.1f"))
+	{
+		bufferData.myExposure = myExposure;
+	}
+
+	ImGui::Dummy({ 0.0f, 10.0f });
+
+	ImVec4 ssaoColor = { 1.0f, 0.0f, 0.0f, 1.0f };
+	ImGui::TextColored(ssaoColor, "SSAO");
 
 	if (ImGui::SliderFloat("Sample Kernel Radius", &mySSAORadius, 0.1f, 10.0f, "%.1f"))
 	{

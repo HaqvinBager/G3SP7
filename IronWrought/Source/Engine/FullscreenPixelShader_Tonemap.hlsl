@@ -72,25 +72,28 @@ PixelOutput main(VertexToPixel input)
 	// No Tonemapping
 
 	// Reinhard
-	//{
-    //    returnValue.myColor.rgb = resource / (resource + 1.0f);
-    //}
+    if (myIsReinhard)
+    {
+        returnValue.myColor.rgb = resource / (resource + 1.0f);
+    }
 	// Reinhard
     
 	// Uncharted 2
-	{
-        float3 whitePoint = 10.0f; //10.0f;
-        float exposure = 1.0f; //3.0f;
+    if (myIsUncharted)
+    {
+        float3 whitePoint = myWhitePointColor * myWhitePointIntensity; //10.0f;
+        float exposure = myExposure; //3.0f;
         returnValue.myColor.rgb = Uncharted2Tonemap(resource * exposure) / Uncharted2Tonemap(whitePoint);
     }
 	// Uncharted 2
     
     // ACES
-    //{
-    //    float3 whitePoint = 10.0f;
-    //    float exposure = 3.0f;
-    //    returnValue.myColor.rgb = ACESFitted(resource * exposure) / ACESFitted(whitePoint);
-    //}
+    if (myIsACES)
+    {
+        float3 whitePoint = myWhitePointColor * myWhitePointIntensity; //10.0f;
+        float exposure = myExposure; //3.0f;
+        returnValue.myColor.rgb = ACESFitted(resource * exposure) / ACESFitted(whitePoint);
+    }
     // ACES
     
     // ACES approx

@@ -24,11 +24,22 @@ class CFullscreenRenderer {
 public:
 	struct SPostProcessingBufferData
 	{
+		DirectX::SimpleMath::Vector4 myWhitePointColor;
+		float myWhitePointIntensity;
+		float myExposure;
 		float mySSAORadius;
 		float mySSAOSampleBias;
 		float mySSAOMagnitude;
 		float mySSAOContrast;
+		
+		int myIsReinhard;
+		int myIsUncharted;
+		int myIsACES;
+
+		float myPadding[3];
 	};
+
+static_assert((sizeof(SPostProcessingBufferData) % 16) == 0, "CB size not padded correctly");
 
 public:
 	enum class FullscreenShader {
