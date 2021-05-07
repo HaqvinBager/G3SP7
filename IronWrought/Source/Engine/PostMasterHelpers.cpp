@@ -18,10 +18,18 @@ const bool PostMaster::LevelCheck(const char* aStringMessageToCheck)
 
 const bool PostMaster::DisableGravityGlove(const char* aStringMsg)
 {
-	return strcmp(aStringMsg, MSG_DISABLE_GLOVE) == 0;
+	return strcmp(aStringMsg, SMSG_DISABLE_GLOVE) == 0;
 }
 
 const bool PostMaster::EnableGravityGlove(const char* aStringMsg)
 {
-	return strcmp(aStringMsg, MSG_ENABLE_GLOVE) == 0;
+	return strcmp(aStringMsg, SMSG_ENABLE_GLOVE) == 0;
+}
+const bool PostMaster::DisableCanvas(const char* aStringMsg)
+{
+	return strcmp(aStringMsg, SMSG_DISABLE_CANVAS) == 0;
+}
+const bool PostMaster::EnableCanvas(const char* aStringMsg)
+{
+	return strcmp(aStringMsg, SMSG_ENABLE_CANVAS) == 0;
 }

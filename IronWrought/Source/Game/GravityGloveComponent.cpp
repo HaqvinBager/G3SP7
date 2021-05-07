@@ -33,8 +33,8 @@ CGravityGloveComponent::CGravityGloveComponent(CGameObject& aParent, CTransformC
 CGravityGloveComponent::~CGravityGloveComponent()
 {
 	myGravitySlot = nullptr;
-	CMainSingleton::PostMaster().Unsubscribe(PostMaster::MSG_DISABLE_GLOVE, this);
-	CMainSingleton::PostMaster().Unsubscribe(PostMaster::MSG_ENABLE_GLOVE, this);
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_DISABLE_GLOVE, this);
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_ENABLE_GLOVE, this);
 }
 
 void CGravityGloveComponent::Awake()
@@ -43,8 +43,8 @@ void CGravityGloveComponent::Awake()
 	myRigidStatic->userData = (void*)GameObject().myTransform;
 	CEngine::GetInstance()->GetPhysx().GetPXScene()->addActor(*myRigidStatic);
 
-	CMainSingleton::PostMaster().Subscribe(PostMaster::MSG_DISABLE_GLOVE, this);
-	CMainSingleton::PostMaster().Subscribe(PostMaster::MSG_ENABLE_GLOVE, this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_DISABLE_GLOVE, this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_ENABLE_GLOVE, this);
 }
 
 void CGravityGloveComponent::Start()

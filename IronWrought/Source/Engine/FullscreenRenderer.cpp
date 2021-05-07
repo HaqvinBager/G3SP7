@@ -186,17 +186,17 @@ bool CFullscreenRenderer::Init(CDirectXFramework* aFramework) {
 	ENGINE_HR_MESSAGE(device->CreateTexture2D(&noiseTextureDesc, &noiseTextureData, &noiseTextureBuffer), "Noise Texture could not be created.");
 	ENGINE_HR_MESSAGE(device->CreateShaderResourceView(noiseTextureBuffer, &noiseSRVDesc, &myNoiseTexture), "Noise Shader Resource View could not be created.");
 
-	myPostProcessingBufferData.myWhitePointColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-	myPostProcessingBufferData.myWhitePointIntensity = 10.0f;
-	myPostProcessingBufferData.myExposure = 1.0f;
+	myPostProcessingBufferData.myWhitePointColor = { 175.0f/255.0f, 182.0f/255.0f, 1.0f, 1.0f };
+	myPostProcessingBufferData.myWhitePointIntensity = 1.9f;
+	myPostProcessingBufferData.myExposure = 1.1f;
 	myPostProcessingBufferData.myIsReinhard = false;
 	myPostProcessingBufferData.myIsUncharted = true;
 	myPostProcessingBufferData.myIsACES = false;
 
-	myPostProcessingBufferData.mySSAORadius = 0.6f;
-	myPostProcessingBufferData.mySSAOSampleBias = 0.005f;
-	myPostProcessingBufferData.mySSAOMagnitude = 1.1f;
-	myPostProcessingBufferData.mySSAOContrast = 1.5f;
+	myPostProcessingBufferData.mySSAORadius = 0.8f;
+	myPostProcessingBufferData.mySSAOSampleBias = 0.0624f;
+	myPostProcessingBufferData.mySSAOMagnitude = 1.0f;
+	myPostProcessingBufferData.mySSAOContrast = 1.7f;
 
 #pragma endregion
 	return true;
