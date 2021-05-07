@@ -33,3 +33,8 @@ const bool PostMaster::EnableCanvas(const char* aStringMsg)
 {
 	return strcmp(aStringMsg, SMSG_ENABLE_CANVAS) == 0;
 }
+
+const bool PostMaster::GloveEvent(const char* aStringMsg)
+{
+	return strcmp(aStringMsg, SMSG_PICKUP_GLOVE_EVENT) == 0;;
+}
