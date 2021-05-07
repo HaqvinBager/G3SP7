@@ -140,16 +140,16 @@ void CPlayerControllerComponent::FixedUpdate()
 			myHasJumped = false;
 		}
 
-		myMovement.y -= myFallSpeed * myFallSpeed * CTimer::FixedDt() * myAirborneTimer * static_cast<float>(!myIsGrounded);// false == 0, true == 1 => !true == 0 and !false == 1.
-		myAirborneTimer += CTimer::FixedDt();
+		myMovement.y -= myFallSpeed * myFallSpeed * CTimer::FixedDt() * myAirborneTimer /* static_cast<float>(!myIsGrounded)*/;// false == 0, true == 1 => !true == 0 and !false == 1.
+		if (!myIsGrounded) {
+			myAirborneTimer += CTimer::FixedDt();
+		}
 
 		if (myMovement.y < myMaxFallSpeed)
 			myMovement.y = myMaxFallSpeed;
 
 		Move({ myMovement.x, myMovement.y, myMovement.z });
 		
-		if (myIsGrounded)
-			myMovement.y = 0.0f;
 	}
 }
 
@@ -171,6 +171,7 @@ void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
 	switch (aEvent)
 	{
 		case EInputEvent::Jump:
+			std::cout << "IS GROUNDED: " << myIsGrounded << std::endl;
 			if (myIsGrounded == true)
 			{
 				myHasJumped = true;
@@ -226,10 +227,10 @@ void CPlayerControllerComponent::ControllerUpdate()
 void CPlayerControllerComponent::Move(Vector3 aDir)
 {
 	physx::PxControllerCollisionFlags collisionflag = myController->GetController().move({ aDir.x, aDir.y, aDir.z}, 0, CTimer::FixedDt(), 0);
-	myIsGrounded = (collisionflag == physx::PxControllerCollisionFlag::eCOLLISION_DOWN);
+	myIsGrounded = (collisionflag & physx::PxControllerCollisionFlag::eCOLLISION_DOWN);
 	if (myIsGrounded)
 	{
-		myMovement.y = 0.0f;
+		myAirborneTimer = 0.f;
 		Vector2 horizontalDir(aDir.x, aDir.z);
 		if (horizontalDir.LengthSquared() > 0.0f)
 		{
