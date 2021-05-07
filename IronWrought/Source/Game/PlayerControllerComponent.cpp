@@ -81,8 +81,8 @@ void CPlayerControllerComponent::Awake()
 void CPlayerControllerComponent::Start()
 {
 	SetRespawnPosition();
-	CMainSingleton::PostMaster().Subscribe(PostMaster::MSG_DISABLE_GLOVE, this);
-	CMainSingleton::PostMaster().Subscribe(PostMaster::MSG_ENABLE_GLOVE, this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_DISABLE_GLOVE, this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_ENABLE_GLOVE, this);
 }
 
 void CPlayerControllerComponent::Update()

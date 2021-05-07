@@ -69,8 +69,10 @@ void CInGameState::Start()
 	IRONWROUGHT->HideCursor();
 	myExitLevel = false;
 
-	CMainSingleton::PostMaster().Subscribe(PostMaster::MSG_DISABLE_GLOVE, this);
-	CMainSingleton::PostMaster().Subscribe(PostMaster::MSG_ENABLE_GLOVE, this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_DISABLE_GLOVE, this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_ENABLE_GLOVE, this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_DISABLE_CANVAS, this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_ENABLE_CANVAS, this);
 }
 
 void CInGameState::Stop()
@@ -79,8 +81,10 @@ void CInGameState::Stop()
 	CMainSingleton::CollisionManager().ClearColliders();
 	myEnemyAnimationController->Deactivate();
 
-	CMainSingleton::PostMaster().Unsubscribe(PostMaster::MSG_DISABLE_GLOVE, this);
-	CMainSingleton::PostMaster().Unsubscribe(PostMaster::MSG_ENABLE_GLOVE, this);
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_DISABLE_GLOVE, this);
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_ENABLE_GLOVE, this);
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_DISABLE_CANVAS, this);
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_ENABLE_CANVAS, this);
 }
 
 void CInGameState::Update()
@@ -121,11 +125,11 @@ void CInGameState::Receive(const SStringMessage& aMessage)
 		myExitLevel = true;
 	}
 
-	if (PostMaster::DisableGravityGlove(aMessage.myMessageType))
+	if (PostMaster::DisableCanvas(aMessage.myMessageType))
 	{
 		IRONWROUGHT->GetActiveScene().CanvasToggle(false);
 	}
-	if (PostMaster::EnableGravityGlove(aMessage.myMessageType))
+	if (PostMaster::EnableCanvas(aMessage.myMessageType))
 	{
 		IRONWROUGHT->GetActiveScene().CanvasToggle(true);
 	}
@@ -152,15 +156,25 @@ void CInGameState::DEBUGFunctionality()
 	{
 		SStringMessage msg = {};
 		msg.data = nullptr;
-		msg.myMessageType = PostMaster::MSG_DISABLE_GLOVE;
+		msg.myMessageType = PostMaster::SMSG_DISABLE_GLOVE;
 		CMainSingleton::PostMaster().Send(msg);
+
+		SStringMessage msg2 = {};
+		msg2.data = nullptr;
+		msg2.myMessageType = PostMaster::SMSG_DISABLE_CANVAS;
+		CMainSingleton::PostMaster().Send(msg2);
 	}
 	if (Input::GetInstance()->IsKeyPressed('Z'))
 	{
 		SStringMessage msg = {};
 		msg.data = nullptr;
-		msg.myMessageType = PostMaster::MSG_ENABLE_GLOVE;
+		msg.myMessageType = PostMaster::SMSG_ENABLE_GLOVE;
 		CMainSingleton::PostMaster().Send(msg);
+
+		SStringMessage msg2 = {};
+		msg2.data = nullptr;
+		msg2.myMessageType = PostMaster::SMSG_ENABLE_CANVAS;
+		CMainSingleton::PostMaster().Send(msg2);
 	}
 #endif
 }
