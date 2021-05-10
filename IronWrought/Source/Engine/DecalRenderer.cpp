@@ -204,7 +204,7 @@ void CDecalRenderer::Render(CCameraComponent* aCamera, std::vector<CGameObject*>
 	if (aGameObjectList.empty())
 		return;
 
-	SM::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
+	SM::Matrix cameraMatrix = aCamera->/*GetViewMatrix()*/GameObject().myTransform->Transform();
 	const SM::Matrix& projectionMatrix = aCamera->GetProjection();
 	myFrameBufferData.myToCameraSpace = cameraMatrix.Invert();
 	myFrameBufferData.myToProjectionSpace = projectionMatrix;

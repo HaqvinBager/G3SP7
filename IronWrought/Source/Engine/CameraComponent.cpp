@@ -21,7 +21,7 @@ CCameraComponent::CCameraComponent(CGameObject& aParent, const float aFoV/*, flo
 
 	myTrauma = 0.0f;
 	myShake = 0.0f;
-	myDecayInSeconds = 1.0f;
+	myDecayInSeconds = 0.5f;
 	myShakeSpeed = 20.0f;
 	myMaxShakeRotation = { 2.0f, 2.0f, 2.0f };
 	myNoise = PerlinNoise(214125213);
@@ -65,6 +65,11 @@ float LogEaseIn(float x) {
 
 void CCameraComponent::Update()
 {
+	if (Input::GetInstance()->IsKeyPressed('H'))
+	{
+		this->SetTrauma(1.5f);
+	}
+
 	if (myTrauma > 0.0f) {
 		myShakeTimer += CTimer::Dt();
 		myTrauma -= (1 / myDecayInSeconds) * CTimer::Dt();
@@ -128,6 +133,11 @@ void CCameraComponent::SetFoV(float aFoV)
 	DirectX::BoundingFrustum::CreateFromMatrix(myViewFrustum, myProjection);
 }
 
+const DirectX::SimpleMath::Matrix& CCameraComponent::GetProjection() const
+{
+	return myProjection; 
+}
+
 float CCameraComponent::GetFoV()
 {
 	return myFoV;
@@ -155,7 +165,15 @@ void CCameraComponent::EmplaceSprites(std::vector<CSpriteInstance*>& someSprites
 const Matrix& CCameraComponent::GetViewMatrix()
 {
 	myView = DirectX::XMMatrixLookAtLH(GameObject().myTransform->Position(), GameObject().myTransform->Position() - GameObject().myTransform->Transform().Forward(), GameObject().myTransform->Transform().Up());
+	myView.Translation(Vector3::Zero);
+	myView *= myShakenMatrix;
+	myView.Translation(GameObject().myTransform->Transform().Translation());
 	return myView;
+}
+
+const Matrix& CCameraComponent::GetShakenMatrix() const
+{
+	return myShakenMatrix;
 }
 
 const DirectX::BoundingFrustum CCameraComponent::GetViewFrustum()
@@ -179,8 +197,12 @@ void CCameraComponent::Shake()
 		float newRotZ = myMaxShakeRotation.z * myShake * (float(myNoise.noise(Random(-myShakeSpeed, myShakeSpeed), CTimer::Time() * myShakeSpeed, 0.0f) - 0.5f)) * 2;
 
 		DirectX::SimpleMath::Vector3 newRotation = { newRotX, newRotY, newRotZ };
+
+		myShakenMatrix = DirectX::SimpleMath::Matrix::CreateFromYawPitchRoll(0.0f, 0.0f, DirectX::XMConvertToRadians(newRotZ));
+		//myShakenMatrix = myShakenMatrix.Transpose();
+		
 		newRotation += myStartingRotation;
-		GameObject().myTransform->Rotation(newRotation);
+		//GameObject().myTransform->Rotation(newRotation);
 		myShakeTimer -= 0.0167f;
 	}
 }

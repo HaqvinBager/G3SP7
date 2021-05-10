@@ -15,7 +15,7 @@ public:
 	void Start() override;
 	void Update() override;
 
-	const DirectX::SimpleMath::Matrix& GetProjection() const { return myProjection; }
+	const DirectX::SimpleMath::Matrix& GetProjection() const;
 	float GetFoV();
 
 	void SetTrauma(float aValue);
@@ -27,6 +27,7 @@ public:
 	void EmplaceSprites(std::vector<CSpriteInstance*>& someSprites) const;
 
 	const Matrix& GetViewMatrix();
+	const Matrix& GetShakenMatrix() const;
 
 	const DirectX::BoundingFrustum GetViewFrustum();
 
@@ -37,6 +38,7 @@ private:
 	CSpriteInstance* myFadingPlane;
 	DirectX::SimpleMath::Matrix myProjection;
 	DirectX::SimpleMath::Matrix myView;
+	DirectX::SimpleMath::Matrix myShakenMatrix;
 	DirectX::BoundingFrustum myViewFrustum;
 	
 	DirectX::SimpleMath::Vector3 myStartingRotation;

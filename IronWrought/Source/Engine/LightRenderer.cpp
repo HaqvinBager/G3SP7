@@ -295,7 +295,7 @@ bool CLightRenderer::Init(CDirectXFramework* aFramework)
 
 void CLightRenderer::Render(CCameraComponent* aCamera, CEnvironmentLight* anEnvironmentLight)
 {
-	SM::Matrix& cameraMatrix = aCamera->GameObject().myTransform->Transform();
+	SM::Matrix cameraMatrix = aCamera->/*GetViewMatrix()*/GameObject().myTransform->Transform();
 	myFrameBufferData.myCameraPosition = SM::Vector4{ cameraMatrix._41, cameraMatrix._42, cameraMatrix._43, 1.f };
 	myFrameBufferData.myToCameraSpace = cameraMatrix.Invert();
 	myFrameBufferData.myToWorldFromCamera = cameraMatrix;
