@@ -44,6 +44,7 @@ CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, 
 	INPUT_MAPPER->AddObserver(EInputEvent::Crouch, this);
 	INPUT_MAPPER->AddObserver(EInputEvent::ResetEntities, this);
 	INPUT_MAPPER->AddObserver(EInputEvent::SetResetPointEntities, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayerTakeDamage, this);
 
 	myController = CEngine::GetInstance()->GetPhysx().CreateCharacterController(gameObject.myTransform->Position(), myColliderRadius, myColliderHeightStanding, GameObject().myTransform, aHitReport);
 	physx::PxShape* shape = nullptr;
@@ -78,6 +79,7 @@ CPlayerControllerComponent::~CPlayerControllerComponent()
 	INPUT_MAPPER->RemoveObserver(EInputEvent::Crouch, this);
 	INPUT_MAPPER->RemoveObserver(EInputEvent::ResetEntities, this);
 	INPUT_MAPPER->RemoveObserver(EInputEvent::SetResetPointEntities, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayerTakeDamage, this);
 
 	delete myAnimationComponentController;
 	myAnimationComponentController = nullptr;
@@ -140,7 +142,7 @@ void CPlayerControllerComponent::FixedUpdate()
 			myMovement.y = myMaxFallSpeed;
 
 		Move({ myMovement.x, myMovement.y, myMovement.z });
-		
+		CrouchUpdate(CTimer::FixedDt() * 2.0f);
 	}
 }
 
@@ -170,7 +172,8 @@ void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
 			}
 			break;
 		case EInputEvent::Crouch:
-			Crouch();
+			/*Crouch();*/
+			OnCrouch();
 			break;
 
 		case EInputEvent::ResetEntities:
@@ -200,6 +203,14 @@ void CPlayerControllerComponent::Receive(const SStringMessage& aMsg)
 	{
 		myCamera->GameObject().GetComponent<CModelComponent>()->Enabled(true);
 		myCamera->GameObject().GetComponent<CAnimationComponent>()->Enabled(true);
+	}
+}
+
+void CPlayerControllerComponent::Receive(const SMessage& aMsg)
+{
+	if (aMsg.myMessageType == EMessageType::PlayerTakeDamage)
+	{
+		myAnimationComponentController->TakeDamage();
 	}
 }
 
@@ -239,6 +250,11 @@ void CPlayerControllerComponent::SetControllerPosition(const Vector3& aPos)
 	myController->GetController().setPosition({ aPos.x, aPos.y, aPos.x });
 }
 
+inline const float Lerp(const float& A, const float& B, const float& T)
+{
+	return ((A - A * T) + (B * T));
+}
+
 void CPlayerControllerComponent::Crouch()
 {
 	myIsCrouching = !myIsCrouching;
@@ -256,6 +272,41 @@ void CPlayerControllerComponent::Crouch()
 		myController->GetController().resize(myColliderHeightStanding);
 		GameObject().myTransform->FetchChildren()[0]->Position({ 0.0f, myCameraPosYStanding, myCameraPosZ });// Equivalent to myCamera->GameObject().myTransform->Position
 		mySpeed = myWalkSpeed;
+	}
+}
+
+void CPlayerControllerComponent::CrouchUpdate(const float& dt)
+{
+	if (myCrouchingLerp >= 0.0f && myCrouchingLerp <= 1.0f)
+	{
+		float currentYPos = Lerp(myCameraPosYStanding, myCameraPosYCrouching, myCrouchingLerp);
+		GameObject().myTransform->FetchChildren()[0]->Position({ 0.0f, currentYPos, myCameraPosZ });// Equivalent to myCamera->GameObject().myTransform->Position
+	}
+	else
+	{
+		return;
+	}
+
+	if(myIsCrouching)
+		myCrouchingLerp += dt;
+	else
+		myCrouchingLerp -= dt;
+}
+
+void CPlayerControllerComponent::OnCrouch()
+{
+	myIsCrouching = !myIsCrouching;
+	if (myIsCrouching)
+	{
+		myController->GetController().resize(myColliderHeightCrouched);
+		mySpeed = myCrouchSpeed;
+		myCrouchingLerp = 0.0f;
+	}
+	else
+	{
+		myController->GetController().resize(myColliderHeightStanding);
+		mySpeed = myWalkSpeed;
+		myCrouchingLerp = 1.0f;
 	}
 }
 

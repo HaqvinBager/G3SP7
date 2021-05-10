@@ -1,6 +1,6 @@
 #pragma once
 class CTransformComponent;
-
+class CEnemyComponent;
 class CAIController
 {
 public:
@@ -36,7 +36,7 @@ private:
 class CAttack : public CAIController
 {
 public:
-	CAttack();
+	CAttack(CEnemyComponent* aUser);
 	~CAttack() override { myTarget = nullptr; }
 	Vector3 Update(const Vector3& aPosition) override;
 	void SetTarget(CTransformComponent* aTarget);
@@ -46,4 +46,5 @@ private:
 	float myAttackCooldown;
 	float myAttackTimer;
 	CTransformComponent* myTarget;
+	CEnemyComponent* myUser;
 };

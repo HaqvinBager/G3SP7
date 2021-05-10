@@ -64,7 +64,7 @@ void CSeek::SetTarget(CTransformComponent* aTarget) {
 	myTarget = aTarget;
 }
 
-CAttack::CAttack() : myDamage(1.0f), myTarget(nullptr), myAttackCooldown(1.f), myAttackTimer(0.f) {
+CAttack::CAttack(CEnemyComponent* aUser) : myDamage(1.0f), myTarget(nullptr), myAttackCooldown(1.f), myAttackTimer(0.f), myUser(aUser) {
 }
 
 Vector3 CAttack::Update(const Vector3& aPosition)
@@ -89,6 +89,7 @@ Vector3 CAttack::Update(const Vector3& aPosition)
 			std::cout << "Player Hit " << std::endl;
 			float damage = 5.0f;
 			CMainSingleton::PostMaster().Send({ EMessageType::PlayerTakeDamage, &damage });
+			CMainSingleton::PostMaster().SendLate({ EMessageType::EnemyAttack, myUser });
 		}
 		myAttackTimer = 0.f;
 	}

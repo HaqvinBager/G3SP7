@@ -21,6 +21,8 @@ void CEnemyAnimationController::Activate()
 	CMainSingleton::PostMaster().Subscribe(EMessageType::EnemyPatrolState, this);
 	CMainSingleton::PostMaster().Subscribe(EMessageType::EnemySeekState, this);
 	CMainSingleton::PostMaster().Subscribe(EMessageType::EnemyAttackState, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::EnemyAttack, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::EnemyTakeDamage, this);
 }
 
 void CEnemyAnimationController::Deactivate()
@@ -28,6 +30,8 @@ void CEnemyAnimationController::Deactivate()
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::EnemyPatrolState, this);
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::EnemySeekState, this);
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::EnemyAttackState, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::EnemyAttack, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::EnemyTakeDamage, this);
 }
 
 void CEnemyAnimationController::Receive(const SMessage& aMessage)
@@ -49,7 +53,19 @@ void CEnemyAnimationController::Receive(const SMessage& aMessage)
 		case EMessageType::EnemyAttackState:
 		{
 			CEnemyComponent* enemy = reinterpret_cast<CEnemyComponent*>(aMessage.data);
+			OnSeek(enemy);
+		}break;
+
+		case EMessageType::EnemyAttack:
+		{
+			CEnemyComponent* enemy = reinterpret_cast<CEnemyComponent*>(aMessage.data);
 			OnAttack(enemy);
+		}break;
+
+		case EMessageType::EnemyTakeDamage:
+		{
+			CEnemyComponent* enemy = reinterpret_cast<CEnemyComponent*>(aMessage.data);
+			OnTakeDamage(enemy);
 		}break;
 
 		default:break;

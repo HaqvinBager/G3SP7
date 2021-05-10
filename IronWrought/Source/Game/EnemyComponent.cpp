@@ -60,7 +60,7 @@ void CEnemyComponent::Start()
 		seekBehaviour->SetTarget(myPlayer->myTransform);
 	}
 
-	CAttack* attack = new CAttack();
+	CAttack* attack = new CAttack(this);
 	if(myPlayer != nullptr)
 		attack->SetTarget(myPlayer->myTransform);
 	myBehaviours.push_back(attack);
@@ -122,6 +122,7 @@ void CEnemyComponent::FixedUpdate()
 void CEnemyComponent::TakeDamage(float aDamage)
 {
 	myCurrentHealth -= aDamage;
+	CMainSingleton::PostMaster().SendLate({ EMessageType::EnemyTakeDamage, this });
 }
 
 void CEnemyComponent::SetState(EBehaviour aState)

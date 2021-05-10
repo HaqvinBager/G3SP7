@@ -31,7 +31,7 @@ void CPlayerAnimationController::Receive(const SMessage& aMessage)
 			if (myState != EState::Action)
 				return;
 
-			PostMaster::SGravityGloveTargetData targetData = *reinterpret_cast<PostMaster::SGravityGloveTargetData*>(aMessage.data);
+			PostMaster::SGravityGloveTargetData targetData = *static_cast<PostMaster::SGravityGloveTargetData*>(aMessage.data);
 			float percent = fabs(targetData.myCurrentDistanceSquared - targetData.myInitialDistanceSquared) / targetData.myInitialDistanceSquared;
 			myPlayerAnimation->BlendLerp(percent);
 

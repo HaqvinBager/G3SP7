@@ -13,7 +13,7 @@ namespace physx {
 	class PxUserControllerHitReport;
 }
 
-class CPlayerControllerComponent : public CComponent, public IInputObserver, public IStringObserver
+class CPlayerControllerComponent : public CComponent, public IInputObserver,  public IObserver, public IStringObserver
 {
 public:
 	CPlayerControllerComponent(CGameObject& gameObject, const float aWalkSpeed = 0.314f, const float aCrouchSpeed = 0.13f, physx::PxUserControllerHitReport* aHitReport = nullptr);
@@ -26,6 +26,7 @@ public:
 
 	void ReceiveEvent(const EInputEvent aEvent) override;
 	void Receive(const SStringMessage& aMsg) override;
+	void Receive(const SMessage& aMsg) override;
 
 	void ControllerUpdate();
 
@@ -34,6 +35,8 @@ public:
 	//void AddFaceMesh(CGameObject* aGameObject);
 	void SetControllerPosition(const Vector3& aPos);
 	void Crouch();
+	void CrouchUpdate(const float& dt);
+	void OnCrouch();
 
 	void ResetPlayerPosition();
 
@@ -76,6 +79,7 @@ private:
 	bool myLadderHasTriggered;
 
 	bool myIsCrouching;
+	float myCrouchingLerp;
 	float myWalkSpeed;
 	float myCrouchSpeed;
 	float myJumpHeight;
