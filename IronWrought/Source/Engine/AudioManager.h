@@ -12,7 +12,7 @@ enum class EAmbience { AirVent, Inside, Outside, Count };
 enum class ESFX { GravityGlovePullBuildup, GravityGlovePullHit, GravityGlovePush, GravityGlovePullRelease, Count };
 enum class ESFXCollection { StepAirVent, StepConcrete, Count };
 enum class EUI { ButtonClick, PlayClick, Count };
-enum class EResearcherEventVoiceLine { ResearcherDoorEventVerticalSlice, ResearcherIntroVerticalSlice, Intro, , Outro, Count };
+enum class EResearcherEventVoiceLine { ResearcherDoorEventVerticalSlice, ResearcherIntroVerticalSlice, Count };
 enum class EResearcherReactionVoiceLine { ResearcherReactionExplosives, Count };
 enum class ERobotVoiceLine { RobotAttack, RobotDeath, RobotIdle, RobotPatrolling, RobotSearching, Count };
 
