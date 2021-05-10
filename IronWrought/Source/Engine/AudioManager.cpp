@@ -308,12 +308,78 @@ void CAudioManager::Receive(const SMessage& aMessage) {
 	//	//}
 	//}break;
 
+	case EMessageType::StartGame:
+	{
+		std::string scene = *reinterpret_cast<std::string*>(aMessage.data);
+		if (strcmp(scene.c_str(), "Level_1-1") == 0)
+		{
+			myChannels[CAST(EChannel::Ambience)]->Stop();
+			myWrapper.Play(myAmbienceAudio[CAST(EAmbience::Inside)], myChannels[CAST(EChannel::Ambience)]);
+			return;
+		}
+
+		if (strcmp(scene.c_str(), "Level_1-2") == 0)
+		{
+			myChannels[CAST(EChannel::Ambience)]->Stop();
+			myWrapper.Play(myAmbienceAudio[CAST(EAmbience::Inside)], myChannels[CAST(EChannel::Ambience)]);
+			return;
+		}
+
+		if (strcmp(scene.c_str(), "Level_2-1") == 0)
+		{
+			myChannels[CAST(EChannel::Ambience)]->Stop();
+			myWrapper.Play(myAmbienceAudio[CAST(EAmbience::Outside)], myChannels[CAST(EChannel::Ambience)]);
+			return;
+		}
+
+		if (strcmp(scene.c_str(), "Level_2-2") == 0)
+		{
+			myChannels[CAST(EChannel::Ambience)]->Stop();
+			myWrapper.Play(myAmbienceAudio[CAST(EAmbience::Outside)], myChannels[CAST(EChannel::Ambience)]);
+			return;
+		}
+	}break;
+
+	case EMessageType::BootUpState:
+	{
+		myWrapper.Play(myAmbienceAudio[CAST(EAmbience::Inside)], myChannels[CAST(EChannel::Ambience)]);
+		//myWrapper.Play(myRes)
+	}break;
+
 	default: break;
 	}
 }
 
-void CAudioManager::Receive(const SStringMessage& /*aMessage*/)
-{}
+void CAudioManager::Receive(const SStringMessage& aMessage)
+{
+	if (strcmp(aMessage.myMessageType, "Level_1-1") == 0)
+	{
+		myChannels[CAST(EChannel::Ambience)]->Stop();
+		myWrapper.Play(myAmbienceAudio[CAST(EAmbience::Inside)], myChannels[CAST(EChannel::Ambience)]);
+		return;
+	}
+	
+	if (strcmp(aMessage.myMessageType, "Level_1-2") == 0)
+	{
+		myChannels[CAST(EChannel::Ambience)]->Stop();
+		myWrapper.Play(myAmbienceAudio[CAST(EAmbience::Inside)], myChannels[CAST(EChannel::Ambience)]);
+		return;
+	}
+	
+	if (strcmp(aMessage.myMessageType, "Level_2-1") == 0)
+	{
+		myChannels[CAST(EChannel::Ambience)]->Stop();
+		myWrapper.Play(myAmbienceAudio[CAST(EAmbience::Outside)], myChannels[CAST(EChannel::Ambience)]);
+		return;
+	}
+
+	if (strcmp(aMessage.myMessageType, "Level_2-2") == 0)
+	{
+		myChannels[CAST(EChannel::Ambience)]->Stop();
+		myWrapper.Play(myAmbienceAudio[CAST(EAmbience::Outside)], myChannels[CAST(EChannel::Ambience)]);
+		return;
+	}
+}
 
 void CAudioManager::Update()
 {
@@ -359,6 +425,15 @@ void CAudioManager::SubscribeToMessages()
 
 	//CMainSingleton::PostMaster().Subscribe(EMessageType::PlayVoiceLine, this);
 	//CMainSingleton::PostMaster().Subscribe(EMessageType::StopDialogue, this);
+	
+	// Ambience
+	CMainSingleton::PostMaster().Subscribe(EMessageType::StartGame, this);
+	CMainSingleton::PostMaster().Subscribe("Level_1-1", this);
+	CMainSingleton::PostMaster().Subscribe("Level_1-2", this);
+	CMainSingleton::PostMaster().Subscribe("Level_2-1", this);
+	CMainSingleton::PostMaster().Subscribe("Level_2-2", this);
+
+	CMainSingleton::PostMaster().Subscribe(EMessageType::BootUpState, this);
 }
 
 void CAudioManager::UnsubscribeToMessages()
@@ -385,6 +460,15 @@ void CAudioManager::UnsubscribeToMessages()
 
 	//CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayVoiceLine, this);
 	//CMainSingleton::PostMaster().Unsubscribe(EMessageType::StopDialogue, this);
+
+	// Ambience
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::StartGame, this);
+	CMainSingleton::PostMaster().Unsubscribe("Level_1-1", this);
+	CMainSingleton::PostMaster().Unsubscribe("Level_1-2", this);
+	CMainSingleton::PostMaster().Unsubscribe("Level_2-1", this);
+	CMainSingleton::PostMaster().Unsubscribe("Level_2-2", this);
+
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::BootUpState, this);
 }
 
 std::string CAudioManager::GetPath(EMusic type) const
@@ -479,8 +563,10 @@ std::string CAudioManager::TranslateEnum(EAmbience enumerator) const {
 	{
 	case EAmbience::AirVent:
 		return "AirVent";
-	case EAmbience::Factory:
-		return "Factory";
+	case EAmbience::Inside:
+		return "Inside";
+	case EAmbience::Outside:
+		return "Outside";
 	default:
 		return "";
 	}
