@@ -39,6 +39,38 @@ static int Random(int aLowerBound, int anUpperBound, int anExcludedNumber)
 	return num;
 }
 
+static int Random(int aLowerBound, int anUpperBound, std::vector<int>& someExcludedNumbers)
+{
+	if (someExcludedNumbers.empty())
+	{
+		int result = Random(aLowerBound, anUpperBound);
+		someExcludedNumbers.push_back(result);
+		return result;
+	}
+
+	int num = someExcludedNumbers[0];
+
+	if (anUpperBound - aLowerBound > 0) 
+	{
+		while (std::find(someExcludedNumbers.begin(), someExcludedNumbers.end(), num) != someExcludedNumbers.end()) 
+		{
+			num = Random(aLowerBound, anUpperBound);
+		}
+		someExcludedNumbers.push_back(num);
+
+		if (someExcludedNumbers.size() > anUpperBound)
+		{
+			someExcludedNumbers.clear();
+		}
+	}
+	else 
+	{
+		return Random(aLowerBound, anUpperBound);
+	}
+
+	return num;
+}
+
 static DirectX::SimpleMath::Vector3 Random(DirectX::SimpleMath::Vector3& aLowerBound, DirectX::SimpleMath::Vector3& anUpperBound)
 {
 	float x = Random(aLowerBound.x, anUpperBound.x);

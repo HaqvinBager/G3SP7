@@ -33,12 +33,13 @@ CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, 
 	, myIsJumping(false)
 	, myJumpHeight(0.1f)// these values don't make sense. //Supposed to be 40cm => ~0.4f
 	, myFallSpeed(0.982f * 1.0f)
-	, myMovement( Vector3(0.0f, 0.0f, 0.0f ))
+	, myMovement(Vector3(0.0f, 0.0f, 0.0f))
 	, myAirborneTimer(0.0f)
 	, myLadderHasTriggered(false)
 	, myAnimationComponentController(nullptr)
 	, myPlayerComponent(nullptr)
 	, myStepTimer(0.0f)
+	, myStepTime(aWalkSpeed * 5.0f)
 {
 	INPUT_MAPPER->AddObserver(EInputEvent::Jump, this);
 	INPUT_MAPPER->AddObserver(EInputEvent::Crouch, this);
@@ -236,9 +237,9 @@ void CPlayerControllerComponent::Move(Vector3 aDir)
 		if (horizontalDir.LengthSquared() > 0.0f)
 		{
 			myStepTimer -= CTimer::FixedDt();
-			if (myStepTimer <= 0.0f) 
+			if (myStepTimer <= 0.0f && !myIsCrouching) 
 			{
-				myStepTimer = mySpeed;
+				myStepTimer = myStepTime;
 				CMainSingleton::PostMaster().SendLate({ EMessageType::PlayStepSound, nullptr });
 			}
 		}
@@ -264,7 +265,7 @@ void CPlayerControllerComponent::Crouch()
 		GameObject().myTransform->FetchChildren()[0]->Position({ 0.0f, myCameraPosYCrouching, myCameraPosZ });// Equivalent to myCamera->GameObject().myTransform->Position
 		mySpeed = myCrouchSpeed;
 		// THIS IS TEMP :)
-		myAnimationComponentController->TakeDamage();// TEMP :)
+		//myAnimationComponentController->TakeDamage();// TEMP :)
 		// SUPER TEMP :)
 	}
 	else

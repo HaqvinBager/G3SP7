@@ -86,6 +86,7 @@ private:
 	float myFallSpeed;
 	float myAirborneTimer;
 	float myStepTimer;
+	float myStepTime;
 
 	//CRigidBodyComponent* myLadder;
 
