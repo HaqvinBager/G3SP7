@@ -147,6 +147,7 @@ void CPlayerControllerComponent::FixedUpdate()
 			myMovement.y = myJumpHeight;
 			myAirborneTimer = 0.0f;
 			myHasJumped = false;
+			CMainSingleton::PostMaster().SendLate({ EMessageType::PlayJumpSound, nullptr });
 		}
 
 		myMovement.y -= myFallSpeed * myFallSpeed * CTimer::FixedDt() * myAirborneTimer ;
@@ -190,7 +191,6 @@ void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
 				myHasJumped = true;
 				myIsJumping = true;
 				myIsGrounded = false;
-				CMainSingleton::PostMaster().SendLate({ EMessageType::PlayJumpSound, nullptr });
 			}
 			break;
 		case EInputEvent::Crouch:
