@@ -13,6 +13,7 @@
 #include "RigidBodyComponent.h"
 #include "ModelComponent.h"
 #include "PhysXWrapper.h"
+#include "VFXSystemComponent.h"
 
 //EnemyComp
 
@@ -22,6 +23,7 @@ CEnemyComponent::CEnemyComponent(CGameObject& aParent, const SEnemySetting& some
 	, myEnemy(nullptr)
 	, myCurrentState(EBehaviour::Count)
 	, myRigidBodyComponent(nullptr)
+	, myTakeDamageTimer(0.0f)
 {
 	//myController = CEngine::GetInstance()->GetPhysx().CreateCharacterController(GameObject().myTransform->Position(), 0.6f * 0.5f, 1.8f * 0.5f, GameObject().myTransform, aHitReport);
 	//myController->GetController().getActor()->setRigidBodyFlag(PxRigidBodyFlag::eUSE_KINEMATIC_TARGET_FOR_SCENE_QUERIES, true);
@@ -67,6 +69,9 @@ void CEnemyComponent::Start()
 
 	this->GameObject().GetComponent<CVFXSystemComponent>()->EnableEffect(0);
 
+	mySettings.mySpeed = 5.0f;
+	mySettings.myHealth = 10.0f;
+
 	if (GameObject().GetComponent<CRigidBodyComponent>()) {
 		myRigidBodyComponent = GameObject().GetComponent<CRigidBodyComponent>();
 		myRigidBodyComponent->GetDynamicRigidBody()->GetBody().setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
@@ -79,6 +84,30 @@ void CEnemyComponent::Start()
 
 void CEnemyComponent::Update()//får bestämma vilket behaviour vi vill köra i denna Update()!!!
 {
+	// :grimacing:
+	myTakeDamageTimer -= CTimer::Dt();
+	if (myCurrentHealth <= 0.f) {
+
+		myTimeToDeathTimer -= CTimer::Dt();
+		if (myTimeToDeathTimer <= 0.0f)
+		{
+			CMainSingleton::PostMaster().SendLate({ EMessageType::EnemyDisabled, this });
+			if (myTimeToDeathTimer <= -0.12f)
+			{
+				Dead();
+			}
+		}
+		else
+		{
+			CMainSingleton::PostMaster().SendLate({ EMessageType::EnemyDied, this });
+			auto vfx = GameObject().GetComponent<CVFXSystemComponent>();
+			if(vfx->Enabled())
+				CMainSingleton::PostMaster().SendLate({ EMessageType::PlayRobotDeathSound, nullptr } );
+			vfx->Enabled(false);
+		}
+		return;
+	}
+
 	float distanceToPlayer = Vector3::DistanceSquared(myPlayer->myTransform->Position(), GameObject().myTransform->Position());
 
 	if (mySettings.myRadius * mySettings.myRadius >= distanceToPlayer) {
@@ -104,14 +133,6 @@ void CEnemyComponent::Update()//får bestämma vilket behaviour vi vill köra i 
 		myCurrentOrientation = Lerp(myCurrentOrientation, targetOrientation, 2.0f * CTimer::Dt());
 		GameObject().myTransform->Rotation({ 0, DirectX::XMConvertToDegrees(myCurrentOrientation) + 180.f, 0 });
 	}
-
-//new movement
-	//if (GameObject().GetComponent<CRigidBodyComponent>()) {
-//		GameObject().GetComponent<CRigidBodyComponent>()->AddForce({ 1.f, 0.f, 0.f });
-	//}
-	if (myCurrentHealth <= 0.f) {
-		Dead();
-	}
 }
 
 void CEnemyComponent::FixedUpdate()
@@ -121,8 +142,13 @@ void CEnemyComponent::FixedUpdate()
 
 void CEnemyComponent::TakeDamage(float aDamage)
 {
-	myCurrentHealth -= aDamage;
 	CMainSingleton::PostMaster().SendLate({ EMessageType::EnemyTakeDamage, this });
+	
+	if (myTakeDamageTimer > 0.0f)
+		return;
+
+	myTakeDamageTimer = 0.5f;
+	myCurrentHealth -= aDamage;
 }
 
 void CEnemyComponent::SetState(EBehaviour aState)
@@ -169,5 +195,8 @@ const CEnemyComponent::EBehaviour CEnemyComponent::GetState() const
 
 void CEnemyComponent::Dead()
 {
+	float deadPos = static_cast<float>(0xDEAD);
+	GameObject().myTransform->Position({ deadPos, deadPos, deadPos });
+	myRigidBodyComponent->SetPosition({ deadPos, deadPos, deadPos });
 	GameObject().Active(false);
 }
