@@ -87,8 +87,8 @@ CPlayerControllerComponent::~CPlayerControllerComponent()
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayerTakeDamage, this);
 	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_DISABLE_GLOVE, this);
 	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_ENABLE_GLOVE, this);
-	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_FIRST_END_EVENT, this);
-	CMainSingleton::PostMaster().Unsubscribe("Outro2", this);
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_OUTRO1, this);
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_OUTRO2, this);
 
 	delete myAnimationComponentController;
 	myAnimationComponentController = nullptr;
@@ -102,8 +102,8 @@ void CPlayerControllerComponent::Start()
 	SetRespawnPosition();
 	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_DISABLE_GLOVE, this);
 	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_ENABLE_GLOVE, this);
-	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_FIRST_END_EVENT, this);
-	CMainSingleton::PostMaster().Subscribe("Outro2", this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_OUTRO1, this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_OUTRO2, this);
 }
 
 void CPlayerControllerComponent::Update()
@@ -235,7 +235,7 @@ void CPlayerControllerComponent::Receive(const SStringMessage& aMsg)
 	//	break;
 	//}
 
-	if (PostMaster::CompareStringMessage(PostMaster::SMSG_FIRST_END_EVENT, aMsg.myMessageType))
+	if (PostMaster::CompareStringMessage(PostMaster::SMSG_OUTRO1, aMsg.myMessageType))
 	{
 		if (myEventCounter > 0)
 			return;
