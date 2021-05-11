@@ -64,7 +64,7 @@ void CSeek::SetTarget(CTransformComponent* aTarget) {
 	myTarget = aTarget;
 }
 
-CAttack::CAttack(CEnemyComponent* aUser) : myDamage(1.0f), myTarget(nullptr), myAttackCooldown(1.f), myAttackTimer(0.f), myUser(aUser) {
+CAttack::CAttack(CEnemyComponent* aUser) : myDamage(1.0f), myTarget(nullptr), myAttackCooldown(1.f), myAnimationOffset(0.45f), myAttackTimer(0.f), myUser(aUser) {
 }
 
 Vector3 CAttack::Update(const Vector3& aPosition)
@@ -76,7 +76,13 @@ Vector3 CAttack::Update(const Vector3& aPosition)
 
 	//byt ut attacktimer och attackcooldown till animationtimer - Alexander Matthäi 2021-05-07
 	myAttackTimer += CTimer::Dt();
-	if (myAttackTimer >= myAttackCooldown) {
+	if (myAttackTimer >= myAttackCooldown)
+	{
+		CMainSingleton::PostMaster().SendLate({ EMessageType::EnemyAttack, myUser });
+	}
+
+	if (myAttackTimer >= (myAttackCooldown + myAnimationOffset)) 
+	{
 		Vector3 origin = aPosition;
 		PxRaycastBuffer hit = CEngine::GetInstance()->GetPhysx().Raycast(origin, direction, 10.0f, CPhysXWrapper::ELayerMask::PLAYER);
 		int hits = hit.getNbAnyHits();
@@ -89,7 +95,7 @@ Vector3 CAttack::Update(const Vector3& aPosition)
 			std::cout << "Player Hit " << std::endl;
 			float damage = 5.0f;
 			CMainSingleton::PostMaster().Send({ EMessageType::PlayerTakeDamage, &damage });
-			CMainSingleton::PostMaster().SendLate({ EMessageType::EnemyAttack, myUser });
+			//CMainSingleton::PostMaster().SendLate({ EMessageType::EnemyAttack, myUser });
 		}
 		myAttackTimer = 0.f;
 	}

@@ -10,7 +10,7 @@
 using namespace rapidjson;
 
 #define CAST(type) { static_cast<unsigned int>(type) }
-#define AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION 2
+#define AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION 1
 
 CAudioManager::CAudioManager() 
 	: myWrapper() 
@@ -210,6 +210,13 @@ void CAudioManager::Receive(const SMessage& aMessage) {
 	}
 	break;
 
+	case EMessageType::PlayerTakeDamage:
+	{
+		myWrapper.Play(mySFXAudio[CAST(ESFX::EnemyHit)], myChannels[CAST(EChannel::SFX)]);
+		//myDelayedSFX.push_back({ESFX::EnemyHit, 0.45f});
+	}
+	break;
+
 	case EMessageType::PlayResearcherReactionExplosives:
 	{
 		PlayRandomSoundFromCollection(myResearcherReactionsExplosives, EChannel::ResearcherVOX);
@@ -249,6 +256,7 @@ void CAudioManager::Receive(const SMessage& aMessage) {
 	case EMessageType::EnemyTakeDamage:
 	{
 		PlayCyclicRandomSoundFromCollection(myRobotDeathSounds, EChannel::RobotVOX, myDeathSoundIndices, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
+		myWrapper.Play(mySFXAudio[CAST(ESFX::EnemyHit)], myChannels[CAST(EChannel::SFX)]);
 	}
 	break;
 	
@@ -423,10 +431,11 @@ void CAudioManager::SubscribeToMessages()
 	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayRobotSearching, this);
 	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayResearcherEvent, this);
 	CMainSingleton::PostMaster().Subscribe(EMessageType::PlaySFX, this);
-	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayJumpSound, this);
 
 	// Player & Gravity Glove 
 	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayStepSound, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayJumpSound, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayerTakeDamage, this);
 	CMainSingleton::PostMaster().Subscribe(EMessageType::GravityGlovePull, this);
 	CMainSingleton::PostMaster().Subscribe(EMessageType::GravityGlovePush, this);
 
@@ -460,10 +469,11 @@ void CAudioManager::UnsubscribeToMessages()
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayRobotSearching, this);
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayResearcherEvent, this);
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlaySFX, this);
-	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayJumpSound, this);
 
 	// Player & Gravity Glove 
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayStepSound, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayJumpSound, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayerTakeDamage, this);
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::GravityGlovePull, this);
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::GravityGlovePush, this);
 
@@ -599,6 +609,14 @@ std::string CAudioManager::TranslateEnum(ESFX enumerator) const {
 		return "GravityGlovePullRelease";
 	case ESFX::Jump:
 		return "Jump";
+	case ESFX::EnemyHit:
+		return "EnemyHit";
+	case ESFX::SwitchPress:
+		return "SwitchPress";
+	case ESFX::PickupGravityGlove:
+		return "PickupGravityGlove";
+	case ESFX::PickupHeal:
+		return "PickupHeal";
 	default:
 		return "";
 	}

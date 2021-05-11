@@ -45,6 +45,7 @@ private:
 	float myDamage;
 	float myAttackCooldown;
 	float myAttackTimer;
+	float myAnimationOffset;
 	CTransformComponent* myTarget;
 	CEnemyComponent* myUser;
 };

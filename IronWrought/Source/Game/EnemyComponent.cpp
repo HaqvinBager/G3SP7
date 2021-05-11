@@ -141,14 +141,13 @@ void CEnemyComponent::FixedUpdate()
 }
 
 void CEnemyComponent::TakeDamage(float aDamage)
-{
-	CMainSingleton::PostMaster().SendLate({ EMessageType::EnemyTakeDamage, this });
-	
+{	
 	if (myTakeDamageTimer > 0.0f)
 		return;
 
 	myTakeDamageTimer = 0.5f;
 	myCurrentHealth -= aDamage;
+	CMainSingleton::PostMaster().SendLate({ EMessageType::EnemyTakeDamage, this });
 }
 
 void CEnemyComponent::SetState(EBehaviour aState)
