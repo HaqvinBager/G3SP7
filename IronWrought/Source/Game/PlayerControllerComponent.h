@@ -83,6 +83,7 @@ private:
 	bool myIsJumping;
 	bool myHasJumped;
 	bool myLadderHasTriggered;
+	bool myCanStand;
 
 	bool myLockPlayerInput;
 	bool myIsCrouching;
