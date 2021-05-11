@@ -185,13 +185,22 @@ bool CFullscreenRenderer::Init(CDirectXFramework* aFramework) {
 	ID3D11Texture2D* noiseTextureBuffer;
 	ENGINE_HR_MESSAGE(device->CreateTexture2D(&noiseTextureDesc, &noiseTextureData, &noiseTextureBuffer), "Noise Texture could not be created.");
 	ENGINE_HR_MESSAGE(device->CreateShaderResourceView(noiseTextureBuffer, &noiseSRVDesc, &myNoiseTexture), "Noise Shader Resource View could not be created.");
-
-	myPostProcessingBufferData.myWhitePointColor = { 128.0f/255.0f, 170.0f/255.0f, 1.0f, 1.0f };
-	myPostProcessingBufferData.myWhitePointIntensity = 0.1f;
-	myPostProcessingBufferData.myExposure = 0.1f;
+	
+	//Level 1-1 & 1-2
+	myPostProcessingBufferData.myWhitePointColor = { 255.0f/255.0f, 170.0f/255.0f, 0.5f, 1.0f };
+	myPostProcessingBufferData.myWhitePointIntensity = 10.0f;
+	myPostProcessingBufferData.myExposure = 1.0f;
 	myPostProcessingBufferData.myIsReinhard = false;
 	myPostProcessingBufferData.myIsUncharted = true;
 	myPostProcessingBufferData.myIsACES = false;
+	
+	//Level 2-1 & 2-2
+	//myPostProcessingBufferData.myWhitePointColor = { 128.0f/255.0f, 170.0f/255.0f, 1.0f, 1.0f };
+	//myPostProcessingBufferData.myWhitePointIntensity = 0.1f;
+	//myPostProcessingBufferData.myExposure = 0.1f;
+	//myPostProcessingBufferData.myIsReinhard = false;
+	//myPostProcessingBufferData.myIsUncharted = true;
+	//myPostProcessingBufferData.myIsACES = false;
 
 	myPostProcessingBufferData.mySSAORadius = 1.1f;
 	myPostProcessingBufferData.mySSAOSampleBias = 0.0163f;

@@ -1,0 +1,32 @@
+{
+    "Custom Data": [
+        {
+            "Data key": "canInteractPanel",
+            "Type": "Bool"
+        },
+        {
+            "Data key": "panelDone",
+            "Type": "Bool"
+        },
+        {
+            "Data key": "openTick",
+            "Type": "Int"
+        },
+        {
+            "Data key": "EventOpenDoors",
+            "Type": "Start"
+        },
+        {
+            "Data key": "isOpenGarageDoors",
+            "Type": "Bool"
+        },
+        {
+            "Data key": "CloseDoorsEvent",
+            "Type": "Start"
+        },
+        {
+            "Data key": "playingAudio",
+            "Type": "Bool"
+        }
+    ]
+}

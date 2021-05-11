@@ -39,7 +39,7 @@ public:
 	void Start() override;
 	void Update() override;
 	void FixedUpdate() override;
-	void TakeDamage(float aDamage);
+	void TakeDamage(const float aDamage = 2.0f);
 	void SetState(EBehaviour aState);
 	const EBehaviour GetState()const;
 
@@ -75,6 +75,9 @@ private:
 	Vector3 myCurrentDirection;
 	float myCurrentOrientation; 
 	CRigidBodyComponent* myRigidBodyComponent;
+
+	float myTakeDamageTimer;
+	float myTimeToDeathTimer = 0.958f;// Animation is 24frames @ 24fps => 1s. 1/24th of a second ~= 0.958f. :S
 
 	float myYaw;
 	float myPitch;

@@ -74,6 +74,7 @@ enum class EMessageType
 	EnemyAttack,
 	EnemyTargetLost,
 	EnemyTakeDamage,
+	EnemyDisabled,
 
 	BootUpState,
 	PlayJumpSound,
