@@ -112,7 +112,17 @@ void CContactReportCallback::onContact(const physx::PxContactPairHeader& pairHea
 			if (secondTransform->GetComponent<CRigidBodyComponent>()) {
 				length = secondTransform->GetComponent<CRigidBodyComponent>()->GetDynamicRigidBody()->GetLinearVelocity().LengthSquared();
 				if (length >= 50.f) {
-					enemy->TakeDamage(5.f);
+					enemy->TakeDamage();
+				}
+			}
+		}
+		if (secondTransform->GetComponent<CEnemyComponent>()) {
+			enemy = secondTransform->GetComponent<CEnemyComponent>();
+			//check velocity
+			if (firstTransform->GetComponent<CRigidBodyComponent>()) {
+				length = firstTransform->GetComponent<CRigidBodyComponent>()->GetDynamicRigidBody()->GetLinearVelocity().LengthSquared();
+				if (length >= 50.f) {
+					enemy->TakeDamage();
 				}
 			}
 		}
