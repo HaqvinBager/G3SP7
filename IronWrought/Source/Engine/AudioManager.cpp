@@ -10,7 +10,7 @@
 using namespace rapidjson;
 
 #define CAST(type) { static_cast<unsigned int>(type) }
-#define AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION 3
+#define AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION 2
 
 CAudioManager::CAudioManager() 
 	: myWrapper() 
@@ -196,11 +196,11 @@ void CAudioManager::Receive(const SMessage& aMessage) {
 	{
 		if (myCurrentGroundType == EGroundType::Concrete)
 		{
-			PlayRandomSoundFromCollection(myConcreteStepSounds, EChannel::SFX, 1);
+			PlayCyclicRandomSoundFromCollection(myConcreteStepSounds, EChannel::SFX, myStepSoundIndices, 1);
 		}
 		else if (myCurrentGroundType == EGroundType::AirVent)
 		{
-			PlayRandomSoundFromCollection(myAirVentStepSounds, EChannel::SFX, 1);
+			PlayCyclicRandomSoundFromCollection(myAirVentStepSounds, EChannel::SFX, myStepSoundIndices, 1);
 		}
 	}
 	break;
@@ -213,31 +213,31 @@ void CAudioManager::Receive(const SMessage& aMessage) {
 
 	case EMessageType::PlayRobotAttackSound:
 	{
-		PlayRandomSoundFromCollection(myRobotAttackSounds, EChannel::RobotVOX, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
+		PlayCyclicRandomSoundFromCollection(myRobotAttackSounds, EChannel::RobotVOX, myAttackSoundIndices, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
 	}
 	break;
 
 	case EMessageType::PlayRobotDeathSound:
 	{
-		PlayRandomSoundFromCollection(myRobotDeathSounds, EChannel::RobotVOX, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
+		PlayCyclicRandomSoundFromCollection(myRobotDeathSounds, EChannel::RobotVOX, myDeathSoundIndices, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
 	}
 	break;
 
 	case EMessageType::PlayRobotIdleSound:
 	{
-		PlayRandomSoundFromCollection(myRobotIdleSounds, EChannel::RobotVOX, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
+		PlayCyclicRandomSoundFromCollection(myRobotIdleSounds, EChannel::RobotVOX, myIdleSoundIndices, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
 	}
 	break;
 
 	case EMessageType::PlayRobotPatrolling:
 	{
-		PlayRandomSoundFromCollection(myRobotPatrollingSounds, EChannel::RobotVOX, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
+		PlayCyclicRandomSoundFromCollection(myRobotPatrollingSounds, EChannel::RobotVOX, myPatrollingSoundIndices, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
 	}
 	break;
 
 	case EMessageType::PlayRobotSearching:
 	{
-		PlayRandomSoundFromCollection(myRobotSearchingSounds, EChannel::RobotVOX, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
+		PlayCyclicRandomSoundFromCollection(myRobotSearchingSounds, EChannel::RobotVOX, mySearchingSoundIndices, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
 	}
 	break;
 	
@@ -276,17 +276,17 @@ void CAudioManager::Receive(const SMessage& aMessage) {
 	{
 		// Todo add max 3 to be playable at the same time. Can be done inside PlayRandomSoundFromCollection
 		// 
-		PlayRandomSoundFromCollection(myRobotAttackSounds, EChannel::RobotVOX, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
+		PlayCyclicRandomSoundFromCollection(myRobotAttackSounds, EChannel::RobotVOX, myAttackSoundIndices, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
 	}break;
 
 	case EMessageType::EnemyPatrolState:
 	{
-		PlayRandomSoundFromCollection(myRobotPatrollingSounds, EChannel::RobotVOX, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
+		PlayCyclicRandomSoundFromCollection(myRobotPatrollingSounds, EChannel::RobotVOX, myPatrollingSoundIndices, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
 	}break;
 
 	case EMessageType::EnemySeekState:
 	{
-		PlayRandomSoundFromCollection(myRobotAttackSounds, EChannel::RobotVOX, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
+		PlayCyclicRandomSoundFromCollection(myRobotAttackSounds, EChannel::RobotVOX, myAttackSoundIndices, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
 	}break;
 
 	//// VOICELINES
@@ -308,12 +308,78 @@ void CAudioManager::Receive(const SMessage& aMessage) {
 	//	//}
 	//}break;
 
+	case EMessageType::StartGame:
+	{
+		std::string scene = *reinterpret_cast<std::string*>(aMessage.data);
+		if (strcmp(scene.c_str(), "Level_1-1") == 0)
+		{
+			myChannels[CAST(EChannel::Ambience)]->Stop();
+			myWrapper.Play(myAmbienceAudio[CAST(EAmbience::Inside)], myChannels[CAST(EChannel::Ambience)]);
+			return;
+		}
+
+		if (strcmp(scene.c_str(), "Level_1-2") == 0)
+		{
+			myChannels[CAST(EChannel::Ambience)]->Stop();
+			myWrapper.Play(myAmbienceAudio[CAST(EAmbience::Inside)], myChannels[CAST(EChannel::Ambience)]);
+			return;
+		}
+
+		if (strcmp(scene.c_str(), "Level_2-1") == 0)
+		{
+			myChannels[CAST(EChannel::Ambience)]->Stop();
+			myWrapper.Play(myAmbienceAudio[CAST(EAmbience::Outside)], myChannels[CAST(EChannel::Ambience)]);
+			return;
+		}
+
+		if (strcmp(scene.c_str(), "Level_2-2") == 0)
+		{
+			myChannels[CAST(EChannel::Ambience)]->Stop();
+			myWrapper.Play(myAmbienceAudio[CAST(EAmbience::Outside)], myChannels[CAST(EChannel::Ambience)]);
+			return;
+		}
+	}break;
+
+	case EMessageType::BootUpState:
+	{
+		myWrapper.Play(myAmbienceAudio[CAST(EAmbience::Inside)], myChannels[CAST(EChannel::Ambience)]);
+		//myWrapper.Play(myRes)
+	}break;
+
 	default: break;
 	}
 }
 
-void CAudioManager::Receive(const SStringMessage& /*aMessage*/)
-{}
+void CAudioManager::Receive(const SStringMessage& aMessage)
+{
+	if (strcmp(aMessage.myMessageType, "Level_1-1") == 0)
+	{
+		myChannels[CAST(EChannel::Ambience)]->Stop();
+		myWrapper.Play(myAmbienceAudio[CAST(EAmbience::Inside)], myChannels[CAST(EChannel::Ambience)]);
+		return;
+	}
+	
+	if (strcmp(aMessage.myMessageType, "Level_1-2") == 0)
+	{
+		myChannels[CAST(EChannel::Ambience)]->Stop();
+		myWrapper.Play(myAmbienceAudio[CAST(EAmbience::Inside)], myChannels[CAST(EChannel::Ambience)]);
+		return;
+	}
+	
+	if (strcmp(aMessage.myMessageType, "Level_2-1") == 0)
+	{
+		myChannels[CAST(EChannel::Ambience)]->Stop();
+		myWrapper.Play(myAmbienceAudio[CAST(EAmbience::Outside)], myChannels[CAST(EChannel::Ambience)]);
+		return;
+	}
+
+	if (strcmp(aMessage.myMessageType, "Level_2-2") == 0)
+	{
+		myChannels[CAST(EChannel::Ambience)]->Stop();
+		myWrapper.Play(myAmbienceAudio[CAST(EAmbience::Outside)], myChannels[CAST(EChannel::Ambience)]);
+		return;
+	}
+}
 
 void CAudioManager::Update()
 {
@@ -359,6 +425,15 @@ void CAudioManager::SubscribeToMessages()
 
 	//CMainSingleton::PostMaster().Subscribe(EMessageType::PlayVoiceLine, this);
 	//CMainSingleton::PostMaster().Subscribe(EMessageType::StopDialogue, this);
+	
+	// Ambience
+	CMainSingleton::PostMaster().Subscribe(EMessageType::StartGame, this);
+	CMainSingleton::PostMaster().Subscribe("Level_1-1", this);
+	CMainSingleton::PostMaster().Subscribe("Level_1-2", this);
+	CMainSingleton::PostMaster().Subscribe("Level_2-1", this);
+	CMainSingleton::PostMaster().Subscribe("Level_2-2", this);
+
+	CMainSingleton::PostMaster().Subscribe(EMessageType::BootUpState, this);
 }
 
 void CAudioManager::UnsubscribeToMessages()
@@ -385,6 +460,15 @@ void CAudioManager::UnsubscribeToMessages()
 
 	//CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayVoiceLine, this);
 	//CMainSingleton::PostMaster().Unsubscribe(EMessageType::StopDialogue, this);
+
+	// Ambience
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::StartGame, this);
+	CMainSingleton::PostMaster().Unsubscribe("Level_1-1", this);
+	CMainSingleton::PostMaster().Unsubscribe("Level_1-2", this);
+	CMainSingleton::PostMaster().Unsubscribe("Level_2-1", this);
+	CMainSingleton::PostMaster().Unsubscribe("Level_2-2", this);
+
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::BootUpState, this);
 }
 
 std::string CAudioManager::GetPath(EMusic type) const
@@ -415,7 +499,7 @@ std::string CAudioManager::GetPath(EUI type) const
 {
 	std::string path = myUIPath;
 	path.append(TranslateEnum(type));
-	path.append(".wav");
+	path.append(".mp3");
 	return path;
 }
 
@@ -479,8 +563,10 @@ std::string CAudioManager::TranslateEnum(EAmbience enumerator) const {
 	{
 	case EAmbience::AirVent:
 		return "AirVent";
-	case EAmbience::Factory:
-		return "Factory";
+	case EAmbience::Inside:
+		return "Inside";
+	case EAmbience::Outside:
+		return "Outside";
 	default:
 		return "";
 	}
@@ -516,7 +602,9 @@ std::string CAudioManager::TranslateEnum(EUI enumerator) const {
 	switch (enumerator)
 	{
 	case EUI::ButtonClick:
-		return "buttonclick";
+		return "ButtonClick";
+	case EUI::PlayClick:
+		return "PlayClick";
 	default:
 		return "";
 	}
@@ -698,5 +786,17 @@ void CAudioManager::PlayRandomSoundFromCollection(const std::vector<CAudio*>& aC
 	   return;
 
 	unsigned int randomIndex = Random(0, static_cast<int>(aCollection.size()) - 1);
+	myWrapper.Play(aCollection[randomIndex], myChannels[CAST(aChannel)]);
+}
+
+void CAudioManager::PlayCyclicRandomSoundFromCollection(const std::vector<CAudio*>& aCollection, const EChannel& aChannel, std::vector<int>& someCollectionIndices, const int& aMaxNrOfChannelsActive)
+{
+	if (aCollection.empty())
+		return;
+
+	if (myChannels[CAST(aChannel)]->PlayCount() > aMaxNrOfChannelsActive)
+		return;
+
+	unsigned int randomIndex = Random(0, static_cast<int>(aCollection.size()) - 1, someCollectionIndices);
 	myWrapper.Play(aCollection[randomIndex], myChannels[CAST(aChannel)]);
 }

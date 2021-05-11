@@ -75,5 +75,7 @@ enum class EMessageType
 	EnemyTargetLost,
 	EnemyTakeDamage,
 
+	BootUpState,
+
 	Count
 };

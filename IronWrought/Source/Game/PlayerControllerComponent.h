@@ -96,6 +96,7 @@ private:
 	float myMovementLockTimer; 
 
 	short myEventCounter;// yikes
+	float myStepTime;
 
 	//CRigidBodyComponent* myLadder;
 

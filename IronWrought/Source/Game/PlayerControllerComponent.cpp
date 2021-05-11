@@ -42,6 +42,7 @@ CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, 
 	, myLockPlayerInput(false)
 	, myMovementLockTimer(0.0f)
 	, myEventCounter(0)
+	, myStepTime(aWalkSpeed * 5.0f)
 {
 	INPUT_MAPPER->AddObserver(EInputEvent::Jump, this);
 	INPUT_MAPPER->AddObserver(EInputEvent::Crouch, this);
@@ -313,9 +314,9 @@ void CPlayerControllerComponent::Move(Vector3 aDir)
 		if (horizontalDir.LengthSquared() > 0.0f)
 		{
 			myStepTimer -= CTimer::FixedDt();
-			if (myStepTimer <= 0.0f) 
+			if (myStepTimer <= 0.0f && !myIsCrouching) 
 			{
-				myStepTimer = mySpeed;
+				myStepTimer = myStepTime;
 				CMainSingleton::PostMaster().SendLate({ EMessageType::PlayStepSound, nullptr });
 			}
 		}
@@ -341,7 +342,7 @@ void CPlayerControllerComponent::Crouch()
 		GameObject().myTransform->FetchChildren()[0]->Position({ 0.0f, myCameraPosYCrouching, myCameraPosZ });// Equivalent to myCamera->GameObject().myTransform->Position
 		mySpeed = myCrouchSpeed;
 		// THIS IS TEMP :)
-		myAnimationComponentController->TakeDamage();// TEMP :)
+		//myAnimationComponentController->TakeDamage();// TEMP :)
 		// SUPER TEMP :)
 	}
 	else

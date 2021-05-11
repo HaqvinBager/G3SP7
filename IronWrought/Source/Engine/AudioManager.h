@@ -8,10 +8,10 @@ class CAudio;
 class CAudioChannel;
 
 enum class EMusic { Count };
-enum class EAmbience { AirVent, Factory, Count };
+enum class EAmbience { AirVent, Inside, Outside, Count };
 enum class ESFX { GravityGlovePullBuildup, GravityGlovePullHit, GravityGlovePush, GravityGlovePullRelease, Count };
 enum class ESFXCollection { StepAirVent, StepConcrete, Count };
-enum class EUI { ButtonClick, Count };
+enum class EUI { ButtonClick, PlayClick, Count };
 enum class EResearcherEventVoiceLine { ResearcherDoorEventVerticalSlice, ResearcherIntroVerticalSlice, Count };
 enum class EResearcherReactionVoiceLine { ResearcherReactionExplosives, Count };
 enum class ERobotVoiceLine { RobotAttack, RobotDeath, RobotIdle, RobotPatrolling, RobotSearching, Count };
@@ -69,6 +69,7 @@ private:
 
 private:
 	void PlayRandomSoundFromCollection(const std::vector<CAudio*>& aCollection, const EChannel& aChannel, const int& aMaxNrOfChannelsActive = 5);
+	void PlayCyclicRandomSoundFromCollection(const std::vector<CAudio*>& aCollection, const EChannel& aChannel, std::vector<int>& someCollectionIndices, const int& aMaxNrOfChannelsActive = 5);
 
 private:
 	const std::string& myAmbiencePath = "Audio/Ambience/";
@@ -97,6 +98,13 @@ private:
 	std::vector<CAudio*> myRobotIdleSounds;
 	std::vector<CAudio*> myRobotPatrollingSounds;
 	std::vector<CAudio*> myRobotSearchingSounds;
+
+	std::vector<int> myStepSoundIndices;
+	std::vector<int> myAttackSoundIndices;
+	std::vector<int> myDeathSoundIndices;
+	std::vector<int> myIdleSoundIndices;
+	std::vector<int> myPatrollingSoundIndices;
+	std::vector<int> mySearchingSoundIndices;
 
 	std::vector<CAudioChannel*> myChannels;
 
