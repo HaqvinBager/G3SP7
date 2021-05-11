@@ -32,13 +32,13 @@ CCameraControllerComponent::CCameraControllerComponent(CGameObject& aGameObject,
 
 CCameraControllerComponent::~CCameraControllerComponent()
 {
-	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_FIRST_END_EVENT, this);
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_OUTRO1, this);
 }
 
 void CCameraControllerComponent::Awake()
 {
 	myCamera = CEngine::GetInstance()->GetActiveScene().MainCamera();
-	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_FIRST_END_EVENT, this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_OUTRO1, this);
 }
 
 void CCameraControllerComponent::Start()
@@ -154,7 +154,7 @@ void CCameraControllerComponent::RotateTransformWithYawAndPitch(const Vector2& s
 
 void CCameraControllerComponent::Receive(const SStringMessage& aMsg)
 {
-	if (PostMaster::CompareStringMessage(PostMaster::SMSG_FIRST_END_EVENT, aMsg.myMessageType))
+	if (PostMaster::CompareStringMessage(PostMaster::SMSG_OUTRO1, aMsg.myMessageType))
 	{
 		myLimitFirstPerson = true;
 		return;

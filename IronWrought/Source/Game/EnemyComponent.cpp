@@ -69,8 +69,8 @@ void CEnemyComponent::Start()
 
 	this->GameObject().GetComponent<CVFXSystemComponent>()->EnableEffect(0);
 
-	mySettings.mySpeed = 5.0f;
-	mySettings.myHealth = 10.0f;
+	//mySettings.mySpeed = 5.0f;
+	//mySettings.myHealth = 10.0f;
 
 	if (GameObject().GetComponent<CRigidBodyComponent>()) {
 		myRigidBodyComponent = GameObject().GetComponent<CRigidBodyComponent>();
@@ -140,7 +140,7 @@ void CEnemyComponent::FixedUpdate()
 	//myController->Move({ 0.0f, -0.098f, 0.0f }, 1.f);
 }
 
-void CEnemyComponent::TakeDamage(float aDamage)
+void CEnemyComponent::TakeDamage(const float& aDamage)
 {
 	CMainSingleton::PostMaster().SendLate({ EMessageType::EnemyTakeDamage, this });
 	
@@ -149,6 +149,7 @@ void CEnemyComponent::TakeDamage(float aDamage)
 
 	myTakeDamageTimer = 0.5f;
 	myCurrentHealth -= aDamage;
+	std::cout << aDamage << std::endl;
 }
 
 void CEnemyComponent::SetState(EBehaviour aState)

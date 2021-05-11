@@ -11,8 +11,8 @@ class CScene;
 
 class CLineInstance;
 
-#define DEBUG_COLLIDER_BOX // DOES NOT WORK PROPERLY, UPDATE TRANSFORM 
 #ifdef _DEBUG
+//#define DEBUG_COLLIDER_BOX // DOES NOT WORK PROPERLY, UPDATE TRANSFORM 
 #endif
 
 class CBoxColliderComponent : public CBehaviour

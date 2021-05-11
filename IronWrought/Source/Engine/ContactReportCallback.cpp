@@ -110,9 +110,12 @@ void CContactReportCallback::onContact(const physx::PxContactPairHeader& pairHea
 			enemy = firstTransform->GetComponent<CEnemyComponent>();
 			//check velocity
 			if (secondTransform->GetComponent<CRigidBodyComponent>()) {
-				length = secondTransform->GetComponent<CRigidBodyComponent>()->GetDynamicRigidBody()->GetLinearVelocity().LengthSquared();
+				auto& rb = *secondTransform->GetComponent<CRigidBodyComponent>();
+				length = rb.GetDynamicRigidBody()->GetLinearVelocity().LengthSquared();
 				if (length >= 50.f) {
-					enemy->TakeDamage();
+					float massDiff = fabs(rb.GetMass() - firstTransform->GetComponent<CRigidBodyComponent>()->GetMass());
+					float dmg = massDiff * length;
+					enemy->TakeDamage(dmg);
 				}
 			}
 		}
@@ -120,9 +123,13 @@ void CContactReportCallback::onContact(const physx::PxContactPairHeader& pairHea
 			enemy = secondTransform->GetComponent<CEnemyComponent>();
 			//check velocity
 			if (firstTransform->GetComponent<CRigidBodyComponent>()) {
-				length = firstTransform->GetComponent<CRigidBodyComponent>()->GetDynamicRigidBody()->GetLinearVelocity().LengthSquared();
+				auto& rb = *firstTransform->GetComponent<CRigidBodyComponent>();
+				length = rb.GetDynamicRigidBody()->GetLinearVelocity().LengthSquared();
 				if (length >= 50.f) {
-					enemy->TakeDamage();
+					float massDiff = fabs(rb.GetMass() /*- secondTransform->GetComponent<CRigidBodyComponent>()->GetMass()*/);
+					std::cout << __FUNCTION__ << " " << massDiff << std::endl;
+					float dmg = massDiff * length;
+					enemy->TakeDamage(dmg);
 				}
 			}
 		}
