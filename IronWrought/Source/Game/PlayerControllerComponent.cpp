@@ -189,6 +189,7 @@ void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
 				myHasJumped = true;
 				myIsJumping = true;
 				myIsGrounded = false;
+				CMainSingleton::PostMaster().SendLate({ EMessageType::PlayJumpSound, nullptr });
 			}
 			break;
 		case EInputEvent::Crouch:
@@ -302,6 +303,12 @@ void CPlayerControllerComponent::ControllerUpdate()
 void CPlayerControllerComponent::Move(Vector3 aDir)
 {
 	physx::PxControllerCollisionFlags collisionflag = myController->GetController().move({ aDir.x, aDir.y, aDir.z}, 0, CTimer::FixedDt(), 0);
+	
+	if (!myIsGrounded && (collisionflag & physx::PxControllerCollisionFlag::eCOLLISION_DOWN)) 
+	{
+		CMainSingleton::PostMaster().SendLate({ EMessageType::PlayStepSound, nullptr }); // Landing
+	}
+	
 	myIsGrounded = (collisionflag & physx::PxControllerCollisionFlag::eCOLLISION_DOWN);
 	if (myIsGrounded)
 	{
