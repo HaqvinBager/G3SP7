@@ -191,7 +191,6 @@ void CAudioManager::Receive(const SMessage& aMessage) {
 		}
 	}break;
 
-
 	case EMessageType::PlayStepSound:
 	{
 		if (myCurrentGroundType == EGroundType::Concrete)
@@ -202,6 +201,12 @@ void CAudioManager::Receive(const SMessage& aMessage) {
 		{
 			PlayCyclicRandomSoundFromCollection(myAirVentStepSounds, EChannel::SFX, myStepSoundIndices, 1);
 		}
+	}
+	break;
+
+	case EMessageType::PlayJumpSound:
+	{
+		myWrapper.Play(mySFXAudio[CAST(ESFX::Jump)], myChannels[CAST(EChannel::SFX)]);
 	}
 	break;
 
@@ -418,6 +423,7 @@ void CAudioManager::SubscribeToMessages()
 	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayRobotSearching, this);
 	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayResearcherEvent, this);
 	CMainSingleton::PostMaster().Subscribe(EMessageType::PlaySFX, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayJumpSound, this);
 
 	// Player & Gravity Glove 
 	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayStepSound, this);
@@ -454,6 +460,7 @@ void CAudioManager::UnsubscribeToMessages()
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayRobotSearching, this);
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayResearcherEvent, this);
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlaySFX, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayJumpSound, this);
 
 	// Player & Gravity Glove 
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayStepSound, this);
@@ -590,6 +597,8 @@ std::string CAudioManager::TranslateEnum(ESFX enumerator) const {
 		return "GravityGlovePush";
 	case ESFX::GravityGlovePullRelease:
 		return "GravityGlovePullRelease";
+	case ESFX::Jump:
+		return "Jump";
 	default:
 		return "";
 	}

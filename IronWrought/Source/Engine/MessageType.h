@@ -77,6 +77,7 @@ enum class EMessageType
 	EnemyDisabled,
 
 	BootUpState,
+	PlayJumpSound,
 
 	Count
 };
