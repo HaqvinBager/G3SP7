@@ -121,6 +121,18 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!134 &10040164
+PhysicMaterial:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  dynamicFriction: 0.6
+  staticFriction: 0.6
+  bounciness: 0
+  frictionCombine: 0
+  bounceCombine: 0
 --- !u!1001 &39993157
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -240,7 +252,7 @@ PrefabInstance:
     - target: {fileID: 4576284543776600102, guid: d17af1ed1847c3140b8f73c513971b19,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 253
+      value: 253.169
       objectReference: {fileID: 0}
     - target: {fileID: 4576284543776600102, guid: d17af1ed1847c3140b8f73c513971b19,
         type: 3}
@@ -330,7 +342,7 @@ PrefabInstance:
     - target: {fileID: 4957967806527470932, guid: e498f80d3c3c78243a7eef5791f49e57,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 253
+      value: 253.169
       objectReference: {fileID: 0}
     - target: {fileID: 4957967806527470932, guid: e498f80d3c3c78243a7eef5791f49e57,
         type: 3}
@@ -415,7 +427,7 @@ PrefabInstance:
     - target: {fileID: 7089310833152888487, guid: 4affe8eb9456ed74e9f27c1dded7ab46,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 7089310833152888487, guid: 4affe8eb9456ed74e9f27c1dded7ab46,
         type: 3}
@@ -425,7 +437,7 @@ PrefabInstance:
     - target: {fileID: 7089310833152888487, guid: 4affe8eb9456ed74e9f27c1dded7ab46,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 7089310833152888487, guid: 4affe8eb9456ed74e9f27c1dded7ab46,
         type: 3}
@@ -484,7 +496,7 @@ PrefabInstance:
     - target: {fileID: 7089310833152888487, guid: 4affe8eb9456ed74e9f27c1dded7ab46,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -4
+      value: -3
       objectReference: {fileID: 0}
     - target: {fileID: 7089310833152888487, guid: 4affe8eb9456ed74e9f27c1dded7ab46,
         type: 3}
@@ -494,7 +506,7 @@ PrefabInstance:
     - target: {fileID: 7089310833152888487, guid: 4affe8eb9456ed74e9f27c1dded7ab46,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7089310833152888487, guid: 4affe8eb9456ed74e9f27c1dded7ab46,
         type: 3}
@@ -878,6 +890,11 @@ PrefabInstance:
       propertyPath: m_StaticEditorFlags
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1931459958589615517, guid: 054c602b24957c54eb73da18efaa4bdc,
+        type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 10040164}
     - target: {fileID: 4202447463713991227, guid: 054c602b24957c54eb73da18efaa4bdc,
         type: 3}
       propertyPath: m_UseGravity
@@ -897,6 +914,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: BP_GarageDoorFirst_door_R_Level_1-2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4442086363409774608, guid: 054c602b24957c54eb73da18efaa4bdc,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4576284543776600102, guid: 054c602b24957c54eb73da18efaa4bdc,
         type: 3}
@@ -1027,6 +1049,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: BP_EN_P_Controlpanel3_Level_1-2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8228920135911737257, guid: 3e1eb39b9caf64d4998cde3e6a419dd6,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3e1eb39b9caf64d4998cde3e6a419dd6, type: 3}
@@ -1280,6 +1307,11 @@ PrefabInstance:
       propertyPath: m_StaticEditorFlags
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2523882232050782098, guid: 6f2c3602965a7c5438dfc7cbe976b127,
+        type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 2042292683}
     - target: {fileID: 3078448552239133812, guid: 6f2c3602965a7c5438dfc7cbe976b127,
         type: 3}
       propertyPath: m_StaticEditorFlags
@@ -1344,6 +1376,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: BP_GarageDoorFirst_door_L_Level_1-2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6832413717157510413, guid: 6f2c3602965a7c5438dfc7cbe976b127,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6f2c3602965a7c5438dfc7cbe976b127, type: 3}
@@ -1439,6 +1476,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 283bb0b3a6cbe1642acdce390ee643db, type: 3}
+--- !u!134 &2042292683
+PhysicMaterial:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  dynamicFriction: 0.6
+  staticFriction: 0.6
+  bounciness: 0
+  frictionCombine: 0
+  bounceCombine: 0
 --- !u!1001 &2140780472
 PrefabInstance:
   m_ObjectHideFlags: 0
