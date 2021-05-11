@@ -68,8 +68,8 @@ void CTransformComponent::Rotation(DirectX::SimpleMath::Vector3 aRotation)
 		DirectX::XMConvertToRadians(aRotation.z)
 	);
 
-	myLocalTransform = tempRotation;
-	myLocalTransform *= Matrix::CreateScale(myScale);
+	myLocalTransform = Matrix::CreateScale(myScale);
+	myLocalTransform *= tempRotation;
 	myLocalTransform.Translation(tempTranslation);
 	//myLocalRotation += aRotation;
 }
@@ -81,8 +81,8 @@ void CTransformComponent::Rotation(DirectX::SimpleMath::Quaternion aQuaternion)
 	Matrix tempRotation = Matrix::CreateFromQuaternion(
 		aQuaternion
 	);
-	myLocalTransform = tempRotation;
-	myLocalTransform *= Matrix::CreateScale(myScale);
+	myLocalTransform = Matrix::CreateScale(myScale);
+	myLocalTransform *= tempRotation;
 	myLocalTransform.Translation(tempTranslation);
 }
 

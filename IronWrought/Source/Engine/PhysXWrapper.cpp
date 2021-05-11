@@ -355,7 +355,8 @@ void CPhysXWrapper::Cooking(const std::vector<CGameObject*>& gameObjectsToCook, 
 			PxDefaultMemoryInputData readBuffer(writeBuffer.getData(), writeBuffer.getSize());
 			PxConvexMesh* pxMesh = myPhysics->createConvexMesh(readBuffer);
 
-			PxConvexMeshGeometry pMeshGeometry(pxMesh);
+			PxMeshScale meshScale(PxVec3(gameObjectsToCook[i]->myTransform->Scale().x, gameObjectsToCook[i]->myTransform->Scale().y, gameObjectsToCook[i]->myTransform->Scale().z), PxQuat(PxIdentity));
+			PxConvexMeshGeometry pMeshGeometry(pxMesh, meshScale);
 
 			PxShape* convexShape = myPhysics->createShape(pMeshGeometry, *gameObjectsToCook[i]->GetComponent<CConvexMeshColliderComponent>()->GetMaterial(), true);
 			gameObjectsToCook[i]->GetComponent<CConvexMeshColliderComponent>()->SetShape(convexShape);
@@ -386,10 +387,18 @@ void CPhysXWrapper::Cooking(const std::vector<CGameObject*>& gameObjectsToCook, 
 				PxTriangleMeshCookingResult::Enum result;
 				myCooking->cookTriangleMesh(meshDesc, writeBuffer, &result);
 
+				DirectX::SimpleMath::Vector3 translation;
+				DirectX::SimpleMath::Vector3 scale;
+				DirectX::SimpleMath::Quaternion quat;
+				DirectX::SimpleMath::Matrix transform = gameObjectsToCook[i]->GetComponent<CInstancedModelComponent>()->GetInstancedTransforms()[z];
+				transform.Decompose(scale, quat, translation);
+
+				PxMeshScale meshScale(PxVec3(scale.x, scale.y, scale.z), PxQuat(PxIdentity));
+
 				PxDefaultMemoryInputData readBuffer(writeBuffer.getData(), writeBuffer.getSize());
 				PxTriangleMesh* pxMesh = myPhysics->createTriangleMesh(readBuffer);
 
-				PxTriangleMeshGeometry pMeshGeometry(pxMesh);
+				PxTriangleMeshGeometry pMeshGeometry(pxMesh, meshScale);
 
 				PxRigidStatic* actor = myPhysics->createRigidStatic({ 0.f, 0.f, 0.f });
 				PxShape* instancedShape = myPhysics->createShape(pMeshGeometry, *CreateMaterial(CPhysXWrapper::materialfriction::basic), true);
@@ -400,11 +409,6 @@ void CPhysXWrapper::Cooking(const std::vector<CGameObject*>& gameObjectsToCook, 
 				actor->attachShape(*instancedShape);
 				aScene->PXScene()->addActor(*actor);
 
-				DirectX::SimpleMath::Vector3 translation;
-				DirectX::SimpleMath::Vector3 scale;
-				DirectX::SimpleMath::Quaternion quat;
-				DirectX::SimpleMath::Matrix transform = gameObjectsToCook[i]->GetComponent<CInstancedModelComponent>()->GetInstancedTransforms()[z];
-				transform.Decompose(scale, quat, translation);
 
 				PxVec3 pos = { translation.x, translation.y, translation.z };
 				PxQuat pxQuat = { quat.x, quat.y, quat.z, quat.w };
