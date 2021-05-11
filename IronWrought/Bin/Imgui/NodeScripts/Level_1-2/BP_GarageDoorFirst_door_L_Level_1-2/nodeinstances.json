@@ -1,0 +1,86 @@
+{
+    "UID_MAX": {
+        "Num": 154
+    },
+    "NodeInstances": [
+        {
+            "NodeType ID": 11,
+            "NodeType": 1,
+            "UID": 129,
+            "Position": {
+                "X": 4502,
+                "Y": 2684
+            },
+            "Pins": [
+                {
+                    "Index": 0,
+                    "UID": 130,
+                    "DATA": "",
+                    "DATA_TYPE": ""
+                }
+            ]
+        },
+        {
+            "NodeType ID": 26,
+            "NodeType": 0,
+            "UID": 131,
+            "Position": {
+                "X": 4931,
+                "Y": 2690
+            },
+            "Pins": [
+                {
+                    "Index": 0,
+                    "UID": 132,
+                    "DATA": "",
+                    "DATA_TYPE": ""
+                },
+                {
+                    "Index": 1,
+                    "UID": 133,
+                    "DATA": "",
+                    "DATA_TYPE": ""
+                },
+                {
+                    "Index": 2,
+                    "UID": 134,
+                    "DATA": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "DATA_TYPE": "VECTOR3"
+                },
+                {
+                    "Index": 3,
+                    "UID": 135,
+                    "DATA": "",
+                    "DATA_TYPE": "BOOL"
+                },
+                {
+                    "Index": 4,
+                    "UID": 136,
+                    "DATA": 0.5,
+                    "DATA_TYPE": "FLOAT"
+                }
+            ]
+        },
+        {
+            "NodeType ID": 7,
+            "NodeType": 2,
+            "UID": 137,
+            "Position": {
+                "X": 4429,
+                "Y": 2860
+            },
+            "Pins": [
+                {
+                    "Index": 0,
+                    "UID": 138,
+                    "DATA": "",
+                    "DATA_TYPE": "VECTOR3"
+                }
+            ]
+        }
+    ]
+}

@@ -27,6 +27,12 @@
 	#include <TextFactory.h>
 	#include <TextInstance.h>
 	#include "EnemyComponent.h"
+
+	#include "AnimationComponent.h"
+	#include "animationLoader.h"
+	#include "ModelComponent.h"
+	
+	#include "EngineDefines.h"
 	
 	void TEMP_VFX(CScene* aScene);
 #endif
@@ -43,20 +49,27 @@ CInGameState::~CInGameState()
 	delete myEnemyAnimationController;
 }
 
-
+//CGameObject* enemy = new CGameObject(919);
 void CInGameState::Awake()
 {
 	CJsonReader::Get()->InitFromGenerated();
 	myEnemyAnimationController = new CEnemyAnimationController();
 	CScene* scene = CSceneManager::CreateEmpty();
+
 #ifndef NDEBUG
 	TEMP_VFX(scene);
+	//std::string s = "../../SP7UnityEditor/Assets/Graphics/Character/Enemy/CH_E_Robot_SK.fbx";
+	//enemy->AddComponent<CModelComponent>(*enemy, s);
+	//AnimationLoader::AddAnimationsToGameObject(enemy, s);
+	//scene->AddInstance(enemy);
 #endif
 	CEngine::GetInstance()->AddScene(myState, scene);
 	CMainSingleton::PostMaster().Subscribe("Level_1-1", this);
 	CMainSingleton::PostMaster().Subscribe("Level_1-2", this);
 	CMainSingleton::PostMaster().Subscribe("Level_2-1", this);
 	CMainSingleton::PostMaster().Subscribe("Level_2-2", this);
+
+	
 
 }
 
@@ -101,6 +114,8 @@ void CInGameState::Update()
 		myExitLevel = false;
 		myStateStack.PopTopAndPush(CStateStack::EState::LoadLevel);
 	}
+
+
 }
 
 void CInGameState::ReceiveEvent(const EInputEvent aEvent)
@@ -176,6 +191,42 @@ void CInGameState::DEBUGFunctionality()
 		msg2.myMessageType = PostMaster::SMSG_ENABLE_CANVAS;
 		CMainSingleton::PostMaster().Send(msg2);
 	}
+
+	/*auto a = enemy->GetComponent<CAnimationComponent>();
+	static int i = 1;
+	if (Input::GetInstance()->IsKeyPressed('1'))
+	{
+		i = 1;
+	}
+	if (Input::GetInstance()->IsKeyPressed('2'))
+	{
+		i = 2;
+	}
+	if (Input::GetInstance()->IsKeyPressed('3'))
+	{
+		i = 3;
+	}
+	if (Input::GetInstance()->IsKeyPressed('4'))
+	{
+		i = 4;
+	}
+	if (Input::GetInstance()->IsKeyPressed('5'))
+	{
+		i = 5;
+	}
+	if (Input::GetInstance()->IsKeyPressed('6'))
+	{
+		i = 6;
+	}
+	if (Input::GetInstance()->IsKeyPressed('7'))
+	{
+		i = 7;
+	}
+	if (Input::GetInstance()->IsKeyPressed('8'))
+	{
+		i = 8;
+	}
+	a->BlendToAnimation(i);*/
 #endif
 }
 

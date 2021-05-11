@@ -32,6 +32,8 @@ private:
 	void OnSeek(CEnemyComponent* anEnemy);
 	void OnAttack(CEnemyComponent* anEnemy);
 	void OnTakeDamage(CEnemyComponent* anEnemy);
+	void OnDeath(CEnemyComponent* anEnemy);
+	void OnDisabled(CEnemyComponent* anEnemy);
 
 private:
 	CAnimationComponent* myAnimationComponent;
