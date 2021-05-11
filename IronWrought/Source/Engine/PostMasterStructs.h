@@ -1,5 +1,6 @@
 #pragma once
 
+class CTransformComponent;
 namespace PostMaster
 {
 	struct SCrossHairData
@@ -13,6 +14,12 @@ namespace PostMaster
 	{
 		float myInitialDistanceSquared = 0.0f;
 		float myCurrentDistanceSquared = 0.0f;
+	};
+
+	struct SBoxColliderEvenTriggerData
+	{
+		bool myState;
+		CTransformComponent* myTransform;
 	};
 
 	// SP7: Checks if the string is equivalent to any of our levels

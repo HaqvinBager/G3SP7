@@ -119,16 +119,22 @@ void CBoxColliderComponent::OnTriggerEnter(CTransformComponent* aOther)
 	{
 		if (aOther->GetComponent<CPlayerControllerComponent>() != nullptr)
 		{
+			PostMaster::SBoxColliderEvenTriggerData data = {};
+			data.myState = true;
+			data.myTransform = GameObject().myTransform;
+
 			//Send Player Has entered Collision Message here
-			bool state = true;
-			SStringMessage message = { myEventMessage.c_str(), &state };
+			/*bool state = true;*/
+			SStringMessage message = { myEventMessage.c_str(), &data };
 			CMainSingleton::PostMaster().Send(message);
 		}
 	}
 	else
 	{
-		bool state = true;
-		SStringMessage message = { myEventMessage.c_str(), &state };
+		PostMaster::SBoxColliderEvenTriggerData data = {};
+		data.myState = true;
+		data.myTransform = GameObject().myTransform;
+		SStringMessage message = { myEventMessage.c_str(), &data };
 		CMainSingleton::PostMaster().Send(message);
 	}
 }
@@ -140,15 +146,21 @@ void CBoxColliderComponent::OnTriggerExit(CTransformComponent* aOther)
 		if (aOther->GetComponent<CPlayerControllerComponent>() != nullptr)
 		{
 			//Send Player Has entered Collision Message here
-			bool state = false;
-			SStringMessage message = { myEventMessage.c_str(), &state };
+			/*bool state = false;*/
+			PostMaster::SBoxColliderEvenTriggerData data = {};
+			data.myState = false;
+			data.myTransform = GameObject().myTransform;
+			SStringMessage message = { myEventMessage.c_str(), &data };
 			CMainSingleton::PostMaster().Send(message);
 		}
 	}
 	else
 	{
-		bool state = false;
-		SStringMessage message = { myEventMessage.c_str(), &state };
+		/*bool state = false;*/
+		PostMaster::SBoxColliderEvenTriggerData data = {};
+		data.myState = true;
+		data.myTransform = GameObject().myTransform;
+		SStringMessage message = { myEventMessage.c_str(), &data };
 		CMainSingleton::PostMaster().Send(message);
 	}
 }

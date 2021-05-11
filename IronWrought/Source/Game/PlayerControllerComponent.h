@@ -34,7 +34,9 @@ public:
 
 	//void AddFaceMesh(CGameObject* aGameObject);
 	void SetControllerPosition(const Vector3& aPos);
+	// No lerp. Instant crouch
 	void Crouch();
+	// Lerp for crouch
 	void CrouchUpdate(const float& dt);
 	void OnCrouch();
 
@@ -59,6 +61,10 @@ public:
 	void SetRespawnPosition();
 
 private:
+	void LockMovementFor(const float& someSeconds);
+	void UpdateMovementLock();
+	void OnInputLockEvent();
+	void OnInputLockUpdate();
 	void BoundsCheck();
 	void LadderUpdate();
 
@@ -78,6 +84,7 @@ private:
 	bool myHasJumped;
 	bool myLadderHasTriggered;
 
+	bool myLockPlayerInput;
 	bool myIsCrouching;
 	float myCrouchingLerp;
 	float myWalkSpeed;
@@ -86,6 +93,9 @@ private:
 	float myFallSpeed;
 	float myAirborneTimer;
 	float myStepTimer;
+	float myMovementLockTimer; 
+
+	short myEventCounter;// yikes
 	float myStepTime;
 
 	//CRigidBodyComponent* myLadder;
