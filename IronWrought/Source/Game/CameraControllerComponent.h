@@ -1,9 +1,10 @@
 #include "Component.h"
+#include "Observer.h"
 
 class CCameraComponent;
 class CGameObject;
 #define PI 3.14159265f
-class CCameraControllerComponent : public CComponent
+class CCameraControllerComponent : public CComponent, public IStringObserver
 {
 public:
 	enum class ECameraMode
@@ -27,6 +28,8 @@ public:
 	const bool IsFreeCamMode() const { return (myCameraMode == ECameraMode::FreeCam); }
 	const bool IsCursorUnlocked() const { return (myCameraMode == ECameraMode::UnlockCursor); }
 	void RotateTransformWithYawAndPitch(const Vector2& aInput);
+
+	void Receive(const SStringMessage& aMsg) override;
 
 
 public:
@@ -89,6 +92,7 @@ public:
 
 private:
 	void UpdatePlayerFirstPerson();
+	void UpdateLimitedPlayerFirstPerson();
 	void UpdateFreeCam();
 
 	const char myToggleFreeCam;
@@ -103,4 +107,6 @@ private:
 	float myMouseRotationSpeed;
 	float myPitch;
 	float myYaw;
+
+	bool myLimitFirstPerson;
 };

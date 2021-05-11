@@ -10,6 +10,9 @@
 #include "LineFactory.h"
 #include "LineInstance.h"
 
+#include "MainSingleton.h"
+#include "PostMaster.h"
+
 
 
 CCameraControllerComponent::CCameraControllerComponent(CGameObject& aGameObject, float aCameraMoveSpeed, ECameraMode aCameraMode, char aToggleFreeCam, Vector3 aOffset)
@@ -22,17 +25,20 @@ CCameraControllerComponent::CCameraControllerComponent(CGameObject& aGameObject,
 	myOffset(aOffset),
 	myMouseRotationSpeed(120.0f),
 	myPitch(0.0f),
-	myYaw(0.0f)
+	myYaw(0.0f),
+	myLimitFirstPerson(false)
 {
 }
 
 CCameraControllerComponent::~CCameraControllerComponent()
 {
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_FIRST_END_EVENT, this);
 }
 
 void CCameraControllerComponent::Awake()
 {
 	myCamera = CEngine::GetInstance()->GetActiveScene().MainCamera();
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_FIRST_END_EVENT, this);
 }
 
 void CCameraControllerComponent::Start()
@@ -87,7 +93,8 @@ void CCameraControllerComponent::Update()
 			break;
 
 		case ECameraMode::PlayerFirstPerson:
-			UpdatePlayerFirstPerson();
+			if(!myLimitFirstPerson)
+				UpdatePlayerFirstPerson();
 			break;
 
 		case ECameraMode::UnlockCursor:
@@ -144,6 +151,16 @@ void CCameraControllerComponent::RotateTransformWithYawAndPitch(const Vector2& s
 		GameObject().myTransform->Rotation({ myPitch, myYaw, 0 });
 	}
 }
+
+void CCameraControllerComponent::Receive(const SStringMessage& aMsg)
+{
+	if (PostMaster::CompareStringMessage(PostMaster::SMSG_FIRST_END_EVENT, aMsg.myMessageType))
+	{
+		myLimitFirstPerson = true;
+		return;
+	}
+}
+
 void CCameraControllerComponent::SetCameraMoveSpeed(float aCameraMoveSpeed) {
 	myCameraMoveSpeed = aCameraMoveSpeed;
 }

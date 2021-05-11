@@ -29,6 +29,7 @@ CPlayerComponent::~CPlayerComponent()
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayerSetRespawnPoint, this);
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayerRespawn, this);
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayerTakeDamage, this);
+	CMainSingleton::PostMaster().Unsubscribe("Ladder", this);
 }
 
 
@@ -171,8 +172,9 @@ void CPlayerComponent::Receive(const SStringMessage& aMessage)
 	std::string ladder = "Ladder";
 	if (aMessage.myMessageType == ladder)
 	{
-		bool* enter = static_cast<bool*>(aMessage.data);
-		if (*enter == true)
+		//bool* enter = static_cast<bool*>(aMessage.data);
+		PostMaster::SBoxColliderEvenTriggerData data = *static_cast<PostMaster::SBoxColliderEvenTriggerData*>(aMessage.data);
+		if (data.myState == true)
 		{
 			myPlayerController->LadderEnter();
 		}
