@@ -43,6 +43,7 @@ CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, 
 	, myMovementLockTimer(0.0f)
 	, myEventCounter(0)
 	, myStepTime(aWalkSpeed * 5.0f)
+	, myCanStand(true)
 {
 	INPUT_MAPPER->AddObserver(EInputEvent::Jump, this);
 	INPUT_MAPPER->AddObserver(EInputEvent::Crouch, this);
@@ -146,6 +147,7 @@ void CPlayerControllerComponent::FixedUpdate()
 			myMovement.y = myJumpHeight;
 			myAirborneTimer = 0.0f;
 			myHasJumped = false;
+			CMainSingleton::PostMaster().SendLate({ EMessageType::PlayJumpSound, nullptr });
 		}
 
 		myMovement.y -= myFallSpeed * myFallSpeed * CTimer::FixedDt() * myAirborneTimer ;
@@ -302,6 +304,12 @@ void CPlayerControllerComponent::ControllerUpdate()
 void CPlayerControllerComponent::Move(Vector3 aDir)
 {
 	physx::PxControllerCollisionFlags collisionflag = myController->GetController().move({ aDir.x, aDir.y, aDir.z}, 0, CTimer::FixedDt(), 0);
+	
+	if (!myIsGrounded && (collisionflag & physx::PxControllerCollisionFlag::eCOLLISION_DOWN)) 
+	{
+		CMainSingleton::PostMaster().SendLate({ EMessageType::PlayStepSound, nullptr }); // Landing
+	}
+	
 	myIsGrounded = (collisionflag & physx::PxControllerCollisionFlag::eCOLLISION_DOWN);
 	if (myIsGrounded)
 	{
@@ -365,7 +373,7 @@ void CPlayerControllerComponent::CrouchUpdate(const float& dt)
 		return;
 	}
 
-	if(myIsCrouching)
+	if(myIsCrouching && myCanStand)
 		myCrouchingLerp += dt;
 	else
 		myCrouchingLerp -= dt;
@@ -373,7 +381,9 @@ void CPlayerControllerComponent::CrouchUpdate(const float& dt)
 
 void CPlayerControllerComponent::OnCrouch()
 {
-	myIsCrouching = !myIsCrouching;
+	if (myCanStand) {
+		myIsCrouching = !myIsCrouching;
+	}
 	if (myIsCrouching)
 	{
 		myController->GetController().resize(myColliderHeightCrouched);
@@ -382,9 +392,20 @@ void CPlayerControllerComponent::OnCrouch()
 	}
 	else
 	{
-		myController->GetController().resize(myColliderHeightStanding);
-		mySpeed = myWalkSpeed;
-		myCrouchingLerp = 1.0f;
+		Vector3 start = GameObject().myTransform->GetWorldMatrix().Translation();
+		start.y += (myColliderHeightStanding / 2);
+		Vector3 dir = GameObject().myTransform->GetWorldMatrix().Up();
+		//checks if we can stand up 
+		PxRaycastBuffer hit = CEngine::GetInstance()->GetPhysx().Raycast(start, dir, (myColliderHeightStanding), CPhysXWrapper::ELayerMask::STATIC_ENVIRONMENT);
+		if (hit.getNbAnyHits() <= 0) {
+			myCanStand = true;
+			myController->GetController().resize(myColliderHeightStanding);
+			mySpeed = myWalkSpeed;
+			myCrouchingLerp = 1.0f;
+		}
+		else {
+			myCanStand = false;
+		}
 	}
 }
 
