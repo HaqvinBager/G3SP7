@@ -39,7 +39,7 @@ CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, 
 	, myAnimationComponentController(nullptr)
 	, myPlayerComponent(nullptr)
 	, myStepTimer(0.0f)
-	, myLockPlayerInput(false)
+	, myPlayerMovementLock(EPlayerMovementLock::None)
 	, myMovementLockTimer(0.0f)
 	, myEventCounter(0)
 	, myStepTime(aWalkSpeed * 5.0f)
@@ -87,6 +87,7 @@ CPlayerControllerComponent::~CPlayerControllerComponent()
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayerTakeDamage, this);
 	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_DISABLE_GLOVE, this);
 	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_ENABLE_GLOVE, this);
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_INTRO, this);
 	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_OUTRO1, this);
 	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_OUTRO2, this);
 
@@ -102,6 +103,7 @@ void CPlayerControllerComponent::Start()
 	SetRespawnPosition();
 	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_DISABLE_GLOVE, this);
 	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_ENABLE_GLOVE, this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_INTRO, this);
 	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_OUTRO1, this);
 	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_OUTRO2, this);
 }
@@ -113,25 +115,37 @@ void CPlayerControllerComponent::Update()
 		return;
 #endif
 
+	if (Input::GetInstance()->IsKeyPressed(VK_RETURN))
+	{
+		CMainSingleton::PostMaster().Send({ PostMaster::SMSG_INTRO, nullptr });
+	}
+
 	GameObject().myTransform->Position(myController->GetPosition());
 	myAnimationComponentController->Update(myMovement);
 
-	if (myLockPlayerInput)
-		OnInputLockUpdate();
-	else
-		ControllerUpdate();
+	switch (myPlayerMovementLock)
+	{
+		case EPlayerMovementLock::None:
+		{
+			ControllerUpdate();
+		}break;
+
+		case EPlayerMovementLock::ForceFoward:
+		{
+			UpdateForceForward();
+		}break;
+
+		case EPlayerMovementLock::ForceStandStill:
+		{
+			UpdateStandStill();
+		}break;
+
+		default:break;
+	}
 
 	UpdateMovementLock();
 
 	BoundsCheck();
-	
-
-#ifdef _DEBUG
-	if (Input::GetInstance()->IsKeyPressed('R'))
-	{
-		ResetPlayerPosition();
-	}
-#endif // _DEBUG
 }
 
 void CPlayerControllerComponent::FixedUpdate()
@@ -165,10 +179,20 @@ void CPlayerControllerComponent::FixedUpdate()
 
 void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
 {
-	if (myLockPlayerInput)
+	switch (myPlayerMovementLock)
 	{
-		OnInputLockEvent();
-		return;
+		case EPlayerMovementLock::None:
+		{}break;
+
+		case EPlayerMovementLock::ForceFoward:
+		{
+			InitForceForward();
+		}break;
+
+		case EPlayerMovementLock::ForceStandStill:
+		{}break;
+
+		default:break;
 	}
 
 #ifdef _DEBUG
@@ -235,6 +259,18 @@ void CPlayerControllerComponent::Receive(const SStringMessage& aMsg)
 	//	break;
 	//}
 
+	if (PostMaster::CompareStringMessage(PostMaster::SMSG_INTRO, aMsg.myMessageType))
+	{
+		if (myEventCounter > 0)
+			return;
+		myEventCounter++;
+
+		CMainSingleton::PostMaster().Send({ PostMaster::SMSG_ENABLE_GLOVE, nullptr });
+		LockMovementFor(5.0f);
+
+		return;
+	}
+
 	if (PostMaster::CompareStringMessage(PostMaster::SMSG_OUTRO1, aMsg.myMessageType))
 	{
 		if (myEventCounter > 0)
@@ -242,7 +278,8 @@ void CPlayerControllerComponent::Receive(const SStringMessage& aMsg)
 		myEventCounter++;
 
 		CMainSingleton::PostMaster().Send({ PostMaster::SMSG_DISABLE_GLOVE, nullptr });
-		myLockPlayerInput = true;
+		CMainSingleton::PostMaster().Send({ EMessageType::LockFPSCamera, nullptr });
+		myPlayerMovementLock = EPlayerMovementLock::ForceFoward;
 
 		PostMaster::SBoxColliderEvenTriggerData data = *static_cast<PostMaster::SBoxColliderEvenTriggerData*>(aMsg.data);
 		CTransformComponent* transform = data.myTransform;
@@ -314,9 +351,6 @@ void CPlayerControllerComponent::Move(Vector3 aDir)
 	if (myIsGrounded)
 	{
 		myAirborneTimer = 0.f;
-
-		if (myLockPlayerInput)
-			return;
 
 		Vector2 horizontalDir(aDir.x, aDir.z);
 		if (horizontalDir.LengthSquared() > 0.0f)
@@ -455,7 +489,7 @@ void CPlayerControllerComponent::UpdateMovementLock()
 	myMovement = { 0.0f, myMovement.y, 0.0f };
 }
 
-void CPlayerControllerComponent::OnInputLockEvent()
+void CPlayerControllerComponent::InitForceForward()
 {
 	Vector3 vertical =	-GameObject().myTransform->GetLocalMatrix().Forward();
 	float y = myMovement.y;
@@ -463,7 +497,7 @@ void CPlayerControllerComponent::OnInputLockEvent()
 	myMovement.y = y;
 }
 
-void CPlayerControllerComponent::OnInputLockUpdate()
+void CPlayerControllerComponent::UpdateForceForward()
 {
 	const float horizontalInput = Input::GetInstance()->GetAxis(Input::EAxis::Horizontal);
 	const float verticalInput = Input::GetInstance()->GetAxis(Input::EAxis::Vertical);
@@ -482,6 +516,18 @@ void CPlayerControllerComponent::OnInputLockUpdate()
 		myMovement = (vertical) * mySpeed; //* 0.5f;
 		myMovement.y = y;
 	}
+}
+
+void CPlayerControllerComponent::InitStandStill(const float& aStandStillTimer)
+{
+	LockMovementFor(aStandStillTimer);
+	myPlayerMovementLock = EPlayerMovementLock::ForceStandStill;
+}
+
+void CPlayerControllerComponent::UpdateStandStill()
+{
+	if (myMovementLockTimer <= 0.0f)
+		myPlayerMovementLock = EPlayerMovementLock::None;
 }
 
 void CPlayerControllerComponent::BoundsCheck()
@@ -549,3 +595,9 @@ void CPlayerControllerComponent::LadderUpdate()
 	//	myIsOnLadder = false;
 	//}
 }
+
+void CPlayerControllerComponent::InitIntroEvent()
+{}
+
+void CPlayerControllerComponent::HandleIntroEvent()
+{}

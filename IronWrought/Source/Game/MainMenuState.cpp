@@ -62,10 +62,10 @@ void CMainMenuState::Stop()
 void CMainMenuState::Update()
 {
 #ifndef NDEBUG
-	if (INPUT->IsKeyPressed('R'))
-	{
-		IRONWROUGHT->GetActiveScene().ReInitCanvas(ASSETPATH("Assets/Graphics/UI/JSON/UI_MainMenu.json"));
-	}
+	//if (INPUT->IsKeyPressed('R'))
+	//{
+	//	IRONWROUGHT->GetActiveScene().ReInitCanvas(ASSETPATH("Assets/Graphics/UI/JSON/UI_MainMenu.json"));
+	//}
 #endif
 
 	if(myTimeToQuit)

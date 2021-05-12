@@ -410,7 +410,7 @@ void CAudioManager::Receive(const SMessage& aMessage) {
 	case EMessageType::BootUpState:
 	{
 		myWrapper.Play(myAmbienceAudio[CAST(EAmbience::Inside)], myChannels[CAST(EChannel::Ambience)]);
-		//myWrapper.Play(myRes)
+		myWrapper.Play(myResearcherEventSounds[CAST(EResearcherEventVoiceLine::BootUp)], myChannels[CAST(EChannel::ResearcherVOX)]);
 	}break;
 
 	case EMessageType::MainMenu:
@@ -944,6 +944,18 @@ void CAudioManager::FillCollection(ERobotVoiceLine enumerator)
 		while (sound != nullptr)
 		{
 			myRobotSearchingSounds.push_back(sound);
+			sound = myWrapper.TryGetSound(myVoxPath + GetCollectionPath(enumerator, ++counter));
+		}
+	}
+	break;
+
+	case ERobotVoiceLine::RobotDamage:
+	{
+		CAudio* sound = myWrapper.TryGetSound(myVoxPath + GetCollectionPath(enumerator, ++counter));
+
+		while (sound != nullptr)
+		{
+			myRobotDamageSounds.push_back(sound);
 			sound = myWrapper.TryGetSound(myVoxPath + GetCollectionPath(enumerator, ++counter));
 		}
 	}

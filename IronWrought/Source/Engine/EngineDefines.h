@@ -9,7 +9,7 @@
 ////#define EXCELSIOR_BUILD // ! Manual toggle
 //#endif
 
-#define VERTICAL_SLICE
+//#define VERTICAL_SLICE
 
 #ifdef EXCELSIOR_BUILD
 #define ASSETPATH(path) std::string(path).c_str() // EXCELSIOR

@@ -33,6 +33,8 @@ void CPlayerReportCallback::onShapeHit(const physx::PxControllerShapeHit& hit)
 							if (player->GetComponent<CPlayerComponent>()->CurrentHealth() < 100.f) {
 								player->GetComponent<CPlayerComponent>()->IncreaseHealth(objectTransform->GetComponent<CHealthPickupComponent>()->GetHealthPickupAmount());
 								objectTransform->GetComponent<CHealthPickupComponent>()->Destroy();
+
+								CMainSingleton::PostMaster().SendLate({ EMessageType::PlayerHealthPickup, nullptr }); // For AudioManager
 							}
 						}
 
