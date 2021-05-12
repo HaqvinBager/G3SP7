@@ -290,6 +290,12 @@ void CAudioManager::Receive(const SMessage& aMessage) {
 		myWrapper.Play(mySFXAudio[CAST(ESFX::GravityGlovePush)], myChannels[CAST(EChannel::SFX)]);
 	}break;
 
+	case EMessageType::PlayerHealthPickup:
+	{
+		myWrapper.Play(mySFXAudio[CAST(ESFX::PickupHeal)], myChannels[CAST(EChannel::SFX)]);
+	}break;
+
+
 	case EMessageType::EnemyAttackState:
 	{
 		// Todo add max 3 to be playable at the same time. Can be done inside PlayRandomSoundFromCollection
@@ -444,6 +450,7 @@ void CAudioManager::SubscribeToMessages()
 	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayerTakeDamage, this);
 	CMainSingleton::PostMaster().Subscribe(EMessageType::GravityGlovePull, this);
 	CMainSingleton::PostMaster().Subscribe(EMessageType::GravityGlovePush, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayerHealthPickup, this);
 
 	// Enemy
 	CMainSingleton::PostMaster().Subscribe(EMessageType::EnemyPatrolState, this);
@@ -483,6 +490,7 @@ void CAudioManager::UnsubscribeToMessages()
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayerTakeDamage, this);
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::GravityGlovePull, this);
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::GravityGlovePush, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayerHealthPickup, this);
 
 	// Enemy
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::EnemyPatrolState, this);
@@ -658,10 +666,80 @@ std::string CAudioManager::TranslateEnum(EResearcherEventVoiceLine enumerator) c
 {
 	switch (enumerator)
 	{
-	case EResearcherEventVoiceLine::ResearcherDoorEventVerticalSlice:
-		return "ResearcherDoorEventVerticalSlice";
-	case EResearcherEventVoiceLine::ResearcherIntroVerticalSlice:
-		return "ResearcherIntroVerticalSlice";
+	case EResearcherEventVoiceLine::V1:
+		return "V1";
+	case EResearcherEventVoiceLine::BootUp:
+		return "BootUp";
+	case EResearcherEventVoiceLine::Intro:
+		return "Intro";
+	case EResearcherEventVoiceLine::Line1:
+		return "1";
+	case EResearcherEventVoiceLine::Line2:
+		return "2";
+	case EResearcherEventVoiceLine::Line3:
+		return "3";
+	case EResearcherEventVoiceLine::Line4:
+		return "4";
+	case EResearcherEventVoiceLine::Line5:
+		return "5";
+	case EResearcherEventVoiceLine::Line6:
+		return "6";
+	case EResearcherEventVoiceLine::Line7:
+		return "7";
+	case EResearcherEventVoiceLine::Line8:
+		return "8";
+	case EResearcherEventVoiceLine::Line9:
+		return "9";
+	case EResearcherEventVoiceLine::Line10:
+		return "10";
+	case EResearcherEventVoiceLine::Line11:
+		return "11";
+	case EResearcherEventVoiceLine::Line12:
+		return "12";
+	case EResearcherEventVoiceLine::Line13:
+		return "13";
+	case EResearcherEventVoiceLine::Line14:
+		return "14";
+	case EResearcherEventVoiceLine::Line15:
+		return "15";
+	case EResearcherEventVoiceLine::Line16:
+		return "16";
+	case EResearcherEventVoiceLine::Line17:
+		return "17";
+	case EResearcherEventVoiceLine::Line18:
+		return "18";
+	case EResearcherEventVoiceLine::Line19:
+		return "19";
+	case EResearcherEventVoiceLine::Line20:
+		return "20";
+	case EResearcherEventVoiceLine::Line21:
+		return "21";
+	case EResearcherEventVoiceLine::Line22:
+		return "22";
+	case EResearcherEventVoiceLine::Line23:
+		return "23";
+	case EResearcherEventVoiceLine::Line24:
+		return "24";
+	case EResearcherEventVoiceLine::Line25:
+		return "25";
+	case EResearcherEventVoiceLine::Line26:
+		return "26";
+	case EResearcherEventVoiceLine::Line27:
+		return "27";
+	case EResearcherEventVoiceLine::Outro1:
+		return "Outro1";
+	case EResearcherEventVoiceLine::Outro2:
+		return "Outro2";
+	case EResearcherEventVoiceLine::Outro3:
+		return "Outro3";
+	case EResearcherEventVoiceLine::Outro4:
+		return "Outro4";
+	case EResearcherEventVoiceLine::Outro5:
+		return "Outro5";
+	case EResearcherEventVoiceLine::Outro6:
+		return "Outro6";
+	case EResearcherEventVoiceLine::Outro7:
+		return "Outro7";
 	default:
 		return "";
 	}
