@@ -266,7 +266,7 @@ void CAudioManager::Receive(const SMessage& aMessage) {
 	{
 		if (myChannels[CAST(EChannel::ResearcherVOX)]->IsPlaying())
 			return;
-		PlayCyclicRandomSoundFromCollection(myRobotDeathSounds, EChannel::RobotVOX, myDeathSoundIndices, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
+		PlayCyclicRandomSoundFromCollection(myRobotDamageSounds, EChannel::RobotVOX, myDamageSoundIndices, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
 		myWrapper.Play(mySFXAudio[CAST(ESFX::EnemyHit)], myChannels[CAST(EChannel::SFX)]);
 	}
 	break;
@@ -818,6 +818,8 @@ std::string CAudioManager::TranslateEnum(ERobotVoiceLine enumerator) const
 		return "RobotPatrolling";
 	case ERobotVoiceLine::RobotSearching:
 		return "RobotSearching";
+	case ERobotVoiceLine::RobotDamage:
+		return "RobotDamage";
 	default:
 		return "";
 	}
