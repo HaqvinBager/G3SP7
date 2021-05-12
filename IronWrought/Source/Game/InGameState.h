@@ -35,7 +35,6 @@ private:
 	void DEBUGFunctionality();
 
 private:
-	bool myExitLevel;
 	EExitTo myExitTo;
 
 	class CEnemyAnimationController* myEnemyAnimationController;

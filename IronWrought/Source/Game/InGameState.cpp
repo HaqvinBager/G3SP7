@@ -37,9 +37,12 @@
 	void TEMP_VFX(CScene* aScene);
 #endif
 
+#ifdef VERTICAL_SLICE
+	bool gHasPlayedAudio = false;
+#endif
+
 CInGameState::CInGameState(CStateStack& aStateStack, const CStateStack::EState aState)
-	: CState(aStateStack, aState),
-	myExitLevel(false)
+	: CState(aStateStack, aState)
 	, myEnemyAnimationController(nullptr)
 	, myExitTo(EExitTo::None)
 {
@@ -78,11 +81,15 @@ void CInGameState::Start()
 	CEngine::GetInstance()->SetActiveScene(myState);
 	IRONWROUGHT->GetActiveScene().CanvasIsHUD();
 	IRONWROUGHT->HideCursor();
-	myExitLevel = false;
+
 	myExitTo = EExitTo::None;
 
 #ifdef VERTICAL_SLICE
-	CMainSingleton::PostMaster().SendLate({ EMessageType::GameStarted, nullptr });
+	if (gHasPlayedAudio == false)
+	{
+		gHasPlayedAudio = true;
+		CMainSingleton::PostMaster().SendLate({ EMessageType::GameStarted, nullptr });
+	}
 #endif
 
 	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_DISABLE_GLOVE, this);
@@ -114,12 +121,6 @@ void CInGameState::Update()
 
 	DEBUGFunctionality();
 
-	if (myExitLevel)
-	{
-		myExitLevel = false;
-		myStateStack.PopTopAndPush(CStateStack::EState::LoadLevel);
-	}
-
 	switch (myExitTo)
 	{
 		case EExitTo::AnotherLevel:
@@ -132,6 +133,9 @@ void CInGameState::Update()
 		{
 			myExitTo = EExitTo::None;
 			myStateStack.PopUntil(CStateStack::EState::MainMenu);
+#ifdef VERTICAL_SLICE
+			gHasPlayedAudio = false;
+#endif
 		}break;
 
 		case EExitTo::None:
@@ -160,12 +164,10 @@ void CInGameState::Receive(const SStringMessage& aMessage)
 {
 	if (PostMaster::LevelCheck(aMessage.myMessageType))
 	{
-		myExitLevel = true;
 		myExitTo = EExitTo::AnotherLevel;
 	}
 	if (PostMaster::CompareStringMessage(aMessage.myMessageType, PostMaster::SMSG_TO_MAIN_MENU))
 	{
-		myExitLevel = true;
 		myExitTo = EExitTo::MainMenu;
 	}
 
