@@ -81,5 +81,7 @@ enum class EMessageType
 	
 	GameStarted,
 
+	LockFPSCamera,
+
 	Count
 };

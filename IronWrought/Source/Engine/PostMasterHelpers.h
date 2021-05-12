@@ -17,6 +17,8 @@ namespace PostMaster
 	static const char* SMSG_OUTRO6 = "Outro6";
 	static const char* SMSG_OUTRO7 = "Outro7";
 
+	static const char* SMSG_INTRO = "Intro";
+
 	static const char* SMSG_LEVEL11 = "Level_1-1";
 	static const char* SMSG_LEVEL12 = "Level_1-2";
 	static const char* SMSG_LEVEL21 = "Level_2-1";

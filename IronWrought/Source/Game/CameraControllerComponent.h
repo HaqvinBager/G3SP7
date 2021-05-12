@@ -4,7 +4,7 @@
 class CCameraComponent;
 class CGameObject;
 #define PI 3.14159265f
-class CCameraControllerComponent : public CComponent, public IStringObserver
+class CCameraControllerComponent : public CComponent, public IObserver
 {
 public:
 	enum class ECameraMode
@@ -29,7 +29,7 @@ public:
 	const bool IsCursorUnlocked() const { return (myCameraMode == ECameraMode::UnlockCursor); }
 	void RotateTransformWithYawAndPitch(const Vector2& aInput);
 
-	void Receive(const SStringMessage& aMsg) override;
+	void Receive(const SMessage& aMsg) override;
 
 
 public:
