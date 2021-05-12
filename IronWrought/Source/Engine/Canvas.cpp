@@ -24,7 +24,11 @@ CCanvas::CCanvas() :
 	, myIsEnabled(true)
 	, myIsHUDCanvas(false)
 	, myCurrentRenderLayer(0)
+#ifdef VERTICAL_SLICE
+	, myLevelToLoad("VerticalSlice")
+#else
 	, myLevelToLoad("Level_1-1")
+#endif
 	, myCurrentWidgetIndex(-1)
 {
 }
@@ -380,6 +384,9 @@ void CCanvas::Update()
 				break;
 						
 			}
+#ifdef VERTICAL_SLICE
+			myLevelToLoad = "VerticalSlice";
+#endif
 		}
 	}
 

@@ -71,6 +71,8 @@ CScene* CSceneManager::CreateEmpty()
 CScene* CSceneManager::CreateScene(const std::string& aSceneJson)
 {
 	CScene* scene = Instantiate();
+	if (aSceneJson.empty())
+		return nullptr;
 
 	Binary::SLevelData binLevelData = CBinReader::Load(ASSETPATH("Assets/Generated/" + aSceneJson + "/" + aSceneJson + ".bin"));
 
@@ -772,7 +774,9 @@ void CSceneFactory::Update()
 		CScene* loadedScene = myFuture.get();
 		if (loadedScene == nullptr)
 		{
+#ifdef _DEBUG
 			ENGINE_ERROR_MESSAGE("Failed to Load Scene %s", myLastSceneName.c_str());
+#endif
 			return;
 		}
 

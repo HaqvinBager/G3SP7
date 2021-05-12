@@ -82,4 +82,6 @@ private:
 	float myYaw;
 	float myPitch;
 
+	float mySpeedModifier;
+
 };

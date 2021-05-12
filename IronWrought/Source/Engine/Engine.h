@@ -72,6 +72,8 @@ public:
 	void UpdateScene(const CStateStack::EState& aState);
 	CPhysXWrapper& GetPhysx() { return *myPhysxWrapper; }
 
+	const bool IsInGameScene() const;
+
 	void ModelViewerSetScene(CScene* aScene);
 	//void PopBackScene();
 	//void SetActiveScene(CScene* aScene);

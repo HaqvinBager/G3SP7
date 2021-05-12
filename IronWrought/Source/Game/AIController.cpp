@@ -76,7 +76,7 @@ Vector3 CAttack::Update(const Vector3& aPosition)
 
 	//byt ut attacktimer och attackcooldown till animationtimer - Alexander Matthäi 2021-05-07
 	myAttackTimer += CTimer::Dt();
-	if (myAttackTimer >= myAttackCooldown)
+	if (myAttackTimer >= myAttackCooldown) 
 	{
 		CMainSingleton::PostMaster().SendLate({ EMessageType::EnemyAttack, myUser });
 	}

@@ -358,6 +358,11 @@ void CEngine::UpdateScene(const CStateStack::EState& aState)
 	}
 }
 
+const bool CEngine::IsInGameScene() const
+{
+	return myActiveState == CStateStack::EState::InGame;
+}
+
 void CEngine::ModelViewerSetScene(CScene* aScene)
 {
 	myActiveState = CStateStack::EState::InGame;

@@ -156,7 +156,11 @@ Binary::SLevelData CBinReader::Load(const std::string& aPath)
 	std::ifstream stream;
 	stream.open(aPath, std::ios::binary);
 	if (!stream.is_open())
+	{
+#ifdef _DEBUG
 		ENGINE_BOOL_POPUP(stream.is_open(), "Failed to open Binary File");
+#endif
+	}
 
 	std::string binaryData((std::istreambuf_iterator<char>(stream)), std::istreambuf_iterator<char>());
 	char* ptr = &binaryData[0];

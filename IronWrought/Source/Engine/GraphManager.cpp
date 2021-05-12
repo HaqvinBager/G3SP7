@@ -63,14 +63,6 @@ void CGraphManager::Load(const std::string& aSceneName)
 	//Global = Kan alltid n�s om programmet k�r
 	//Scene = Data som relaterar till Just denna Scen, kan alltid n�s n�r Scene �r ig�ng
 	//Script = Data som relaterar till just detta script
-
-#ifdef _DEBUG
-	myRunScripts = false;
-#else
-	myRunScripts = true;
-#endif // _DEBUG
-
-
 	if (!CNodeDataManager::Get())
 	{
 		CNodeDataManager::Create();
@@ -180,15 +172,21 @@ void CGraphManager::Load(const std::string& aSceneName)
 	LoadTreeFromFile();
 
 	myRenderGraph = false;
+
+#ifdef _DEBUG
 	myRunScripts = false;
+#else
+	myRunScripts = true;
+#endif // _DEBUG
 }
 
 void CGraphManager::Clear()
 {
 	if (myGraphs.size() <= 0)
 		return;
-
+#ifdef _DEBUG
 	SaveTreeToFile();
+#endif
 	CUID::ClearUIDS();
 	for (auto& sGraph : myGraphs)
 	{
@@ -539,6 +537,9 @@ void CGraphManager::ShowFlow(int aLinkID)
 
 void CGraphManager::Update()
 {
+	if (!IRONWROUGHT->IsInGameScene())
+		return;
+
 	if (myGraphs.size() > 0)
 	{
 		CGraphNodeTimerManager::Get()->Update();

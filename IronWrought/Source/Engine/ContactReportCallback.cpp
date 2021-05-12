@@ -115,6 +115,7 @@ void CContactReportCallback::onContact(const physx::PxContactPairHeader& pairHea
 				if (length >= 50.f) {
 					float massDiff = fabs(rb.GetMass() - firstTransform->GetComponent<CRigidBodyComponent>()->GetMass());
 					float dmg = massDiff * length;
+					dmg = 3.34f;// For vertical slice
 					enemy->TakeDamage(dmg);
 				}
 			}
@@ -129,6 +130,7 @@ void CContactReportCallback::onContact(const physx::PxContactPairHeader& pairHea
 					float massDiff = fabs(rb.GetMass() /*- secondTransform->GetComponent<CRigidBodyComponent>()->GetMass()*/);
 					std::cout << __FUNCTION__ << " " << massDiff << std::endl;
 					float dmg = massDiff * length;
+					dmg = 3.34f;// For vertical slice
 					enemy->TakeDamage(dmg);
 				}
 			}

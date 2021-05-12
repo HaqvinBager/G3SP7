@@ -25,7 +25,11 @@ CMainMenuState::~CMainMenuState()
 
 void CMainMenuState::Awake()
 {
+#ifdef VERTICAL_SLICE
+	CScene* scene = CSceneManager::CreateMenuScene("MainMenu", ASSETPATH("Assets/Graphics/UI/JSON/UI_MainMenu_VS.json"));
+#else
 	CScene* scene = CSceneManager::CreateMenuScene("MainMenu", ASSETPATH("Assets/Graphics/UI/JSON/UI_MainMenu.json"));
+#endif
 	CEngine::GetInstance()->AddScene(myState, scene);
 }
 
