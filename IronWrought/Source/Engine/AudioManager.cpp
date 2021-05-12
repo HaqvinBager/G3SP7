@@ -410,7 +410,7 @@ void CAudioManager::Receive(const SMessage& aMessage) {
 	case EMessageType::BootUpState:
 	{
 		myWrapper.Play(myAmbienceAudio[CAST(EAmbience::Inside)], myChannels[CAST(EChannel::Ambience)]);
-		//myWrapper.Play(myRes)
+		myWrapper.Play(myResearcherEventSounds[CAST(EResearcherEventVoiceLine::BootUp)], myChannels[CAST(EChannel::ResearcherVOX)]);
 	}break;
 
 	case EMessageType::MainMenu:
