@@ -65,6 +65,9 @@ private:
 	void UpdateMovementLock();
 	void InitForceForward();
 	void UpdateForceForward();
+	void InitStandStill(const float& aStandStillTimer);
+	void UpdateStandStill();
+
 	void BoundsCheck();
 	void LadderUpdate();
 
