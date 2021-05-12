@@ -22,6 +22,9 @@ public:
 	void OnComplete(std::string aSceneThatHasBeenSuccessfullyLoaded);
 
 private:
+	void CheckAndUpdatePostProcess(const char* aLevel);
+
+private:
 	std::string myLevelToLoad;
 };
 

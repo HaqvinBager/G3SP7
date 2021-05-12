@@ -184,9 +184,7 @@ void CGraphManager::Clear()
 {
 	if (myGraphs.size() <= 0)
 		return;
-#ifdef _DEBUG
 	SaveTreeToFile();
-#endif
 	CUID::ClearUIDS();
 	for (auto& sGraph : myGraphs)
 	{
