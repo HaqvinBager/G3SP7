@@ -64,7 +64,7 @@ void CSeek::SetTarget(CTransformComponent* aTarget) {
 	myTarget = aTarget;
 }
 
-CAttack::CAttack(CEnemyComponent* aUser) : myDamage(1.0f), myTarget(nullptr), myAttackCooldown(1.f), myAnimationOffset(0.45f), myAttackTimer(0.f), myUser(aUser) {
+CAttack::CAttack(CEnemyComponent* aUser) : myDamage(1.0f), myTarget(nullptr), myAttackCooldown(1.f), myAnimationOffset(0.45f), myAttackTimer(0.f), myIsAttacking(false), myUser(aUser) {
 }
 
 Vector3 CAttack::Update(const Vector3& aPosition)
@@ -74,10 +74,10 @@ Vector3 CAttack::Update(const Vector3& aPosition)
 	}
 	Vector3 direction = myTarget->WorldPosition() - aPosition;
 
-	//byt ut attacktimer och attackcooldown till animationtimer - Alexander Matthäi 2021-05-07
 	myAttackTimer += CTimer::Dt();
-	if (myAttackTimer >= myAttackCooldown)
+	if ((myAttackTimer >= myAttackCooldown) && !myIsAttacking)
 	{
+		myIsAttacking = true;
 		CMainSingleton::PostMaster().SendLate({ EMessageType::EnemyAttack, myUser });
 	}
 
@@ -98,6 +98,7 @@ Vector3 CAttack::Update(const Vector3& aPosition)
 			//CMainSingleton::PostMaster().SendLate({ EMessageType::EnemyAttack, myUser });
 		}
 		myAttackTimer = 0.f;
+		myIsAttacking = false;
 	}
 	return std::move(direction);
 }
