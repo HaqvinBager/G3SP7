@@ -46,6 +46,7 @@ private:
 	float myAttackCooldown;
 	float myAttackTimer;
 	float myAnimationOffset;
+	bool myIsAttacking;
 	CTransformComponent* myTarget;
 	CEnemyComponent* myUser;
 };

@@ -213,7 +213,6 @@ void CAudioManager::Receive(const SMessage& aMessage) {
 	case EMessageType::PlayerTakeDamage:
 	{
 		myWrapper.Play(mySFXAudio[CAST(ESFX::EnemyHit)], myChannels[CAST(EChannel::SFX)]);
-		//myDelayedSFX.push_back({ESFX::EnemyHit, 0.45f});
 	}
 	break;
 
@@ -307,6 +306,13 @@ void CAudioManager::Receive(const SMessage& aMessage) {
 	{
 		PlayCyclicRandomSoundFromCollection(myRobotAttackSounds, EChannel::RobotVOX, myAttackSoundIndices, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
 	}break;
+
+	case EMessageType::EnemyAttack:
+	{
+		if (mySFXAudio[CAST(ESFX::EnemyAttack)])
+		myWrapper.Play(mySFXAudio[CAST(ESFX::EnemyAttack)], myChannels[CAST(EChannel::SFX)]);
+	}break;
+
 
 	//// VOICELINES
 	//case EMessageType::PlayVoiceLine:
@@ -444,6 +450,7 @@ void CAudioManager::SubscribeToMessages()
 	CMainSingleton::PostMaster().Subscribe(EMessageType::EnemySeekState, this);
 	CMainSingleton::PostMaster().Subscribe(EMessageType::EnemyAttackState, this);
 	CMainSingleton::PostMaster().Subscribe(EMessageType::EnemyTakeDamage, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::EnemyAttack, this);
 
 	//CMainSingleton::PostMaster().Subscribe(EMessageType::PlayVoiceLine, this);
 	//CMainSingleton::PostMaster().Subscribe(EMessageType::StopDialogue, this);
@@ -482,6 +489,7 @@ void CAudioManager::UnsubscribeToMessages()
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::EnemySeekState, this);
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::EnemyAttackState, this);
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::EnemyTakeDamage, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::EnemyAttack, this);
 
 	//CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayVoiceLine, this);
 	//CMainSingleton::PostMaster().Unsubscribe(EMessageType::StopDialogue, this);
@@ -617,6 +625,8 @@ std::string CAudioManager::TranslateEnum(ESFX enumerator) const {
 		return "PickupGravityGlove";
 	case ESFX::PickupHeal:
 		return "PickupHeal";
+	case ESFX::EnemyAttack:
+		return "EnemyAttack";
 	default:
 		return "";
 	}
