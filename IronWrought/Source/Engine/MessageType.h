@@ -78,6 +78,8 @@ enum class EMessageType
 
 	BootUpState,
 	PlayJumpSound,
+	
+	GameStarted,
 
 	Count
 };

@@ -44,6 +44,8 @@ void CMainMenuState::Start()
 	CMainSingleton::PostMaster().Subscribe(EMessageType::SetResolution1280x720, this);
 	CMainSingleton::PostMaster().Subscribe(EMessageType::SetResolution1600x900, this);
 	CMainSingleton::PostMaster().Subscribe(EMessageType::SetResolution1920x1080, this);
+
+	CMainSingleton::PostMaster().SendLate({ EMessageType::MainMenu, nullptr });
 }
 
 void CMainMenuState::Stop()

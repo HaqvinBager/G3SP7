@@ -81,6 +81,10 @@ void CInGameState::Start()
 	myExitLevel = false;
 	myExitTo = EExitTo::None;
 
+#ifdef VERTICAL_SLICE
+	CMainSingleton::PostMaster().SendLate({ EMessageType::GameStarted, nullptr });
+#endif
+
 	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_DISABLE_GLOVE, this);
 	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_ENABLE_GLOVE, this);
 	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_DISABLE_CANVAS, this);

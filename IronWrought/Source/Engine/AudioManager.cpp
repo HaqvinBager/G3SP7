@@ -224,36 +224,48 @@ void CAudioManager::Receive(const SMessage& aMessage) {
 
 	case EMessageType::PlayRobotAttackSound:
 	{
+		if (myChannels[CAST(EChannel::ResearcherVOX)]->IsPlaying())
+			return;
 		PlayCyclicRandomSoundFromCollection(myRobotAttackSounds, EChannel::RobotVOX, myAttackSoundIndices, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
 	}
 	break;
 
 	case EMessageType::PlayRobotDeathSound:
 	{
+		if (myChannels[CAST(EChannel::ResearcherVOX)]->IsPlaying())
+			return;
 		PlayCyclicRandomSoundFromCollection(myRobotDeathSounds, EChannel::RobotVOX, myDeathSoundIndices, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
 	}
 	break;
 
 	case EMessageType::PlayRobotIdleSound:
 	{
+		if (myChannels[CAST(EChannel::ResearcherVOX)]->IsPlaying())
+			return;
 		PlayCyclicRandomSoundFromCollection(myRobotIdleSounds, EChannel::RobotVOX, myIdleSoundIndices, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
 	}
 	break;
 
 	case EMessageType::PlayRobotPatrolling:
 	{
+		if (myChannels[CAST(EChannel::ResearcherVOX)]->IsPlaying())
+			return;
 		PlayCyclicRandomSoundFromCollection(myRobotPatrollingSounds, EChannel::RobotVOX, myPatrollingSoundIndices, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
 	}
 	break;
 
 	case EMessageType::PlayRobotSearching:
 	{
+		if (myChannels[CAST(EChannel::ResearcherVOX)]->IsPlaying())
+			return;
 		PlayCyclicRandomSoundFromCollection(myRobotSearchingSounds, EChannel::RobotVOX, mySearchingSoundIndices, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
 	}
 	break;
 
 	case EMessageType::EnemyTakeDamage:
 	{
+		if (myChannels[CAST(EChannel::ResearcherVOX)]->IsPlaying())
+			return;
 		PlayCyclicRandomSoundFromCollection(myRobotDeathSounds, EChannel::RobotVOX, myDeathSoundIndices, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
 		myWrapper.Play(mySFXAudio[CAST(ESFX::EnemyHit)], myChannels[CAST(EChannel::SFX)]);
 	}
@@ -292,6 +304,8 @@ void CAudioManager::Receive(const SMessage& aMessage) {
 
 	case EMessageType::EnemyAttackState:
 	{
+		if (myChannels[CAST(EChannel::ResearcherVOX)]->IsPlaying())
+			return;
 		// Todo add max 3 to be playable at the same time. Can be done inside PlayRandomSoundFromCollection
 		// 
 		PlayCyclicRandomSoundFromCollection(myRobotAttackSounds, EChannel::RobotVOX, myAttackSoundIndices, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
@@ -299,16 +313,25 @@ void CAudioManager::Receive(const SMessage& aMessage) {
 
 	case EMessageType::EnemyPatrolState:
 	{
+		if (myChannels[CAST(EChannel::ResearcherVOX)]->IsPlaying())
+			return;
+
 		PlayCyclicRandomSoundFromCollection(myRobotPatrollingSounds, EChannel::RobotVOX, myPatrollingSoundIndices, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
+
 	}break;
 
 	case EMessageType::EnemySeekState:
 	{
+		if (myChannels[CAST(EChannel::ResearcherVOX)]->IsPlaying())
+			return;
 		PlayCyclicRandomSoundFromCollection(myRobotAttackSounds, EChannel::RobotVOX, myAttackSoundIndices, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
 	}break;
 
 	case EMessageType::EnemyAttack:
 	{
+		if (myChannels[CAST(EChannel::ResearcherVOX)]->IsPlaying())
+			return;
+
 		if (mySFXAudio[CAST(ESFX::EnemyAttack)])
 		myWrapper.Play(mySFXAudio[CAST(ESFX::EnemyAttack)], myChannels[CAST(EChannel::SFX)]);
 	}break;
@@ -333,9 +356,22 @@ void CAudioManager::Receive(const SMessage& aMessage) {
 	//	//}
 	//}break;
 
+	case EMessageType::GameStarted:
+	{
+		myWrapper.Play(myResearcherEventSounds[CAST(EResearcherEventVoiceLine::ResearcherIntroVerticalSlice)], myChannels[CAST(EChannel::ResearcherVOX)]);
+
+	}break;
+
 	case EMessageType::StartGame:
 	{
 		std::string scene = *reinterpret_cast<std::string*>(aMessage.data);
+		if (strcmp(scene.c_str(), "VerticalSlice") == 0)
+		{
+			myChannels[CAST(EChannel::Ambience)]->Stop();
+			myWrapper.Play(myAmbienceAudio[CAST(EAmbience::Inside)], myChannels[CAST(EChannel::Ambience)]);
+			return;
+		}
+
 		if (strcmp(scene.c_str(), "Level_1-1") == 0)
 		{
 			myChannels[CAST(EChannel::Ambience)]->Stop();
@@ -369,6 +405,16 @@ void CAudioManager::Receive(const SMessage& aMessage) {
 	{
 		myWrapper.Play(myAmbienceAudio[CAST(EAmbience::Inside)], myChannels[CAST(EChannel::Ambience)]);
 		//myWrapper.Play(myRes)
+	}break;
+
+	case EMessageType::MainMenu:
+	{
+		myChannels[CAST(EChannel::Ambience)]->Stop();
+		myChannels[CAST(EChannel::Music)]->Stop();
+		myChannels[CAST(EChannel::ResearcherVOX)]->Stop();
+		myChannels[CAST(EChannel::RobotVOX)]->Stop();
+		myChannels[CAST(EChannel::SFX)]->Stop();
+		myWrapper.Play(myAmbienceAudio[CAST(EAmbience::Inside)], myChannels[CAST(EChannel::Ambience)]);
 	}break;
 
 	default: break;
@@ -463,6 +509,8 @@ void CAudioManager::SubscribeToMessages()
 	CMainSingleton::PostMaster().Subscribe("Level_2-2", this);
 
 	CMainSingleton::PostMaster().Subscribe(EMessageType::BootUpState, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::GameStarted, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::MainMenu, this);
 }
 
 void CAudioManager::UnsubscribeToMessages()
@@ -502,6 +550,8 @@ void CAudioManager::UnsubscribeToMessages()
 	CMainSingleton::PostMaster().Unsubscribe("Level_2-2", this);
 
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::BootUpState, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::GameStarted, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::MainMenu, this);
 }
 
 std::string CAudioManager::GetPath(EMusic type) const
