@@ -9,6 +9,6 @@ public:
 	int OnEnter(class CNodeInstance* aTriggeringNodeInstance) override;
 	std::string GetNodeTypeCategory() override { return "Audio"; }
 private:
-	int myMaxValue = 2;
+	int myMaxValue = 9;
 };
 
