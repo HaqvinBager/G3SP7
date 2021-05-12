@@ -213,7 +213,6 @@ void CAudioManager::Receive(const SMessage& aMessage) {
 	case EMessageType::PlayerTakeDamage:
 	{
 		myWrapper.Play(mySFXAudio[CAST(ESFX::EnemyHit)], myChannels[CAST(EChannel::SFX)]);
-		//myDelayedSFX.push_back({ESFX::EnemyHit, 0.45f});
 	}
 	break;
 
