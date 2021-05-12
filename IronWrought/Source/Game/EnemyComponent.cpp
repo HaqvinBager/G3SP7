@@ -149,7 +149,8 @@ void CEnemyComponent::TakeDamage(const float& aDamage)
 	myTakeDamageTimer = 0.5f;
 	myCurrentHealth -= aDamage;
 	std::cout << aDamage << std::endl;
-	CMainSingleton::PostMaster().SendLate({ EMessageType::EnemyTakeDamage, this });
+	if(myCurrentHealth > 0.0f)
+		CMainSingleton::PostMaster().SendLate({ EMessageType::EnemyTakeDamage, this });
 }
 
 void CEnemyComponent::SetState(EBehaviour aState)
