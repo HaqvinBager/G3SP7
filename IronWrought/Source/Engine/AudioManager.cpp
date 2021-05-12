@@ -364,7 +364,7 @@ void CAudioManager::Receive(const SMessage& aMessage) {
 
 	case EMessageType::GameStarted:
 	{
-		myWrapper.Play(myResearcherEventSounds[CAST(EResearcherEventVoiceLine::ResearcherIntroVerticalSlice)], myChannels[CAST(EChannel::ResearcherVOX)]);
+		myWrapper.Play(myResearcherEventSounds[CAST(EResearcherEventVoiceLine::V1)], myChannels[CAST(EChannel::ResearcherVOX)]);
 
 	}break;
 
@@ -718,6 +718,8 @@ std::string CAudioManager::TranslateEnum(EResearcherEventVoiceLine enumerator) c
 	{
 	case EResearcherEventVoiceLine::V1:
 		return "V1";
+	case EResearcherEventVoiceLine::V2:
+		return "V2";
 	case EResearcherEventVoiceLine::BootUp:
 		return "BootUp";
 	case EResearcherEventVoiceLine::Intro:
@@ -790,6 +792,7 @@ std::string CAudioManager::TranslateEnum(EResearcherEventVoiceLine enumerator) c
 		return "Outro6";
 	case EResearcherEventVoiceLine::Outro7:
 		return "Outro7";
+
 	default:
 		return "";
 	}
