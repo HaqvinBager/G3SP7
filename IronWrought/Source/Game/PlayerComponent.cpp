@@ -189,14 +189,15 @@ void CPlayerComponent::Receive(const SMessage& aMessage)
 {
 	switch (aMessage.myMessageType)
 	{
-		case EMessageType::PlayerHealthPickup:
-		{
-			if (aMessage.data)
-				IncreaseHealth(*reinterpret_cast<float*>(aMessage.data));
-			else
-				IncreaseHealth();
-		}
-		break;
+		// Not used, event only used by AudioManager
+		//case EMessageType::PlayerHealthPickup:
+		//{
+		//	if (aMessage.data)
+		//		IncreaseHealth(*reinterpret_cast<float*>(aMessage.data));
+		//	else
+		//		IncreaseHealth();
+		//}
+		//break;
 
 		case EMessageType::PlayerTakeDamage:
 		{

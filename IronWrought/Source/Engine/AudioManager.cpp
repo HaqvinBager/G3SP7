@@ -949,6 +949,18 @@ void CAudioManager::FillCollection(ERobotVoiceLine enumerator)
 	}
 	break;
 
+	case ERobotVoiceLine::RobotDamage:
+	{
+		CAudio* sound = myWrapper.TryGetSound(myVoxPath + GetCollectionPath(enumerator, ++counter));
+
+		while (sound != nullptr)
+		{
+			myRobotDamageSounds.push_back(sound);
+			sound = myWrapper.TryGetSound(myVoxPath + GetCollectionPath(enumerator, ++counter));
+		}
+	}
+	break;
+
 	default:
 		break;
 	}
