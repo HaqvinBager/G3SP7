@@ -126,23 +126,42 @@ bool CFullscreenRenderer::Init(CDirectXFramework* aFramework) {
 	//End Samplers
 
 #pragma region SSAO Setup
-	for (unsigned int i = 0; i < myKernelSize; ++i) {
-		float r = 1.0f * sqrt(Random(0.0f, 1.0f));
-		float theta = Random(float(i) / float(myKernelSize), float(i+1) / float(myKernelSize)) * 2.0f * 3.14159265f;
-		float x = r * cosf(theta);
-		float y = r * sinf(theta);
-		float z = sqrt(1 - x * x - y * y);
-		myKernel[i] = Vector4(
-			x,
-			y,
-			z,
-			1.0f);
-			//myKernel[i].Normalize();
-			myKernel[i] *= Random(0.0f, 1.0f);
-			//float scale = float(i) / float(myKernelSize);
-			//scale = KernelLerp(0.1f, 1.0f, scale * scale);
-			//myKernel[i] *= scale;
-	}
+	//for (unsigned int i = 0; i < myKernelSize; ++i) {
+	//	float r = 1.0f * sqrt(Random(0.0f, 1.0f));
+	//	float theta = Random(float(i) / float(myKernelSize), float(i+1) / float(myKernelSize)) * 2.0f * 3.14159265f;
+	//	float x = r * cosf(theta);
+	//	float y = r * sinf(theta);
+	//	float z = sqrt(1 - x * x - y * y);
+	//	myKernel[i] = Vector4(
+	//		x,
+	//		y,
+	//		z,
+	//		1.0f);
+	//		//myKernel[i].Normalize();
+	//		myKernel[i] *= Random(0.0f, 1.0f);
+	//		//float scale = float(i) / float(myKernelSize);
+	//		//scale = KernelLerp(0.1f, 1.0f, scale * scale);
+	//		//myKernel[i] *= scale;
+	//}
+
+	// Hardcoded Kernel
+	myKernel[0] = { 0.528985322f, 0.163332120f, 0.620016515f, 1.0f };
+	myKernel[1] = { 0.573982120f, 0.378577918f, 0.470547318f, 1.0f };
+	myKernel[2] = { 0.065050237f, 0.139410198f, 0.347815633f, 1.0f };
+	myKernel[3] = { 0.041187014f, 0.130081877f, 0.164059237f, 1.0f };
+	myKernel[4] = { -0.026605275f, 0.090929292f, 0.077286638f, 1.0f };
+	myKernel[5] = { -0.113886870f, 0.154690191f, 0.197556734f, 1.0f };
+	myKernel[6] = { -0.666800976f, 0.662895739f, 0.277599692f, 1.0f };
+	myKernel[7] = { -0.399470448f, 0.096369371f, 0.417604893f, 1.0f };
+	myKernel[8] = { -0.411310822f, -0.082451604f, 0.179119825f, 1.0f };
+	myKernel[9] = { -0.117983297f, -0.095347963f, 0.374402136f, 1.0f };
+	myKernel[10] = { -0.457335383f, -0.529036164f, 0.490310162f, 1.0f };
+	myKernel[11] = { -0.119527563f, -0.291437626f, 0.206827655f, 1.0f };
+	myKernel[12] = { 0.201868936f, -0.513456404f, 0.432056010f, 1.0f };
+	myKernel[13] = { 0.096077450f, -0.107414119f, 0.527342558f, 1.0f };
+	myKernel[14] = { 0.223280489f, -0.180109233f, 0.203371927f, 1.0f };
+	myKernel[15] = { 0.163490131f, -0.039255358f, 0.532910645f, 1.0f };
+
 
 	Vector4 noise[myKernelSize];
 	for (unsigned int i = 0; i < myKernelSize; ++i)
