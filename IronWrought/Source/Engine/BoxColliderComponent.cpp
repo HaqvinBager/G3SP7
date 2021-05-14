@@ -119,9 +119,8 @@ void CBoxColliderComponent::CreateBoxCollider()
 
 void CBoxColliderComponent::OnTriggerEnter(CTransformComponent* aOther)
 {
-	if (myTriggerOnce)
-		if (myHasTriggered)
-			return;
+	if (GameObject().Active() == false)
+		return;
 
 	if (myEventFilter == EEventFilter::PlayerOnly)
 	{
@@ -132,7 +131,6 @@ void CBoxColliderComponent::OnTriggerEnter(CTransformComponent* aOther)
 			if (myAudioEventIndex > -1)
 			{
 				CMainSingleton::PostMaster().SendLate({ EMessageType::PlayResearcherEvent, &myAudioEventIndex });
-				return;
 			}
 
 			PostMaster::SBoxColliderEvenTriggerData data = {};
@@ -155,13 +153,16 @@ void CBoxColliderComponent::OnTriggerEnter(CTransformComponent* aOther)
 
 		myHasTriggered = true;
 	}
+
+	if (myTriggerOnce)
+		if (myHasTriggered)
+			GameObject().Active(false);
 }
 
 void CBoxColliderComponent::OnTriggerExit(CTransformComponent* aOther)
 {
-	if (myTriggerOnce)
-		if (myHasTriggered)
-			return;
+	if (GameObject().Active() == false)
+		return;
 
 	if (myEventFilter == EEventFilter::PlayerOnly)
 	{
@@ -172,7 +173,6 @@ void CBoxColliderComponent::OnTriggerExit(CTransformComponent* aOther)
 			if (myAudioEventIndex > -1)
 			{
 				CMainSingleton::PostMaster().SendLate({ EMessageType::PlayResearcherEvent, &myAudioEventIndex });
-				return;
 			}
 			//Send Player Has entered Collision Message here
 			/*bool state = false;*/
@@ -193,6 +193,14 @@ void CBoxColliderComponent::OnTriggerExit(CTransformComponent* aOther)
 		CMainSingleton::PostMaster().Send(message);
 
 		myHasTriggered = true;
+	}
+
+	if (myTriggerOnce)
+	{
+		if (myHasTriggered)
+		{
+			GameObject().Active(false);
+		}
 	}
 }
 
