@@ -1,0 +1,86 @@
+{
+    "UID_MAX": {
+        "Num": 1456
+    },
+    "NodeInstances": [
+        {
+            "NodeType ID": 9,
+            "NodeType": 1,
+            "UID": 1097,
+            "Position": {
+                "X": 464,
+                "Y": 499
+            },
+            "Pins": [
+                {
+                    "Index": 0,
+                    "UID": 1098,
+                    "DATA": "",
+                    "DATA_TYPE": ""
+                }
+            ]
+        },
+        {
+            "NodeType ID": 26,
+            "NodeType": 0,
+            "UID": 1099,
+            "Position": {
+                "X": 881,
+                "Y": 508
+            },
+            "Pins": [
+                {
+                    "Index": 0,
+                    "UID": 1100,
+                    "DATA": "",
+                    "DATA_TYPE": ""
+                },
+                {
+                    "Index": 1,
+                    "UID": 1101,
+                    "DATA": "",
+                    "DATA_TYPE": ""
+                },
+                {
+                    "Index": 2,
+                    "UID": 1102,
+                    "DATA": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "DATA_TYPE": "VECTOR3"
+                },
+                {
+                    "Index": 3,
+                    "UID": 1103,
+                    "DATA": "",
+                    "DATA_TYPE": "BOOL"
+                },
+                {
+                    "Index": 4,
+                    "UID": 1104,
+                    "DATA": 0.5,
+                    "DATA_TYPE": "FLOAT"
+                }
+            ]
+        },
+        {
+            "NodeType ID": 2,
+            "NodeType": 2,
+            "UID": 1105,
+            "Position": {
+                "X": 472,
+                "Y": 662
+            },
+            "Pins": [
+                {
+                    "Index": 0,
+                    "UID": 1106,
+                    "DATA": "",
+                    "DATA_TYPE": "VECTOR3"
+                }
+            ]
+        }
+    ]
+}
