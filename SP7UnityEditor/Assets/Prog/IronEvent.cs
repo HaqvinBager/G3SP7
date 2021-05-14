@@ -22,4 +22,6 @@ public class IronEvent : MonoBehaviour
     public IronEventType eventType;
     public GameEvent eventObject;
     public EEventFilter eventFilter = EEventFilter.Any;
+    public int audioIndex = -1;
+    public bool triggerOnce = false;
 }

@@ -19,8 +19,8 @@
 #include "RigidBodyComponent.h"
 #include "RigidDynamicBody.h"
 
-#define PLAYER_MAX_POSITION 500.0f
-#define PLAYER_MIN_POSITION -500.0f
+#define PLAYER_MAX_POSITION 50.0f
+#define PLAYER_MIN_POSITION -50.0f
 
 CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, const float aWalkSpeed, const float aCrouchSpeed, physx::PxUserControllerHitReport* aHitReport)
 	: CComponent(gameObject)
@@ -595,9 +595,3 @@ void CPlayerControllerComponent::LadderUpdate()
 	//	myIsOnLadder = false;
 	//}
 }
-
-void CPlayerControllerComponent::InitIntroEvent()
-{}
-
-void CPlayerControllerComponent::HandleIntroEvent()
-{}

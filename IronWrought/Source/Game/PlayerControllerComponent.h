@@ -79,9 +79,6 @@ private:
 		ForceStandStill
 	};
 
-	void InitIntroEvent();
-	void HandleIntroEvent();
-
 
 	CCharacterController* myController;
 	CPlayerAnimationController* myAnimationComponentController;

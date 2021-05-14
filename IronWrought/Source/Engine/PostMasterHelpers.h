@@ -24,6 +24,8 @@ namespace PostMaster
 	static const char* SMSG_LEVEL21 = "Level_2-1";
 	static const char* SMSG_LEVEL22 = "Level_2-2";
 
+	static const char* SMSG_AUDIO = "AudioEvent";
+
 	// SP7: compares a string received from SStringMessage.aMessageType with the levels we have.
 	const bool LevelCheck(const char* aStringMessageToCheck);
 
