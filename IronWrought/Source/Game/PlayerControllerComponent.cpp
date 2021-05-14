@@ -11,6 +11,7 @@
 
 #include "Scene.h"
 #include "CameraControllerComponent.h"
+#include "CameraComponent.h"
 
 #include "PlayerAnimationController.h"
 #include "PlayerComponent.h"
@@ -31,7 +32,7 @@ CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, 
 	, myIsGrounded(true)
 	, myHasJumped(false)
 	, myIsJumping(false)
-	, myJumpHeight(0.1f)// these values don't make sense. //Supposed to be 40cm => ~0.4f
+	, myJumpHeight(0.07f)// these values don't make sense. //Supposed to be 40cm => ~0.4f
 	, myFallSpeed(0.982f * 1.0f)
 	, myMovement(Vector3(0.0f, 0.0f, 0.0f))
 	, myAirborneTimer(0.0f)
@@ -265,8 +266,14 @@ void CPlayerControllerComponent::Receive(const SStringMessage& aMsg)
 			return;
 		myEventCounter++;
 
-		CMainSingleton::PostMaster().Send({ PostMaster::SMSG_ENABLE_GLOVE, nullptr });
-		LockMovementFor(5.0f);
+		int researcherIndex = 3;
+		int sfxIndex = 7;
+		CMainSingleton::PostMaster().Send({ EMessageType::PlayResearcherEvent, &researcherIndex });
+		CMainSingleton::PostMaster().Send({ EMessageType::PlaySFX, &sfxIndex });
+		myCamera->GameObject().GetComponent<CCameraComponent>()->Fade(false);
+		LockMovementFor(54.0f);
+		CMainSingleton::PostMaster().Send({ PostMaster::SMSG_ENABLE_GLOVE,  nullptr });
+		CMainSingleton::PostMaster().Send({ PostMaster::SMSG_ENABLE_CANVAS, nullptr });
 
 		return;
 	}

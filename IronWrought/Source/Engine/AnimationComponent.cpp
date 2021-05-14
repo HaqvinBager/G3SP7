@@ -145,6 +145,8 @@ void CAnimationComponent::UpdateBlended()
 
 	std::vector<aiMatrix4x4> trans;
 	myController->SetBoneTransforms(trans);
+	if (trans.empty())
+		return;
 	memcpy(myBones.data(), &trans[0], (sizeof(float) * 16) * trans.size());//was memcpy
 }
 
