@@ -1,6 +1,6 @@
 {
     "UID_MAX": {
-        "Num": 570
+        "Num": 540
     },
     "NodeInstances": [
         {
@@ -566,6 +566,29 @@
                     "UID": 243,
                     "DATA": true,
                     "DATA_TYPE": "BOOL"
+                }
+            ]
+        },
+        {
+            "NodeType ID": 48,
+            "NodeType": 0,
+            "UID": 528,
+            "Position": {
+                "X": 2396,
+                "Y": 98
+            },
+            "Pins": [
+                {
+                    "Index": 0,
+                    "UID": 529,
+                    "DATA": "",
+                    "DATA_TYPE": ""
+                },
+                {
+                    "Index": 1,
+                    "UID": 530,
+                    "DATA": 6,
+                    "DATA_TYPE": "INT"
                 }
             ]
         }
