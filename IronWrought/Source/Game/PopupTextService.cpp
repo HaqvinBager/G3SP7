@@ -27,58 +27,59 @@ bool CPopupTextService::Init()
 	Document document = CJsonReader::Get()->LoadDocument("Json/UI/PopupTextServiceInit.json");
 	ENGINE_BOOL_POPUP(!document.HasParseError(), "Could not load 'Json/UI/PopupTextServiceInit.json'!");
 
-	const unsigned int damageNumbersPoolSize = document["Damage Numbers Pool Size"].GetInt();
+	//const unsigned int damageNumbersPoolSize = document["Damage Numbers Pool Size"].GetInt();
 
-	for (unsigned int i = 0; i < damageNumbersPoolSize; ++i)
-	{
-		myTextPool.push(new CTextInstance());
-		myTextPool.back()->Init(CTextFactory::GetInstance()->GetText(document["Damage Numbers Font and Size"].GetString()));
-		myAnimatedDataPool.push(new STextAnimationData());
-	}
+	//for (unsigned int i = 0; i < damageNumbersPoolSize; ++i)
+	//{
+	//	myTextPool.push(new CTextInstance());
+	//	myTextPool.back()->Init(CTextFactory::GetInstance()->GetText(document["Damage Numbers Font and Size"].GetString()));
+	//	myAnimatedDataPool.push(new STextAnimationData());
+	//}
 
-	myDamageColors[0] = { 1.0f, 1.0f, 1.0f, 1.0f };									// Normal
-	myDamageColors[1] = { 255.0f / 255.0f, 203.0f / 255.0f, 5.0f / 255.0f, 1.0f };	// Crit
-	myDamageColors[2] = { 232.0f / 255.0f, 126.0f / 255.0f, 4.0f / 255.0f, 1.0f };	// Ultracrit
-	myDamageColors[3] = { 1.0f, 0.0f, 0.0f, 1.0f };									// Enemy
-	myDamageColors[4] = { 0.0f, 230.0f / 255.0f, 64.0f / 255.0f, 1.0f };			// Healing
+	//myDamageColors[0] = { 1.0f, 1.0f, 1.0f, 1.0f };									// Normal
+	//myDamageColors[1] = { 255.0f / 255.0f, 203.0f / 255.0f, 5.0f / 255.0f, 1.0f };	// Crit
+	//myDamageColors[2] = { 232.0f / 255.0f, 126.0f / 255.0f, 4.0f / 255.0f, 1.0f };	// Ultracrit
+	//myDamageColors[3] = { 1.0f, 0.0f, 0.0f, 1.0f };									// Enemy
+	//myDamageColors[4] = { 0.0f, 230.0f / 255.0f, 64.0f / 255.0f, 1.0f };			// Healing
 
-	myTutorialText = new CTextInstance();
-	myTutorialText->Init(CTextFactory::GetInstance()->GetText(document["Tutorial Message Font and Size"].GetString()));
-	myTutorialAnimationData = new STextAnimationData();
+	//myTutorialText = new CTextInstance();
+	//myTutorialText->Init(CTextFactory::GetInstance()->GetText(document["Tutorial Message Font and Size"].GetString()));
+	//myTutorialAnimationData = new STextAnimationData();
 
-	myWarningText = new CTextInstance();
-	myWarningText->Init(CTextFactory::GetInstance()->GetText(document["Warning Message Font and Size"].GetString()));
-	myWarningAnimationData = new STextAnimationData();
+	//myWarningText = new CTextInstance();
+	//myWarningText->Init(CTextFactory::GetInstance()->GetText(document["Warning Message Font and Size"].GetString()));
+	//myWarningAnimationData = new STextAnimationData();
 
 	auto skillIconPaths = document["Skill Icon Paths"].GetArray();
 	for (unsigned int i = 0; i < skillIconPaths.Size(); ++i)
 	{
 		mySkillIcons.emplace_back(new CSpriteInstance());
-		mySkillIcons.back()->Init(CSpriteFactory::GetInstance()->GetSprite(skillIconPaths[i]["Path"].GetString()));
+		mySkillIcons.back()->Init(CSpriteFactory::GetInstance()->GetSprite(ASSETPATH(skillIconPaths[i]["Path"].GetString())));
 		mySkillIcons.back()->SetPosition({ document["Skill Icon Position X"].GetFloat(), document["Skill Icon Position Y"].GetFloat() });
 		mySkillIcons.back()->SetColor({ 1.0f, 1.0f, 1.0f, 0.5f });
 	}
 
-	myInfoBoxBackground = new CSpriteInstance();
-	std::string skillBackgroundPath = document["Skill Info Box Background Path"].GetString();
-	if(skillBackgroundPath.empty() == false)
-		myInfoBoxBackground->Init(CSpriteFactory::GetInstance()->GetSprite(skillBackgroundPath));
-	myInfoBoxBackground->SetPosition({ document["Info Box Position X"].GetFloat(), document["Info Box Position Y"].GetFloat() });
-	myInfoBoxBackground->SetColor({ 1.0f, 1.0f, 1.0f, 0.5f });
+	//myInfoBoxBackground = new CSpriteInstance();
+	//std::string skillBackgroundPath = document["Skill Info Box Background Path"].GetString();
+	//if(skillBackgroundPath.empty() == false)
+	//	myInfoBoxBackground->Init(CSpriteFactory::GetInstance()->GetSprite(skillBackgroundPath));
+	//myInfoBoxBackground->SetPosition({ document["Info Box Position X"].GetFloat(), document["Info Box Position Y"].GetFloat() });
+	//myInfoBoxBackground->SetColor({ 1.0f, 1.0f, 1.0f, 0.5f });
 
-	myInfoBoxText = new CTextInstance();
-	myInfoBoxText->Init(CTextFactory::GetInstance()->GetText(document["Skill Info Font and Size"].GetString()));
-	myInfoBoxText->SetPosition({ -0.22f, document["Info Box Position Y"].GetFloat() });
-	myInfoBoxText->SetColor({ 1.0f, 1.0f, 1.0f, 0.5f });
+	//myInfoBoxText = new CTextInstance();
+	//myInfoBoxText->Init(CTextFactory::GetInstance()->GetText(document["Skill Info Font and Size"].GetString()));
+	//myInfoBoxText->SetPosition({ -0.22f, document["Info Box Position Y"].GetFloat() });
+	//myInfoBoxText->SetColor({ 1.0f, 1.0f, 1.0f, 0.5f });
 	myInfoAnimationData = new STextAnimationData();
 
-	auto skillTexts = document["Skill Info Texts"].GetArray();
-	for (unsigned int i = 0; i < skillTexts.Size(); ++i)
-	{
-		myStoredSkillInfoStrings.emplace_back(skillTexts[i]["Text"].GetString());
-	}
-
 	return true;
+	//auto skillTexts = document["Skill Info Texts"].GetArray();
+	//for (unsigned int i = 0; i < skillTexts.Size(); ++i)
+	//{
+	//	myStoredSkillInfoStrings.emplace_back(skillTexts[i]["Text"].GetString());
+	//}
+
+	//return true;
 }
 
 /// <summary>
@@ -145,8 +146,8 @@ void CPopupTextService::EmplaceTexts(std::vector<CTextInstance*>& someTexts)
 
 void CPopupTextService::EmplaceSprites(std::vector<CSpriteInstance*>& someSprites) const
 {
-	if (myActiveInfoBoxText) {
-		someSprites.emplace_back(myInfoBoxBackground);
+	if (myActiveSkillSprite) {
+		//someSprites.emplace_back(myInfoBoxBackground);
 		someSprites.emplace_back(myActiveSkillSprite);
 	}
 }
@@ -314,31 +315,43 @@ void CPopupTextService::SpawnDamageNumber(void* someData)
 void CPopupTextService::SpawnInfoBox(std::string someInfoIdentifier)
 {
 	unsigned int skillPicker = 0;
-	if (someInfoIdentifier == "Skill 1")
+	if (someInfoIdentifier == "Move")
 	{
 		skillPicker = 0;
 	}
-	else if (someInfoIdentifier == "Skill 2") 
+	else if (someInfoIdentifier == "Interact") 
 	{
 		skillPicker = 1;
 	}
-	else if (someInfoIdentifier == "Skill 3") 
+	else if (someInfoIdentifier == "Pull") 
 	{
 		skillPicker = 2;
 	}
+	else if (someInfoIdentifier == "Push")
+	{
+		skillPicker = 3;
+	}
+	else if (someInfoIdentifier == "Crouch")
+	{
+		skillPicker = 4;
+	}
+	else if (someInfoIdentifier == "Jump")
+	{
+		skillPicker = 5;
+	}
 
 	myActiveSkillSprite = mySkillIcons[skillPicker];
-	myInfoBoxText->SetPivot({ 0.0f, 0.5f });
-	myInfoBoxText->SetScale({ 1.0f, 1.0f });
-	myInfoBoxText->SetText(myStoredSkillInfoStrings[skillPicker]);
+	//myInfoBoxText->SetPivot({ 0.0f, 0.5f });
+	//myInfoBoxText->SetScale({ 1.0f, 1.0f });
+	//myInfoBoxText->SetText(myStoredSkillInfoStrings[skillPicker]);
 
 	myInfoAnimationData->myStartColor = { 1.0f, 1.0f, 1.0f, 0.5f };
 	myInfoAnimationData->myEndColor = { 0.0f, 0.0f, 0.0f, 0.0f };
-	myInfoAnimationData->myLifespan = 6.0f;
-	myInfoAnimationData->myFadeOutThreshold = 4.5f;
+	myInfoAnimationData->myLifespan = 4.5f;
+	myInfoAnimationData->myFadeOutThreshold = 4.0f;
 	myInfoAnimationData->myTimer = 0.0f;
 
-	myActiveInfoBoxText = myInfoBoxText;
+	//myActiveInfoBoxText = myInfoBoxText;
 }
 
 void CPopupTextService::SpawnTutorialText(std::string aText)
@@ -467,7 +480,7 @@ void CPopupTextService::UpdateResources()
 	}
 
 	fadeOutQuotient = 0.0f;
-	if (myActiveInfoBoxText) {
+	if (myActiveSkillSprite) {
 		myInfoAnimationData->myTimer += CTimer::Dt();
 
 		if (myInfoAnimationData->myTimer > myInfoAnimationData->myFadeOutThreshold)
@@ -476,8 +489,8 @@ void CPopupTextService::UpdateResources()
 				/ (myInfoAnimationData->myLifespan - myInfoAnimationData->myFadeOutThreshold);
 		}
 
-		myActiveInfoBoxText->SetColor(DirectX::SimpleMath::Vector4::Lerp(myInfoAnimationData->myStartColor, myInfoAnimationData->myEndColor, fadeOutQuotient));
-		myInfoBoxBackground->SetColor(DirectX::SimpleMath::Vector4::Lerp(myInfoAnimationData->myStartColor, myInfoAnimationData->myEndColor, fadeOutQuotient));
+		//myActiveInfoBoxText->SetColor(DirectX::SimpleMath::Vector4::Lerp(myInfoAnimationData->myStartColor, myInfoAnimationData->myEndColor, fadeOutQuotient));
+		//myInfoBoxBackground->SetColor(DirectX::SimpleMath::Vector4::Lerp(myInfoAnimationData->myStartColor, myInfoAnimationData->myEndColor, fadeOutQuotient));
 		myActiveSkillSprite->SetColor(DirectX::SimpleMath::Vector4::Lerp(myInfoAnimationData->myStartColor, myInfoAnimationData->myEndColor, fadeOutQuotient));
 		
 		if (myInfoAnimationData->myTimer > myInfoAnimationData->myLifespan)
