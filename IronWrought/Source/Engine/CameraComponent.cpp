@@ -28,10 +28,11 @@ CCameraComponent::CCameraComponent(CGameObject& aParent, const float aFoV/*, flo
 	myShakeTimer = 0.0f;
 	
 	myFadingPlane = nullptr;
-	myFadeTimer = 1.0f;
-	myFadeSpeed = 2.75f;
+	myFadeTimer = 1.5f;
+	myFadeSpeed = 1.0f;
 	myFadingIn = true;
 	myFadingPlaneActive = false;
+	myFadePermanent = false;
 }
 
 CCameraComponent::~CCameraComponent()
@@ -60,15 +61,15 @@ float LogEaseOut(float x) {
 }
 
 float LogEaseIn(float x) {
-	return (log(x) / log(0.01f));
+	return std::clamp((log(x) / log(0.01f)), 0.0f, 1.0f);
 }
 
 void CCameraComponent::Update()
 {
-	if (Input::GetInstance()->IsKeyPressed('H'))
-	{
-		this->SetTrauma(1.5f);
-	}
+	//if (Input::GetInstance()->IsKeyPressed('H'))
+	//{
+	//	this->SetTrauma(1.5f);
+	//}
 
 	if (myTrauma > 0.0f) {
 		myShakeTimer += CTimer::Dt();
@@ -81,7 +82,7 @@ void CCameraComponent::Update()
 	}
 
 	if (myFadingPlaneActive) {
-		
+
 		if (!myFadingPlane->GetShouldRender())
 			myFadingPlane->SetShouldRender(true);
 
@@ -102,13 +103,17 @@ void CCameraComponent::Update()
 		else {
 			DirectX::SimpleMath::Vector4 color = myFadingPlane->GetColor();
 			float alpha = color.w;
-			alpha = LogEaseIn(myFadeTimer);
+			if(alpha < 1.0f)
+				alpha = LogEaseIn(myFadeTimer);
 			if (alpha >= 1.0f) {
 				alpha = 1.0f;
-				myFadingPlaneActive = false;
-				myFadeTimer = 1.0f;
-				myFadingPlane->SetShouldRender(false);
-				CMainSingleton::PostMaster().SendLate({ EMessageType::FadeOutComplete, 0 });
+				if (!myFadePermanent)
+				{
+					myFadingPlaneActive = false;
+					myFadeTimer = 1.0f;
+					myFadingPlane->SetShouldRender(false);
+					CMainSingleton::PostMaster().SendLate({ EMessageType::FadeOutComplete, 0 });
+				}
 			}
 			myFadingPlane->SetColor({ color.x, color.y, color.z, alpha });
 		}
@@ -147,6 +152,13 @@ void CCameraComponent::Fade(bool aShouldFadeIn)
 {
 	myFadingPlaneActive = true;
 	myFadingIn = aShouldFadeIn;
+}
+
+void CCameraComponent::FadePermanent()
+{
+	myFadingPlaneActive = true;
+	myFadingIn = false;
+	myFadePermanent = true;
 }
 
 const bool CCameraComponent::IsFading() const

@@ -189,7 +189,7 @@ void CSpriteInstance::Update()
 
 void CSpriteInstance::PlayAnimation(unsigned int anIndex, bool aShouldLoop, bool aShouldBeReversed)
 {
-	if (anIndex >= myAnimationData.size() && anIndex < 0)
+	if (anIndex >= myAnimationData.size() || anIndex < 0)
 		return;
 
 	myCurrentAnimationIndex = anIndex;
@@ -205,9 +205,9 @@ void CSpriteInstance::PlayAnimation(unsigned int anIndex, bool aShouldLoop, bool
 	myShouldAnimate = true;
 }
 
-void CSpriteInstance::PlayAnimationUsingInternalData(const unsigned int& anIndex, const bool& aShouldBeReversed)
+void CSpriteInstance::PlayAnimationUsingInternalData(const int& anIndex, const bool& aShouldBeReversed)
 {
-	if (anIndex >= myAnimationData.size() && anIndex < 0)
+	if (anIndex >= myAnimationData.size() || anIndex < 0)
 		return;
 
 	myCurrentAnimationIndex = anIndex;

@@ -23,6 +23,7 @@ public:
 	void SetFoV(float aFoV);
 
 	void Fade(bool aShouldFadeIn);
+	void FadePermanent();
 	const bool IsFading() const;
 	void EmplaceSprites(std::vector<CSpriteInstance*>& someSprites) const;
 
@@ -54,6 +55,7 @@ private:
 	float myFadeSpeed;
 	bool myFadingIn;
 	bool myFadingPlaneActive;
+	bool myFadePermanent;
 
 	float myFoV; 
 

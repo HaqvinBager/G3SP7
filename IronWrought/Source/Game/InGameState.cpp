@@ -79,6 +79,7 @@ void CInGameState::Start()
 {
 	myEnemyAnimationController->Activate();
 	CEngine::GetInstance()->SetActiveScene(myState);
+	IRONWROUGHT->SetBrokenScreen(false);
 	IRONWROUGHT->GetActiveScene().CanvasIsHUD();
 	IRONWROUGHT->HideCursor();
 

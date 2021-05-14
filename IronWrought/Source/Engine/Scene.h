@@ -45,7 +45,7 @@ public:
 	bool Init();
 	bool InitNavMesh(const std::string& aPath);
 	bool InitCanvas(const std::string& aPath);
-	bool ReInitCanvas(const std::string& aPath);
+	bool ReInitCanvas(const std::string& aPath, const bool& aDelete = false);
 	void CanvasIsHUD();
 	/*void UpdateCanvas()*/;
 	void DisableWidgetsOnCanvas();
