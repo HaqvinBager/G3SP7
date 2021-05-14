@@ -19,6 +19,8 @@
 #include "RigidBodyComponent.h"
 #include "RigidDynamicBody.h"
 
+#include "PopupTextService.h"
+
 #define PLAYER_MAX_POSITION 50.0f
 #define PLAYER_MIN_POSITION -50.0f
 
@@ -90,6 +92,13 @@ CPlayerControllerComponent::~CPlayerControllerComponent()
 	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_INTRO, this);
 	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_OUTRO1, this);
 	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_OUTRO2, this);
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_UIMOVE, this);
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_UIINTERACT, this);
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_UIPULL, this);
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_UIPUSH, this);
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_UIPULL, this);
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_UICROUCH, this);
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_UIJUMP, this);
 
 	delete myAnimationComponentController;
 	myAnimationComponentController = nullptr;
@@ -106,6 +115,13 @@ void CPlayerControllerComponent::Start()
 	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_INTRO, this);
 	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_OUTRO1, this);
 	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_OUTRO2, this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_UIMOVE, this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_UIINTERACT, this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_UIPULL, this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_UIPUSH, this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_UIPULL, this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_UICROUCH, this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_UIJUMP, this);
 }
 
 void CPlayerControllerComponent::Update()
@@ -316,6 +332,36 @@ void CPlayerControllerComponent::Receive(const SStringMessage& aMsg)
 		LockMovementFor(5.0f);
 
 		return;
+	}
+
+	if (PostMaster::CompareStringMessage(PostMaster::SMSG_UIMOVE, aMsg.myMessageType))
+	{
+		CMainSingleton::PopupTextService().SpawnPopup(EPopupType::Info, "Move");
+	}
+
+	if (PostMaster::CompareStringMessage(PostMaster::SMSG_UIINTERACT, aMsg.myMessageType))
+	{
+		CMainSingleton::PopupTextService().SpawnPopup(EPopupType::Info, "Interact");
+	}
+
+	if (PostMaster::CompareStringMessage(PostMaster::SMSG_UIPULL, aMsg.myMessageType))
+	{
+		CMainSingleton::PopupTextService().SpawnPopup(EPopupType::Info, "Pull");
+	}
+
+	if (PostMaster::CompareStringMessage(PostMaster::SMSG_UIPUSH, aMsg.myMessageType))
+	{
+		CMainSingleton::PopupTextService().SpawnPopup(EPopupType::Info, "Push");
+	}
+
+	if (PostMaster::CompareStringMessage(PostMaster::SMSG_UICROUCH, aMsg.myMessageType))
+	{
+		CMainSingleton::PopupTextService().SpawnPopup(EPopupType::Info, "Crouch");
+	}
+
+	if (PostMaster::CompareStringMessage(PostMaster::SMSG_UIJUMP, aMsg.myMessageType))
+	{
+		CMainSingleton::PopupTextService().SpawnPopup(EPopupType::Info, "Jump");
 	}
 }
 

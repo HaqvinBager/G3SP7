@@ -26,6 +26,13 @@ namespace PostMaster
 
 	static const char* SMSG_AUDIO = "AudioEvent";
 
+	static const char* SMSG_UIMOVE = "UIMove";
+	static const char* SMSG_UIINTERACT = "UIInteract";
+	static const char* SMSG_UIPULL = "UIPull";
+	static const char* SMSG_UIPUSH = "UIPush";
+	static const char* SMSG_UICROUCH = "UICrouch";
+	static const char* SMSG_UIJUMP = "UIJump";
+
 	// SP7: compares a string received from SStringMessage.aMessageType with the levels we have.
 	const bool LevelCheck(const char* aStringMessageToCheck);
 
