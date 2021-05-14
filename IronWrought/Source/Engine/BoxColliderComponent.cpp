@@ -110,6 +110,7 @@ void CBoxColliderComponent::CreateBoxCollider()
 			PxShape* triggerShape;
 			actor->getShapes(&triggerShape, 1);
 			triggerShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
+			triggerShape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, false);
 			triggerShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
 			actor->userData = (void*) this;
 		}
