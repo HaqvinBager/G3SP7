@@ -343,6 +343,8 @@ void CPlayerControllerComponent::Receive(const SStringMessage& aMsg)
 
 	if (PostMaster::CompareStringMessage(PostMaster::SMSG_UIMOVE, aMsg.myMessageType))
 	{
+		CMainSingleton::PostMaster().Send({ PostMaster::SMSG_DISABLE_CANVAS, nullptr });
+		CMainSingleton::PostMaster().Send({ PostMaster::SMSG_DISABLE_GLOVE, nullptr });
 		CMainSingleton::PopupTextService().SpawnPopup(EPopupType::Info, "Move");
 	}
 
