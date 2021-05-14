@@ -22,8 +22,8 @@
 
 #include "PopupTextService.h"
 
-#define PLAYER_MAX_POSITION 50.0f
-#define PLAYER_MIN_POSITION -50.0f
+#define PLAYER_MAX_POSITION 100.0f
+#define PLAYER_MIN_POSITION -100.0f
 
 CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, const float aWalkSpeed, const float aCrouchSpeed, physx::PxUserControllerHitReport* aHitReport)
 	: CComponent(gameObject)
@@ -93,6 +93,11 @@ CPlayerControllerComponent::~CPlayerControllerComponent()
 	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_INTRO, this);
 	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_OUTRO1, this);
 	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_OUTRO2, this);
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_OUTRO3, this);
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_OUTRO4, this);
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_OUTRO5, this);
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_OUTRO6, this);
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_OUTRO7, this);
 	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_UIMOVE, this);
 	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_UIINTERACT, this);
 	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_UIPULL, this);
@@ -116,6 +121,11 @@ void CPlayerControllerComponent::Start()
 	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_INTRO, this);
 	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_OUTRO1, this);
 	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_OUTRO2, this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_OUTRO3, this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_OUTRO4, this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_OUTRO5, this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_OUTRO6, this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_OUTRO7, this);
 	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_UIMOVE, this);
 	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_UIINTERACT, this);
 	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_UIPULL, this);
@@ -131,11 +141,6 @@ void CPlayerControllerComponent::Update()
 	if (myCamera->IsFreeCamMode() || myCamera->IsCursorUnlocked())
 		return;
 #endif
-
-	if (Input::GetInstance()->IsKeyPressed(VK_RETURN))
-	{
-		CMainSingleton::PostMaster().Send({ PostMaster::SMSG_INTRO, nullptr });
-	}
 
 	GameObject().myTransform->Position(myController->GetPosition());
 	myAnimationComponentController->Update(myMovement);
@@ -269,13 +274,6 @@ void CPlayerControllerComponent::Receive(const SStringMessage& aMsg)
 		return;
 	}
 
-	//switch (myEventCounter)
-	//{
-	//	case 0:
-	//	// maybe create a switch case to reduce string comparisons.
-	//	break;
-	//}
-
 	if (PostMaster::CompareStringMessage(PostMaster::SMSG_INTRO, aMsg.myMessageType))
 	{
 		if (myEventCounter > 0)
@@ -296,9 +294,12 @@ void CPlayerControllerComponent::Receive(const SStringMessage& aMsg)
 
 	if (PostMaster::CompareStringMessage(PostMaster::SMSG_OUTRO1, aMsg.myMessageType))
 	{
-		if (myEventCounter > 0)
-			return;
-		myEventCounter++;
+		//if (myEventCounter > 0)
+		//	return;
+		//myEventCounter++;
+
+		int researcherIndex = 31;
+		CMainSingleton::PostMaster().Send({ EMessageType::PlayResearcherEvent, &researcherIndex });
 
 		CMainSingleton::PostMaster().Send({ PostMaster::SMSG_DISABLE_GLOVE, nullptr });
 		CMainSingleton::PostMaster().Send({ EMessageType::LockFPSCamera, nullptr });
@@ -308,35 +309,119 @@ void CPlayerControllerComponent::Receive(const SStringMessage& aMsg)
 		CTransformComponent* transform = data.myTransform;
 		GameObject().myTransform->CopyRotation(transform->Transform());
 
+		LockMovementFor(9.0f);
+
 		return;
 	}
 
 	if (PostMaster::CompareStringMessage(PostMaster::SMSG_OUTRO2, aMsg.myMessageType))
 	{
-		if (myEventCounter > 1)
-			return;
-		myEventCounter++;
+		//if (myEventCounter > 1)
+		//	return;
+		//myEventCounter++;
+
+		int researcherIndex = 32;
+		CMainSingleton::PostMaster().Send({ EMessageType::PlayResearcherEvent, &researcherIndex });
 
 		PostMaster::SBoxColliderEvenTriggerData data = *static_cast<PostMaster::SBoxColliderEvenTriggerData*>(aMsg.data);
 		CTransformComponent* transform = data.myTransform;
 		GameObject().myTransform->CopyRotation(transform->Transform());
-		
-		LockMovementFor(5.0f);
+
+		IRONWROUGHT->SetBrokenScreen(true);
+		IRONWROUGHT->GetActiveScene().ReInitCanvas(ASSETPATH("Assets/Graphics/UI/JSON/UI_HUD_Broken.json"), true);
+		LockMovementFor(14.0f);
 
 		return;
 	}
 
 	if (PostMaster::CompareStringMessage(PostMaster::SMSG_OUTRO3, aMsg.myMessageType))
 	{
-		if (myEventCounter > 2)
-			return;
-		myEventCounter++;
+		//if (myEventCounter > 2)
+		//	return;
+		//myEventCounter++;
+
+		int researcherIndex = 33;
+		CMainSingleton::PostMaster().Send({ EMessageType::PlayResearcherEvent, &researcherIndex });
 
 		PostMaster::SBoxColliderEvenTriggerData data = *static_cast<PostMaster::SBoxColliderEvenTriggerData*>(aMsg.data);
 		CTransformComponent* transform = data.myTransform;
 		GameObject().myTransform->CopyRotation(transform->Transform());
 
-		LockMovementFor(5.0f);
+		LockMovementFor(6.0f);
+
+		return;
+	}
+
+	if (PostMaster::CompareStringMessage(PostMaster::SMSG_OUTRO4, aMsg.myMessageType))
+	{
+		//if (myEventCounter > 3)
+		//	return;
+		//myEventCounter++;
+
+		int researcherIndex = 34;
+		CMainSingleton::PostMaster().Send({ EMessageType::PlayResearcherEvent, &researcherIndex });
+
+		PostMaster::SBoxColliderEvenTriggerData data = *static_cast<PostMaster::SBoxColliderEvenTriggerData*>(aMsg.data);
+		CTransformComponent* transform = data.myTransform;
+		GameObject().myTransform->CopyRotation(transform->Transform());
+
+		LockMovementFor(7.0f);
+
+		return;
+	}
+
+	if (PostMaster::CompareStringMessage(PostMaster::SMSG_OUTRO5, aMsg.myMessageType))
+	{
+		//if (myEventCounter > 4)
+		//	return;
+		//myEventCounter++;
+
+		int researcherIndex = 35;
+		CMainSingleton::PostMaster().Send({ EMessageType::PlayResearcherEvent, &researcherIndex });
+
+		PostMaster::SBoxColliderEvenTriggerData data = *static_cast<PostMaster::SBoxColliderEvenTriggerData*>(aMsg.data);
+		CTransformComponent* transform = data.myTransform;
+		GameObject().myTransform->CopyRotation(transform->Transform());
+
+		LockMovementFor(6.0f);
+
+		return;
+	}
+
+	if (PostMaster::CompareStringMessage(PostMaster::SMSG_OUTRO6, aMsg.myMessageType))
+	{
+		//if (myEventCounter > 5)
+		//	return;
+		//myEventCounter++;
+
+		int researcherIndex = 36;
+		CMainSingleton::PostMaster().Send({ EMessageType::PlayResearcherEvent, &researcherIndex });
+
+		PostMaster::SBoxColliderEvenTriggerData data = *static_cast<PostMaster::SBoxColliderEvenTriggerData*>(aMsg.data);
+		CTransformComponent* transform = data.myTransform;
+		GameObject().myTransform->CopyRotation(transform->Transform());
+
+		LockMovementFor(11.0f);
+
+		return;
+	}
+
+	if (PostMaster::CompareStringMessage(PostMaster::SMSG_OUTRO7, aMsg.myMessageType))
+	{
+		//if (myEventCounter > 6)
+		//	return;
+		//myEventCounter++;
+
+		int researcherIndex = 37;
+		CMainSingleton::PostMaster().Send({ EMessageType::PlayResearcherEvent, &researcherIndex });
+
+		PostMaster::SBoxColliderEvenTriggerData data = *static_cast<PostMaster::SBoxColliderEvenTriggerData*>(aMsg.data);
+		CTransformComponent* transform = data.myTransform;
+		GameObject().myTransform->CopyRotation(transform->Transform());
+
+		myCamera->GameObject().GetComponent<CCameraComponent>()->FadePermanent();
+
+		// 13s
 
 		return;
 	}

@@ -116,7 +116,7 @@ void CBoxColliderComponent::CreateBoxCollider()
 		}
 	}
 }
-#include "ModelComponent.h"
+
 void CBoxColliderComponent::OnTriggerEnter(CTransformComponent* aOther)
 {
 	if (GameObject().Active() == false)

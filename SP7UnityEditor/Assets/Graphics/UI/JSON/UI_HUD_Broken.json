@@ -1,0 +1,27 @@
+{
+  "Sprites": [
+    {
+      "Path": "Assets/Graphics/UI/Misc/UI_SYSTEM_FAILURE_ANIM.dds",
+      "Position X": 0.0,
+      "Position Y": 0.0,
+      "Scale X": 1.0,
+      "Scale Y": 1.0,
+      "Animations": [
+        {
+          "Name": "failure",
+          "FrameWidth": 1024.0,
+          "FrameHeight": 256.0,
+          "VerticalStartingPos": 0.0,
+          "FrameOffset": 0,
+          "NumberOfFrames": 4,
+          "FramesPerSecond": 60,
+          "RotationSpeedPerSecond": 0.0,
+          "ShouldLoop": true,
+          "TransitionIndex": 0,
+          "ReverseTransitionIndex": 0
+        }
+      ]
+    }
+  ]
+
+}

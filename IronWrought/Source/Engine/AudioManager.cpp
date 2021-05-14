@@ -274,6 +274,7 @@ void CAudioManager::Receive(const SMessage& aMessage) {
 	case EMessageType::PlayResearcherEvent:
 	{
 		int index = *static_cast<int*>(aMessage.data);
+		myChannels[CAST(EChannel::RobotVOX)]->Stop();
 		myChannels[CAST(EChannel::ResearcherVOX)]->Stop();
 		myWrapper.Play(myResearcherEventSounds[index], myChannels[CAST(EChannel::ResearcherVOX)]);
 	}

@@ -158,8 +158,13 @@ bool CScene::InitCanvas(const std::string& aPath)
 
 	return true;
 }
-bool CScene::ReInitCanvas(const std::string& aPath)
+bool CScene::ReInitCanvas(const std::string& aPath, const bool& aDelete)
 {
+	if (aDelete)
+	{
+		delete myCanvas;
+		myCanvas = nullptr;
+	}
 	if (!myCanvas)
 		InitCanvas(aPath);
 
