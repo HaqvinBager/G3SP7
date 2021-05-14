@@ -694,10 +694,9 @@ void CSceneManager::AddTriggerEvents(CScene& aScene, RapidArray someData)
 			triggerVolume->RegisterEventTriggerAudioIndex(audioIndex);
 			triggerVolume->RegisterEventTriggerOnce(triggerOnce);
 
-			if (strcmp(eventData.c_str(), "Intro"))
+			if (strcmp(eventData.c_str(), "Intro") == 0)
 			{
 				gameObject->AddComponent<CModelComponent>(*gameObject, ASSETPATH("Assets/Graphics/Character/Main_Character/CH_PL_Glove.fbx"));
-				std::cout << "adding CH_PL_Glove.fbx to Intro event object" << "Pos: " << std::endl;
 			}
 		}
 	}
