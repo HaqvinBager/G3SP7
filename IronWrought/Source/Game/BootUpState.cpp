@@ -89,7 +89,7 @@ void CBootUpState::Update()
 	}
 
 	if (myTimer > myLogoDisplayDuration) {
-		myTimer = 0.0f;
+		myTimer -= myLogoDisplayDuration;
 
 		myLogos[myLogoToRender]->SetShouldRender(false);
 		myLogoToRender++;

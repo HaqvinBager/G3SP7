@@ -28,7 +28,7 @@ CCameraComponent::CCameraComponent(CGameObject& aParent, const float aFoV/*, flo
 	myShakeTimer = 0.0f;
 	
 	myFadingPlane = nullptr;
-	myFadeTimer = 1.0f;
+	myFadeParameter = 1.0f;
 	myFadeSpeed = 1.0f;
 	myFadingPlaneActive = false;
 	myFadePermanent = false;
@@ -91,14 +91,14 @@ void CCameraComponent::Update()
 			if (!myFadingPlane->GetShouldRender())
 				myFadingPlane->SetShouldRender(true);
 
-			myFadeTimer -= myFadeSpeed * CTimer::Dt();
+			myFadeParameter -= myFadeSpeed * CTimer::Dt();
 
 			DirectX::SimpleMath::Vector4 color = myFadingPlane->GetColor();
 			float alpha = color.w;
 
 			if (myState == ECameraState::FadeIn)
 			{
-				alpha = LogEaseOut(myFadeTimer);
+				alpha = LogEaseOut(myFadeParameter);
 				if (alpha <= 0.01f)
 				{
 					alpha = 0.0f;
@@ -108,7 +108,7 @@ void CCameraComponent::Update()
 			}
 			else if (myState == ECameraState::FadeOut)
 			{
-				alpha = LogEaseIn(myFadeTimer);
+				alpha = LogEaseIn(myFadeParameter);
 				if (alpha >= 0.99f) 
 				{
 					alpha = 1.0f;
@@ -121,7 +121,7 @@ void CCameraComponent::Update()
 
 			if (myState == ECameraState::Default)
 			{
-				myFadeTimer = 1.0f;
+				myFadeParameter = 1.0f;
 				myFadeSpeed = 1.0f;
 				myFadingPlaneActive = myFadePermanent;
 				myFadingPlane->SetShouldRender(myFadePermanent);
