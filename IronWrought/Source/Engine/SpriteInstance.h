@@ -16,7 +16,9 @@ enum class ERenderOrder {
 	Layer3,
 	Layer4,
 	Layer5,
-	Layer6
+	Layer6,
+
+	Count
 };
 
 struct SSpriteSheetPositionData
@@ -85,7 +87,7 @@ public:
 	inline const bool HasAnimations() const { return myAnimationFrames.size() > 0; }
 
 	ERenderOrder GetRenderOrder() const { return myRenderOrder; }
-	void SetRenderOrder(ERenderOrder aRenderOrder);
+	void SetRenderOrder(ERenderOrder aRenderOrder, CScene& aScene);
 
 private:
 	std::vector<Vector4> myAnimationFrames;

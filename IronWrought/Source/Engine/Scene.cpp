@@ -162,20 +162,24 @@ bool CScene::ReInitCanvas(const std::string& aPath, const bool& aDelete)
 {
 	if (aDelete)
 	{
+		myCanvas->ClearFromScene(*this);
 		delete myCanvas;
 		myCanvas = nullptr;
 	}
 	if (!myCanvas)
+	{
 		InitCanvas(aPath);
+		return true;
+	}
 
 	myCanvas->Init(aPath, *this);
 	return true;
 }
 
-void CScene::CanvasIsHUD()
+void CScene::CanvasIsHUD(const bool& aIsHud)
 {
 	if (myCanvas)
-		myCanvas->IsHUDCanvas(true);
+		myCanvas->IsHUDCanvas(aIsHud);
 }
 
 void CScene::DisableWidgetsOnCanvas()
@@ -700,6 +704,7 @@ bool CScene::RemoveInstance(CAnimatedUIElement* anAnimatedUIElement)
 	{
 		if (myAnimatedUIElements[i] == anAnimatedUIElement)
 		{
+			anAnimatedUIElement->ClearFromScene(*this);
 			myAnimatedUIElements.erase(myAnimatedUIElements.begin() + i);
 			return true;
 		}
@@ -723,13 +728,17 @@ bool CScene::RemoveInstance(CGameObject* aGameObject)
 }
 bool CScene::RemoveInstance(CSpriteInstance* aSpriteInstance)
 {
-	ERenderOrder renderOrder = aSpriteInstance->GetRenderOrder();
-	for (UINT i = 0; i < mySpriteInstances[renderOrder].size(); ++i)
+	/*ERenderOrder renderOrder = aSpriteInstance->GetRenderOrder();*/
+	for (size_t r = static_cast<size_t>(ERenderOrder::Layer0); r < static_cast<size_t>(ERenderOrder::Count); ++r)
 	{
-		if (aSpriteInstance == mySpriteInstances[renderOrder][i])
+		ERenderOrder layer = static_cast<ERenderOrder>(r);
+		for (UINT i = 0; i < mySpriteInstances[layer].size(); ++i)
 		{
-			mySpriteInstances[renderOrder].erase(mySpriteInstances[renderOrder].begin() + i);
-			return true;
+			if (aSpriteInstance == mySpriteInstances[layer][i])
+			{
+				mySpriteInstances[layer].erase(mySpriteInstances[layer].begin() + i);
+				return true;
+			}
 		}
 	}
 	return false;
@@ -849,16 +858,15 @@ bool CScene::ClearGameObjects()
 
 bool CScene::ClearSprites()
 {
-	for (UINT i = 0; i < mySpriteInstances.size() - 1; ++i)
+	for (size_t r = static_cast<size_t>(ERenderOrder::Layer0); r < static_cast<size_t>(ERenderOrder::Count); ++r)
 	{
-		for (auto& sprite : mySpriteInstances[static_cast<ERenderOrder>(i)])
+		ERenderOrder layer = static_cast<ERenderOrder>(r);
+		for (UINT i = 0; i < mySpriteInstances[layer].size(); ++i)
 		{
-			delete sprite;
-			sprite = nullptr;
+			delete mySpriteInstances[layer][i];
+			mySpriteInstances[layer][i] = nullptr;
 		}
 	}
-	mySpriteInstances.clear();
-	
 	return true;
 }
 //CLEAR SCENE OF INSTANCES END

@@ -99,10 +99,10 @@ bool CSpriteInstance::Init(CSprite* aSprite, const std::vector<SSpriteSheetPosit
 
 		this->SetUVRect(myAnimationFrames[0]);
 
-		//myShouldAnimate = true;
+		myCurrentAnimationIndex = 0;
+		myShouldAnimate = true;
+		myShouldLoopAnimation = myAnimationData[myCurrentAnimationIndex].myIsLooping;
 	}
-
-
 
 	return true;
 }
@@ -150,7 +150,7 @@ void CSpriteInstance::Update()
 	if ((myAnimationTimer += CTimer::Dt()) > (1.0f / myAnimationData[myCurrentAnimationIndex].myFramesPerSecond))
 	{
 		myAnimationTimer = 0.0f; // doing it properly doesn't seem to work, as CTimer is not marked at the start of this state
-
+		
 		if (!myShouldReverseAnimation)
 		{
 			myCurrentAnimationFrame++;
@@ -253,11 +253,14 @@ void CSpriteInstance::PlayAnimation(std::string aName, bool aShouldLoop, bool aS
 		myCurrentAnimationFrame = (myAnimationData[myCurrentAnimationIndex].myNumberOfFrames + myAnimationData[myCurrentAnimationIndex].myFramesOffset - 1);
 
 	myShouldAnimate = true;
+	std::cout << __FUNCTION__ << std::endl;
 }
 
-void CSpriteInstance::SetRenderOrder(ERenderOrder aRenderOrder)
+void CSpriteInstance::SetRenderOrder(ERenderOrder aRenderOrder, CScene& aScene)
 {
+	aScene.RemoveInstance(this);
 	myRenderOrder = aRenderOrder;
+	aScene.AddInstance(this);
 }
 
 /// <summary>

@@ -24,6 +24,7 @@ CCanvas::CCanvas() :
 	, myIsEnabled(true)
 	, myIsHUDCanvas(false)
 	, myCurrentRenderLayer(0)
+	, myHasBeenCleared(false)
 #ifdef VERTICAL_SLICE
 	, myLevelToLoad("VerticalSlice")
 #else
@@ -38,6 +39,43 @@ CCanvas::~CCanvas()
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::UpdateCrosshair, this);
 	UnsubscribeToMessages();
 	myMessageTypes.clear();
+
+	if (myHasBeenCleared)
+	{
+		if (myBackground)
+		{
+			delete myBackground;
+			myBackground = nullptr;
+		}
+
+		for (size_t i = 0; i < myAnimatedUIs.size(); ++i)
+		{
+			delete myAnimatedUIs[i];
+			myAnimatedUIs[i] = nullptr;
+		}
+		myAnimatedUIs.clear();
+
+		for (size_t i = 0; i < mySprites.size(); ++i)
+		{
+			delete mySprites[i];
+			mySprites[i] = nullptr;
+		}
+		mySprites.clear();
+
+		for (size_t i = 0; i < myButtonTexts.size(); ++i)
+		{
+			delete myButtonTexts[i];
+			myButtonTexts[i] = nullptr;
+		}
+		myButtonTexts.clear();
+
+		for (size_t i = 0; i < myTexts.size(); ++i)
+		{
+			delete myTexts[i];
+			myTexts[i] = nullptr;
+		}
+		myTexts.clear();
+	}
 
 	for (size_t i = 0; i < myButtons.size(); ++i)
 	{
@@ -78,48 +116,41 @@ inline void CCanvas::Pivot(const Vector2& aPivot)
 
 void CCanvas::ClearFromScene(CScene& aScene)
 {
-	aScene.RemoveInstance(myBackground);
-	delete myBackground;
-	myBackground = nullptr;
+	if (myBackground)
+	{
+		aScene.RemoveInstance(myBackground);
+	}
 
 	for (size_t i = 0; i < myAnimatedUIs.size(); ++i)
 	{
 		aScene.RemoveInstance(myAnimatedUIs[i]);
-		delete myAnimatedUIs[i];
-		myAnimatedUIs[i] = nullptr;
 	}
-	myAnimatedUIs.clear();
 
 	for (size_t i = 0; i < myButtons.size(); ++i)
 	{
-		delete myButtons[i];
-		myButtons[i] = nullptr;
+		myButtons[i]->ClearFromScene(aScene);
 	}
-	myButtons.clear();
 
 	for (size_t i = 0; i < mySprites.size(); ++i)
 	{
 		aScene.RemoveInstance(mySprites[i]);
-		delete mySprites[i];
-		mySprites[i] = nullptr;
 	}
-	mySprites.clear();
 
 	for (size_t i = 0; i < myButtonTexts.size(); ++i)
 	{
 		aScene.RemoveInstance(myButtonTexts[i]);
-		delete myButtonTexts[i];
-		myButtonTexts[i] = nullptr;
 	}
-	myButtonTexts.clear();
 
 	for (size_t i = 0; i < myTexts.size(); ++i)
 	{
 		aScene.RemoveInstance(myTexts[i]);
-		delete myTexts[i];
-		myTexts[i] = nullptr;
 	}
-	myTexts.clear();
+
+	for (size_t i = 0; i < myWidgets.size(); ++i)
+	{
+		myWidgets[i]->ClearFromScene(aScene);
+	}
+	myHasBeenCleared = true;
 }
 
 void CCanvas::Init(const std::string& aFilePath, CScene& aScene, bool addToScene, const Vector2& aParentPivot, const Vector2& aParentPosition, const unsigned int& aSpriteRenderLayerOffset)
@@ -164,14 +195,14 @@ void CCanvas::Init(const std::string& aFilePath, CScene& aScene, bool addToScene
 				myButtonTexts.emplace_back(new CTextInstance(aScene, addToScene));
 				myButtons.emplace_back(new CButton());
 				InitButton(buttonDataArray[i].GetObjectW(), i, aScene);
-				myButtons.back()->SetRenderLayer(static_cast<ERenderOrder>(2 + myCurrentRenderLayer));
+				myButtons.back()->SetRenderLayer(static_cast<ERenderOrder>(2 + myCurrentRenderLayer), aScene);
 			}
 		}
-		for (int i = 0; i < currentSize; ++i)
-		{
-			InitButton(buttonDataArray[i].GetObjectW(), i, aScene);
-			myButtons[i]->SetRenderLayer(static_cast<ERenderOrder>(2 + myCurrentRenderLayer));
-		}
+		//for (int i = 0; i < currentSize; ++i)
+		//{
+		//	InitButton(buttonDataArray[i].GetObjectW(), i, aScene);
+		//	myButtons[i]->SetRenderLayer(static_cast<ERenderOrder>(2 + myCurrentRenderLayer), aScene);
+		//}
 	}
 
 	if (document.HasMember("Texts"))
@@ -202,10 +233,10 @@ void CCanvas::Init(const std::string& aFilePath, CScene& aScene, bool addToScene
 				InitText(textDataArray[i].GetObjectW(), i);
 			}
 		}
-		for (unsigned int i = 0; i < textDataArray.Size(); ++i)
-		{
-			InitText(textDataArray[i].GetObjectW(), i);
-		}
+		//for (unsigned int i = 0; i < textDataArray.Size(); ++i)
+		//{
+		//	InitText(textDataArray[i].GetObjectW(), i);
+		//}
 	}
 
 	if (document.HasMember("Animated UI Elements"))
@@ -233,20 +264,20 @@ void CCanvas::Init(const std::string& aFilePath, CScene& aScene, bool addToScene
 			{
 				myAnimatedUIs.emplace_back(new CAnimatedUIElement(aScene, addToScene));
 				InitAnimatedElement(animatedDataArray[i].GetObjectW(), i, aScene);
-				myAnimatedUIs.back()->SetRenderLayer(static_cast<ERenderOrder>(2 + myCurrentRenderLayer));
+				myAnimatedUIs.back()->SetRenderLayer(static_cast<ERenderOrder>(2 + myCurrentRenderLayer), aScene);
 			}
 		}
-		for (int i = 0; i < currentSize; ++i)
-		{
-			InitAnimatedElement(animatedDataArray[i].GetObjectW(), i, aScene);
-			myAnimatedUIs.back()->SetRenderLayer(static_cast<ERenderOrder>(2 + myCurrentRenderLayer));
-		}
+		//for (int i = 0; i < currentSize; ++i)
+		//{
+		//	InitAnimatedElement(animatedDataArray[i].GetObjectW(), i, aScene);
+		//	myAnimatedUIs.back()->SetRenderLayer(static_cast<ERenderOrder>(2 + myCurrentRenderLayer), aScene);
+		//}
 	}
 
 	if (document.HasMember("Background"))
 	{
 		InitBackground(ASSETPATH(document["Background"]["Path"].GetString()), aScene);
-		myBackground->SetRenderOrder(static_cast<ERenderOrder>(0 + myCurrentRenderLayer));
+		myBackground->SetRenderOrder(static_cast<ERenderOrder>(0 + myCurrentRenderLayer), aScene);
 	}
 
 	if (document.HasMember("Sprites"))
@@ -274,14 +305,14 @@ void CCanvas::Init(const std::string& aFilePath, CScene& aScene, bool addToScene
 			{
 				mySprites.emplace_back(new CSpriteInstance(aScene, addToScene));
 				InitSprite(spriteDataArray[i].GetObjectW(), i);
-				mySprites.back()->SetRenderOrder(static_cast<ERenderOrder>(2 + myCurrentRenderLayer));
+				mySprites.back()->SetRenderOrder(static_cast<ERenderOrder>(2 + myCurrentRenderLayer), aScene);
 			}
 		}
-		for (int i = 0; i < currentSize; ++i)
-		{
-			InitSprite(spriteDataArray[i].GetObjectW(), i);
-			mySprites.back()->SetRenderOrder(static_cast<ERenderOrder>(2 + myCurrentRenderLayer));
-		}
+		//for (int i = 0; i < currentSize; ++i)
+		//{
+		//	InitSprite(spriteDataArray[i].GetObjectW(), i);
+		//	mySprites.back()->SetRenderOrder(static_cast<ERenderOrder>(2 + myCurrentRenderLayer), aScene);
+		//}
 	}
 
 	if (document.HasMember("PostmasterEvents"))
@@ -317,18 +348,12 @@ void CCanvas::Init(const std::string& aFilePath, CScene& aScene, bool addToScene
 				myWidgets[i]->SetEnabled(false);
 			}
 		}
-		for (int i = 0; i < currentSize; ++i)
-		{
-			myWidgets[i]->Init(ASSETPATH(widgetsArray[i]["Path"].GetString()), aScene, true, myPivot, myPosition, 3);
-			myWidgets[i]->SetEnabled(false);
-		}
+		//for (int i = 0; i < currentSize; ++i)
+		//{
+		//	myWidgets[i]->Init(ASSETPATH(widgetsArray[i]["Path"].GetString()), aScene, true, myPivot, myPosition, 3);
+		//	myWidgets[i]->SetEnabled(false);
+		//}
 	}
-
-	// To start Idle Crosshair Animation
-	if (mySprites.empty())
-		return;
-	if(mySprites[0]->HasAnimations())
-		mySprites[0]->PlayAnimationUsingInternalData(1);
 }
 
 void CCanvas::Update()
@@ -437,6 +462,8 @@ void CCanvas::Receive(const SMessage& aMessage)
 			case EMessageType::UpdateCrosshair:
 			{
 				if (mySprites.empty())
+					return;
+				if (!myIsHUDCanvas)
 					return;
 				PostMaster::SCrossHairData* aData = reinterpret_cast<PostMaster::SCrossHairData*>(aMessage.data);
 				mySprites[0]->PlayAnimationUsingInternalData(aData->myIndex, aData->myShouldBeReversed);
@@ -664,7 +691,7 @@ bool CCanvas::InitBackground(const std::string& aPath, CScene& aScene)
 		myBackground = new CSpriteInstance(aScene);
 
 	myBackground->Init(CSpriteFactory::GetInstance()->GetSprite(aPath));
-	myBackground->SetRenderOrder(ERenderOrder::Layer0);
+	myBackground->SetRenderOrder(ERenderOrder::Layer0, aScene);
 	myBackground->SetPosition(myPosition);
 	return true;
 }

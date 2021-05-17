@@ -4,50 +4,37 @@
 
   "Sprites": [
     {
-      "Path": "Assets/Graphics/UI/HUD/UI_HUD_Crosshair_Animation.dds",
+      "Path": "Assets/Graphics/UI/Misc/UI_LOGO_IAM_to_AI_ANIM.dds",
       "Position X": 0.0,
       "Position Y": 0.0,
-      "Scale X": 0.35,
-      "Scale Y": 0.35,
+      "Scale X": 1.0,
+      "Scale Y": 1.0,
       "Animations": [
         {
-          "Name": "Shoot",
-          "FrameWidth": 240.0,
-          "FrameHeight": 240.0,
+          "Name": "IAM",
+          "FrameWidth": 1024.0,
+          "FrameHeight": 1024.0,
           "VerticalStartingPos": 0.0,
           "FrameOffset": 0,
-          "NumberOfFrames": 7,
-          "FramesPerSecond": 60,
-          "RotationSpeedPerSecond": 720.0,
+          "NumberOfFrames": 3,
+          "FramesPerSecond": 24,
+          "RotationSpeedPerSecond": 0.0,
           "ShouldLoop": false,
-          "TransitionIndex": 2,
+          "TransitionIndex": 1,
           "ReverseTransitionIndex": 1
         },
         {
-          "Name": "Idle",
-          "FrameWidth": 240.0,
-          "FrameHeight": 240.0,
+          "Name": "IAM2",
+          "FrameWidth": 1024.0,
+          "FrameHeight": 1024.0,
           "VerticalStartingPos": 0.0,
           "FrameOffset": 0,
           "NumberOfFrames": 1,
           "FramesPerSecond": 1,
-          "RotationSpeedPerSecond": -90.0,
-          "ShouldLoop": true,
-          "TransitionIndex": 2,
-          "ReverseTransitionIndex": 1
-        },
-        {
-          "Name": "Hold",
-          "FrameWidth": 240.0,
-          "FrameHeight": 240.0,
-          "VerticalStartingPos": 0.0,
-          "FrameOffset": 4,
-          "NumberOfFrames": 1,
-          "FramesPerSecond": 60,
-          "RotationSpeedPerSecond": 720.0,
-          "ShouldLoop": true,
-          "TransitionIndex": 2,
-          "ReverseTransitionIndex": 1
+          "RotationSpeedPerSecond": 0.0,
+          "ShouldLoop": false,
+          "TransitionIndex": 0,
+          "ReverseTransitionIndex": 0
         }
       ]
     }

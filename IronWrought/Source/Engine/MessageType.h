@@ -83,5 +83,7 @@ enum class EMessageType
 
 	LockFPSCamera,
 
+	ReturnToMainMenu,
+
 	Count
 };

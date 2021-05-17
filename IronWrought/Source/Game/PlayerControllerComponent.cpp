@@ -44,7 +44,6 @@ CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, 
 	, myStepTimer(0.0f)
 	, myPlayerMovementLock(EPlayerMovementLock::None)
 	, myMovementLockTimer(0.0f)
-	, myEventCounter(0)
 	, myStepTime(aWalkSpeed * 5.0f)
 	, myCanStand(true)
 {
@@ -142,6 +141,15 @@ void CPlayerControllerComponent::Update()
 		return;
 #endif
 
+	if (Input::GetInstance()->IsKeyPressed('0'))
+	{
+		CMainSingleton::PostMaster().Send({ PostMaster::SMSG_OUTRO7, nullptr });
+	}
+	if (Input::GetInstance()->IsKeyPressed('9'))
+	{
+		CMainSingleton::PostMaster().Send({ PostMaster::SMSG_DISABLE_GLOVE, nullptr });
+	}
+
 	GameObject().myTransform->Position(myController->GetPosition());
 	myAnimationComponentController->Update(myMovement);
 
@@ -166,7 +174,7 @@ void CPlayerControllerComponent::Update()
 	}
 
 	UpdateMovementLock();
-
+	UpdateEndEvent();
 	BoundsCheck();
 }
 
@@ -209,10 +217,13 @@ void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
 		case EPlayerMovementLock::ForceFoward:
 		{
 			InitForceForward();
+			return;
 		}break;
 
 		case EPlayerMovementLock::ForceStandStill:
-		{}break;
+		{
+			return;
+		}break;
 
 		default:break;
 	}
@@ -276,9 +287,9 @@ void CPlayerControllerComponent::Receive(const SStringMessage& aMsg)
 
 	if (PostMaster::CompareStringMessage(PostMaster::SMSG_INTRO, aMsg.myMessageType))
 	{
-		if (myEventCounter > 0)
-			return;
-		myEventCounter++;
+		//if (myEventCounter > 0)
+		//	return;
+		//myEventCounter++;
 
 		int researcherIndex = 3;
 		int sfxIndex = 7;
@@ -415,13 +426,14 @@ void CPlayerControllerComponent::Receive(const SStringMessage& aMsg)
 		int researcherIndex = 37;
 		CMainSingleton::PostMaster().Send({ EMessageType::PlayResearcherEvent, &researcherIndex });
 
-		PostMaster::SBoxColliderEvenTriggerData data = *static_cast<PostMaster::SBoxColliderEvenTriggerData*>(aMsg.data);
-		CTransformComponent* transform = data.myTransform;
-		GameObject().myTransform->CopyRotation(transform->Transform());
+		//PostMaster::SBoxColliderEvenTriggerData data = *static_cast<PostMaster::SBoxColliderEvenTriggerData*>(aMsg.data);
+		//CTransformComponent* transform = data.myTransform;
+		//GameObject().myTransform->CopyRotation(transform->Transform());
 
 		myCamera->GameObject().GetComponent<CCameraComponent>()->Fade(false, 1.5f, true);
-
-		// 13seconds
+		myEndEvent = EEndEventState::Active;
+		// 13seconds voice clip length
+		myEndEventTimer = 11.0f;
 
 		return;
 	}
@@ -734,4 +746,42 @@ void CPlayerControllerComponent::LadderUpdate()
 	//{
 	//	myIsOnLadder = false;
 	//}
+}
+
+void CPlayerControllerComponent::UpdateEndEvent()
+{
+	switch (myEndEvent)
+	{
+		case EEndEventState::Disabled:
+		{
+			return;
+		}break;
+
+		case EEndEventState::Active:
+		{
+			myEndEventTimer -= CTimer::Dt();
+			if (myEndEventTimer <= 0.0f)
+			{
+				CMainSingleton::PostMaster().Send({ PostMaster::SMSG_DISABLE_GLOVE, nullptr });
+				myCamera->GameObject().GetComponent<CCameraComponent>()->Fade(true, 0.1f);
+				IRONWROUGHT->GetActiveScene().ReInitCanvas(ASSETPATH("Assets/Graphics/UI/JSON/UI_HUD_End.json"), true);
+				IRONWROUGHT->GetActiveScene().CanvasIsHUD(false);
+				myEndEvent = EEndEventState::AfterFall;
+			}
+		}break;
+
+		case EEndEventState::AfterFall:
+		{
+			myEndEventTimer -= CTimer::Dt();
+			if (myEndEventTimer <= -7.0f)
+				myEndEvent = EEndEventState::End;
+		}break;
+
+		case EEndEventState::End:
+		{
+			CMainSingleton::PostMaster().Send({ PostMaster::SMSG_TO_MAIN_MENU, nullptr });
+		}break;
+	}
+	if (myEndEvent == EEndEventState::Disabled)
+		return;
 }

@@ -49,6 +49,10 @@ void CGravityGloveComponent::Awake()
 
 void CGravityGloveComponent::Start()
 {
+	PostMaster::SCrossHairData data; // Wind down
+	data.myIndex = 0;
+	data.myShouldBeReversed = true;
+	CMainSingleton::PostMaster().Send({ EMessageType::UpdateCrosshair, &data });
 }
 
 void CGravityGloveComponent::Update()

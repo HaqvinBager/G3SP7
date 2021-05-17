@@ -49,7 +49,9 @@ public:
 	void SetShouldRender(const bool aShouldRender);
 	void SetScale(const Vector2& aScale);
 
-	void SetRenderLayer(const ERenderOrder& aRenderLayer);
+	void SetRenderLayer(const ERenderOrder& aRenderLayer, CScene& aScene);
+
+	void ClearFromScene(CScene& aScene);
 
 public:
 	CSpriteInstance* GetInstance() const;
@@ -59,5 +61,6 @@ private:
 	SAnimatedSpriteData* myData;
 	CSpriteInstance* mySpriteInstance;
 	float myLevel;
+	bool myHasBeenCleared;
 };
 
