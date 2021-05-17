@@ -60,7 +60,7 @@ private:
 	float myShakeTimer;
 
 	
-	float myFadeTimer;
+	float myFadeParameter;
 	float myFadeSpeed;
 	
 	ECameraState myState;
