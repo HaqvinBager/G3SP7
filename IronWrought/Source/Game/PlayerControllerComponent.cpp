@@ -284,7 +284,7 @@ void CPlayerControllerComponent::Receive(const SStringMessage& aMsg)
 		int sfxIndex = 7;
 		CMainSingleton::PostMaster().Send({ EMessageType::PlayResearcherEvent, &researcherIndex });
 		CMainSingleton::PostMaster().Send({ EMessageType::PlaySFX, &sfxIndex });
-		myCamera->GameObject().GetComponent<CCameraComponent>()->Fade(false);
+		myCamera->GameObject().GetComponent<CCameraComponent>()->Fade(true, 1.0f);
 		LockMovementFor(54.0f);
 		CMainSingleton::PostMaster().Send({ PostMaster::SMSG_ENABLE_GLOVE,  nullptr });
 		CMainSingleton::PostMaster().Send({ PostMaster::SMSG_ENABLE_CANVAS, nullptr });
@@ -419,9 +419,9 @@ void CPlayerControllerComponent::Receive(const SStringMessage& aMsg)
 		CTransformComponent* transform = data.myTransform;
 		GameObject().myTransform->CopyRotation(transform->Transform());
 
-		myCamera->GameObject().GetComponent<CCameraComponent>()->FadePermanent();
+		myCamera->GameObject().GetComponent<CCameraComponent>()->Fade(false, 1.5f, true);
 
-		// 13s
+		// 13seconds
 
 		return;
 	}
