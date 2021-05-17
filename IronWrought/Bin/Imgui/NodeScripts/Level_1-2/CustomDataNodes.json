@@ -27,6 +27,18 @@
         {
             "Data key": "canOpenDoor",
             "Type": "Bool"
+        },
+        {
+            "Data key": "openFirst",
+            "Type": "Bool"
+        },
+        {
+            "Data key": "openSecond",
+            "Type": "Bool"
+        },
+        {
+            "Data key": "closingDoors",
+            "Type": "Bool"
         }
     ]
 }

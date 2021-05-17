@@ -1,32 +1,15 @@
 {
     "UID_MAX": {
-        "Num": 1456
+        "Num": 1619
     },
     "NodeInstances": [
-        {
-            "NodeType ID": 8,
-            "NodeType": 1,
-            "UID": 289,
-            "Position": {
-                "X": 81,
-                "Y": 124
-            },
-            "Pins": [
-                {
-                    "Index": 0,
-                    "UID": 290,
-                    "DATA": "",
-                    "DATA_TYPE": ""
-                }
-            ]
-        },
         {
             "NodeType ID": 54,
             "NodeType": 0,
             "UID": 291,
             "Position": {
-                "X": -160,
-                "Y": 103
+                "X": -249,
+                "Y": -318
             },
             "Pins": [
                 {
@@ -50,29 +33,12 @@
             ]
         },
         {
-            "NodeType ID": 9,
-            "NodeType": 1,
-            "UID": 295,
-            "Position": {
-                "X": -186,
-                "Y": 380
-            },
-            "Pins": [
-                {
-                    "Index": 0,
-                    "UID": 296,
-                    "DATA": "",
-                    "DATA_TYPE": ""
-                }
-            ]
-        },
-        {
             "NodeType ID": 26,
             "NodeType": 0,
             "UID": 297,
             "Position": {
-                "X": 241,
-                "Y": 386
+                "X": 347,
+                "Y": -68
             },
             "Pins": [
                 {
@@ -116,8 +82,8 @@
             "NodeType": 2,
             "UID": 303,
             "Position": {
-                "X": -158,
-                "Y": 524
+                "X": -334,
+                "Y": 220
             },
             "Pins": [
                 {
@@ -125,6 +91,128 @@
                     "UID": 304,
                     "DATA": "",
                     "DATA_TYPE": "VECTOR3"
+                }
+            ]
+        },
+        {
+            "NodeType ID": 0,
+            "NodeType": 0,
+            "UID": 1475,
+            "Position": {
+                "X": -330,
+                "Y": -84
+            },
+            "Pins": [
+                {
+                    "Index": 0,
+                    "UID": 1476,
+                    "DATA": true,
+                    "DATA_TYPE": "BOOL"
+                },
+                {
+                    "Index": 1,
+                    "UID": 1477,
+                    "DATA": "",
+                    "DATA_TYPE": ""
+                }
+            ]
+        },
+        {
+            "NodeType ID": 37,
+            "NodeType": 0,
+            "UID": 1478,
+            "Position": {
+                "X": -52,
+                "Y": -80
+            },
+            "Pins": [
+                {
+                    "Index": 0,
+                    "UID": 1479,
+                    "DATA": "",
+                    "DATA_TYPE": ""
+                },
+                {
+                    "Index": 1,
+                    "UID": 1480,
+                    "DATA": "",
+                    "DATA_TYPE": ""
+                },
+                {
+                    "Index": 2,
+                    "UID": 1481,
+                    "DATA": "",
+                    "DATA_TYPE": ""
+                },
+                {
+                    "Index": 3,
+                    "UID": 1482,
+                    "DATA": false,
+                    "DATA_TYPE": "BOOL"
+                }
+            ]
+        },
+        {
+            "NodeType ID": 19,
+            "NodeType": 1,
+            "UID": 1567,
+            "Position": {
+                "X": -291,
+                "Y": 28
+            },
+            "Pins": [
+                {
+                    "Index": 0,
+                    "UID": 1568,
+                    "DATA": "",
+                    "DATA_TYPE": "BOOL"
+                },
+                {
+                    "Index": 1,
+                    "UID": 1569,
+                    "DATA": false,
+                    "DATA_TYPE": "BOOL"
+                }
+            ]
+        },
+        {
+            "NodeType ID": 18,
+            "NodeType": 1,
+            "UID": 1570,
+            "Position": {
+                "X": 29,
+                "Y": -304
+            },
+            "Pins": [
+                {
+                    "Index": 0,
+                    "UID": 1571,
+                    "DATA": "",
+                    "DATA_TYPE": ""
+                },
+                {
+                    "Index": 1,
+                    "UID": 1572,
+                    "DATA": "",
+                    "DATA_TYPE": ""
+                },
+                {
+                    "Index": 2,
+                    "UID": 1573,
+                    "DATA": false,
+                    "DATA_TYPE": "BOOL"
+                },
+                {
+                    "Index": 3,
+                    "UID": 1574,
+                    "DATA": "",
+                    "DATA_TYPE": "BOOL"
+                },
+                {
+                    "Index": 4,
+                    "UID": 1575,
+                    "DATA": false,
+                    "DATA_TYPE": "BOOL"
                 }
             ]
         }
