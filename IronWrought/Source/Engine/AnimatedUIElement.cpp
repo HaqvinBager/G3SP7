@@ -15,6 +15,7 @@ CAnimatedUIElement::CAnimatedUIElement(CScene& aScene, bool addToScene)
     :  mySpriteInstance(new CSpriteInstance(aScene, addToScene))
     , myData(nullptr)
     , myLevel(1.0f)
+    , myHasBeenCleared(false)
 {
     if (addToScene == false) {
         mySpriteInstance->SetShouldRender(false);
@@ -25,6 +26,7 @@ CAnimatedUIElement::CAnimatedUIElement(CScene& aScene, bool addToScene)
 CAnimatedUIElement::CAnimatedUIElement(const std::string& aFilePath, CScene& aScene, bool addToScene) 
     : mySpriteInstance(nullptr)
     , myLevel(1.0f)
+    , myHasBeenCleared(false)
 {
     mySpriteInstance = new CSpriteInstance(aScene, addToScene);
     Init(aFilePath, addToScene, myLevel);
@@ -34,10 +36,15 @@ CAnimatedUIElement::CAnimatedUIElement(const std::string& aFilePath, CScene& aSc
 CAnimatedUIElement::~CAnimatedUIElement()
 {
     // This is done for reinit of canvas. / Aki 20210401
+    if (myHasBeenCleared)
+        return;
+
     CScene& scene = IRONWROUGHT_ACTIVE_SCENE;
-    scene.RemoveInstance(mySpriteInstance);
-    delete mySpriteInstance;
-    mySpriteInstance = nullptr;
+    if (scene.RemoveInstance(mySpriteInstance))
+    {
+        delete mySpriteInstance;
+        mySpriteInstance = nullptr;
+    }
 }
 
 void CAnimatedUIElement::Init(const std::string& aFilePath, const bool& aAddToScene, const float& aLevel)
@@ -91,7 +98,10 @@ void CAnimatedUIElement::SetRenderLayer(const ERenderOrder& aRenderLayer, CScene
 
 void CAnimatedUIElement::ClearFromScene(CScene& aScene)
 {
-    aScene.RemoveInstance(mySpriteInstance);
+    if (aScene.RemoveInstance(mySpriteInstance))
+    {
+        myHasBeenCleared = true;
+    }
 }
 
 CSpriteInstance* CAnimatedUIElement::GetInstance() const

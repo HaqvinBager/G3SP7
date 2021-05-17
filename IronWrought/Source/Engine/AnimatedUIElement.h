@@ -61,5 +61,6 @@ private:
 	SAnimatedSpriteData* myData;
 	CSpriteInstance* mySpriteInstance;
 	float myLevel;
+	bool myHasBeenCleared;
 };
 
