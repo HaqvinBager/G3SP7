@@ -10,7 +10,7 @@ public:
 	std::string GetNodeTypeCategory() override { return "Audio"; }
 
 private:
-	int myMaxValue = 1;
+	int myMaxValue = 37;
 };
 
 

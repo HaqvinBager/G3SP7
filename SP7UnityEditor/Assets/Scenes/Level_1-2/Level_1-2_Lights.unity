@@ -1156,6 +1156,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8940042554043142032, guid: d867d100b52ef79418c85e1c50b3a99d,
         type: 3}
+      propertyPath: numberOfSamples
+      value: 64
+      objectReference: {fileID: 0}
+    - target: {fileID: 8940042554043142032, guid: d867d100b52ef79418c85e1c50b3a99d,
+        type: 3}
       propertyPath: scatteringProbability
       value: 0.005
       objectReference: {fileID: 0}
