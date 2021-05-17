@@ -71,6 +71,8 @@ private:
 	void BoundsCheck();
 	void LadderUpdate();
 
+	void UpdateEndEvent();
+
 private:
 	enum class EPlayerMovementLock
 	{
@@ -107,8 +109,17 @@ private:
 	float myStepTimer;
 	float myMovementLockTimer; 
 
-	short myEventCounter;// yikes
 	float myStepTime;
+
+	enum class EEndEventState
+	{
+		Disabled,
+		Active,
+		AfterFall,
+		End
+	};
+	float myEndEventTimer = 13.0f;
+	EEndEventState myEndEvent = EEndEventState::Disabled;
 
 	//CRigidBodyComponent* myLadder;
 

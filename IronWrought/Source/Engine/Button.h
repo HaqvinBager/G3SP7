@@ -43,9 +43,11 @@ public:
 	void Enabled(const bool& anIsEnabled);
 	inline const bool Enabled();
 
-	void SetRenderLayer(const ERenderOrder& aRenderLayer);
+	void SetRenderLayer(const ERenderOrder& aRenderLayer, CScene& aScene);
 
 private:
+	void ClearFromScene(CScene& aScene);
+
 	CButton();
 	CButton(SButtonData& someData, CScene& aScene);
 	~CButton();
@@ -59,6 +61,7 @@ private:
 	EButtonState myState;
 	bool myEnabled;
 	bool myIsMouseHover;
+	bool myHasBeenCleared;
 	int myWidgetToToggleIndex;
 	
 };

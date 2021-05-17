@@ -38,8 +38,6 @@ CCameraComponent::CCameraComponent(CGameObject& aParent, const float aFoV/*, flo
 
 CCameraComponent::~CCameraComponent()
 {
-	delete myFadingPlane;
-	myFadingPlane = nullptr;
 }
 
 void CCameraComponent::Awake()
@@ -49,7 +47,7 @@ void CCameraComponent::Awake()
 	myFadingPlane = new CSpriteInstance();
 	myFadingPlane->Init(CSpriteFactory::GetInstance()->GetSprite(ASSETPATH(document["Fade Screen Path"].GetString())));
 	myFadingPlane->SetSize({ 15.1f, 8.5f });
-	myFadingPlane->SetRenderOrder(ERenderOrder::Layer3);
+	myFadingPlane->SetRenderOrder(ERenderOrder::Layer3, IRONWROUGHT->GetActiveScene());
 	myFadingPlane->SetShouldRender(false);
 }
 

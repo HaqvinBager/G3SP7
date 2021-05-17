@@ -135,11 +135,21 @@ inline const bool CButton::Enabled()
 	return myEnabled;
 }
 
-void CButton::SetRenderLayer(const ERenderOrder& aRenderLayer)
+void CButton::SetRenderLayer(const ERenderOrder& aRenderLayer, CScene& aScene)
 {
-	mySprites[0]->SetRenderOrder(aRenderLayer);
-	mySprites[1]->SetRenderOrder(aRenderLayer);
-	mySprites[2]->SetRenderOrder(aRenderLayer);
+	mySprites[0]->SetRenderOrder(aRenderLayer, aScene);
+	mySprites[1]->SetRenderOrder(aRenderLayer, aScene);
+	mySprites[2]->SetRenderOrder(aRenderLayer, aScene);
+}
+
+void CButton::ClearFromScene(CScene& aScene)
+{
+	for (size_t i = 0; i < mySprites.size(); ++i)
+	{
+		aScene.RemoveInstance(mySprites[i]);
+	}
+
+	myHasBeenCleared = true;
 }
 
 CButton::CButton()
@@ -147,6 +157,7 @@ CButton::CButton()
 	, myEnabled(false)
 	, myIsMouseHover(false)
 	, myWidgetToToggleIndex(-1)
+	, myHasBeenCleared(false)
 {}
 
 CButton::CButton(SButtonData& someData, CScene& aScene)
@@ -156,15 +167,18 @@ CButton::CButton(SButtonData& someData, CScene& aScene)
 
 CButton::~CButton()
 {
+	if (myHasBeenCleared)
+	{
+		delete mySprites.at(static_cast<size_t>(EButtonState::Idle));
+		delete mySprites.at(static_cast<size_t>(EButtonState::Hover));
+		delete mySprites.at(static_cast<size_t>(EButtonState::Click));
+	}
 	// Scene should handle the deletion... ? / Aki 2021/01/04
 	// Scene handles the deletion. 2021/04/08
 //	IRONWROUGHT->GetActiveScene().RemoveInstance(mySprites.at(static_cast<size_t>(EButtonState::Idle)));
 //	IRONWROUGHT->GetActiveScene().RemoveInstance(mySprites.at(static_cast<size_t>(EButtonState::Hover)));
 //	IRONWROUGHT->GetActiveScene().RemoveInstance(mySprites.at(static_cast<size_t>(EButtonState::Click)));
 //
-//	delete mySprites.at(static_cast<size_t>(EButtonState::Idle));
-//	delete mySprites.at(static_cast<size_t>(EButtonState::Hover));
-//	delete mySprites.at(static_cast<size_t>(EButtonState::Click));
 }
 
 void CButton::Init(SButtonData& someData, CScene& aScene)
@@ -185,7 +199,7 @@ void CButton::Init(SButtonData& someData, CScene& aScene)
 		}
 
 		mySprites.at(i)->Init(spriteFactory.GetSprite(someData.mySpritePaths.at(i)));
-		mySprites.at(i)->SetRenderOrder(ERenderOrder::Layer2);// Potentionaly an issue, should be based of the parent canvas layer
+		mySprites.at(i)->SetRenderOrder(ERenderOrder::Layer2, aScene);// Potentionaly an issue, should be based of the parent canvas layer
 		mySprites.at(i)->SetPosition({ someData.myPosition.x, someData.myPosition.y });
 
 		if(addToScene)

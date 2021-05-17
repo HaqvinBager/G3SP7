@@ -84,9 +84,14 @@ void CAnimatedUIElement::SetScale(const Vector2& aScale)
     mySpriteInstance->SetSize(aScale);
 }
 
-void CAnimatedUIElement::SetRenderLayer(const ERenderOrder& aRenderLayer)
+void CAnimatedUIElement::SetRenderLayer(const ERenderOrder& aRenderLayer, CScene& aScene)
 {
-    mySpriteInstance->SetRenderOrder(aRenderLayer);
+    mySpriteInstance->SetRenderOrder(aRenderLayer, aScene);
+}
+
+void CAnimatedUIElement::ClearFromScene(CScene& aScene)
+{
+    aScene.RemoveInstance(mySpriteInstance);
 }
 
 CSpriteInstance* CAnimatedUIElement::GetInstance() const
