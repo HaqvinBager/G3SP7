@@ -4,7 +4,7 @@
 const bool PostMaster::LevelCheck(const char* aStringMessageToCheck)
 {
 	{
-		std::array<const char*, 4> levels = { "Level_1-1", "Level_1-2", "Level_2-1", "Level_2-2" };
+		std::array<const char*, 4> levels = { SMSG_LEVEL11, SMSG_LEVEL12, SMSG_LEVEL21, SMSG_LEVEL22 };
 		for (auto& level : levels)
 		{
 			if (strcmp(aStringMessageToCheck, level) == 0)
@@ -37,11 +37,6 @@ const bool PostMaster::EnableCanvas(const char* aStringMsg)
 const bool PostMaster::GloveEvent(const char* aStringMsg)
 {
 	return strcmp(aStringMsg, SMSG_PICKUP_GLOVE_EVENT) == 0;
-}
-
-const bool PostMaster::EndEventFirst(const char* aStringMsg)
-{
-	return strcmp(aStringMsg, SMSG_FIRST_END_EVENT) == 0;
 }
 
 const bool PostMaster::CompareStringMessage(const char* aCompareTo, const char* aReceived)

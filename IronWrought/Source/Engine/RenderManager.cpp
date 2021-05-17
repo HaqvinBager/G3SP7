@@ -76,12 +76,12 @@ bool CRenderManager::ReInit(CDirectXFramework* aFramework, CWindowHandler* aWind
 void CRenderManager::InitRenderTextures(CWindowHandler* aWindowHandler)
 {
 	myIntermediateDepth = myFullscreenTextureFactory.CreateDepth(aWindowHandler->GetResolution(), DXGI_FORMAT_R24G8_TYPELESS);
-	myEnvironmentShadowDepth = myFullscreenTextureFactory.CreateDepth({ 2048.0f * 1.0f, 2048.0f * 1.0f }, DXGI_FORMAT_R32_TYPELESS);
+	myEnvironmentShadowDepth = myFullscreenTextureFactory.CreateDepth({ 2048.0f * 4.0f, 2048.0f * 4.0f }, DXGI_FORMAT_R32_TYPELESS);
 	myBoxLightShadowDepth = myFullscreenTextureFactory.CreateDepth(aWindowHandler->GetResolution(), DXGI_FORMAT_R32_TYPELESS);
 	myDepthCopy = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R32_FLOAT);
 	myDownsampledDepth = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution() / 2.0f, DXGI_FORMAT_R32_FLOAT);
 
-	myIntermediateTexture = myFullscreenTextureFactory.CreateTexture({ 2048.0f * 1.0f, 2048.0f * 1.0f }, DXGI_FORMAT_R8G8B8A8_UNORM);
+	myIntermediateTexture = myFullscreenTextureFactory.CreateTexture({ 2048.0f * 4.0f, 2048.0f * 4.0f }, DXGI_FORMAT_R8G8B8A8_UNORM);
 	myLuminanceTexture = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution(), DXGI_FORMAT_R16G16B16A16_FLOAT);
 	myHalfSizeTexture = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution() / 2.0f, DXGI_FORMAT_R16G16B16A16_FLOAT);
 	myQuarterSizeTexture = myFullscreenTextureFactory.CreateTexture(aWindowHandler->GetResolution() / 4.0f, DXGI_FORMAT_R16G16B16A16_FLOAT);

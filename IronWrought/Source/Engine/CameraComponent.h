@@ -22,7 +22,7 @@ public:
 	void SetStartingRotation(DirectX::SimpleMath::Vector3 aRotation);
 	void SetFoV(float aFoV);
 
-	void Fade(bool aShouldFadeIn);
+	void Fade(bool aShouldFadeIn, const float& aFadeDuration = 1.0f, const bool& aFadeIsPermanent = false);
 	const bool IsFading() const;
 	void EmplaceSprites(std::vector<CSpriteInstance*>& someSprites) const;
 
@@ -33,6 +33,15 @@ public:
 
 private:
 	void Shake();
+
+	enum class ECameraState
+	{
+		Default,
+		FadeIn,
+		FadeOut,
+
+		Count
+	};
 
 private:
 	CSpriteInstance* myFadingPlane;
@@ -50,10 +59,13 @@ private:
 	float myDecayInSeconds;
 	float myShakeTimer;
 
-	float myFadeTimer;
+	
+	float myFadeParameter;
 	float myFadeSpeed;
-	bool myFadingIn;
+	
+	ECameraState myState;
 	bool myFadingPlaneActive;
+	bool myFadePermanent;
 
 	float myFoV; 
 

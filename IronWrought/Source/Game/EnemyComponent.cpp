@@ -24,6 +24,7 @@ CEnemyComponent::CEnemyComponent(CGameObject& aParent, const SEnemySetting& some
 	, myCurrentState(EBehaviour::Count)
 	, myRigidBodyComponent(nullptr)
 	, myTakeDamageTimer(0.0f)
+	, mySpeedModifier(1.0f)
 {
 	//myController = CEngine::GetInstance()->GetPhysx().CreateCharacterController(GameObject().myTransform->Position(), 0.6f * 0.5f, 1.8f * 0.5f, GameObject().myTransform, aHitReport);
 	//myController->GetController().getActor()->setRigidBodyFlag(PxRigidBodyFlag::eUSE_KINEMATIC_TARGET_FOR_SCENE_QUERIES, true);
@@ -69,8 +70,8 @@ void CEnemyComponent::Start()
 
 	this->GameObject().GetComponent<CVFXSystemComponent>()->EnableEffect(0);
 
-	mySettings.mySpeed = 5.0f;
-	mySettings.myHealth = 10.0f;
+	mySettings.mySpeed = mySettings.mySpeed < 5.0f ? 5.0f : mySettings.mySpeed;
+	mySettings.myHealth = mySettings.myHealth < 10.0f ? 10.0f : mySettings.myHealth;
 
 	if (GameObject().GetComponent<CRigidBodyComponent>()) {
 		myRigidBodyComponent = GameObject().GetComponent<CRigidBodyComponent>();
@@ -128,7 +129,7 @@ void CEnemyComponent::Update()//får bestämma vilket behaviour vi vill köra i 
 		Vector3 targetDirection = myBehaviours[static_cast<int>(myCurrentState)]->Update(GameObject().myTransform->Position());
 		
 		targetDirection.y = 0;
-		myRigidBodyComponent->AddForce(targetDirection,mySettings.mySpeed);
+		myRigidBodyComponent->AddForce(targetDirection,mySettings.mySpeed * mySpeedModifier);
 		float targetOrientation = WrapAngle(atan2f(targetDirection.x, targetDirection.z));
 		myCurrentOrientation = Lerp(myCurrentOrientation, targetOrientation, 2.0f * CTimer::Dt());
 		GameObject().myTransform->Rotation({ 0, DirectX::XMConvertToDegrees(myCurrentOrientation) + 180.f, 0 });
@@ -140,15 +141,16 @@ void CEnemyComponent::FixedUpdate()
 	//myController->Move({ 0.0f, -0.098f, 0.0f }, 1.f);
 }
 
-void CEnemyComponent::TakeDamage(float aDamage)
+void CEnemyComponent::TakeDamage(const float& aDamage)
 {
-	CMainSingleton::PostMaster().SendLate({ EMessageType::EnemyTakeDamage, this });
-	
 	if (myTakeDamageTimer > 0.0f)
 		return;
 
 	myTakeDamageTimer = 0.5f;
 	myCurrentHealth -= aDamage;
+	std::cout << aDamage << std::endl;
+	if(myCurrentHealth > 0.0f)
+		CMainSingleton::PostMaster().SendLate({ EMessageType::EnemyTakeDamage, this });
 }
 
 void CEnemyComponent::SetState(EBehaviour aState)
@@ -165,18 +167,21 @@ void CEnemyComponent::SetState(EBehaviour aState)
 		{
 			//std::cout << __FUNCTION__ << " " << "PATROL" << std::endl;
 			msgType = EMessageType::EnemyPatrolState;
+			mySpeedModifier = 1.0f;
 		}break;
 
 		case EBehaviour::Seek:
 		{
 			//std::cout << __FUNCTION__ << " " << "SEEK" << std::endl;
 			msgType = EMessageType::EnemySeekState;
+			mySpeedModifier = 1.5f;
 		}break;
 
 		case EBehaviour::Attack:
 		{
 			//std::cout << __FUNCTION__ << " " << "ATTACK" << std::endl;
 			msgType = EMessageType::EnemyAttackState;
+			mySpeedModifier = 1.5f;
 		}break;
 
 

@@ -25,6 +25,7 @@ private:
 	float myTimer;
 	float myLogoDisplayDuration;
 	float myFadeOutStart;
+	float myFadeInDuration;
 	int myLogoToRender;
 };
 

@@ -18,4 +18,5 @@ using namespace DirectX::SimpleMath;
 #include "Input.h"
 #include "MainSingleton.h"
 #include "EngineException.h"
+#include "EngineDefines.h"
 //#include "Scene.h"

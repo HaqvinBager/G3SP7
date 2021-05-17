@@ -63,10 +63,21 @@ public:
 private:
 	void LockMovementFor(const float& someSeconds);
 	void UpdateMovementLock();
-	void OnInputLockEvent();
-	void OnInputLockUpdate();
+	void InitForceForward();
+	void UpdateForceForward();
+	void InitStandStill(const float& aStandStillTimer);
+	void UpdateStandStill();
+
 	void BoundsCheck();
 	void LadderUpdate();
+
+private:
+	enum class EPlayerMovementLock
+	{
+		None,
+		ForceFoward,
+		ForceStandStill
+	};
 
 
 	CCharacterController* myController;
@@ -83,8 +94,9 @@ private:
 	bool myIsJumping;
 	bool myHasJumped;
 	bool myLadderHasTriggered;
+	bool myCanStand;
 
-	bool myLockPlayerInput;
+	EPlayerMovementLock myPlayerMovementLock;
 	bool myIsCrouching;
 	float myCrouchingLerp;
 	float myWalkSpeed;

@@ -10,7 +10,7 @@
 using namespace rapidjson;
 
 #define CAST(type) { static_cast<unsigned int>(type) }
-#define AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION 2
+#define AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION 1
 
 CAudioManager::CAudioManager() 
 	: myWrapper() 
@@ -191,7 +191,6 @@ void CAudioManager::Receive(const SMessage& aMessage) {
 		}
 	}break;
 
-
 	case EMessageType::PlayStepSound:
 	{
 		if (myCurrentGroundType == EGroundType::Concrete)
@@ -205,6 +204,18 @@ void CAudioManager::Receive(const SMessage& aMessage) {
 	}
 	break;
 
+	case EMessageType::PlayJumpSound:
+	{
+		myWrapper.Play(mySFXAudio[CAST(ESFX::Jump)], myChannels[CAST(EChannel::SFX)]);
+	}
+	break;
+
+	case EMessageType::PlayerTakeDamage:
+	{
+		myWrapper.Play(mySFXAudio[CAST(ESFX::EnemyHit)], myChannels[CAST(EChannel::SFX)]);
+	}
+	break;
+
 	case EMessageType::PlayResearcherReactionExplosives:
 	{
 		PlayRandomSoundFromCollection(myResearcherReactionsExplosives, EChannel::ResearcherVOX);
@@ -213,43 +224,57 @@ void CAudioManager::Receive(const SMessage& aMessage) {
 
 	case EMessageType::PlayRobotAttackSound:
 	{
+		if (myChannels[CAST(EChannel::ResearcherVOX)]->IsPlaying())
+			return;
 		PlayCyclicRandomSoundFromCollection(myRobotAttackSounds, EChannel::RobotVOX, myAttackSoundIndices, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
 	}
 	break;
 
 	case EMessageType::PlayRobotDeathSound:
 	{
+		if (myChannels[CAST(EChannel::ResearcherVOX)]->IsPlaying())
+			return;
 		PlayCyclicRandomSoundFromCollection(myRobotDeathSounds, EChannel::RobotVOX, myDeathSoundIndices, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
 	}
 	break;
 
 	case EMessageType::PlayRobotIdleSound:
 	{
+		if (myChannels[CAST(EChannel::ResearcherVOX)]->IsPlaying())
+			return;
 		PlayCyclicRandomSoundFromCollection(myRobotIdleSounds, EChannel::RobotVOX, myIdleSoundIndices, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
 	}
 	break;
 
 	case EMessageType::PlayRobotPatrolling:
 	{
+		if (myChannels[CAST(EChannel::ResearcherVOX)]->IsPlaying())
+			return;
 		PlayCyclicRandomSoundFromCollection(myRobotPatrollingSounds, EChannel::RobotVOX, myPatrollingSoundIndices, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
 	}
 	break;
 
 	case EMessageType::PlayRobotSearching:
 	{
+		if (myChannels[CAST(EChannel::ResearcherVOX)]->IsPlaying())
+			return;
 		PlayCyclicRandomSoundFromCollection(myRobotSearchingSounds, EChannel::RobotVOX, mySearchingSoundIndices, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
 	}
 	break;
 
 	case EMessageType::EnemyTakeDamage:
 	{
-		PlayCyclicRandomSoundFromCollection(myRobotDeathSounds, EChannel::RobotVOX, myDeathSoundIndices, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
+		if (myChannels[CAST(EChannel::ResearcherVOX)]->IsPlaying())
+			return;
+		PlayCyclicRandomSoundFromCollection(myRobotDamageSounds, EChannel::RobotVOX, myDamageSoundIndices, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
+		myWrapper.Play(mySFXAudio[CAST(ESFX::EnemyHit)], myChannels[CAST(EChannel::SFX)]);
 	}
 	break;
 	
 	case EMessageType::PlayResearcherEvent:
 	{
 		int index = *static_cast<int*>(aMessage.data);
+		myChannels[CAST(EChannel::RobotVOX)]->Stop();
 		myChannels[CAST(EChannel::ResearcherVOX)]->Stop();
 		myWrapper.Play(myResearcherEventSounds[index], myChannels[CAST(EChannel::ResearcherVOX)]);
 	}
@@ -278,8 +303,16 @@ void CAudioManager::Receive(const SMessage& aMessage) {
 		myWrapper.Play(mySFXAudio[CAST(ESFX::GravityGlovePush)], myChannels[CAST(EChannel::SFX)]);
 	}break;
 
+	case EMessageType::PlayerHealthPickup:
+	{
+		myWrapper.Play(mySFXAudio[CAST(ESFX::PickupHeal)], myChannels[CAST(EChannel::SFX)]);
+	}break;
+
+
 	case EMessageType::EnemyAttackState:
 	{
+		if (myChannels[CAST(EChannel::ResearcherVOX)]->IsPlaying())
+			return;
 		// Todo add max 3 to be playable at the same time. Can be done inside PlayRandomSoundFromCollection
 		// 
 		PlayCyclicRandomSoundFromCollection(myRobotAttackSounds, EChannel::RobotVOX, myAttackSoundIndices, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
@@ -287,13 +320,29 @@ void CAudioManager::Receive(const SMessage& aMessage) {
 
 	case EMessageType::EnemyPatrolState:
 	{
+		if (myChannels[CAST(EChannel::ResearcherVOX)]->IsPlaying())
+			return;
+
 		PlayCyclicRandomSoundFromCollection(myRobotPatrollingSounds, EChannel::RobotVOX, myPatrollingSoundIndices, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
+
 	}break;
 
 	case EMessageType::EnemySeekState:
 	{
+		if (myChannels[CAST(EChannel::ResearcherVOX)]->IsPlaying())
+			return;
 		PlayCyclicRandomSoundFromCollection(myRobotAttackSounds, EChannel::RobotVOX, myAttackSoundIndices, AUDIO_MAX_NR_OF_SFX_FROM_COLLECTION);
 	}break;
+
+	case EMessageType::EnemyAttack:
+	{
+		if (myChannels[CAST(EChannel::ResearcherVOX)]->IsPlaying())
+			return;
+
+		if (mySFXAudio[CAST(ESFX::EnemyAttack)])
+		myWrapper.Play(mySFXAudio[CAST(ESFX::EnemyAttack)], myChannels[CAST(EChannel::SFX)]);
+	}break;
+
 
 	//// VOICELINES
 	//case EMessageType::PlayVoiceLine:
@@ -314,9 +363,22 @@ void CAudioManager::Receive(const SMessage& aMessage) {
 	//	//}
 	//}break;
 
+	case EMessageType::GameStarted:
+	{
+		myWrapper.Play(myResearcherEventSounds[CAST(EResearcherEventVoiceLine::V1)], myChannels[CAST(EChannel::ResearcherVOX)]);
+
+	}break;
+
 	case EMessageType::StartGame:
 	{
 		std::string scene = *reinterpret_cast<std::string*>(aMessage.data);
+		if (strcmp(scene.c_str(), "VerticalSlice") == 0)
+		{
+			myChannels[CAST(EChannel::Ambience)]->Stop();
+			myWrapper.Play(myAmbienceAudio[CAST(EAmbience::Inside)], myChannels[CAST(EChannel::Ambience)]);
+			return;
+		}
+
 		if (strcmp(scene.c_str(), "Level_1-1") == 0)
 		{
 			myChannels[CAST(EChannel::Ambience)]->Stop();
@@ -349,7 +411,17 @@ void CAudioManager::Receive(const SMessage& aMessage) {
 	case EMessageType::BootUpState:
 	{
 		myWrapper.Play(myAmbienceAudio[CAST(EAmbience::Inside)], myChannels[CAST(EChannel::Ambience)]);
-		//myWrapper.Play(myRes)
+		myWrapper.Play(myResearcherEventSounds[CAST(EResearcherEventVoiceLine::BootUp)], myChannels[CAST(EChannel::ResearcherVOX)]);
+	}break;
+
+	case EMessageType::MainMenu:
+	{
+		myChannels[CAST(EChannel::Ambience)]->Stop();
+		myChannels[CAST(EChannel::Music)]->Stop();
+		myChannels[CAST(EChannel::ResearcherVOX)]->Stop();
+		myChannels[CAST(EChannel::RobotVOX)]->Stop();
+		myChannels[CAST(EChannel::SFX)]->Stop();
+		myWrapper.Play(myAmbienceAudio[CAST(EAmbience::Inside)], myChannels[CAST(EChannel::Ambience)]);
 	}break;
 
 	default: break;
@@ -421,14 +493,18 @@ void CAudioManager::SubscribeToMessages()
 
 	// Player & Gravity Glove 
 	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayStepSound, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayJumpSound, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayerTakeDamage, this);
 	CMainSingleton::PostMaster().Subscribe(EMessageType::GravityGlovePull, this);
 	CMainSingleton::PostMaster().Subscribe(EMessageType::GravityGlovePush, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::PlayerHealthPickup, this);
 
 	// Enemy
 	CMainSingleton::PostMaster().Subscribe(EMessageType::EnemyPatrolState, this);
 	CMainSingleton::PostMaster().Subscribe(EMessageType::EnemySeekState, this);
 	CMainSingleton::PostMaster().Subscribe(EMessageType::EnemyAttackState, this);
 	CMainSingleton::PostMaster().Subscribe(EMessageType::EnemyTakeDamage, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::EnemyAttack, this);
 
 	//CMainSingleton::PostMaster().Subscribe(EMessageType::PlayVoiceLine, this);
 	//CMainSingleton::PostMaster().Subscribe(EMessageType::StopDialogue, this);
@@ -441,6 +517,8 @@ void CAudioManager::SubscribeToMessages()
 	CMainSingleton::PostMaster().Subscribe("Level_2-2", this);
 
 	CMainSingleton::PostMaster().Subscribe(EMessageType::BootUpState, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::GameStarted, this);
+	CMainSingleton::PostMaster().Subscribe(EMessageType::MainMenu, this);
 }
 
 void CAudioManager::UnsubscribeToMessages()
@@ -457,14 +535,18 @@ void CAudioManager::UnsubscribeToMessages()
 
 	// Player & Gravity Glove 
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayStepSound, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayJumpSound, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayerTakeDamage, this);
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::GravityGlovePull, this);
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::GravityGlovePush, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayerHealthPickup, this);
 
 	// Enemy
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::EnemyPatrolState, this);
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::EnemySeekState, this);
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::EnemyAttackState, this);
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::EnemyTakeDamage, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::EnemyAttack, this);
 
 	//CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayVoiceLine, this);
 	//CMainSingleton::PostMaster().Unsubscribe(EMessageType::StopDialogue, this);
@@ -477,6 +559,8 @@ void CAudioManager::UnsubscribeToMessages()
 	CMainSingleton::PostMaster().Unsubscribe("Level_2-2", this);
 
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::BootUpState, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::GameStarted, this);
+	CMainSingleton::PostMaster().Unsubscribe(EMessageType::MainMenu, this);
 }
 
 std::string CAudioManager::GetPath(EMusic type) const
@@ -590,6 +674,18 @@ std::string CAudioManager::TranslateEnum(ESFX enumerator) const {
 		return "GravityGlovePush";
 	case ESFX::GravityGlovePullRelease:
 		return "GravityGlovePullRelease";
+	case ESFX::Jump:
+		return "Jump";
+	case ESFX::EnemyHit:
+		return "EnemyHit";
+	case ESFX::SwitchPress:
+		return "SwitchPress";
+	case ESFX::PickupGravityGlove:
+		return "PickupGravityGlove";
+	case ESFX::PickupHeal:
+		return "PickupHeal";
+	case ESFX::EnemyAttack:
+		return "EnemyAttack";
 	default:
 		return "";
 	}
@@ -621,10 +717,83 @@ std::string CAudioManager::TranslateEnum(EResearcherEventVoiceLine enumerator) c
 {
 	switch (enumerator)
 	{
-	case EResearcherEventVoiceLine::ResearcherDoorEventVerticalSlice:
-		return "ResearcherDoorEventVerticalSlice";
-	case EResearcherEventVoiceLine::ResearcherIntroVerticalSlice:
-		return "ResearcherIntroVerticalSlice";
+	case EResearcherEventVoiceLine::V1:
+		return "V1";
+	case EResearcherEventVoiceLine::V2:
+		return "V2";
+	case EResearcherEventVoiceLine::BootUp:
+		return "BootUp";
+	case EResearcherEventVoiceLine::Intro:
+		return "Intro";
+	case EResearcherEventVoiceLine::Line1:
+		return "1";
+	case EResearcherEventVoiceLine::Line2:
+		return "2";
+	case EResearcherEventVoiceLine::Line3:
+		return "3";
+	case EResearcherEventVoiceLine::Line4:
+		return "4";
+	case EResearcherEventVoiceLine::Line5:
+		return "5";
+	case EResearcherEventVoiceLine::Line6:
+		return "6";
+	case EResearcherEventVoiceLine::Line7:
+		return "7";
+	case EResearcherEventVoiceLine::Line8:
+		return "8";
+	case EResearcherEventVoiceLine::Line9:
+		return "9";
+	case EResearcherEventVoiceLine::Line10:
+		return "10";
+	case EResearcherEventVoiceLine::Line11:
+		return "11";
+	case EResearcherEventVoiceLine::Line12:
+		return "12";
+	case EResearcherEventVoiceLine::Line13:
+		return "13";
+	case EResearcherEventVoiceLine::Line14:
+		return "14";
+	case EResearcherEventVoiceLine::Line15:
+		return "15";
+	case EResearcherEventVoiceLine::Line16:
+		return "16";
+	case EResearcherEventVoiceLine::Line17:
+		return "17";
+	case EResearcherEventVoiceLine::Line18:
+		return "18";
+	case EResearcherEventVoiceLine::Line19:
+		return "19";
+	case EResearcherEventVoiceLine::Line20:
+		return "20";
+	case EResearcherEventVoiceLine::Line21:
+		return "21";
+	case EResearcherEventVoiceLine::Line22:
+		return "22";
+	case EResearcherEventVoiceLine::Line23:
+		return "23";
+	case EResearcherEventVoiceLine::Line24:
+		return "24";
+	case EResearcherEventVoiceLine::Line25:
+		return "25";
+	case EResearcherEventVoiceLine::Line26:
+		return "26";
+	case EResearcherEventVoiceLine::Line27:
+		return "27";
+	case EResearcherEventVoiceLine::Outro1:
+		return "Outro1";
+	case EResearcherEventVoiceLine::Outro2:
+		return "Outro2";
+	case EResearcherEventVoiceLine::Outro3:
+		return "Outro3";
+	case EResearcherEventVoiceLine::Outro4:
+		return "Outro4";
+	case EResearcherEventVoiceLine::Outro5:
+		return "Outro5";
+	case EResearcherEventVoiceLine::Outro6:
+		return "Outro6";
+	case EResearcherEventVoiceLine::Outro7:
+		return "Outro7";
+
 	default:
 		return "";
 	}
@@ -653,6 +822,8 @@ std::string CAudioManager::TranslateEnum(ERobotVoiceLine enumerator) const
 		return "RobotPatrolling";
 	case ERobotVoiceLine::RobotSearching:
 		return "RobotSearching";
+	case ERobotVoiceLine::RobotDamage:
+		return "RobotDamage";
 	default:
 		return "";
 	}
@@ -774,6 +945,18 @@ void CAudioManager::FillCollection(ERobotVoiceLine enumerator)
 		while (sound != nullptr)
 		{
 			myRobotSearchingSounds.push_back(sound);
+			sound = myWrapper.TryGetSound(myVoxPath + GetCollectionPath(enumerator, ++counter));
+		}
+	}
+	break;
+
+	case ERobotVoiceLine::RobotDamage:
+	{
+		CAudio* sound = myWrapper.TryGetSound(myVoxPath + GetCollectionPath(enumerator, ++counter));
+
+		while (sound != nullptr)
+		{
+			myRobotDamageSounds.push_back(sound);
 			sound = myWrapper.TryGetSound(myVoxPath + GetCollectionPath(enumerator, ++counter));
 		}
 	}

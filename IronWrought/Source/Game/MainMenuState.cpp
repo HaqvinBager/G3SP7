@@ -25,7 +25,11 @@ CMainMenuState::~CMainMenuState()
 
 void CMainMenuState::Awake()
 {
+#ifdef VERTICAL_SLICE
+	CScene* scene = CSceneManager::CreateMenuScene("MainMenu", ASSETPATH("Assets/Graphics/UI/JSON/UI_MainMenu_VS.json"));
+#else
 	CScene* scene = CSceneManager::CreateMenuScene("MainMenu", ASSETPATH("Assets/Graphics/UI/JSON/UI_MainMenu.json"));
+#endif
 	CEngine::GetInstance()->AddScene(myState, scene);
 }
 
@@ -40,6 +44,8 @@ void CMainMenuState::Start()
 	CMainSingleton::PostMaster().Subscribe(EMessageType::SetResolution1280x720, this);
 	CMainSingleton::PostMaster().Subscribe(EMessageType::SetResolution1600x900, this);
 	CMainSingleton::PostMaster().Subscribe(EMessageType::SetResolution1920x1080, this);
+
+	CMainSingleton::PostMaster().SendLate({ EMessageType::MainMenu, nullptr });
 }
 
 void CMainMenuState::Stop()
@@ -56,10 +62,10 @@ void CMainMenuState::Stop()
 void CMainMenuState::Update()
 {
 #ifndef NDEBUG
-	if (INPUT->IsKeyPressed('R'))
-	{
-		IRONWROUGHT->GetActiveScene().ReInitCanvas(ASSETPATH("Assets/Graphics/UI/JSON/UI_MainMenu.json"));
-	}
+	//if (INPUT->IsKeyPressed('R'))
+	//{
+	//	IRONWROUGHT->GetActiveScene().ReInitCanvas(ASSETPATH("Assets/Graphics/UI/JSON/UI_MainMenu.json"));
+	//}
 #endif
 
 	if(myTimeToQuit)

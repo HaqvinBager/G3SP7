@@ -8,6 +8,8 @@ public struct EventData
     public Transform instanceID;
     public string gameEvent;
     public EEventFilter eventFilter;
+    public int audioIndex;
+    public bool triggerOnce;
 }
 
 [System.Serializable]
@@ -27,11 +29,13 @@ public class ExportEventTrigger
         IronEvent[] ironEvents = GameObject.FindObjectsOfType<IronEvent>();
         foreach (IronEvent ironEvent in ironEvents)
         {
-            collection.triggerEvents.Add(new EventData { 
-                instanceID = ironEvent.transform, 
+            collection.triggerEvents.Add(new EventData {
+                instanceID = ironEvent.transform,
                 gameEvent = ironEvent.eventObject.name,
-                eventFilter = ironEvent.eventFilter
-            });
+                eventFilter = ironEvent.eventFilter,
+                audioIndex = ironEvent.audioIndex,
+                triggerOnce = ironEvent.triggerOnce
+            }); ;
         }
 
         return collection;

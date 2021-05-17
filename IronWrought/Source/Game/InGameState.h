@@ -25,10 +25,17 @@ public:
 
 	void TEMP_DecalTests(class CScene* aScene);
 private:
+	enum class EExitTo
+	{
+		None,
+		MainMenu,
+		AnotherLevel
+	};
+
 	void DEBUGFunctionality();
 
 private:
-	bool myExitLevel;
+	EExitTo myExitTo;
 
 	class CEnemyAnimationController* myEnemyAnimationController;
 	CGameObject* myDecal;

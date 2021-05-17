@@ -71,6 +71,8 @@ CScene* CSceneManager::CreateEmpty()
 CScene* CSceneManager::CreateScene(const std::string& aSceneJson)
 {
 	CScene* scene = Instantiate();
+	if (aSceneJson.empty())
+		return nullptr;
 
 	Binary::SLevelData binLevelData = CBinReader::Load(ASSETPATH("Assets/Generated/" + aSceneJson + "/" + aSceneJson + ".bin"));
 
@@ -578,7 +580,6 @@ void CSceneManager::AddCollider(CScene& aScene, RapidArray someData)
 		bool isTrigger = c.HasMember("isTrigger") ? c["isTrigger"].GetBool() : false;
 		unsigned int layer = c.HasMember("layer") ? c["layer"].GetInt() : 1;
 
-
 		CRigidBodyComponent* rigidBody = gameObject->GetComponent<CRigidBodyComponent>();
 		if (rigidBody == nullptr && isStatic == false)
 		{
@@ -686,12 +687,17 @@ void CSceneManager::AddTriggerEvents(CScene& aScene, RapidArray someData)
 		{
 			std::string eventData = triggerEvent["gameEvent"].GetString();
 			int eventFilter = triggerEvent.HasMember("eventFilter") ? triggerEvent["eventFilter"].GetInt() : static_cast<int>(CBoxColliderComponent::EEventFilter::Any);
+			int audioIndex = triggerEvent.HasMember("audioIndex") ? triggerEvent["audioIndex"].GetInt() : -1;
+			bool triggerOnce = triggerEvent.HasMember("triggerOnce") ? triggerEvent["triggerOnce"].GetBool() : false;
 			triggerVolume->RegisterEventTriggerMessage(eventData);
 			triggerVolume->RegisterEventTriggerFilter(eventFilter);
-			//SStringMessage triggerMessage = {};
-			//memcpy(&triggerMessage.myMessageType, &eventData[0], sizeof(char) * eventData.size());
-			//triggerMessage.myMessageType = eventData.c_str();
+			triggerVolume->RegisterEventTriggerAudioIndex(audioIndex);
+			triggerVolume->RegisterEventTriggerOnce(triggerOnce);
 
+			if (strcmp(eventData.c_str(), "Intro") == 0)
+			{
+				gameObject->AddComponent<CModelComponent>(*gameObject, ASSETPATH("Assets/Graphics/Character/Main_Character/CH_PL_Glove.fbx"));
+			}
 		}
 	}
 }
@@ -772,7 +778,9 @@ void CSceneFactory::Update()
 		CScene* loadedScene = myFuture.get();
 		if (loadedScene == nullptr)
 		{
+#ifdef _DEBUG
 			ENGINE_ERROR_MESSAGE("Failed to Load Scene %s", myLastSceneName.c_str());
+#endif
 			return;
 		}
 

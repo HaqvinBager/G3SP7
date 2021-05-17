@@ -9,12 +9,12 @@ class CAudioChannel;
 
 enum class EMusic { Count };
 enum class EAmbience { AirVent, Inside, Outside, Count };
-enum class ESFX { GravityGlovePullBuildup, GravityGlovePullHit, GravityGlovePush, GravityGlovePullRelease, Count };
+enum class ESFX { GravityGlovePullBuildup, GravityGlovePullHit, GravityGlovePush, GravityGlovePullRelease, Jump, EnemyHit, SwitchPress, PickupGravityGlove, PickupHeal, EnemyAttack, Count };
 enum class ESFXCollection { StepAirVent, StepConcrete, Count };
 enum class EUI { ButtonClick, PlayClick, Count };
-enum class EResearcherEventVoiceLine { ResearcherDoorEventVerticalSlice, ResearcherIntroVerticalSlice, Count };
+enum class EResearcherEventVoiceLine { V1, V2, BootUp, Intro, Line1, Line2, Line3, Line4, Line5, Line6, Line7, Line8, Line9, Line10, Line11, Line12, Line13, Line14, Line15, Line16, Line17, Line18, Line19, Line20, Line21, Line22, Line23, Line24, Line25, Line26, Line27, Outro1, Outro2, Outro3, Outro4, Outro5, Outro6, Outro7, Count };
 enum class EResearcherReactionVoiceLine { ResearcherReactionExplosives, Count };
-enum class ERobotVoiceLine { RobotAttack, RobotDeath, RobotIdle, RobotPatrolling, RobotSearching, Count };
+enum class ERobotVoiceLine { RobotAttack, RobotDeath, RobotIdle, RobotPatrolling, RobotSearching, RobotDamage, Count };
 
 enum class EChannel { Music, Ambience, SFX, UI, ResearcherVOX, RobotVOX, Count };
 
@@ -94,6 +94,7 @@ private:
 	std::vector<CAudio*> myResearcherReactionsExplosives;
 
 	std::vector<CAudio*> myRobotAttackSounds;
+	std::vector<CAudio*> myRobotDamageSounds;
 	std::vector<CAudio*> myRobotDeathSounds;
 	std::vector<CAudio*> myRobotIdleSounds;
 	std::vector<CAudio*> myRobotPatrollingSounds;
@@ -101,6 +102,7 @@ private:
 
 	std::vector<int> myStepSoundIndices;
 	std::vector<int> myAttackSoundIndices;
+	std::vector<int> myDamageSoundIndices;
 	std::vector<int> myDeathSoundIndices;
 	std::vector<int> myIdleSoundIndices;
 	std::vector<int> myPatrollingSoundIndices;

@@ -16,11 +16,11 @@
 CBootUpState::CBootUpState(CStateStack& aStateStack, const CStateStack::EState aState)
 	: CState(aStateStack, aState)
 	, myTimer(0.0f)
-	, myLogoDisplayDuration(4.0f)
-	, myFadeOutStart(3.0f)
+	, myLogoDisplayDuration(6.0f)
+	, myFadeOutStart(4.5f)
+	, myFadeInDuration(1.5f)
 	, myLogoToRender(0)
 {
-
 }
 
 CBootUpState::~CBootUpState()
@@ -49,6 +49,10 @@ void CBootUpState::Start()
 	myLogos.back()->Init(CSpriteFactory::GetInstance()->GetSprite(ASSETPATH(document["Group Logo Path"].GetString())));
 	myLogos.back()->SetShouldRender(false);
 
+	myLogos.emplace_back(new CSpriteInstance(scene, true));
+	myLogos.back()->Init(CSpriteFactory::GetInstance()->GetSprite(ASSETPATH(document["Engine Logo Path"].GetString())));
+	myLogos.back()->SetShouldRender(false);
+
 	CTimer::Mark();
 	myTimer = 0.0f;
 	myLogoToRender = 0;
@@ -66,10 +70,14 @@ void CBootUpState::Update()
 {
 	myTimer += CTimer::Dt();
 
-	//for (auto& gameObject : CEngine::GetInstance()->GetActiveScene().myGameObjects)
-	//{
-	//	gameObject->Update();
-	//}
+	if (myTimer < myFadeInDuration)
+	{
+		auto color = myLogos[myLogoToRender]->GetColor();
+		color.x = myTimer / myFadeInDuration;
+		color.y = myTimer / myFadeInDuration;
+		color.z = myTimer / myFadeInDuration;
+		myLogos[myLogoToRender]->SetColor(color);
+	}
 
 	if (myTimer > myFadeOutStart)
 	{
@@ -81,7 +89,7 @@ void CBootUpState::Update()
 	}
 
 	if (myTimer > myLogoDisplayDuration) {
-		myTimer = 0.0f;
+		myTimer -= myLogoDisplayDuration;
 
 		myLogos[myLogoToRender]->SetShouldRender(false);
 		myLogoToRender++;

@@ -18,7 +18,7 @@ public:
 
 	void OnNotAlive();
 
-	void RegenerateHealth(const float& somePercent = 0.5f);
+	void RegenerateHealth(const float& somePercent = 0.1f);
 
 	bool GetIsAlive();
 	void SetIsAlive(bool setAlive);

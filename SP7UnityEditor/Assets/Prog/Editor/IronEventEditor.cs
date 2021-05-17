@@ -17,6 +17,8 @@ public class IronEventEditor : Editor
     SerializedProperty eventProperty = null;
     string eventName = string.Empty;
     SerializedProperty eventFilter = null;
+    SerializedProperty audioIndex = null;
+    SerializedProperty triggerOnce = null;
 
     private void OnEnable()
     {
@@ -47,6 +49,12 @@ public class IronEventEditor : Editor
             //    OnInspectorGUIVFXEvents();
             //    break;
         }
+
+        audioIndex = serializedObject.FindProperty("audioIndex");
+        EditorGUILayout.PropertyField(audioIndex);
+
+        triggerOnce = serializedObject.FindProperty("triggerOnce");
+        EditorGUILayout.PropertyField(triggerOnce);
 
         serializedObject.ApplyModifiedProperties();
     }

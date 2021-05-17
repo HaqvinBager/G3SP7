@@ -11,6 +11,7 @@
 
 #include "Scene.h"
 #include "CameraControllerComponent.h"
+#include "CameraComponent.h"
 
 #include "PlayerAnimationController.h"
 #include "PlayerComponent.h"
@@ -19,8 +20,10 @@
 #include "RigidBodyComponent.h"
 #include "RigidDynamicBody.h"
 
-#define PLAYER_MAX_POSITION 500.0f
-#define PLAYER_MIN_POSITION -500.0f
+#include "PopupTextService.h"
+
+#define PLAYER_MAX_POSITION 100.0f
+#define PLAYER_MIN_POSITION -100.0f
 
 CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, const float aWalkSpeed, const float aCrouchSpeed, physx::PxUserControllerHitReport* aHitReport)
 	: CComponent(gameObject)
@@ -31,7 +34,7 @@ CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, 
 	, myIsGrounded(true)
 	, myHasJumped(false)
 	, myIsJumping(false)
-	, myJumpHeight(0.1f)// these values don't make sense. //Supposed to be 40cm => ~0.4f
+	, myJumpHeight(0.07f)// these values don't make sense. //Supposed to be 40cm => ~0.4f
 	, myFallSpeed(0.982f * 1.0f)
 	, myMovement(Vector3(0.0f, 0.0f, 0.0f))
 	, myAirborneTimer(0.0f)
@@ -39,10 +42,11 @@ CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, 
 	, myAnimationComponentController(nullptr)
 	, myPlayerComponent(nullptr)
 	, myStepTimer(0.0f)
-	, myLockPlayerInput(false)
+	, myPlayerMovementLock(EPlayerMovementLock::None)
 	, myMovementLockTimer(0.0f)
 	, myEventCounter(0)
 	, myStepTime(aWalkSpeed * 5.0f)
+	, myCanStand(true)
 {
 	INPUT_MAPPER->AddObserver(EInputEvent::Jump, this);
 	INPUT_MAPPER->AddObserver(EInputEvent::Crouch, this);
@@ -86,8 +90,21 @@ CPlayerControllerComponent::~CPlayerControllerComponent()
 	CMainSingleton::PostMaster().Unsubscribe(EMessageType::PlayerTakeDamage, this);
 	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_DISABLE_GLOVE, this);
 	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_ENABLE_GLOVE, this);
-	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_FIRST_END_EVENT, this);
-	CMainSingleton::PostMaster().Unsubscribe("Outro2", this);
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_INTRO, this);
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_OUTRO1, this);
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_OUTRO2, this);
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_OUTRO3, this);
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_OUTRO4, this);
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_OUTRO5, this);
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_OUTRO6, this);
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_OUTRO7, this);
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_UIMOVE, this);
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_UIINTERACT, this);
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_UIPULL, this);
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_UIPUSH, this);
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_UIPULL, this);
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_UICROUCH, this);
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_UIJUMP, this);
 
 	delete myAnimationComponentController;
 	myAnimationComponentController = nullptr;
@@ -101,8 +118,21 @@ void CPlayerControllerComponent::Start()
 	SetRespawnPosition();
 	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_DISABLE_GLOVE, this);
 	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_ENABLE_GLOVE, this);
-	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_FIRST_END_EVENT, this);
-	CMainSingleton::PostMaster().Subscribe("Outro2", this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_INTRO, this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_OUTRO1, this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_OUTRO2, this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_OUTRO3, this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_OUTRO4, this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_OUTRO5, this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_OUTRO6, this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_OUTRO7, this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_UIMOVE, this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_UIINTERACT, this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_UIPULL, this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_UIPUSH, this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_UIPULL, this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_UICROUCH, this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_UIJUMP, this);
 }
 
 void CPlayerControllerComponent::Update()
@@ -115,22 +145,29 @@ void CPlayerControllerComponent::Update()
 	GameObject().myTransform->Position(myController->GetPosition());
 	myAnimationComponentController->Update(myMovement);
 
-	if (myLockPlayerInput)
-		OnInputLockUpdate();
-	else
-		ControllerUpdate();
+	switch (myPlayerMovementLock)
+	{
+		case EPlayerMovementLock::None:
+		{
+			ControllerUpdate();
+		}break;
+
+		case EPlayerMovementLock::ForceFoward:
+		{
+			UpdateForceForward();
+		}break;
+
+		case EPlayerMovementLock::ForceStandStill:
+		{
+			UpdateStandStill();
+		}break;
+
+		default:break;
+	}
 
 	UpdateMovementLock();
 
 	BoundsCheck();
-	
-
-#ifdef _DEBUG
-	if (Input::GetInstance()->IsKeyPressed('R'))
-	{
-		ResetPlayerPosition();
-	}
-#endif // _DEBUG
 }
 
 void CPlayerControllerComponent::FixedUpdate()
@@ -146,6 +183,7 @@ void CPlayerControllerComponent::FixedUpdate()
 			myMovement.y = myJumpHeight;
 			myAirborneTimer = 0.0f;
 			myHasJumped = false;
+			CMainSingleton::PostMaster().SendLate({ EMessageType::PlayJumpSound, nullptr });
 		}
 
 		myMovement.y -= myFallSpeed * myFallSpeed * CTimer::FixedDt() * myAirborneTimer ;
@@ -163,10 +201,20 @@ void CPlayerControllerComponent::FixedUpdate()
 
 void CPlayerControllerComponent::ReceiveEvent(const EInputEvent aEvent)
 {
-	if (myLockPlayerInput)
+	switch (myPlayerMovementLock)
 	{
-		OnInputLockEvent();
-		return;
+		case EPlayerMovementLock::None:
+		{}break;
+
+		case EPlayerMovementLock::ForceFoward:
+		{
+			InitForceForward();
+		}break;
+
+		case EPlayerMovementLock::ForceStandStill:
+		{}break;
+
+		default:break;
 	}
 
 #ifdef _DEBUG
@@ -226,57 +274,188 @@ void CPlayerControllerComponent::Receive(const SStringMessage& aMsg)
 		return;
 	}
 
-	//switch (myEventCounter)
-	//{
-	//	case 0:
-	//	// maybe create a switch case to reduce string comparisons.
-	//	break;
-	//}
-
-	if (PostMaster::CompareStringMessage(PostMaster::SMSG_FIRST_END_EVENT, aMsg.myMessageType))
+	if (PostMaster::CompareStringMessage(PostMaster::SMSG_INTRO, aMsg.myMessageType))
 	{
 		if (myEventCounter > 0)
 			return;
 		myEventCounter++;
 
+		int researcherIndex = 3;
+		int sfxIndex = 7;
+		CMainSingleton::PostMaster().Send({ EMessageType::PlayResearcherEvent, &researcherIndex });
+		CMainSingleton::PostMaster().Send({ EMessageType::PlaySFX, &sfxIndex });
+		myCamera->GameObject().GetComponent<CCameraComponent>()->Fade(true, 1.0f);
+		LockMovementFor(54.0f);
+		CMainSingleton::PostMaster().Send({ PostMaster::SMSG_ENABLE_GLOVE,  nullptr });
+		CMainSingleton::PostMaster().Send({ PostMaster::SMSG_ENABLE_CANVAS, nullptr });
+
+		return;
+	}
+
+	if (PostMaster::CompareStringMessage(PostMaster::SMSG_OUTRO1, aMsg.myMessageType))
+	{
+		//if (myEventCounter > 0)
+		//	return;
+		//myEventCounter++;
+
+		int researcherIndex = 31;
+		CMainSingleton::PostMaster().Send({ EMessageType::PlayResearcherEvent, &researcherIndex });
+
 		CMainSingleton::PostMaster().Send({ PostMaster::SMSG_DISABLE_GLOVE, nullptr });
-		myLockPlayerInput = true;
+		CMainSingleton::PostMaster().Send({ EMessageType::LockFPSCamera, nullptr });
+		myPlayerMovementLock = EPlayerMovementLock::ForceFoward;
 
 		PostMaster::SBoxColliderEvenTriggerData data = *static_cast<PostMaster::SBoxColliderEvenTriggerData*>(aMsg.data);
 		CTransformComponent* transform = data.myTransform;
 		GameObject().myTransform->CopyRotation(transform->Transform());
+
+		LockMovementFor(9.0f);
 
 		return;
 	}
 
 	if (PostMaster::CompareStringMessage(PostMaster::SMSG_OUTRO2, aMsg.myMessageType))
 	{
-		if (myEventCounter > 1)
-			return;
-		myEventCounter++;
+		//if (myEventCounter > 1)
+		//	return;
+		//myEventCounter++;
+
+		int researcherIndex = 32;
+		CMainSingleton::PostMaster().Send({ EMessageType::PlayResearcherEvent, &researcherIndex });
 
 		PostMaster::SBoxColliderEvenTriggerData data = *static_cast<PostMaster::SBoxColliderEvenTriggerData*>(aMsg.data);
 		CTransformComponent* transform = data.myTransform;
 		GameObject().myTransform->CopyRotation(transform->Transform());
-		
-		LockMovementFor(5.0f);
+
+		IRONWROUGHT->SetBrokenScreen(true);
+		IRONWROUGHT->GetActiveScene().ReInitCanvas(ASSETPATH("Assets/Graphics/UI/JSON/UI_HUD_Broken.json"), true);
+		LockMovementFor(14.0f);
 
 		return;
 	}
 
 	if (PostMaster::CompareStringMessage(PostMaster::SMSG_OUTRO3, aMsg.myMessageType))
 	{
-		if (myEventCounter > 2)
-			return;
-		myEventCounter++;
+		//if (myEventCounter > 2)
+		//	return;
+		//myEventCounter++;
+
+		int researcherIndex = 33;
+		CMainSingleton::PostMaster().Send({ EMessageType::PlayResearcherEvent, &researcherIndex });
 
 		PostMaster::SBoxColliderEvenTriggerData data = *static_cast<PostMaster::SBoxColliderEvenTriggerData*>(aMsg.data);
 		CTransformComponent* transform = data.myTransform;
 		GameObject().myTransform->CopyRotation(transform->Transform());
 
-		LockMovementFor(5.0f);
+		LockMovementFor(6.0f);
 
 		return;
+	}
+
+	if (PostMaster::CompareStringMessage(PostMaster::SMSG_OUTRO4, aMsg.myMessageType))
+	{
+		//if (myEventCounter > 3)
+		//	return;
+		//myEventCounter++;
+
+		int researcherIndex = 34;
+		CMainSingleton::PostMaster().Send({ EMessageType::PlayResearcherEvent, &researcherIndex });
+
+		PostMaster::SBoxColliderEvenTriggerData data = *static_cast<PostMaster::SBoxColliderEvenTriggerData*>(aMsg.data);
+		CTransformComponent* transform = data.myTransform;
+		GameObject().myTransform->CopyRotation(transform->Transform());
+
+		LockMovementFor(7.0f);
+
+		return;
+	}
+
+	if (PostMaster::CompareStringMessage(PostMaster::SMSG_OUTRO5, aMsg.myMessageType))
+	{
+		//if (myEventCounter > 4)
+		//	return;
+		//myEventCounter++;
+
+		int researcherIndex = 35;
+		CMainSingleton::PostMaster().Send({ EMessageType::PlayResearcherEvent, &researcherIndex });
+
+		PostMaster::SBoxColliderEvenTriggerData data = *static_cast<PostMaster::SBoxColliderEvenTriggerData*>(aMsg.data);
+		CTransformComponent* transform = data.myTransform;
+		GameObject().myTransform->CopyRotation(transform->Transform());
+
+		LockMovementFor(6.0f);
+
+		return;
+	}
+
+	if (PostMaster::CompareStringMessage(PostMaster::SMSG_OUTRO6, aMsg.myMessageType))
+	{
+		//if (myEventCounter > 5)
+		//	return;
+		//myEventCounter++;
+
+		int researcherIndex = 36;
+		CMainSingleton::PostMaster().Send({ EMessageType::PlayResearcherEvent, &researcherIndex });
+
+		PostMaster::SBoxColliderEvenTriggerData data = *static_cast<PostMaster::SBoxColliderEvenTriggerData*>(aMsg.data);
+		CTransformComponent* transform = data.myTransform;
+		GameObject().myTransform->CopyRotation(transform->Transform());
+
+		LockMovementFor(11.0f);
+
+		return;
+	}
+
+	if (PostMaster::CompareStringMessage(PostMaster::SMSG_OUTRO7, aMsg.myMessageType))
+	{
+		//if (myEventCounter > 6)
+		//	return;
+		//myEventCounter++;
+
+		int researcherIndex = 37;
+		CMainSingleton::PostMaster().Send({ EMessageType::PlayResearcherEvent, &researcherIndex });
+
+		PostMaster::SBoxColliderEvenTriggerData data = *static_cast<PostMaster::SBoxColliderEvenTriggerData*>(aMsg.data);
+		CTransformComponent* transform = data.myTransform;
+		GameObject().myTransform->CopyRotation(transform->Transform());
+
+		myCamera->GameObject().GetComponent<CCameraComponent>()->Fade(false, 1.5f, true);
+
+		// 13seconds
+
+		return;
+	}
+
+	if (PostMaster::CompareStringMessage(PostMaster::SMSG_UIMOVE, aMsg.myMessageType))
+	{
+		CMainSingleton::PostMaster().Send({ PostMaster::SMSG_DISABLE_CANVAS, nullptr });
+		CMainSingleton::PostMaster().Send({ PostMaster::SMSG_DISABLE_GLOVE, nullptr });
+		CMainSingleton::PopupTextService().SpawnPopup(EPopupType::Info, "Move");
+	}
+
+	if (PostMaster::CompareStringMessage(PostMaster::SMSG_UIINTERACT, aMsg.myMessageType))
+	{
+		CMainSingleton::PopupTextService().SpawnPopup(EPopupType::Info, "Interact");
+	}
+
+	if (PostMaster::CompareStringMessage(PostMaster::SMSG_UIPULL, aMsg.myMessageType))
+	{
+		CMainSingleton::PopupTextService().SpawnPopup(EPopupType::Info, "Pull");
+	}
+
+	if (PostMaster::CompareStringMessage(PostMaster::SMSG_UIPUSH, aMsg.myMessageType))
+	{
+		CMainSingleton::PopupTextService().SpawnPopup(EPopupType::Info, "Push");
+	}
+
+	if (PostMaster::CompareStringMessage(PostMaster::SMSG_UICROUCH, aMsg.myMessageType))
+	{
+		CMainSingleton::PopupTextService().SpawnPopup(EPopupType::Info, "Crouch");
+	}
+
+	if (PostMaster::CompareStringMessage(PostMaster::SMSG_UIJUMP, aMsg.myMessageType))
+	{
+		CMainSingleton::PopupTextService().SpawnPopup(EPopupType::Info, "Jump");
 	}
 }
 
@@ -302,13 +481,16 @@ void CPlayerControllerComponent::ControllerUpdate()
 void CPlayerControllerComponent::Move(Vector3 aDir)
 {
 	physx::PxControllerCollisionFlags collisionflag = myController->GetController().move({ aDir.x, aDir.y, aDir.z}, 0, CTimer::FixedDt(), 0);
+	
+	if (!myIsGrounded && (collisionflag & physx::PxControllerCollisionFlag::eCOLLISION_DOWN)) 
+	{
+		CMainSingleton::PostMaster().SendLate({ EMessageType::PlayStepSound, nullptr }); // Landing
+	}
+	
 	myIsGrounded = (collisionflag & physx::PxControllerCollisionFlag::eCOLLISION_DOWN);
 	if (myIsGrounded)
 	{
 		myAirborneTimer = 0.f;
-
-		if (myLockPlayerInput)
-			return;
 
 		Vector2 horizontalDir(aDir.x, aDir.z);
 		if (horizontalDir.LengthSquared() > 0.0f)
@@ -365,7 +547,7 @@ void CPlayerControllerComponent::CrouchUpdate(const float& dt)
 		return;
 	}
 
-	if(myIsCrouching)
+	if(myIsCrouching && myCanStand)
 		myCrouchingLerp += dt;
 	else
 		myCrouchingLerp -= dt;
@@ -373,7 +555,9 @@ void CPlayerControllerComponent::CrouchUpdate(const float& dt)
 
 void CPlayerControllerComponent::OnCrouch()
 {
-	myIsCrouching = !myIsCrouching;
+	if (myCanStand) {
+		myIsCrouching = !myIsCrouching;
+	}
 	if (myIsCrouching)
 	{
 		myController->GetController().resize(myColliderHeightCrouched);
@@ -382,9 +566,20 @@ void CPlayerControllerComponent::OnCrouch()
 	}
 	else
 	{
-		myController->GetController().resize(myColliderHeightStanding);
-		mySpeed = myWalkSpeed;
-		myCrouchingLerp = 1.0f;
+		Vector3 start = GameObject().myTransform->GetWorldMatrix().Translation();
+		start.y += (myColliderHeightStanding / 2);
+		Vector3 dir = GameObject().myTransform->GetWorldMatrix().Up();
+		//checks if we can stand up 
+		PxRaycastBuffer hit = CEngine::GetInstance()->GetPhysx().Raycast(start, dir, (myColliderHeightStanding), CPhysXWrapper::ELayerMask::STATIC_ENVIRONMENT);
+		if (hit.getNbAnyHits() <= 0) {
+			myCanStand = true;
+			myController->GetController().resize(myColliderHeightStanding);
+			mySpeed = myWalkSpeed;
+			myCrouchingLerp = 1.0f;
+		}
+		else {
+			myCanStand = false;
+		}
 	}
 }
 
@@ -434,7 +629,7 @@ void CPlayerControllerComponent::UpdateMovementLock()
 	myMovement = { 0.0f, myMovement.y, 0.0f };
 }
 
-void CPlayerControllerComponent::OnInputLockEvent()
+void CPlayerControllerComponent::InitForceForward()
 {
 	Vector3 vertical =	-GameObject().myTransform->GetLocalMatrix().Forward();
 	float y = myMovement.y;
@@ -442,7 +637,7 @@ void CPlayerControllerComponent::OnInputLockEvent()
 	myMovement.y = y;
 }
 
-void CPlayerControllerComponent::OnInputLockUpdate()
+void CPlayerControllerComponent::UpdateForceForward()
 {
 	const float horizontalInput = Input::GetInstance()->GetAxis(Input::EAxis::Horizontal);
 	const float verticalInput = Input::GetInstance()->GetAxis(Input::EAxis::Vertical);
@@ -461,6 +656,18 @@ void CPlayerControllerComponent::OnInputLockUpdate()
 		myMovement = (vertical) * mySpeed; //* 0.5f;
 		myMovement.y = y;
 	}
+}
+
+void CPlayerControllerComponent::InitStandStill(const float& aStandStillTimer)
+{
+	LockMovementFor(aStandStillTimer);
+	myPlayerMovementLock = EPlayerMovementLock::ForceStandStill;
+}
+
+void CPlayerControllerComponent::UpdateStandStill()
+{
+	if (myMovementLockTimer <= 0.0f)
+		myPlayerMovementLock = EPlayerMovementLock::None;
 }
 
 void CPlayerControllerComponent::BoundsCheck()

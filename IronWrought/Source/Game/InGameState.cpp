@@ -37,10 +37,14 @@
 	void TEMP_VFX(CScene* aScene);
 #endif
 
+#ifdef VERTICAL_SLICE
+	bool gHasPlayedAudio = false;
+#endif
+
 CInGameState::CInGameState(CStateStack& aStateStack, const CStateStack::EState aState)
-	: CState(aStateStack, aState),
-	myExitLevel(false)
+	: CState(aStateStack, aState)
 	, myEnemyAnimationController(nullptr)
+	, myExitTo(EExitTo::None)
 {
 }
 
@@ -68,9 +72,6 @@ void CInGameState::Awake()
 	CMainSingleton::PostMaster().Subscribe("Level_1-2", this);
 	CMainSingleton::PostMaster().Subscribe("Level_2-1", this);
 	CMainSingleton::PostMaster().Subscribe("Level_2-2", this);
-
-	
-
 }
 
 
@@ -78,14 +79,25 @@ void CInGameState::Start()
 {
 	myEnemyAnimationController->Activate();
 	CEngine::GetInstance()->SetActiveScene(myState);
+	IRONWROUGHT->SetBrokenScreen(false);
 	IRONWROUGHT->GetActiveScene().CanvasIsHUD();
 	IRONWROUGHT->HideCursor();
-	myExitLevel = false;
+
+	myExitTo = EExitTo::None;
+
+#ifdef VERTICAL_SLICE
+	if (gHasPlayedAudio == false)
+	{
+		gHasPlayedAudio = true;
+		CMainSingleton::PostMaster().SendLate({ EMessageType::GameStarted, nullptr });
+	}
+#endif
 
 	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_DISABLE_GLOVE, this);
 	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_ENABLE_GLOVE, this);
 	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_DISABLE_CANVAS, this);
 	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_ENABLE_CANVAS, this);
+	CMainSingleton::PostMaster().Subscribe(PostMaster::SMSG_TO_MAIN_MENU, this);
 }
 
 void CInGameState::Stop()
@@ -98,6 +110,7 @@ void CInGameState::Stop()
 	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_ENABLE_GLOVE, this);
 	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_DISABLE_CANVAS, this);
 	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_ENABLE_CANVAS, this);
+	CMainSingleton::PostMaster().Unsubscribe(PostMaster::SMSG_TO_MAIN_MENU, this);
 }
 
 void CInGameState::Update()
@@ -109,13 +122,28 @@ void CInGameState::Update()
 
 	DEBUGFunctionality();
 
-	if (myExitLevel)
+	switch (myExitTo)
 	{
-		myExitLevel = false;
-		myStateStack.PopTopAndPush(CStateStack::EState::LoadLevel);
+		case EExitTo::AnotherLevel:
+		{
+			myExitTo = EExitTo::None;
+			myStateStack.PopTopAndPush(CStateStack::EState::LoadLevel);
+		}break;
+
+		case EExitTo::MainMenu:
+		{
+			myExitTo = EExitTo::None;
+			myStateStack.PopUntil(CStateStack::EState::MainMenu);
+#ifdef VERTICAL_SLICE
+			gHasPlayedAudio = false;
+#endif
+		}break;
+
+		case EExitTo::None:
+		break;
+
+		default:break;
 	}
-
-
 }
 
 void CInGameState::ReceiveEvent(const EInputEvent aEvent)
@@ -137,7 +165,11 @@ void CInGameState::Receive(const SStringMessage& aMessage)
 {
 	if (PostMaster::LevelCheck(aMessage.myMessageType))
 	{
-		myExitLevel = true;
+		myExitTo = EExitTo::AnotherLevel;
+	}
+	if (PostMaster::CompareStringMessage(aMessage.myMessageType, PostMaster::SMSG_TO_MAIN_MENU))
+	{
+		myExitTo = EExitTo::MainMenu;
 	}
 
 	if (PostMaster::DisableCanvas(aMessage.myMessageType))

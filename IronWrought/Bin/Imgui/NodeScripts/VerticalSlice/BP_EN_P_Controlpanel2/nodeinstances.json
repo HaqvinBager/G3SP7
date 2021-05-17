@@ -1,6 +1,6 @@
 {
     "UID_MAX": {
-        "Num": 311
+        "Num": 524
     },
     "NodeInstances": [
         {
@@ -492,6 +492,168 @@
                 {
                     "Index": 3,
                     "UID": 311,
+                    "DATA": false,
+                    "DATA_TYPE": "BOOL"
+                }
+            ]
+        },
+        {
+            "NodeType ID": 2,
+            "NodeType": 0,
+            "UID": 487,
+            "Position": {
+                "X": -2147483648,
+                "Y": -2147483648
+            },
+            "Pins": [
+                {
+                    "Index": 0,
+                    "UID": 490,
+                    "DATA": "E",
+                    "DATA_TYPE": "STRING"
+                },
+                {
+                    "Index": 1,
+                    "UID": 491,
+                    "DATA": "",
+                    "DATA_TYPE": ""
+                }
+            ]
+        },
+        {
+            "NodeType ID": 3,
+            "NodeType": 1,
+            "UID": 492,
+            "Position": {
+                "X": -2147483648,
+                "Y": -2147483648
+            },
+            "Pins": [
+                {
+                    "Index": 0,
+                    "UID": 495,
+                    "DATA": "",
+                    "DATA_TYPE": "BOOL"
+                },
+                {
+                    "Index": 1,
+                    "UID": 496,
+                    "DATA": true,
+                    "DATA_TYPE": "BOOL"
+                }
+            ]
+        },
+        {
+            "NodeType ID": 37,
+            "NodeType": 0,
+            "UID": 497,
+            "Position": {
+                "X": -2147483648,
+                "Y": -2147483648
+            },
+            "Pins": [
+                {
+                    "Index": 0,
+                    "UID": 502,
+                    "DATA": "",
+                    "DATA_TYPE": ""
+                },
+                {
+                    "Index": 1,
+                    "UID": 503,
+                    "DATA": "",
+                    "DATA_TYPE": ""
+                },
+                {
+                    "Index": 2,
+                    "UID": 504,
+                    "DATA": "",
+                    "DATA_TYPE": ""
+                },
+                {
+                    "Index": 3,
+                    "UID": 505,
+                    "DATA": false,
+                    "DATA_TYPE": "BOOL"
+                }
+            ]
+        },
+        {
+            "NodeType ID": 1,
+            "NodeType": 1,
+            "UID": 506,
+            "Position": {
+                "X": -2147483648,
+                "Y": -2147483648
+            },
+            "Pins": [
+                {
+                    "Index": 0,
+                    "UID": 509,
+                    "DATA": "",
+                    "DATA_TYPE": "BOOL"
+                },
+                {
+                    "Index": 1,
+                    "UID": 510,
+                    "DATA": true,
+                    "DATA_TYPE": "BOOL"
+                }
+            ]
+        },
+        {
+            "NodeType ID": 48,
+            "NodeType": 0,
+            "UID": 511,
+            "Position": {
+                "X": -2147483648,
+                "Y": -2147483648
+            },
+            "Pins": [
+                {
+                    "Index": 0,
+                    "UID": 514,
+                    "DATA": "",
+                    "DATA_TYPE": ""
+                },
+                {
+                    "Index": 1,
+                    "UID": 515,
+                    "DATA": 6,
+                    "DATA_TYPE": "INT"
+                }
+            ]
+        },
+        {
+            "NodeType ID": 37,
+            "NodeType": 0,
+            "UID": 516,
+            "Position": {
+                "X": -2147483648,
+                "Y": -2147483648
+            },
+            "Pins": [
+                {
+                    "Index": 0,
+                    "UID": 521,
+                    "DATA": "",
+                    "DATA_TYPE": ""
+                },
+                {
+                    "Index": 1,
+                    "UID": 522,
+                    "DATA": "",
+                    "DATA_TYPE": ""
+                },
+                {
+                    "Index": 2,
+                    "UID": 523,
+                    "DATA": "",
+                    "DATA_TYPE": ""
+                },
+                {
+                    "Index": 3,
+                    "UID": 524,
                     "DATA": false,
                     "DATA_TYPE": "BOOL"
                 }

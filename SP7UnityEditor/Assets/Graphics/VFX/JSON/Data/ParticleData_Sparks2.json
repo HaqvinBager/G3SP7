@@ -1,18 +1,18 @@
 {
-  "Max Number Of Particles": 48,
+  "Max Number Of Particles": 35,
   "Spawn Rate": 136.5,
   "Lifetime": 0.17000000178813935,
   "Speed": 15.510000228881836,
-  "Start Color R": 20.0,
-  "Start Color G": 15.0,
-  "Start Color B": 10.0,
-  "Start Color A": 1.0,
-  "End Color R": 20.0,
-  "End Color G": 20.0,
-  "End Color B": 10.0,
-  "End Color A": 1.0,
+  "Start Color R": 10.0,
+  "Start Color G": 3.9215686321258547,
+  "Start Color B": 3.9215686321258547,
+  "Start Color A": 10.0,
+  "End Color R": 10.0,
+  "End Color G": 1.9607843160629273,
+  "End Color B": 0.003921568859368563,
+  "End Color A": 3.0,
   "Start Size": 0.09000000357627869,
-  "End Size": 0.019999999552965165,
+  "End Size": 0.009999999776482582,
   "Start Direction X": 0.0,
   "Start Direction Y": 0.0,
   "Start Direction Z": 0.0,
@@ -35,23 +35,23 @@
   "Spawn Direction Y Randomize To": 1.0,
   "Spawn Direction Z Randomize From": -1.0,
   "Spawn Direction Z Randomize To": 1.0,
-  "Texture Path": "Assets/Graphics/VFX/Texture/VFX_Particle_spark.dds",
+  "Texture Path": "Assets/Graphics/VFX/Texture/VFX_Particle_spark2.dds",
   "Color Curve": [
     {
       "x": 0.0,
-      "y": 1.0
+      "y": 0.8999999761581421
     },
     {
-      "x": 0.3499999940395355,
-      "y": 0.9800000190734863
+      "x": 0.3149999976158142,
+      "y": 0.8650000095367432
     },
     {
-      "x": 0.6800000071525574,
-      "y": 0.9900000095367432
+      "x": 0.5550000071525574,
+      "y": 0.6549999713897705
     },
     {
       "x": 1.0,
-      "y": 1.0
+      "y": 0.7749999761581421
     }
   ],
   "Size Curve": [

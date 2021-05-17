@@ -109,6 +109,8 @@ void CGravityGloveComponent::Update()
 					myCurrentTarget.myRigidBodyPtr->GetComponent<CHealthPickupComponent>()->Destroy();
 					myCurrentTarget.myRigidBodyPtr = nullptr;
 
+					CMainSingleton::PostMaster().SendLate({ EMessageType::PlayerHealthPickup, nullptr }); // For AudioManager
+
 					PostMaster::SCrossHairData data; // Wind down
 					data.myIndex = 0;
 					data.myShouldBeReversed = true;

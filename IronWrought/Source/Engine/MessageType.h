@@ -77,6 +77,11 @@ enum class EMessageType
 	EnemyDisabled,
 
 	BootUpState,
+	PlayJumpSound,
+	
+	GameStarted,
+
+	LockFPSCamera,
 
 	Count
 };
