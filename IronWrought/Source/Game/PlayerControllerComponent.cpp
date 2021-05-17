@@ -23,7 +23,7 @@
 #include "PopupTextService.h"
 
 #define PLAYER_MAX_POSITION 100.0f
-#define PLAYER_MIN_POSITION -100.0f
+#define PLAYER_MIN_POSITION -500.0f
 
 CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, const float aWalkSpeed, const float aCrouchSpeed, physx::PxUserControllerHitReport* aHitReport)
 	: CComponent(gameObject)
@@ -767,6 +767,7 @@ void CPlayerControllerComponent::UpdateEndEvent()
 				IRONWROUGHT->GetActiveScene().ReInitCanvas(ASSETPATH("Assets/Graphics/UI/JSON/UI_HUD_End.json"), true);
 				IRONWROUGHT->GetActiveScene().CanvasIsHUD(false);
 				myEndEvent = EEndEventState::AfterFall;
+				myPlayerMovementLock = EPlayerMovementLock::ForceStandStill;
 			}
 		}break;
 
