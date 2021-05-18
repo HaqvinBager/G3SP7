@@ -6,6 +6,7 @@
 
 #include <SpriteInstance.h>
 #include <SpriteFactory.h>
+#include <Canvas.h>
 
 #include <CameraComponent.h>
 
@@ -32,26 +33,33 @@ void CBootUpState::Awake()
 	CScene* scene = CSceneManager::CreateEmpty();
 
 	CEngine::GetInstance()->AddScene(myState, scene);
+	scene->InitCanvas();
 	CEngine::GetInstance()->SetActiveScene(myState);
 }
 
 void CBootUpState::Start()
 {
 	rapidjson::Document document = CJsonReader::Get()->LoadDocument("Json/Settings/SplashSettings.json");
+	
+	CEngine::GetInstance()->SetActiveScene(myState);
 
-	auto& scene = IRONWROUGHT->GetActiveScene();
-
-	myLogos.emplace_back(new CSpriteInstance(scene, true));
+	CCanvas& canvas = *IRONWROUGHT->GetActiveScene().Canvas();
+	myLogos.emplace_back(new CSpriteInstance());
 	myLogos.back()->Init(CSpriteFactory::GetInstance()->GetSprite(ASSETPATH(document["TGA Logo Path"].GetString())));
 	myLogos.back()->SetShouldRender(true);
 
-	myLogos.emplace_back(new CSpriteInstance(scene, true));
+	myLogos.emplace_back(new CSpriteInstance());
 	myLogos.back()->Init(CSpriteFactory::GetInstance()->GetSprite(ASSETPATH(document["Group Logo Path"].GetString())));
 	myLogos.back()->SetShouldRender(false);
 
-	myLogos.emplace_back(new CSpriteInstance(scene, true));
+	myLogos.emplace_back(new CSpriteInstance());
 	myLogos.back()->Init(CSpriteFactory::GetInstance()->GetSprite(ASSETPATH(document["Engine Logo Path"].GetString())));
 	myLogos.back()->SetShouldRender(false);
+
+	for (auto& sprite : myLogos)
+	{
+		canvas.AddSpriteToCanvas(sprite);
+	}
 
 	CTimer::Mark();
 	myTimer = 0.0f;

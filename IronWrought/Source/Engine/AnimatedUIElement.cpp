@@ -11,51 +11,35 @@
 #include "rapidjson\document.h"
 #include "rapidjson\istreamwrapper.h"
 
-CAnimatedUIElement::CAnimatedUIElement(CScene& aScene, bool addToScene)
-    :  mySpriteInstance(new CSpriteInstance(aScene, addToScene))
-    , myData(nullptr)
-    , myLevel(1.0f)
-    , myHasBeenCleared(false)
-{
-    if (addToScene == false) {
-        mySpriteInstance->SetShouldRender(false);
-    }
-    aScene.AddInstance(this);
-}
-
-CAnimatedUIElement::CAnimatedUIElement(const std::string& aFilePath, CScene& aScene, bool addToScene) 
+CAnimatedUIElement::CAnimatedUIElement()
     : mySpriteInstance(nullptr)
     , myLevel(1.0f)
-    , myHasBeenCleared(false)
+    , myData(nullptr)
+{}
+
+CAnimatedUIElement::CAnimatedUIElement(const std::string& aFilePath, const float& aLevel) 
+    : mySpriteInstance(nullptr)
+    , myLevel(aLevel)
 {
-    mySpriteInstance = new CSpriteInstance(aScene, addToScene);
-    Init(aFilePath, addToScene, myLevel);
-    aScene.AddInstance(this);
+    mySpriteInstance = new CSpriteInstance();
+    Init(aFilePath, myLevel);
 }
 
 CAnimatedUIElement::~CAnimatedUIElement()
 {
-    // This is done for reinit of canvas. / Aki 20210401
-    if (myHasBeenCleared)
-        return;
-
-    CScene& scene = IRONWROUGHT_ACTIVE_SCENE;
-    if (scene.RemoveInstance(mySpriteInstance))
-    {
-        delete mySpriteInstance;
-        mySpriteInstance = nullptr;
-    }
+    delete mySpriteInstance;
+    mySpriteInstance = nullptr;
 }
 
-void CAnimatedUIElement::Init(const std::string& aFilePath, const bool& aAddToScene, const float& aLevel)
+void CAnimatedUIElement::Init(const std::string& aFilePath, const float& aLevel)
 {
     using namespace rapidjson;
     Document document = CJsonReader::Get()->LoadDocument(aFilePath);
 
+    if(!mySpriteInstance)
+        mySpriteInstance = new CSpriteInstance();
+
     mySpriteInstance->Init(CSpriteFactory::GetInstance()->GetSprite(ASSETPATH(document["Texture Overlay"].GetString())));
-    if (aAddToScene == false) {
-        mySpriteInstance->SetShouldRender(false);
-    }
 
     myData = CSpriteFactory::GetInstance()->GetVFXSprite(aFilePath);
 
@@ -86,22 +70,24 @@ void CAnimatedUIElement::SetShouldRender(const bool aShouldRender)
     mySpriteInstance->SetShouldRender(aShouldRender);
 }
 
+const bool CAnimatedUIElement::GetShouldRender() const
+{
+    return mySpriteInstance->GetShouldRender();
+}
+
 void CAnimatedUIElement::SetScale(const Vector2& aScale)
 {
     mySpriteInstance->SetSize(aScale);
 }
 
-void CAnimatedUIElement::SetRenderLayer(const ERenderOrder& aRenderLayer, CScene& aScene)
+void CAnimatedUIElement::SetRenderLayer(const ERenderOrder& aRenderLayer)
 {
-    mySpriteInstance->SetRenderOrder(aRenderLayer, aScene);
+    mySpriteInstance->SetRenderOrder(aRenderLayer);
 }
 
-void CAnimatedUIElement::ClearFromScene(CScene& aScene)
+const ERenderOrder CAnimatedUIElement::GetRendererLayer() const
 {
-    if (aScene.RemoveInstance(mySpriteInstance))
-    {
-        myHasBeenCleared = true;
-    }
+    return mySpriteInstance->GetRenderOrder();
 }
 
 CSpriteInstance* CAnimatedUIElement::GetInstance() const

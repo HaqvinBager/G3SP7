@@ -130,26 +130,21 @@ void CButton::Enabled(const bool& anIsEnabled)
 	}
 }
 
-inline const bool CButton::Enabled()
+const bool CButton::Enabled()
 {
 	return myEnabled;
 }
 
-void CButton::SetRenderLayer(const ERenderOrder& aRenderLayer, CScene& aScene)
+void CButton::SetRenderLayer(const ERenderOrder& aRenderLayer)
 {
-	mySprites[0]->SetRenderOrder(aRenderLayer, aScene);
-	mySprites[1]->SetRenderOrder(aRenderLayer, aScene);
-	mySprites[2]->SetRenderOrder(aRenderLayer, aScene);
+	mySprites[0]->SetRenderOrder(aRenderLayer);
+	mySprites[1]->SetRenderOrder(aRenderLayer);
+	mySprites[2]->SetRenderOrder(aRenderLayer);
 }
 
-void CButton::ClearFromScene(CScene& aScene)
+const ERenderOrder CButton::GetRenderLayer()
 {
-	for (size_t i = 0; i < mySprites.size(); ++i)
-	{
-		aScene.RemoveInstance(mySprites[i]);
-	}
-
-	myHasBeenCleared = true;
+	return mySprites[0]->GetRenderOrder();
 }
 
 CButton::CButton()
@@ -157,31 +152,21 @@ CButton::CButton()
 	, myEnabled(false)
 	, myIsMouseHover(false)
 	, myWidgetToToggleIndex(-1)
-	, myHasBeenCleared(false)
 {}
 
-CButton::CButton(SButtonData& someData, CScene& aScene)
+CButton::CButton(SButtonData& someData)
 {
-	Init(someData, aScene);
+	Init(someData);
 }
 
 CButton::~CButton()
 {
-	if (myHasBeenCleared)
-	{
-		delete mySprites.at(static_cast<size_t>(EButtonState::Idle));
-		delete mySprites.at(static_cast<size_t>(EButtonState::Hover));
-		delete mySprites.at(static_cast<size_t>(EButtonState::Click));
-	}
-	// Scene should handle the deletion... ? / Aki 2021/01/04
-	// Scene handles the deletion. 2021/04/08
-//	IRONWROUGHT->GetActiveScene().RemoveInstance(mySprites.at(static_cast<size_t>(EButtonState::Idle)));
-//	IRONWROUGHT->GetActiveScene().RemoveInstance(mySprites.at(static_cast<size_t>(EButtonState::Hover)));
-//	IRONWROUGHT->GetActiveScene().RemoveInstance(mySprites.at(static_cast<size_t>(EButtonState::Click)));
-//
+	delete mySprites.at(static_cast<size_t>(EButtonState::Idle));
+	delete mySprites.at(static_cast<size_t>(EButtonState::Hover));
+	delete mySprites.at(static_cast<size_t>(EButtonState::Click));
 }
 
-void CButton::Init(SButtonData& someData, CScene& aScene)
+void CButton::Init(SButtonData& someData)
 {
 	myMessagesToSend = someData.myMessagesToSend;
 	myState = EButtonState::Idle;
@@ -191,19 +176,14 @@ void CButton::Init(SButtonData& someData, CScene& aScene)
 	CSpriteFactory& spriteFactory = *CSpriteFactory::GetInstance();
 	for (unsigned int i = 0; i < mySprites.max_size(); ++i) 
 	{
-		bool addToScene = false;// For some reason the sprite won't render/show on screen unless added to the scene after Init(),SetRenderOrder() & SetPosition. Maybe I am just going crazy. / Aki 03-31-2021
 		if (mySprites.at(i) == nullptr)
 		{
-			mySprites.at(i) = new CSpriteInstance(aScene, false);
-			addToScene = true;
+			mySprites.at(i) = new CSpriteInstance();
 		}
 
 		mySprites.at(i)->Init(spriteFactory.GetSprite(someData.mySpritePaths.at(i)));
-		mySprites.at(i)->SetRenderOrder(ERenderOrder::Layer2, aScene);// Potentionaly an issue, should be based of the parent canvas layer
+		mySprites.at(i)->SetRenderOrder(ERenderOrder::Layer2);
 		mySprites.at(i)->SetPosition({ someData.myPosition.x, someData.myPosition.y });
-
-		if(addToScene)
-			aScene.AddInstance(mySprites.at(i));
 		
 	}
 	mySprites.at(static_cast<size_t>(EButtonState::Hover))->SetShouldRender(false);

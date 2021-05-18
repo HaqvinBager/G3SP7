@@ -78,7 +78,7 @@ private:
 	{
 		None,
 		ForceFoward,
-		ForceStandStill
+		ForceStandStill,
 	};
 
 
@@ -118,7 +118,7 @@ private:
 		AfterFall,
 		End
 	};
-	float myEndEventTimer = 13.0f;
+	float myEndEventTimer;
 	EEndEventState myEndEvent = EEndEventState::Disabled;
 
 	//CRigidBodyComponent* myLadder;

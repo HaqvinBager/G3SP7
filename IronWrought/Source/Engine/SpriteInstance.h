@@ -52,7 +52,6 @@ struct SSpriteAnimationData
 class CSpriteInstance
 {
 public:
-	CSpriteInstance(CScene& aScene, bool aAddToScene = true);
 	CSpriteInstance();
 	~CSpriteInstance();
 
@@ -87,7 +86,7 @@ public:
 	inline const bool HasAnimations() const { return myAnimationFrames.size() > 0; }
 
 	ERenderOrder GetRenderOrder() const { return myRenderOrder; }
-	void SetRenderOrder(ERenderOrder aRenderOrder, CScene& aScene);
+	void SetRenderOrder(ERenderOrder aRenderOrder);
 
 private:
 	std::vector<Vector4> myAnimationFrames;

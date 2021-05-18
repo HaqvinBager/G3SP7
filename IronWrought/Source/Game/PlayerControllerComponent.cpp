@@ -46,6 +46,8 @@ CPlayerControllerComponent::CPlayerControllerComponent(CGameObject& gameObject, 
 	, myMovementLockTimer(0.0f)
 	, myStepTime(aWalkSpeed * 5.0f)
 	, myCanStand(true)
+	, myCrouchingLerp(0.0f)
+	, myEndEventTimer(0.0f)
 {
 	INPUT_MAPPER->AddObserver(EInputEvent::Jump, this);
 	INPUT_MAPPER->AddObserver(EInputEvent::Crouch, this);
@@ -433,7 +435,7 @@ void CPlayerControllerComponent::Receive(const SStringMessage& aMsg)
 		myCamera->GameObject().GetComponent<CCameraComponent>()->Fade(false, 1.5f, true);
 		myEndEvent = EEndEventState::Active;
 		// 13seconds voice clip length
-		myEndEventTimer = 11.0f;
+		myEndEventTimer = 9.0f;
 
 		return;
 	}
@@ -560,9 +562,9 @@ void CPlayerControllerComponent::CrouchUpdate(const float& dt)
 	}
 
 	if(myIsCrouching && myCanStand)
-		myCrouchingLerp += dt;
+		myCrouchingLerp += dt * 2.0f;
 	else
-		myCrouchingLerp -= dt;
+		myCrouchingLerp -= dt * 2.0f;
 }
 
 void CPlayerControllerComponent::OnCrouch()
@@ -707,45 +709,6 @@ void CPlayerControllerComponent::LadderUpdate()
 			LadderExit();
 		}
 	}
-
-	//if (myHasJumped)
-	//{
-	//	LadderExit();
-	//}
-
-	//	std::cout << myMovement.z << std::endl;
-	//	if (myMovement.z < 0.0f)
-	//	{
-	//		LadderExit();
-	//	}
-	//	//std::cout << "Touched Ground" << std::endl;
-	//}
-	//else
-	//{
-	//	Move({ 0.0f, myMovement.z, 0.0f });
-	//}
-
-
-
-	//if (myLadderHasTriggered)
-	//{
-		//Nuddar vi Marken?
-
-		//Försöker vi gå neråt?
-	//}
-
-	//Best�mmer n�r myIsOnladder s�tts till false
-
-	//G�ra s� att vi g�r upp och ner f�r Ladder n�r vi trycker p� W eller S
-	/*if (myIsGrounded && myMovement.LengthSquared() > 0.25f)
-	{
-		myIsOnLadder = false;
-	}*/
-
-	//if (Input::GetInstance()->IsKeyPressed('K'))
-	//{
-	//	myIsOnLadder = false;
-	//}
 }
 
 void CPlayerControllerComponent::UpdateEndEvent()

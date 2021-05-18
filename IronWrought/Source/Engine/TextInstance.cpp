@@ -6,16 +6,9 @@
 
 namespace SM = DirectX::SimpleMath;
 
-CTextInstance::CTextInstance(CScene& aScene, bool aAddToScene) 
-    : myTextData(nullptr)
-    , myShouldRender(true)
-{
-    if (aAddToScene)
-       aScene.AddInstance(this);
-}
-
 CTextInstance::CTextInstance()
     : myTextData(nullptr)
+    , myShouldRender(false)
 {}
 
 CTextInstance::~CTextInstance()

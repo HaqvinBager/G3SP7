@@ -12,6 +12,7 @@
 #include "MainSingleton.h"
 #include "PopupTextService.h"
 #include "DialogueSystem.h"
+#include "Canvas.h"
 
 #include "Engine.h"
 #include "Scene.h"
@@ -443,13 +444,16 @@ void CRenderManager::Render(CScene& aScene)
 	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_ALPHABLEND);
 	myRenderStateManager.SetDepthStencilState(CRenderStateManager::DepthStencilStates::DEPTHSTENCILSTATE_ONLYREAD);
 
-	std::vector<CSpriteInstance*> sprites = aScene.CullSprites();
+	const CCanvas* canvas = aScene.Canvas();
+
+	std::vector<CSpriteInstance*> sprites;
+	canvas->EmplaceSprites(sprites);
 	CMainSingleton::PopupTextService().EmplaceSprites(sprites);
 	CMainSingleton::DialogueSystem().EmplaceSprites(sprites);
 	mySpriteRenderer.Render(sprites);
 
 	std::vector<CSpriteInstance*> animatedUIFrames;
-	std::vector<CAnimatedUIElement*> animatedUIElements = aScene.CullAnimatedUI(animatedUIFrames);
+	std::vector<CAnimatedUIElement*> animatedUIElements = canvas->EmplaceAnimatedUI(animatedUIFrames);
 	CEngine::GetInstance()->GetActiveScene().MainCamera()->EmplaceSprites(animatedUIFrames);
 	mySpriteRenderer.Render(animatedUIElements);
 	mySpriteRenderer.Render(animatedUIFrames);
@@ -458,7 +462,8 @@ void CRenderManager::Render(CScene& aScene)
 	myRenderStateManager.SetBlendState(CRenderStateManager::BlendStates::BLENDSTATE_DISABLE);
 	myRenderStateManager.SetDepthStencilState(CRenderStateManager::DepthStencilStates::DEPTHSTENCILSTATE_DEFAULT);
 
-	std::vector<CTextInstance*> textsToRender = aScene.Texts();
+	std::vector<CTextInstance*> textsToRender;
+	canvas->EmplaceTexts(textsToRender);
 	CMainSingleton::PopupTextService().EmplaceTexts(textsToRender);
 	CMainSingleton::DialogueSystem().EmplaceTexts(textsToRender);
 	myTextRenderer.Render(textsToRender);

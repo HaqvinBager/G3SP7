@@ -41,13 +41,12 @@ public:
 	CScene(const unsigned int aGameObjectCount = 0);
 	~CScene();
 
-	//static CScene* GetInstance();
 	bool Init();
 	bool InitNavMesh(const std::string& aPath);
 	bool InitCanvas(const std::string& aPath);
+	bool InitCanvas();
 	bool ReInitCanvas(const std::string& aPath, const bool& aDelete = false);
 	void CanvasIsHUD(const bool& aIsHud = true);
-	/*void UpdateCanvas()*/;
 	void DisableWidgetsOnCanvas();
 	void CanvasToggle(const bool& anIsEnabled, const bool& anIsForceEnable = false);
 
@@ -55,8 +54,6 @@ public:
 
 //UPDATE
 public:
-	void Awake();
-	void Start();
 	void Update();
 	void FixedUpdate();
 	void Receive(const SMessage& aMessage) override;
@@ -98,7 +95,7 @@ public:
 	PxScene* PXScene();
 	std::vector<CGameObject*> ModelsToOutline() const;
 	std::vector<CPointLight*>& PointLights();
-	std::vector<CTextInstance*> Texts();
+	CCanvas* Canvas();
 	const std::vector<CGameObject*>& ActiveGameObjects() const;
 //GETTERS END
 public:
@@ -113,10 +110,10 @@ public:
 	std::pair<unsigned int, std::array<CPointLight*, LIGHTCOUNT>> CullLights(CGameObject* aGameObject);
 	const std::vector<CLineInstance*>& CullLineInstances() const;
 	const std::vector<SLineTime>& CullLines() const;
-	std::vector<CAnimatedUIElement*> CullAnimatedUI(std::vector<CSpriteInstance*>& someFramesToReturn);
+
 	LightPair CullLightInstanced(CInstancedModelComponent* aModelType);
 	std::vector<CGameObject*> CullGameObjects(CCameraComponent* aMainCamera);
-	std::vector<CSpriteInstance*> CullSprites();
+
 	CGameObject* FindObjectWithID(const int aGameObjectInstanceID);
 	template<class T>
 	std::vector<CComponent*>* GetAllComponents();
@@ -130,11 +127,11 @@ public:
 	bool AddInstance(CSpotLight* aSpotLight);
 	bool AddInstance(CBoxLight* aBoxLight);
 	bool AddInstance(CLineInstance* aLineInstance);
-	bool AddInstance(CAnimatedUIElement* anAnimatedUIElement);
-	bool AddInstance(CTextInstance* aText);
+	//bool AddInstance(CAnimatedUIElement* anAnimatedUIElement);
+	//bool AddInstance(CTextInstance* aText);
 	bool AddInstance(CGameObject* aGameObject);
 	bool AddInstances(std::vector<CGameObject*>& someGameObjects);
-	bool AddInstance(CSpriteInstance* aSprite);
+	//bool AddInstance(CSpriteInstance* aSprite);
 	//PhysX
 	bool AddPXScene(PxScene* aPXScene);
 	//POPULATE SCENE END
@@ -144,10 +141,8 @@ public:
 	bool RemoveInstance(CPointLight* aPointLight);
 	bool RemoveInstance(CSpotLight* aSpotLight);
 	bool RemoveInstance(CBoxLight* aBoxLight);
-	bool RemoveInstance(CAnimatedUIElement* anAnimatedUIElement);
 	bool RemoveInstance(CGameObject* aGameObject);
-	bool RemoveInstance(CSpriteInstance* aSpriteInstance);
-	bool RemoveInstance(CTextInstance* aTextInstance);
+
 //REMOVE SPECIFIC INSTANCE END
 //CLEAR SCENE OF INSTANCES START
 	bool ClearSecondaryEnvironmentLights();
@@ -155,10 +150,8 @@ public:
 	bool ClearSpotLights();
 	bool ClearBoxLights();
 	bool ClearLineInstances();
-	bool ClearAnimatedUIElement();
-	bool ClearTextInstances();
 	bool ClearGameObjects();
-	bool ClearSprites();
+
 //CLEAR SCENE OF INSTANCES START
 
 
@@ -175,13 +168,10 @@ private:
 	std::vector<CSpotLight*> mySpotLights;
 	std::vector<CBoxLight*> myBoxLights;
 	std::vector<CLineInstance*> myLineInstances;
-	std::vector<CAnimatedUIElement*> myAnimatedUIElements;
-	std::vector<CTextInstance*> myTexts;
 	std::vector<CGameObject*> myGameObjects;
 	std::vector<CGameObject*> myModelsToOutline;
 	std::unordered_map<int, CGameObject*> myIDGameObjectMap;
 	std::unordered_map<size_t, std::vector<CComponent*>> myComponentMap;
-	std::unordered_map<ERenderOrder, std::vector<CSpriteInstance*>> mySpriteInstances;
 
 	std::queue<CComponent*> myAwakeComponents;
 	std::queue<CComponent*> myStartComponents;

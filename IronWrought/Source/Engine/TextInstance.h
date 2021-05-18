@@ -7,7 +7,6 @@ class CScene;
 class CTextInstance
 {
 public:
-	CTextInstance(CScene& aScene, bool aAddToScene = true);
 	CTextInstance();
 	~CTextInstance();
 

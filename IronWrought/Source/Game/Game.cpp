@@ -34,7 +34,8 @@ void CGame::Init()
 #ifdef NDEBUG
 	InitRealGame();
 #else
-	InitDev();
+	InitRealGame();
+	//InitDev();
 #endif
 #endif
 }

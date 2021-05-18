@@ -5,22 +5,6 @@
 #include "Engine.h"
 #include "WindowHandler.h"
 
-CSpriteInstance::CSpriteInstance(CScene& aScene, bool aAddToScene)
-	: mySprite(nullptr)
-	, myRenderOrder(ERenderOrder::Layer0)
-	, myShouldRender(true)
-	, myShouldAnimate(false)
-	, myAnimationTimer(0.0f)
-	, myCurrentAnimationIndex(0)
-	, myCurrentAnimationFrame(0)
-	, myCurrentAnimationSpeed(1.0f / 60.0f)
-	, myRotation(0.0f)
-	, myShouldLoopAnimation(false)
-	, myShouldReverseAnimation(false)
-{
-	if (aAddToScene)
-		aScene.AddInstance(this);
-}
 CSpriteInstance::CSpriteInstance()
 	: mySprite(nullptr)
 	, myRenderOrder(ERenderOrder::Layer0)
@@ -152,7 +136,6 @@ void CSpriteInstance::Update()
 		if (!myShouldReverseAnimation)
 		{
 			myCurrentAnimationFrame++;
-			std::cout << "Frame Number: " << myCurrentAnimationFrame << std::endl;
 			if (myCurrentAnimationFrame > (myAnimationData[myCurrentAnimationIndex].myNumberOfFrames + myAnimationData[myCurrentAnimationIndex].myFramesOffset - 1))
 			{
 				myShouldAnimate = myShouldLoopAnimation;
@@ -254,14 +237,11 @@ void CSpriteInstance::PlayAnimation(std::string aName, bool aShouldLoop, bool aS
 		myCurrentAnimationFrame = (myAnimationData[myCurrentAnimationIndex].myNumberOfFrames + myAnimationData[myCurrentAnimationIndex].myFramesOffset - 1);
 
 	myShouldAnimate = true;
-	std::cout << __FUNCTION__ << std::endl;
 }
 
-void CSpriteInstance::SetRenderOrder(ERenderOrder aRenderOrder, CScene& aScene)
+void CSpriteInstance::SetRenderOrder(ERenderOrder aRenderOrder)
 {
-	aScene.RemoveInstance(this);
 	myRenderOrder = aRenderOrder;
-	aScene.AddInstance(this);
 }
 
 /// <summary>
