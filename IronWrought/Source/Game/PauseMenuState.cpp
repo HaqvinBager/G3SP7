@@ -27,6 +27,7 @@ void CPauseMenuState::Start()
 {
 	CEngine::GetInstance()->SetActiveScene(myState);
 	IRONWROUGHT->ShowCursor();
+	IRONWROUGHT->GetActiveScene().ReInitCanvas(ASSETPATH("Assets/Graphics/UI/JSON/UI_PauseMenu.json"), true);
 	CMainSingleton::PostMaster().Subscribe(EMessageType::MainMenu, this);
 	CMainSingleton::PostMaster().Subscribe(EMessageType::Resume, this);
 }
