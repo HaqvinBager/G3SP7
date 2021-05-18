@@ -277,6 +277,9 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 #endif
 
 	myModelMap.emplace(aFilePath, model);
+
+	mesh = nullptr;
+
 	return model;
 }
 
@@ -301,8 +304,6 @@ CModel* CModelFactory::GetOutlineModelSubset()
 	ENGINE_HR_MESSAGE(myFramework->GetDevice()->CreatePixelShader(psData.data(), psData.size(), nullptr, &pixelShader), "Pixel Shader could not be created.");
 	psFile.close();
 	//End Shader
-
-
 
 	myOutlineModelSubset = new CModel();
 
@@ -601,6 +602,10 @@ CModel* CModelFactory::CreateInstancedModels(std::string aFilePath, int aNumberO
 	SInstancedModel instancedModel = { aFilePath, aNumberOfInstanced };
 
 	myInstancedModelMap[instancedModel] = model;
+
+	delete loaderModel;
+	mesh = nullptr;
+
 	return model;
 }
 

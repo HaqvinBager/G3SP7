@@ -139,6 +139,9 @@ CVFXBase* CVFXMeshFactory::LoadVFXBase(std::string aFilePath)
     if (myVFXBaseMap.find(aFilePath) == myVFXBaseMap.end())
         myVFXBaseMap.emplace(aFilePath, vfxBase);
 
+    delete loaderModel;
+    mesh = nullptr;
+
     return vfxBase;
 }
 
