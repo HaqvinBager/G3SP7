@@ -276,7 +276,8 @@ CModel* CModelFactory::LoadModel(std::string aFilePath)
 	model->HasBones(mesh->myModel->myNumBones > 0);
 #endif
 
-	myModelMap.emplace(aFilePath, model);
+	//myModelMap.emplace(aFilePath, model);
+	myModelMap[aFilePath] = std::move(model);
 
 	mesh = nullptr;
 
@@ -601,7 +602,7 @@ CModel* CModelFactory::CreateInstancedModels(std::string aFilePath, int aNumberO
 	model->Init(modelInstanceData);
 	SInstancedModel instancedModel = { aFilePath, aNumberOfInstanced };
 
-	myInstancedModelMap[instancedModel] = model;
+	myInstancedModelMap[instancedModel] = std::move(model);
 
 	delete loaderModel;
 	mesh = nullptr;

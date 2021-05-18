@@ -141,7 +141,6 @@ void CPlayerControllerComponent::Update()
 #ifdef _DEBUG
 	if (myCamera->IsFreeCamMode() || myCamera->IsCursorUnlocked())
 		return;
-#endif
 
 	if (Input::GetInstance()->IsKeyPressed('0'))
 	{
@@ -151,6 +150,7 @@ void CPlayerControllerComponent::Update()
 	{
 		CMainSingleton::PostMaster().Send({ PostMaster::SMSG_DISABLE_GLOVE, nullptr });
 	}
+#endif
 
 	GameObject().myTransform->Position(myController->GetPosition());
 	myAnimationComponentController->Update(myMovement);
@@ -428,9 +428,9 @@ void CPlayerControllerComponent::Receive(const SStringMessage& aMsg)
 		int researcherIndex = 37;
 		CMainSingleton::PostMaster().Send({ EMessageType::PlayResearcherEvent, &researcherIndex });
 
-		//PostMaster::SBoxColliderEvenTriggerData data = *static_cast<PostMaster::SBoxColliderEvenTriggerData*>(aMsg.data);
-		//CTransformComponent* transform = data.myTransform;
-		//GameObject().myTransform->CopyRotation(transform->Transform());
+		PostMaster::SBoxColliderEvenTriggerData data = *static_cast<PostMaster::SBoxColliderEvenTriggerData*>(aMsg.data);
+		CTransformComponent* transform = data.myTransform;
+		GameObject().myTransform->CopyRotation(transform->Transform());
 
 		myCamera->GameObject().GetComponent<CCameraComponent>()->Fade(false, 1.5f, true);
 		myEndEvent = EEndEventState::Active;

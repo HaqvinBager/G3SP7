@@ -43,7 +43,6 @@ void CBootUpState::Start()
 	
 	CEngine::GetInstance()->SetActiveScene(myState);
 
-	CCanvas& canvas = *IRONWROUGHT->GetActiveScene().Canvas();
 	myLogos.emplace_back(new CSpriteInstance());
 	myLogos.back()->Init(CSpriteFactory::GetInstance()->GetSprite(ASSETPATH(document["TGA Logo Path"].GetString())));
 	myLogos.back()->SetShouldRender(true);
@@ -56,6 +55,7 @@ void CBootUpState::Start()
 	myLogos.back()->Init(CSpriteFactory::GetInstance()->GetSprite(ASSETPATH(document["Engine Logo Path"].GetString())));
 	myLogos.back()->SetShouldRender(false);
 
+	CCanvas& canvas = *IRONWROUGHT->GetActiveScene().Canvas();
 	for (auto& sprite : myLogos)
 	{
 		canvas.AddSpriteToCanvas(sprite);

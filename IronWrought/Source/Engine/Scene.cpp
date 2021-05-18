@@ -53,7 +53,7 @@ CScene::CScene(const unsigned int aGameObjectCount)
 #endif
 {
 	myGameObjects.reserve(aGameObjectCount);
-	myPXScene = CEngine::GetInstance()->GetPhysx().CreatePXScene(this);
+	myPXScene = CEngine::GetInstance()->GetPhysx().CreatePXScene();
 
 	myModelsToOutline.resize(2);
 	for (unsigned int i = 0; i < myModelsToOutline.size(); ++i)
@@ -76,9 +76,6 @@ CScene::~CScene()
 	this->ClearPointLights();
 	this->ClearSpotLights();
 	this->ClearBoxLights();
-	//this->ClearSprites();
-	//this->ClearAnimatedUIElement();
-	//this->ClearTextInstances();
 
 	myMainCamera = nullptr;
 	delete myEnvironmentLight;
@@ -94,8 +91,8 @@ CScene::~CScene()
 	myComponentMap.clear();
 
 #ifdef _DEBUG
-	myGrid = nullptr;
 	delete myGrid;
+	myGrid = nullptr;
 #endif
 	if (myPXScene != nullptr)
 	{
@@ -678,17 +675,11 @@ bool CScene::ClearLineInstances()
 
 bool CScene::ClearGameObjects()
 {
-	// So that we can see which index might be giving us issues.
 	for (size_t i = 0; i < myGameObjects.size(); ++i)
 	{
 		delete myGameObjects[i];
 		myGameObjects[i] = nullptr;
 	}
-	//for (auto& gameObject : myGameObjects)
-	//{
-	//	delete gameObject;
-	//	gameObject = nullptr;
-	//}
 	myGameObjects.clear();
 	return true;
 }
