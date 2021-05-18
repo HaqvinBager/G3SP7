@@ -396,6 +396,7 @@ void CEngine::HideCursor(const bool& anIsInEditorMode)
 
 void CEngine::LoadGraph(const std::string& aSceneName)
 {
+	myGraphManager->Clear();
 	myGraphManager->Load(aSceneName);
 }
 

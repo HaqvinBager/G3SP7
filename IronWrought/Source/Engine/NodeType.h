@@ -185,7 +185,7 @@ class CNodeTypeCollector
 {
 public:
 	static void PopulateTypes();
-
+	static void Clear();
 	static CNodeType* GetNodeTypeFromID(unsigned int aClassID, CNodeType::ENodeType aNodeType = CNodeType::ENodeType::EDefault)
 	{
 		switch (aNodeType)

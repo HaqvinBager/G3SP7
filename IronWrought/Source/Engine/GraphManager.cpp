@@ -184,15 +184,16 @@ void CGraphManager::Clear()
 {
 	if (myGraphs.size() <= 0)
 		return;
+
 	SaveTreeToFile();
 	CUID::ClearUIDS();
 	for (auto& sGraph : myGraphs)
-	{
 		sGraph.Clear();
-	}
 	myGraphs.clear();
 	myCurrentGraph = nullptr;
+
 	CNodeDataManager::Get()->ClearStoredData();
+	CNodeTypeCollector::Clear();
 }
 
 void CGraphManager::ReTriggerUpdatingTrees()
