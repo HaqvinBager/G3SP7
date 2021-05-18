@@ -156,6 +156,23 @@ void CNodeTypeCollector::PopulateTypes()
 	//RegisterType<CNodeTypeEnemySpawn>("Spawn Enemies"); // Enabled only when testing, not ready for use yet. 23/3 Aki
 }
 
+void CNodeTypeCollector::Clear()
+{
+	for (auto& nodeType : myCustomTypes)
+	{
+		if(nodeType != NULL)
+			DegisterCustomDataType(nodeType->NodeName());
+	}
+	for (auto& nodeType : myChildTypes)
+		nodeType = nullptr;
+	for (auto& nodeType : myDefaultTypes)
+		nodeType = nullptr;
+
+	myDefaultTypeCounter = 0;
+	myCustomTypeCounter = 0;
+	myChildTypeCounter = 0;
+}
+
 void CNodeTypeCollector::RegisterNewDataType(const std::string& aNodeName, unsigned int aType)
 {
 	switch (aType)
