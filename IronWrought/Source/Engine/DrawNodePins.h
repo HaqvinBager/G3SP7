@@ -14,11 +14,15 @@ class CDrawNodePins
 public:
 	CDrawNodePins() : myGraphManager(nullptr), myHeaderTextureID(nullptr) {}
 	~CDrawNodePins() { delete myHeaderTextureID; myHeaderTextureID = nullptr; myGraphManager = nullptr; }
-	void DrawNodes();
+	
 	void GraphManager(CGraphManager& aGraphManager) { myGraphManager = &aGraphManager; }
-	ImColor GetIconColor(unsigned int aType);
+	
+	void DrawNodes();
+	
 	void DrawPinIcon(const SPin& aPin, bool aIsConnected, int anAlpha);
 	void DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInstance);
+	ImColor GetIconColor(unsigned int aType);
+	
 	ImTextureID HeaderTextureID();
 
 private:

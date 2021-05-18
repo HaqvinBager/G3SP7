@@ -25,31 +25,24 @@ public:
 		bool myShouldSave;
 	};
 
+public:
 	~CNodeDataManager();
 	static void Create() { ourInstance = new CNodeDataManager(); }
 	static CNodeDataManager* Get() { return ourInstance; }
-
-	void ClearStoredData();
-	static void SetFolderPath(const std::string& aFolderPath) { ourInstance->myCurrentFolderPath = aFolderPath; }
 	static std::string GetFolderPath() { return ourInstance->myCurrentFolderPath; }
-	void RegisterNewDataNode(std::string aName, CGraphManager& aGraphManager);
-	void SaveDataTypesToJson();
+	static void SetFolderPath(const std::string& aFolderPath) { ourInstance->myCurrentFolderPath = aFolderPath; }
 
+public:
 	template <typename T>
 	T GetData(const std::string& aNodeTypeName)
 	{
-		/*std::hash<std::string> hasher;*/
-		size_t hash = Hasher::GetHashValue(aNodeTypeName);//hasher(aNodeTypeName);
+		size_t hash = Hasher::GetHashValue(aNodeTypeName);
 		for (auto& data : myNodeData)
 		{
 			if (Hasher::GetHashValue(data.myNodeTypeName) == hash)
-			{
 				return *(reinterpret_cast<T*>(data.myData));
-			}
 			else
-			{
 				hash;
-			}
 		}
 		return NULL;
 	}
@@ -57,8 +50,7 @@ public:
 	template <typename T>
 	void SetData(const std::string& aNodeTypeName, const EDataType& aDataType, const T& aValue, const bool& aWouldLikeToSave = true)
 	{
-		/*std::hash<std::string> hasher;*/
-		size_t hash = Hasher::GetHashValue(aNodeTypeName);//hasher(aNodeTypeName);
+		size_t hash = Hasher::GetHashValue(aNodeTypeName);
 
 		for (size_t i = 0; i < myNodeData.size(); ++i)
 		{
@@ -90,21 +82,20 @@ public:
 			if (foundElement)
 			{
 				for (int j = i; j < myNodeData.size() - 1; ++j)
-				{
 					myNodeData[j] = myNodeData[j + 1];
-
-				}
 
 				myNodeData.pop_back();
 			}
 		}
 	}
 
-private:
-	std::vector<SNodeData> myNodeData;
+public:
+	void ClearStoredData();
+	void RegisterNewDataNode(std::string aName, CGraphManager& aGraphManager);
+	void SaveDataTypesToJson();
 
-	//std::unordered_map<std::string, void*> myNodeDataMap;
-	//std::unordered_map<std::string, EDataType> myNodeDataTypeMap;
-	std::string myCurrentFolderPath;
+private:
 	static CNodeDataManager* ourInstance;
+	std::string myCurrentFolderPath;
+	std::vector<SNodeData> myNodeData;
 };

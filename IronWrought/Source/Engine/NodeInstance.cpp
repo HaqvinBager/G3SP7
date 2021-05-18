@@ -5,14 +5,6 @@
 #include "GraphManager.h"
 #include "BaseDecisionNode.h"
 
-CNodeInstance::CNodeInstance(CGraphManager* aGraphManager, bool aCreateNewUID)
-	:myGraphManager(aGraphManager), myUID(aCreateNewUID), myNodeType(nullptr), myEditorPosition{ 0.0f,0.0f }
-{}
-
-CNodeInstance::~CNodeInstance()
-{}
-
-
 bool IsOutput(std::vector<SPin>& somePins, unsigned int anID)
 {
 	for (auto& pin : somePins)
@@ -21,6 +13,15 @@ bool IsOutput(std::vector<SPin>& somePins, unsigned int anID)
 			return true;
 	}
 	return false;
+}
+
+CNodeInstance::CNodeInstance(CGraphManager* aGraphManager, bool aCreateNewUID)
+	:myGraphManager(aGraphManager), myUID(aCreateNewUID), myNodeType(nullptr), myEditorPosition{ 0.0f,0.0f }
+{}
+
+CGameObject* CNodeInstance::GetCurrentGameObject()
+{
+	return myGraphManager->GetCurrentGameObject();
 }
 
 void CNodeInstance::Enter()
@@ -48,10 +49,17 @@ void CNodeInstance::ExitVia(unsigned int aPinIndex)
 		link->myLink->Enter();
 }
 
-void CNodeInstance::ConstructUniquePins()
+void CNodeInstance::DebugUpdate()
 {
-	if (myNodeType != NULL)
-		myPins = myNodeType->GetPins();
+	if (myNodeType)
+		myNodeType->DebugUpdate(this);
+}
+
+void CNodeInstance::VisualUpdate(float aDeltaTime)
+{
+	myEnteredTimer -= aDeltaTime;
+	if (myEnteredTimer <= 0.0f)
+		myEnteredTimer = 0.0f;
 }
 
 bool CNodeInstance::CanAddLink(unsigned int aPinIDFromMe)
@@ -130,63 +138,16 @@ void CNodeInstance::RemoveLinkToVia(CNodeInstance* aLink, unsigned int aPinThatI
 	assert(0);
 }
 
+void CNodeInstance::ConstructUniquePins()
+{
+	if (myNodeType != NULL)
+		myPins = myNodeType->GetPins();
+}
+
 void CNodeInstance::ChangePinTypes(SPin::EPinType aType)
 {
 	for (auto& pin : myPins)
 		pin.myVariableType = aType;
-}
-
-std::vector<SNodeInstanceLink*> CNodeInstance::GetLinkFromPin(unsigned int aPinToFetchFrom)
-{
-	std::vector< SNodeInstanceLink*> links;
-	for (int i = 0; i < myLinks.size(); i++)
-	{
-		if (myLinks[i].myFromPinID == aPinToFetchFrom)
-			links.push_back(&myLinks[i]);
-		else if (myLinks[i].myToPinID == aPinToFetchFrom)
-			links.push_back(&myLinks[i]);
-	}
-	return links;
-
-}
-
-SPin* CNodeInstance::GetPinFromID(unsigned int aUID)
-{
-	for (auto& pin : myPins)
-	{
-		if (pin.myUID.AsInt() == aUID)
-			return &pin;
-	}
-	return nullptr;
-}
-
-int CNodeInstance::GetPinIndexFromPinUID(unsigned int aPinUID)
-{
-	for (int i = 0; i < myPins.size(); i++)
-	{
-		if (myPins[i].myUID.AsInt() == aPinUID)
-			return i;
-	}
-	return -1;
-}
-
-
-void CNodeInstance::DebugUpdate()
-{
-	if (myNodeType)
-		myNodeType->DebugUpdate(this);
-}
-
-void CNodeInstance::VisualUpdate(float aDeltaTime)
-{
-	myEnteredTimer -= aDeltaTime;
-	if (myEnteredTimer <= 0.0f)
-		myEnteredTimer = 0.0f;
-}
-
-CGameObject* CNodeInstance::GetCurrentGameObject()
-{
-	return myGraphManager->GetCurrentGameObject();
 }
 
 void CNodeInstance::FetchData(SPin::EPinType& anOutType, NodeDataPtr& someData, size_t& anOutSize, unsigned int aPinToFetchFrom)
@@ -201,9 +162,9 @@ void CNodeInstance::FetchData(SPin::EPinType& anOutType, NodeDataPtr& someData, 
 				int pinIndex = links[0]->myLink->GetPinIndexFromPinUID(links[0]->myToPinID);
 				if (pinIndex == -1)
 					assert(0);
-			
+
 				myGraphManager->ShowFlow(links[0]->myLinkID);
-				
+
 				links[0]->myLink->FetchData(anOutType, someData, anOutSize, pinIndex);
 				return;
 			}
@@ -240,36 +201,70 @@ void CNodeInstance::FetchData(SPin::EPinType& anOutType, NodeDataPtr& someData, 
 	{
 		anOutSize = dataPin.myData != nullptr ? sizeof(float) : 0;
 	}
-		break;
+	break;
 	case SPin::EPinType::EInt:
 	{
 		anOutSize = dataPin.myData != nullptr ? sizeof(int) : 0;
 	}
-		break;
+	break;
 	case SPin::EPinType::EBool:
 	{
 		anOutSize = dataPin.myData != nullptr ? sizeof(bool) : 0;
 	}
-		break;
+	break;
 	case SPin::EPinType::EString:
 	{
 		anOutSize = dataPin.myData != nullptr ? strlen(static_cast<char*>(dataPin.myData)) : 0;
 	}
-		break;
+	break;
 	case SPin::EPinType::EVector3:
 	{
 		anOutSize = dataPin.myData != nullptr ? sizeof(DirectX::SimpleMath::Vector3) : 0;
 	}
-		break;
+	break;
 	case SPin::EPinType::EStringList:
 	{
 		anOutSize = dataPin.myData != nullptr ? strlen(static_cast<char*>(dataPin.myData)) : 0;
 	}
-		break;
+	break;
 	default:
 		break;
 	}
 
 	someData = dataPin.myData;
 	anOutType = dataPin.myVariableType;
+}
+
+std::vector<SNodeInstanceLink*> CNodeInstance::GetLinkFromPin(unsigned int aPinToFetchFrom)
+{
+	std::vector< SNodeInstanceLink*> links;
+	for (int i = 0; i < myLinks.size(); i++)
+	{
+		if (myLinks[i].myFromPinID == aPinToFetchFrom)
+			links.push_back(&myLinks[i]);
+		else if (myLinks[i].myToPinID == aPinToFetchFrom)
+			links.push_back(&myLinks[i]);
+	}
+	return links;
+
+}
+
+SPin* CNodeInstance::GetPinFromID(unsigned int aUID)
+{
+	for (auto& pin : myPins)
+	{
+		if (pin.myUID.AsInt() == aUID)
+			return &pin;
+	}
+	return nullptr;
+}
+
+int CNodeInstance::GetPinIndexFromPinUID(unsigned int aPinUID)
+{
+	for (int i = 0; i < myPins.size(); i++)
+	{
+		if (myPins[i].myUID.AsInt() == aPinUID)
+			return i;
+	}
+	return -1;
 }

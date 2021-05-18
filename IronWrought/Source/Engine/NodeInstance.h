@@ -15,6 +15,7 @@ namespace ed = ax::NodeEditor;
 
 class CGraphManager;
 class CGameObject;
+class CNodeType;
 
 struct SNodeInstanceLink
 {
@@ -32,31 +33,23 @@ class CNodeInstance
 {
 public:
 	CNodeInstance(CGraphManager* aGraphManager, bool aCreateNewUID = true);
-	~CNodeInstance();
-	CUID myUID;
-	class CNodeType* myNodeType;
-	void CheckIfInputNode() { if (myNodeType->IsInputNode())myShouldTriggerAgain = false; }
-	void Enter();
-	void ExitVia(unsigned int aPinIndex);
-	void ConstructUniquePins();
 
-	bool CanAddLink(unsigned int aPinIdFromMe);
-	bool HasLinkBetween(unsigned int aFirstPin, unsigned int aSecondPin);
-	bool AddLinkToVia(CNodeInstance* aLink, unsigned int aPinIdFromMe, unsigned int aPinIdToMe, unsigned int aLinkID);
-	void RemoveLinkToVia(CNodeInstance* aLink, unsigned int aPinThatIOwn);
+	CGameObject* GetCurrentGameObject();
+	const CGraphManager* GraphManager() { return myGraphManager; }
+	std::string GetNodeName() {	return myNodeType->NodeName(); }
+	std::vector<SPin>& GetPins() { return myPins; }
+	std::vector<SNodeInstanceLink>& GetLinks() { return myLinks; }
+	CUID UID() { return myUID; }
+	const float EditorPosition(const unsigned int& anIndex) const { return myEditorPosition[anIndex]; }
+	void EditorPosition(const unsigned int& anIndex, const float& aValue) { myEditorPosition[anIndex] = aValue; }
+	void HasSetEditorPosition(const bool& aHasSetEditorPosition) { myHasSetEditorPosition = aHasSetEditorPosition; }
+	const bool HasSetEditorPosition() const { return myHasSetEditorPosition; }
+	CNodeType* NodeType() const { return myNodeType; }
+	void NodeType(CNodeType* aNodeType) { myNodeType = aNodeType; }
 
 	bool IsPinConnected(SPin& aPin) { return GetLinkFromPin(aPin.myUID.AsInt()).size() > 0; }
-	std::string GetNodeName() {	return myNodeType->NodeName(); }
-
-	std::vector<SPin>& GetPins() { return myPins; }
-	void ChangePinTypes(SPin::EPinType aType);
-
-	void FetchData(SPin::EPinType& anOutType, NodeDataPtr& someData, size_t& anOutSize, unsigned int aPinToFetchFrom);
-	std::vector<SNodeInstanceLink>& GetLinks() { return myLinks; }
-	std::vector< SNodeInstanceLink*> GetLinkFromPin(unsigned int aPinToFetchFrom);
-	SPin* GetPinFromID(unsigned int aUID);
-	int GetPinIndexFromPinUID(unsigned int aPinUID);
-
+	void CheckIfInputNode() { if (myNodeType->IsInputNode())myShouldTriggerAgain = false; }
+	
 	inline std::string WriteVariableType(const SPin& aPin) const
 	{
 		switch (aPin.myVariableType)
@@ -91,7 +84,24 @@ public:
 			break;
 		}
 	}
-
+	
+	virtual int GetColor()
+	{
+		if (myEnteredTimer > 0.0f)
+		{
+			return COL32(0, min(myEnteredTimer * 200, 200), 0, 255);
+		}
+		if (myNodeType->IsStartNode())
+		{
+			return COL32(200, 75, 75, 255);
+		}
+		if (myNodeType->IsFlowNode())
+		{
+			return COL32(75, 125, 200, 255);
+		}
+		return COL32(75, 75, 75, 255);
+	}
+	
 	template <typename Writer>
 	inline void WritePinValue(Writer& aWriter, const SPin& aPin) const
 	{
@@ -147,7 +157,6 @@ public:
 			}
 		}
 	}
-
 	template <typename Writer>
 	void Serialize(Writer& aWriter) const
 	{
@@ -195,43 +204,40 @@ public:
 
 		aWriter.EndObject();
 	}
+	
+	void Enter();
+	void ExitVia(unsigned int aPinIndex);
 
 	void DebugUpdate();
 	void VisualUpdate(float aDeltaTime);
+	
+	bool CanAddLink(unsigned int aPinIdFromMe);
+	bool HasLinkBetween(unsigned int aFirstPin, unsigned int aSecondPin);
+	bool AddLinkToVia(CNodeInstance* aLink, unsigned int aPinIdFromMe, unsigned int aPinIdToMe, unsigned int aLinkID);
+	void RemoveLinkToVia(CNodeInstance* aLink, unsigned int aPinThatIOwn);
 
+	void ConstructUniquePins();
+	void ChangePinTypes(SPin::EPinType aType);
+	void FetchData(SPin::EPinType& anOutType, NodeDataPtr& someData, size_t& anOutSize, unsigned int aPinToFetchFrom);
+	std::vector< SNodeInstanceLink*> GetLinkFromPin(unsigned int aPinToFetchFrom);
+	SPin* GetPinFromID(unsigned int aUID);
+	int GetPinIndexFromPinUID(unsigned int aPinUID);
+
+private:
+	CGraphManager* myGraphManager;
+	CNodeType* myNodeType;
+
+	CUID myUID;
+	
+	float myEnteredTimer = 0.0f;
 	float myEditorPosition[2];
 
 	bool myHasSetEditorPosition = false;
 	bool myShouldTriggerAgain = true;
 
-	std::unordered_map<std::string, std::any> myMetaData;
-
 	std::vector<SNodeInstanceLink> myLinks;
 	std::vector<SPin> myPins;
 
-	virtual int GetColor()
-	{
-		if (myEnteredTimer > 0.0f)
-		{
-			return COL32(0, min(myEnteredTimer * 200, 200), 0, 255);
-		}
-		if (myNodeType->IsStartNode())
-		{
-			return COL32(200, 75, 75, 255);
-		}
-		if (myNodeType->IsFlowNode())
-		{
-			return COL32(75, 125, 200, 255);
-		}
-		return COL32(75, 75, 75, 255);
-	}
-
-	float myEnteredTimer = 0.0f;
-
-	CGameObject* GetCurrentGameObject();
-	const CGraphManager* GraphManager() { return myGraphManager; }
-
-private:
-	CGraphManager* myGraphManager;
+	std::unordered_map<std::string, std::any> myMetaData;
 };
 

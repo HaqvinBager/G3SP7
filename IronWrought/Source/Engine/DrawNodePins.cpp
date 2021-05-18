@@ -16,15 +16,15 @@ void CDrawNodePins::DrawNodes()
 {
 	for (auto& nodeInstance : myGraphManager->CurrentGraph().myNodeInstances)
 	{
-		if (!nodeInstance->myHasSetEditorPosition)
+		if (!nodeInstance->HasSetEditorPosition())
 		{
-			ed::SetNodePosition(nodeInstance->myUID.AsInt(), ImVec2(nodeInstance->myEditorPosition[0], nodeInstance->myEditorPosition[1]));
-			nodeInstance->myHasSetEditorPosition = true;
+			ed::SetNodePosition(nodeInstance->UID().AsInt(), ImVec2(nodeInstance->EditorPosition(0), nodeInstance->EditorPosition(1)));
+			nodeInstance->HasSetEditorPosition(true);
 		}
 
 		ed::PushStyleVar(ed::StyleVar_NodePadding, ImVec4(8, 4, 8, 8));
-		ed::BeginNode(nodeInstance->myUID.AsInt());
-		ImGui::PushID(nodeInstance->myUID.AsInt());
+		ed::BeginNode(nodeInstance->UID().AsInt());
+		ImGui::PushID(nodeInstance->UID().AsInt());
 		ImGui::BeginVertical("node");
 
 		ImGui::BeginHorizontal("header");
@@ -92,7 +92,7 @@ void CDrawNodePins::DrawNodes()
 
 		if (ImGui::IsItemVisible())
 		{
-			auto drawList = ed::GetNodeBackgroundDrawList(nodeInstance->myUID.AsInt());
+			auto drawList = ed::GetNodeBackgroundDrawList(nodeInstance->UID().AsInt());
 
 			const auto halfBorderWidth = ed::GetStyle().NodeBorderWidth * 0.5f;
 			auto headerColor = nodeInstance->GetColor();
@@ -120,31 +120,6 @@ void CDrawNodePins::DrawNodes()
 	for (auto& linkInfo : myGraphManager->CurrentGraph().myLinks)
 		ed::Link(linkInfo.myID, linkInfo.myInputID, linkInfo.myOutputID);
 }
-
-ImColor CDrawNodePins::GetIconColor(unsigned int aType)
-{
-	SPin::EPinType type = static_cast<SPin::EPinType>(aType);
-	switch (type)
-	{
-	default:
-	case SPin::EPinType::EFlow:
-		return ImColor(255, 255, 255);
-	case SPin::EPinType::EBool:
-		return ImColor(220, 48, 48);
-	case SPin::EPinType::EInt:
-		return ImColor(68, 201, 156);
-	case SPin::EPinType::EFloat:
-		return ImColor(147, 226, 74);
-	case SPin::EPinType::EString:
-		return ImColor(124, 21, 153);
-	case SPin::EPinType::EVector3:
-		return ImColor(255, 166, 0);
-	case SPin::EPinType::EStringListIndexed:
-		return ImColor(0, 255, 0);
-	case SPin::EPinType::EUnknown:
-		return ImColor(255, 0, 0);
-	}
-};
 
 void CDrawNodePins::DrawPinIcon(const SPin& pin, bool connected, int alpha)
 {
@@ -352,6 +327,31 @@ void CDrawNodePins::DrawTypeSpecificPin(SPin& aPin, CNodeInstance* aNodeInstance
 	}
 	default:
 		assert(0);
+	}
+}
+
+ImColor CDrawNodePins::GetIconColor(unsigned int aType)
+{
+	SPin::EPinType type = static_cast<SPin::EPinType>(aType);
+	switch (type)
+	{
+	default:
+	case SPin::EPinType::EFlow:
+		return ImColor(255, 255, 255);
+	case SPin::EPinType::EBool:
+		return ImColor(220, 48, 48);
+	case SPin::EPinType::EInt:
+		return ImColor(68, 201, 156);
+	case SPin::EPinType::EFloat:
+		return ImColor(147, 226, 74);
+	case SPin::EPinType::EString:
+		return ImColor(124, 21, 153);
+	case SPin::EPinType::EVector3:
+		return ImColor(255, 166, 0);
+	case SPin::EPinType::EStringListIndexed:
+		return ImColor(0, 255, 0);
+	case SPin::EPinType::EUnknown:
+		return ImColor(255, 0, 0);
 	}
 }
 

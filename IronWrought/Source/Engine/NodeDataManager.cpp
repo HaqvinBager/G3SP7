@@ -32,6 +32,41 @@ void CNodeDataManager::ClearStoredData()
 	myNodeData.clear();
 }
 
+void CNodeDataManager::RegisterNewDataNode(std::string aName, CGraphManager& aGraphManager)
+{
+	if (aGraphManager.NewVariableType() == "Float")
+	{
+		float value = 0.0f;
+		CNodeTypeCollector::RegisterNewDataType(aName, static_cast<int>(CNodeDataManager::EDataType::EFloat));
+		CNodeDataManager::Get()->SetData(aName, CNodeDataManager::EDataType::EFloat, value);
+	}
+	else if (aGraphManager.NewVariableType() == "Int")
+	{
+		int value = 0;
+		CNodeTypeCollector::RegisterNewDataType(aName, static_cast<int>(CNodeDataManager::EDataType::EInt));
+		CNodeDataManager::Get()->SetData(aName, CNodeDataManager::EDataType::EInt, value);
+	}
+	else if (aGraphManager.NewVariableType() == "Bool")
+	{
+		bool value = false;
+		CNodeTypeCollector::RegisterNewDataType(aName, static_cast<int>(CNodeDataManager::EDataType::EBool));
+		CNodeDataManager::Get()->SetData(aName, CNodeDataManager::EDataType::EBool, value);
+	}
+	else if (aGraphManager.NewVariableType() == "Start")
+	{
+		bool value = false;
+		CNodeTypeCollector::RegisterNewDataType(aName, static_cast<int>(CNodeDataManager::EDataType::EStart));
+		CNodeDataManager::Get()->SetData(aName, CNodeDataManager::EDataType::EStart, value);
+	}
+	else if (aGraphManager.NewVariableType() == "Vector 3")
+	{
+		Vector3 value = { 0.0f,0.0f,0.0f };
+		CNodeTypeCollector::RegisterNewDataType(aName, static_cast<int>(CNodeDataManager::EDataType::EVector3));
+		CNodeDataManager::Get()->SetData(aName, CNodeDataManager::EDataType::EVector3, value);
+	}
+	aGraphManager.AddCustomDataNode(aName);
+}
+
 void CNodeDataManager::SaveDataTypesToJson()
 {
 	rapidjson::StringBuffer s;
@@ -76,39 +111,4 @@ void CNodeDataManager::SaveDataTypesToJson()
 
 	std::ofstream of(myCurrentFolderPath + "CustomDataNodes.json");
 	of << s.GetString();
-}
-
-void CNodeDataManager::RegisterNewDataNode(std::string aName, CGraphManager& aGraphManager)
-{
-	if (aGraphManager.NewVariableType() == "Float")
-	{
-		float value = 0.0f;
-		CNodeTypeCollector::RegisterNewDataType(aName, static_cast<int>(CNodeDataManager::EDataType::EFloat));
-		CNodeDataManager::Get()->SetData(aName, CNodeDataManager::EDataType::EFloat, value);
-	}
-	else if (aGraphManager.NewVariableType() == "Int")
-	{
-		int value = 0;
-		CNodeTypeCollector::RegisterNewDataType(aName, static_cast<int>(CNodeDataManager::EDataType::EInt));
-		CNodeDataManager::Get()->SetData(aName, CNodeDataManager::EDataType::EInt, value);
-	}
-	else if (aGraphManager.NewVariableType() == "Bool")
-	{
-		bool value = false;
-		CNodeTypeCollector::RegisterNewDataType(aName, static_cast<int>(CNodeDataManager::EDataType::EBool));
-		CNodeDataManager::Get()->SetData(aName, CNodeDataManager::EDataType::EBool, value);
-	}
-	else if (aGraphManager.NewVariableType() == "Start")
-	{
-		bool value = false;
-		CNodeTypeCollector::RegisterNewDataType(aName, static_cast<int>(CNodeDataManager::EDataType::EStart));
-		CNodeDataManager::Get()->SetData(aName, CNodeDataManager::EDataType::EStart, value);
-	}
-	else if (aGraphManager.NewVariableType() == "Vector 3")
-	{
-		Vector3 value = { 0.0f,0.0f,0.0f };
-		CNodeTypeCollector::RegisterNewDataType(aName, static_cast<int>(CNodeDataManager::EDataType::EVector3));
-		CNodeDataManager::Get()->SetData(aName, CNodeDataManager::EDataType::EVector3, value);
-	}
-	aGraphManager.AddCustomDataNode(aName);
 }

@@ -8,7 +8,6 @@
 #include "rapidjson/prettywriter.h"
 #include "JsonReader.h"
 #include <fstream>
-#include <iostream>
 #include <sstream>
 #include "NodeInstance.h"
 #include "NodeType.h"
@@ -22,6 +21,7 @@
 #include "FolderUtility.h"
 #include "NodeDataManager.h"
 #include "NodeGraphSaveLoad.h"
+#ifdef _DEBUG
 #include "DrawNodePins.h"
 #include <imgui_node_editor.h>
 #include "Drawing.h"
@@ -30,13 +30,16 @@
 #include <imgui_impl_dx11.h>
 
 using namespace ax::Drawing;
-using namespace rapidjson;
 static ed::EditorContext* g_Context = nullptr;
+#endif // _DEBUG
+using namespace rapidjson;
 
 CGraphManager::~CGraphManager()
 {
 	Clear();
+#ifdef _DEBUG
 	ed::DestroyEditor(g_Context);
+#endif // _DEBUG
 }
 
 void CGraphManager::SGraph::Clear()
@@ -52,20 +55,23 @@ void CGraphManager::SGraph::Clear()
 
 void CGraphManager::Load(const std::string& aSceneName)
 {
+#ifdef _DEBUG
 	myPinDrawer = new CDrawNodePins();
 	myPinDrawer->GraphManager(*this);
+#endif // _DEBUG
 	mySaveLoadGraphManager = new CNodeGraphSaveLoad();
 
+#ifdef _DEBUG
 	ed::Config config;
 	config.SettingsFile = "Imgui/NodeScripts/Simple.json";
 	g_Context = ed::CreateEditor(&config);
-
 	myRunScripts = false;
 	myRenderGraph = false;
-	myRunScripts = false;
-
 	myMenuSearchField = new char[127];
 	memset(&myMenuSearchField[0], 0, sizeof(myMenuSearchField));
+#else
+	myRunScripts = true;
+#endif // _DEBUG
 
 	if (myGraphs.size() > 0)
 		myCurrentGraph = &myGraphs[0];
@@ -143,7 +149,7 @@ CNodeInstance* CGraphManager::GetNodeFromNodeID(unsigned int anID)
 	auto it = myCurrentGraph->myNodeInstances.begin();
 	while (it != myCurrentGraph->myNodeInstances.end())
 	{
-		if ((*it)->myUID.AsInt() == anID)
+		if ((*it)->UID().AsInt() == anID)
 			return *it;
 		else
 			++it;
@@ -178,17 +184,20 @@ void CGraphManager::Update()
 
 		PreFrame();
 
+#ifdef _DEBUG
 		if (myRenderGraph)
 		{
 			ConstructEditorTreeAndConnectLinks();
 			PostFrame();
 			ImGui::End();
 		}
+#endif // _DEBUG
 	}
 }
 
 void CGraphManager::PreFrame()
 {
+#ifdef _DEBUG
 	if (myRenderGraph)
 	{
 		auto& io = ImGui::GetIO();
@@ -230,16 +239,20 @@ void CGraphManager::PreFrame()
 		nodeInstance->DebugUpdate();
 		nodeInstance->VisualUpdate(CTimer::Dt());
 	}
+#endif // _DEBUG
 
 	TriggerNodeGraphs();
 
+#ifdef _DEBUG
 	if (myRenderGraph)
 	{
 		ed::SetCurrentEditor(g_Context);
 		ed::Begin("My Editor", ImVec2(0.0, 0.0f));
 	}
+#endif // _DEBUG
 }
 
+#ifdef _DEBUG
 void CGraphManager::CreateNewDataNode()
 {
 	if (myEnteringNodeName)
@@ -282,6 +295,7 @@ void CGraphManager::CreateNewDataNode()
 		ImGui::End();
 	}
 }
+#endif // _DEBUG
 
 void CGraphManager::TriggerNodeGraphs()
 {
@@ -296,7 +310,7 @@ void CGraphManager::TriggerNodeGraphs()
 				myCurrentBluePrintInstance = bluePrintInstances[i];
 				for (auto& nodeInstance : graph.myNodeInstances)
 				{
-					if (nodeInstance->myNodeType->IsStartNode())
+					if (nodeInstance->NodeType()->IsStartNode())
 						nodeInstance->Enter();
 				}
 			}
@@ -304,6 +318,7 @@ void CGraphManager::TriggerNodeGraphs()
 	}
 }
 
+#ifdef _DEBUG
 CGraphManager::SEditorCommand CGraphManager::CreateInverseEditorCommand(SEditorCommand& anEditorCommand)
 {
 	SEditorCommand inverseCommand = anEditorCommand;
@@ -353,7 +368,7 @@ CGraphManager::SEditorCommand CGraphManager::CreateInverseEditorCommand(SEditorC
 
 void CGraphManager::DeleteNodeType(CNodeInstance& aNodeInstance)
 {
-	aNodeInstance.myNodeType->ClearNodeInstanceFromMap(&aNodeInstance);
+	aNodeInstance.NodeType()->ClearNodeInstanceFromMap(&aNodeInstance);
 	std::vector<SNodeInstanceLink> links = (&aNodeInstance)->GetLinks();
 
 	for (auto& link : links)
@@ -382,6 +397,7 @@ void CGraphManager::ConstructEditorTreeAndConnectLinks()
 		UndoRedoActions();
 	}
 }
+#endif // _DEBUG
 
 bool ArePinTypesCompatible(SPin& aFirst, SPin& aSecond)
 {
@@ -394,6 +410,7 @@ bool ArePinTypesCompatible(SPin& aFirst, SPin& aSecond)
 	return true;
 }
 
+#ifdef _DEBUG
 void CGraphManager::AddNodeLinks()
 {
 	if (ed::BeginCreate())
@@ -546,13 +563,13 @@ void CGraphManager::DeleteLinksOrNodes()
 				auto it = myCurrentGraph->myNodeInstances.begin();
 				while (it != myCurrentGraph->myNodeInstances.end())
 				{
-					if ((*it)->myUID.AsInt() == nodeId.Get())
+					if ((*it)->UID().AsInt() == nodeId.Get())
 					{
-						(*it)->myNodeType->ClearNodeInstanceFromMap((*it));
+						(*it)->NodeType()->ClearNodeInstanceFromMap((*it));
 						if (myPushCommand)
 						{
 							mySave = true;
-							myUndoCommands.push({ ECommandAction::EDelete, (*it), nullptr,  {0,0,0}, (*it)->myUID.AsInt() });
+							myUndoCommands.push({ ECommandAction::EDelete, (*it), nullptr,  {0,0,0}, (*it)->UID().AsInt() });
 						}
 						it = myCurrentGraph->myNodeInstances.erase(it);
 					}
@@ -632,18 +649,18 @@ void CGraphManager::CreateNewNode()
 				if (ImGui::MenuItem(found[i]->NodeName().c_str()))
 				{
 					node = new CNodeInstance(this);
-					node->myNodeType = found[i];
+					node->NodeType(found[i]);
 					node->CheckIfInputNode();
 					node->ConstructUniquePins();
-					ed::SetNodePosition(node->myUID.AsInt(), newNodePostion);
-					node->myHasSetEditorPosition = true;
+					ed::SetNodePosition(node->UID().AsInt(), newNodePostion);
+					node->HasSetEditorPosition(true);
 
 					myCurrentGraph->myNodeInstances.push_back(node);
 
 					if (myPushCommand)
 					{
 						mySave = true;
-						myUndoCommands.push({ ECommandAction::ECreate, node, nullptr, {0,0,0}, node->myUID.AsInt() });
+						myUndoCommands.push({ ECommandAction::ECreate, node, nullptr, {0,0,0}, node->UID().AsInt() });
 					}
 				}
 			}
@@ -682,12 +699,12 @@ void CGraphManager::CreateNewNode()
 									auto it = graph.myNodeInstances.begin();
 									while (it != graph.myNodeInstances.end())
 									{
-										if ((*it)->myNodeType->NodeName() == "Get: " + myCustomDataNodes[i])
+										if ((*it)->NodeType()->NodeName() == "Get: " + myCustomDataNodes[i])
 										{
 											DeleteNodeType(*(*it));
 											it = graph.myNodeInstances.erase(it);
 										}
-										else if ((*it)->myNodeType->NodeName() == "Set: " + myCustomDataNodes[i])
+										else if ((*it)->NodeType()->NodeName() == "Set: " + myCustomDataNodes[i])
 										{
 											DeleteNodeType(*(*it));
 											it = graph.myNodeInstances.erase(it);
@@ -716,18 +733,18 @@ void CGraphManager::CreateNewNode()
 								node = new CNodeInstance(this, true);
 
 								//int nodeType = i;
-								node->myNodeType = type;
+								node->NodeType(type);
 								node->CheckIfInputNode();
 								node->ConstructUniquePins();
-								ed::SetNodePosition(node->myUID.AsInt(), newNodePostion);
-								node->myHasSetEditorPosition = true;
+								ed::SetNodePosition(node->UID().AsInt(), newNodePostion);
+								node->HasSetEditorPosition(true);
 
 								myCurrentGraph->myNodeInstances.push_back(node);
 
 								if (myPushCommand)
 								{
 									mySave = true;
-									myUndoCommands.push({ ECommandAction::ECreate, node, nullptr, {0,0,0}, node->myUID.AsInt() });
+									myUndoCommands.push({ ECommandAction::ECreate, node, nullptr, {0,0,0}, node->UID().AsInt() });
 								}
 							}
 						}
@@ -821,3 +838,4 @@ void CGraphManager::PostFrame()
 	ed::End();
 	ed::SetCurrentEditor(nullptr);
 }
+#endif // _DEBUG

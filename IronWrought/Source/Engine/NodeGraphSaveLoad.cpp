@@ -137,7 +137,9 @@ void CNodeGraphSaveLoad::LoadScripts(CGraphManager& aGraphManager, const std::st
 				else
 				{
 					aGraphManager.CurrentGraph(&graph);
+#ifdef _DEBUG
 					SaveTreeToFile(aGraphManager);
+#endif // _DEBUG
 				}
 			}
 		}
@@ -173,28 +175,28 @@ void CNodeGraphSaveLoad::LoadTreeFromFile(CGraphManager& aGraphManager)
 					CNodeInstance* object = new CNodeInstance(&aGraphManager, false);
 					int nodeTypeID = nodeInstance["NodeType ID"].GetInt();
 					int UID = nodeInstance["UID"].GetInt();
-					object->myUID.SetUID(UID);
-					object->myNodeType = CNodeTypeCollector::GetNodeTypeFromID(nodeTypeID, static_cast<CNodeType::ENodeType>(nodeInstance["NodeType"].GetInt()));
+					object->UID().SetUID(UID);
+					object->NodeType(CNodeTypeCollector::GetNodeTypeFromID(nodeTypeID, static_cast<CNodeType::ENodeType>(nodeInstance["NodeType"].GetInt())));
 
-					if (object->myNodeType)
+					if (object->NodeType())
 						object->CheckIfInputNode();
 
-					object->myEditorPosition[0] = static_cast<float>(nodeInstance["Position"]["X"].GetInt());
-					object->myEditorPosition[1] = static_cast<float>(nodeInstance["Position"]["Y"].GetInt());
+					object->EditorPosition(0, static_cast<float>(nodeInstance["Position"]["X"].GetInt()));
+					object->EditorPosition(1, static_cast<float>(nodeInstance["Position"]["Y"].GetInt()));
 
-					if (object->myEditorPosition[0] <= -100000 || object->myEditorPosition[0] >= 100000)
-						object->myEditorPosition[0] = 0;
-					if (object->myEditorPosition[1] <= -100000 || object->myEditorPosition[1] >= 100000)
-						object->myEditorPosition[1] = 0;
+					if (object->EditorPosition(0) <= -100000 || object->EditorPosition(0) >= 100000)
+						object->EditorPosition(0, 0.0f);
+					if (object->EditorPosition(1) <= -100000 || object->EditorPosition(1) >= 100000)
+						object->EditorPosition(1, 0.0f);
 
 					object->ConstructUniquePins();
 
 					for (unsigned int k = 0; k < nodeInstance["Pins"].Size(); k++)
 					{
 						int index = nodeInstance["Pins"][k]["Index"].GetInt();
-						object->myPins[index].myUID.SetUID(nodeInstance["Pins"][k]["UID"].GetInt());
-						SPin::EPinType newType = LoadPinData(object->myPins[index].myData, nodeInstance["Pins"][k]["DATA"]);
-						if (object->myPins[index].myVariableType == SPin::EPinType::EUnknown)
+						object->GetPins()[index].myUID.SetUID(nodeInstance["Pins"][k]["UID"].GetInt());
+						SPin::EPinType newType = LoadPinData(object->GetPins()[index].myData, nodeInstance["Pins"][k]["DATA"]);
+						if (object->GetPins()[index].myVariableType == SPin::EPinType::EUnknown)
 							object->ChangePinTypes(newType);
 					}
 					graph.myNodeInstances.push_back(object);
@@ -223,8 +225,9 @@ void CNodeGraphSaveLoad::LoadTreeFromFile(CGraphManager& aGraphManager)
 
 					firstNode->AddLinkToVia(secondNode, inputID, Output, id);
 					secondNode->AddLinkToVia(firstNode, Output, inputID, id);
-
+#ifdef _DEBUG
 					graph.myLinks.push_back({ ed::LinkId(id), ed::PinId(inputID), ed::PinId(Output) });
+#endif // _DEBUG
 					if (graph.myNextLinkIdCounter < id + 1)
 						graph.myNextLinkIdCounter = id + 1;
 				}
@@ -257,6 +260,7 @@ void CNodeGraphSaveLoad::LoadDataNodesFromFile(CGraphManager& aGraphManager)
 	}
 }
 
+#ifdef _DEBUG
 void CNodeGraphSaveLoad::SaveTreeToFile(CGraphManager& aGraphManager)
 {
 	for (const auto& graph : aGraphManager.Graphs())
@@ -369,9 +373,9 @@ void CNodeGraphSaveLoad::LoadNodesFromClipboard(CGraphManager& aGraphManager)
 
 		CNodeInstance* object = new CNodeInstance(&aGraphManager, true);
 		int nodeTypeID = nodeInstance["NodeType ID"].GetInt();
-		object->myNodeType = CNodeTypeCollector::GetNodeTypeFromID(nodeTypeID, static_cast<CNodeType::ENodeType>(nodeInstance["NodeType"].GetInt()));
+		object->NodeType(CNodeTypeCollector::GetNodeTypeFromID(nodeTypeID, static_cast<CNodeType::ENodeType>(nodeInstance["NodeType"].GetInt())));
 
-		if (object->myNodeType)
+		if (object->NodeType())
 			object->CheckIfInputNode();
 
 		if (i == 0)
@@ -389,15 +393,16 @@ void CNodeGraphSaveLoad::LoadNodesFromClipboard(CGraphManager& aGraphManager)
 		for (unsigned int j = 0; j < nodeInstance["Pins"].Size(); j++)
 		{
 			int index = nodeInstance["Pins"][j]["Index"].GetInt();
-			object->myPins[index].myUID.SetUID(CUID().AsInt());
-			SPin::EPinType newType = LoadPinData(object->myPins[index].myData, nodeInstance["Pins"][j]["DATA"]);
-			if (object->myPins[index].myVariableType == SPin::EPinType::EUnknown)
+			object->GetPins()[index].myUID.SetUID(CUID().AsInt());
+			SPin::EPinType newType = LoadPinData(object->GetPins()[index].myData, nodeInstance["Pins"][j]["DATA"]);
+			if (object->GetPins()[index].myVariableType == SPin::EPinType::EUnknown)
 				object->ChangePinTypes(newType);
 		}
 
-		ed::SetNodePosition(object->myUID.AsInt(), position);
-		object->myHasSetEditorPosition = true;
+		ed::SetNodePosition(object->UID().AsInt(), position);
+		object->HasSetEditorPosition(true);
 
 		aGraphManager.CurrentGraph().myNodeInstances.push_back(object);
 	}
 }
+#endif // _DEBUG
