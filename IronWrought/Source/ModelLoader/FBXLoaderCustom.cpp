@@ -291,7 +291,7 @@ CLoaderModel* CFBXLoaderCustom::LoadModel(const char* aModel)
 		newModel = nullptr;
 	}
 
-	return newModel;
+	return std::move(newModel);
 }
 
 bool does_file_exist(const char* fileName)
