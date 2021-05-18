@@ -83,15 +83,32 @@ CPhysXWrapper::CPhysXWrapper()
 
 CPhysXWrapper::~CPhysXWrapper()
 {
-	//I will fix later -- crashes because cant release nullptr //Alexander Matth�i 15/1 - 2021
+	delete myContactReportCallback;
+	//delete myPlayerReportCallback; // inaccesible?
+	
+	if(myCooking)
+		myCooking->release();
+	if(myPXMaterial)
+		myPXMaterial->release();
+	if(myDispatcher)
+		myDispatcher->release();
+	//if (myControllerManager)
+	//	myControllerManager->release();// Can't release
+	if(myPhysics)
+		myPhysics->release();
+	if (myPhysicsVisualDebugger)
+		myPhysicsVisualDebugger->release();
 
-	//delete myAllocator;
-	//myAllocator = nullptr;
-	//myFoundation->release();
-	/*myCooking->release();
-	myPhysics->release();
-	myDispatcher->release();
-	myPXMaterial->release();*/
+	delete myAllocator;
+	myAllocator = nullptr;
+
+	//if(myFoundation)
+	//	myFoundation->release();// Can't release
+
+
+
+
+	//I will fix later -- crashes because cant release nullptr //Alexander Matth�i 15/1 - 2021
 }
 
 bool CPhysXWrapper::Init()
@@ -127,7 +144,7 @@ bool CPhysXWrapper::Init()
     return true;
 }
 
-PxScene* CPhysXWrapper::CreatePXScene(CScene* aScene)
+PxScene* CPhysXWrapper::CreatePXScene()
 {
 	PxSceneDesc sceneDesc(myPhysics->getTolerancesScale());
 	sceneDesc.gravity = PxVec3(0.0f, -9.82f, 0.0f);
@@ -151,7 +168,6 @@ PxScene* CPhysXWrapper::CreatePXScene(CScene* aScene)
 		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
 	}
 	myControllerManager = PxCreateControllerManager(*pXScene);
-	myPXScenes[aScene] = pXScene;
 	return pXScene;
 }
 
