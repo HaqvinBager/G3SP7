@@ -110,6 +110,11 @@ void CBootUpState::Update()
 		}
 
 		myLogos[myLogoToRender]->SetShouldRender(true);
+		auto color = myLogos[myLogoToRender]->GetColor();
+		color.x = myTimer / myFadeInDuration;
+		color.y = myTimer / myFadeInDuration;
+		color.z = myTimer / myFadeInDuration;
+		myLogos[myLogoToRender]->SetColor(color);
 	}
 
 	if (INPUT->IsKeyPressed(VK_SPACE))
@@ -133,6 +138,11 @@ void CBootUpState::Update()
 		}
 
 		myLogos[myLogoToRender]->SetShouldRender(true);
+		auto color = myLogos[myLogoToRender]->GetColor();
+		color.x = myTimer / myFadeInDuration;
+		color.y = myTimer / myFadeInDuration;
+		color.z = myTimer / myFadeInDuration;
+		myLogos[myLogoToRender]->SetColor(color);
 	}
 }
 
