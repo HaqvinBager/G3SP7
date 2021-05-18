@@ -1,6 +1,6 @@
 {
     "UID_MAX": {
-        "Num": 1619
+        "Num": 1535
     },
     "NodeInstances": [
         {
@@ -409,8 +409,8 @@
             "NodeType": 0,
             "UID": 286,
             "Position": {
-                "X": 800,
-                "Y": -244
+                "X": 984,
+                "Y": -340
             },
             "Pins": [
                 {
@@ -464,6 +464,64 @@
                     "Index": 4,
                     "UID": 1468,
                     "DATA": false,
+                    "DATA_TYPE": "BOOL"
+                }
+            ]
+        },
+        {
+            "NodeType ID": 37,
+            "NodeType": 0,
+            "UID": 1508,
+            "Position": {
+                "X": 716,
+                "Y": -384
+            },
+            "Pins": [
+                {
+                    "Index": 0,
+                    "UID": 1513,
+                    "DATA": "",
+                    "DATA_TYPE": ""
+                },
+                {
+                    "Index": 1,
+                    "UID": 1514,
+                    "DATA": "",
+                    "DATA_TYPE": ""
+                },
+                {
+                    "Index": 2,
+                    "UID": 1515,
+                    "DATA": "",
+                    "DATA_TYPE": ""
+                },
+                {
+                    "Index": 3,
+                    "UID": 1516,
+                    "DATA": false,
+                    "DATA_TYPE": "BOOL"
+                }
+            ]
+        },
+        {
+            "NodeType ID": 1,
+            "NodeType": 1,
+            "UID": 1517,
+            "Position": {
+                "X": 525,
+                "Y": -212
+            },
+            "Pins": [
+                {
+                    "Index": 0,
+                    "UID": 1534,
+                    "DATA": "",
+                    "DATA_TYPE": "BOOL"
+                },
+                {
+                    "Index": 1,
+                    "UID": 1535,
+                    "DATA": true,
                     "DATA_TYPE": "BOOL"
                 }
             ]
