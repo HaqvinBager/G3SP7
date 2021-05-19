@@ -1,0 +1,58 @@
+{
+  "Buttons": [
+    {
+      "Text": "",
+      "FontAndFontSize": "Assets/Fonts/MorrisRoman42",
+      "Text Position X": 0.0,
+      "Text Position Y": -0.05,
+      "Text Pivot X": 0.0,
+      "Text Pivot Y": 0.0,
+      "Text Color R": 1.5,
+      "Text Color G": 0.7,
+      "Text Color B": 0.0,
+      "Pixel Width": 256.0,
+      "Pixel Height": 64.0,
+      "Sprite Position X": 0.0,
+      "Sprite Position Y": 0.0,
+      "Idle Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_RESUME.dds",
+      "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_RESUME_HOVER.dds",
+      "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_RESUME_HOVER.dds",
+      "Messages": [ 9 ]
+    },
+    {
+      "Text": "",
+      "FontAndFontSize": "Assets/Fonts/MorrisRoman42",
+      "Text Position X": 0.0,
+      "Text Position Y": 0.15,
+      "Text Pivot X": 1.0,
+      "Text Pivot Y": 1.0,
+      "Text Color R": 1.5,
+      "Text Color G": 0.7,
+      "Text Color B": 0.0,
+      "Pixel Width": 256.0,
+      "Pixel Height": 64.0,
+      "Idle Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_MAINMENU.dds",
+      "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_MAINMENU_HOVER.dds",
+      "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_MAINMENU_HOVER.dds",
+      "Messages": [ 2 ]
+    }
+  ],
+
+  "Texts": [
+  ],
+
+  "Animated UI Elements": [
+  ],
+
+  "Background": {
+    "Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/IAmPauseBackground.dds"
+  },
+
+
+  "Sprites": [
+  ],
+
+  "PostmasterEvents": {
+    "Events": [ ]
+  }
+}

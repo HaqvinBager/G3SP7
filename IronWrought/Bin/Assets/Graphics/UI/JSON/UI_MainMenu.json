@@ -1,0 +1,144 @@
+{
+  "Pivot X": 0.0,
+  "Pivot Y": 0.0,
+  "Postion X": 0.0,
+  "Position Y": 0.0,
+
+  "Buttons": [
+    {
+      "Text": "",
+      "FontAndFontSize": "Assets/Fonts/MorrisRoman42",
+      "Text Position X": 0.0,
+      "Text Position Y": 0.0,
+      "Text Pivot X": 0.0,
+      "Text Pivot Y": 0.0,
+      "Text Color R": 1.5,
+      "Text Color G": 0.7,
+      "Text Color B": 0.0,
+      "Pixel Width": 256.0,
+      "Pixel Height": 64.0,
+      "Sprite Position X": 0.0,
+      "Sprite Position Y": 0.7,
+      "Idle Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_STARTGAME.dds",
+      "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_STARTGAME_HOVER.dds",
+      "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_STARTGAME.dds",
+      "Messages": [ 6 ],
+      "Sub Canvas Toggle Index": 7
+    },
+    {
+      "Text": "",
+      "FontAndFontSize": "Assets/Fonts/MorrisRoman42",
+      "Text Position X": 0.0,
+      "Text Position Y": 0.0,
+      "Text Pivot X": 0.0,
+      "Text Pivot Y": 0.0,
+      "Text Color R": 1.5,
+      "Text Color G": 0.7,
+      "Text Color B": 0.0,
+      "Pixel Width": 256.0,
+      "Pixel Height": 64.0,
+      "Sprite Position X": -0.535,
+      "Sprite Position Y": -0.135,
+      "Idle Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_LEVELSELECT.dds",
+      "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_LEVELSELECT_HOVER.dds",
+      "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_LEVELSELECT_HOVER.dds",
+      "Messages": [],
+      "Sub Canvas Toggle Index": 0
+    },
+    {
+      "Text": "",
+      "FontAndFontSize": "Assets/Fonts/MorrisRoman42",
+      "Text Position X": 0.0,
+      "Text Position Y": 0.0,
+      "Text Pivot X": 0.0,
+      "Text Pivot Y": 0.0,
+      "Text Color R": 1.5,
+      "Text Color G": 0.7,
+      "Text Color B": 0.0,
+      "Pixel Width": 256.0,
+      "Pixel Height": 64.0,
+      "Sprite Position X": -0.175,
+      "Sprite Position Y": -0.135,
+      "Idle Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_RESOLUTION.dds",
+      "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_RESOLUTION_HOVER.dds",
+      "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_RESOLUTION_HOVER.dds",
+      "Messages": [],
+      "Sub Canvas Toggle Index": 4
+    },
+    {
+      "Text": "",
+      "FontAndFontSize": "Assets/Fonts/MorrisRoman42",
+      "Text Position X": 0.0,
+      "Text Position Y": 0.0,
+      "Text Pivot X": 0.0,
+      "Text Pivot Y": 0.0,
+      "Text Color R": 1.5,
+      "Text Color G": 0.7,
+      "Text Color B": 0.0,
+      "Pixel Width": 256.0,
+      "Pixel Height": 64.0,
+      "Sprite Position X": 0.175,
+      "Sprite Position Y": -0.135,
+      "Idle Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_CREDITS.dds",
+      "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_CREDITS_HOVER.dds",
+      "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_CREDITS_HOVER.dds",
+      "Messages": [],
+      "Sub Canvas Toggle Index": 5
+    },
+    {
+      "Text": "",
+      "FontAndFontSize": "Assets/Fonts/MorrisRoman42",
+      "Text Position X": 0.0,
+      "Text Position Y": 0.0,
+      "Text Pivot X": 0.0,
+      "Text Pivot Y": 0.0,
+      "Text Color R": 1.5,
+      "Text Color G": 0.7,
+      "Text Color B": 0.0,
+      "Pixel Width": 256.0,
+      "Pixel Height": 64.0,
+      "Sprite Position X": 0.535,
+      "Sprite Position Y": -0.135,
+      "Idle Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_QUIT.dds",
+      "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_QUIT_HOVER.dds",
+      "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_QUIT_HOVER.dds",
+      "Messages": [],
+      "Sub Canvas Toggle Index": 6
+    }
+  ],
+
+  "Texts": [
+  ],
+
+  "Animated UI Elements": [
+  ],
+
+  "Background": {
+    "Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/MenuBackground.dds"
+  },
+
+  "Sprites": [
+    {
+      "Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/Menu_IAM_LOGO.dds",
+      "Position X": 0.0,
+      "Position Y": -0.5,
+      "Scale X": 1.0,
+      "Scale Y": 1.0   
+    }
+  ],
+
+  "PostmasterEvents": {
+    "Events": []
+  },
+
+  "Widgets": [
+    { "Path": "Assets/Graphics/UI/JSON/UI_MainMenu_Level_1-1.json" },
+    { "Path": "Assets/Graphics/UI/JSON/UI_MainMenu_Level_1-2.json" },
+    { "Path": "Assets/Graphics/UI/JSON/UI_MainMenu_Level_2-1.json" },
+    { "Path": "Assets/Graphics/UI/JSON/UI_MainMenu_Level_2-2.json" },
+    { "Path": "Assets/Graphics/UI/JSON/UI_MainMenu_Settings.json" },
+    { "Path": "Assets/Graphics/UI/JSON/UI_MainMenu_Credits.json" },
+    { "Path": "Assets/Graphics/UI/JSON/UI_MainMenu_Quit.json" },
+    { "Path": "Assets/Graphics/UI/JSON/UI_LoadingScreen.json" }
+  ]
+}

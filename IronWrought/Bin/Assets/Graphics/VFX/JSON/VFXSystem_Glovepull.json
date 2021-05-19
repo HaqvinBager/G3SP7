@@ -1,0 +1,99 @@
+{
+	"VFXEffects": [
+		{
+			"Name": "Pull",
+
+			"VFXMeshes": [
+				{
+					"Path": "Assets/Graphics/VFX/JSON/Data/VFXMeshData_Beam.json",
+					"Offset X": 0.0,
+					"Offset Y": 0.0,
+					"Offset Z": 0.0,
+					"Rotation X": 0.0,
+					"Rotation Y": 0,
+					"Rotation Z": 0.0,
+					"Scale X": 1.0,
+					"Scale Y": 1.0,
+					"Scale Z": 1.0,
+					"Rotate X per second": 0.0,
+					"Rotate Y per second": 0,
+					"Rotate Z per second": 0.0,
+					"Orbit": true,
+					"Delay": 0.0,
+					"Duration": 5.0
+				},
+				{
+					"Path": "Assets/Graphics/VFX/JSON/Data/VFXMeshData_BigSprial.json",
+					"Offset X": 0.0,
+					"Offset Y": 0.0,
+					"Offset Z": 0.0,
+					"Rotation X": 0.0,
+					"Rotation Y": 0.0,
+					"Rotation Z": 0.0,
+					"Scale X": 1.0,
+					"Scale Y": 1.0,
+					"Scale Z": 1.0,
+					"Rotate X per second": 0.0,
+					"Rotate Y per second": 0.0,
+					"Rotate Z per second": 0.0,
+					"Orbit": false,
+					"Delay": 0.5,
+					"Duration": 4.5
+				},
+				{
+					"Path": "Assets/Graphics/VFX/JSON/Data/VFXMeshData_SmallSpiral.json",
+					"Offset X": 0.0,
+					"Offset Y": 0.0,
+					"Offset Z": 0.0,
+					"Rotation X": 0.0,
+					"Rotation Y": 0.0,
+					"Rotation Z": 0.0,
+					"Scale X": 1.0,
+					"Scale Y": 1.0,
+					"Scale Z": 1.0,
+					"Rotate X per second": 0.0,
+					"Rotate Y per second": 0.0,
+					"Rotate Z per second": 0.0,
+					"Orbit": false,
+					"Delay": 1.2,
+					"Duration": 3.8
+				}
+			],
+
+			"ParticleSystems": [
+				{
+					"Path": "Assets/Graphics/VFX/JSON/Data/ParticleData_Pull.json",
+					"Offset X": 0,
+					"Offset Y": 0.65,
+					"Offset Z": 2.7,
+					"Rotation X": 0.0,
+					"Rotation Y": 0.0,
+					"Rotation Z": 0.0,
+					"Scale": 1.0,
+					"Rotate X per second": 0,
+					"Rotate Y per second": 0,
+					"Rotate Z per second": 0.0,
+					"Orbit": true,
+					"Delay": 0.2,
+					"Duration": 4.8
+				},
+				{
+					"Path": "Assets/Graphics/VFX/JSON/Data/ParticleData_PullStar.json",
+					"Offset X": 0,
+					"Offset Y": 0.65,
+					"Offset Z": 2.7,
+					"Rotation X": 0.0,
+					"Rotation Y": 0.0,
+					"Rotation Z": 0.0,
+					"Scale": 1.0,
+					"Rotate X per second": 0,
+					"Rotate Y per second": 0,
+					"Rotate Z per second": 0.0,
+					"Orbit": true,
+					"Delay": 0.2,
+					"Duration": 4.8
+				}
+			]
+		} 
+	]
+}

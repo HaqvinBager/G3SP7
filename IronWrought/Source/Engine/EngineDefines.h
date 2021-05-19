@@ -4,7 +4,7 @@
 
 // Uncomment before release.
 //#ifdef NDEBUG
-//#define EXCELSIOR_BUILD
+#define EXCELSIOR_BUILD
 //#else
 ////#define EXCELSIOR_BUILD // ! Manual toggle
 //#endif

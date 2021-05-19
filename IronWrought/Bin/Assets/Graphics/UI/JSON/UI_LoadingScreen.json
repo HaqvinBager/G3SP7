@@ -1,0 +1,46 @@
+{
+  "Animated UI Elements": [
+  ],
+
+  "Sprites": [
+    {
+      "Path": "Assets/Graphics/UI/Misc/UI_LOGO_IAM_to_AI_ANIM.dds",
+      "Position X": 0.0,
+      "Position Y": 0.0,
+      "Scale X": 1.0,
+      "Scale Y": 1.0,
+      "Animations": [
+        {
+          "Name": "IAM",
+          "FrameWidth": 1024.0,
+          "FrameHeight": 1024.0,
+          "VerticalStartingPos": 0.0,
+          "FrameOffset": 0,
+          "NumberOfFrames": 3,
+          "FramesPerSecond": 24,
+          "RotationSpeedPerSecond": 0.0,
+          "ShouldLoop": false,
+          "TransitionIndex": 1,
+          "ReverseTransitionIndex": 1
+        },
+        {
+          "Name": "IAM2",
+          "FrameWidth": 1024.0,
+          "FrameHeight": 1024.0,
+          "VerticalStartingPos": 0.0,
+          "FrameOffset": 0,
+          "NumberOfFrames": 1,
+          "FramesPerSecond": 1,
+          "RotationSpeedPerSecond": 0.0,
+          "ShouldLoop": false,
+          "TransitionIndex": 0,
+          "ReverseTransitionIndex": 0
+        }
+      ]
+    }
+  ],
+
+  "Background": {
+    "Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_LoadingScreenBackground.dds"
+  }
+}

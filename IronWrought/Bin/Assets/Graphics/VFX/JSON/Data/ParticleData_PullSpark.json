@@ -1,0 +1,93 @@
+{
+  "Max Number Of Particles": 3,
+  "Spawn Rate": 5.0,
+  "Lifetime": 2.0,
+  "Speed": 0.0,
+  "Start Color R": 1.0,
+  "Start Color G": 1.0,
+  "Start Color B": 1.0,
+  "Start Color A": 1.0,
+  "End Color R": 1.0,
+  "End Color G": 1.0,
+  "End Color B": 1.0,
+  "End Color A": 0.0,
+  "Start Size": 0.10000000149011612,
+  "End Size": 0.8999999761581421,
+  "Start Direction X": 0.0,
+  "Start Direction Y": 0.0,
+  "Start Direction Z": 0.0,
+  "End Direction X": 0.0,
+  "End Direction Y": 1.0,
+  "End Direction Z": 0.0,
+  "Lifetime Minimum Offset": -1.0,
+  "Lifetime Maximum Offset": 1.0,
+  "Speed Minimum Offset": -0.5,
+  "Speed Maximum Offset": 0.5,
+  "Offset Spawn Position X Randomize From": 0.0,
+  "Offset Spawn Position X Randomize To": 0.0,
+  "Offset Spawn Position Y Randomize From": 0.0,
+  "Offset Spawn Position Y Randomize To": 0.0,
+  "Offset Spawn Position Z Randomize From": 0.0,
+  "Offset Spawn Position Z Randomize To": 0.0,
+  "Spawn Direction X Randomize From": -0.5,
+  "Spawn Direction X Randomize To": 0.5,
+  "Spawn Direction Y Randomize From": 0.0,
+  "Spawn Direction Y Randomize To": 0.0,
+  "Spawn Direction Z Randomize From": -0.5,
+  "Spawn Direction Z Randomize To": 0.5,
+  "Texture Path": "Assets/Graphics/VFX/Examples/particle_template.dds",
+  "Color Curve": [
+    {
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "x": 0.33000001311302187,
+      "y": 0.30000001192092898
+    },
+    {
+      "x": 0.6600000262260437,
+      "y": 0.6600000262260437
+    },
+    {
+      "x": 1.0,
+      "y": 1.0
+    }
+  ],
+  "Size Curve": [
+    {
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "x": 0.33000001311302187,
+      "y": 0.30000001192092898
+    },
+    {
+      "x": 0.6600000262260437,
+      "y": 0.6600000262260437
+    },
+    {
+      "x": 1.0,
+      "y": 1.0
+    }
+  ],
+  "Direction Curve": [
+    {
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "x": 0.33000001311302187,
+      "y": 0.30000001192092898
+    },
+    {
+      "x": 0.6600000262260437,
+      "y": 0.6600000262260437
+    },
+    {
+      "x": 1.0,
+      "y": 1.0
+    }
+  ]
+}

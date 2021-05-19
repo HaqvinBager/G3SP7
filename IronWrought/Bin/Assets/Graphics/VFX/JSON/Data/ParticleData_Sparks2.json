@@ -1,0 +1,93 @@
+{
+  "Max Number Of Particles": 35,
+  "Spawn Rate": 136.5,
+  "Lifetime": 0.17000000178813935,
+  "Speed": 15.510000228881836,
+  "Start Color R": 10.0,
+  "Start Color G": 3.9215686321258547,
+  "Start Color B": 3.9215686321258547,
+  "Start Color A": 10.0,
+  "End Color R": 10.0,
+  "End Color G": 1.9607843160629273,
+  "End Color B": 0.003921568859368563,
+  "End Color A": 3.0,
+  "Start Size": 0.09000000357627869,
+  "End Size": 0.009999999776482582,
+  "Start Direction X": 0.0,
+  "Start Direction Y": 0.0,
+  "Start Direction Z": 0.0,
+  "End Direction X": 1.0,
+  "End Direction Y": 1.0,
+  "End Direction Z": 1.0,
+  "Lifetime Minimum Offset": 0.0,
+  "Lifetime Maximum Offset": 0.0,
+  "Speed Minimum Offset": 0.0,
+  "Speed Maximum Offset": 0.0,
+  "Offset Spawn Position X Randomize From": 0.0,
+  "Offset Spawn Position X Randomize To": 0.0,
+  "Offset Spawn Position Y Randomize From": 0.0,
+  "Offset Spawn Position Y Randomize To": 0.0,
+  "Offset Spawn Position Z Randomize From": 0.0,
+  "Offset Spawn Position Z Randomize To": 0.0,
+  "Spawn Direction X Randomize From": -1.0,
+  "Spawn Direction X Randomize To": 1.0,
+  "Spawn Direction Y Randomize From": -1.0,
+  "Spawn Direction Y Randomize To": 1.0,
+  "Spawn Direction Z Randomize From": -1.0,
+  "Spawn Direction Z Randomize To": 1.0,
+  "Texture Path": "Assets/Graphics/VFX/Texture/VFX_Particle_spark2.dds",
+  "Color Curve": [
+    {
+      "x": 0.0,
+      "y": 0.8999999761581421
+    },
+    {
+      "x": 0.3149999976158142,
+      "y": 0.8650000095367432
+    },
+    {
+      "x": 0.5550000071525574,
+      "y": 0.6549999713897705
+    },
+    {
+      "x": 1.0,
+      "y": 0.7749999761581421
+    }
+  ],
+  "Size Curve": [
+    {
+      "x": 0.0,
+      "y": 0.4049999713897705
+    },
+    {
+      "x": 0.27000001072883608,
+      "y": 0.42000001668930056
+    },
+    {
+      "x": 0.625,
+      "y": 0.35500001907348635
+    },
+    {
+      "x": 1.0,
+      "y": 0.04000002145767212
+    }
+  ],
+  "Direction Curve": [
+    {
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "x": 0.32499998807907107,
+      "y": 0.004999995231628418
+    },
+    {
+      "x": 0.6700000166893005,
+      "y": 0.009999990463256836
+    },
+    {
+      "x": 1.0,
+      "y": 0.009999990463256836
+    }
+  ]
+}

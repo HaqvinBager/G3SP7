@@ -1,0 +1,69 @@
+{
+  "Pivot X": 0.0,
+  "Pivot Y": 0.0,
+  "Postion X": 0.0,
+  "Position Y": 0.3,
+
+  "Buttons": [
+    {
+      "Text": "",
+      "FontAndFontSize": "Assets/Fonts/MorrisRoman42",
+      "Text Position X": 0.0,
+      "Text Position Y": 0.0,
+      "Text Pivot X": 0.0,
+      "Text Pivot Y": 0.0,
+      "Text Color R": 1.5,
+      "Text Color G": 0.7,
+      "Text Color B": 0.0,
+      "Pixel Width": 59.0,
+      "Pixel Height": 95.0,
+      "Sprite Position X": -0.5,
+      "Sprite Position Y": -0.04,
+      "Idle Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_ARROWLEFT.dds",
+      "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_ARROWLEFT_HOVER.dds",
+      "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_ARROWLEFT.dds",
+      "Messages": [],
+      "Sub Canvas Toggle Index": 3
+    },
+    {
+      "Text": "",
+      "FontAndFontSize": "Assets/Fonts/MorrisRoman42",
+      "Text Position X": 0.0,
+      "Text Position Y": 0.0,
+      "Text Pivot X": 0.0,
+      "Text Pivot Y": 0.0,
+      "Text Color R": 1.5,
+      "Text Color G": 0.7,
+      "Text Color B": 0.0,
+      "Pixel Width": 59.0,
+      "Pixel Height": 95.0,
+      "Sprite Position X": 0.5,
+      "Sprite Position Y": -0.04,
+      "Idle Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_ARROWRIGHT.dds",
+      "Hover Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_ARROWRIGHT_HOVER.dds",
+      "Click Sprite Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_ARROWRIGHT.dds",
+      "Messages": [],
+      "Sub Canvas Toggle Index": 1
+    }
+  ],
+
+  "Texts": [
+  ],
+
+  "Animated UI Elements": [
+  ],
+
+  "Background": {
+    "Path": "Assets/Graphics/UI/Menu/PLACEHOLDER/UI_LEVEL1.dds"
+  },
+
+  "Sprites": [
+  ],
+
+  "PostmasterEvents": {
+    "Events": []
+  },
+
+  "Widgets": [
+  ]
+}
